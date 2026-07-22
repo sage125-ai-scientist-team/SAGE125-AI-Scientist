@@ -1,0 +1,64 @@
+# ============================================================
+# SAGE125-AI-Scientist 依赖清单
+# 说明：
+#   1. 默认不安装本地大模型推理库（transformers / torch）。
+#   2. Qwen3-Embedding / Reranker 本地模式仅作为可选说明，见 README。
+#   3. weasyprint 若本机安装失败，PDF exporter 会使用 ReportLab 兜底，
+#      不会导致主流程失败（见 app/exporters/pdf_exporter.py）。
+# ============================================================
+
+# ---- Web 服务与前端 ----
+fastapi==0.121.2
+uvicorn==0.48.0
+streamlit==1.58.0
+
+# ---- 数据校验与配置 ----
+pydantic==2.12.4
+pydantic-settings==2.14.1
+python-dotenv==1.2.1
+
+# ---- LLM / 百炼调用客户端 ----
+# openai：作为调用百炼 OpenAI-compatible endpoint 的 HTTP 客户端（模型仍为 Qwen）
+openai==2.41.0
+# Qwen streaming/proxy/timeouts use httpx directly; keep it explicit.
+httpx==0.28.1
+# dashscope：qwen-deep-research 专用 SDK（不走 OpenAI-compatible）
+dashscope==1.26.2
+
+# ---- 文献 API 与网络请求 ----
+requests==2.34.2
+feedparser==6.0.12
+
+# ---- 文档解析与数据处理 ----
+pymupdf==1.28.0
+pandas==2.3.3
+numpy==2.2.5
+
+# ---- 向量检索（RAG）----
+zvec==0.5.1
+
+# ---- 测试 ----
+pytest==9.0.3
+
+# ---- 文件上传 / 模板 / 导出 ----
+python-multipart==0.0.32
+jinja2==3.1.6
+markdown==3.10.2
+weasyprint==69.0
+# pypdf：PDF 页数检测（validate_pdf_output）
+pypdf==6.14.2
+# reportlab：WeasyPrint 不可用时的 PDF 兜底生成器
+reportlab==5.0.0
+
+# ---- 前端可视化（科研发现控制台）----
+# streamlit-antd-components：顶部菜单/分段/步骤/badge 等（安装失败会自动降级）
+streamlit-antd-components==0.3.2
+# streamlit-extras：badge / metric cards / stylable_container（失败降级为原生容器）
+streamlit-extras==1.6.0
+# plotly：Agent timeline / 证据分布 / readiness 雷达 / 领域覆盖 / 关系图
+plotly==5.24.1
+# networkx：构造 Agent/Evidence/Hypothesis 关系图数据
+networkx==3.6.1
+
+# ---- 可选增强（仅用于实验性 Lab Wall，非主流程硬依赖）----
+# streamlit-elements==0.1.*

@@ -1,0 +1,48 @@
+{# 125 批量输出总览 HTML 模板。 #}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>Batch 125 Summary</title>
+<style>{{ print_css }}</style>
+</head>
+<body>
+  <h1>SAGE125 · 125 Questions Batch Summary</h1>
+  <div class="meta-line">生成时间：{{ summary.created_at }}</div>
+  <div class="meta-line">总数：{{ summary.total }} · 完成：{{ summary.completed }} · 失败：{{ summary.failed }}</div>
+  <div class="meta-line">Mock 模式：{{ summary.mock }}</div>
+
+  <h2>各领域数量</h2>
+  <table>
+    <tr><th>Domain</th><th>Count</th></tr>
+    {% for d, c in summary.domain_counts.items() %}
+    <tr><td>{{ d }}</td><td>{{ c }}</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>Validation Status 分布</h2>
+  <table>
+    <tr><th>Status</th><th>Count</th></tr>
+    {% for s, c in summary.status_counts.items() %}
+    <tr><td>{{ s }}</td><td>{{ c }}</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>每题摘要（仅摘要与路径，不含完整长报告）</h2>
+  <table>
+    <tr><th>ID</th><th>Domain</th><th>Status</th><th>Validation</th><th>Refs</th><th>Results Pending</th></tr>
+    {% for row in summary.rows %}
+    <tr>
+      <td>{{ row.question_id }}</td>
+      <td>{{ row.domain }}</td>
+      <td>{{ row.status }}</td>
+      <td>{{ row.validation_status }}</td>
+      <td>{{ row.reference_count }}</td>
+      <td>{{ row.results_pending }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <div class="footer-note">SAGE125 AI Scientist · Batch 125 · Built with Qwen + Bailian + RAG + Multi-Agent Workflow.</div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+{# ResearchPlan 学术排版 HTML 模板（autoescape 开启，所有变量自动转义）。 #}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>{{ plan.paper_title or plan.input_question }}</title>
+<style>{{ print_css }}</style>
+</head>
+<body>
+  <h1>{{ plan.paper_title or plan.input_question }}</h1>
+  <div class="meta-line">Run ID: {{ run_id }}</div>
+  <div class="meta-line">Domain: {{ plan.domain }}</div>
+  <div class="meta-line">Validation Status:
+    <span class="status-pill status-{{ plan.validation_status }}">{{ plan.validation_status }}</span>
+  </div>
+
+  <h2>Input Question</h2>
+  <p>{{ plan.input_question }}</p>
+
+  <h2>Problem Statement</h2>
+  <p>{{ plan.problem_statement }}</p>
+
+  <h2>Rationale</h2>
+  <p>{{ plan.rationale }}</p>
+
+  <h2>Generated Hypotheses</h2>
+  {% for h in plan.generated_hypotheses %}
+  <h3>Hypothesis {{ loop.index }}</h3>
+  <table>
+    <tr><th>Hypothesis</th><td>{{ h.hypothesis }}</td></tr>
+    <tr><th>Mechanism</th><td>{{ h.mechanism }}</td></tr>
+    <tr><th>Falsifiable Prediction</th><td>{{ h.falsifiable_prediction }}</td></tr>
+    <tr><th>Required Observations</th><td>{{ h.required_observations | join('；') }}</td></tr>
+    <tr><th>Risk of Being Wrong</th><td>{{ h.risk_of_being_wrong }}</td></tr>
+  </table>
+  {% endfor %}
+
+  <h2>Technical Details</h2>
+  <p class="small">Technical Details 表示系统建议如何验证科学假设的技术路线，不是要求普通用户手动执行。</p>
+  <p>{{ plan.technical_details }}</p>
+
+  <h2>Datasets</h2>
+  <table>
+    <tr><th>Source</th><td>{{ plan.datasets.get('source') }}</td></tr>
+    <tr><th>Target</th><td>{{ plan.datasets.get('target') }}</td></tr>
+  </table>
+
+  <h2>Paper Abstract</h2>
+  <p>{{ plan.paper_abstract }}</p>
+
+  <h2>Methods</h2>
+  <p>{{ plan.methods }}</p>
+
+  <h2>Experiments</h2>
+  <table>
+    <tr><th>Baselines</th><td>{{ plan.experiments.get('baselines') }}</td></tr>
+    <tr><th>Metrics</th><td>{{ plan.experiments.get('metrics') }}</td></tr>
+    <tr><th>Ablation</th><td>{{ plan.experiments.get('ablation') }}</td></tr>
+    <tr><th>Validation Protocol</th><td>{{ plan.experiments.get('validation_protocol') }}</td></tr>
+  </table>
+
+  <h2>Results</h2>
+  {% if pending %}
+  <div class="pending-box">{{ plan.results }}</div>
+  <p class="small">未执行真实实验时，Results 只能显示待验证状态，不能编造指标。</p>
+  {% else %}
+  <p>{{ plan.results }}</p>
+  {% endif %}
+
+  <h2>References（来自 EvidenceCards）</h2>
+  {% if plan.references %}
+    {% for r in plan.references %}
+    <div class="evidence-compact">
+      <span class="src">[{{ r.id }}] {{ r.source_type }}</span>
+      {% if 'mock_for_testing' in (r.reliability_note or '') %}<span class="mock-tag">mock_for_testing</span>{% endif %}
+      <div>{{ r.title }}</div>
+      <div class="small">authors: {{ r.authors | join(', ') or 'Not available' }} · year: {{ r.year or 'Not available' }}</div>
+      <div class="small">url: {{ r.url or 'Not available' }} · doi: {{ r.doi or 'Not available' }}</div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p>references 待检索/待验证。</p>
+  {% endif %}
+
+  <h2>Reviewer Comments</h2>
+  <ul>{% for c in plan.reviewer_comments %}<li>{{ c }}</li>{% endfor %}</ul>
+
+  <h2>Reproducibility Checklist</h2>
+  <ul>{% for c in plan.reproducibility_checklist %}<li>{{ c }}</li>{% endfor %}</ul>
+
+  <div class="footer-note">SAGE125 AI Scientist · Run {{ run_id }} · Status: {{ plan.validation_status }}
+    · Built with Qwen + Bailian + RAG + Multi-Agent Workflow.</div>
+</body>
+</html>

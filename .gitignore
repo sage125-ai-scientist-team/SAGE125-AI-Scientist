@@ -1,0 +1,87 @@
+# ============================================================
+# SAGE125-AI-Scientist .gitignore
+# 目的：屏蔽敏感文件（.env）、生成物与缓存，防止密钥或大文件入库。
+# 说明：明确允许提交 .env.example 作为配置模板。
+# ============================================================
+
+# ---- 环境变量与密钥（严禁入库）----
+.env
+.env.*
+# 例外：允许提交示例配置文件
+!.env.example
+
+# ---- RAG 索引与缓存（体积大 / 可重建）----
+data/index/
+data/cache/
+# 用户上传的原文永久保存在本机项目，但属于私密/大文件，禁止误提交 Git。
+data/raw/uploads/
+*.part
+
+# ---- 导出产物（每次运行生成）----
+exports/
+
+# ---- Python 编译缓存 ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ---- 虚拟环境 ----
+.venv/
+venv/
+env/
+
+# ---- 测试与覆盖率缓存 ----
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ---- IDE / 系统文件 ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# === SAGE125 TEAM SAFETY RULES ===
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Python generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Front-end dependencies and generated builds
+node_modules/
+frontend/node_modules/
+dist/
+build/
+
+# Runtime data, indexes, uploads and outputs
+data/cache/
+data/index/
+data/processed/
+data/raw/uploads/
+exports/
+logs/
+tmp/
+.cache/
+
+# Local logs
+*.log
+# === END SAGE125 TEAM SAFETY RULES ===
+
+# External scientific inputs: local only until provenance and redistribution rights are documented
+/sjtu-booklet.pdf
+/data/raw/sjtu-booklet.pdf
