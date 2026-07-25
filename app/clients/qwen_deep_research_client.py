@@ -15,14 +15,86 @@ app.clients.qwen_deep_research_client —— Qwen Deep Research 客户端。
 
 from __future__ import annotations
 
+import time
 from typing import Optional
 
 from app.core.config import Settings, assert_qwen_model, get_settings
-from app.core.logging import get_logger, mask_text
+from app.core.logging import get_logger
 from app.core.run_progress import emit_progress
+from app.clients.outbound_http import build_outbound_requests_session, redact_outbound_error
 
 # 模块级日志器（继承脱敏能力）。
 logger = get_logger("clients.deep_research")
+
+
+_DEEP_RESEARCH_ERROR_GUIDANCE: dict[str, str] = {
+    "DEEP_RESEARCH_RATE_LIMIT": "DeepResearch 被限流或配额不足（429）；请稍后重试。",
+    "DEEP_RESEARCH_SERVICE": "DeepResearch 服务暂时异常（5xx）；请稍后重试。",
+    "DEEP_RESEARCH_TIMEOUT": "DeepResearch 请求超时；请检查网络后重试。",
+    "DEEP_RESEARCH_CONNECTION_RESET": "DeepResearch HTTPS 流式连接被重置；请检查网络出口、VPN 或显式 HTTPS 代理。",
+    "DEEP_RESEARCH_PROXY": "DeepResearch 代理连接失败；请检查项目 OUTBOUND_HTTPS_PROXY。",
+    "DEEP_RESEARCH_AUTH": "DeepResearch 鉴权或模型权限失败（401/403）。",
+    "DEEP_RESEARCH_ENDPOINT": "DeepResearch endpoint 或请求格式无效（400/404/422）。",
+    "DEEP_RESEARCH_NETWORK": "无法连接 DeepResearch HTTPS 服务；请检查网络出口、VPN 或显式 HTTPS 代理。",
+    "DEEP_RESEARCH_UNKNOWN": "DeepResearch 调用失败；请运行低成本 smoke 诊断。",
+}
+
+
+class _DeepResearchCallFailure(Exception):
+    """Internal, secret-safe failure classification for one DeepResearch attempt."""
+
+    def __init__(self, code: str, stage: str) -> None:
+        self.code = code
+        self.stage = stage
+        super().__init__(code)
+
+
+def _status_code(value: object) -> int | None:
+    """Read an SDK response status without reading its body or headers."""
+    try:
+        status = int(getattr(value, "status_code", None))
+    except (TypeError, ValueError):
+        return None
+    return status if status > 0 else None
+
+
+def _classify_exception(exc: Exception, *, stage: str) -> _DeepResearchCallFailure:
+    """Map transport and HTTP failures without returning raw exception text."""
+    if isinstance(exc, _DeepResearchCallFailure):
+        return exc
+    status = _status_code(exc)
+    if status == 429:
+        code = "DEEP_RESEARCH_RATE_LIMIT"
+    elif status in {401, 403}:
+        code = "DEEP_RESEARCH_AUTH"
+    elif status in {400, 404, 422}:
+        code = "DEEP_RESEARCH_ENDPOINT"
+    elif status is not None and status >= 500:
+        code = "DEEP_RESEARCH_SERVICE"
+    else:
+        text = str(exc).lower()
+        if "10054" in text or "connection reset" in text or "forcibly closed" in text:
+            code = "DEEP_RESEARCH_CONNECTION_RESET"
+        elif "proxy" in text or "tunnel" in text or "407" in text:
+            code = "DEEP_RESEARCH_PROXY"
+        elif "timeout" in text or "timed out" in text:
+            code = "DEEP_RESEARCH_TIMEOUT"
+        elif any(token in text for token in ("connect", "connection", "dns", "name resolution", "ssl", "certificate")):
+            code = "DEEP_RESEARCH_NETWORK"
+        else:
+            code = "DEEP_RESEARCH_UNKNOWN"
+    return _DeepResearchCallFailure(code, stage)
+
+
+def _retryable(failure: _DeepResearchCallFailure) -> bool:
+    """Keep retries bounded to the project policy and only transient failures."""
+    return failure.code in {
+        "DEEP_RESEARCH_RATE_LIMIT",
+        "DEEP_RESEARCH_SERVICE",
+        "DEEP_RESEARCH_TIMEOUT",
+        "DEEP_RESEARCH_CONNECTION_RESET",
+        "DEEP_RESEARCH_NETWORK",
+    }
 
 
 class QwenDeepResearchClient:
@@ -87,84 +159,101 @@ class QwenDeepResearchClient:
         user_content = topic if not context else f"{context}\n\n研究主题：{topic}"
         messages = [{"role": "user", "content": user_content}]
 
-        # 聚合容器：内容、阶段、引用、用量、request_id。
-        collected_content: list[str] = []
-        phases: list[str] = []
-        references: list[dict] = []
-        usage: dict = {}
-        request_id: str = ""
+        # DeepResearch 仅支持 stream=True。DashScope 允许注入 requests.Session，
+        # 因此这里复用所有百炼客户端共享的显式代理策略，而不读取系统代理。
+        max_retries = int(getattr(self.settings, "llm_max_retries", 1))
+        for attempt in range(max_retries + 1):
+            collected_content: list[str] = []
+            phases: list[str] = []
+            references: list[dict] = []
+            usage: dict = {}
+            request_id: str = ""
+            session = build_outbound_requests_session(self.settings)
+            try:
+                emit_progress(
+                    "deep_research", status="waiting", percent=38,
+                    message="正在等待千问 DeepResearch 返回调研阶段",
+                    model_alias="deepresearch", model_name_internal=self.settings.qwen_deep_research_model,
+                )
+                responses = Generation.call(
+                    api_key=self.settings.dashscope_api_key,
+                    model=self.settings.qwen_deep_research_model,
+                    messages=messages,
+                    stream=True,
+                    timeout=getattr(self.settings, "deep_research_timeout_seconds", 900),
+                    session=session,
+                )
+                # 逐个消费流式响应，解析 phase/status/content 与引用线索。
+                for response in responses:
+                    # HTTP 错误必须稳定映射，不能误报为“空成功”。
+                    status = _status_code(response)
+                    if status is not None and status >= 400:
+                        raise _classify_exception(response, stage="http_response")
+                    rid = getattr(response, "request_id", None)
+                    if rid:
+                        request_id = str(rid)
+                    resp_usage = getattr(response, "usage", None)
+                    if resp_usage:
+                        usage = dict(resp_usage) if not isinstance(resp_usage, dict) else resp_usage
+                    output = getattr(response, "output", None)
+                    if not output:
+                        continue
+                    message = output.get("message", {}) if isinstance(output, dict) else {}
+                    phase = message.get("phase")
+                    content = message.get("content", "")
+                    if phase and phase not in phases:
+                        phases.append(phase)
+                        phase_labels = {
+                            "search": "正在检索资料",
+                            "analysis": "正在分析资料",
+                            "answer": "正在生成调研纪要",
+                        }
+                        emit_progress(
+                            "deep_research", status="running", percent=38,
+                            message=f"千问 DeepResearch：{phase_labels.get(phase, str(phase))}",
+                            model_alias="deepresearch", model_name_internal=self.settings.qwen_deep_research_model,
+                        )
+                    if phase == "answer" and content:
+                        collected_content.append(content)
+                    extra = message.get("extra", {}) if isinstance(message, dict) else {}
+                    deep = extra.get("deep_research", {}) if isinstance(extra, dict) else {}
+                    for ref in deep.get("references", []) or []:
+                        references.append(ref)
 
-        try:
-            # 必须 stream=True：深度研究为长耗时多轮任务，同步会超时。
-            emit_progress(
-                "deep_research", status="waiting", percent=38,
-                message="正在等待千问 DeepResearch 返回调研阶段",
-                model_alias="deepresearch", model_name_internal=self.settings.qwen_deep_research_model,
-            )
-            responses = Generation.call(
-                api_key=self.settings.dashscope_api_key,
-                model=self.settings.qwen_deep_research_model,
-                messages=messages,
-                stream=True,
-                timeout=self.settings.deep_research_timeout_seconds,
-            )
-            # 逐个消费流式响应，解析 phase/status/content 与引用线索。
-            for response in responses:
-                # 记录 request_id（若存在）。
-                rid = getattr(response, "request_id", None)
-                if rid:
-                    request_id = rid
-                # 记录用量（若存在）。
-                resp_usage = getattr(response, "usage", None)
-                if resp_usage:
-                    # usage 可能是对象或 dict，尽量转为 dict。
-                    usage = dict(resp_usage) if not isinstance(resp_usage, dict) else resp_usage
-                # 解析 output.message。
-                output = getattr(response, "output", None)
-                if not output:
-                    continue
-                message = output.get("message", {}) if isinstance(output, dict) else {}
-                phase = message.get("phase")
-                content = message.get("content", "")
-                # 记录去重后的阶段名。
-                if phase and phase not in phases:
-                    phases.append(phase)
-                    phase_labels = {
-                        "search": "正在检索资料",
-                        "analysis": "正在分析资料",
-                        "answer": "正在生成调研纪要",
-                    }
-                    emit_progress(
-                        "deep_research", status="running", percent=38,
-                        message=f"千问 DeepResearch：{phase_labels.get(phase, str(phase))}",
-                        model_alias="deepresearch", model_name_internal=self.settings.qwen_deep_research_model,
+                return {
+                    "status": "succeeded",
+                    "content": "".join(collected_content),
+                    "phases": phases,
+                    "references": references,
+                    "usage": usage,
+                    "request_id": request_id,
+                    "note": "DeepResearch 输出仅为调研资料来源，需经证据抽取与核验后使用。",
+                }
+            except Exception as exc:
+                stage = "stream_read" if collected_content else "http_stream_open"
+                failure = _classify_exception(exc, stage=stage)
+                if attempt < max_retries and not collected_content and _retryable(failure):
+                    logger.warning(
+                        "DeepResearch 短暂失败，将进行有限重试：code=%s stage=%s exception_type=%s",
+                        failure.code, failure.stage, type(exc).__name__,
                     )
-                # 仅在 answer 阶段收集正文内容（其余阶段多为进度信息）。
-                if phase == "answer" and content:
-                    collected_content.append(content)
-                # 收集引用线索（未核验），供下游 EvidenceExtractor 处理。
-                extra = message.get("extra", {}) if isinstance(message, dict) else {}
-                deep = extra.get("deep_research", {}) if isinstance(extra, dict) else {}
-                for ref in deep.get("references", []) or []:
-                    references.append(ref)
-
-            # 聚合成功结果。
-            return {
-                "status": "succeeded",
-                "content": "".join(collected_content),
-                "phases": phases,
-                "references": references,
-                "usage": usage,
-                "request_id": request_id,
-                # 明确提示：以下内容为调研资料，非最终报告。
-                "note": "DeepResearch 输出仅为调研资料来源，需经证据抽取与核验后使用。",
-            }
-        except Exception as exc:
-            # 任何异常都不得中断 pipeline：脱敏后返回 failed 结构。
-            logger.warning("DeepResearch 调用失败：%s", mask_text(str(exc)))
-            emit_progress(
-                "deep_research", status="running", percent=42,
-                message="DeepResearch 未完成，主流程将继续使用其他证据来源",
-                model_alias="deepresearch", model_name_internal=self.settings.qwen_deep_research_model,
-            )
-            return {"status": "failed", "error": mask_text(str(exc)), "content": ""}
+                    time.sleep(min(1.5 * (attempt + 1), 3.0))
+                    continue
+                logger.warning(
+                    "DeepResearch 调用失败：code=%s stage=%s exception_type=%s detail=%s",
+                    failure.code, failure.stage, type(exc).__name__, redact_outbound_error(exc),
+                )
+                emit_progress(
+                    "deep_research", status="running", percent=42,
+                    message="DeepResearch 未完成，主流程将继续使用其他证据来源",
+                    model_alias="deepresearch", model_name_internal=self.settings.qwen_deep_research_model,
+                )
+                return {
+                    "status": "failed",
+                    "error": _DEEP_RESEARCH_ERROR_GUIDANCE[failure.code],
+                    "error_code": failure.code,
+                    "error_stage": failure.stage,
+                    "content": "",
+                }
+            finally:
+                session.close()

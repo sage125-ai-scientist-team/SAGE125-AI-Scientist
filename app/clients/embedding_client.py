@@ -18,6 +18,7 @@ from typing import Optional
 
 from app.core.config import Settings, assert_qwen_model, get_settings
 from app.core.logging import get_logger
+from app.clients.outbound_http import build_outbound_httpx_client
 
 # 模块级日志器。
 logger = get_logger("clients.embedding")
@@ -235,13 +236,7 @@ class EmbeddingClient:
                 timeout_seconds,
                 connect=min(connect_seconds, timeout_seconds),
             )
-            http_kwargs = {"timeout": timeout, "trust_env": False}
-            explicit_proxy = str(
-                getattr(self.settings, "outbound_https_proxy", "") or ""
-            ).strip()
-            if explicit_proxy:
-                http_kwargs["proxy"] = explicit_proxy
-            http_client = httpx.Client(**http_kwargs)
+            http_client = build_outbound_httpx_client(self.settings, timeout=timeout)
             self._client = OpenAI(
                 api_key=self.settings.dashscope_api_key,
                 base_url=self.settings.dashscope_base_url,

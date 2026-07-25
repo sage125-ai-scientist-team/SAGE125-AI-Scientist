@@ -19,6 +19,7 @@ from typing import Optional
 
 from app.core.config import Settings, assert_qwen_model, get_settings
 from app.core.logging import get_logger, mask_text
+from app.clients.outbound_http import build_outbound_requests_session
 
 # 模块级日志器。
 logger = get_logger("clients.rerank")
@@ -155,11 +156,7 @@ class RerankClient:
             "return_documents": False,
         }
         # 禁用 Windows/环境隐式代理，仅尊重项目显式 OUTBOUND_HTTPS_PROXY。
-        session = requests.Session()
-        session.trust_env = False
-        explicit_proxy = str(getattr(self.settings, "outbound_https_proxy", "") or "").strip()
-        if explicit_proxy:
-            session.proxies.update({"http": explicit_proxy, "https": explicit_proxy})
+        session = build_outbound_requests_session(self.settings)
         # 发起请求，设置连接/读取超时。
         connect_timeout = float(getattr(self.settings, "llm_connect_timeout_seconds", 20.0))
         resp = session.post(
