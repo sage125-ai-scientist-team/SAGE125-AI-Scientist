@@ -1,11 +1,42 @@
-name: test
+name: quality-gates
 
 on:
   push:
   pull_request:
+    branches:
+      - integration/2026-08-10
+
+permissions:
+  contents: read
 
 jobs:
-  pytest:
+  lint:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run Wave A lint contract
+        run: python scripts/eval/wave_a_quality.py lint
+  type:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run Wave A type contract
+        run: python scripts/eval/wave_a_quality.py type
+  unit:
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
@@ -16,7 +47,66 @@ jobs:
           cache: pip
       - name: Install pinned dependencies
         run: python -m pip install -r requirements.txt
-      - name: Run offline test suite
+      - name: Run offline unit baseline
         env:
           MOCK_LLM: "true"
-        run: python -m pytest -q
+        run: python -m pytest -q --ignore=tests/integration --junitxml "${{ runner.temp }}/unit-junit.xml"
+      - name: Upload unit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-results
+          path: ${{ runner.temp }}/unit-junit.xml
+          if-no-files-found: warn
+  integration:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run offline integration fixture
+        env:
+          MOCK_LLM: "true"
+        run: python -m pytest -q tests/integration --junitxml "${{ runner.temp }}/integration-junit.xml"
+      - name: Upload integration results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-results
+          path: ${{ runner.temp }}/integration-junit.xml
+          if-no-files-found: warn
+  security:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run existing project security audit
+        run: python scripts/audit_project.py
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Compile supported Python sources
+        run: python -m compileall -q app scripts/eval
+      - name: Validate benchmark dry run
+        run: python scripts/eval/benchmark_skeleton.py --dry-run --output "${{ runner.temp }}/benchmark.json"
+      - name: Validate benchmark schema
+        run: python scripts/eval/wave_a_quality.py validate-result --result "${{ runner.temp }}/benchmark.json"
