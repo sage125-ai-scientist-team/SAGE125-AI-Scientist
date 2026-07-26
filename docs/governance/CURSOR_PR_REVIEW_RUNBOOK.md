@@ -266,6 +266,105 @@ git push origin integration/2026-08-10
   GitHub 集成是否针对该仓库启用；确认套餐额度未耗尽 |
 | 脚本报 "task-owner-map.yaml 缺失" | 确认当前分支已包含本次治理配置 PR 的内容（`integration/2026-08-10`
   合并后才会有这些文件） |
+| `ConvertFrom-Json` 失败 / `category=pr_view_*` | 见第 13 节：不得通过删除 PR body 或吞掉解析错误绕过；应确认脚本已使用「机器字段与正文分离」版本 |
+
+---
+
+## 13. Windows PowerShell 5.1 / UTF-8 / 机器字段与 PR 正文分离
+
+### 13.1 支持范围
+
+- **最低要求**：Windows PowerShell **5.1**（本仓库队长默认环境）。
+- **推荐**：PowerShell 7（`pwsh`）若已安装可直接运行同一脚本；**非强制**。
+- 脚本文件 `scripts/captain/review_latest_pr.ps1` 与治理测试
+  `tests/governance/test_review_latest_pr.ps1` **必须保存为 UTF-8 with BOM**。
+  无 BOM 时，Windows PowerShell 5.1 可能按系统活动代码页误解码中文，导致
+  「字符串缺少终止符」等假性语法错误。
+
+### 13.2 为什么不能把完整 PR body 塞进同一个 ConvertFrom-Json
+
+Windows PowerShell 5.1 的 `ConvertFrom-Json` 对「含中文、Markdown、转义字符、
+多行正文」的大型 JSON 对象不稳定。实测：同一 PR #3，
+
+- **仅机器字段**（number/title/base/head/files/checks 等）→ 解析成功；
+- **机器字段 + body/comments/reviews 正文** → `System.ArgumentException`
+  （ConvertFrom-Json 失败）。
+
+因此脚本采用硬边界：
+
+| 通道 | 内容 | 解析方式 |
+|---|---|---|
+| 机器门禁 | number, title, author, isDraft, base/head, SHA, mergeable, files, labels, checks… | `gh --json` → UTF-8 临时文件 → `ConvertFrom-Json` |
+| PR 正文 | body（及未来的评论原文） | `gh --json body --jq .body`，经 `System.Diagnostics.Process` UTF-8 捕获为**纯文本**；**不**送入 ConvertFrom-Json |
+| Checks | name/state/bucket/link/workflow | `gh pr checks --json`；仅 `bucket=pass` 视为通过 |
+
+临时文件一律写在 `%TEMP%`（随机名），`finally` 中删除；**不**写入仓库目录。
+
+### 13.3 gh JSON 读取方式（实现要点）
+
+脚本提供统一 helper：
+
+- `Invoke-GhCaptureUtf8`：Process 捕获 UTF-8 stdout（避免 PS 5.1 把多行拆成 `Object[]`）
+- `Invoke-GhJson`：机器字段 → 临时 UTF-8 文件 → `Read-Utf8JsonFile`
+- `Invoke-GhText`：正文纯文本（可选 Base64）；失败时只报告 category / PR 号 / 字符数 / 异常类型，**不打印正文**
+
+Checks 判定：
+
+- `pass` → 通过
+- `fail` / `pending` / `skipping` / `cancel` → 非通过（阻断）
+- Checks 总数为 0 → **WAIT**（不得当成功）
+
+### 13.4 中文 / Markdown / 转义字符回归测试
+
+运行：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File tests/governance/test_review_latest_pr.ps1
+```
+
+覆盖：中文、中英混合、引号、反斜杠、Windows 路径、Markdown 围栏、JSON 形文本、
+多行列表、CRLF/LF、Emoji、制表符、空 body、超长 body、`@codex review` 文本、
+`<>&`、以及 DryRun 不调用 `gh pr review` / `gh pr merge`。
+
+### 13.5 ConvertFrom-Json 失败时的排障步骤
+
+1. 确认当前脚本版本已包含「机器字段与正文分离」（本节目的设计）。
+2. 单独验证机器字段：
+
+```powershell
+gh pr view <N> --repo sage125-ai-scientist-team/SAGE125-AI-Scientist `
+  --json number,title,baseRefName,headRefName,headRefOid,files
+```
+
+3. 单独验证正文（不要与机器字段混在同一 JSON 再 ConvertFrom-Json）：
+
+```powershell
+gh pr view <N> --repo sage125-ai-scientist-team/SAGE125-AI-Scientist `
+  --json body --jq .body | Out-File -Encoding utf8 $env:TEMP\pr-body.txt
+```
+
+4. **禁止**的错误修复方式：
+   - 删除或清空 PR body 来让脚本通过；
+   - `catch { }` 吞掉 ConvertFrom-Json 异常后假装元数据完整；
+   - 依赖当前 Windows 活动代码页或终端字体；
+   - 把完整 PR body 重新塞回机器 JSON。
+
+### 13.6 快速自检命令
+
+```powershell
+# 语法
+powershell.exe -NoProfile -Command ^
+  "$e=$null; [void][System.Management.Automation.Language.Parser]::ParseFile( ^
+  'scripts/captain/review_latest_pr.ps1', [ref]$null, [ref]$e); ^
+  if($e.Count){$e|Format-List; exit 1}else{'SYNTAX_OK'}"
+
+# 真实 PR（无副作用）
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File scripts/captain/review_latest_pr.ps1 -PrNumber 3 -DryRun
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File scripts/captain/review_latest_pr.ps1 -PrNumber 2 -DryRun
+```
 
 ---
 
