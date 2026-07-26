@@ -27,17 +27,17 @@ from typing import Any, Dict, List, Set, Tuple
 
 TASK_IDS = tuple("T0%d" % n for n in range(1, 10))
 REQ_ID_RE = re.compile(
-    r"^id:\s*(T0[1-9]-(?:A|B|C|MUST|DOD|METRIC|HANDOFF|FREEZE)-\d{3})\s*$",
+    r"^- id:\s*(T0[1-9]-(?:A|B|C|MUST|DOD|METRIC|HANDOFF|FREEZE)-\d{3})\s*$",
     re.M,
 )
 TASK_ID_LINE_RE = re.compile(r"^task_id:\s*(T0[1-9])\s*$", re.M)
-REQ_TEXT_RE = re.compile(r"^requirement_text:\s*(\S.*)$", re.M)
+REQ_TEXT_RE = re.compile(r"^  requirement_text:\s*(\S.*)$", re.M)
 BLOCKING_RE = re.compile(
-    r"^blocking_policy:\s*(P0_BLOCKING|P1_BLOCKING|DEFERRED_ALLOWED|P2_RECOMMENDATION|OPTIONAL)\s*$",
+    r"^  blocking_policy:\s*(P0_BLOCKING|P1_BLOCKING|DEFERRED_ALLOWED|P2_RECOMMENDATION|OPTIONAL)\s*$",
     re.M,
 )
-WAVE_RE = re.compile(r"^wave:\s*(A|B|C|FINAL|FREEZE)\s*$", re.M)
-SOURCE_SHA_RE = re.compile(r"^source_text_sha256:\s*([a-f0-9]{64})\s*$", re.M)
+WAVE_RE = re.compile(r"^  wave:\s*(A|B|C|FINAL|FREEZE)\s*$", re.M)
+SOURCE_SHA_RE = re.compile(r"^  source_text_sha256:\s*([a-f0-9]{64})\s*$", re.M)
 
 
 def sha256_text_file(path: Path) -> str:
