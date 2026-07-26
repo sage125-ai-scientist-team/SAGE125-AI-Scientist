@@ -1,0 +1,1130 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T05
+title: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环
+mission: 将“只设计实验”升级为至少一个旗舰问题能够加载真实数据、运行代码、产生指标和图表，并让 Round 1 结果改变 Round 2 方案。
+scoring_dimensions:
+- 方案落地验证
+- 技术深度
+- 科研闭环
+- 可复现性
+owner_paths:
+- app/execution/**
+- app/contracts/execution.py
+- tests/execution/**
+- experiments/flagship/**
+- docs/modules/T05/**
+forbidden_paths:
+- 不得把模拟指标写成真实结果
+- 不直接修改 pipeline.py，通过 ExecutionResult 交给 T02
+dependencies:
+  raw: 上游 T02；下游 T02、T07、T08、T09。
+  upstream:
+  - T02
+  downstream:
+  - T02
+  - T07
+  - T08
+  - T09
+branch_series:
+- t05/a-execution-contract
+- t05/b-execution-core
+- t05/c-execution-hardening
+paired_reviewer: T06
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- ExecutionSpec、ExecutionResult、ArtifactManifest、DatasetManifest 和最小权限运行器。
+- 超时、资源限制、命令/路径白名单、种子、环境、依赖版本、stdout/stderr、指标、图表和校验和。
+- actual_execution=true 严格守卫；旗舰案例完成 Round 1→分析→修改→Round 2 的真实闭环。
+definition_of_done:
+- 从干净环境按文档可复现；数据来源、许可、版本和 SHA-256 明确。
+- 失败、超时、缺依赖和非法路径不得报告为成功；不得虚构 AUROC/准确率。
+- Round 2 明确受 Round 1 结果影响，日志、指标、种子、环境与 Git commit 全部可追溯。
+quantitative_thresholds: []
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与旗舰定题
+      work: 完成协作接入；与队长确定旗舰问题、公开数据、基线、成功指标和运行环境；盘点执行缺口与安全风险。
+      deliverable: Execution RFC；数据清单；风险清单。
+      evidence: 问题可在本地或云端真实运行；数据许可可核验。
+    - date: 07/28（周二）
+      focus: 安全契约与运行器骨架
+      work: 设计 ExecutionSpec/Result/Artifact/DatasetManifest、威胁模型、超时/资源/路径限制；实现隔离工作目录、命令入口和日志捕获；开启 Draft PR-A。
+      deliverable: 接口与安全清单；runner skeleton；Draft PR-A。
+      evidence: actual_execution 规则明确；no-op/失败夹具可运行。
+    - date: 07/29（周三）
+      focus: PR-A 完成
+      work: 实现沙箱骨架、stdout/stderr、超时、清理和基础测试；同步 integration、契约/安全测试，20:00 前转 Ready。
+      deliverable: PR-A Ready；安全测试报告。
+      evidence: 不依赖生产密钥；非法路径被阻断。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: 数据适配
+      work: 新建 B 分支；实现下载/加载、许可、版本、checksum、缓存和缺失处理；固定公开数据快照。
+      deliverable: DatasetManifest + adapter。
+      evidence: 数据来源合规，可校验并可重下载。
+    - date: 07/31（周五）
+      focus: 真实基线执行
+      work: 实现并运行基线代码，保存参数、种子、日志、环境和首批指标；指标必须从真实输出解析。
+      deliverable: Baseline Run 包。
+      evidence: 实际运行成功或失败均有原始日志，不得手填指标。
+    - date: 08/01（周六）
+      focus: 产物管理与 Draft PR-B
+      work: 保存模型/表格/图、包版本、Git SHA 和 artifact URI；实现 actual_execution 守卫、失败分类和重试清理；开启 Draft PR-B。
+      deliverable: ArtifactManifest；失败分类；Draft PR-B。
+      evidence: 失败不能误置 true；产物一键定位。
+    - date: 08/02（周日）
+      focus: 鲁棒性与故障注入
+      work: 测试超时、OOM 模拟、非法路径、坏数据、缺包和重复运行；完成 T06 配对审查。
+      deliverable: 故障注入报告；配对审查记录。
+      evidence: 失败安全、可解释、可清理。
+    - date: 08/03（周一）
+      focus: 工作流联调与 Round 1
+      work: 与 T02 集成 ExecutionResult，确保结果摘要和指标进入 revision context；完成 Round 1 正式运行和分析。
+      deliverable: E2E hook；Round 1 结果包。
+      evidence: 结果可改变下一轮；Round 1 可从干净环境复跑。
+    - date: 08/04（周二）
+      focus: 反馈分析
+      work: 基于 Round 1 结果提出具体修改，记录每项修改与证据；准备 Round 2 配置和预期判据。
+      deliverable: Round 1→Round 2 变更说明。
+      evidence: 不是重复同一配置；修改有数据依据。
+    - date: 08/05（周三）
+      focus: PR-B Ready
+      work: 同步 integration，运行模块/契约/E2E；固定数据与环境版本，补文档；@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；Round 1 可复现包。
+      evidence: P0/P1 关闭；分支 up to date。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: Round 2 与复现
+      work: 新建 C 分支；执行修改后的实验，生成比较表、图和解释；在第二环境/容器从零复跑；20:00 前开启 Draft PR-C。
+      deliverable: Round 2 正式产物；reproduction report；Draft PR-C。
+      evidence: 关键指标在预设容差内；变更与结果对应。
+    - date: 08/07（周五）
+      focus: 交付联调
+      work: 完成 T08 payload、T09 评测接口、数据说明、脚本、回滚和安全文档；处理 Codex/配对审查。
+      deliverable: API/产物样例；演示 runbook v1。
+      evidence: 下游可消费；无未登记共享修改。
+    - date: 08/08（周六）
+      focus: 完整两轮演示
+      work: 跑完整两轮演示，记录耗时、成本、失败恢复和屏幕证据；同步 integration、全测试、@codex review，18:00 前转 Ready。
+      deliverable: 两轮演示包；PR-C Ready。
+      evidence: 全链路无人工伪造指标；P0/P1 关闭。
+code_freeze:
+  date: 08/09（周日）
+  focus: Code Freeze 与交接
+  work: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  deliverable: 阻断修复或“无变更”确认；最终 handoff 包。
+  evidence: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不得把模拟指标写成真实结果；不直接修改 pipeline.py，通过 ExecutionResult 交给 T02。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 158
+  info_table_index: 70
+  must_deliver_table_index: 71
+  daily_table_index: 72
+requirements:
+- id: T05-MUST-001
+  task_id: T05
+  wave: FINAL
+  category: must_deliver
+  requirement_text: ExecutionSpec、ExecutionResult、ArtifactManifest、DatasetManifest 和最小权限运行器。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.1 必须交付
+  source_paragraph_index: 158
+  source_table_index: 71
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 9be1a47fe73d9381eb3cbbcc95b915787d84e6a61efa6ad0fa490528023395b3
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-MUST-002
+  task_id: T05
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 超时、资源限制、命令/路径白名单、种子、环境、依赖版本、stdout/stderr、指标、图表和校验和。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.1 必须交付
+  source_paragraph_index: 158
+  source_table_index: 71
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: f3328cdb8a967344a706fd38b92c29958e247de6d19a023cfdc93bea5058d66e
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-MUST-003
+  task_id: T05
+  wave: FINAL
+  category: must_deliver
+  requirement_text: actual_execution=true 严格守卫；旗舰案例完成 Round 1→分析→修改→Round 2 的真实闭环。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.1 必须交付
+  source_paragraph_index: 158
+  source_table_index: 71
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: afc38f5000e397abb69127da0556828b4c5b627b8e6df73f444fc7d1dfe2db60
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T05-DOD-001
+  task_id: T05
+  wave: C
+  category: definition_of_done
+  requirement_text: 从干净环境按文档可复现；数据来源、许可、版本和 SHA-256 明确。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.2 Definition of Done
+  source_paragraph_index: 158
+  source_table_index: 71
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 8d8119af6607d06615921e0c8046a2bdf6a0b79be2da118a3a2f1910065cb78f
+  evidence_required:
+  - dataset_manifest
+  - artifact_file
+  - documentation
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-DOD-002
+  task_id: T05
+  wave: C
+  category: definition_of_done
+  requirement_text: 失败、超时、缺依赖和非法路径不得报告为成功；不得虚构 AUROC/准确率。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.2 Definition of Done
+  source_paragraph_index: 158
+  source_table_index: 71
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 5e033cda0da9b3402697f827880235f372d7a5b9ad4ce664a097ea375abb14ac
+  evidence_required:
+  - metrics_file
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T05-DOD-003
+  task_id: T05
+  wave: C
+  category: definition_of_done
+  requirement_text: Round 2 明确受 Round 1 结果影响，日志、指标、种子、环境与 Git commit 全部可追溯。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.2 Definition of Done
+  source_paragraph_index: 158
+  source_table_index: 71
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 389f4c12ec7515ffdae9ce1410bc991046988e40eef240d8914f3f37b265da8e
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-A-001
+  task_id: T05
+  wave: A
+  category: daily_work
+  requirement_text: 完成协作接入；与队长确定旗舰问题、公开数据、基线、成功指标和运行环境；盘点执行缺口与安全风险。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: d750488b4fd9fe6b068ccbb0614f3a493485cf12e730350d6d70abcf4da37271
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-A-002
+  task_id: T05
+  wave: A
+  category: daily_deliverable
+  requirement_text: Execution RFC；数据清单；风险清单。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: 0b128a58203faa10fd47f5bde475a4afee0ffa8f6f20cf1b98af974d35c27a94
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-A-003
+  task_id: T05
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 问题可在本地或云端真实运行；数据许可可核验。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 8fbd90c92daa5334dbace590d86b41f7edbd33623668fa0e6ffd7c5d7215da90
+  evidence_required:
+  - dataset_manifest
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-A-004
+  task_id: T05
+  wave: A
+  category: daily_work
+  requirement_text: 设计 ExecutionSpec/Result/Artifact/DatasetManifest、威胁模型、超时/资源/路径限制；实现隔离工作目录、命令入口和日志捕获；开启 Draft PR-A。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: db0a13de322215a0572444331243115653b19283f9770c91a0c570faab56716a
+  evidence_required:
+  - raw_results
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-A-005
+  task_id: T05
+  wave: A
+  category: daily_deliverable
+  requirement_text: 接口与安全清单；runner skeleton；Draft PR-A。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: 2f7b31f2907d8dc449f1f0ee99dd100b6759850f4fc9ab62c0d29068602e9297
+  evidence_required:
+  - source_code
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-A-006
+  task_id: T05
+  wave: A
+  category: acceptance_evidence
+  requirement_text: actual_execution 规则明确；no-op/失败夹具可运行。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: c3ae12896bb00eecaffa63d329420d1c5df9c218c4b7ce7ea9f5c700808214b0
+  evidence_required:
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T05-A-007
+  task_id: T05
+  wave: A
+  category: daily_work
+  requirement_text: 实现沙箱骨架、stdout/stderr、超时、清理和基础测试；同步 integration、契约/安全测试，20:00 前转 Ready。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: 5b7498ef55627c3950e55a563e0e023a6aadbb3ac8334e11c2e3cf6f30155ca7
+  evidence_required:
+  - test_output
+  - raw_results
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-A-008
+  task_id: T05
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；安全测试报告。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: 4857397c102169a574339c7f8bad1ac9a852bcdfaf502dc70f11e33f08917b2b
+  evidence_required:
+  - test_output
+  - artifact_file
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-A-009
+  task_id: T05
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 不依赖生产密钥；非法路径被阻断。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 1429a64612069e70740780e40fdcd9b43ff00473af0e0ef7c28d866281a47086
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-001
+  task_id: T05
+  wave: B
+  category: daily_work
+  requirement_text: 新建 B 分支；实现下载/加载、许可、版本、checksum、缓存和缺失处理；固定公开数据快照。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: 408a7b641edbd88bf62741cd22f7976761e9a25a07f34d87c3a61e696bdd70a7
+  evidence_required:
+  - dataset_manifest
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-002
+  task_id: T05
+  wave: B
+  category: daily_deliverable
+  requirement_text: DatasetManifest + adapter。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: 5d79c543e279dc023d41f8f418e6b96fb83ab956be171ae57f6b551e1099af17
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-003
+  task_id: T05
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 数据来源合规，可校验并可重下载。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: c454663b32e8442a63a9ac96b0f65c9a04cd40dccad7e2cd90dd77a075f08ab6
+  evidence_required:
+  - dataset_manifest
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-004
+  task_id: T05
+  wave: B
+  category: daily_work
+  requirement_text: 实现并运行基线代码，保存参数、种子、日志、环境和首批指标；指标必须从真实输出解析。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: 30454b3c035f1ace70510d5125076d629f422e448f59fd93dd05edb2c9e4a2bd
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - source_code
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-005
+  task_id: T05
+  wave: B
+  category: daily_deliverable
+  requirement_text: Baseline Run 包。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: 2cdf4293a81ec47bf56b6af2a9705a72f8d7a60e821855ff21e2a971cddb99a4
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-006
+  task_id: T05
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 实际运行成功或失败均有原始日志，不得手填指标。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: a8b570ef2bd638b61eb1db9f5af9f4e94a1fa0c3d65ede0d899111c154183633
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-007
+  task_id: T05
+  wave: B
+  category: daily_work
+  requirement_text: 保存模型/表格/图、包版本、Git SHA 和 artifact URI；实现 actual_execution 守卫、失败分类和重试清理；开启 Draft PR-B。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: 33becd1d02daac54f418d3d0b2864d89a5559e73e15f7269353ee2bc2f04b7ee
+  evidence_required:
+  - source_code
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T05-B-008
+  task_id: T05
+  wave: B
+  category: daily_deliverable
+  requirement_text: ArtifactManifest；失败分类；Draft PR-B。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: 65d682387fd221f0e094962aefe2f43a2587187e1763dbc31d210aa504da8094
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-009
+  task_id: T05
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 失败不能误置 true；产物一键定位。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: 003709a811ee047a88772f838f711a6f56936a0aaf74510d9766e7529ecdc702
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-010
+  task_id: T05
+  wave: B
+  category: daily_work
+  requirement_text: 测试超时、OOM 模拟、非法路径、坏数据、缺包和重复运行；完成 T06 配对审查。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: 9e8bd76b99c3d4b01ba708dc4db3e97f96d1b857872e62870865726fa4125a18
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-011
+  task_id: T05
+  wave: B
+  category: daily_deliverable
+  requirement_text: 故障注入报告；配对审查记录。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: d8da71fc7cd3b535caf335aaa0d7736acc0a9d864ac2bec187616df3c517bf86
+  evidence_required:
+  - artifact_file
+  - documentation
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-012
+  task_id: T05
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 失败安全、可解释、可清理。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: b622ca128d6a93b7859d7316778379918f842dd925e85313bf39d3469536378b
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-013
+  task_id: T05
+  wave: B
+  category: daily_work
+  requirement_text: 与 T02 集成 ExecutionResult，确保结果摘要和指标进入 revision context；完成 Round 1 正式运行和分析。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: cfc73bff30c152a0be688003db865adf008aa93db512bfb00528b9d9e41865d1
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-014
+  task_id: T05
+  wave: B
+  category: daily_deliverable
+  requirement_text: E2E hook；Round 1 结果包。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: e88c9d0215fb7e334b177baeff2ef779bf3599834541a8f10b339e9852e565ea
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-015
+  task_id: T05
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 结果可改变下一轮；Round 1 可从干净环境复跑。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: e819cc1d130b97798674219cb802e8953ccf04dd09df4276868a64c92fd69566
+  evidence_required:
+  - reproduction_command
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-016
+  task_id: T05
+  wave: B
+  category: daily_work
+  requirement_text: 基于 Round 1 结果提出具体修改，记录每项修改与证据；准备 Round 2 配置和预期判据。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 8bfaa16eca24e94088726d7a3a2486b888b34b551abaaa4494b6b51d92559ca6
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-017
+  task_id: T05
+  wave: B
+  category: daily_deliverable
+  requirement_text: Round 1→Round 2 变更说明。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: 18525cd70299112e8e467f46cb4c809637876a36efc175e66f2f29b5cfe434c9
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-018
+  task_id: T05
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 不是重复同一配置；修改有数据依据。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: 7658410d2fabbec0480b4ef93b6000fe67cdc6b97f6cf3cbd07a04f72ba0a693
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-019
+  task_id: T05
+  wave: B
+  category: daily_work
+  requirement_text: 同步 integration，运行模块/契约/E2E；固定数据与环境版本，补文档；@codex review，20:00 前转 Ready。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: 3aa5d500894974b6d114721cc9eb77296c15bc3186c75ab8b8058cb0e001da18
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-020
+  task_id: T05
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；Round 1 可复现包。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: 2525f0fcf54d03b981fbcf13540336a7d1c7867cf8331c294eb07ecd25dfd56b
+  evidence_required:
+  - reproduction_command
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-B-021
+  task_id: T05
+  wave: B
+  category: acceptance_evidence
+  requirement_text: P0/P1 关闭；分支 up to date。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: 52aabfe85c8f6eba41ef875ccce8785e0f7b9a525bbec2db06cc4dc2a083dd04
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-001
+  task_id: T05
+  wave: C
+  category: daily_work
+  requirement_text: 新建 C 分支；执行修改后的实验，生成比较表、图和解释；在第二环境/容器从零复跑；20:00 前开启 Draft PR-C。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: 36e3a07cc89efa286a771fbae6f984193e2c2aed37721202e66659a567ecd4ab
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-002
+  task_id: T05
+  wave: C
+  category: daily_deliverable
+  requirement_text: Round 2 正式产物；reproduction report；Draft PR-C。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: 76c6f2c13733e96ce3f34bcaaa9a9704c7ddf29aa3b9a5f0828b5293b96cbdc9
+  evidence_required:
+  - artifact_file
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-003
+  task_id: T05
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 关键指标在预设容差内；变更与结果对应。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: 6446af17f19c8184dde4edb985cacaf63ed9910266448a20304b44804eb32e73
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-004
+  task_id: T05
+  wave: C
+  category: daily_work
+  requirement_text: 完成 T08 payload、T09 评测接口、数据说明、脚本、回滚和安全文档；处理 Codex/配对审查。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: 951ff4295a513b8e8fab97ada0386aa0c60c2b5b89bf521e1d283d13d468628b
+  evidence_required:
+  - computation_script
+  - source_code
+  - documentation
+  - dataset_manifest
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-005
+  task_id: T05
+  wave: C
+  category: daily_deliverable
+  requirement_text: API/产物样例；演示 runbook v1。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: a556de378ba5e32e46689b58e1e49bb0f5808cdc3e8b8b1e65ca0d1325453b49
+  evidence_required:
+  - artifact_file
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-006
+  task_id: T05
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 下游可消费；无未登记共享修改。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: 8608d7900b43fa816e113c40e29571afb814af32e9f647399a2d00678a671757
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-007
+  task_id: T05
+  wave: C
+  category: daily_work
+  requirement_text: 跑完整两轮演示，记录耗时、成本、失败恢复和屏幕证据；同步 integration、全测试、@codex review，18:00 前转 Ready。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 9402998da92a8cb299b5920d9d739b9acb3c58939ccbf8f4f6df94306e24dc45
+  evidence_required:
+  - test_output
+  - metrics_file
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-008
+  task_id: T05
+  wave: C
+  category: daily_deliverable
+  requirement_text: 两轮演示包；PR-C Ready。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: 0cb48dc78856c27896206ad43461aa737d8726067535945529fcf0cbd9b9e5ae
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-C-009
+  task_id: T05
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 全链路无人工伪造指标；P0/P1 关闭。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: f86770fbec5f87b722713e7c44f85217813921739a1ac8801f847ffbf0dcd8f1
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-FREEZE-001
+  task_id: T05
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 7d5941104714831cac0e87190db6bbfd2072f1cf43cd0471bd6360ac19217bfb
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-FREEZE-002
+  task_id: T05
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 阻断修复或“无变更”确认；最终 handoff 包。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: 070372ce4f2d5f34256583cc585a87f2c4e26b41a8d6754426d9c8e250e65653
+  evidence_required:
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-FREEZE-003
+  task_id: T05
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+  source_heading: T05. 队员 5（姓名待填）— 真实实验执行器、结果分析与可复现实验闭环 › T05.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 158
+  source_table_index: 72
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: de864e07b9c6ad7d1c585a6a6a67256e2955ed78416873a1fb7d218e99f8a285
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-HANDOFF-001
+  task_id: T05
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-HANDOFF-002
+  task_id: T05
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-HANDOFF-003
+  task_id: T05
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T05-HANDOFF-004
+  task_id: T05
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []

@@ -29,6 +29,38 @@ require_head_sha_match: true          # head SHA at merge time == head SHA at re
 forbid_admin_bypass: true             # gh pr merge --admin is never allowed
 forbid_force_push: true               # git push --force[-with-lease] is never allowed
 
+# ---- Task content / Wave acceptance (V3.0) ----
+# Engineering gates alone are never sufficient. Merge requires both:
+# ENGINEERING_COMPLIANCE=PASS and CONTENT_COMPLIANCE=PASS.
+require_task_content_review: true
+require_current_wave_pass: true
+require_acceptance_evidence: true
+allow_future_wave_deferred: true
+require_final_dod_on_wave_c: true
+require_content_review_head_sha_match: true
+block_on_current_wave_unverified: true
+allow_merge_with_p2_only: true
+
+content_statuses:
+  - PASS
+  - FAIL
+  - UNVERIFIED
+  - DEFERRED
+  - NOT_APPLICABLE
+
+content_gate:
+  engineering_pass_required: true
+  content_pass_required: true
+  block_on_fail: true
+  block_on_current_wave_unverified: true
+  block_on_missing_task_spec: true
+  block_on_unknown_task_or_wave: true
+  allow_future_deferred: true
+  allow_p2_recommendations: true
+  content_review_schema: docs/governance/schemas/content-review.schema.json
+  task_requirement_schema: docs/governance/schemas/task-requirement.schema.json
+  task_requirements_dir: docs/governance/task-requirements
+
 # ---- Bugbot handling ----
 # require_bugbot_check is an initial safety-compatible setting: false means Bugbot's
 # absence does not by itself block merge, BUT if a `Cursor Bugbot` check DOES exist on

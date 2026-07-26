@@ -245,3 +245,29 @@ No blocking SAGE125 findings.
 
 It must never say only "looks good" or similar vague approval language with no
 structured checklist behind it.
+
+## 9. Task content / Wave acceptance (supplementary)
+
+Bugbot / Agent supplementary review MUST load the machine-readable V3.0 task spec for
+the PR's task:
+
+`docs/governance/task-requirements/T0X.yaml`
+
+Rules:
+
+1. Identify task/wave from title → branch → labels → body. On conflict: WAIT, do not guess.
+2. Check **current Wave** requirements; cite `Requirement ID` (e.g. `T09-A-003`) in findings.
+3. "Code runs" ≠ "task complete". "A test file exists" ≠ "tests are effective".
+4. PR description claims are never sufficient evidence of completion.
+5. Quantitative thresholds without full evidence (data/manifest, script, raw+aggregate
+   results, command, model/prompt versions, seed when applicable, commit, time, env,
+   checksum, repro notes) are `UNVERIFIED` — never `PASS` from a screenshot alone.
+6. Future-wave-only gaps are `DEFERRED` and must not wrongly block an earlier Wave.
+7. Emit `P2` / `AWARD_QUALITY_RECOMMENDATION` when the current Wave hard bar is met but
+   award quality can still improve (does not block).
+8. Bugbot findings are **supplementary**. Final merge judgment is owned by the Cursor
+   Agent captain workflow and `scripts/captain/review_latest_pr.ps1`, which require both
+   `ENGINEERING_COMPLIANCE=PASS` and `CONTENT_COMPLIANCE=PASS`.
+
+Do **not** paste the full T01–T09 YAML bodies into Bugbot comments; reference IDs and
+short excerpts only.

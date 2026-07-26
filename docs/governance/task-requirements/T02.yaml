@@ -1,0 +1,1196 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T02
+title: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化
+mission: 将形式上的重复调用改造成评审意见真正进入下一轮、版本差异可解释、评分与问题关闭状态可追踪的科研迭代状态机。
+scoring_dimensions:
+- 科学价值
+- 多智能体协作
+- 反馈迭代稳定性
+owner_paths:
+- app/workflow/**（含 pipeline.py 唯一修改权）
+- app/contracts/revision.py
+- tests/workflow/**
+- docs/modules/T02/**
+forbidden_paths:
+- 不得重写 T01/T03/T05/T06 的内部实现
+- 仅通过冻结契约调用
+dependencies:
+  raw: 上游 T01、T03、T05、T06；下游 T07、T08。
+  upstream:
+  - T01
+  - T03
+  - T05
+  - T06
+  downstream:
+  - T07
+  - T08
+branch_series:
+- t02/a-revision-contract
+- t02/b-revision-core
+- t02/c-revision-hardening
+paired_reviewer: T03
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- ReviewFeedback、RevisionContext、PlanVersion、IssueClosure 与序列化；prompt hash、lineage 和评分变化可追溯。
+- critical_issues、required_revisions、comments 真正进入下一轮假设和实验设计。
+- 最大迭代、无改进停止、失败重试、幂等恢复、人工暂停/继续，以及至少一个真实两轮案例。
+definition_of_done:
+- Reviewer 不通过后，下一轮输入与 prompt_hash 必须变化，并可定位到具体意见。
+- 每条 required_revision 有关闭状态；未解决 P0 不得放行。
+- 超时、重复回调和 LLM 失败不产生重复版本或无限循环；前端/导出可展示 V1/V2 差异和停止原因。
+quantitative_thresholds:
+- requirement_id: T02-METRIC-001
+  raw_text: 至少一个
+  comparator: at_least
+  value: 1
+  unit: 个
+  source_requirement_id: T02-MUST-003
+- requirement_id: T02-METRIC-002
+  raw_text: 至少 4 个
+  comparator: at_least
+  value: 4
+  unit: 个
+  source_requirement_id: T02-A-006
+- requirement_id: T02-METRIC-003
+  raw_text: 1 问题
+  comparator: quantity
+  value: 1
+  unit: 问题
+  source_requirement_id: T02-B-018
+- requirement_id: T02-METRIC-004
+  raw_text: 3 个
+  comparator: quantity
+  value: 3
+  unit: 个
+  source_requirement_id: T02-C-007
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与状态机审计
+      work: 完成 Fork 协作接入；复现 HypothesisGenerator、ExperimentDesigner、Reviewer 两轮 prompt_hash 相同的问题；绘制当前状态机与数据流。
+      deliverable: 失败轨迹；现状状态图；T02 审计笔记。
+      evidence: 旧流程问题可重复；分支起点为最新 integration。
+    - date: 07/28（周二）
+      focus: 契约与红灯测试
+      work: 设计 ReviewFeedback、RevisionContext、PlanVersion、IssueClosure 和扩展 hook；与 T03/T05/T06 对齐；编写意见注入、hash 变化、版本递增和停止条件红灯测试；开启 Draft PR-A。
+      deliverable: 接口 RFC；红灯测试；Draft PR-A。
+      evidence: 至少 4 个旧流程测试稳定失败；接口不泄漏其他模块实现。
+    - date: 07/29（周三）
+      focus: PR-A 完成
+      work: 实现状态对象、prompt builder 骨架、版本存储和兼容迁移；明确 pipeline.py 修改范围；同步 integration、测试并在 20:00 前转 Ready。
+      deliverable: PR-A Ready；接口冻结记录。
+      evidence: 状态可序列化；新 push 后重新审查；无跨 owner 重写。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: Reviewer 意见注入
+      work: 从最新 integration 新建 B 分支；将 critical_issues、required_revisions、comments 和 issue_id 注入下一轮假设生成。
+      deliverable: Hypothesis revision prompt。
+      evidence: trace 可定位意见来源；输入 hash 发生合理变化。
+    - date: 07/31（周五）
+      focus: 实验方案修订
+      work: 让 ExperimentDesigner 读取评审意见、上一版实验、未关闭问题和失败原因；生成可解释修订理由。
+      deliverable: Experiment revision prompt；问题关闭映射。
+      evidence: 实验设计发生实质变化，而不是仅改措辞。
+    - date: 08/01（周六）
+      focus: 版本、差异与 Draft PR-B
+      work: 生成 V1/V2 结构化 diff、issue closure、评分变化和 lineage；实现最大轮数、无改进停止、人工暂停和重试；开启 Draft PR-B。
+      deliverable: 版本服务；停止策略；Draft PR-B。
+      evidence: 一次迭代可完整回放；无无限循环。
+    - date: 08/02（周日）
+      focus: 幂等与恢复
+      work: 测试超时、空 reviewer、重复事件、断点恢复和重复提交；确保失败不产生重复版本。
+      deliverable: 稳定性测试报告。
+      evidence: 重复回调幂等；失败可恢复且有停止原因。
+    - date: 08/03（周一）
+      focus: T01/T03 联调
+      work: 接入 EvidenceBundle 与人工反馈 RevisionContext；完成 T03 配对审查；补充契约与迁移测试。
+      deliverable: 联调提交；配对审查记录。
+      evidence: 评审与人工反馈均进入下一轮；字段兼容有测试。
+    - date: 08/04（周二）
+      focus: 真实两轮 E2E
+      work: 运行一个真实或准真实两轮案例，核对输入、输出、hash、版本、评分和问题关闭；补 candidate hypothesis 排名。
+      deliverable: 两轮 trace；差异报告；排名结果。
+      evidence: V2 明确回应 V1 问题；差异可解释。
+    - date: 08/05（周三）
+      focus: PR-B Ready
+      work: 同步最新 integration，运行全测试与最小 E2E；补齐 trace 导出、迁移和回滚；@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；可复现案例包。
+      evidence: 关键链路可复现；P0/P1 关闭；分支 up to date。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: 执行/多模态入口
+      work: 新建 C 分支；接入 T05 ExecutionResult 和 T06 MultimodalArtifact 的摘要、指标、失败原因、单位与置信度；避免大对象污染 prompt；开启 Draft PR-C。
+      deliverable: execution/multimodal feedback hooks；Draft PR-C。
+      evidence: 实际结果可改变下一轮计划；来源信息完整。
+    - date: 08/07（周五）
+      focus: API 与稳定性联调
+      work: 向 T08 暴露版本、issue、diff、状态事件与停止原因；执行幂等、超时、空结果和恢复测试；处理 Codex/配对审查。
+      deliverable: API 合约；稳定性修订提交。
+      evidence: 前端无需解析内部对象；无未登记共享文件冲突。
+    - date: 08/08（周六）
+      focus: 冻结前回归
+      work: 对 Q028、旗舰案例和 3 个随机题运行全链路回归；同步 integration、全测试、@codex review，18:00 前转 Ready。
+      deliverable: 回归矩阵；PR-C Ready。
+      evidence: 无相同 prompt_hash 假迭代；P0/P1 关闭。
+code_freeze:
+  date: 08/09（周日）
+  focus: Code Freeze 与交接
+  work: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  deliverable: 阻断修复或“无变更”确认；最终 handoff 包。
+  evidence: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不得重写 T01/T03/T05/T06 的内部实现；仅通过冻结契约调用。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 140
+  info_table_index: 58
+  must_deliver_table_index: 59
+  daily_table_index: 60
+requirements:
+- id: T02-MUST-001
+  task_id: T02
+  wave: FINAL
+  category: must_deliver
+  requirement_text: ReviewFeedback、RevisionContext、PlanVersion、IssueClosure 与序列化；prompt hash、lineage 和评分变化可追溯。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.1 必须交付
+  source_paragraph_index: 140
+  source_table_index: 59
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 5f4b692a9e0e311077f33301879fb800e1df849901730dc91d091993749de4c7
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-MUST-002
+  task_id: T02
+  wave: FINAL
+  category: must_deliver
+  requirement_text: critical_issues、required_revisions、comments 真正进入下一轮假设和实验设计。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.1 必须交付
+  source_paragraph_index: 140
+  source_table_index: 59
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: f69bb4ce4ac52aea0d76d1ba1888d7b3dd7ee32c3bb11c572dd63ed1784f13ce
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-MUST-003
+  task_id: T02
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 最大迭代、无改进停止、失败重试、幂等恢复、人工暂停/继续，以及至少一个真实两轮案例。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.1 必须交付
+  source_paragraph_index: 140
+  source_table_index: 59
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c4fc3aaed8826320feed25f80460f73c8e827c5d10bfea408d5c47d3df688c6f
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T02-METRIC-001
+- id: T02-METRIC-001
+  task_id: T02
+  wave: FINAL
+  category: quantitative_metric
+  requirement_text: 最大迭代、无改进停止、失败重试、幂等恢复、人工暂停/继续，以及至少一个真实两轮案例。（定量阈值：至少一个）
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.1 必须交付
+  source_paragraph_index: 140
+  source_table_index: 59
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 010c99f8d0bf9e9e2e167710eafd6d265989dfcc9fe2f8ae462911a584066d0b
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T02-MUST-003
+- id: T02-DOD-001
+  task_id: T02
+  wave: C
+  category: definition_of_done
+  requirement_text: Reviewer 不通过后，下一轮输入与 prompt_hash 必须变化，并可定位到具体意见。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.2 Definition of Done
+  source_paragraph_index: 140
+  source_table_index: 59
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 392cdb981f40b20b9655a8e48ccb9580d56bd605ade7e643f33af3c0573eef27
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-DOD-002
+  task_id: T02
+  wave: C
+  category: definition_of_done
+  requirement_text: 每条 required_revision 有关闭状态；未解决 P0 不得放行。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.2 Definition of Done
+  source_paragraph_index: 140
+  source_table_index: 59
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 264eec13d75d0df216d41d6ed626b8d7fc58c933c18799267eaffb56bf1f2c9c
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-DOD-003
+  task_id: T02
+  wave: C
+  category: definition_of_done
+  requirement_text: 超时、重复回调和 LLM 失败不产生重复版本或无限循环；前端/导出可展示 V1/V2 差异和停止原因。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.2 Definition of Done
+  source_paragraph_index: 140
+  source_table_index: 59
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 007787b3be25364494f98b6e2c5698b51931df47d4fc3bd3a2cefbcabf1cd7d7
+  evidence_required:
+  - artifact_file
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-A-001
+  task_id: T02
+  wave: A
+  category: daily_work
+  requirement_text: 完成 Fork 协作接入；复现 HypothesisGenerator、ExperimentDesigner、Reviewer 两轮 prompt_hash 相同的问题；绘制当前状态机与数据流。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: 559e413fa2ce0add391f73ed164bf0a558aae63ce48293e8cdda283470ea4f8e
+  evidence_required:
+  - reproduction_command
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-A-002
+  task_id: T02
+  wave: A
+  category: daily_deliverable
+  requirement_text: 失败轨迹；现状状态图；T02 审计笔记。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: c4f8de8f7b8dfd3853999dd29cb0f810e0c63de32243313701d150dc6a8a7a9e
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-A-003
+  task_id: T02
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 旧流程问题可重复；分支起点为最新 integration。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 0a88ab3a91aa915e9c0029bceed6b6d48a2ea27a5671c8b1b6bcdc28ba56493a
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-A-004
+  task_id: T02
+  wave: A
+  category: daily_work
+  requirement_text: 设计 ReviewFeedback、RevisionContext、PlanVersion、IssueClosure 和扩展 hook；与 T03/T05/T06 对齐；编写意见注入、hash 变化、版本递增和停止条件红灯测试；开启 Draft PR-A。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: ac766bec7ea134a307d40424ee35dfb74607a6e38c1064a8426b3c90338325a2
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-A-005
+  task_id: T02
+  wave: A
+  category: daily_deliverable
+  requirement_text: 接口 RFC；红灯测试；Draft PR-A。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: 193b7ae28d6c83ffa282d96ee5bba9d3e819e53ee9bb1ee826ea4944535cd793
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-A-006
+  task_id: T02
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 至少 4 个旧流程测试稳定失败；接口不泄漏其他模块实现。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: 7586ab8afd38f6a4c960dd5e84b2f73bc312207240f63e73094b0f479f79bf64
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T02-METRIC-002
+- id: T02-METRIC-002
+  task_id: T02
+  wave: A
+  category: quantitative_metric
+  requirement_text: 至少 4 个旧流程测试稳定失败；接口不泄漏其他模块实现。（定量阈值：至少 4 个）
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: afdc8287c1639db5d3f5815b72c158a45eb636e284d274e84e09ba7616b0c601
+  evidence_required:
+  - test_output
+  - source_code
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T02-A-006
+- id: T02-A-007
+  task_id: T02
+  wave: A
+  category: daily_work
+  requirement_text: 实现状态对象、prompt builder 骨架、版本存储和兼容迁移；明确 pipeline.py 修改范围；同步 integration、测试并在 20:00 前转 Ready。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: 6e105c4265e3090dc588d763b4c7fa191d14998df15132369c0ab82feee61822
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-A-008
+  task_id: T02
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；接口冻结记录。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: 308aa44e39f3ac40ef80c9b9a1133d04cebab70b87ba294e7787e2165c1d1864
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-A-009
+  task_id: T02
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 状态可序列化；新 push 后重新审查；无跨 owner 重写。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 9147bb8638cc88b2d6f5e7ddafbafe1c7377dbe9e8db5ccc3a90a7ca38633ccf
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-001
+  task_id: T02
+  wave: B
+  category: daily_work
+  requirement_text: 从最新 integration 新建 B 分支；将 critical_issues、required_revisions、comments 和 issue_id 注入下一轮假设生成。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: b686dabd8fd5bfd9f55e1417e2731e84c1745479c3a7a6fd3feeccc743d5baa5
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-002
+  task_id: T02
+  wave: B
+  category: daily_deliverable
+  requirement_text: Hypothesis revision prompt。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: b6198edaebafe50ea425408aeb1c3f68cd5ea5eea5a7baf6a4ac95804d09e6ae
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-003
+  task_id: T02
+  wave: B
+  category: acceptance_evidence
+  requirement_text: trace 可定位意见来源；输入 hash 发生合理变化。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: 25ca16f5152349f9640aa3029aff939beca67906162f86b912fcb70400afa9f6
+  evidence_required:
+  - raw_results
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-004
+  task_id: T02
+  wave: B
+  category: daily_work
+  requirement_text: 让 ExperimentDesigner 读取评审意见、上一版实验、未关闭问题和失败原因；生成可解释修订理由。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: 2bdfa2fbc1e23a94b560ba03b685c0e3f561ce0c0ac79a075571a8b02c0e815f
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-005
+  task_id: T02
+  wave: B
+  category: daily_deliverable
+  requirement_text: Experiment revision prompt；问题关闭映射。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: 102039fee719617d71250483d64bee7db43b53581c6b37a1c543c63f393a0add
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-006
+  task_id: T02
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 实验设计发生实质变化，而不是仅改措辞。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: a1d8da6d65bacff8be91f3d299eb9a7ae157035a90d825a633c409fad88a4f65
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-007
+  task_id: T02
+  wave: B
+  category: daily_work
+  requirement_text: 生成 V1/V2 结构化 diff、issue closure、评分变化和 lineage；实现最大轮数、无改进停止、人工暂停和重试；开启 Draft PR-B。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: b9f5644bc818bbb64f707e3af9d5f3e77a1422e19016268a1231376dc0a11977
+  evidence_required:
+  - source_code
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-008
+  task_id: T02
+  wave: B
+  category: daily_deliverable
+  requirement_text: 版本服务；停止策略；Draft PR-B。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: 58c02ecefb146aad339f3e4af40760fba276ac0d79145b8bf1565c63eb66bbd5
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-009
+  task_id: T02
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 一次迭代可完整回放；无无限循环。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: 3edb83acf5b26a4e7ee56240a3a46de8d3d5703e78777ce00e94bab5796de8a1
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-010
+  task_id: T02
+  wave: B
+  category: daily_work
+  requirement_text: 测试超时、空 reviewer、重复事件、断点恢复和重复提交；确保失败不产生重复版本。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: ddab36566a18186342977d3610cbae701314a7e49498809905203854cf65163e
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-011
+  task_id: T02
+  wave: B
+  category: daily_deliverable
+  requirement_text: 稳定性测试报告。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: 95c5bd8deda884a49617991d6a76b24453efe3e49e839e712e4a5854283c8f9f
+  evidence_required:
+  - test_output
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-012
+  task_id: T02
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 重复回调幂等；失败可恢复且有停止原因。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: 36d84e3f532c82236265bb71dfad12ad993fc7d053fce86c6e08209316dbf197
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-013
+  task_id: T02
+  wave: B
+  category: daily_work
+  requirement_text: 接入 EvidenceBundle 与人工反馈 RevisionContext；完成 T03 配对审查；补充契约与迁移测试。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: 04701e4dc52e45f5bbd701cedee55d09be23b187e439af91ca065eeda358186e
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-014
+  task_id: T02
+  wave: B
+  category: daily_deliverable
+  requirement_text: 联调提交；配对审查记录。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: 0eec42bf6afa30260b9fd3e6d62730ac9826e0fc5c980ba2691768efee669ed4
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-015
+  task_id: T02
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 评审与人工反馈均进入下一轮；字段兼容有测试。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: cca190ee5021c0b4775127a80c2f2457a591ce89c4ed5e436d4313db201125a4
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-016
+  task_id: T02
+  wave: B
+  category: daily_work
+  requirement_text: 运行一个真实或准真实两轮案例，核对输入、输出、hash、版本、评分和问题关闭；补 candidate hypothesis 排名。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 880d8539461c1b93d630401ed1c68a6cb6246c3bcca85cbcb0ddf81579e18330
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-017
+  task_id: T02
+  wave: B
+  category: daily_deliverable
+  requirement_text: 两轮 trace；差异报告；排名结果。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: dfab28b46c40a91358d5a09d0b47c5990969d9c887618bea90ad32ff73a24313
+  evidence_required:
+  - raw_results
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-018
+  task_id: T02
+  wave: B
+  category: acceptance_evidence
+  requirement_text: V2 明确回应 V1 问题；差异可解释。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: 24d86c10081c1944e998b6b652a84a109f8595c7ce2d24e925903ad7e5af12c2
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T02-METRIC-003
+- id: T02-METRIC-003
+  task_id: T02
+  wave: B
+  category: quantitative_metric
+  requirement_text: V2 明确回应 V1 问题；差异可解释。（定量阈值：1 问题）
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: 15cad2688eb0f097055ed3cfadc355fdc4ff7ae82c913b8496d38985a72b1245
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T02-B-018
+- id: T02-B-019
+  task_id: T02
+  wave: B
+  category: daily_work
+  requirement_text: 同步最新 integration，运行全测试与最小 E2E；补齐 trace 导出、迁移和回滚；@codex review，20:00 前转 Ready。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: e32ff8a533b3c5e90021a90b48a437464c149d8c7dddfb28c060cf2fe832f84a
+  evidence_required:
+  - test_output
+  - raw_results
+  - artifact_file
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-020
+  task_id: T02
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；可复现案例包。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: e7c4bdf363d8579efe2537aca2f6c93fd8eb8e917316a9b4a40223fc25a0fbd1
+  evidence_required:
+  - reproduction_command
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-B-021
+  task_id: T02
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 关键链路可复现；P0/P1 关闭；分支 up to date。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: 7812e0b85469701ad621a292e360b9242dc26286c694bd0f8dad554a4a9204b3
+  evidence_required:
+  - reproduction_command
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-C-001
+  task_id: T02
+  wave: C
+  category: daily_work
+  requirement_text: 新建 C 分支；接入 T05 ExecutionResult 和 T06 MultimodalArtifact 的摘要、指标、失败原因、单位与置信度；避免大对象污染 prompt；开启 Draft PR-C。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: 92c9cdd214a2a7d1f495ef485bd39c6d9db6c75a8932804be3b561c4bf1b566a
+  evidence_required:
+  - metrics_file
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-C-002
+  task_id: T02
+  wave: C
+  category: daily_deliverable
+  requirement_text: execution/multimodal feedback hooks；Draft PR-C。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: 6f7d7fe7af4502b82677b11f978b6cf253b15152c27a70b0c334122b1ede8b6d
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-C-003
+  task_id: T02
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 实际结果可改变下一轮计划；来源信息完整。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: c3697525dc23bb71a589af86e4f051cfa8d0a95547593bcc3456b316a6039bea
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-C-004
+  task_id: T02
+  wave: C
+  category: daily_work
+  requirement_text: 向 T08 暴露版本、issue、diff、状态事件与停止原因；执行幂等、超时、空结果和恢复测试；处理 Codex/配对审查。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: 5252daf5e445d8a427cd7e2c269b5bdfff3d35ce733092f8a3afb6d2155d5fe0
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-C-005
+  task_id: T02
+  wave: C
+  category: daily_deliverable
+  requirement_text: API 合约；稳定性修订提交。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: 687cdf2c77c2110eb9b70a2c6eb268115feeec30b51fd9932b852eb9f16beb86
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-C-006
+  task_id: T02
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 前端无需解析内部对象；无未登记共享文件冲突。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: bd30c92224682164419e2782f263fcf30f06a709ac969610f8f35ae6c6de6d58
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-C-007
+  task_id: T02
+  wave: C
+  category: daily_work
+  requirement_text: 对 Q028、旗舰案例和 3 个随机题运行全链路回归；同步 integration、全测试、@codex review，18:00 前转 Ready。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: e83a08bfee158f17529e52ae0171c77c666fadcee5d3246951d3613a320157e1
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T02-METRIC-004
+- id: T02-METRIC-004
+  task_id: T02
+  wave: C
+  category: quantitative_metric
+  requirement_text: 对 Q028、旗舰案例和 3 个随机题运行全链路回归；同步 integration、全测试、@codex review，18:00 前转 Ready。（定量阈值：3 个）
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 9978e8d6ecf3f13dae344d8e56666969e907a6b6d5dd8a2f6cf3b7c7912947d0
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T02-C-007
+- id: T02-C-008
+  task_id: T02
+  wave: C
+  category: daily_deliverable
+  requirement_text: 回归矩阵；PR-C Ready。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: 8cc3675102d67cf60d0935dc8054e0bcf8b407695e1217cb8f43d30a8b41a5f5
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-C-009
+  task_id: T02
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 无相同 prompt_hash 假迭代；P0/P1 关闭。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: fad5ed0b9219cc695d9f7bf84c40b5286dabb4e049b4d52a08b83d08e564e510
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-FREEZE-001
+  task_id: T02
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 7d5941104714831cac0e87190db6bbfd2072f1cf43cd0471bd6360ac19217bfb
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-FREEZE-002
+  task_id: T02
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 阻断修复或“无变更”确认；最终 handoff 包。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: 070372ce4f2d5f34256583cc585a87f2c4e26b41a8d6754426d9c8e250e65653
+  evidence_required:
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-FREEZE-003
+  task_id: T02
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+  source_heading: T02. 队员 2（姓名待填）— Reviewer 驱动的真实迭代与工作流版本化 › T02.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 140
+  source_table_index: 60
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: de864e07b9c6ad7d1c585a6a6a67256e2955ed78416873a1fb7d218e99f8a285
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-HANDOFF-001
+  task_id: T02
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-HANDOFF-002
+  task_id: T02
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-HANDOFF-003
+  task_id: T02
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T02-HANDOFF-004
+  task_id: T02
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []

@@ -1,0 +1,1245 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T08
+title: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署
+mission: 将 FastAPI/Streamlit 工程升级为评委可稳定调用、可观察证据与版本、可提交反馈并可下载专业产物的一体化演示入口。
+scoring_dimensions:
+- 应用潜力
+- 演示交付
+- 交互体验
+- 多模态展示
+owner_paths:
+- app/api/**
+- frontend/**
+- app/export/**
+- Dockerfile
+- compose.yaml
+- tests/api/**
+- docs/deployment/**
+forbidden_paths:
+- 不得在 UI 层伪造状态或结果
+- 不直接改 T02/T03/T05/T06 内部，只通过契约消费
+dependencies:
+  raw: 消费 T01-T07；与 T09 联调部署和验收。
+  upstream:
+  - T01
+  - T07
+  - T09
+  downstream: []
+branch_series:
+- t08/a-delivery-contract
+- t08/b-delivery-core
+- t08/c-delivery-hardening
+paired_reviewer: T07
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- health、questions、run、status、feedback、versions/diff、artifacts、export API；OpenAPI 与可复制示例。
+- 异步任务状态、超时、失败恢复、correlation_id、最小鉴权和速率限制。
+- 前端展示证据、Reviewer 问题、V1/V2 diff、真实执行、多模态和人工反馈；专业 PDF/MD/JSON；Docker 一键启动。
+definition_of_done:
+- 评委可通过测试 API 提交任务、查询状态并取回结果。
+- 前端完成“运行→证据/版本→反馈→新版本→导出”闭环；5 并发状态不丢失，2 小时稳定测试通过。
+- PDF 无异常字距、裸 Markdown、空白页；干净电脑按 README/Docker 启动，密钥不进镜像。
+quantitative_thresholds:
+- requirement_id: T08-METRIC-001
+  raw_text: 5 并发
+  comparator: quantity
+  value: 5
+  unit: 并发
+  source_requirement_id: T08-DOD-002
+- requirement_id: T08-METRIC-002
+  raw_text: 2 小时
+  comparator: quantity
+  value: 2
+  unit: 小时
+  source_requirement_id: T08-DOD-002
+- requirement_id: T08-METRIC-003
+  raw_text: 5 并发
+  comparator: quantity
+  value: 5
+  unit: 并发
+  source_requirement_id: T08-B-013
+- requirement_id: T08-METRIC-004
+  raw_text: 5 并发
+  comparator: quantity
+  value: 5
+  unit: 并发
+  source_requirement_id: T08-C-004
+- requirement_id: T08-METRIC-005
+  raw_text: 2 小时
+  comparator: quantity
+  value: 2
+  unit: 小时
+  source_requirement_id: T08-C-004
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与现状盘点
+      work: 完成协作接入；盘点 API 路由、Streamlit、导出、启动日志和 8501 端口问题；建立基础 health/API/前端冒烟。
+      deliverable: 接口清单；失败复现；T08 信息架构草图。
+      evidence: 现有入口可重复启动或失败；分支来自最新 integration。
+    - date: 07/28（周二）
+      focus: 契约与异步骨架
+      work: 设计 Job、Status、Artifact、Version、Feedback API 和 UI flow；实现任务 ID、状态存储、队列抽象和 correlation_id；开启 Draft PR-A。
+      deliverable: OpenAPI RFC；async skeleton；Draft PR-A。
+      evidence: 请求不阻塞长任务；契约与 T02/T03/T05/T06 对齐。
+    - date: 07/29（周三）
+      focus: PR-A 完成
+      work: 提交 API Schema、health/OpenAPI、基础测试和错误结构；同步 integration、测试并在 20:00 前转 Ready。
+      deliverable: PR-A Ready；接口冻结记录。
+      evidence: OpenAPI 可访问；无上游内部对象泄漏。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: 核心 API
+      work: 新建 B 分支；实现 run/status/artifacts/questions，输入验证、幂等键和错误码；提供 curl 示例。
+      deliverable: API v1。
+      evidence: 代表性请求可复制运行；失败状态清楚。
+    - date: 07/31（周五）
+      focus: 反馈/版本与证据 UI
+      work: 接入 T03 feedback、T02 versions/diff；展示证据原文、来源、页码、支持状态和低置信度警告。
+      deliverable: feedback/version endpoints；Evidence panel。
+      evidence: 反馈可追踪到新版本；不只展示标题。
+    - date: 08/01（周六）
+      focus: 闭环 UI 与 Draft PR-B
+      work: 展示 Reviewer issue、V1/V2 diff、validation gate、T05 日志/指标、T06 原图/提取值/单位；完成 T07 配对审查；开启 Draft PR-B。
+      deliverable: Execution/Multimodal panels；Draft PR-B。
+      evidence: 真实/模拟状态严格区分；闭环状态可视化。
+    - date: 08/02（周日）
+      focus: 专业导出
+      work: 改造 PDF 排版、Markdown 清洗、分页、字体、目录和引用链接；增加 MD/JSON 导出一致性测试。
+      deliverable: 新版 report.pdf；导出回归。
+      evidence: 无裸符号、空白页、字距异常；事实引用可点击。
+    - date: 08/03（周一）
+      focus: 恢复、并发与权限
+      work: 补失败恢复、重试、下载权限、最小鉴权、速率限制和 API 集成测试；测试 5 并发任务。
+      deliverable: 并发/恢复报告。
+      evidence: 状态不丢失；超时/失败可见且可重试。
+    - date: 08/04（周二）
+      focus: 全链路 E2E
+      work: 运行“启动任务→查看证据/版本→提交反馈→新版本→执行/多模态→导出”完整流程；与上游逐项对齐。
+      deliverable: E2E 录像/trace v1。
+      evidence: 接口与 UI 不伪造结果；跨模块字段完整。
+    - date: 08/05（周三）
+      focus: PR-B Ready
+      work: 同步 integration、运行 API/前端/导出/最小 E2E；补错误码、迁移和限制；@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；接口回归报告。
+      evidence: P0/P1 关闭；分支 up to date。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: 容器化与干净部署
+      work: 新建 C 分支；完成 Dockerfile/compose、healthcheck、持久卷、.env 使用说明和第二环境部署；20:00 前开启 Draft PR-C。
+      deliverable: 一键部署包；clean deployment report；Draft PR-C。
+      evidence: 干净机可启动；镜像无生产密钥。
+    - date: 08/07（周五）
+      focus: 稳定性与演示材料
+      work: 执行 5 并发、2 小时运行、断网/重启恢复和资源泄漏测试；整理 API 说明、截图、代表性输入输出与回滚。
+      deliverable: 稳定性报告；演示 runbook v1。
+      evidence: 状态不丢失；赛事材料可直接使用。
+    - date: 08/08（周六）
+      focus: 冻结前演示
+      work: 完整走通运行、反馈、版本变化、执行、多模态和导出；制作 10 分钟内演示草稿和备用录屏；同步 integration、@codex review，18:00 前转 Ready。
+      deliverable: 演示 runbook；录像草稿；PR-C Ready。
+      evidence: 10 分钟内讲清闭环；P0/P1 关闭。
+code_freeze:
+  date: 08/09（周日）
+  focus: 部署交接与冻结
+  work: 只修发布阻断；提供稳定地址或一键启动、健康检查、备用录屏、最终 API 示例和 handoff。
+  deliverable: 最终部署包；handoff。
+  evidence: 评委入口稳定可访问；无新增功能；可在干净环境复现。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不得在 UI 层伪造状态或结果；不直接改 T02/T03/T05/T06 内部，只通过契约消费。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 176
+  info_table_index: 82
+  must_deliver_table_index: 83
+  daily_table_index: 84
+requirements:
+- id: T08-MUST-001
+  task_id: T08
+  wave: FINAL
+  category: must_deliver
+  requirement_text: health、questions、run、status、feedback、versions/diff、artifacts、export API；OpenAPI 与可复制示例。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.1 必须交付
+  source_paragraph_index: 176
+  source_table_index: 83
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 8ec8606c9f3f68f1a414dad8043bc21984ebdffe704a3557511035ed574eddf8
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-MUST-002
+  task_id: T08
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 异步任务状态、超时、失败恢复、correlation_id、最小鉴权和速率限制。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.1 必须交付
+  source_paragraph_index: 176
+  source_table_index: 83
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: b68c094d4b7e39b923cb77e62077381fe36f9a0633902bd36e4b717070815e5b
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-MUST-003
+  task_id: T08
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 前端展示证据、Reviewer 问题、V1/V2 diff、真实执行、多模态和人工反馈；专业 PDF/MD/JSON；Docker 一键启动。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.1 必须交付
+  source_paragraph_index: 176
+  source_table_index: 83
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: a6a629bdc10fb782923a2910dc1bf27a9023de55c9dc8bf2684b61f829dd4170
+  evidence_required:
+  - raw_results
+  - artifact_file
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-DOD-001
+  task_id: T08
+  wave: C
+  category: definition_of_done
+  requirement_text: 评委可通过测试 API 提交任务、查询状态并取回结果。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.2 Definition of Done
+  source_paragraph_index: 176
+  source_table_index: 83
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 2f647ab95179707c652dbebff8e97cc1e19471922c321f413ba503ff5cc74161
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-DOD-002
+  task_id: T08
+  wave: C
+  category: definition_of_done
+  requirement_text: 前端完成“运行→证据/版本→反馈→新版本→导出”闭环；5 并发状态不丢失，2 小时稳定测试通过。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.2 Definition of Done
+  source_paragraph_index: 176
+  source_table_index: 83
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 77490871f4760b46f2672c0911e449feb3c321a2646e70cd6a249225aafaabc3
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T08-METRIC-001
+  - T08-METRIC-002
+- id: T08-METRIC-001
+  task_id: T08
+  wave: C
+  category: quantitative_metric
+  requirement_text: 前端完成“运行→证据/版本→反馈→新版本→导出”闭环；5 并发状态不丢失，2 小时稳定测试通过。（定量阈值：5 并发）
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.2 Definition of Done
+  source_paragraph_index: 176
+  source_table_index: 83
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 9d6d445db3df8d956a8f7240c60a869cca95965a7218822b449985a74bb0bf74
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T08-DOD-002
+- id: T08-METRIC-002
+  task_id: T08
+  wave: C
+  category: quantitative_metric
+  requirement_text: 前端完成“运行→证据/版本→反馈→新版本→导出”闭环；5 并发状态不丢失，2 小时稳定测试通过。（定量阈值：2 小时）
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.2 Definition of Done
+  source_paragraph_index: 176
+  source_table_index: 83
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 738fc96e9bb31588f7f922668a45c7919eb420f7865e6f013b554789ac6738d6
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T08-DOD-002
+- id: T08-DOD-003
+  task_id: T08
+  wave: C
+  category: definition_of_done
+  requirement_text: PDF 无异常字距、裸 Markdown、空白页；干净电脑按 README/Docker 启动，密钥不进镜像。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.2 Definition of Done
+  source_paragraph_index: 176
+  source_table_index: 83
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: c0854cfce4579bc8d3dba8e4012c47cb4cde77c36d69eb5a98b3825d01cab916
+  evidence_required:
+  - artifact_file
+  - documentation
+  verification_type: artifact_inspection
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T08-A-001
+  task_id: T08
+  wave: A
+  category: daily_work
+  requirement_text: 完成协作接入；盘点 API 路由、Streamlit、导出、启动日志和 8501 端口问题；建立基础 health/API/前端冒烟。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: 105c37f2e131fddee7bde12eff671f1f624811c4698e4736ffb5c07b35cd55c8
+  evidence_required:
+  - raw_results
+  - artifact_file
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-A-002
+  task_id: T08
+  wave: A
+  category: daily_deliverable
+  requirement_text: 接口清单；失败复现；T08 信息架构草图。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: f288c1e3bf49ef89f1a3b102ad6eed813ebe87eadf0e269aa85663bbf8e5f2f1
+  evidence_required:
+  - source_code
+  - reproduction_command
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-A-003
+  task_id: T08
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 现有入口可重复启动或失败；分支来自最新 integration。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 8d4481750ce9fb0a6cf0624bf9205635be49d6f36b20ecfd95d5a9e0e43fc436
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-A-004
+  task_id: T08
+  wave: A
+  category: daily_work
+  requirement_text: 设计 Job、Status、Artifact、Version、Feedback API 和 UI flow；实现任务 ID、状态存储、队列抽象和 correlation_id；开启 Draft PR-A。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: fe346f47c943160457c6970df24d81132fb165843e4204ddb291188754d5e16c
+  evidence_required:
+  - source_code
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-A-005
+  task_id: T08
+  wave: A
+  category: daily_deliverable
+  requirement_text: OpenAPI RFC；async skeleton；Draft PR-A。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: f57996f5242cdb24f4aa30e373252a40b60752a0f1a8e488ddec686cf078273f
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-A-006
+  task_id: T08
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 请求不阻塞长任务；契约与 T02/T03/T05/T06 对齐。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: 328403d8cc814784f2a5d8b64acf94309912fa2147ec331aec47fea9df385d12
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-A-007
+  task_id: T08
+  wave: A
+  category: daily_work
+  requirement_text: 提交 API Schema、health/OpenAPI、基础测试和错误结构；同步 integration、测试并在 20:00 前转 Ready。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: 76604f20cb7d85c25b08d0b11a5d85d89747021c0b332bf25127c96351ac4d19
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-A-008
+  task_id: T08
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；接口冻结记录。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: 308aa44e39f3ac40ef80c9b9a1133d04cebab70b87ba294e7787e2165c1d1864
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-A-009
+  task_id: T08
+  wave: A
+  category: acceptance_evidence
+  requirement_text: OpenAPI 可访问；无上游内部对象泄漏。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 9f1f21f7de1055941c1e5d6739fe89e0378b8ba8dd929d0803617f6749e2d9bc
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-001
+  task_id: T08
+  wave: B
+  category: daily_work
+  requirement_text: 新建 B 分支；实现 run/status/artifacts/questions，输入验证、幂等键和错误码；提供 curl 示例。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: b5eb0d1cde49910fadd2bf4b31ddf80f79ba4e7ed2616a956583402fcfb36702
+  evidence_required:
+  - source_code
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-002
+  task_id: T08
+  wave: B
+  category: daily_deliverable
+  requirement_text: API v1。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: 33daf7ac36de6e7005646cfa75a10b55c2504c8105bb1a9bbf93c3e9f22d3293
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-003
+  task_id: T08
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 代表性请求可复制运行；失败状态清楚。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: ff40201bf9bf99ac3646b8ac1f0c624283aae7d8863ee770f6e1d55db6a5fb23
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-004
+  task_id: T08
+  wave: B
+  category: daily_work
+  requirement_text: 接入 T03 feedback、T02 versions/diff；展示证据原文、来源、页码、支持状态和低置信度警告。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: be237d4dbf95cc954b9452974bbcd84158766faedf842b49c07f495313792b9d
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-005
+  task_id: T08
+  wave: B
+  category: daily_deliverable
+  requirement_text: feedback/version endpoints；Evidence panel。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: 23b5d5c26d706d2f9e52afdad737c07358631219fcd9819d8b356eec2707af68
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-006
+  task_id: T08
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 反馈可追踪到新版本；不只展示标题。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: 47b337126a8aacc128341e4b3ccdfd93a2240563483324e53d5972ac176bdf67
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-007
+  task_id: T08
+  wave: B
+  category: daily_work
+  requirement_text: 展示 Reviewer issue、V1/V2 diff、validation gate、T05 日志/指标、T06 原图/提取值/单位；完成 T07 配对审查；开启 Draft PR-B。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: d7c024346e9c3994ed949e44068a5a1d593e733c13ad39d18385759c64cf119e
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-008
+  task_id: T08
+  wave: B
+  category: daily_deliverable
+  requirement_text: Execution/Multimodal panels；Draft PR-B。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: 98b9eb5192f239a35c6a0bb66f61a43d243f3acb3567475ed0762791edaf2550
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-009
+  task_id: T08
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 真实/模拟状态严格区分；闭环状态可视化。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: 0a81d07893e2476ed7f580a2750e20ca7459214b18805f05d8c0bb1107e86143
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-010
+  task_id: T08
+  wave: B
+  category: daily_work
+  requirement_text: 改造 PDF 排版、Markdown 清洗、分页、字体、目录和引用链接；增加 MD/JSON 导出一致性测试。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: bb6210e75e1d8e84d818548875bfb17997a60dce48d27ea5b4ece72bc94d4616
+  evidence_required:
+  - test_output
+  - raw_results
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-011
+  task_id: T08
+  wave: B
+  category: daily_deliverable
+  requirement_text: 新版 report.pdf；导出回归。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: 7e31da175b139a2fec951dd1fff53c31e1bc4fbb6c6dc43b4a69cb8b17c7b0ff
+  evidence_required:
+  - test_output
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-012
+  task_id: T08
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 无裸符号、空白页、字距异常；事实引用可点击。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: bd11d10d5028f59e047710f1295203b5b2aa469c238942a6d2a3036d85d49f6e
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-013
+  task_id: T08
+  wave: B
+  category: daily_work
+  requirement_text: 补失败恢复、重试、下载权限、最小鉴权、速率限制和 API 集成测试；测试 5 并发任务。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: 439bf1e4a4488c055c9d2ce8c026987dfe955eab76d53c86f2381ef81b6837b9
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T08-METRIC-003
+- id: T08-METRIC-003
+  task_id: T08
+  wave: B
+  category: quantitative_metric
+  requirement_text: 补失败恢复、重试、下载权限、最小鉴权、速率限制和 API 集成测试；测试 5 并发任务。（定量阈值：5 并发）
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: 1d33b8670992d8f6cad408c87c891d83c627e894301c0ae93e124228949f29d8
+  evidence_required:
+  - test_output
+  - source_code
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T08-B-013
+- id: T08-B-014
+  task_id: T08
+  wave: B
+  category: daily_deliverable
+  requirement_text: 并发/恢复报告。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: f7123cbd0dc37734d35001552f29da458d79bff867c2271a73e6183a44cb8811
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-015
+  task_id: T08
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 状态不丢失；超时/失败可见且可重试。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: 95a3e15cda717d8e93ab521ad5a49c7d39fb8bb3bc35a0453f472fea55db24d9
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-016
+  task_id: T08
+  wave: B
+  category: daily_work
+  requirement_text: 运行“启动任务→查看证据/版本→提交反馈→新版本→执行/多模态→导出”完整流程；与上游逐项对齐。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: f2bb2d056a202b8a85720e5b4ded3d2cf20b1b0792606121fda0e1ac58269b84
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-017
+  task_id: T08
+  wave: B
+  category: daily_deliverable
+  requirement_text: E2E 录像/trace v1。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: a665a64b8e331f9453f05ba9ae82680cc8204b0c464b4827f0da9bdabc4b348b
+  evidence_required:
+  - test_output
+  - raw_results
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-018
+  task_id: T08
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 接口与 UI 不伪造结果；跨模块字段完整。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: a077f47087c168adc463a234af72b8aee771679f252a1dc31de11f727875ad9a
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-019
+  task_id: T08
+  wave: B
+  category: daily_work
+  requirement_text: 同步 integration、运行 API/前端/导出/最小 E2E；补错误码、迁移和限制；@codex review，20:00 前转 Ready。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: 0a2c41fbd0481891e4370b1ec565f4f4dfe679d7f6356a06f81e1cd39502b453
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-020
+  task_id: T08
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；接口回归报告。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: 002e7bb6b2e6dc1db6fa30b55e914726c1a1268a732d5ff7958605b9c79a8522
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-B-021
+  task_id: T08
+  wave: B
+  category: acceptance_evidence
+  requirement_text: P0/P1 关闭；分支 up to date。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: 52aabfe85c8f6eba41ef875ccce8785e0f7b9a525bbec2db06cc4dc2a083dd04
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-C-001
+  task_id: T08
+  wave: C
+  category: daily_work
+  requirement_text: 新建 C 分支；完成 Dockerfile/compose、healthcheck、持久卷、.env 使用说明和第二环境部署；20:00 前开启 Draft PR-C。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: 5d2a9baa78a27cccff4b70949240668df9b0dcdd6114eb4cd3dd8f8f44c0c1ef
+  evidence_required:
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-C-002
+  task_id: T08
+  wave: C
+  category: daily_deliverable
+  requirement_text: 一键部署包；clean deployment report；Draft PR-C。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: 42823f8b8021750c80f99d4078a57e917598546352aaff35d6ffca3e8324bec3
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-C-003
+  task_id: T08
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 干净机可启动；镜像无生产密钥。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: e25022ed6779226b6a830986c94d1c4b37741e4fd1723f34d4ffae32412d96c3
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-C-004
+  task_id: T08
+  wave: C
+  category: daily_work
+  requirement_text: 执行 5 并发、2 小时运行、断网/重启恢复和资源泄漏测试；整理 API 说明、截图、代表性输入输出与回滚。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: 7066b155abddee7702f57e27595d46115ca6cd32d133858bd57ab341145e849e
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T08-METRIC-004
+  - T08-METRIC-005
+- id: T08-METRIC-004
+  task_id: T08
+  wave: C
+  category: quantitative_metric
+  requirement_text: 执行 5 并发、2 小时运行、断网/重启恢复和资源泄漏测试；整理 API 说明、截图、代表性输入输出与回滚。（定量阈值：5 并发）
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: 54cd6cbfb2411d8ce63a7028cc12c87c809fd998925afddd3d03ba9f42ad523c
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T08-C-004
+- id: T08-METRIC-005
+  task_id: T08
+  wave: C
+  category: quantitative_metric
+  requirement_text: 执行 5 并发、2 小时运行、断网/重启恢复和资源泄漏测试；整理 API 说明、截图、代表性输入输出与回滚。（定量阈值：2 小时）
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: f2f2f3840c45ab8dff1921eabf9e41f2087df5e9f03883b1dbef25788fa84286
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T08-C-004
+- id: T08-C-005
+  task_id: T08
+  wave: C
+  category: daily_deliverable
+  requirement_text: 稳定性报告；演示 runbook v1。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: 1d4f87af506360e357eca0660db7e16b438c998097192a78f9c19bc45dc31724
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-C-006
+  task_id: T08
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 状态不丢失；赛事材料可直接使用。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: 21bb08dfe13daa49f4e9b4a62e7c429de996252bf84bdee57616d7204d825d34
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-C-007
+  task_id: T08
+  wave: C
+  category: daily_work
+  requirement_text: 完整走通运行、反馈、版本变化、执行、多模态和导出；制作 10 分钟内演示草稿和备用录屏；同步 integration、@codex review，18:00 前转 Ready。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: f4f423e7e80c9d2952f682a33da09b12850de8f0f085b0e9ae96fbe7ba46b813
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-C-008
+  task_id: T08
+  wave: C
+  category: daily_deliverable
+  requirement_text: 演示 runbook；录像草稿；PR-C Ready。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: e513eac8befa3ec24da3fe6f0b148d9b5331deb2accfef6582a55313ee9e38fc
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-C-009
+  task_id: T08
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 10 分钟内讲清闭环；P0/P1 关闭。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: 57fd675d4910594235b07a6f372555d5c3283a38c5a203fe68bdb6e3dcbd7457
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-FREEZE-001
+  task_id: T08
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 只修发布阻断；提供稳定地址或一键启动、健康检查、备用录屏、最终 API 示例和 handoff。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 287bf8d318007042aec517aa0af2cb7de6182092313b71428ca8124dd2bc5c76
+  evidence_required:
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-FREEZE-002
+  task_id: T08
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 最终部署包；handoff。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: de1b7bdf245c6b92b0eed62bf006762428dcf6801a1c218662596a4618b3eb8e
+  evidence_required:
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-FREEZE-003
+  task_id: T08
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 评委入口稳定可访问；无新增功能；可在干净环境复现。
+  source_heading: T08. 队员 8（姓名待填）— 可调用 API、交互前端、异步任务、导出与部署 › T08.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 176
+  source_table_index: 84
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: 441a8371ad9c6a0fe46f26b8ae47c38d99e2b221d9ac02a2d47acbd6865a18f0
+  evidence_required:
+  - reproduction_command
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-HANDOFF-001
+  task_id: T08
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-HANDOFF-002
+  task_id: T08
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-HANDOFF-003
+  task_id: T08
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T08-HANDOFF-004
+  task_id: T08
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
