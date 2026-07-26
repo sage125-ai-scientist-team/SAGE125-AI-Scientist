@@ -16,6 +16,7 @@ app.workflow.pipeline —— 多智能体核心编排器（自研、轻量、可
 from __future__ import annotations
 
 import json
+import os
 from contextvars import ContextVar
 from pathlib import Path
 from typing import Optional
@@ -50,7 +51,7 @@ logger = get_logger("workflow.pipeline")
 # any early Agent/client failure escapes before the normal artifact phase.
 _ACTIVE_STATE: ContextVar[PipelineState | None] = ContextVar("sage125_active_state", default=None)
 
-# 项目根与问题清单路径。
+# 项目根与问题清单默认路径（生产默认；测试可通过 SAGE_QUESTIONS_PATH 覆盖）。
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 QUESTIONS_PATH = PROJECT_ROOT / "data" / "processed" / "questions_125.json"
 
@@ -63,26 +64,54 @@ def _is_mock(mock_mode: Optional[bool]) -> bool:
     return is_mock_mode(mock_mode)
 
 
-def load_question(question_id: str) -> dict:
+def resolve_questions_path(questions_path: Path | str | None = None) -> Path:
     """
-    从 questions_125.json 加载指定 question_id 的问题。
+    解析问题清单路径。
+
+    优先级：
+        1. 显式 questions_path 参数（测试注入）
+        2. 环境变量 SAGE_QUESTIONS_PATH（测试/临时覆盖）
+        3. 默认 data/processed/questions_125.json（生产行为不变）
+    """
+    if questions_path is not None:
+        return Path(questions_path)
+    override = str(os.environ.get("SAGE_QUESTIONS_PATH", "") or "").strip()
+    if override:
+        return Path(override)
+    return QUESTIONS_PATH
+
+
+def load_question(question_id: str, *, questions_path: Path | str | None = None) -> dict:
+    """
+    从问题清单 JSON 加载指定 question_id 的问题。
 
     参数：
         question_id: 问题 ID（如 "Q001"）。
+        questions_path: 可选覆盖路径；缺省走 resolve_questions_path()。
 
     返回：
         QuestionItem 兼容 dict。
 
     异常：
-        FileNotFoundError: questions_125.json 缺失。
+        FileNotFoundError: 问题清单文件缺失。
         ValueError:        question_id 不存在。
     """
-    # 问题清单必须已由 extract_125_questions.py 生成。
-    if not QUESTIONS_PATH.exists():
+    path = resolve_questions_path(questions_path)
+    if not path.exists():
+        # 默认路径保持历史错误文案，避免破坏既有运维指引。
+        try:
+            is_default = path.resolve() == QUESTIONS_PATH.resolve()
+        except OSError:
+            is_default = path == QUESTIONS_PATH
+        if is_default:
+            raise FileNotFoundError(
+                "缺少 data/processed/questions_125.json，请先运行 python scripts/extract_125_questions.py。"
+            )
         raise FileNotFoundError(
-            "缺少 data/processed/questions_125.json，请先运行 python scripts/extract_125_questions.py。"
+            f"缺少问题清单文件：{path}。请先运行 python scripts/extract_125_questions.py，"
+            "或在测试中通过 SAGE_QUESTIONS_PATH / questions_path 注入临时夹具。"
         )
-    items = json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
+    items = json.loads(path.read_text(encoding="utf-8"))
     for it in items:
         if it.get("id") == question_id:
             return it
