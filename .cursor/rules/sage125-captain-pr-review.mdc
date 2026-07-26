@@ -1,0 +1,146 @@
+---
+description: SAGE125 captain pull request review and controlled integration merge workflow
+alwaysApply: true
+---
+
+# SAGE125 Captain PR Review & Controlled Merge Workflow
+
+This rule governs how Cursor Agent must behave when the captain (GitHub account
+`liuyanbo12`) asks it to review or merge pull requests in
+`sage125-ai-scientist-team/SAGE125-AI-Scientist`.
+
+This is a **controlled review-and-merge workflow**, not unconditional auto-merge.
+Every gate below must be satisfied before any Approve or Merge action is taken.
+
+## 0. Canonical facts
+
+- Central repository: `sage125-ai-scientist-team/SAGE125-AI-Scientist`
+- Captain GitHub account: `liuyanbo12`
+- Ordinary teammate PR base branch (the **only** valid target for task PRs):
+  `integration/2026-08-10`
+- Final release base branch: `main`
+- Final release head branch: `integration/2026-08-10`
+- Merge method: **squash**, using `--match-head-commit` (never `--admin`, never force push)
+- Path ownership source of truth: `docs/governance/task-owner-map.yaml`
+- Review policy source of truth: `docs/governance/pr-review-policy.yaml`
+- Review helper script: `scripts/captain/review_latest_pr.ps1`
+- Project-wide Bugbot rules: `.cursor/BUGBOT.md`
+
+## 1. Trigger phrases
+
+When the user (captain) types any of the following (Chinese or English, case-insensitive,
+allowing minor rewording), Agent must enter **SAGE125 PR Review Mode**:
+
+- 帮我审核最新的PR
+- 审核最新PR
+- 检查并处理最新PR
+- 重新审核PR #<number>
+- 审核PR #<number>
+- "review the latest PR" / "review PR #<number>"
+
+Any other phrasing that clearly asks to review/merge a SAGE125 PR should be treated the
+same way, but if intent is ambiguous, Agent must ask for clarification rather than guess.
+
+## 2. Definition of "latest PR" when no number is given
+
+When no PR number is specified, "最新 PR" means, in the central repository:
+
+- `state = open`
+- `base = integration/2026-08-10`
+- sorted by `updatedAt` descending
+- the first item in that sorted list
+
+If two or more PRs have effectively the same `updatedAt` (same minute) such that the
+"latest" one cannot be uniquely determined, Agent must **not** guess. It must list all
+candidate PRs (number, title, author, updatedAt) and stop — no review comment, no merge.
+
+## 3. Mandatory opening report
+
+At the very start of every review, before doing anything else, Agent must output:
+
+- PR number
+- Title
+- Author
+- Draft or Ready for review
+- Base branch
+- Head branch (and head repository owner, to detect forks)
+- Head SHA (this is the SHA that must match at merge time — the "reviewed head SHA")
+- Last updated time
+- Changed files count
+- Additions / deletions
+- PR URL
+
+## 4. Base branch policy
+
+- If the PR's base is **not** `integration/2026-08-10` in ordinary review mode:
+  - Classify as **P1**.
+  - Post review comments explaining the base branch must be
+    `integration/2026-08-10`.
+  - Do **not** merge.
+- A PR with base `main` may only be a **release PR**, and only if **all** of:
+  - `head = integration/2026-08-10`
+  - Title starts with `[RELEASE]`
+  - The captain has explicitly typed:
+    `审核最终发布PR并在全部发布门禁通过后合并到main`
+  Any other PR targeting `main` must never be auto-approved or auto-merged by the
+  ordinary "帮我审核最新的PR" instruction.
+
+## 5. Agent may only review and merge — never edit teammate code
+
+- Agent must never push commits to a teammate's PR branch.
+- Agent must never use Bugbot Autofix or any tool to auto-fix a teammate's code.
+- All findings go into the GitHub PR as review comments / Request Changes / Approve.
+- Teammates fix their own branch and push; the captain (or Agent on the captain's
+  instruction) re-reviews after that push.
+
+## 6. Re-review support
+
+- After a teammate pushes new commits to the same PR branch, the captain can say
+  "帮我审核最新的PR" again (if it's still the most recently updated open PR against
+  `integration/2026-08-10`) or "重新审核PR #<number>" to target it explicitly.
+- Each re-review must re-fetch the current head SHA — never reuse a stale SHA from a
+  previous review round.
+
+## 7. Reporting discipline
+
+- Every command that is actually executed, and its real result (success/failure/output),
+  must be reported accurately.
+- Agent must never claim a check, test, or command "passed" if it was not actually run.
+- If something could not be run (missing directory, missing tool, permission issue),
+  Agent must say so explicitly rather than silently skipping it.
+
+## 8. Where the detailed procedure lives
+
+The full step-by-step review procedure (context gathering, isolated worktree review,
+static/semantic checklist, local test matrix per task T01–T09, Bugbot handling, the
+merge gate checklist, and the required final output block) is specified in:
+
+- `docs/governance/CURSOR_PR_REVIEW_RUNBOOK.md` (captain-facing operational runbook)
+- `.cursor/BUGBOT.md` (project-wide review rules: security, scientific integrity,
+  task/path ownership, batch isolation, CI/test integrity, finding format)
+- `docs/governance/task-owner-map.yaml` (machine-readable path ownership)
+- `docs/governance/pr-review-policy.yaml` (machine-readable merge gate configuration)
+
+Agent must read all four of the above before completing a review, in addition to the
+PR's own diff, comments, checks, and any task/contract docs the changed paths point to.
+
+## 9. Absolute safety constraints (always apply, no exceptions)
+
+1. Never read, print, commit, or modify the real `.env` file.
+2. Never print any API key, token, password, private key, or credential value.
+3. Never use `git push --force` or `git push --force-with-lease`.
+4. Never use `gh pr merge --admin`.
+5. Never treat `skipped`, `neutral`, `cancelled`, `pending`, or a missing/zero check as
+   passing.
+6. Never weaken a PR's checks to make it pass (deleting tests, weakening assertions,
+   adding `continue-on-error`, skipping required jobs, renaming jobs to dodge required
+   checks, converting failures into successes, or generating empty placeholder
+   artifacts).
+7. Never modify a teammate's PR branch code.
+8. Never merge directly to `main` or `integration/2026-08-10` by pushing — only via
+   `gh pr merge` on a reviewed PR.
+9. Treat any uncertain merge condition as **not allowed to merge**.
+10. Never bypass gates because the captain is a repo admin.
+11. Ordinary task PRs may only ever merge into `integration/2026-08-10`.
+
+When in doubt, choose the safer action: comment, request changes, or wait — never merge.
