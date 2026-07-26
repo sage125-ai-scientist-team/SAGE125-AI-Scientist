@@ -18,9 +18,20 @@ REPORT = ROOT / "exports" / "smoke_bailian" / "smoke_report.json"
 
 def test_smoke_dry_run():
     """dry-run 应成功并生成脱敏报告，DeepResearch 为 skipped。"""
+    import os
+
+    env = os.environ.copy()
+    # Inherit CI/local UTF-8 mode so Chinese prints never hit Windows charmap.
+    env["PYTHONUTF8"] = "1"
+    env["PYTHONIOENCODING"] = "utf-8"
     proc = subprocess.run(
-        [sys.executable, str(ROOT / "scripts" / "smoke_bailian.py"), "--dry-run"],
-        cwd=str(ROOT), capture_output=True, text=True, timeout=120,
+        [sys.executable, "-X", "utf8", str(ROOT / "scripts" / "smoke_bailian.py"), "--dry-run"],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env=env,
+        timeout=120,
     )
     # dry-run 返回 0。
     assert proc.returncode == 0

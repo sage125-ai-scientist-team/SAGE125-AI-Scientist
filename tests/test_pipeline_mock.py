@@ -17,7 +17,8 @@ import pytest
 
 from app.core.constants import PIPELINE_STAGES
 from app.core.schemas import PipelineState, QuestionItem
-from app.workflow.pipeline import run_pipeline
+from app.workflow.pipeline import load_question, run_pipeline
+from tests.helpers_questions_fixture import write_minimal_questions_fixture
 
 
 def test_pipeline_stages_order():
@@ -34,11 +35,20 @@ def test_pipeline_state_construction():
     assert state.selected_question.question == "Q?"
 
 
-def test_run_pipeline_unknown_question_raises():
+def test_run_pipeline_unknown_question_raises(monkeypatch, tmp_path):
     """run_pipeline 对未知 question_id 应抛出 ValueError（已实现，不再是骨架）。"""
+    fixture = write_minimal_questions_fixture(tmp_path / "questions_125.json", question_id="Q001")
+    monkeypatch.setenv("SAGE_QUESTIONS_PATH", str(fixture))
     # "示例问题" 不是合法 question_id，应清晰报错。
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="question_id 不存在"):
         run_pipeline("示例问题", mock_mode=True)
+
+
+def test_load_question_missing_catalog_raises_clear_error(tmp_path):
+    """缺失问题清单时必须清晰失败，不得伪造成功。"""
+    missing = tmp_path / "does_not_exist" / "questions_125.json"
+    with pytest.raises(FileNotFoundError, match="缺少问题清单文件"):
+        load_question("Q001", questions_path=missing)
 
 
 def test_qwen_chat_mock(monkeypatch):
