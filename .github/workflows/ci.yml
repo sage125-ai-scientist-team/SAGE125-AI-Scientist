@@ -19,4 +19,7 @@ jobs:
       - name: Run offline test suite
         env:
           MOCK_LLM: "true"
-        run: python -m pytest -q
+          # Windows runner default code page cannot encode Chinese smoke output.
+          PYTHONUTF8: "1"
+          PYTHONIOENCODING: "utf-8"
+        run: python -X utf8 -m pytest -q
