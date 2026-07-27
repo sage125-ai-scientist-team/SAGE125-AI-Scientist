@@ -1,87 +1,48 @@
-# T09 质量基线
+# T09 quality baseline
 
-## 范围与可追溯性
+## Provenance
 
-本记录由 T09 在 `t09/a-quality-contract` 分支上建立，用于描述当前集成基线的实际质量状态，而不是发布声明。
-
-- 集成基线：`upstream/integration/2026-08-10`
-- 集成提交：`450551f1b7d4dc4a714cf499cd063b8044301f16`（`chore(repo): import audited project baseline`）
-- 审计分支：`t09/a-quality-contract`
-- 分支初始状态：与集成基线相同；未包含额外提交。
-- 运行模式：`MOCK_LLM=true`，未加载或读取 `.env`，未进行真实 API 调用。
-
-历史 `BASELINE_2026-07-22.md` 中的结果仅用于追溯，不是本记录的测试结论。本文件只记录本轮命令的实际输出。
-
-## Python 与依赖环境
-
-| 项目 | 实际值 |
+| Field | Value |
 | --- | --- |
-| 解释器 | `D:\AI-Projects\SAGE125-AI-Scientist\.venv\Scripts\python.exe` |
-| Python | `3.12.10` |
-| pytest | `9.0.3` |
-| 项目声明 | `requires-python >=3.10,<3.15` |
-| CI 当前版本 | Python `3.12` |
-| 安装清单 | `requirements.txt`（锁定版本） |
+| Integration baseline | `upstream/integration/2026-08-10` at `1642ea05e88b853f18d24739d9d2134c3448eb7b` |
+| Tested PR candidate | `013f9c843c1347ce8f9b32fab7cdcf0a53e67485` |
+| Branch | `t09/a-quality-contract` |
+| Recorded | 2026-07-28T04:18:19+08:00 |
+| Interpreter | `.venv\Scripts\python.exe`, Python 3.12.10 |
+| Operating system | Microsoft Windows 10.0.26200.8875 |
+| Mode | Offline: `MOCK_LLM=true`; no `.env` was loaded and no live model was invoked. |
 
-项目根目录没有 `.python-version`、`pytest.ini`、`setup.cfg`、`tox.ini` 或 Python 依赖锁文件。现有虚拟环境可用；本轮没有升级、安装或改写依赖。
+The tested candidate is the merge result containing the latest integration baseline and the final CI conflict resolution. Subsequent documentation-only evidence edits do not change the tested executable code.
 
-## 实际执行的命令
+## Exact execution environment
 
 ```powershell
 $env:MOCK_LLM='true'
-.venv\Scripts\python.exe -m pytest --collect-only -q
-.venv\Scripts\python.exe -m pytest -q
-.venv\Scripts\python.exe -m pip check
-.venv\Scripts\python.exe -m compileall -q app
+$env:PYTHONUTF8='1'
+$env:PYTHONIOENCODING='utf-8'
+$py = '.venv\Scripts\python.exe'
 ```
 
-环境变量在命令结束后移除。所有测试均在离线 Mock 模式下运行；没有运行批量 125 题任务。
+## Results from one local verification run
 
-## 测试结果
+| Check | Exact command | Exit | Collected | Passed | Failed | Skipped | Warnings |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| lint | `& $py -X utf8 scripts/eval/wave_a_quality.py lint` | 0 | 3 owned files | n/a | 0 | n/a | none reported |
+| type | `& $py -X utf8 scripts/eval/wave_a_quality.py type` | 0 | n/a | n/a | 0 | n/a | none reported |
+| unit | `& $py -X utf8 -m pytest -q --ignore=tests/integration` | 0 | 272 | 272 | 0 | 0 | none reported |
+| integration | `& $py -X utf8 -m pytest -q tests/integration` | 0 | 1 | 1 | 0 | 0 | none reported |
+| security | `& $py -X utf8 scripts/audit_project.py` | 0 | n/a | `critical=0` | 0 | n/a | `warnings=0` |
+| build: compile | `& $py -X utf8 -m compileall -q app scripts/eval` | 0 | n/a | completed | 0 | n/a | none reported |
+| build: dry-run | `& $py -X utf8 scripts/eval/benchmark_skeleton.py --dry-run --output $benchmark` | 0 | 5 planned variants | completed | 0 | n/a | none reported |
+| build: schema | `& $py -X utf8 scripts/eval/wave_a_quality.py validate-result --result $benchmark` | 0 | JSON and CSV | completed | 0 | n/a | none reported |
+| full pytest | `& $py -X utf8 -m pytest -q` | 0 | 273 | 273 | 0 | 0 | none reported |
 
-| 检查 | 结果 | 耗时 |
-| --- | --- | --- |
-| pytest 收集 | 250 项 | 1.17 秒 |
-| 全量 pytest | 249 passed、1 failed、0 skipped、0 xfailed、0 xpassed、0 errors | 11.80 秒 |
-| `pip check` | `No broken requirements found.` | 已完成 |
-| `compileall -q app` | 通过 | 已完成 |
+`$benchmark` was a unique path beneath the system temporary directory: `C:\Users\rockk\AppData\Local\Temp\sage125-t09-benchmark-9b2acaae-4e5d-4713-8e06-72fc96d170b0\benchmark.json`. Its JSON and companion CSV are planned-only dry-run evidence and are not repository artifacts.
 
-### 未通过项
+## Failures
 
-`tests/test_embedding_error_mapping.py::test_embed_texts_maps_sdk_proxy_error_without_echoing_secret`
+There were no failed tests, skipped tests, or non-zero commands in this run. Consequently there are no failing test names or failure reasons to report. This statement applies only to the exact run and candidate SHA above; it does not claim a GitHub Actions result.
 
-- 直接原因：断言要求错误提示包含 `HTTP_PROXY`，实际提示使用 `OUTBOUND_HTTPS_PROXY`。
-- 初步分类：接口/测试断言不一致，非网络、凭据或外部服务环境问题。
-- 处理原则：本轮不修改产品代码或测试，不增加 skip，不降低断言。
-- 质量影响：当前全量 pytest 不是绿色基线，不能将现有单一 CI job 作为稳定 required check。
+## Remote verification status
 
-## 现有测试与质量能力
-
-- 跟踪的测试文件：64 个；测试大致覆盖 API、pipeline、UI、RAG/文档库、安全与配置、导出/运行产物、Qwen/Embedding/DeepResearch。
-- 当前没有 `tests/integration/**`；集成测试边界尚未独立命名或组织。
-- 条件跳过逻辑存在，主要依赖 `questions_125.json` 或本地 PDF 输入；本轮实际运行未出现 skip。
-- 本地工作副本含未跟踪的问题清单等输入，因此本轮没有触发条件跳过；这些输入不在 Git 中。干净 CI 环境预计会跳过约 41 项受问题清单/PDF 门控的测试，不能将本轮 250 项收集结果直接等同于 CI 覆盖范围。
-- 未发现 xfail 标记或自定义 pytest marker 配置。
-- `scripts/audit_project.py`、`scripts/doctor.py` 和相关测试存在，但尚未成为 CI 独立 job。
-
-## 静态、类型、安全与构建现状
-
-| 能力 | 当前状态 | 本轮结论 |
-| --- | --- | --- |
-| lint | 缺失 | 未声明 Ruff、Black 或等效工具及配置。 |
-| 类型检查 | 缺失 | 未声明 Mypy、Pyright 或等效工具及配置。 |
-| 覆盖率 | 缺失 | 未声明 pytest-cov、阈值或报告格式。 |
-| 依赖审计 | 缺失 | 未声明 pip-audit 或锁文件审计。 |
-| 密钥扫描 | 部分已有 | `scripts/audit_project.py` 有应用级审计，但 CI 没有独立秘密扫描 job。 |
-| 构建验证 | 部分已有 | `compileall -q app` 通过；没有打包元数据、Dockerfile、前端构建或安装包验证。 |
-
-## 基线使用规则
-
-1. 任何后续修复必须保留失败用例，先确认期望的代理配置契约，再修改相应实现或断言。
-2. CI 不得通过删除断言、隐藏失败、`continue-on-error` 或跳过 job 获得绿色状态。
-3. 单元与未来集成测试必须显式使用 Mock 或 fixture，Fork PR 不得获得生产密钥。
-4. 全量 pytest 转为 required 之前，必须先将本记录中的失败项关闭并复跑完整基线。
-
-## 候选 Shared Change 验证（未进入 integration）
-
-`f644442 fix(deepresearch): enforce explicit outbound proxy policy` 位于独立 Draft PR #1，尚未合入 `integration/2026-08-10`，不得替代上方 integration 基线。该候选提交的独立离线验证为：256 项收集、256 passed、`pip check` 通过、`compileall -q app` 通过。它将失败断言的代理变量同步为 `OUTBOUND_HTTPS_PROXY`，但 T09 只能在该提交进入 integration 后重新建立绿色基线。
+The six configured GitHub Actions jobs have not yet been observed on the post-fix head. Their status and run URLs must be recorded from GitHub after a normal push; they are not pre-filled as passing in this baseline.
