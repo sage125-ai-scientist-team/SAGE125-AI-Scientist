@@ -2,32 +2,25 @@
 
 ## Purpose
 
-Initial fact-evidence pairs for validating EvidenceCardV2,
+This document provides 20 initial evidence-grounding validation pairs.
 
-ClaimEvidenceLink and EvidenceBundle contracts.
+These pairs are contract validation samples.
 
-This file defines validation samples only.
+They are used to test:
 
-No fabricated paper metadata or unsupported scientific claims are included.
+- EvidenceCard traceability
 
----
+- ClaimEvidenceLink validation
 
-# Sample Format
+- unsupported claim rejection
 
-Each evidence pair contains:
+- evidence provenance control
 
-- claim_id
-- claim
-- evidence_id
-- source_status
-- relation
-- validation_status
+No fabricated literature metadata is included.
 
 ---
 
-# Evidence Pairs
-
-## Pair 001
+# Evidence Pair 001
 
 claim_id:
 
@@ -35,15 +28,11 @@ CLAIM-001
 
 claim:
 
-A scientific claim requires traceable supporting evidence.
+A factual scientific claim requires traceable evidence.
 
 evidence_id:
 
 EV-PENDING-001
-
-source_status:
-
-pending
 
 relation:
 
@@ -55,7 +44,7 @@ pending
 
 ---
 
-## Pair 002
+# Evidence Pair 002
 
 claim_id:
 
@@ -63,15 +52,11 @@ CLAIM-002
 
 claim:
 
-Evidence location information should be preserved.
+Evidence objects should preserve source identification.
 
 evidence_id:
 
 EV-PENDING-002
-
-source_status:
-
-pending
 
 relation:
 
@@ -83,7 +68,7 @@ pending
 
 ---
 
-## Pair 003
+# Evidence Pair 003
 
 claim_id:
 
@@ -91,19 +76,15 @@ CLAIM-003
 
 claim:
 
-Title-only information should not establish scientific facts.
+Evidence should contain location information when available.
 
 evidence_id:
 
 EV-PENDING-003
 
-source_status:
-
-pending
-
 relation:
 
-context
+supports
 
 validation_status:
 
@@ -111,7 +92,7 @@ pending
 
 ---
 
-## Pair 004
+# Evidence Pair 004
 
 claim_id:
 
@@ -119,15 +100,11 @@ CLAIM-004
 
 claim:
 
-Question booklet content should not become scientific evidence.
+A title alone cannot establish a scientific fact.
 
 evidence_id:
 
 EV-PENDING-004
-
-source_status:
-
-pending
 
 relation:
 
@@ -139,7 +116,7 @@ pending
 
 ---
 
-## Pair 005
+# Evidence Pair 005
 
 claim_id:
 
@@ -147,15 +124,11 @@ CLAIM-005
 
 claim:
 
-Evidence IDs must map to existing EvidenceCard objects.
+An evidence_id should correspond to an existing EvidenceCard.
 
 evidence_id:
 
 EV-PENDING-005
-
-source_status:
-
-pending
 
 relation:
 
@@ -167,14 +140,360 @@ pending
 
 ---
 
-# Pair 006-020
+# Evidence Pair 006
 
-The remaining 15 validation pairs follow the same schema:
+claim_id:
 
-- unique claim_id
-- unique evidence_id
-- explicit relation
-- validation status
-- no fabricated scientific metadata
+CLAIM-006
 
-They will be populated with verified literature evidence after EvidenceCardV2 integration.
+claim:
+
+Unsupported factual statements should remain pending hypotheses.
+
+evidence_id:
+
+EV-PENDING-006
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 007
+
+claim_id:
+
+CLAIM-007
+
+claim:
+
+DeepResearch summaries require downstream verification.
+
+evidence_id:
+
+EV-PENDING-007
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 008
+
+claim_id:
+
+CLAIM-008
+
+claim:
+
+Metadata fields should not replace original evidence text.
+
+evidence_id:
+
+EV-PENDING-008
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 009
+
+claim_id:
+
+CLAIM-009
+
+claim:
+
+Evidence provenance should be preserved during processing.
+
+evidence_id:
+
+EV-PENDING-009
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 010
+
+claim_id:
+
+CLAIM-010
+
+claim:
+
+Evidence validation status should be explicit.
+
+evidence_id:
+
+EV-PENDING-010
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 011
+
+claim_id:
+
+CLAIM-011
+
+claim:
+
+Question booklet content should not directly become scientific evidence.
+
+evidence_id:
+
+EV-PENDING-011
+
+relation:
+
+contradicts
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 012
+
+claim_id:
+
+CLAIM-012
+
+claim:
+
+Cross-domain evidence transfer requires validation.
+
+evidence_id:
+
+EV-PENDING-012
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 013
+
+claim_id:
+
+CLAIM-013
+
+claim:
+
+Evidence bundles should record token budget information.
+
+evidence_id:
+
+EV-PENDING-013
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 014
+
+claim_id:
+
+CLAIM-014
+
+claim:
+
+Evidence relationships should distinguish support and contradiction.
+
+evidence_id:
+
+EV-PENDING-014
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 015
+
+claim_id:
+
+CLAIM-015
+
+claim:
+
+Evidence references should remain stable during pipeline execution.
+
+evidence_id:
+
+EV-PENDING-015
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 016
+
+claim_id:
+
+CLAIM-016
+
+claim:
+
+Evidence without verification status should not be treated as validated.
+
+evidence_id:
+
+EV-PENDING-016
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 017
+
+claim_id:
+
+CLAIM-017
+
+claim:
+
+Evidence conflicts should be represented explicitly.
+
+evidence_id:
+
+EV-PENDING-017
+
+relation:
+
+contradicts
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 018
+
+claim_id:
+
+CLAIM-018
+
+claim:
+
+Evidence selection should consider provenance quality.
+
+evidence_id:
+
+EV-PENDING-018
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 019
+
+claim_id:
+
+CLAIM-019
+
+claim:
+
+Evidence bundles should prevent uncontrolled context expansion.
+
+evidence_id:
+
+EV-PENDING-019
+
+relation:
+
+supports
+
+validation_status:
+
+pending
+
+---
+
+# Evidence Pair 020
+
+claim_id:
+
+CLAIM-020
+
+claim:
+
+All established facts should be traceable to evidence objects.
+
+evidence_id:
+
+EV-PENDING-020
+
+relation:
+
+supports
+
+validation_status:
+
+pending

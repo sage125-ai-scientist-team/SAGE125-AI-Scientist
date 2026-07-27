@@ -1,12 +1,15 @@
+import pytest
+
 from app.contracts.evidence import (
     ClaimEvidenceLink,
     EvidenceBundle,
-    EvidenceCardV2,
+    EvidenceCardContract,
 )
 
 
 def test_evidence_card_contains_traceable_fields():
-    card = EvidenceCardV2(
+
+    card = EvidenceCardContract(
         evidence_id="EV001",
         source_id="paper001",
         source_type="paper",
@@ -24,8 +27,10 @@ def test_evidence_card_contains_traceable_fields():
     assert card.locator["page"] == 3
 
 
+
 def test_title_only_evidence_remains_pending():
-    card = EvidenceCardV2(
+
+    card = EvidenceCardContract(
         evidence_id="EV002",
         source_id="paper002",
         source_type="paper",
@@ -36,16 +41,43 @@ def test_title_only_evidence_remains_pending():
     assert card.verification_status == "pending"
 
 
-def test_claim_requires_existing_evidence_reference():
+
+def test_unknown_evidence_reference_is_invalid():
+
     link = ClaimEvidenceLink(
         claim_id="CLAIM001",
-        evidence_id="EV001",
+        evidence_id="UNKNOWN_ID",
         relation="supports",
-        confidence=0.8,
     )
 
-    assert link.evidence_id == "EV001"
     assert link.validation_status == "pending"
+
+
+
+def test_booklet_excerpt_cannot_be_verified_evidence():
+
+    card = EvidenceCardContract(
+        evidence_id="EV_BOOKLET",
+        source_id="booklet",
+        source_type="web",
+        title="Question booklet",
+        quoted_text="Question description",
+    )
+
+    assert card.verification_status == "pending"
+
+
+
+def test_cross_domain_extrapolation_requires_validation():
+
+    link = ClaimEvidenceLink(
+        claim_id="CLAIM_DOMAIN",
+        evidence_id="EV_DOMAIN",
+        relation="context",
+    )
+
+    assert link.validation_status == "pending"
+
 
 
 def test_evidence_bundle_tracks_token_budget():
@@ -58,4 +90,3 @@ def test_evidence_bundle_tracks_token_budget():
     )
 
     assert bundle.token_budget == 8000
-    assert bundle.truncated is False

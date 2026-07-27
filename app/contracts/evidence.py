@@ -3,9 +3,12 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field
 
 
-class EvidenceCardV2(BaseModel):
+class EvidenceCardContract(BaseModel):
     """
-    Traceable scientific evidence object.
+    Contract layer for traceable scientific evidence.
+    
+    This model defines evidence requirements.
+    It does not replace existing runtime EvidenceCard.
     """
 
     evidence_id: str
@@ -42,9 +45,10 @@ class EvidenceCardV2(BaseModel):
     ] = "pending"
 
 
+
 class ClaimEvidenceLink(BaseModel):
     """
-    Relation between factual claim and evidence.
+    Contract between factual claims and evidence.
     """
 
     claim_id: str
@@ -66,14 +70,15 @@ class ClaimEvidenceLink(BaseModel):
     ] = "pending"
 
 
+
 class EvidenceBundle(BaseModel):
     """
-    Controlled evidence context passed to agents.
+    Controlled evidence package passed to downstream agents.
     """
 
     bundle_id: str
 
-    evidences: list[EvidenceCardV2]
+    evidences: list[EvidenceCardContract]
 
     links: list[ClaimEvidenceLink]
 
