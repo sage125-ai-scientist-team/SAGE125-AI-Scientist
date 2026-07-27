@@ -23,6 +23,8 @@ Every gate below must be satisfied before any Approve or Merge action is taken.
 - Merge method: **squash**, using `--match-head-commit` (never `--admin`, never force push)
 - Path ownership source of truth: `docs/governance/task-owner-map.yaml`
 - Review policy source of truth: `docs/governance/pr-review-policy.yaml`
+- Task content requirements (V3.0): `docs/governance/task-requirements/T01.yaml`–`T09.yaml`
+- Content review schema: `docs/governance/schemas/content-review.schema.json`
 - Review helper script: `scripts/captain/review_latest_pr.ps1`
 - Project-wide Bugbot rules: `.cursor/BUGBOT.md`
 
@@ -120,9 +122,56 @@ merge gate checklist, and the required final output block) is specified in:
   task/path ownership, batch isolation, CI/test integrity, finding format)
 - `docs/governance/task-owner-map.yaml` (machine-readable path ownership)
 - `docs/governance/pr-review-policy.yaml` (machine-readable merge gate configuration)
+- `docs/governance/task-requirements/T0X.yaml` (V3.0 task/wave content requirements)
 
-Agent must read all four of the above before completing a review, in addition to the
-PR's own diff, comments, checks, and any task/contract docs the changed paths point to.
+Agent must read the above before completing a review, in addition to the PR's own
+diff, comments, checks, and any task/contract docs the changed paths point to.
+
+## 8b. Two-phase review: engineering + task content (mandatory)
+
+Every review triggered by the phrases in §1 MUST complete BOTH phases:
+
+### Phase 1 — ENGINEERING_COMPLIANCE
+
+Existing gates: base branch, Draft/Ready, head SHA, mergeable/sync, owner paths,
+GitHub Checks (never treat skipped/neutral/cancelled/pending/zero as pass), Bugbot
+policy, secrets/security, scientific integrity, and local verification commands.
+
+### Phase 2 — CONTENT_COMPLIANCE
+
+1. Identify `task_id` (T01–T09) and `wave` (A/B/C/FREEZE) from, in order:
+   PR title → head branch → labels → PR body. On conflict or inability to identify:
+   set `CONTENT_COMPLIANCE=WAIT`, request metadata fix, do **not** merge, do **not** guess.
+2. Load `docs/governance/task-requirements/T0X.yaml` for that task. If missing:
+   `CONTENT_COMPLIANCE=WAIT` / stop.
+3. Build a current-wave acceptance matrix from that YAML. Do **not** only inspect
+   changed files or trust the PR description as proof of completion.
+4. Inspect implementation, tests (including failure paths), artifacts, metrics,
+   reproduction commands, contracts, and Wave acceptance evidence.
+5. Assign each requirement one of: `PASS` / `FAIL` / `UNVERIFIED` / `DEFERRED` /
+   `NOT_APPLICABLE` (definitions in the runbook).
+6. Write `content-review.json` **outside** the repo
+   (`%TEMP%\sage125-pr-review\pr-<N>-<HEAD_SHA>\content-review.json`).
+7. Merge is forbidden unless **both** `ENGINEERING_COMPLIANCE=PASS` and
+   `CONTENT_COMPLIANCE=PASS`.
+
+Hard content gates:
+
+- Current-wave `FAIL` → do not merge (`REQUEST_CHANGES`).
+- Current-wave blocking `UNVERIFIED` → do not merge.
+- Only future-wave gaps may be `DEFERRED` (`allow_future_wave_deferred`).
+- Wave C: final Definition of Done must be verified; incomplete → block.
+- P2 award-quality recommendations alone do **not** block (`allow_merge_with_p2_only`).
+- Screenshots / PR prose / Mock / planned / expected metrics alone never make a
+  quantitative threshold `PASS`.
+- Never invent metrics or treat teammate claims as evidence.
+
+Every final review report MUST include:
+
+- `ENGINEERING_COMPLIANCE=PASS|FAIL|WAIT`
+- `CONTENT_COMPLIANCE=PASS|FAIL|WAIT`
+- P0 / P1 / P2 counts
+- Blocking requirement IDs (when any)
 
 ## 9. Absolute safety constraints (always apply, no exceptions)
 

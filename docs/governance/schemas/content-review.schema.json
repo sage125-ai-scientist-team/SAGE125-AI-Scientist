@@ -1,0 +1,173 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sage125-ai-scientist-team.github.io/schemas/content-review.schema.json",
+  "title": "SAGE125 PR content acceptance review result",
+  "description": "Schema for the content-review.json that the Cursor Agent produces for one PR review round. The file must be written OUTSIDE the repository (default %TEMP%\\sage125-pr-review\\pr-<NUMBER>-<HEAD_SHA>\\content-review.json) and is consumed by scripts/captain/review_latest_pr.ps1 -ContentReviewPath and by scripts/captain/validate_content_review.py.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "pr_number",
+    "reviewed_head_sha",
+    "task_id",
+    "wave",
+    "source_spec_path",
+    "source_spec_sha256",
+    "requirements_total",
+    "pass_count",
+    "fail_count",
+    "unverified_count",
+    "deferred_count",
+    "not_applicable_count",
+    "p0_count",
+    "p1_count",
+    "p2_count",
+    "current_wave_status",
+    "final_dod_coverage",
+    "content_compliance",
+    "blocking_requirement_ids",
+    "recommendation_ids",
+    "requirements"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "repository": { "const": "sage125-ai-scientist-team/SAGE125-AI-Scientist" },
+    "pr_number": { "type": "integer", "minimum": 1 },
+    "reviewed_head_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "task_id": { "type": "string", "pattern": "^T0[1-9]$" },
+    "wave": { "enum": ["A", "B", "C", "FREEZE"] },
+    "source_spec_path": { "type": "string", "minLength": 1 },
+    "source_spec_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of the T0X.yaml file that the review was performed against. A mismatch against the current file means the review is stale and merge must WAIT."
+    },
+    "requirements_total": { "type": "integer", "minimum": 1 },
+    "pass_count": { "type": "integer", "minimum": 0 },
+    "fail_count": { "type": "integer", "minimum": 0 },
+    "unverified_count": { "type": "integer", "minimum": 0 },
+    "deferred_count": { "type": "integer", "minimum": 0 },
+    "not_applicable_count": { "type": "integer", "minimum": 0 },
+    "p0_count": { "type": "integer", "minimum": 0 },
+    "p1_count": { "type": "integer", "minimum": 0 },
+    "p2_count": { "type": "integer", "minimum": 0 },
+    "current_wave_status": {
+      "enum": ["PASS", "FAIL", "UNVERIFIED", "WAIT"],
+      "description": "Aggregate status of requirements whose wave equals the PR's current wave."
+    },
+    "final_dod_coverage": {
+      "type": "object",
+      "required": ["total", "pass", "outstanding", "verified_at_wave_c"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "pass": { "type": "integer", "minimum": 0 },
+        "outstanding": { "type": "integer", "minimum": 0 },
+        "verified_at_wave_c": { "type": "boolean" }
+      }
+    },
+    "content_compliance": { "enum": ["PASS", "FAIL", "WAIT"] },
+    "blocking_requirement_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^T0[1-9]-(A|B|C|MUST|DOD|METRIC|HANDOFF|FREEZE)-[0-9]{3}$" }
+    },
+    "recommendation_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^T0[1-9]-(A|B|C|MUST|DOD|METRIC|HANDOFF|FREEZE)-[0-9]{3}$" }
+    },
+    "reviewer": { "type": "string" },
+    "reviewed_at_utc": { "type": "string" },
+    "notes": { "type": "string" },
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/reviewed_requirement" }
+    }
+  },
+  "definitions": {
+    "reviewed_requirement": {
+      "type": "object",
+      "required": [
+        "requirement_id",
+        "status",
+        "severity",
+        "requirement_text",
+        "observed_implementation",
+        "evidence_paths",
+        "evidence_commands",
+        "missing_evidence",
+        "consequence",
+        "required_fix",
+        "verification_command",
+        "blocking"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "type": "string",
+          "pattern": "^T0[1-9]-(A|B|C|MUST|DOD|METRIC|HANDOFF|FREEZE)-[0-9]{3}$"
+        },
+        "status": { "enum": ["PASS", "FAIL", "UNVERIFIED", "DEFERRED", "NOT_APPLICABLE"] },
+        "severity": { "enum": ["P0", "P1", "P2", "NONE"] },
+        "wave": { "enum": ["A", "B", "C", "FREEZE", "FINAL"] },
+        "requirement_text": { "type": "string", "minLength": 1 },
+        "observed_implementation": {
+          "type": "string",
+          "description": "What the reviewer actually found in the diff, tests and artifacts. Must not restate the PR description as fact."
+        },
+        "evidence_paths": { "type": "array", "items": { "type": "string" } },
+        "evidence_commands": { "type": "array", "items": { "type": "string" } },
+        "missing_evidence": { "type": "array", "items": { "type": "string" } },
+        "consequence": { "type": "string" },
+        "required_fix": { "type": "string" },
+        "verification_command": { "type": "string" },
+        "blocking": { "type": "boolean" },
+        "not_applicable_reason": { "type": "string" },
+        "deferred_to_wave": { "enum": ["B", "C", "FREEZE"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "PASS" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "evidence_paths": { "minItems": 1 },
+              "observed_implementation": { "minLength": 1 },
+              "blocking": { "const": false }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "FAIL" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "required_fix": { "minLength": 1 },
+              "consequence": { "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "UNVERIFIED" } }, "required": ["status"] },
+          "then": { "properties": { "missing_evidence": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "DEFERRED" } }, "required": ["status"] },
+          "then": {
+            "required": ["deferred_to_wave"],
+            "properties": { "blocking": { "const": false } }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "NOT_APPLICABLE" } }, "required": ["status"] },
+          "then": {
+            "required": ["not_applicable_reason"],
+            "properties": {
+              "not_applicable_reason": { "minLength": 1 },
+              "blocking": { "const": false }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

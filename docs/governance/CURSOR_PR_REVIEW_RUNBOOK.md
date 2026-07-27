@@ -368,6 +368,98 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 
 ---
 
+## 14. 任务内容与 Wave 验收
+
+### 14.1 工程审核 vs 内容审核
+
+| 维度 | ENGINEERING_COMPLIANCE | CONTENT_COMPLIANCE |
+|---|---|---|
+| 关注点 | base、Draft、路径、Checks、Secret、Mock 泄漏、缓存/exports | V3.0 任务使命、当前 Wave 交付、DoD、定量指标、验收证据 |
+| 权威来源 | `pr-review-policy.yaml` + `task-owner-map.yaml` | `docs/governance/task-requirements/T0X.yaml`（由 V3.0 手册提取） |
+| 失败后果 | 不得合并 | 不得合并 |
+| 最终条件 | 两门禁都必须 `PASS` | 两门禁都必须 `PASS` |
+
+工程全绿但核心任务内容未完成 → **不得合并**。
+
+### 14.2 T01—T09 规范来源
+
+- 权威人类文档：SAGE125 队员版 V3.0 手册（本机 DOCX，**不得提交进仓库**）。
+- 机器可读产物：`docs/governance/task-requirements/T01.yaml` … `T09.yaml`。
+- 源指纹：`docs/governance/task-requirements/source-manifest.json`。
+- 提取/校验：`scripts/captain/extract_task_requirements.py`、
+  `validate_task_requirements.py`、`validate_content_review.py`。
+
+未找到对应 `T0X.yaml` 时必须停止（`CONTENT_COMPLIANCE=WAIT`），不得凭记忆编造。
+
+### 14.3 如何识别 task / wave
+
+优先级：**标题 → Head 分支 → 标签 → PR 描述**。
+来源冲突或无法识别 → `CONTENT_COMPLIANCE=WAIT`，要求队员修正元数据，**禁止猜测、禁止合并**。
+
+### 14.4 状态定义
+
+| 状态 | 含义 |
+|---|---|
+| PASS | 实现存在、测试实际运行、产物/证据支持要求、结果可复现 |
+| FAIL | 与要求冲突 / 当前 Wave 必须内容缺失 / 空壳或无效测试 |
+| UNVERIFIED | 声称完成但缺测试、运行记录、产物或复现命令 |
+| DEFERRED | 明确属于后续 Wave；当前不阻断 |
+| NOT_APPLICABLE | 仅当文档/任务规范明确允许，且必须写理由；禁止用来规避 |
+
+### 14.5 为什么 PR 描述 / 截图不能直接证明完成
+
+- PR 描述是声明，不是证据。
+- 截图不能独立证明定量指标（缺脚本、数据、checksum、commit、环境等）。
+- Mock / planned / expected / 未运行 skeleton 不得标为正式结果。
+
+### 14.6 当前 Wave 与未来 Wave
+
+- Wave A：审核 A；B/C 最终指标可 `DEFERRED`；不得因未完成最终正式案例拒收契约 PR，但接口/红灯测试/骨架/文档必须齐。
+- Wave B：A 必须保持 PASS；B 必审；C 可 DEFERRED；核心功能/单测/最小 E2E/指标框架缺失则阻断。
+- Wave C：A/B/C + 最终 DoD 全审；handoff/复现/稳定性/安全/性能/最终证据缺失则阻断。
+- Code Freeze：只允许修已登记阻断；新功能/破坏性接口/无关依赖升级阻断。
+
+### 14.7 P2 冲奖质量建议
+
+已满足当前 Wave 硬要求时，可输出 `Severity: P2` /
+`Type: AWARD_QUALITY_RECOMMENDATION`（不阻断，可并入后续 Wave 建议清单）。
+**不得**把硬要求降级为 P2。
+
+### 14.8 content-review.json
+
+Agent 在仓库外写入：
+
+`%TEMP%\sage125-pr-review\pr-<NUMBER>-<HEAD_SHA>\content-review.json`
+
+必须符合 `docs/governance/schemas/content-review.schema.json`。
+脚本参数：`-ContentReviewPath <path>`。
+合并前校验：PR 编号、task/wave、head SHA、source_spec_sha256、
+`content_compliance=PASS`、`fail_count=0`、当前 Wave 阻断性 unverified=0、P0=0、P1=0。
+
+SHA 过期（head 或 source spec）→ `ACTION=WAIT`，不得沿用旧审核。
+
+### 14.9 队员修复后如何重新审核
+
+队员 Push 后，队长重新触发审核；必须重新抓 head SHA、重新生成/校验
+content-review.json，不得复用过期文件。
+
+### 14.10 最终合并条件
+
+```
+ENGINEERING_COMPLIANCE=PASS
+CONTENT_COMPLIANCE=PASS
+P0=0
+P1=0
+```
+
+仅有 P2 时允许合并。缺少内容审核结果时 `WAIT`，不得合并。
+
+内容审核意见（Request Changes）建议格式见治理规则与 Bugbot §9，必须包含
+Requirement ID、Severity、Wave、文档要求、当前观察、已有/缺失证据、后果、
+必须修改、建议实现、验证命令、是否阻断当前 Wave。
+
+---
+
 ## 附：安全边界重申
 
 - 本工作流永远不会读取、显示或提交真实 `.env`。
@@ -378,3 +470,4 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
   必须经过 `gh pr merge` 合并一个已审核的 PR。
 - 普通指令"帮我审核最新的PR"永远不会触及 `main`。
 - 任何不确定的合并条件，都按"不允许合并"处理。
+- 不得把源 DOCX 提交进仓库；任务标准以已提取的 T0X.yaml 为准。

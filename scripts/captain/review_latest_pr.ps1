@@ -48,6 +48,10 @@
 .PARAMETER OutDir
     保存本次审核只读元数据/报告的临时目录（脚本外部，不进入仓库）。
 
+.PARAMETER ContentReviewPath
+    Agent 产出的 content-review.json 绝对路径（必须在仓库外）。
+    -AllowMerge 时必需；缺失、SHA 过期或 CONTENT_COMPLIANCE!=PASS 时拒绝合并。
+
 .NOTES
     绝不使用 --admin；绝不 force push；绝不打印任何密钥/Token 值或完整 PR body。
     仓库：sage125-ai-scientist-team/SAGE125-AI-Scientist
@@ -64,9 +68,10 @@ param(
     [switch]$AllowMerge,
     [switch]$ReleaseMode,
     [string]$ReviewedHeadSha = "",
-    [string]$ApproveBody = "Cursor captain review approved: no blocking P0/P1; path ownership, scientific integrity, security, local tests and GitHub Checks are acceptable for squash merge into integration/2026-08-10.",
+    [string]$ApproveBody = "Cursor captain review approved: no blocking P0/P1; path ownership, scientific integrity, security, local tests, GitHub Checks, and V3.0 task/wave content acceptance are acceptable for squash merge into integration/2026-08-10.",
     [string]$RequestChangesBodyFile = "",
-    [string]$OutDir = ""
+[string]$OutDir = "",
+    [string]$ContentReviewPath = ""
 )
 
 # 注意：不能设为 "Stop"。本脚本大量调用外部 gh.exe，PowerShell 5.1 会把
@@ -708,18 +713,182 @@ function Get-CheckClassification {
 function Get-InferredTask {
     <#
     .SYNOPSIS
-        从标题 / 分支名 / 标签推断 T01-T09。
+        从标题 / 分支名 / 标签 / 正文推断 T01-T09（优先级：标题→分支→标签→正文）。
+        冲突时返回 CONFLICT，不得猜测。
     #>
-    param([string]$Title, [string]$HeadRef, [array]$Labels)
+    param([string]$Title, [string]$HeadRef, [array]$Labels, [string]$BodyText = "")
     $labelNames = @()
     if ($Labels) {
         $labelNames = @($Labels | ForEach-Object { $_.name })
     }
-    $haystack = "$Title $HeadRef " + ($labelNames -join ' ')
-    if ($haystack -match 'T0([1-9])') {
-        return "T0$($Matches[1])"
+
+    $fromTitle = "UNKNOWN"
+    if ($Title -match 'T0([1-9])') { $fromTitle = "T0$($Matches[1])" }
+
+    $fromBranch = "UNKNOWN"
+    if ($HeadRef -match '(?i)t0([1-9])') { $fromBranch = "T0$($Matches[1])" }
+
+    $fromLabel = "UNKNOWN"
+    foreach ($name in $labelNames) {
+        if ($name -match 'T0([1-9])') { $fromLabel = "T0$($Matches[1])"; break }
     }
-    return "UNKNOWN"
+
+    $fromBody = "UNKNOWN"
+    if ($BodyText -match '(?im)^\s*[-*]?\s*Task\s*:\s*T0([1-9])') {
+        $fromBody = "T0$($Matches[1])"
+    } elseif ($BodyText -match 'T0([1-9])') {
+        $fromBody = "T0$($Matches[1])"
+    }
+
+    $ordered = @($fromTitle, $fromBranch, $fromLabel, $fromBody) | Where-Object { $_ -ne "UNKNOWN" }
+    if ($ordered.Count -eq 0) { return "UNKNOWN" }
+    $unique = @($ordered | Select-Object -Unique)
+    if ($unique.Count -gt 1) { return "CONFLICT" }
+    return $unique[0]
+}
+
+function Get-InferredWave {
+    <#
+    .SYNOPSIS
+        从标题 / 分支 / 标签 / 正文推断 Wave A/B/C/FREEZE。冲突返回 CONFLICT。
+    #>
+    param([string]$Title, [string]$HeadRef, [array]$Labels, [string]$BodyText = "")
+    $labelNames = @()
+    if ($Labels) {
+        $labelNames = @($Labels | ForEach-Object { $_.name })
+    }
+
+    function Convert-WaveToken([string]$Token) {
+        if (-not $Token) { return "UNKNOWN" }
+        $t = $Token.ToUpperInvariant()
+        if ($t -match 'FREEZE|CODE[\s_-]*FREEZE') { return "FREEZE" }
+        if ($t -match 'A') { return "A" }
+        if ($t -match 'B') { return "B" }
+        if ($t -match 'C') { return "C" }
+        return "UNKNOWN"
+    }
+
+    $fromTitle = "UNKNOWN"
+    if ($Title -match '(?i)\[T0[1-9][\s_-]*([ABC])\]') { $fromTitle = $Matches[1].ToUpperInvariant() }
+    elseif ($Title -match '(?i)wave[\s_-]*([ABC])') { $fromTitle = $Matches[1].ToUpperInvariant() }
+    elseif ($Title -match '(?i)code\s*freeze') { $fromTitle = "FREEZE" }
+
+    $fromBranch = "UNKNOWN"
+    if ($HeadRef -match '(?i)/(a|b|c)-') { $fromBranch = $Matches[1].ToUpperInvariant() }
+    elseif ($HeadRef -match '(?i)wave[\s_-]*([abc])') { $fromBranch = $Matches[1].ToUpperInvariant() }
+    elseif ($HeadRef -match '(?i)freeze') { $fromBranch = "FREEZE" }
+
+    $fromLabel = "UNKNOWN"
+    foreach ($name in $labelNames) {
+        if ($name -match '(?i)wave[\s_-]*([abc])') { $fromLabel = $Matches[1].ToUpperInvariant(); break }
+        if ($name -match '(?i)^([abc])$') { $fromLabel = $Matches[1].ToUpperInvariant(); break }
+        if ($name -match '(?i)freeze') { $fromLabel = "FREEZE"; break }
+    }
+
+    $fromBody = "UNKNOWN"
+    if ($BodyText -match '(?im)^\s*[-*]?\s*Wave\s*:\s*([ABC]|FREEZE|Code\s*Freeze)') {
+        $fromBody = Convert-WaveToken $Matches[1]
+    } elseif ($BodyText -match '(?i)wave\s*([ABC])') {
+        $fromBody = $Matches[1].ToUpperInvariant()
+    }
+
+    $ordered = @($fromTitle, $fromBranch, $fromLabel, $fromBody) | Where-Object { $_ -ne "UNKNOWN" }
+    if ($ordered.Count -eq 0) { return "UNKNOWN" }
+    $unique = @($ordered | Select-Object -Unique)
+    if ($unique.Count -gt 1) { return "CONFLICT" }
+    return $unique[0]
+}
+
+function Get-TaskRequirementPath {
+    <#
+    .SYNOPSIS
+        返回 docs/governance/task-requirements/T0X.yaml 路径；不存在时返回空串。
+    #>
+    param([string]$TaskId)
+    if ($TaskId -notmatch '^T0[1-9]$') { return "" }
+    $path = Join-Path $script:RepoRoot ("docs\governance\task-requirements\{0}.yaml" -f $TaskId)
+    if (Test-Path -LiteralPath $path) { return $path }
+    return ""
+}
+
+function Get-FileSha256Hex {
+    <#
+    .SYNOPSIS
+        计算文件逻辑文本 SHA-256（CRLF 规范化为 LF 后的小写 hex）。
+    #>
+    param([string]$Path)
+    $text = [System.IO.File]::ReadAllText($Path, [System.Text.UTF8Encoding]::new($false))
+    $text = $text -replace "`r`n", "`n"
+    $text = $text -replace "`r", "`n"
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($text)
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $hash = $sha.ComputeHash($bytes)
+    } finally {
+        $sha.Dispose()
+    }
+    return ([System.BitConverter]::ToString($hash) -replace "-", "").ToLowerInvariant()
+}
+
+function Test-ContentReviewGate {
+    <#
+    .SYNOPSIS
+        调用 validate_content_review.py 校验 content-review.json。
+    #>
+    param(
+        [string]$ContentReviewPath,
+        [int]$PrNumber,
+        [string]$TaskId,
+        [string]$Wave,
+        [string]$HeadSha,
+        [string]$SourceSpecPath,
+        [switch]$RequireMergeGate
+    )
+
+    if (-not $ContentReviewPath) {
+        return @{ Ok = $false; ExitCode = 30; Output = ""; Reason = "missing ContentReviewPath" }
+    }
+    if (-not (Test-Path -LiteralPath $ContentReviewPath)) {
+        return @{ Ok = $false; ExitCode = 30; Output = ""; Reason = "content-review file not found" }
+    }
+
+    $validator = Join-Path $script:RepoRoot "scripts\captain\validate_content_review.py"
+    if (-not (Test-Path -LiteralPath $validator)) {
+        return @{ Ok = $false; ExitCode = 60; Output = ""; Reason = "validate_content_review.py missing" }
+    }
+
+    $argList = @(
+        "-3",
+        $validator,
+        "--content-review", $ContentReviewPath,
+        "--pr-number", "$PrNumber",
+        "--task-id", $TaskId,
+        "--wave", $Wave,
+        "--head-sha", $HeadSha,
+        "--source-spec", $SourceSpecPath
+    )
+    if ($RequireMergeGate) { $argList += "--require-merge-gate" }
+
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = "py"
+    $psi.Arguments = (($argList | ForEach-Object {
+        if ($_ -match '\s') { '"' + $_ + '"' } else { $_ }
+    }) -join " ")
+    $psi.UseShellExecute = $false
+    $psi.RedirectStandardOutput = $true
+    $psi.RedirectStandardError = $true
+    $psi.CreateNoWindow = $true
+    $proc = [System.Diagnostics.Process]::Start($psi)
+    $stdout = $proc.StandardOutput.ReadToEnd()
+    $stderr = $proc.StandardError.ReadToEnd()
+    $proc.WaitForExit()
+    $combined = ($stdout + "`n" + $stderr).Trim()
+    return @{
+        Ok       = ($proc.ExitCode -eq 0)
+        ExitCode = $proc.ExitCode
+        Output   = $combined
+        Reason   = if ($proc.ExitCode -eq 0) { "ok" } else { "content-review validation failed" }
+    }
 }
 
 function Test-PathOwnership {
@@ -870,10 +1039,26 @@ function Invoke-CaptainReviewMain {
     $taskOwnerMap = Get-TaskOwnerMap
     $null = Get-ReviewPolicy
 
-    $inferredTask = Get-InferredTask -Title $prDetail.title -HeadRef $prDetail.headRefName -Labels $prDetail.labels
+    $inferredTask = Get-InferredTask -Title $prDetail.title -HeadRef $prDetail.headRefName -Labels $prDetail.labels -BodyText $bundle.BodyText
+    $inferredWave = Get-InferredWave -Title $prDetail.title -HeadRef $prDetail.headRefName -Labels $prDetail.labels -BodyText $bundle.BodyText
     Write-Host "Inferred task: $inferredTask"
+    Write-Host "Inferred wave: $inferredWave"
 
-    $ownership = Test-PathOwnership -ChangedFiles $prDetail.files -TaskOwnerMap $taskOwnerMap -TaskCode $inferredTask
+    $taskSpecPath = Get-TaskRequirementPath -TaskId $inferredTask
+    if ($taskSpecPath) {
+        $taskSpecSha = Get-FileSha256Hex -Path $taskSpecPath
+        Write-Host ("Task spec        : {0}" -f $taskSpecPath)
+        Write-Host ("Task spec sha256 : {0}" -f $taskSpecSha)
+    } else {
+        $taskSpecSha = ""
+        Write-Host "Task spec        : MISSING or task UNKNOWN/CONFLICT" -ForegroundColor Yellow
+    }
+
+    $taskCodeForPaths = $inferredTask
+    if ($taskCodeForPaths -notin @("T01","T02","T03","T04","T05","T06","T07","T08","T09")) {
+        $taskCodeForPaths = "UNKNOWN"
+    }
+    $ownership = Test-PathOwnership -ChangedFiles $prDetail.files -TaskOwnerMap $taskOwnerMap -TaskCode $taskCodeForPaths
     Write-Host ("Owned paths              : {0}" -f $ownership.OwnedFiles.Count)
     Write-Host ("Captain-only path hits   : {0}" -f $ownership.CaptainOnlyHits.Count)
     Write-Host ("Shared-change path hits  : {0}" -f $ownership.SharedChangeHits.Count)
@@ -933,6 +1118,46 @@ function Invoke-CaptainReviewMain {
     Write-Host ("Out-of-scope paths == 0       : {0}" -f ($ownership.OutOfScopeFiles.Count -eq 0))
     Write-Host ("Captain-only hits == 0        : {0}" -f ($ownership.CaptainOnlyHits.Count -eq 0))
 
+    $taskWaveKnown = ($inferredTask -match '^T0[1-9]$') -and ($inferredWave -in @("A","B","C","FREEZE"))
+    $taskWaveConflict = ($inferredTask -eq "CONFLICT") -or ($inferredWave -eq "CONFLICT")
+    $taskSpecPresent = [bool]$taskSpecPath
+    Write-Host ("Task/wave identifiable        : {0}" -f $taskWaveKnown)
+    Write-Host ("Task/wave conflict            : {0}" -f $taskWaveConflict)
+    Write-Host ("Task spec present             : {0}" -f $taskSpecPresent)
+    Write-Host ("ContentReviewPath provided    : {0}" -f ([bool]$ContentReviewPath))
+
+    $engineeringCompliance = "PASS"
+    if (-not $baseOk) { $engineeringCompliance = "FAIL" }
+    elseif ($prDetail.isDraft -or $hasZeroChecks -or $hasNonPassingChecks -or $bugbotBlocking -or $isBehindOrConflict -or $unresolvedBlocking) {
+        $engineeringCompliance = "WAIT"
+    } elseif ($ownership.OutOfScopeFiles.Count -gt 0) {
+        $engineeringCompliance = "FAIL"
+    }
+
+    $contentCompliance = "WAIT"
+    if ($taskWaveConflict -or (-not $taskWaveKnown) -or (-not $taskSpecPresent)) {
+        $contentCompliance = "WAIT"
+    } elseif ($ContentReviewPath) {
+        $preview = Test-ContentReviewGate -ContentReviewPath $ContentReviewPath -PrNumber $targetNumber `
+            -TaskId $inferredTask -Wave $inferredWave -HeadSha $reviewedHeadShaAtStart `
+            -SourceSpecPath $taskSpecPath
+        if ($preview.Ok) {
+            try {
+                $crObj = Get-Content -LiteralPath $ContentReviewPath -Raw -Encoding UTF8 | ConvertFrom-Json
+                $contentCompliance = [string]$crObj.content_compliance
+            } catch {
+                $contentCompliance = "WAIT"
+            }
+        } else {
+            $contentCompliance = "WAIT"
+            Write-Host ("Content review preview: {0}" -f $preview.Reason) -ForegroundColor Yellow
+            if ($preview.Output) { Write-Host $preview.Output -ForegroundColor DarkYellow }
+        }
+    }
+
+    Write-Host ("ENGINEERING_COMPLIANCE        : {0}" -f $engineeringCompliance)
+    Write-Host ("CONTENT_COMPLIANCE            : {0}" -f $contentCompliance)
+
     $mechanicalGatesPass = $baseOk -and (-not $prDetail.isDraft) -and $isMergeableRaw -and (-not $isBehindOrConflict) -and
         (-not $hasNonPassingChecks) -and (-not $hasZeroChecks) -and (-not $bugbotBlocking) -and
         (-not $unresolvedBlocking) -and ($ownership.OutOfScopeFiles.Count -eq 0) -and ($ownership.CaptainOnlyHits.Count -eq 0)
@@ -943,11 +1168,31 @@ function Invoke-CaptainReviewMain {
         Exit-WithCode $script:ExitCodes.SECURITY_ABORT "Base branch policy failed. Ordinary PRs require base=$script:OrdinaryBaseBranch; ReleaseMode requires base=$script:ReleaseBaseBranch, head=$script:ReleaseHeadBranch, title starting with [RELEASE]."
     }
 
+    if ($taskWaveConflict) {
+        Exit-WithCode $script:ExitCodes.WAITING ("Task/wave metadata conflict (task={0}, wave={1}). CONTENT_COMPLIANCE=WAIT; ask teammate to fix title/branch/labels/body. Artifacts: {2}" -f $inferredTask, $inferredWave, $outDirUsed)
+    }
+
     if (-not $AllowMerge) {
-        if ($prDetail.isDraft -or $hasZeroChecks -or $hasNonPassingChecks -or $bugbotBlocking -or $isBehindOrConflict -or $unresolvedBlocking) {
-            Exit-WithCode $script:ExitCodes.WAITING ("InspectOnly done: waiting on Draft/Checks/Bugbot/branch sync/threads. See output and {0}." -f $outDirUsed)
+        if (-not $taskWaveKnown -or -not $taskSpecPresent) {
+            Exit-WithCode $script:ExitCodes.WAITING ("InspectOnly done: task/wave/spec not ready (CONTENT_COMPLIANCE=WAIT). See {0}." -f $outDirUsed)
         }
-        Exit-WithCode $script:ExitCodes.OK "InspectOnly done: mechanical gates ready; semantic review (P0/P1) still required before -AllowMerge."
+        if ($prDetail.isDraft -or $hasZeroChecks -or $hasNonPassingChecks -or $bugbotBlocking -or $isBehindOrConflict -or $unresolvedBlocking) {
+            Exit-WithCode $script:ExitCodes.WAITING ("InspectOnly done: waiting on Draft/Checks/Bugbot/branch sync/threads. ENGINEERING={0} CONTENT={1}. See {2}." -f $engineeringCompliance, $contentCompliance, $outDirUsed)
+        }
+        if (-not $ContentReviewPath) {
+            Exit-WithCode $script:ExitCodes.WAITING ("InspectOnly done: engineering mechanical gates ready, but content-review.json not provided (CONTENT_COMPLIANCE=WAIT). Produce content-review.json then re-run with -ContentReviewPath. Artifacts: {0}" -f $outDirUsed)
+        }
+        if ($contentCompliance -ne "PASS") {
+            Exit-WithCode $script:ExitCodes.NEEDS_CHANGES ("InspectOnly done: CONTENT_COMPLIANCE={0}. Fix current-wave gaps or refresh content-review.json. Artifacts: {1}" -f $contentCompliance, $outDirUsed)
+        }
+        Exit-WithCode $script:ExitCodes.OK ("InspectOnly done: ENGINEERING_COMPLIANCE={0} CONTENT_COMPLIANCE={1}. Semantic/P2 review still required before -AllowMerge." -f $engineeringCompliance, $contentCompliance)
+    }
+
+    if (-not $ContentReviewPath) {
+        Exit-WithCode $script:ExitCodes.WAITING "-AllowMerge refused: missing -ContentReviewPath (CONTENT_COMPLIANCE=WAIT)."
+    }
+    if (-not $taskWaveKnown -or -not $taskSpecPresent) {
+        Exit-WithCode $script:ExitCodes.WAITING "-AllowMerge refused: task/wave/spec not identifiable (CONTENT_COMPLIANCE=WAIT)."
     }
 
     Write-Host "Re-fetching head SHA to prevent post-review content swap ..." -ForegroundColor DarkGray
@@ -957,6 +1202,15 @@ function Invoke-CaptainReviewMain {
     if ($currentHeadSha -ne $ReviewedHeadSha) {
         Exit-WithCode $script:ExitCodes.SECURITY_ABORT ("Head SHA changed (reviewed={0}, current={1}). Merge aborted." -f $ReviewedHeadSha, $currentHeadSha)
     }
+
+    $contentGate = Test-ContentReviewGate -ContentReviewPath $ContentReviewPath -PrNumber $targetNumber `
+        -TaskId $inferredTask -Wave $inferredWave -HeadSha $currentHeadSha `
+        -SourceSpecPath $taskSpecPath -RequireMergeGate
+    if (-not $contentGate.Ok) {
+        Write-Host $contentGate.Output -ForegroundColor Yellow
+        Exit-WithCode $script:ExitCodes.WAITING ("Content review gate failed or stale ({0}). ACTION=WAIT; no merge." -f $contentGate.Reason)
+    }
+    Write-Host "Content review gate: PASS" -ForegroundColor Green
 
     if (-not $mechanicalGatesPass) {
         Exit-WithCode $script:ExitCodes.NEEDS_CHANGES "Mechanical merge gates not fully satisfied; refuse merge."
