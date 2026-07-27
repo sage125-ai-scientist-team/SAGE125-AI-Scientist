@@ -1,0 +1,1289 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T09
+title: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制
+mission: 建立所有 PR 的自动化质量门禁、跨领域评测和消融基线，并完成可复现、可审计、可打包的发布工程。
+scoring_dimensions:
+- 代码与结果可复现
+- 技术证明
+- 提交完整性
+owner_paths:
+- .github/workflows/**
+- tests/integration/**
+- scripts/eval/**
+- docs/reproducibility/**
+- pyproject.toml/requirements/锁文件
+- LICENSE/SBOM
+forbidden_paths:
+- 不得降低测试标准来让 PR 变绿
+- 共享依赖变更须经队长批准
+- 不替代各任务单测
+dependencies:
+  raw: 横向服务所有任务；向队长提供 CI、评测和发布门禁。
+  upstream: []
+  downstream: []
+branch_series:
+- t09/a-quality-contract
+- t09/b-quality-core
+- t09/c-quality-hardening
+paired_reviewer: 队长 + 受影响模块 owner
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- GitHub Actions：lint/type/unit/integration/security/build，固定 job 名称与测试产物。
+- 无 RAG、无 Reviewer、无 HITL、单智能体、完整系统消融；引用正确率、幻觉率、可证伪性、可执行性、迭代提升、延迟/token/成本。
+- 依赖锁、LICENSE、SBOM/checksum、干净环境复现、旧 Mock/测试/失败 exports 清理、提交包校验器和 release notes。
+definition_of_done:
+- 所有合并通过固定检查；不得通过删除断言、跳过 job 或重命名规避失败。
+- 完整系统与至少 4 个消融基线使用同一题集和评分协议，结果可复跑。
+- 发布包无 API key、无许可数据、旧 Mock/测试残留；从 clone 到核心冒烟可按文档完成。
+quantitative_thresholds:
+- requirement_id: T09-METRIC-001
+  raw_text: 至少 4 个
+  comparator: at_least
+  value: 4
+  unit: 个
+  source_requirement_id: T09-DOD-002
+- requirement_id: T09-METRIC-002
+  raw_text: 12 领域
+  comparator: quantity
+  value: 12
+  unit: 领域
+  source_requirement_id: T09-B-016
+- requirement_id: T09-METRIC-003
+  raw_text: 20 页
+  comparator: quantity
+  value: 20
+  unit: 页
+  source_requirement_id: T09-C-001
+- requirement_id: T09-METRIC-004
+  raw_text: 125 文件
+  comparator: quantity
+  value: 125
+  unit: 文件
+  source_requirement_id: T09-C-001
+- requirement_id: T09-METRIC-005
+  raw_text: 12 领域
+  comparator: quantity
+  value: 12
+  unit: 领域
+  source_requirement_id: T09-C-007
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与质量基线
+      work: 完成协作接入；盘点测试、CI、依赖、文档和 exports；记录当前 208 passed/35 skipped/7 failed 基线，定义稳定的 required check 名称与 owner。
+      deliverable: QA 基线；检查矩阵；T09 审计笔记。
+      evidence: 现有通过率与失败原因明确；分支来自最新 integration。
+    - date: 07/28（周二）
+      focus: CI/评测契约与 Draft PR-A
+      work: 定义 lint/type/unit/integration/security/build、科学指标、消融协议、release manifest 和 DoD；建立基础 workflow、artifact 上传和 benchmark skeleton；开启 Draft PR-A。
+      deliverable: Evaluation RFC；CI skeleton；Draft PR-A。
+      evidence: PR 能触发稳定 job 名；接口可供各任务接入。
+    - date: 07/29（周三）
+      focus: PR-A 完成
+      work: 提交 CI、离线夹具、PR 检查说明和失败产物；同步 integration、验证 workflow，20:00 前转 Ready。
+      deliverable: PR-A Ready；CI 运行链接。
+      evidence: 队长可用固定检查；失败不被隐藏。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: 静态质量与集成夹具
+      work: 新建 B 分支；接入 Ruff、类型检查、覆盖率渐进阈值、固定 Python 版本；构建离线/低成本 E2E fixture。
+      deliverable: lint/type jobs；integration harness。
+      evidence: 不通过删除检查规避历史问题；fixture 不泄密。
+    - date: 07/31（周五）
+      focus: 安全与供应链
+      work: 增加秘密扫描、依赖审计、数据许可和产物 checksum；确定锁文件策略、LICENSE 与 SBOM 方案。
+      deliverable: security jobs；SBOM/lock 方案。
+      evidence: 示例密钥和无许可数据可被检测。
+    - date: 08/01（周六）
+      focus: 清理与 Draft PR-B
+      work: 实现旧 Mock/测试/失败 exports 清理与 release 排除规则；开启 Draft PR-B；完成受影响模块配对审查。
+      deliverable: cleaning validator；Draft PR-B；审查记录。
+      evidence: 旧产物不进入 release；依赖变更有队长批准。
+    - date: 08/02（周日）
+      focus: 黄金集与评分协议
+      work: 整合 T01/T04/T06 gold set，定义引用、检索、多模态、闭环和成本指标；固化同题集评分协议。
+      deliverable: eval datasets；metrics schema。
+      evidence: 版本、许可和计算方式清楚。
+    - date: 08/03（周一）
+      focus: 消融初跑
+      work: 运行 no-RAG、no-reviewer、no-HITL、single-agent 初始基线；保存原始 JSON/CSV 和环境。
+      deliverable: ablation raw results。
+      evidence: 所有配置使用同一题集和协议；结果可重复。
+    - date: 08/04（周二）
+      focus: 跨领域评测
+      work: 运行 12 领域样例，统计通过率、稳定性、引用正确率和迭代改善；生成聚合脚本和图表。
+      deliverable: 12-domain report；aggregation scripts。
+      evidence: 失败类型可定位到任务 owner。
+    - date: 08/05（周三）
+      focus: PR-B Ready
+      work: 同步 integration、运行完整 CI、评测和安全检查；补成本/延迟统计；@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；评测报告 v1。
+      evidence: 报告可一键再生成；P0/P1 关闭。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: 干净复现与打包校验
+      work: 新建 C 分支；在新环境 clone/install/test/run，补故障排除；实现 20 页文档、125 文件、API 说明、凭证清单和 checksums 校验；开启 Draft PR-C。
+      deliverable: clean-room report；packaging validator；Draft PR-C。
+      evidence: 无隐含本地路径；缺材料明确失败。
+    - date: 08/07（周五）
+      focus: 发布材料联调
+      work: 整合技术方案数据表、Qwen/百炼调用凭证清单、125 manifest、重复/Mock/secret 扫描和 release notes。
+      deliverable: RC validation v1；材料缺口表。
+      evidence: 不写入真实密钥；旧产物不混入。
+    - date: 08/08（周六）
+      focus: 全量 CI 与 RC 验证
+      work: 运行 full CI、12 领域评测、125 manifest 校验、随机抽查与安全扫描；同步 integration、@codex review，18:00 前转 Ready。
+      deliverable: RC validation final；PR-C Ready。
+      evidence: P0/P1 关闭；发布候选可复现、可审计。
+code_freeze:
+  date: 08/09（周日）
+  focus: 最终 QA 与交接
+  work: 只修发布阻断；生成 checksums、DoD 汇总、最终 QA 报告和 handoff，核对九项任务验收证据。
+  deliverable: 最终 QA 报告；checksums；handoff。
+  evidence: 发布包完整、无敏感或无许可内容；所有未通过项明确阻断。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不得降低测试标准来让 PR 变绿；共享依赖变更须经队长批准；不替代各任务单测。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 182
+  info_table_index: 86
+  must_deliver_table_index: 87
+  daily_table_index: 88
+requirements:
+- id: T09-MUST-001
+  task_id: T09
+  wave: FINAL
+  category: must_deliver
+  requirement_text: GitHub Actions：lint/type/unit/integration/security/build，固定 job 名称与测试产物。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.1 必须交付
+  source_paragraph_index: 182
+  source_table_index: 87
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: b505b13ed3a8b8d4f1520d20d48458a855a89c9c512c295d0c6acedccfc14b26
+  evidence_required:
+  - test_output
+  - artifact_file
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-MUST-002
+  task_id: T09
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 无 RAG、无 Reviewer、无 HITL、单智能体、完整系统消融；引用正确率、幻觉率、可证伪性、可执行性、迭代提升、延迟/token/成本。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.1 必须交付
+  source_paragraph_index: 182
+  source_table_index: 87
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 46fc6411c3f3cd1dd6d60aeb75ef097ebe83ade3894906d1ad897b45dfd9b1a2
+  evidence_required:
+  - metrics_file
+  - computation_script
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-MUST-003
+  task_id: T09
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 依赖锁、LICENSE、SBOM/checksum、干净环境复现、旧 Mock/测试/失败 exports 清理、提交包校验器和 release notes。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.1 必须交付
+  source_paragraph_index: 182
+  source_table_index: 87
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 70a0fbb695a23ef19e7287da9688a84c8ff322834f9eeb7d57990a70628f751c
+  evidence_required:
+  - test_output
+  - computation_script
+  - artifact_file
+  - reproduction_command
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-DOD-001
+  task_id: T09
+  wave: C
+  category: definition_of_done
+  requirement_text: 所有合并通过固定检查；不得通过删除断言、跳过 job 或重命名规避失败。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.2 Definition of Done
+  source_paragraph_index: 182
+  source_table_index: 87
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 0234727988e0186bc954b01cf4b77530617027210448b942ba110790ed24c2cb
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T09-DOD-002
+  task_id: T09
+  wave: C
+  category: definition_of_done
+  requirement_text: 完整系统与至少 4 个消融基线使用同一题集和评分协议，结果可复跑。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.2 Definition of Done
+  source_paragraph_index: 182
+  source_table_index: 87
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 6ac2c1645d52dd2ec95cb743c3f9d0ffd5cf60ba8bb8c38c731fd6a4faeaedd7
+  evidence_required:
+  - computation_script
+  - dataset_manifest
+  - reproduction_command
+  - raw_results
+  - metrics_file
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T09-METRIC-001
+- id: T09-METRIC-001
+  task_id: T09
+  wave: C
+  category: quantitative_metric
+  requirement_text: 完整系统与至少 4 个消融基线使用同一题集和评分协议，结果可复跑。（定量阈值：至少 4 个）
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.2 Definition of Done
+  source_paragraph_index: 182
+  source_table_index: 87
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 38145871f7bdd8f7a7a11fccb286e98b04f4fcf1d269bad9946ebe6f25a6e145
+  evidence_required:
+  - computation_script
+  - dataset_manifest
+  - reproduction_command
+  - raw_results
+  - metrics_file
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T09-DOD-002
+- id: T09-DOD-003
+  task_id: T09
+  wave: C
+  category: definition_of_done
+  requirement_text: 发布包无 API key、无许可数据、旧 Mock/测试残留；从 clone 到核心冒烟可按文档完成。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.2 Definition of Done
+  source_paragraph_index: 182
+  source_table_index: 87
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: cbe4cfe1b28d8af94045b049be2f5503eea4ceb72e528a1c20eebe3af353d115
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - source_code
+  - documentation
+  - reproduction_command
+  verification_type: test_execution
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T09-A-001
+  task_id: T09
+  wave: A
+  category: daily_work
+  requirement_text: 完成协作接入；盘点测试、CI、依赖、文档和 exports；记录当前 208 passed/35 skipped/7 failed 基线，定义稳定的 required check 名称与 owner。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: 7d27be61f04001bc8b56797c1cc1d1e90d2b9ae030472fd9c33defb6c2a03a2d
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-A-002
+  task_id: T09
+  wave: A
+  category: daily_deliverable
+  requirement_text: QA 基线；检查矩阵；T09 审计笔记。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: cd50d7ad4e46d49fc6021c6d3adde5bdb78a40bf3a2420e33f4d26e93e821830
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-A-003
+  task_id: T09
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 现有通过率与失败原因明确；分支来自最新 integration。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 25eb18c193972afd74d7ae75720d808fa98d8019d28055c0cef35288f85afca5
+  evidence_required:
+  - metrics_file
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-A-004
+  task_id: T09
+  wave: A
+  category: daily_work
+  requirement_text: 定义 lint/type/unit/integration/security/build、科学指标、消融协议、release manifest 和 DoD；建立基础 workflow、artifact 上传和 benchmark skeleton；开启 Draft PR-A。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: 9f2748117c51f58700614c3a967389e286ca7d79503f3b97218460b4e047c53d
+  evidence_required:
+  - metrics_file
+  - computation_script
+  - dataset_manifest
+  - artifact_file
+  - git_commit_reference
+  - raw_results
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-A-005
+  task_id: T09
+  wave: A
+  category: daily_deliverable
+  requirement_text: Evaluation RFC；CI skeleton；Draft PR-A。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: 7423893d89196aacc76c81687329684f141fb84fe9bb25224e2efb79cc9c376c
+  evidence_required:
+  - test_output
+  - documentation
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-A-006
+  task_id: T09
+  wave: A
+  category: acceptance_evidence
+  requirement_text: PR 能触发稳定 job 名；接口可供各任务接入。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: e81dd5c1f91cfa87902500ec861179f2d6c8384f7e064ca2cc154478c0404a38
+  evidence_required:
+  - test_output
+  - source_code
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-A-007
+  task_id: T09
+  wave: A
+  category: daily_work
+  requirement_text: 提交 CI、离线夹具、PR 检查说明和失败产物；同步 integration、验证 workflow，20:00 前转 Ready。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: c7da7e3464bba90b665342f2d2808ac0a809655639d8a417c794919e8643d4cc
+  evidence_required:
+  - test_output
+  - artifact_file
+  - documentation
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-A-008
+  task_id: T09
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；CI 运行链接。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: 34b45656064dcf58ece04653d7ce4d88916e64fba825e517bb2ea92a3c872767
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-A-009
+  task_id: T09
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 队长可用固定检查；失败不被隐藏。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 79706c6b09d90073f3c0b54a1a49b3b75bdbb6d8dd2d361c65167b4da19c95c2
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-001
+  task_id: T09
+  wave: B
+  category: daily_work
+  requirement_text: 新建 B 分支；接入 Ruff、类型检查、覆盖率渐进阈值、固定 Python 版本；构建离线/低成本 E2E fixture。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: 2690b66d4708a907fa7fee594134c0c299bd0921295cfcbc0055caef29761f72
+  evidence_required:
+  - test_output
+  - metrics_file
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-002
+  task_id: T09
+  wave: B
+  category: daily_deliverable
+  requirement_text: lint/type jobs；integration harness。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: 6e9224a3df9289c7afd37366e6240ba452ea848c7f588764f1edb8a4d6b70080
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-003
+  task_id: T09
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 不通过删除检查规避历史问题；fixture 不泄密。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: 602b80c35bb00c6b72414f5a6e37042d984a62a6f214b8bddd183101d05fbbcc
+  evidence_required:
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-004
+  task_id: T09
+  wave: B
+  category: daily_work
+  requirement_text: 增加秘密扫描、依赖审计、数据许可和产物 checksum；确定锁文件策略、LICENSE 与 SBOM 方案。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: 686109e7d52902f605d68757e65b4e900155afc5fe2268496719fcc74c15c4a2
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-005
+  task_id: T09
+  wave: B
+  category: daily_deliverable
+  requirement_text: security jobs；SBOM/lock 方案。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: 051c60f7dc063874791272dbe2c7b0f0b0fcad6ca8d4bb35d00069b16f47651e
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-006
+  task_id: T09
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 示例密钥和无许可数据可被检测。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: 02a6bbb5290da43bb64aa36bcb2e59d715ced8a37da047cbf3033cb87e315be3
+  evidence_required:
+  - dataset_manifest
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-007
+  task_id: T09
+  wave: B
+  category: daily_work
+  requirement_text: 实现旧 Mock/测试/失败 exports 清理与 release 排除规则；开启 Draft PR-B；完成受影响模块配对审查。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: 47668566a0042d733546ff83e06f2252c32b140d601892b17e2bb3e41c75f447
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-008
+  task_id: T09
+  wave: B
+  category: daily_deliverable
+  requirement_text: cleaning validator；Draft PR-B；审查记录。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: 06f66843f664d37d9b9070f209516b621fba424edc0c5f20519ad168033395b1
+  evidence_required:
+  - documentation
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-009
+  task_id: T09
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 旧产物不进入 release；依赖变更有队长批准。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: 5e9fbac19dcfc8d12b604752f595031a14e1a22e1056179b4874865049edf5eb
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-010
+  task_id: T09
+  wave: B
+  category: daily_work
+  requirement_text: 整合 T01/T04/T06 gold set，定义引用、检索、多模态、闭环和成本指标；固化同题集评分协议。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: b0191d1bf98624d647d23f7429230ee4d0fb6464c9323e1c3e6f3649f3a95ef9
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-011
+  task_id: T09
+  wave: B
+  category: daily_deliverable
+  requirement_text: eval datasets；metrics schema。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: a89d8b561808b055110239b8ec203e84a87db5ae3ed720e0a4098cdeef495d3d
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-012
+  task_id: T09
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 版本、许可和计算方式清楚。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: 2f563a91757b903e232d040730edfaac9b37f44523aec3952570ba499cfbcb36
+  evidence_required:
+  - computation_script
+  - dataset_manifest
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-013
+  task_id: T09
+  wave: B
+  category: daily_work
+  requirement_text: 运行 no-RAG、no-reviewer、no-HITL、single-agent 初始基线；保存原始 JSON/CSV 和环境。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: 245b9d966aeebbb44a6f726db2f7df4d53993cb1339cc91554277763998141e7
+  evidence_required:
+  - raw_results
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-014
+  task_id: T09
+  wave: B
+  category: daily_deliverable
+  requirement_text: ablation raw results。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: ea0cee4cdff11af87b8ac306a7899d847d167230a77b0f6d4006c576495ead53
+  evidence_required:
+  - raw_results
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-015
+  task_id: T09
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 所有配置使用同一题集和协议；结果可重复。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: cf09aaf6532280260f2eb2eba12c82ded3a08fdd3816773d68069372fc968414
+  evidence_required:
+  - dataset_manifest
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-016
+  task_id: T09
+  wave: B
+  category: daily_work
+  requirement_text: 运行 12 领域样例，统计通过率、稳定性、引用正确率和迭代改善；生成聚合脚本和图表。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 71476f6e01d69d772f74d1bce3b7ddeab3497d533db1f6d7d846d347bbf5672e
+  evidence_required:
+  - metrics_file
+  - computation_script
+  - artifact_file
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T09-METRIC-002
+- id: T09-METRIC-002
+  task_id: T09
+  wave: B
+  category: quantitative_metric
+  requirement_text: 运行 12 领域样例，统计通过率、稳定性、引用正确率和迭代改善；生成聚合脚本和图表。（定量阈值：12 领域）
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 1bf78ba46994a40aa9bc85dc0a23b5c1c8bf58ef80bd23959c8494b4b19699dc
+  evidence_required:
+  - metrics_file
+  - computation_script
+  - artifact_file
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T09-B-016
+- id: T09-B-017
+  task_id: T09
+  wave: B
+  category: daily_deliverable
+  requirement_text: 12-domain report；aggregation scripts。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: 05a6c1e64fa70cbe6a4d6d2b990e04f7a46eea91db304d0f8aca4b9d5f0303c7
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-018
+  task_id: T09
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 失败类型可定位到任务 owner。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: 1c16482024c70cd66c454ae0bcb455f86162d01fa4ba8f1a0c16034fdf689655
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-019
+  task_id: T09
+  wave: B
+  category: daily_work
+  requirement_text: 同步 integration、运行完整 CI、评测和安全检查；补成本/延迟统计；@codex review，20:00 前转 Ready。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: a0ac7685d9d91e05f31ea71e7fc63891aa3ce9d9b1e40f115c9bb93a107ffb07
+  evidence_required:
+  - test_output
+  - metrics_file
+  - computation_script
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-020
+  task_id: T09
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；评测报告 v1。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: 34d2e6db001c19c84b67ddd115ad885e65150ef945ea730886accdd2d23cf835
+  evidence_required:
+  - computation_script
+  - artifact_file
+  - git_commit_reference
+  - dataset_manifest
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-B-021
+  task_id: T09
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 报告可一键再生成；P0/P1 关闭。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: b41f6a8c4a56006e89f373c0f4f671a219556139e822c35460cf8b1f14980320
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-C-001
+  task_id: T09
+  wave: C
+  category: daily_work
+  requirement_text: 新建 C 分支；在新环境 clone/install/test/run，补故障排除；实现 20 页文档、125 文件、API 说明、凭证清单和 checksums 校验；开启 Draft PR-C。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: efc0a4a8555201b58b28f2f148c0564e7e9ec781e1babca059ce28e0d8eaf47d
+  evidence_required:
+  - artifact_file
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T09-METRIC-003
+  - T09-METRIC-004
+- id: T09-METRIC-003
+  task_id: T09
+  wave: C
+  category: quantitative_metric
+  requirement_text: 新建 C 分支；在新环境 clone/install/test/run，补故障排除；实现 20 页文档、125 文件、API 说明、凭证清单和 checksums 校验；开启 Draft PR-C。（定量阈值：20 页）
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: c082fc38aa58b1298c68c8553e03d04884e1c9480b022c380ecba179d4456277
+  evidence_required:
+  - artifact_file
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T09-C-001
+- id: T09-METRIC-004
+  task_id: T09
+  wave: C
+  category: quantitative_metric
+  requirement_text: 新建 C 分支；在新环境 clone/install/test/run，补故障排除；实现 20 页文档、125 文件、API 说明、凭证清单和 checksums 校验；开启 Draft PR-C。（定量阈值：125 文件）
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: 4cb0de7f48ac9f28c410be33d0d2923a96d0126536a1dd01acb7092baf0be38d
+  evidence_required:
+  - artifact_file
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T09-C-001
+- id: T09-C-002
+  task_id: T09
+  wave: C
+  category: daily_deliverable
+  requirement_text: clean-room report；packaging validator；Draft PR-C。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: 7fc3fbcae23e10ce882062ceeedd904f503f490dac757a422274d36cbfd179fc
+  evidence_required:
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-C-003
+  task_id: T09
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 无隐含本地路径；缺材料明确失败。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: 4078171f45e2d2fc92d146bcada5e01967f2fa4a05ea6bd6626d2efec1e6f191
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-C-004
+  task_id: T09
+  wave: C
+  category: daily_work
+  requirement_text: 整合技术方案数据表、Qwen/百炼调用凭证清单、125 manifest、重复/Mock/secret 扫描和 release notes。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: b715962b0c427b34046c43d56bbff7e5b599993a4b2bbca58f648e9747be4f03
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-C-005
+  task_id: T09
+  wave: C
+  category: daily_deliverable
+  requirement_text: RC validation v1；材料缺口表。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: 5f3dda8c1903ec0704506258c8002235dffd3499abcb1ced6a4c7796254636fb
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-C-006
+  task_id: T09
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 不写入真实密钥；旧产物不混入。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: 8660d73a8dc4c301eff19fbe26d5e3798f42aee04fd3a261b0cca16698ec8515
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T09-C-007
+  task_id: T09
+  wave: C
+  category: daily_work
+  requirement_text: 运行 full CI、12 领域评测、125 manifest 校验、随机抽查与安全扫描；同步 integration、@codex review，18:00 前转 Ready。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 907c4e67e57761aed64ccf870b62b3cf3c2a6d75e7e364c662834b265441f265
+  evidence_required:
+  - test_output
+  - computation_script
+  - dataset_manifest
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T09-METRIC-005
+- id: T09-METRIC-005
+  task_id: T09
+  wave: C
+  category: quantitative_metric
+  requirement_text: 运行 full CI、12 领域评测、125 manifest 校验、随机抽查与安全扫描；同步 integration、@codex review，18:00 前转 Ready。（定量阈值：12 领域）
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 638061a91c3e72c187118bf5f16679b10761e404742cfd240ca2962f408834cb
+  evidence_required:
+  - test_output
+  - computation_script
+  - dataset_manifest
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T09-C-007
+- id: T09-C-008
+  task_id: T09
+  wave: C
+  category: daily_deliverable
+  requirement_text: RC validation final；PR-C Ready。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: 270111a582efcc6f7a670325c118039e74b5ef447edf757eba757ed50dbc685f
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-C-009
+  task_id: T09
+  wave: C
+  category: acceptance_evidence
+  requirement_text: P0/P1 关闭；发布候选可复现、可审计。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: 8e5cf88ab1e4ef4b76b55ee5ac3bb3318e9d08433f38721406b5bbad8c0c5bdd
+  evidence_required:
+  - reproduction_command
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-FREEZE-001
+  task_id: T09
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 只修发布阻断；生成 checksums、DoD 汇总、最终 QA 报告和 handoff，核对九项任务验收证据。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 6a9cf6c348a6774d0e28e7a9b83e760910b798e8c7c3ebb34fc7716699db5212
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-FREEZE-002
+  task_id: T09
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 最终 QA 报告；checksums；handoff。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: 4a4fce4d6e53b00ef1afd715d0c0399601f67475eeb9a561bc86b884cf706bfc
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-FREEZE-003
+  task_id: T09
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 发布包完整、无敏感或无许可内容；所有未通过项明确阻断。
+  source_heading: T09. 队员 9（姓名待填）— CI、评测消融、复现工程与提交材料质量控制 › T09.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 182
+  source_table_index: 88
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: 466deabb9a8e51a6f2a6d3c32d929d8906964619081e62acab2e6787c8413df7
+  evidence_required:
+  - dataset_manifest
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-HANDOFF-001
+  task_id: T09
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-HANDOFF-002
+  task_id: T09
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-HANDOFF-003
+  task_id: T09
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T09-HANDOFF-004
+  task_id: T09
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []

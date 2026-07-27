@@ -1,0 +1,1161 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T03
+title: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环
+mission: 确保人工反馈真正改变下一轮输入，并让 Validator/质量门基于完整产物执行可阻断验证，而不是仅记录意见或只检查题目。
+scoring_dimensions:
+- 反馈迭代
+- 科学真实性
+- 应用稳定性
+owner_paths:
+- app/feedback/**
+- app/validation/**
+- app/quality/**
+- app/contracts/validation.py
+- tests/validation/**
+- docs/modules/T03/**
+forbidden_paths:
+- 不直接重构 pipeline.py 或 API 路由
+- 向 T02/T08 提供稳定接口
+dependencies:
+  raw: 上游 T01；与 T02/T08 双向联调；下游 T07。
+  upstream:
+  - T01
+  - T02
+  - T08
+  downstream:
+  - T07
+branch_series:
+- t03/a-validation-contract
+- t03/b-validation-core
+- t03/c-validation-hardening
+paired_reviewer: T02
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- FeedbackRecord、FeedbackDecision、ValidationContext、GateResult、Severity 和 audit lineage。
+- 人工意见进入下一轮；系统可接受、部分接受或拒绝并给出可审计理由。
+- Validator 同时接收 ResearchPlan、EvidenceCards、AgentTrace、execution_metadata 和 question_item；缺字段、虚构引用、错误 actual_execution、串题等均可阻断。
+definition_of_done:
+- 下一轮 prompt 可找到 feedback_id 和具体意见，输出变化或给出可审计拒绝理由。
+- P0/P1 未解决时 validation_status 不得为 passed。
+- 至少 10 个无效输入、恶意反馈、缺失产物和并发失败用例；审计链不可丢失。
+quantitative_thresholds:
+- requirement_id: T03-METRIC-001
+  raw_text: 至少 10 个
+  comparator: at_least
+  value: 10
+  unit: 个
+  source_requirement_id: T03-DOD-003
+- requirement_id: T03-METRIC-002
+  raw_text: 12 个
+  comparator: quantity
+  value: 12
+  unit: 个
+  source_requirement_id: T03-C-001
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与基线复现
+      work: 完成协作接入；复现 feedback 只写历史、Validator 只收到 question_item 的问题；盘点现有质量门和状态字段。
+      deliverable: 失败样例；Validator 输入矩阵；T03 审计笔记。
+      evidence: 旧链路问题可重复；分支从最新 integration 创建。
+    - date: 07/28（周二）
+      focus: 契约与红灯测试
+      work: 设计 FeedbackRecord、FeedbackDecision、ValidationContext、GateResult、Severity 和 lineage；编写反馈传播、完整输入和阻断规则红灯测试；开启 Draft PR-A。
+      deliverable: 接口 RFC；JSON 示例；红灯测试；Draft PR-A。
+      evidence: 字段覆盖版本、来源、决策和审计；旧代码稳定失败。
+    - date: 07/29（周三）
+      focus: PR-A 完成
+      work: 实现 Schema、存储适配和服务接口；与 T02/T08 对齐；同步 integration、模块/契约测试，20:00 前转 Ready。
+      deliverable: PR-A Ready；接口冻结记录。
+      evidence: T02/T08 可依契约开发；无 pipeline/API 越权修改。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: 反馈持久化
+      work: 新建 B 分支；实现保存、去重、权限与输入长度校验、版本关联和幂等请求。
+      deliverable: FeedbackService。
+      evidence: 重复请求不重复写入；非法输入安全失败。
+    - date: 07/31（周五）
+      focus: RevisionContext
+      work: 将有效反馈结构化为下一轮输入；支持接受、部分接受、拒绝和理由；保留 feedback_id 与原始版本。
+      deliverable: RevisionContext builder。
+      evidence: 反馈决策和来源可追溯。
+    - date: 08/01（周六）
+      focus: 完整 Validator 与 Draft PR-B
+      work: 让 Validator 验证计划、证据、轨迹、执行元数据和问题项；实现严重级别、阻断状态机和 gate 聚合；开启 Draft PR-B。
+      deliverable: ValidationContext validator；Gate aggregator；Draft PR-B。
+      evidence: 缺一关键对象即失败；P0/P1 不误放行。
+    - date: 08/02（周日）
+      focus: 审计链与攻击测试
+      work: 记录反馈→版本→差异→关闭状态；增加 prompt injection、超长/空反馈、非法 ID、重复与并发提交用例。
+      deliverable: Audit lineage；安全失败用例。
+      evidence: 攻击输入不污染后续版本；审计链可查询。
+    - date: 08/03（周一）
+      focus: T02/T08 联调
+      work: 完成 T02 配对审查；对接 feedback API、恢复运行和版本事件；补接口契约、错误码和迁移测试。
+      deliverable: 联调提交；配对审查记录。
+      evidence: 反馈不再只是日志；API 幂等。
+    - date: 08/04（周二）
+      focus: E2E 与质量指标
+      work: 运行“提交反馈→恢复→新版本→验证”E2E；输出 gate 通过率、错误类型和修订关闭率，供 T08/T09 使用。
+      deliverable: E2E 演示记录；metrics payload。
+      evidence: 输出变化或可审计拒绝；指标按题/版本聚合。
+    - date: 08/05（周三）
+      focus: PR-B Ready
+      work: 同步 integration、运行状态转换/安全/集成测试；补迁移、回滚和限制；@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；测试报告。
+      evidence: 状态转换全覆盖；P0/P1 关闭；分支 up to date。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: 跨领域校准
+      work: 新建 C 分支；对 12 个代表题运行 Schema/质量门，校正过严或过松规则；补并发、恶意输入和缺产物回归；开启 Draft PR-C。
+      deliverable: 校准报告；Draft PR-C。
+      evidence: 不存在普遍误阻断或缺输入仍通过。
+    - date: 08/07（周五）
+      focus: 发布联调
+      work: 完成 API 契约、迁移、运维文档、错误码和指标说明；与 T07 批量 gate 联调；处理 Codex/配对审查。
+      deliverable: 接口文档；审查修订提交。
+      evidence: 批量失败题不进入 complete；无未登记共享改动。
+    - date: 08/08（周六）
+      focus: 冻结前审计
+      work: 抽查旗舰、Q028 和批量输出的 Validator 输入与阻断结果；同步 integration、全测试、@codex review，18:00 前转 Ready。
+      deliverable: 冻结审计表；PR-C Ready。
+      evidence: 无“缺输入仍通过”；P0/P1 关闭。
+code_freeze:
+  date: 08/09（周日）
+  focus: Code Freeze 与交接
+  work: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  deliverable: 阻断修复或“无变更”确认；最终 handoff 包。
+  evidence: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不直接重构 pipeline.py 或 API 路由；向 T02/T08 提供稳定接口。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 146
+  info_table_index: 62
+  must_deliver_table_index: 63
+  daily_table_index: 64
+requirements:
+- id: T03-MUST-001
+  task_id: T03
+  wave: FINAL
+  category: must_deliver
+  requirement_text: FeedbackRecord、FeedbackDecision、ValidationContext、GateResult、Severity 和 audit lineage。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.1 必须交付
+  source_paragraph_index: 146
+  source_table_index: 63
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: df2539fa7f2f993dd49f5774fa75e224e0ffc5627e78eb0d8aa849acfdc374ea
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-MUST-002
+  task_id: T03
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 人工意见进入下一轮；系统可接受、部分接受或拒绝并给出可审计理由。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.1 必须交付
+  source_paragraph_index: 146
+  source_table_index: 63
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: df87a02e1215dc3f80f9dcf5f9082dd042341ff107f3a6b5939f54250e008f85
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-MUST-003
+  task_id: T03
+  wave: FINAL
+  category: must_deliver
+  requirement_text: Validator 同时接收 ResearchPlan、EvidenceCards、AgentTrace、execution_metadata 和 question_item；缺字段、虚构引用、错误 actual_execution、串题等均可阻断。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.1 必须交付
+  source_paragraph_index: 146
+  source_table_index: 63
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: e7c436c28a57d7b41b4a05dfe52d75f7b7c44ac694d41f459975916d0b20f4b7
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T03-DOD-001
+  task_id: T03
+  wave: C
+  category: definition_of_done
+  requirement_text: 下一轮 prompt 可找到 feedback_id 和具体意见，输出变化或给出可审计拒绝理由。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.2 Definition of Done
+  source_paragraph_index: 146
+  source_table_index: 63
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: acd515e1b8aaeee8cf2ad72498ccf120961f6359274a2f2d3952dfb3cb578eb8
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-DOD-002
+  task_id: T03
+  wave: C
+  category: definition_of_done
+  requirement_text: P0/P1 未解决时 validation_status 不得为 passed。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.2 Definition of Done
+  source_paragraph_index: 146
+  source_table_index: 63
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: c1741aadb70489b805ebeb3e5ca932980b081ad2c95e070785f544cd6f3e9200
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-DOD-003
+  task_id: T03
+  wave: C
+  category: definition_of_done
+  requirement_text: 至少 10 个无效输入、恶意反馈、缺失产物和并发失败用例；审计链不可丢失。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.2 Definition of Done
+  source_paragraph_index: 146
+  source_table_index: 63
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: ecd4018bf4b319f0ea7d5ca64a02d41301ff8965056933177c26b1f29d7f5e99
+  evidence_required:
+  - test_output
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T03-METRIC-001
+- id: T03-METRIC-001
+  task_id: T03
+  wave: C
+  category: quantitative_metric
+  requirement_text: 至少 10 个无效输入、恶意反馈、缺失产物和并发失败用例；审计链不可丢失。（定量阈值：至少 10 个）
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.2 Definition of Done
+  source_paragraph_index: 146
+  source_table_index: 63
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: c8dc6a7b298f6678c154336a0d569ca30a77a43fd3645c37e091627995eabd44
+  evidence_required:
+  - test_output
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T03-DOD-003
+- id: T03-A-001
+  task_id: T03
+  wave: A
+  category: daily_work
+  requirement_text: 完成协作接入；复现 feedback 只写历史、Validator 只收到 question_item 的问题；盘点现有质量门和状态字段。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: 5ce070b50a62f1b3f3daad37e78fd1232f8186fb2aa6a29a4418cacf75f43cf9
+  evidence_required:
+  - source_code
+  - reproduction_command
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-A-002
+  task_id: T03
+  wave: A
+  category: daily_deliverable
+  requirement_text: 失败样例；Validator 输入矩阵；T03 审计笔记。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: a52541fe22a7c6353b5997a1152571226525dc1ccb7c1ab766001f2db3f890b1
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-A-003
+  task_id: T03
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 旧链路问题可重复；分支从最新 integration 创建。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 157a014122167ae583b82b9b141b974cf642feadcfa7b66e46875e41a375f071
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-A-004
+  task_id: T03
+  wave: A
+  category: daily_work
+  requirement_text: 设计 FeedbackRecord、FeedbackDecision、ValidationContext、GateResult、Severity 和 lineage；编写反馈传播、完整输入和阻断规则红灯测试；开启 Draft PR-A。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: 828cbb513bd0ebdc9583121dbf604b864dbf406b7247cd2cb2005e6dd2dc3234
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-A-005
+  task_id: T03
+  wave: A
+  category: daily_deliverable
+  requirement_text: 接口 RFC；JSON 示例；红灯测试；Draft PR-A。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: 55412183b9ba5f23b4b2ac9514aeaddd7498b5a6e1448bd95a5f4541a3b4df5c
+  evidence_required:
+  - test_output
+  - raw_results
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-A-006
+  task_id: T03
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 字段覆盖版本、来源、决策和审计；旧代码稳定失败。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: c116a81e37493f974bacfddde404b4fd70ded234d3087a35ee24be1bdc4bd12c
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-A-007
+  task_id: T03
+  wave: A
+  category: daily_work
+  requirement_text: 实现 Schema、存储适配和服务接口；与 T02/T08 对齐；同步 integration、模块/契约测试，20:00 前转 Ready。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: 27c3fca61bc280735f6c4ae0e62f1fc0d9e98d5aa04a327a7d28a60c0d647fc7
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-A-008
+  task_id: T03
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；接口冻结记录。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: 308aa44e39f3ac40ef80c9b9a1133d04cebab70b87ba294e7787e2165c1d1864
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-A-009
+  task_id: T03
+  wave: A
+  category: acceptance_evidence
+  requirement_text: T02/T08 可依契约开发；无 pipeline/API 越权修改。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 8726ae91aea3f8b1591dfb66b6b3037ceb872e0a612d975a283dd9e48421ffec
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-001
+  task_id: T03
+  wave: B
+  category: daily_work
+  requirement_text: 新建 B 分支；实现保存、去重、权限与输入长度校验、版本关联和幂等请求。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: dbdf8d2da8488612195a42de48723ee4cf5b5f712cc405ea86de50f436f49cea
+  evidence_required:
+  - source_code
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-002
+  task_id: T03
+  wave: B
+  category: daily_deliverable
+  requirement_text: FeedbackService。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: e59ebd3500e192379ebba8a7eb7542c80355c285a92ab64ea08535130722cc35
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-003
+  task_id: T03
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 重复请求不重复写入；非法输入安全失败。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: f391b6ff193b2ca03ada97e43d178df0750b0072103e2efffe8642fe19e93297
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-004
+  task_id: T03
+  wave: B
+  category: daily_work
+  requirement_text: 将有效反馈结构化为下一轮输入；支持接受、部分接受、拒绝和理由；保留 feedback_id 与原始版本。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: f17a39ce6aeff5891132654c6df6cd621c5211e741dccbdc16ba00d7145de423
+  evidence_required:
+  - raw_results
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-005
+  task_id: T03
+  wave: B
+  category: daily_deliverable
+  requirement_text: RevisionContext builder。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: 30a3345455c8e5a0462b5cc1119e796fa003890ca6d428e86017d1cfbbaca737
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-006
+  task_id: T03
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 反馈决策和来源可追溯。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: 3be7cd1623d0c8f945f9784ab8ece1535eb2f74a2067250c3bd601ea4ae94b54
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-007
+  task_id: T03
+  wave: B
+  category: daily_work
+  requirement_text: 让 Validator 验证计划、证据、轨迹、执行元数据和问题项；实现严重级别、阻断状态机和 gate 聚合；开启 Draft PR-B。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: de5a9bc29d09551d9b1470dd55ce43d4dc32e84164c6f06cb4bb0df8273b7fa7
+  evidence_required:
+  - computation_script
+  - source_code
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-008
+  task_id: T03
+  wave: B
+  category: daily_deliverable
+  requirement_text: ValidationContext validator；Gate aggregator；Draft PR-B。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: ace998c42391b1c53e564fb62a456cbf79d14196434040f571af72f8a8849535
+  evidence_required:
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-009
+  task_id: T03
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 缺一关键对象即失败；P0/P1 不误放行。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: d1ebb8c5302caa3c807614ecc59b245c4bebf5c1df3ec3a75117fb39d3bb7647
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-010
+  task_id: T03
+  wave: B
+  category: daily_work
+  requirement_text: 记录反馈→版本→差异→关闭状态；增加 prompt injection、超长/空反馈、非法 ID、重复与并发提交用例。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: 4b0662c8ca670be2b88a314a7585318251f5a9e20077397587bb691cbc29ed42
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-011
+  task_id: T03
+  wave: B
+  category: daily_deliverable
+  requirement_text: Audit lineage；安全失败用例。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: 81e581316dde5f7a7872e281d86d46e06a22ba317d7f58f74c19013fdeafa415
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-012
+  task_id: T03
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 攻击输入不污染后续版本；审计链可查询。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: 4a4fd7415b99725ab8d2a55769b50750bcfd0745828f974de7cc5caea8e7e403
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-013
+  task_id: T03
+  wave: B
+  category: daily_work
+  requirement_text: 完成 T02 配对审查；对接 feedback API、恢复运行和版本事件；补接口契约、错误码和迁移测试。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: af5a4d94722e80e4324d6f4e31086bdf1e3158043072a4005d1816408d771e23
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-014
+  task_id: T03
+  wave: B
+  category: daily_deliverable
+  requirement_text: 联调提交；配对审查记录。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: 0eec42bf6afa30260b9fd3e6d62730ac9826e0fc5c980ba2691768efee669ed4
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-015
+  task_id: T03
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 反馈不再只是日志；API 幂等。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: 4442e543a10b5a3873edee3fb7e6c599962c96618c0c5932007105aa6d3bb558
+  evidence_required:
+  - raw_results
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-016
+  task_id: T03
+  wave: B
+  category: daily_work
+  requirement_text: 运行“提交反馈→恢复→新版本→验证”E2E；输出 gate 通过率、错误类型和修订关闭率，供 T08/T09 使用。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 777568b59b9a1775a1d4e897883d00f439e28b3f901dd5df4abfd6bfc8b958e3
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-017
+  task_id: T03
+  wave: B
+  category: daily_deliverable
+  requirement_text: E2E 演示记录；metrics payload。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: 1205b564f5459c7f4939f5db63fc06b2916edd45efb3d81a193ad9be56411beb
+  evidence_required:
+  - test_output
+  - metrics_file
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-018
+  task_id: T03
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 输出变化或可审计拒绝；指标按题/版本聚合。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: 93f84338963a6598e09aa31be5ceca8b9831550b97151144ebb8f66d4524fcb1
+  evidence_required:
+  - metrics_file
+  - computation_script
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-019
+  task_id: T03
+  wave: B
+  category: daily_work
+  requirement_text: 同步 integration、运行状态转换/安全/集成测试；补迁移、回滚和限制；@codex review，20:00 前转 Ready。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: 9f6ee6b4d68656dabbc4200d97ed3f4b44707c3f9af6052e0359851101451bd6
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-020
+  task_id: T03
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；测试报告。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: 708aefc35f9e1a0bd8b5fff3c7265e4c7c66c3ef3e6489fa69048ea583fe1fd4
+  evidence_required:
+  - test_output
+  - artifact_file
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-B-021
+  task_id: T03
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 状态转换全覆盖；P0/P1 关闭；分支 up to date。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: 72175281977cde155a20ea1f9ada51282514691d1b94e371011fb4aacfd80ee4
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-C-001
+  task_id: T03
+  wave: C
+  category: daily_work
+  requirement_text: 新建 C 分支；对 12 个代表题运行 Schema/质量门，校正过严或过松规则；补并发、恶意输入和缺产物回归；开启 Draft PR-C。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: d32c666c01c35f286d17ce10ef06db672c0f39f6e672eb4d7e2a137cd2ef6716
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T03-METRIC-002
+- id: T03-METRIC-002
+  task_id: T03
+  wave: C
+  category: quantitative_metric
+  requirement_text: 新建 C 分支；对 12 个代表题运行 Schema/质量门，校正过严或过松规则；补并发、恶意输入和缺产物回归；开启 Draft PR-C。（定量阈值：12 个）
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: 45f6c55684d6463e00fe1429aa2c027463ab13ff141172850af6a9bd845ba7bc
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T03-C-001
+- id: T03-C-002
+  task_id: T03
+  wave: C
+  category: daily_deliverable
+  requirement_text: 校准报告；Draft PR-C。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: 4a912fa761a43bdb575df65ccabe81ced69ed116bd280d2bcf65a48dea1ea1ec
+  evidence_required:
+  - artifact_file
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-C-003
+  task_id: T03
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 不存在普遍误阻断或缺输入仍通过。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: 9b8b38691ff06ca0903cc6bd7d0720691bcaeaa40d533858f23d4dd145826c1e
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-C-004
+  task_id: T03
+  wave: C
+  category: daily_work
+  requirement_text: 完成 API 契约、迁移、运维文档、错误码和指标说明；与 T07 批量 gate 联调；处理 Codex/配对审查。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: dddd0a6a7ea728a20d7c83eab7f69a06a01454799089924563a03a19e37cf9ea
+  evidence_required:
+  - metrics_file
+  - source_code
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-C-005
+  task_id: T03
+  wave: C
+  category: daily_deliverable
+  requirement_text: 接口文档；审查修订提交。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: fee6b3d64c8239ff6be0750ae18e50aee5264efd1dcfc968a37481914563a7a1
+  evidence_required:
+  - source_code
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-C-006
+  task_id: T03
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 批量失败题不进入 complete；无未登记共享改动。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: b424ac7ca9d92c2499857daeeae4458d81888c7971bd9bf738d7519c56bacca3
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-C-007
+  task_id: T03
+  wave: C
+  category: daily_work
+  requirement_text: 抽查旗舰、Q028 和批量输出的 Validator 输入与阻断结果；同步 integration、全测试、@codex review，18:00 前转 Ready。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 470f18966d0fa786b0aebfc65ec3e97990ee9fc74a2f00bb3a69b5375597e364
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-C-008
+  task_id: T03
+  wave: C
+  category: daily_deliverable
+  requirement_text: 冻结审计表；PR-C Ready。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: 51236049a6bada9789bf0c051389e7c55b222e48b2a91d743eded7afbb4695da
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-C-009
+  task_id: T03
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 无“缺输入仍通过”；P0/P1 关闭。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: 79e3b787d31c460a0a9096ad0e36e913b7dd46582d7f19e2019c5297a6e2a1ee
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-FREEZE-001
+  task_id: T03
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 7d5941104714831cac0e87190db6bbfd2072f1cf43cd0471bd6360ac19217bfb
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-FREEZE-002
+  task_id: T03
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 阻断修复或“无变更”确认；最终 handoff 包。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: 070372ce4f2d5f34256583cc585a87f2c4e26b41a8d6754426d9c8e250e65653
+  evidence_required:
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-FREEZE-003
+  task_id: T03
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+  source_heading: T03. 队员 3（姓名待填）— 人在回路、SchemaValidator 与质量门闭环 › T03.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 146
+  source_table_index: 64
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: de864e07b9c6ad7d1c585a6a6a67256e2955ed78416873a1fb7d218e99f8a285
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-HANDOFF-001
+  task_id: T03
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-HANDOFF-002
+  task_id: T03
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-HANDOFF-003
+  task_id: T03
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T03-HANDOFF-004
+  task_id: T03
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []

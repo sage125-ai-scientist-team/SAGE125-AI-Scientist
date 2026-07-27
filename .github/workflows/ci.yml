@@ -10,6 +10,12 @@ on:
 permissions:
   contents: read
 
+env:
+  MOCK_LLM: "true"
+  # Windows runners must use UTF-8 because the suite emits Chinese text.
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
+
 jobs:
   lint:
     runs-on: windows-latest
@@ -21,9 +27,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install pinned dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -X utf8 -m pip install -r requirements.txt
       - name: Run Wave A lint contract
-        run: python scripts/eval/wave_a_quality.py lint
+        run: python -X utf8 scripts/eval/wave_a_quality.py lint
+
   type:
     runs-on: windows-latest
     timeout-minutes: 10
@@ -34,9 +41,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install pinned dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -X utf8 -m pip install -r requirements.txt
       - name: Run Wave A type contract
-        run: python scripts/eval/wave_a_quality.py type
+        run: python -X utf8 scripts/eval/wave_a_quality.py type
+
   unit:
     runs-on: windows-latest
     timeout-minutes: 30
@@ -47,18 +55,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install pinned dependencies
-        run: python -m pip install -r requirements.txt
-      - name: Run offline unit baseline
-        env:
-          MOCK_LLM: "true"
-        run: python -m pytest -q --ignore=tests/integration --junitxml "${{ runner.temp }}/unit-junit.xml"
-      - name: Upload unit results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-results
-          path: ${{ runner.temp }}/unit-junit.xml
-          if-no-files-found: warn
+        run: python -X utf8 -m pip install -r requirements.txt
+      - name: Run offline unit suite
+        run: python -X utf8 -m pytest -q --ignore=tests/integration
+
   integration:
     runs-on: windows-latest
     timeout-minutes: 15
@@ -69,18 +69,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install pinned dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -X utf8 -m pip install -r requirements.txt
       - name: Run offline integration fixture
-        env:
-          MOCK_LLM: "true"
-        run: python -m pytest -q tests/integration --junitxml "${{ runner.temp }}/integration-junit.xml"
-      - name: Upload integration results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-results
-          path: ${{ runner.temp }}/integration-junit.xml
-          if-no-files-found: warn
+        run: python -X utf8 -m pytest -q tests/integration
+
   security:
     runs-on: windows-latest
     timeout-minutes: 15
@@ -91,9 +83,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install pinned dependencies
-        run: python -m pip install -r requirements.txt
-      - name: Run existing project security audit
-        run: python scripts/audit_project.py
+        run: python -X utf8 -m pip install -r requirements.txt
+      - name: Run project security audit
+        run: python -X utf8 scripts/audit_project.py
+
   build:
     runs-on: windows-latest
     timeout-minutes: 15
@@ -104,10 +97,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install pinned dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -X utf8 -m pip install -r requirements.txt
       - name: Compile supported Python sources
-        run: python -m compileall -q app scripts/eval
-      - name: Validate benchmark dry run
-        run: python scripts/eval/benchmark_skeleton.py --dry-run --output "${{ runner.temp }}/benchmark.json"
-      - name: Validate benchmark schema
-        run: python scripts/eval/wave_a_quality.py validate-result --result "${{ runner.temp }}/benchmark.json"
+        run: python -X utf8 -m compileall -q app scripts/eval
+      - name: Create benchmark dry-run manifest
+        run: python -X utf8 scripts/eval/benchmark_skeleton.py --dry-run --output "${{ runner.temp }}/benchmark.json"
+      - name: Validate benchmark dry-run manifest
+        run: python -X utf8 scripts/eval/wave_a_quality.py validate-result --result "${{ runner.temp }}/benchmark.json"

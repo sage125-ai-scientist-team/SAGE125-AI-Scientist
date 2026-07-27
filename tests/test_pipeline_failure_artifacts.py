@@ -10,9 +10,14 @@ import pytest
 
 from app.agents.base import AgentOutputError
 from app.workflow.pipeline import run_pipeline_with_state
+from tests.helpers_questions_fixture import write_minimal_questions_fixture
 
 
-def test_first_agent_failure_persists_partial_state(monkeypatch):
+def test_first_agent_failure_persists_partial_state(monkeypatch, tmp_path):
+    """First-agent failure keeps partial artifacts even without repo questions_125.json."""
+    fixture = write_minimal_questions_fixture(tmp_path / "questions_125.json", question_id="Q001")
+    monkeypatch.setenv("SAGE_QUESTIONS_PATH", str(fixture))
+
     def _fail(*_args, **_kwargs):
         raise AgentOutputError("synthetic connection failure")
 
@@ -32,4 +37,3 @@ def test_first_agent_failure_persists_partial_state(monkeypatch):
     status = json.loads((run_dir / "run_status.json").read_text(encoding="utf-8"))
     assert status["status"] == "failed"
     assert any(event.get("status") == "failed" for event in events)
-

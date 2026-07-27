@@ -1,0 +1,1489 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T01
+title: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用
+mission: 将仅含标题和元数据的检索结果升级为可被后续智能体读取、逐条核验并回链到文献原文位置的证据系统。
+scoring_dimensions:
+- 科学价值
+- 事实准确性
+- 引用可靠性
+- 结果可复现性
+owner_paths:
+- app/evidence/**
+- app/contracts/evidence.py
+- tests/evidence/**
+- docs/modules/T01/**
+forbidden_paths:
+- 不得直接修改 app/workflow/pipeline.py
+- 工作流接入由 T02 根据冻结接口完成
+dependencies:
+  raw: 上游 T04；下游 T02、T03、T07、T08。
+  upstream:
+  - T04
+  downstream:
+  - T02
+  - T03
+  - T07
+  - T08
+branch_series:
+- t01/a-evidence-contract
+- t01/b-evidence-core
+- t01/c-evidence-hardening
+paired_reviewer: T04
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- EvidenceCard、ClaimEvidenceLink、EvidenceBundle：包含 source_id、quote、page/section/locator、DOI/URL、作者、年份、内容哈希、支持关系、置信度与 token 截断记录。
+- 全文证据受控进入 EvidenceExtractor、HypothesisGenerator、ExperimentDesigner；标题、DOI 和问题册不得单独支持事实。
+- 事实—证据支持检查器、可点击引用渲染、Q028 回归案例和 30 条人工标注黄金集。
+definition_of_done:
+- 代表性报告中的事实性结论均可回到文献、页码/章节与原文片段；证据 ID 必须真实存在。
+- 30 条黄金样本支持关系精确率目标不低于 90%；不确定结论必须降级为“待核验”。
+- Q028 不再出现不存在的 booklet_excerpt_Q028，也不得将单一癌种证据无条件外推到所有癌症。
+quantitative_thresholds:
+- requirement_id: T01-METRIC-001
+  raw_text: 30 条
+  comparator: quantity
+  value: 30
+  unit: 条
+  source_requirement_id: T01-MUST-003
+- requirement_id: T01-METRIC-002
+  raw_text: 30 条
+  comparator: quantity
+  value: 30
+  unit: 条
+  source_requirement_id: T01-DOD-002
+- requirement_id: T01-METRIC-003
+  raw_text: 不低于 90%
+  comparator: at_least
+  value: 90
+  unit: '%'
+  source_requirement_id: T01-DOD-002
+- requirement_id: T01-METRIC-004
+  raw_text: 3 个
+  comparator: quantity
+  value: 3
+  unit: 个
+  source_requirement_id: T01-A-003
+- requirement_id: T01-METRIC-005
+  raw_text: 20 条
+  comparator: quantity
+  value: 20
+  unit: 条
+  source_requirement_id: T01-A-004
+- requirement_id: T01-METRIC-006
+  raw_text: 至少 5 类
+  comparator: at_least
+  value: 5
+  unit: 类
+  source_requirement_id: T01-B-006
+- requirement_id: T01-METRIC-007
+  raw_text: 30 条
+  comparator: quantity
+  value: 30
+  unit: 条
+  source_requirement_id: T01-B-016
+- requirement_id: T01-METRIC-008
+  raw_text: 12 个
+  comparator: quantity
+  value: 12
+  unit: 个
+  source_requirement_id: T01-B-016
+- requirement_id: T01-METRIC-009
+  raw_text: 12 题
+  comparator: quantity
+  value: 12
+  unit: 题
+  source_requirement_id: T01-B-017
+- requirement_id: T01-METRIC-010
+  raw_text: 90%
+  comparator: percentage
+  value: 90
+  unit: '%'
+  source_requirement_id: T01-B-018
+- requirement_id: T01-METRIC-011
+  raw_text: 3 个
+  comparator: quantity
+  value: 3
+  unit: 个
+  source_requirement_id: T01-C-007
+- requirement_id: T01-METRIC-012
+  raw_text: 100%
+  comparator: percentage
+  value: 100
+  unit: '%'
+  source_requirement_id: T01-C-009
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与基线审计
+      work: 完成邀请、Fork、Clone、upstream 配置和基线测试；复现 Q028 的虚构证据 ID、标题充当证据、正文未进入智能体等问题；盘点 EvidenceCard 与证据目录生成逻辑。
+      deliverable: 接入完成回执；失败样例清单；T01 审计笔记。
+      evidence: 至少固定 3 个可重复失败样例；任务分支从最新 upstream/integration 创建。
+    - date: 07/28（周二）
+      focus: 契约与红灯测试
+      work: 设计 EvidenceCard v2、ClaimEvidenceLink、EvidenceBundle 和 token 预算字段；建立 20 条初始事实—证据对；编写不存在 ID、标题-only、问题册证据和跨域外推红灯测试；开启 Draft PR-A。
+      deliverable: docs/contracts/T01.md；Schema 示例；红灯测试；Draft PR-A。
+      evidence: 字段覆盖来源、原文、定位、哈希和支持关系；旧代码稳定失败。
+    - date: 07/29（周三）
+      focus: PR-A 完成
+      work: 实现 Schema、序列化、兼容读取和迁移说明；与 T04/T02 对齐接口；同步最新 integration、运行契约与单测，20:00 前将 PR-A 转 Ready。
+      deliverable: PR-A Ready；接口冻结记录。
+      evidence: 无 pipeline.py 越权；CI 可运行；新 push 后重新请求审查。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: 全文上下文构建
+      work: 从最新 integration 新建 B 分支；实现 quote、页码/章节、作者、年份、来源类型与内容哈希进入受控上下文；记录截断原因、token 预算和缺失字段。
+      deliverable: EvidenceBundle builder。
+      evidence: quoted_text 不再被删除；输入可审计且不暴露无关全文。
+    - date: 07/31（周五）
+      focus: 支持关系判定
+      work: 实现 claim-to-evidence 绑定、证据 ID 存在性、metadata-only 拒绝、问题册排除、语义不蕴含与跨域外推检查。
+      deliverable: 支持检查器、错误码和失败夹具。
+      evidence: 至少 5 类坏引用被阻断；不确定项被降级而非伪装通过。
+    - date: 08/01（周六）
+      focus: 引用展示与 Draft PR-B
+      work: 实现报告/API 中的可点击来源、页码/章节、原文片段和支持状态；向 T08 提供 payload；扩展黄金集并开启 Draft PR-B。
+      deliverable: 引用渲染器；API 契约；Draft PR-B。
+      evidence: 样例可从结论一键回到证据；PR 清楚列出上游版本。
+    - date: 08/02（周日）
+      focus: Q028 回归与审查
+      work: 运行 Q028 回归，比较修复前后；处理 Codex 与 T04 配对审查；优化片段去重、排序、截断和错误信息。
+      deliverable: Q028 回归报告 v1；审查修订提交。
+      evidence: 不存在虚构 ID；无支持结论明确标红或降级。
+    - date: 08/03（周一）
+      focus: 链路集成
+      work: 与 T02/T03 联调 EvidenceBundle、版本记录和 Validator；补充 V1/V2、缺证据、冲突证据端到端测试。
+      deliverable: E2E 测试；接口冻结记录。
+      evidence: 证据贯穿生成、修订和验证；无隐性字段丢失。
+    - date: 08/04（周二）
+      focus: 指标与跨领域抽查
+      work: 黄金集扩展至 30 条，计算精确率、拒绝率和未决样本；对 12 个领域代表题抽查题目相关性和跨域外推。
+      deliverable: metrics.json；12 题抽查表。
+      evidence: 精确率达到 90% 或有明确降级策略；每题证据与题目一致。
+    - date: 08/05（周三）
+      focus: PR-B Ready
+      work: 同步最新 integration，运行模块、契约和最小 E2E；补齐迁移、回滚与性能说明；@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；最终指标报告。
+      evidence: 分支 up to date；P0/P1 关闭；结果可复跑。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: 质量门加固
+      work: PR-B 合并后新建 C 分支；接入冲突/反例证据、撤稿/来源状态占位、内容哈希缓存与确定性测试；20:00 前开启 Draft PR-C。
+      deliverable: 质量门增量；缓存与确定性测试；Draft PR-C。
+      evidence: 冲突证据不被静默覆盖；同输入证据集合稳定。
+    - date: 08/07（周五）
+      focus: 发布联调
+      work: 完成 125 输出序列化、API 示例、性能报告、模块文档；与 T07/T08 联调；处理跨模块审查和冲突。
+      deliverable: API/输出样例；性能报告；审查修订提交。
+      evidence: 全部证据字段可序列化；无未登记共享文件修改。
+    - date: 08/08（周六）
+      focus: 冻结前核验
+      work: 逐条核验 Q028、旗舰案例及 3 个随机题的关键事实；同步 integration、全测试、@codex review，18:00 前转 Ready。
+      deliverable: 人工核验签字表；PR-C Ready。
+      evidence: 关键事实 100% 有原文定位；P0/P1 关闭。
+code_freeze:
+  date: 08/09（周日）
+  focus: Code Freeze 与交接
+  work: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  deliverable: 阻断修复或“无变更”确认；最终 handoff 包。
+  evidence: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不得直接修改 app/workflow/pipeline.py；工作流接入由 T02 根据冻结接口完成。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 134
+  info_table_index: 54
+  must_deliver_table_index: 55
+  daily_table_index: 56
+requirements:
+- id: T01-MUST-001
+  task_id: T01
+  wave: FINAL
+  category: must_deliver
+  requirement_text: EvidenceCard、ClaimEvidenceLink、EvidenceBundle：包含 source_id、quote、page/section/locator、DOI/URL、作者、年份、内容哈希、支持关系、置信度与 token 截断记录。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.1 必须交付
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 1801d84c479041250586e49e5747afb02b92248bc9127a2662bf92d2e8df11c6
+  evidence_required:
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-MUST-002
+  task_id: T01
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 全文证据受控进入 EvidenceExtractor、HypothesisGenerator、ExperimentDesigner；标题、DOI 和问题册不得单独支持事实。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.1 必须交付
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 9062a84a6e86a18ed2d4df9333e06214a395fffa45fba08a40229ed48efd7969
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-MUST-003
+  task_id: T01
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 事实—证据支持检查器、可点击引用渲染、Q028 回归案例和 30 条人工标注黄金集。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.1 必须交付
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: f0eb4bada2afbb5cce039462316d3f00a0e298bf19b331e7da0c6b9a33b3d2d2
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-001
+- id: T01-METRIC-001
+  task_id: T01
+  wave: FINAL
+  category: quantitative_metric
+  requirement_text: 事实—证据支持检查器、可点击引用渲染、Q028 回归案例和 30 条人工标注黄金集。（定量阈值：30 条）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.1 必须交付
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: de9377679d697c695445a9bb3bfac020fde5dd4f7f3c88b792d4cf43765534d9
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - source_code
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-MUST-003
+- id: T01-DOD-001
+  task_id: T01
+  wave: C
+  category: definition_of_done
+  requirement_text: 代表性报告中的事实性结论均可回到文献、页码/章节与原文片段；证据 ID 必须真实存在。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.2 Definition of Done
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 21bddf748e582df1f4233fe88ce5f9cccc9bfdc6990875b7dc23e11038a57cd5
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-DOD-002
+  task_id: T01
+  wave: C
+  category: definition_of_done
+  requirement_text: 30 条黄金样本支持关系精确率目标不低于 90%；不确定结论必须降级为“待核验”。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.2 Definition of Done
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: cbdf1c72cef62b89937e4b19d59406ebff8563bc8f72951312191670e82e3415
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-002
+  - T01-METRIC-003
+- id: T01-METRIC-002
+  task_id: T01
+  wave: C
+  category: quantitative_metric
+  requirement_text: 30 条黄金样本支持关系精确率目标不低于 90%；不确定结论必须降级为“待核验”。（定量阈值：30 条）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.2 Definition of Done
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 6c5fb12bead1d4a7248667b945f9d5207a96a5146304ab238cc5c226fe0d66fa
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-DOD-002
+- id: T01-METRIC-003
+  task_id: T01
+  wave: C
+  category: quantitative_metric
+  requirement_text: 30 条黄金样本支持关系精确率目标不低于 90%；不确定结论必须降级为“待核验”。（定量阈值：不低于 90%）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.2 Definition of Done
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: e4564ee39f12a599428441a24b387ba0787cfa4d2e8ee77fc04e706ee2f57d47
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-DOD-002
+- id: T01-DOD-003
+  task_id: T01
+  wave: C
+  category: definition_of_done
+  requirement_text: Q028 不再出现不存在的 booklet_excerpt_Q028，也不得将单一癌种证据无条件外推到所有癌症。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.2 Definition of Done
+  source_paragraph_index: 134
+  source_table_index: 55
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: b70114c92282d692bf0fe71269f684a24a8a71eafa9d303b684349411648bc48
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-A-001
+  task_id: T01
+  wave: A
+  category: daily_work
+  requirement_text: 完成邀请、Fork、Clone、upstream 配置和基线测试；复现 Q028 的虚构证据 ID、标题充当证据、正文未进入智能体等问题；盘点 EvidenceCard 与证据目录生成逻辑。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: 2b74785d3f8fff321eeba1182ffea98b7bc524be8652055f70c71646ba00397f
+  evidence_required:
+  - test_output
+  - artifact_file
+  - reproduction_command
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-A-002
+  task_id: T01
+  wave: A
+  category: daily_deliverable
+  requirement_text: 接入完成回执；失败样例清单；T01 审计笔记。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: e754804f9da9b0795549dbe25fbbd2e6a581e53fba04eb43465f7a675a7e503a
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-A-003
+  task_id: T01
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 至少固定 3 个可重复失败样例；任务分支从最新 upstream/integration 创建。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 754d0e10e4065e047566c733d72f1dadcd1ec0cda9b7f3c4529d4bda818c441d
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-004
+- id: T01-METRIC-004
+  task_id: T01
+  wave: A
+  category: quantitative_metric
+  requirement_text: 至少固定 3 个可重复失败样例；任务分支从最新 upstream/integration 创建。（定量阈值：3 个）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 83a86c718fc1d067038c808fb8141c9c425f0157c2ddb7e5b8f9f9411e7ac330
+  evidence_required:
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-A-003
+- id: T01-A-004
+  task_id: T01
+  wave: A
+  category: daily_work
+  requirement_text: 设计 EvidenceCard v2、ClaimEvidenceLink、EvidenceBundle 和 token 预算字段；建立 20 条初始事实—证据对；编写不存在 ID、标题-only、问题册证据和跨域外推红灯测试；开启 Draft PR-A。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: 8a2661e8f9a512fbeb550c79c7a5059f33ad5d70f5c16958edde31e03e7adc7c
+  evidence_required:
+  - test_output
+  - source_code
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-005
+- id: T01-METRIC-005
+  task_id: T01
+  wave: A
+  category: quantitative_metric
+  requirement_text: 设计 EvidenceCard v2、ClaimEvidenceLink、EvidenceBundle 和 token 预算字段；建立 20 条初始事实—证据对；编写不存在 ID、标题-only、问题册证据和跨域外推红灯测试；开启 Draft PR-A。（定量阈值：20 条）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: bf8d112726c25d5b873cd4db6afac0da671378c5aba468b0e9412017bd7d7882
+  evidence_required:
+  - test_output
+  - source_code
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-A-004
+- id: T01-A-005
+  task_id: T01
+  wave: A
+  category: daily_deliverable
+  requirement_text: docs/contracts/T01.md；Schema 示例；红灯测试；Draft PR-A。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: 81da6383c7c9fb0ed377c381970f14b51ce71804f4df0cc2737a6ac233bad1b8
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-A-006
+  task_id: T01
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 字段覆盖来源、原文、定位、哈希和支持关系；旧代码稳定失败。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: eb02db70d82358a81f4452702cd852222c02f0bc1f551d15358cb869a44469e3
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-A-007
+  task_id: T01
+  wave: A
+  category: daily_work
+  requirement_text: 实现 Schema、序列化、兼容读取和迁移说明；与 T04/T02 对齐接口；同步最新 integration、运行契约与单测，20:00 前将 PR-A 转 Ready。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: 6d193f98395085795511b44fdd5305d6bdd05901f64ce0f6449440d58efd87a4
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-A-008
+  task_id: T01
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；接口冻结记录。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: 308aa44e39f3ac40ef80c9b9a1133d04cebab70b87ba294e7787e2165c1d1864
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-A-009
+  task_id: T01
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 无 pipeline.py 越权；CI 可运行；新 push 后重新请求审查。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 3ecea3c1ca171e4ffc1559b8281379167964f54b35307b2f155dbfe45d52bb6c
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-001
+  task_id: T01
+  wave: B
+  category: daily_work
+  requirement_text: 从最新 integration 新建 B 分支；实现 quote、页码/章节、作者、年份、来源类型与内容哈希进入受控上下文；记录截断原因、token 预算和缺失字段。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: 440f0543ae4a53382d5c16d16af003bf70b3dea3ba32de7986d6b63f34fc413e
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-002
+  task_id: T01
+  wave: B
+  category: daily_deliverable
+  requirement_text: EvidenceBundle builder。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: d8ca95e1143aa77070d7cb86142300bcf24d467abce0c895710052c04a8f7d42
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-003
+  task_id: T01
+  wave: B
+  category: acceptance_evidence
+  requirement_text: quoted_text 不再被删除；输入可审计且不暴露无关全文。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: 7eade9cb1bd278f0aa3fc00f58b0a31c75d47b3ab060c142c4aaca26c9a57492
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-004
+  task_id: T01
+  wave: B
+  category: daily_work
+  requirement_text: 实现 claim-to-evidence 绑定、证据 ID 存在性、metadata-only 拒绝、问题册排除、语义不蕴含与跨域外推检查。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: e8cc61524e00061427df7191ceb0fca5da8b2025ef72c1493de81c7d8c784394
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-005
+  task_id: T01
+  wave: B
+  category: daily_deliverable
+  requirement_text: 支持检查器、错误码和失败夹具。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: f04d347e337e93d5dffe43477d650eddc996057d28936a89356b391ec65a2e0e
+  evidence_required:
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-006
+  task_id: T01
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 至少 5 类坏引用被阻断；不确定项被降级而非伪装通过。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: 3afd9443acb89818b1cecc68ccc46b92cb628593d1d075700504e60acde211da
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-006
+- id: T01-METRIC-006
+  task_id: T01
+  wave: B
+  category: quantitative_metric
+  requirement_text: 至少 5 类坏引用被阻断；不确定项被降级而非伪装通过。（定量阈值：至少 5 类）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: 2ef1bb4ffe4f77f6d1c9267f71f6eb6c4e17168ba2280622cf8d3c91cd6ed2b5
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-B-006
+- id: T01-B-007
+  task_id: T01
+  wave: B
+  category: daily_work
+  requirement_text: 实现报告/API 中的可点击来源、页码/章节、原文片段和支持状态；向 T08 提供 payload；扩展黄金集并开启 Draft PR-B。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: 53c6f5ce503889c023dc12c7b9e8fcd0c910d8e4b54a32021394599bf027e360
+  evidence_required:
+  - dataset_manifest
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-008
+  task_id: T01
+  wave: B
+  category: daily_deliverable
+  requirement_text: 引用渲染器；API 契约；Draft PR-B。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: 924c528bf8404906062d058c470241cefa7f55e88a14ae1e544d172c7fd383cd
+  evidence_required:
+  - source_code
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-009
+  task_id: T01
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 样例可从结论一键回到证据；PR 清楚列出上游版本。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: 0df2f700be2ff3e0e81cd10720d6c0b77f3ad5ecbdcf28516f4c04f783527d31
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-010
+  task_id: T01
+  wave: B
+  category: daily_work
+  requirement_text: 运行 Q028 回归，比较修复前后；处理 Codex 与 T04 配对审查；优化片段去重、排序、截断和错误信息。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: 2dc9d40b65e220f33baadef926a4674c587f674e193496482d8a4ce43a6833ac
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-011
+  task_id: T01
+  wave: B
+  category: daily_deliverable
+  requirement_text: Q028 回归报告 v1；审查修订提交。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: 51fb2f062595e14bf9f5103ef6a942f6d2b1ee14c6947e4381669bd5753f60d8
+  evidence_required:
+  - test_output
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-012
+  task_id: T01
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 不存在虚构 ID；无支持结论明确标红或降级。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: 350594fdb9ebf5daca9c05ea1a1da970f0b4a10ba3c27443987cb6aa90c5155b
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-013
+  task_id: T01
+  wave: B
+  category: daily_work
+  requirement_text: 与 T02/T03 联调 EvidenceBundle、版本记录和 Validator；补充 V1/V2、缺证据、冲突证据端到端测试。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: 35e65394a4e0d993ef15a3527bb5972063fb389f4eb41b09edce9323499550eb
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-014
+  task_id: T01
+  wave: B
+  category: daily_deliverable
+  requirement_text: E2E 测试；接口冻结记录。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: 5fe799aea272ae2b8416c06979421d33e56991c4eaf2031f766f5e635100d812
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-015
+  task_id: T01
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 证据贯穿生成、修订和验证；无隐性字段丢失。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: f6f8aec0e97157db5da5dc98aefac4193321cc4f16773499ca72ae97848c4c96
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-016
+  task_id: T01
+  wave: B
+  category: daily_work
+  requirement_text: 黄金集扩展至 30 条，计算精确率、拒绝率和未决样本；对 12 个领域代表题抽查题目相关性和跨域外推。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 5aa0c22b8c99fac73ad7890274b27fcd4b71910dda64cb4b64cfa018b92a57d9
+  evidence_required:
+  - test_output
+  - metrics_file
+  - computation_script
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-007
+  - T01-METRIC-008
+- id: T01-METRIC-007
+  task_id: T01
+  wave: B
+  category: quantitative_metric
+  requirement_text: 黄金集扩展至 30 条，计算精确率、拒绝率和未决样本；对 12 个领域代表题抽查题目相关性和跨域外推。（定量阈值：30 条）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 25ddcce2d31f33c0eba7d735bbbe590d962b0792e7aca43a4578e4b3dffe3148
+  evidence_required:
+  - test_output
+  - metrics_file
+  - computation_script
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-B-016
+- id: T01-METRIC-008
+  task_id: T01
+  wave: B
+  category: quantitative_metric
+  requirement_text: 黄金集扩展至 30 条，计算精确率、拒绝率和未决样本；对 12 个领域代表题抽查题目相关性和跨域外推。（定量阈值：12 个）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: d197aa1643c2bdf196811b29683b577c1f92153e084512776a73317d13e95af9
+  evidence_required:
+  - test_output
+  - metrics_file
+  - computation_script
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-B-016
+- id: T01-B-017
+  task_id: T01
+  wave: B
+  category: daily_deliverable
+  requirement_text: metrics.json；12 题抽查表。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: 9fa3fec91d1304a871ee5145c0557438d3050b3aeff102192f35a6820856281b
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-009
+- id: T01-METRIC-009
+  task_id: T01
+  wave: B
+  category: quantitative_metric
+  requirement_text: metrics.json；12 题抽查表。（定量阈值：12 题）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: 4d67ec005328157ba982f34962d7936da0027685b9b115859f592a7dd1c3b871
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-B-017
+- id: T01-B-018
+  task_id: T01
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 精确率达到 90% 或有明确降级策略；每题证据与题目一致。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: 21f2798da42d6c47a3d7e608184a674cb578fc2a868cc3d49aa1a8f82c220a01
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-010
+- id: T01-METRIC-010
+  task_id: T01
+  wave: B
+  category: quantitative_metric
+  requirement_text: 精确率达到 90% 或有明确降级策略；每题证据与题目一致。（定量阈值：90%）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: f51d229adc2356ba3ce08fc049efd48b6c2ac876344e38b49740d1231672e305
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-B-018
+- id: T01-B-019
+  task_id: T01
+  wave: B
+  category: daily_work
+  requirement_text: 同步最新 integration，运行模块、契约和最小 E2E；补齐迁移、回滚与性能说明；@codex review，20:00 前转 Ready。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: 266933a436492c879a67b08a698205861ff1cb0a8c1b61f71b9aa82276b305a7
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-020
+  task_id: T01
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；最终指标报告。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: d9933867ade19ad88e0e464650e5c2c95038d5642d41bda5d1dafc5a13194770
+  evidence_required:
+  - metrics_file
+  - artifact_file
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-B-021
+  task_id: T01
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 分支 up to date；P0/P1 关闭；结果可复跑。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: 228c0af80a07071f46d30986789b88d248e1464d90e925aa833f1d64d200d903
+  evidence_required:
+  - reproduction_command
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-C-001
+  task_id: T01
+  wave: C
+  category: daily_work
+  requirement_text: PR-B 合并后新建 C 分支；接入冲突/反例证据、撤稿/来源状态占位、内容哈希缓存与确定性测试；20:00 前开启 Draft PR-C。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: 28d2d0a538f03c93d371efa5f1f9d2e0e6ae40348d98912982388dcba7ee406f
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-C-002
+  task_id: T01
+  wave: C
+  category: daily_deliverable
+  requirement_text: 质量门增量；缓存与确定性测试；Draft PR-C。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: 0b2bcb21bcbe37efad59be80f4a832933c0212e37f10cfe18c37523ee2d2150b
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-C-003
+  task_id: T01
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 冲突证据不被静默覆盖；同输入证据集合稳定。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: ce2f7326a00035cb1e0d8d64831d4a7cd6efb06d0ccbb1911bb8a4c92a204927
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-C-004
+  task_id: T01
+  wave: C
+  category: daily_work
+  requirement_text: 完成 125 输出序列化、API 示例、性能报告、模块文档；与 T07/T08 联调；处理跨模块审查和冲突。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: 469d81e0d88a1800a9a7b7f0e993b1e78e8dc19465a85896c28da8d3feb85bcb
+  evidence_required:
+  - artifact_file
+  - source_code
+  - documentation
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-C-005
+  task_id: T01
+  wave: C
+  category: daily_deliverable
+  requirement_text: API/输出样例；性能报告；审查修订提交。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: 89dec987922ce2545fb9d85010699736462cb7eb1f89f533f96d944d11b4485a
+  evidence_required:
+  - artifact_file
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-C-006
+  task_id: T01
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 全部证据字段可序列化；无未登记共享文件修改。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: 09d577374df4225216acf938e540948e24d19b028fd21f5bbbab6b0e4343ed93
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-C-007
+  task_id: T01
+  wave: C
+  category: daily_work
+  requirement_text: 逐条核验 Q028、旗舰案例及 3 个随机题的关键事实；同步 integration、全测试、@codex review，18:00 前转 Ready。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 2ca50efa731e4f14279289a9f162d693d5d672198e638c487c6d0bfa12cea6c9
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-011
+- id: T01-METRIC-011
+  task_id: T01
+  wave: C
+  category: quantitative_metric
+  requirement_text: 逐条核验 Q028、旗舰案例及 3 个随机题的关键事实；同步 integration、全测试、@codex review，18:00 前转 Ready。（定量阈值：3 个）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: fe7ec7496c0a0b261349b52730d872cb351d5747452fef95d4ff8c204ae69055
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-C-007
+- id: T01-C-008
+  task_id: T01
+  wave: C
+  category: daily_deliverable
+  requirement_text: 人工核验签字表；PR-C Ready。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: 2327e7eff136372870b2568f6eeb841e4fe46d30e558a8af8562d6464fad143a
+  evidence_required:
+  - git_commit_reference
+  verification_type: manual_signoff
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-C-009
+  task_id: T01
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 关键事实 100% 有原文定位；P0/P1 关闭。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: 26daf236a5dab1f06ed6e239fe356c4cb090c4c4648bb30519bfd13d8e03d016
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T01-METRIC-012
+- id: T01-METRIC-012
+  task_id: T01
+  wave: C
+  category: quantitative_metric
+  requirement_text: 关键事实 100% 有原文定位；P0/P1 关闭。（定量阈值：100%）
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: 0e1b15254cf8d4a28207559ceb80453c386aab0c42b592037920b7f641b3feae
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T01-C-009
+- id: T01-FREEZE-001
+  task_id: T01
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 7d5941104714831cac0e87190db6bbfd2072f1cf43cd0471bd6360ac19217bfb
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-FREEZE-002
+  task_id: T01
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 阻断修复或“无变更”确认；最终 handoff 包。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: 070372ce4f2d5f34256583cc585a87f2c4e26b41a8d6754426d9c8e250e65653
+  evidence_required:
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-FREEZE-003
+  task_id: T01
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+  source_heading: T01. 队员 1（姓名待填）— 证据全文注入、事实蕴含与可追溯引用 › T01.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 134
+  source_table_index: 56
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: de864e07b9c6ad7d1c585a6a6a67256e2955ed78416873a1fb7d218e99f8a285
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-HANDOFF-001
+  task_id: T01
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-HANDOFF-002
+  task_id: T01
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-HANDOFF-003
+  task_id: T01
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T01-HANDOFF-004
+  task_id: T01
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []

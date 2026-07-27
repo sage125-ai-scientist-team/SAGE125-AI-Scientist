@@ -1,0 +1,158 @@
+# docs/governance/task-owner-map.yaml
+#
+# Machine-readable path ownership map for the SAGE125-AI-Scientist team project.
+# This is the SOURCE OF TRUTH consumed by scripts/captain/review_latest_pr.ps1 and
+# by the Cursor Agent PR review workflow (.cursor/rules/sage125-captain-pr-review.mdc).
+#
+# Do not describe path ownership only in prose — any review automation must parse
+# this file. Keep .cursor/BUGBOT.md's "Task and path ownership" section in sync with
+# the contents below.
+
+schema_version: 1
+
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+
+# Branch policy (duplicated here in machine-readable form; see pr-review-policy.yaml
+# for the full merge-gate configuration).
+ordinary_base_branch: integration/2026-08-10
+release_base_branch: main
+release_head_branch: integration/2026-08-10
+merge_method: squash
+forbid_admin_bypass: true
+forbid_force_push: true
+
+# Task owner paths. Glob patterns use "**" for recursive matches, matching the same
+# semantics as .gitignore / gh pr diff --name-only path matching.
+tasks:
+  T01:
+    name: Evidence
+    allowed_paths:
+      - "app/evidence/**"
+      - "app/contracts/evidence.py"
+      - "tests/evidence/**"
+      - "docs/modules/T01/**"
+      - "docs/contracts/T01.md"
+
+  T02:
+    name: Workflow / Revision
+    allowed_paths:
+      - "app/workflow/**"
+      - "app/contracts/revision.py"
+      - "tests/workflow/**"
+      - "docs/modules/T02/**"
+      - "docs/contracts/T02.md"
+
+  T03:
+    name: Feedback / Validation / Quality
+    allowed_paths:
+      - "app/feedback/**"
+      - "app/validation/**"
+      - "app/quality/**"
+      - "app/contracts/validation.py"
+      - "tests/validation/**"
+      - "docs/modules/T03/**"
+      - "docs/contracts/T03.md"
+
+  T04:
+    name: RAG
+    allowed_paths:
+      - "app/rag/**"
+      - "app/contracts/rag.py"
+      - "tests/rag/**"
+      - "docs/modules/T04/**"
+      - "docs/contracts/T04.md"
+
+  T05:
+    name: Execution
+    allowed_paths:
+      - "app/execution/**"
+      - "app/contracts/execution.py"
+      - "tests/execution/**"
+      - "experiments/flagship/**"
+      - "docs/modules/T05/**"
+      - "docs/contracts/T05.md"
+
+  T06:
+    name: Multimodal
+    allowed_paths:
+      - "app/multimodal/**"
+      - "app/contracts/multimodal.py"
+      - "tests/multimodal/**"
+      - "docs/modules/T06/**"
+      - "docs/contracts/T06.md"
+
+  T07:
+    name: Batch
+    allowed_paths:
+      - "app/batch/**"
+      - "scripts/batch_125/**"
+      - "app/contracts/batch.py"
+      - "tests/batch/**"
+      - "docs/modules/T07/**"
+      - "docs/contracts/T07.md"
+
+  T08:
+    name: API / Frontend / Deployment
+    allowed_paths:
+      - "app/api/**"
+      - "frontend/**"
+      - "app/export/**"
+      - "Dockerfile"
+      - "compose.yaml"
+      - "tests/api/**"
+      - "docs/deployment/**"
+      - "docs/contracts/T08.md"
+
+  T09:
+    name: CI / Reproducibility / Dependencies
+    allowed_paths:
+      - ".github/workflows/**"
+      - "tests/integration/**"
+      - "scripts/eval/**"
+      - "docs/reproducibility/**"
+      - "docs/contracts/T09.md"
+      - "pyproject.toml"
+      - "requirements*.txt"
+      - "*.lock"
+      - "uv.lock"
+      - "poetry.lock"
+      - "Pipfile.lock"
+      - "LICENSE"
+      - "sbom*.json"
+      - "sbom*.xml"
+
+# Captain-only or shared high-risk paths. Any PR touching these paths requires an
+# explicit, verifiable captain approval record, regardless of the task it claims to
+# belong to.
+captain_only_paths:
+  - ".github/branch-protection/**"
+  - ".github/CODEOWNERS"
+  - "AGENTS.md"
+  - "README.md"
+  - ".github/PULL_REQUEST_TEMPLATE/**"
+  - ".github/ISSUE_TEMPLATE/**"
+  - "app/contracts/base.py"
+  - ".cursor/rules/**"
+  - ".cursor/BUGBOT.md"
+  - "scripts/captain/**"
+  - "docs/governance/**"
+  - "tests/governance/**"
+
+# Paths that any task MAY touch, but only with a recorded, captain-approved
+# shared-change note (e.g. a PR/issue comment link). Absent that record, treat as P1.
+shared_change_required_paths:
+  - "app/contracts/**"
+  - "conftest.py"
+  - "requirements.txt"
+  - ".gitignore"
+  - ".env.example"
+
+# Wave grouping — informational; used to help identify parallel-work context when a PR
+# title/branch does not make the task obvious. Not a hard gate by itself.
+waves:
+  wave_a:
+    tasks: [T01, T02, T04]
+  wave_b:
+    tasks: [T03, T05, T06]
+  wave_c:
+    tasks: [T07, T08, T09]

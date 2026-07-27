@@ -105,7 +105,30 @@ def test_embed_texts_maps_sdk_proxy_error_without_echoing_secret():
 
     assert caught.value.code == "EMBEDDING_PROXY"
     assert raw_token not in str(caught.value)
-    assert "HTTP_PROXY" in str(caught.value)
+    msg = str(caught.value)
+    # Canonical project proxy contract is OUTBOUND_HTTPS_PROXY only.
+    assert "OUTBOUND_HTTPS_PROXY" in msg
+    # Do not recommend implicit env proxies (avoid substring of OUTBOUND_HTTPS_PROXY).
+    assert "HTTP_PROXY" not in msg
+    assert "配置 HTTPS_PROXY" not in msg
+    assert "环境变量 HTTPS_PROXY" not in msg
+    # Must not echo credential-bearing proxy URLs from the raw exception.
+    assert "Authorization" not in msg
+    assert "Bearer" not in msg
+
+
+def test_proxy_guidance_names_outbound_https_proxy_not_http_proxy():
+    """项目正式代理契约是 OUTBOUND_HTTPS_PROXY，不得建议隐式 HTTP_PROXY。"""
+    import re
+
+    from app.clients.embedding_client import embedding_error_guidance
+
+    text = embedding_error_guidance("EMBEDDING_PROXY")
+    assert "OUTBOUND_HTTPS_PROXY" in text
+    assert "HTTP_PROXY" not in text
+    # Bare HTTPS_PROXY must not appear outside the OUTBOUND_ prefix.
+    assert re.search(r"(?<!OUTBOUND_)HTTPS_PROXY", text) is None
+    assert "Windows" in text
 
 
 def test_embed_texts_rejects_incomplete_response():
