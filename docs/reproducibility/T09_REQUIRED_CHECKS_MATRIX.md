@@ -1,18 +1,16 @@
 # T09 required-check matrix
 
-All checks run on `windows-latest` with Python 3.12, `MOCK_LLM=true`, `PYTHONUTF8=1`, and `PYTHONIOENCODING=utf-8`. The workflow has only `contents: read` permission. Each listed command is a real failing gate: its non-zero exit code fails the job. No check uses `continue-on-error`.
+The workflow runs on `windows-latest` with Python 3.12, `MOCK_LLM=true`, `PYTHONUTF8=1`, `PYTHONIOENCODING=utf-8`, and `contents: read` only. Pull requests to `integration/2026-08-10` trigger for `opened`, `synchronize`, `reopened`, `edited`, and `ready_for_review`.
 
-| Job | Command | Inputs and boundary | Failure condition | Evidence |
+Every Python command uses `python -X utf8`. A non-zero command exit fails its job. `if: always()` is used only on evidence upload steps so a failing command retains its generated diagnostic; missing expected evidence fails the upload (`if-no-files-found: error`).
+
+| Job ID | Exact command(s) | Input and failure condition | Generated output / artifact | GitHub evidence |
 | --- | --- | --- | --- | --- |
-| `lint` | `python -X utf8 scripts/eval/wave_a_quality.py lint` | Owned Python files under `scripts/eval` and `tests/integration`; no network or secrets. | Syntax error or trailing whitespace. | Actions log; local run: exit 0, 3 files, no failures. |
-| `type` | `python -X utf8 scripts/eval/wave_a_quality.py type` | The same owned paths; no network or secrets. | A public function lacks an argument or return annotation. | Actions log; local run: exit 0, no failures. |
-| `unit` | `python -X utf8 -m pytest -q --ignore=tests/integration` | Offline project suite with the integration fixture excluded; `MOCK_LLM=true`. | Any collection error, test failure, or command error. | Actions log; local run: 272 passed, exit 0. |
-| `integration` | `python -X utf8 -m pytest -q tests/integration` | Deterministic Wave A fixture; benchmark files are created below pytest's temporary directory. | Any fixture, dry-run, or schema-validation failure. | Actions log; local run: 1 passed, exit 0. |
-| `security` | `python -X utf8 scripts/audit_project.py` | Repository source and ignored local outputs only; no production credentials are supplied. | Any audit critical finding. | Actions log; local run: `critical=0`, `warnings=0`, exit 0. |
-| `build` | `python -X utf8 -m compileall -q app scripts/eval`; `python -X utf8 scripts/eval/benchmark_skeleton.py --dry-run --output "${{ runner.temp }}/benchmark.json"`; `python -X utf8 scripts/eval/wave_a_quality.py validate-result --result "${{ runner.temp }}/benchmark.json"` | Python source plus a planned-only benchmark manifest in the runner temporary directory. | Compile error, dry-run failure, malformed manifest/CSV, or a measured score in a dry-run. | Actions log; local run: all three commands exit 0. |
+| `lint` | `python -X utf8 scripts/eval/wave_a_quality.py lint > "${{ runner.temp }}/lint-result.json"` | Owned eval/integration Python files; fails on syntax or trailing whitespace. | `lint-result.json` / `t09-lint-result` | Job log and artifact on the run. |
+| `type` | `python -X utf8 scripts/eval/wave_a_quality.py type > "${{ runner.temp }}/type-result.json"` | Same owned paths; fails on missing public parameter or return annotations. | `type-result.json` / `t09-type-result` | Job log and artifact on the run. |
+| `unit` | `python -X utf8 -m pytest -q --ignore=tests/integration --junitxml "${{ runner.temp }}/unit-junit.xml"` | Offline suite; fails on collection or test failure. | `unit-junit.xml` / `t09-unit-junit` | Job log and artifact on the run. |
+| `integration` | `python -X utf8 -m pytest -q tests/integration --junitxml "${{ runner.temp }}/integration-junit.xml"` | Wave A fixture; fails on fixture, dry-run, or schema failure. | `integration-junit.xml` / `t09-integration-junit` | Job log and artifact on the run. |
+| `security` | `python -X utf8 scripts/audit_project.py` | Repository audit; fails on any critical finding. | `exports/audit/audit_report.{json,md}` / `t09-security-audit` | Job log and artifact on the run. |
+| `build` | `python -X utf8 -m compileall -q app scripts/eval`; `python -X utf8 scripts/eval/benchmark_skeleton.py --dry-run --output "${{ runner.temp }}/benchmark.json"`; `python -X utf8 scripts/eval/wave_a_quality.py validate-result --result "${{ runner.temp }}/benchmark.json"` | Source plus planned-only manifest; fails on compile, schema, or dry-run score violation. | `benchmark.{json,csv}` / `t09-build-benchmark` | Job log and artifact on the run. |
 
-## Trigger and review contract
-
-The workflow triggers for pushes and for pull requests to `integration/2026-08-10` with the events `opened`, `synchronize`, `reopened`, and `edited`. The stable job names above are required-check candidates. Repository branch-protection settings are intentionally outside this PR's scope.
-
-The current local runs are evidence of the commands, not GitHub Actions results. After the normal non-force push, the PR must show all six jobs with their GitHub Actions links before captain approval is requested. Until then, the PR stays Draft.
+Local execution is documented separately from GitHub Actions. The Actions columns are locations, not assertions that a remote run has passed; run URLs and statuses are filled only after GitHub creates them for the current head.
