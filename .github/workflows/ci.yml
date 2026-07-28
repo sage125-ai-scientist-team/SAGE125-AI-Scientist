@@ -3,7 +3,7 @@ name: quality-gates
 on:
   push:
   pull_request:
-    types: [opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
     branches:
       - integration/2026-08-10
 
@@ -29,7 +29,15 @@ jobs:
       - name: Install pinned dependencies
         run: python -X utf8 -m pip install -r requirements.txt
       - name: Run Wave A lint contract
-        run: python -X utf8 scripts/eval/wave_a_quality.py lint
+        run: python -X utf8 scripts/eval/wave_a_quality.py lint > "${{ runner.temp }}/lint-result.json"
+      - name: Upload lint result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t09-lint-result
+          path: ${{ runner.temp }}/lint-result.json
+          if-no-files-found: error
+          retention-days: 14
 
   type:
     runs-on: windows-latest
@@ -43,7 +51,15 @@ jobs:
       - name: Install pinned dependencies
         run: python -X utf8 -m pip install -r requirements.txt
       - name: Run Wave A type contract
-        run: python -X utf8 scripts/eval/wave_a_quality.py type
+        run: python -X utf8 scripts/eval/wave_a_quality.py type > "${{ runner.temp }}/type-result.json"
+      - name: Upload type result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t09-type-result
+          path: ${{ runner.temp }}/type-result.json
+          if-no-files-found: error
+          retention-days: 14
 
   unit:
     runs-on: windows-latest
@@ -57,7 +73,15 @@ jobs:
       - name: Install pinned dependencies
         run: python -X utf8 -m pip install -r requirements.txt
       - name: Run offline unit suite
-        run: python -X utf8 -m pytest -q --ignore=tests/integration
+        run: python -X utf8 -m pytest -q --ignore=tests/integration --junitxml "${{ runner.temp }}/unit-junit.xml"
+      - name: Upload unit result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t09-unit-junit
+          path: ${{ runner.temp }}/unit-junit.xml
+          if-no-files-found: error
+          retention-days: 14
 
   integration:
     runs-on: windows-latest
@@ -71,7 +95,15 @@ jobs:
       - name: Install pinned dependencies
         run: python -X utf8 -m pip install -r requirements.txt
       - name: Run offline integration fixture
-        run: python -X utf8 -m pytest -q tests/integration
+        run: python -X utf8 -m pytest -q tests/integration --junitxml "${{ runner.temp }}/integration-junit.xml"
+      - name: Upload integration result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t09-integration-junit
+          path: ${{ runner.temp }}/integration-junit.xml
+          if-no-files-found: error
+          retention-days: 14
 
   security:
     runs-on: windows-latest
@@ -86,6 +118,16 @@ jobs:
         run: python -X utf8 -m pip install -r requirements.txt
       - name: Run project security audit
         run: python -X utf8 scripts/audit_project.py
+      - name: Upload security audit result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t09-security-audit
+          path: |
+            exports/audit/audit_report.json
+            exports/audit/audit_report.md
+          if-no-files-found: error
+          retention-days: 14
 
   build:
     runs-on: windows-latest
@@ -104,3 +146,13 @@ jobs:
         run: python -X utf8 scripts/eval/benchmark_skeleton.py --dry-run --output "${{ runner.temp }}/benchmark.json"
       - name: Validate benchmark dry-run manifest
         run: python -X utf8 scripts/eval/wave_a_quality.py validate-result --result "${{ runner.temp }}/benchmark.json"
+      - name: Upload build benchmark result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t09-build-benchmark
+          path: |
+            ${{ runner.temp }}/benchmark.json
+            ${{ runner.temp }}/benchmark.csv
+          if-no-files-found: error
+          retention-days: 14
