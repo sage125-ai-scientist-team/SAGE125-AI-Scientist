@@ -1,8 +1,8 @@
 """Versioned data contracts for controlled execution.
 
-This module defines contracts only. T02 has not yet been integrated, and the
-``app.execution`` runner will be implemented in the next step. Nothing here
-starts a process, creates a workspace, reads provenance, or claims sandboxing.
+This module defines contracts only. The separate ``app.execution`` package
+implements the controlled local runner. Importing this module does not start a
+process, create a workspace, read provenance, or claim sandboxing.
 """
 
 from __future__ import annotations
@@ -813,6 +813,9 @@ class ExecutionResult(_ExecutionContractModel):
         "scientific_result_usable",
         "actual_execution",
     )
+    _RUNNER_EVIDENCE_FIELDS: ClassVar[tuple[str, ...]] = (
+        "resource_enforcement",
+    )
 
     schema_version: SchemaVersion = "1.0"
     execution_id: str
@@ -873,6 +876,11 @@ class ExecutionResult(_ExecutionContractModel):
             for field_name in cls._TRUTH_FIELDS:
                 if field_name in value and value[field_name] is not False:
                     raise ValueError("runner-owned truth cannot be caller supplied")
+            for field_name in cls._RUNNER_EVIDENCE_FIELDS:
+                if field_name in value and value[field_name] is not None:
+                    raise ValueError(
+                        "runner-owned evidence cannot be caller supplied"
+                    )
         return value
 
     @field_validator(
@@ -958,6 +966,8 @@ class ExecutionResult(_ExecutionContractModel):
         if not trusted:
             for field_name in self._TRUTH_FIELDS:
                 object.__setattr__(self, field_name, False)
+            for field_name in self._RUNNER_EVIDENCE_FIELDS:
+                object.__setattr__(self, field_name, None)
             return self
 
         self._clamp_runner_evidence()
@@ -1158,13 +1168,68 @@ class ExecutionResult(_ExecutionContractModel):
             payload = dict(payload)
         return cls.model_validate(payload)
 
+    def model_copy(
+        self,
+        *,
+        update: Mapping[str, Any] | None = None,
+        deep: bool = False,
+    ) -> "ExecutionResult":
+        """Return a revalidated copy without preserving runner attestation."""
+
+        del deep
+        updates = {} if update is None else dict(update)
+        for field_name in self._TRUTH_FIELDS:
+            if field_name in updates and updates[field_name] is not False:
+                raise ValueError("runner-owned truth cannot be caller supplied")
+        for field_name in self._RUNNER_EVIDENCE_FIELDS:
+            if field_name in updates and updates[field_name] is not None:
+                raise ValueError(
+                    "runner-owned evidence cannot be caller supplied"
+                )
+
+        payload = self.model_dump(mode="python")
+        payload.update(updates)
+        for field_name in self._TRUTH_FIELDS:
+            payload[field_name] = False
+        for field_name in self._RUNNER_EVIDENCE_FIELDS:
+            payload[field_name] = None
+        return type(self).model_validate_untrusted(payload)
+
+    @classmethod
+    def model_construct(
+        cls,
+        _fields_set: set[str] | None = None,
+        **values: Any,
+    ) -> "ExecutionResult":
+        """Construct only fail-closed untrusted results without validation."""
+
+        for field_name in cls._TRUTH_FIELDS:
+            if field_name in values and values[field_name] is not False:
+                raise ValueError("runner-owned truth cannot be caller supplied")
+        for field_name in cls._RUNNER_EVIDENCE_FIELDS:
+            if field_name in values and values[field_name] is not None:
+                raise ValueError(
+                    "runner-owned evidence cannot be caller supplied"
+                )
+
+        payload = dict(values)
+        for field_name in cls._TRUTH_FIELDS:
+            payload[field_name] = False
+        for field_name in cls._RUNNER_EVIDENCE_FIELDS:
+            payload[field_name] = None
+        return super().model_construct(_fields_set=_fields_set, **payload)
+
     @classmethod
     def _from_runner(
         cls,
         payload: Mapping[str, Any],
+        *,
+        attestation: object | None = None,
     ) -> "ExecutionResult":
         """Build a result through the module-private runner attestation path."""
 
+        if attestation is not _RUNNER_ATTESTATION:
+            raise ValueError("runner attestation is invalid")
         return cls.model_validate(
             dict(payload),
             context={_RUNNER_CONTEXT_KEY: _RUNNER_ATTESTATION},

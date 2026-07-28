@@ -302,6 +302,58 @@ def test_T05_A_INTEGRITY_006_complete_caller_json_still_lacks_attestation(
     assert untrusted.actual_execution is False
 
 
+def test_T05_A_INTEGRITY_006_copy_and_construct_cannot_spoof_attestation(
+    require_symbol: Callable[[str, str, str], Any],
+    execution_result_payload: Callable[..., dict[str, Any]],
+) -> None:
+    """Normal Pydantic bypass APIs cannot create runner-owned truth."""
+
+    test_id = "T05-A-INTEGRITY-006"
+    execution_result = _model(require_symbol, "ExecutionResult", test_id)
+    untrusted = execution_result.model_validate_untrusted(
+        execution_result_payload()
+    )
+
+    with pytest.raises(ValueError, match="runner-owned truth"):
+        untrusted.model_copy(
+            update={"runner_verified": True, "actual_execution": True}
+        )
+    with pytest.raises(ValueError, match="runner-owned truth"):
+        execution_result.model_construct(
+            **execution_result_payload(),
+            runner_verified=True,
+            actual_execution=True,
+        )
+    with pytest.raises(ValueError, match="runner attestation"):
+        execution_result._from_runner(execution_result_payload())
+
+
+def test_T05_A_INTEGRITY_006_caller_cannot_spoof_resource_enforcement(
+    require_symbol: Callable[[str, str, str], Any],
+    execution_result_payload: Callable[..., dict[str, Any]],
+    resource_enforcement_payload: Callable[..., dict[str, Any]],
+) -> None:
+    """Resource enforcement evidence is runner-owned and fail-closed."""
+
+    test_id = "T05-A-INTEGRITY-006"
+    execution_result = _model(require_symbol, "ExecutionResult", test_id)
+    payload = execution_result_payload(
+        resource_enforcement=resource_enforcement_payload()
+    )
+
+    with pytest.raises(ValidationError, match="runner-owned evidence"):
+        execution_result.model_validate_untrusted(payload)
+    untrusted = execution_result.model_validate_untrusted(
+        execution_result_payload()
+    )
+    with pytest.raises(ValueError, match="runner-owned evidence"):
+        untrusted.model_copy(
+            update={"resource_enforcement": resource_enforcement_payload()}
+        )
+    with pytest.raises(ValueError, match="runner-owned evidence"):
+        execution_result.model_construct(**payload)
+
+
 def test_T05_A_INTEGRITY_007_nonzero_exit_is_not_actual(
     require_symbol: Callable[[str, str, str], Any],
     execution_spec_payload: Callable[..., dict[str, Any]],

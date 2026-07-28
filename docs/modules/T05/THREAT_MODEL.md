@@ -70,7 +70,7 @@ Severity 表示在相应边界被绕过或误用时的潜在影响，不等同�
 | 14 | checksum mismatch | artifact/dataset | canonical SHA-256，copy/collect/re-read 比对 | SHA 证明 bytes，不证明科学含义 | P1 | signed manifest、semantic validator | T05 / T03 |
 | 15 | metric spoofing | metric artifact | 只从声明、valid、哈希绑定 JSON artifact 解析 finite observed metric | 可信脚本仍可生成科学上错误的数值；runner 不验证实验方法 | P1 | T03 scientific validation、baseline/reproduction gates | T03 / T05 |
 | 16 | expected/mock metric 伪装 observed | metric JSON | source 必须精确为 observed；mock/dry_run 禁 observed；失败状态清空 metric | 恶意可信脚本可直接标 observed，需科学复核 | P1 | method-specific validator、independent reproduction | T03 |
-| 17 | caller 伪造 actual | JSON/result fields | runner-owned fields在 untrusted validation 中拒绝/降 false；Scheme B 内部重算 | Python private API 不是恶意同进程代码边界 | P0 | process/service boundary、signed attestation | T05 |
+| 17 | caller 伪造 actual | JSON/result fields | untrusted validation、`model_copy`、`model_construct` 均 fail-closed；私有 builder 要求 module-private capability；Scheme B 内部重算 | Python private API 仍不是恶意同进程代码边界 | P0 | process/service boundary、signed attestation | T05 |
 | 18 | persisted JSON 恢复信任 | deserialize | attestation 不序列化；untrusted reload 全部 truth fields=false | 下游若跳过 adapter/validation 仍可能误用原始 dict | P1 | T02 typed-only consumption、signature/reverification | T02 / T05 |
 | 19 | provider 返回恶意 provenance | injected provider | 类型、key、长度、SHA、bool、host-path 与 allowlist 规范化 | trusted provider 可以给出语义上虚假但格式合法的值 | P1 | provider registry、independent Git/dependency verification | T05 |
 | 20 | dirty Git 伪装 clean | local Git/provider | local `git status`、tracked entrypoint check、actual 要求 available+clean | injected provider 若被错误信任可撒谎；submodules 被忽略 | P1 | 禁止 production injected Git provider、commit signing policy | T05 / release owner |

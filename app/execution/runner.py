@@ -24,6 +24,7 @@ from typing import Any, BinaryIO, Literal
 from pydantic import ValidationError
 
 from app.contracts.execution import (
+    _RUNNER_ATTESTATION,
     ArtifactManifest,
     ArtifactRequirement,
     EnvironmentFingerprint,
@@ -1259,5 +1260,6 @@ class LocalProcessRunner:
                     state.scientific_result_usable
                 ),
                 "actual_execution": False,
-            }
+            },
+            attestation=_RUNNER_ATTESTATION,
         )

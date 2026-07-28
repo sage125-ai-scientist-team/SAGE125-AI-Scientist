@@ -11,6 +11,12 @@ import pytest
 from pydantic import ValidationError
 
 
+def _fake_sk_token() -> str:
+    """Construct a non-secret credential shape only at test runtime."""
+
+    return "sk-" + ("x" * 32)
+
+
 def _api(
     require_symbol: Callable[[str, str, str], Any],
     test_id: str,
@@ -440,7 +446,7 @@ def test_T05_A_RUN_007_persisted_result_redacts_fake_secrets(
     """T05-A-RUN-007: stdout, stderr, errors and URI queries are redacted."""
 
     test_id = "T05-A-RUN-007"
-    fake_secret = "sk-test-not-a-real-secret"
+    fake_secret = _fake_sk_token()
     fake_token = "fake-token-for-redaction-test"
     result = _run(
         require_symbol,
@@ -482,7 +488,7 @@ def test_T05_A_RUN_008_child_receives_only_allowlisted_environment(
 
     test_id = "T05-A-RUN-008"
     fake_values = {
-        "API_KEY": "sk-test-not-a-real-secret",
+        "API_KEY": _fake_sk_token(),
         "TOKEN": "fake-token-for-redaction-test",
         "SECRET": "fake-secret-parent-only",
         "PASSWORD": "fake-password-parent-only",

@@ -75,7 +75,7 @@
 | `artifacts` | `list[ArtifactManifest]` | `[]` | ID 唯一；按 ID 排序 |
 | `metrics` | `list[MetricRecord]` | `[]` | name 唯一；按 name 排序；关联 artifact/round |
 | `cleanup_status` | `CleanupStatus` | — | workspace 收尾结果 |
-| `resource_enforcement` | `ResourceLimitEnforcement \| None` | `null` | 按实际 capability 记录 |
+| `resource_enforcement` | `ResourceLimitEnforcement \| None` | `null` | runner-owned；untrusted payload 只能省略或为 null |
 | `environment_fingerprint` | `EnvironmentFingerprint \| None` | `null` | dependency/Git/seed evidence |
 | `warnings` | `list[str]` | `[]` | 每项非空且最长 1024 |
 | `error` | `ExecutionError \| None` | `null` | 结构化错误 |
@@ -320,11 +320,13 @@ test/mock/dry_run/planned/rejected/failed/timed_out/cancelled 均不能产生 ac
 - `model_validate` 属于 untrusted；
 - `model_validate_json` 属于 untrusted；
 - `model_validate_untrusted` 对 accepted payload 采用 untrusted 路径：省略的 truth fields 会保持 false，显式非 false claim 会被拒绝；已有实例也会先转为普通 payload 再验证；
-- `_from_runner()` 是私有内部入口，只允许 runner host code 使用；
+- `_from_runner()` 是私有内部入口，只允许 runner host code 使用，并要求 module-private attestation capability；普通直接调用失败；
 - 私有 attestation 不持久化，本文不描述其具体值；
 - 序列化后重新加载不能自动恢复 trusted；
 - persisted result 后续必须重新核验 artifact、metric 和 provenance；
-- `model_copy(update=...)` 和 `model_construct()` 不执行完整 validation，调用方生成的对象不是可信 runner result；runner 会重新验证 `ExecutionSpec`，下游必须对 result 使用 untrusted validation；
+- `ExecutionResult.model_copy(update=...)` 会重新验证并丢弃既有 attestation；truth/evidence 非 false/null 更新被拒绝；
+- `ExecutionResult.model_construct()` 被覆写为 fail-closed：不能创建 runner-owned truth 或 resource enforcement evidence；它仍不替代完整 validation；
+- runner 会重新验证 `ExecutionSpec`，下游必须对 result 使用 untrusted validation；
 - Python 的私有命名不是针对同进程恶意代码的安全边界。trusted host code 不得替调用方调用私有入口。
 
 ## 6. Legacy normalization
