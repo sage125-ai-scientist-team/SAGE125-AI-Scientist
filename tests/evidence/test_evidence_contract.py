@@ -6,6 +6,10 @@ from app.contracts.evidence import (
     EvidenceCardContract,
 )
 
+from app.contracts.validators import (
+    validate_evidence_card,
+    validate_evidence_link,
+)
 
 def test_evidence_card_contains_traceable_fields():
 
@@ -90,3 +94,50 @@ def test_evidence_bundle_tracks_token_budget():
     )
 
     assert bundle.token_budget == 8000
+def test_missing_quote_should_fail():
+
+    card = EvidenceCardContract(
+        evidence_id="EV_BAD_001",
+        source_id="paper001",
+        source_type="paper",
+        title="Missing quote",
+        quoted_text="",
+        locator={
+            "page": 1
+        },
+    )
+
+    with pytest.raises(ValueError):
+        validate_evidence_card(card)
+
+
+def test_missing_locator_should_fail():
+
+    card = EvidenceCardContract(
+        evidence_id="EV_BAD_002",
+        source_id="paper002",
+        source_type="paper",
+        title="Missing locator",
+        quoted_text="Some quote",
+        locator={},
+    )
+
+    with pytest.raises(ValueError):
+        validate_evidence_card(card)
+
+
+def test_unknown_evidence_id_should_fail():
+
+    link = ClaimEvidenceLink(
+        claim_id="CLAIM_BAD",
+        evidence_id="UNKNOWN_ID",
+        relation="supports",
+    )
+
+    with pytest.raises(ValueError):
+        validate_evidence_link(
+            link,
+            [
+                "EV001"
+            ],
+        )

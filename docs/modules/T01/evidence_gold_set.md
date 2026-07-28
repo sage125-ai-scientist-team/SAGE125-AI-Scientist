@@ -1,22 +1,21 @@
-# T01 Evidence Gold Set v1
+# T01 Evidence Gold Set v3
 
 ## Purpose
 
-This document provides 20 initial evidence-grounding validation pairs.
+This document defines 20 initial evidence validation pairs for the T01 evidence contract layer.
 
-These pairs are contract validation samples.
+These pairs are contract validation samples used to verify:
 
-They are used to test:
+- evidence provenance representation;
+- claim-evidence linkage;
+- evidence traceability;
+- unsupported evidence rejection.
 
-- EvidenceCard traceability
+The entries in this file are validation placeholders.
 
-- ClaimEvidenceLink validation
+They are not treated as verified scientific evidence.
 
-- unsupported claim rejection
-
-- evidence provenance control
-
-No fabricated literature metadata is included.
+All placeholder evidence fields must be replaced by verified source evidence before establishing scientific facts.
 
 ---
 
@@ -28,11 +27,35 @@ CLAIM-001
 
 claim:
 
-A factual scientific claim requires traceable evidence.
+Scientific factual claims require traceable evidence objects.
 
 evidence_id:
 
 EV-PENDING-001
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -43,6 +66,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 002
 
@@ -52,11 +77,35 @@ CLAIM-002
 
 claim:
 
-Evidence objects should preserve source identification.
+Evidence objects should preserve source identification information.
 
 evidence_id:
 
 EV-PENDING-002
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -67,6 +116,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 003
 
@@ -76,11 +127,35 @@ CLAIM-003
 
 claim:
 
-Evidence should contain location information when available.
+Evidence records should preserve original quoted content.
 
 evidence_id:
 
 EV-PENDING-003
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -92,6 +167,8 @@ pending
 
 ---
 
+
+
 # Evidence Pair 004
 
 claim_id:
@@ -100,11 +177,35 @@ CLAIM-004
 
 claim:
 
-A title alone cannot establish a scientific fact.
+Title-only information cannot establish verified scientific facts.
 
 evidence_id:
 
 EV-PENDING-004
+
+source_id:
+
+pending
+
+source_type:
+
+web
+
+quote:
+
+[placeholder] Title-only content without verified quotation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "metadata",
+
+  "location_value": "title_only"
+
+}
 
 relation:
 
@@ -116,6 +217,8 @@ pending
 
 ---
 
+
+
 # Evidence Pair 005
 
 claim_id:
@@ -124,11 +227,35 @@ CLAIM-005
 
 claim:
 
-An evidence_id should correspond to an existing EvidenceCard.
+Evidence identifiers should map to existing evidence objects.
 
 evidence_id:
 
 EV-PENDING-005
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -139,6 +266,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 006
 
@@ -148,11 +277,35 @@ CLAIM-006
 
 claim:
 
-Unsupported factual statements should remain pending hypotheses.
+Unsupported factual statements should remain unvalidated.
 
 evidence_id:
 
 EV-PENDING-006
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -163,6 +316,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 007
 
@@ -172,11 +327,35 @@ CLAIM-007
 
 claim:
 
-DeepResearch summaries require downstream verification.
+Generated research summaries require downstream evidence verification.
 
 evidence_id:
 
 EV-PENDING-007
+
+source_id:
+
+pending
+
+source_type:
+
+web
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "document_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -187,6 +366,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 008
 
@@ -196,11 +377,35 @@ CLAIM-008
 
 claim:
 
-Metadata fields should not replace original evidence text.
+Evidence provenance should remain available during processing.
 
 evidence_id:
 
 EV-PENDING-008
+
+source_id:
+
+pending
+
+source_type:
+
+dataset
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "record_identifier",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -211,6 +416,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 009
 
@@ -220,11 +427,35 @@ CLAIM-009
 
 claim:
 
-Evidence provenance should be preserved during processing.
+Evidence location information improves reproducibility.
 
 evidence_id:
 
 EV-PENDING-009
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -235,6 +466,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 010
 
@@ -244,11 +477,35 @@ CLAIM-010
 
 claim:
 
-Evidence validation status should be explicit.
+Evidence verification status should be explicitly represented.
 
 evidence_id:
 
 EV-PENDING-010
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -259,6 +516,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 011
 
@@ -274,6 +533,30 @@ evidence_id:
 
 EV-PENDING-011
 
+source_id:
+
+pending
+
+source_type:
+
+web
+
+quote:
+
+[placeholder] Question booklet excerpt requiring validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "booklet_location",
+
+  "location_value": "pending_verification"
+
+}
+
 relation:
 
 contradicts
@@ -284,6 +567,8 @@ pending
 
 ---
 
+
+
 # Evidence Pair 012
 
 claim_id:
@@ -292,11 +577,35 @@ CLAIM-012
 
 claim:
 
-Cross-domain evidence transfer requires validation.
+Cross-domain evidence transfer requires additional validation.
 
 evidence_id:
 
 EV-PENDING-012
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -307,6 +616,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 013
 
@@ -316,11 +627,35 @@ CLAIM-013
 
 claim:
 
-Evidence bundles should record token budget information.
+Evidence bundles should control context size.
 
 evidence_id:
 
 EV-PENDING-013
+
+source_id:
+
+pending
+
+source_type:
+
+experiment
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "experiment_record",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -331,6 +666,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 014
 
@@ -346,6 +683,30 @@ evidence_id:
 
 EV-PENDING-014
 
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
+
 relation:
 
 supports
@@ -355,6 +716,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 015
 
@@ -364,11 +727,35 @@ CLAIM-015
 
 claim:
 
-Evidence references should remain stable during pipeline execution.
+Evidence objects should maintain stable identifiers.
 
 evidence_id:
 
 EV-PENDING-015
+
+source_id:
+
+pending
+
+source_type:
+
+dataset
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "record_identifier",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -379,6 +766,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 016
 
@@ -388,11 +777,35 @@ CLAIM-016
 
 claim:
 
-Evidence without verification status should not be treated as validated.
+Unverified evidence should not be treated as established fact.
 
 evidence_id:
 
 EV-PENDING-016
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -404,6 +817,8 @@ pending
 
 ---
 
+
+
 # Evidence Pair 017
 
 claim_id:
@@ -412,11 +827,35 @@ CLAIM-017
 
 claim:
 
-Evidence conflicts should be represented explicitly.
+Conflicting evidence should be represented explicitly.
 
 evidence_id:
 
 EV-PENDING-017
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -428,6 +867,8 @@ pending
 
 ---
 
+
+
 # Evidence Pair 018
 
 claim_id:
@@ -436,11 +877,35 @@ CLAIM-018
 
 claim:
 
-Evidence selection should consider provenance quality.
+Evidence quality depends on provenance completeness.
 
 evidence_id:
 
 EV-PENDING-018
+
+source_id:
+
+pending
+
+source_type:
+
+dataset
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "record_identifier",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
@@ -451,6 +916,8 @@ validation_status:
 pending
 
 ---
+
+
 
 # Evidence Pair 019
 
@@ -466,6 +933,30 @@ evidence_id:
 
 EV-PENDING-019
 
+source_id:
+
+pending
+
+source_type:
+
+experiment
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "experiment_record",
+
+  "location_value": "pending_verification"
+
+}
+
 relation:
 
 supports
@@ -476,6 +967,8 @@ pending
 
 ---
 
+
+
 # Evidence Pair 020
 
 claim_id:
@@ -484,11 +977,35 @@ CLAIM-020
 
 claim:
 
-All established facts should be traceable to evidence objects.
+Established scientific facts should be traceable to evidence objects.
 
 evidence_id:
 
 EV-PENDING-020
+
+source_id:
+
+pending
+
+source_type:
+
+paper
+
+quote:
+
+[placeholder] Original source quotation required before validation.
+
+locator:
+
+{
+
+  "source_id": "pending",
+
+  "location_type": "page_or_section",
+
+  "location_value": "pending_verification"
+
+}
 
 relation:
 
