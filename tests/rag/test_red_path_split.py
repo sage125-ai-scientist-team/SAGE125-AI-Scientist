@@ -4,17 +4,11 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-import pytest
-
 from app.agents.supervisor import SupervisorAgent
 
 
-@pytest.mark.xfail(
-    reason="Supervisor path routing waiting for owner/shared-change",
-    strict=True,
-)
 def test_supervisor_enables_rag_when_only_formal_user_library_index_exists(tmp_path):
-    """Expected red: a ready formal index must enable Local RAG."""
+    """A ready formal index enables Local RAG without the legacy path."""
 
     data_root = tmp_path / "data"
     formal_index = data_root / "index" / "user_library" / "zvec"

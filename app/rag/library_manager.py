@@ -17,9 +17,9 @@ import threading
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Mapping
 
-from app.contracts.rag import IndexConfig
+from app.contracts.rag import IndexConfig, SourceRecord
 from app.core.config import PROJECT_ROOT, Settings, get_settings
 from app.core.logging import get_logger
 from app.rag.indexing_service import IndexingService
@@ -129,6 +129,7 @@ class LibraryManager:
         disk_usage_fn: Callable[[str | os.PathLike[str]], Any] | None = None,
         vector_store_factory: Callable[..., Any] | None = None,
         index_config: IndexConfig | None = None,
+        source_registry: Mapping[str, SourceRecord] | None = None,
     ) -> None:
         self.settings = settings or get_settings()
         self.index_config = index_config or IndexConfig.resolve(
@@ -146,6 +147,10 @@ class LibraryManager:
         self.indexing_service_factory = indexing_service_factory or IndexingService
         self.disk_usage_fn = disk_usage_fn or shutil.disk_usage
         self.vector_store_factory = vector_store_factory or get_vector_store
+        self.source_registry = {
+            str(content_hash).strip().lower(): SourceRecord.model_validate(record)
+            for content_hash, record in (source_registry or {}).items()
+        }
         self.uploads_dir.mkdir(parents=True, exist_ok=True)
         self._cleanup_stale_parts()
 
@@ -464,6 +469,16 @@ class LibraryManager:
             "source_role": "user_literature",
             "is_user_upload": True,
         }
+        registered_source = self.source_registry.get(str(record["sha256"]).lower())
+        if (
+            registered_source is not None
+            and registered_source.content_hash == str(record["sha256"]).lower()
+        ):
+            overrides.update(
+                source_id=registered_source.source_id,
+                source_type=registered_source.source_type.value,
+                source_role=registered_source.source_role.value,
+            )
         try:
             service = self.indexing_service_factory(index_dir=str(self.index_dir))
             result = service.index_files(

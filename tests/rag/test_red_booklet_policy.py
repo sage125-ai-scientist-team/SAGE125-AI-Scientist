@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from types import SimpleNamespace
 
 from app.contracts.rag import SourceRecord, SourceRole, SourceType
@@ -34,21 +33,6 @@ def test_renamed_registered_booklet_is_not_treated_as_user_evidence(tmp_path):
             return {"status": "ok", "chunks": 1, "chunk_ids": ["CH-BOOKLET"]}
 
     uploads_dir = tmp_path / "uploads"
-    uploads_dir.mkdir()
-    manifest_path = uploads_dir / ".library_manifest.json"
-    manifest_path.write_text(
-        json.dumps(
-            {
-                "version": 1,
-                "documents": [],
-                "source_registry": {
-                    digest: record.model_dump(mode="json")
-                    for digest, record in registry.items()
-                },
-            }
-        ),
-        encoding="utf-8",
-    )
     manager = LibraryManager(
         settings=SimpleNamespace(
             max_upload_mb=25,
@@ -62,15 +46,16 @@ def test_renamed_registered_booklet_is_not_treated_as_user_evidence(tmp_path):
         ),
         uploads_dir=uploads_dir,
         index_dir=tmp_path / "index" / "user_library" / "zvec",
-        manifest_path=manifest_path,
+        manifest_path=uploads_dir / ".library_manifest.json",
         indexing_service_factory=CapturingIndexingService,
+        source_registry=registry,
     )
 
     result = manager.ingest_files([("renamed booklet.pdf", pdf_bytes)])
 
     assert result["status"] == "ok"
     assert captured_metadata["content_sha256"] == content_hash
-    registered_source = registry[captured_metadata["content_sha256"]]
-    assert registered_source.source_type is SourceType.BOOKLET
-    assert registered_source.source_type is not SourceType.PAPER
-    assert registered_source.source_role is SourceRole.QUESTION_SOURCE
+    assert captured_metadata["source_type"] == SourceType.BOOKLET.value
+    assert captured_metadata["source_type"] != SourceType.PAPER.value
+    assert captured_metadata["source_role"] == SourceRole.QUESTION_SOURCE.value
+    assert captured_metadata["source_role"] != "user_literature"

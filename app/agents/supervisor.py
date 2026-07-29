@@ -7,11 +7,11 @@ Supervisor 不生成科学内容，仅根据资源可用性与开关决定启用
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Optional
 
 from app.agents.base import BaseAgent, _now_iso
 from app.agents.prompts import SUPERVISOR_PROMPT
+from app.contracts.rag import IndexConfig
 from app.core.config import Settings
 
 
@@ -27,6 +27,7 @@ class SupervisorAgent(BaseAgent):
         super().__init__(settings)
         self.model_name = self.settings.qwen_balanced_model
         self.system_prompt = SUPERVISOR_PROMPT
+        self.index_config = IndexConfig.resolve({"data_root": self.settings.data_dir})
 
     def run(self, input_data: dict, state, step_index: int = 0) -> dict:
         """
@@ -53,7 +54,7 @@ class SupervisorAgent(BaseAgent):
 
         # 1) RAG index 状态：缺失仍继续，但标记 warning 并关闭 local_rag。
         use_local_rag = bool(switches.get("use_local_rag", True))
-        index_dir = Path(self.settings.data_dir) / "index" / "zvec"
+        index_dir = self.index_config.vector_index_dir
         rag_available = index_dir.exists() and any(index_dir.iterdir()) if index_dir.exists() else False
         if use_local_rag and not rag_available and not mock_mode:
             risk_flags.append("rag_missing_warning")
