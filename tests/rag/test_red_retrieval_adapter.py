@@ -2,10 +2,16 @@
 
 from __future__ import annotations
 
+import pytest
+
 from app.contracts.rag import coerce_retrieval_hit
 from app.rag.evidence import chunk_to_evidence_card
 
 
+@pytest.mark.xfail(
+    reason="Retrieval adapter provenance fields waiting for cross-module integration",
+    strict=True,
+)
 def test_chunk_adapter_preserves_structured_locator_and_content_hash():
     """Expected red until an adapter exposes the T04 RetrievalHit contract."""
 

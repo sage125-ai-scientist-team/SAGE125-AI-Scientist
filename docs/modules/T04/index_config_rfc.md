@@ -175,3 +175,49 @@ content hash、document/source ID、source type/role、score 及 score kind；
 - 20-query 集只是 `contract_fixture`，annotation 为 provisional。
 - 仓库缺少明确 T01 contract；最终 adapter 需跨 owner 确认。
 - 历史索引的废弃和保留周期仍需产品决策。
+
+## 07/29 Wave A 契约补充
+
+### 配置来源与优先级
+
+`IndexConfig.resolve()` 是配置解析边界，优先级固定为：
+
+```text
+environment > supplied config > model default
+```
+
+环境变量名称为 `SAGE_RAG_DATA_ROOT` 和 `SAGE_RAG_SCHEMA_VERSION`。空环境变量不覆盖
+显式配置。`LibraryManager` 默认通过这一入口解析项目 `data` 根目录；调用方仍可注入
+`IndexConfig`，测试和旧调用方也可显式传入 `index_dir`。
+
+当前 `LibraryManager` 的历史常量曾将用户索引硬编码为
+`PROJECT_ROOT/data/index/user_library/zvec`，并在读取 chunk 清单时再次拼接
+`chunks.jsonl`。最小接入后，默认向量目录和 chunk 清单分别来自
+`IndexConfig.vector_index_dir` 与 `IndexConfig.chunks_manifest_path`。上传原文目录和
+library manifest 不属于本轮 IndexConfig 索引布局，保持现状。
+
+### 索引健康状态
+
+`IndexHealth` 只定义可诊断状态，不在本轮探测磁盘或改变索引：
+
+- `READY`：活动索引及其契约完整可用；
+- `DEGRADED`：索引可读，但存在可报告的局部问题；
+- `MISSING`：活动索引不存在；
+- `MIGRATION_REQUIRED`：索引存在，但布局或 schema version 不兼容。
+
+调用方不得把 `MISSING` 或 `MIGRATION_REQUIRED` 静默降级为 `READY`。
+
+### migration dry-run
+
+`MigrationDryRun` 是只读、可序列化的迁移提案，字段固定为 `source`、`target`、
+`checksum`、`rollback_available` 和恒为 `true` 的 `dry_run`。`checksum` 是完整
+SHA-256，且 source 与 target 必须不同。构造、校验或序列化该模型均不得创建目录、
+复制索引、取得迁移锁或执行切换；真实迁移命令明确不在本轮范围。
+
+### renamed booklet 红灯
+
+红灯使用现有 `LibraryManager.ingest_files` 行为：以改名后的 PDF、持久化 registry
+记录和内容 SHA-256 为输入，并捕获提交给索引服务的 metadata。旧实现只写
+`source_role=user_literature` 且不保留 `source_type=booklet`，因此以断言失败稳定暴露
+booklet 可能在检索端默认成为 paper evidence 的缺口。测试不要求、也不调用
+`classify_source` 方法。

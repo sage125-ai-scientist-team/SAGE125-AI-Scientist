@@ -10,14 +10,17 @@ from __future__ import annotations
 import re
 from enum import Enum
 from math import isfinite
+from os import environ as process_environ
 from pathlib import Path, PurePath
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, Literal, Mapping, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator, model_validator
 
 
 _SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 _DOI_PATTERN = re.compile(r"^10\.\d{4,9}/\S+$", re.IGNORECASE)
+INDEX_DATA_ROOT_ENV = "SAGE_RAG_DATA_ROOT"
+INDEX_SCHEMA_VERSION_ENV = "SAGE_RAG_SCHEMA_VERSION"
 
 
 class SourceType(str, Enum):
@@ -45,6 +48,15 @@ class ScoreKind(str, Enum):
     VECTOR_SIMILARITY = "vector_similarity"
     VECTOR_DISTANCE = "vector_distance"
     RERANK_SCORE = "rerank_score"
+
+
+class IndexHealth(str, Enum):
+    """Read-only compatibility state reported for an index."""
+
+    READY = "ready"
+    DEGRADED = "degraded"
+    MISSING = "missing"
+    MIGRATION_REQUIRED = "migration_required"
 
 
 class SourceRecord(BaseModel):
@@ -87,6 +99,27 @@ class IndexConfig(BaseModel):
 
     data_root: Path = Field(default=Path("data"))
     schema_version: str = Field(default="1.0", pattern=r"^\d+\.\d+$")
+
+    @classmethod
+    def resolve(
+        cls,
+        config: "IndexConfig | Mapping[str, Any] | None" = None,
+        *,
+        environ: Mapping[str, str] | None = None,
+    ) -> "IndexConfig":
+        """Resolve values with the contract precedence: env > config > default."""
+
+        values = (
+            config.model_dump(exclude_computed_fields=True)
+            if isinstance(config, cls)
+            else dict(config or {})
+        )
+        env = process_environ if environ is None else environ
+        if env.get(INDEX_DATA_ROOT_ENV):
+            values["data_root"] = env[INDEX_DATA_ROOT_ENV]
+        if env.get(INDEX_SCHEMA_VERSION_ENV):
+            values["schema_version"] = env[INDEX_SCHEMA_VERSION_ENV]
+        return cls.model_validate(values)
 
     @field_validator("data_root", mode="before")
     @classmethod
@@ -139,6 +172,32 @@ class IndexConfig(BaseModel):
         """Compatibility alias used in diagnostics and migration manifests."""
 
         return self.schema_version
+
+
+class MigrationDryRun(BaseModel):
+    """Serializable migration proposal; constructing it performs no migration."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    source: Path
+    target: Path
+    checksum: str
+    rollback_available: bool
+    dry_run: Literal[True] = True
+
+    @field_validator("checksum")
+    @classmethod
+    def _valid_checksum(cls, value: str) -> str:
+        normalized = value.strip().lower()
+        if not _SHA256_PATTERN.fullmatch(normalized):
+            raise ValueError("checksum must be a full SHA-256 hex digest")
+        return normalized
+
+    @model_validator(mode="after")
+    def _distinct_paths(self) -> "MigrationDryRun":
+        if self.source == self.target:
+            raise ValueError("source and target must be different")
+        return self
 
 
 class SourceLocator(BaseModel):

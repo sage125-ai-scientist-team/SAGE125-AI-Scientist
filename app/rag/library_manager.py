@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
+from app.contracts.rag import IndexConfig
 from app.core.config import PROJECT_ROOT, Settings, get_settings
 from app.core.logging import get_logger
 from app.rag.indexing_service import IndexingService
@@ -127,11 +128,20 @@ class LibraryManager:
         indexing_service_factory: Callable[..., Any] | None = None,
         disk_usage_fn: Callable[[str | os.PathLike[str]], Any] | None = None,
         vector_store_factory: Callable[..., Any] | None = None,
+        index_config: IndexConfig | None = None,
     ) -> None:
         self.settings = settings or get_settings()
+        self.index_config = index_config or IndexConfig.resolve(
+            {"data_root": PROJECT_ROOT / "data"}
+        )
         self.uploads_dir = Path(uploads_dir or USER_LIBRARY_UPLOADS_DIR)
-        self.index_dir = Path(index_dir or USER_LIBRARY_ZVEC_DIR)
+        self.index_dir = Path(index_dir or self.index_config.vector_index_dir)
         self.index_root = self.index_dir.parent
+        self.chunks_manifest_path = (
+            self.index_root / "chunks.jsonl"
+            if index_dir is not None
+            else self.index_config.chunks_manifest_path
+        )
         self.manifest_path = Path(manifest_path or (self.uploads_dir / ".library_manifest.json"))
         self.indexing_service_factory = indexing_service_factory or IndexingService
         self.disk_usage_fn = disk_usage_fn or shutil.disk_usage
@@ -168,7 +178,7 @@ class LibraryManager:
 
     def _indexed_chunk_ids(self) -> set[str]:
         ids: set[str] = set()
-        chunks_path = self.index_root / "chunks.jsonl"
+        chunks_path = self.chunks_manifest_path
         if not chunks_path.exists():
             return ids
         try:

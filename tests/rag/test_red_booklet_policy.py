@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from types import SimpleNamespace
 
 from app.contracts.rag import SourceRecord, SourceRole, SourceType
@@ -10,7 +11,7 @@ from app.rag.library_manager import LibraryManager
 
 
 def test_renamed_registered_booklet_is_not_treated_as_user_evidence(tmp_path):
-    """Expected red until LibraryManager implements the SourcePolicy behavior."""
+    """An ingest hash must resolve registry identity independently of filename."""
 
     pdf_bytes = b"%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\n%%EOF"
     content_hash = hashlib.sha256(pdf_bytes).hexdigest()
@@ -22,17 +23,54 @@ def test_renamed_registered_booklet_is_not_treated_as_user_evidence(tmp_path):
             source_role=SourceRole.QUESTION_SOURCE,
         )
     }
+    captured_metadata = {}
+
+    class CapturingIndexingService:
+        def __init__(self, **_kwargs):
+            pass
+
+        def index_files(self, _paths, *, metadata_overrides, **_kwargs):
+            captured_metadata.update(metadata_overrides)
+            return {"status": "ok", "chunks": 1, "chunk_ids": ["CH-BOOKLET"]}
+
+    uploads_dir = tmp_path / "uploads"
+    uploads_dir.mkdir()
+    manifest_path = uploads_dir / ".library_manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "documents": [],
+                "source_registry": {
+                    digest: record.model_dump(mode="json")
+                    for digest, record in registry.items()
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
     manager = LibraryManager(
-        settings=SimpleNamespace(),
-        uploads_dir=tmp_path / "uploads",
+        settings=SimpleNamespace(
+            max_upload_mb=25,
+            library_max_files=500,
+            library_max_total_mb=2048,
+            library_max_chunks=100000,
+            library_max_chunks_per_file=5000,
+            library_max_index_mb=4096,
+            library_min_free_mb=0,
+            library_min_free_percent=0,
+        ),
+        uploads_dir=uploads_dir,
         index_dir=tmp_path / "index" / "user_library" / "zvec",
-        manifest_path=tmp_path / "uploads" / ".library_manifest.json",
+        manifest_path=manifest_path,
+        indexing_service_factory=CapturingIndexingService,
     )
 
-    classified = manager.classify_source(
-        filename="paper.pdf",
-        content_hash=content_hash,
-        registry=registry,
-    )
-    assert classified.source_type is SourceType.BOOKLET
-    assert classified.source_role is SourceRole.QUESTION_SOURCE
+    result = manager.ingest_files([("renamed booklet.pdf", pdf_bytes)])
+
+    assert result["status"] == "ok"
+    assert captured_metadata["content_sha256"] == content_hash
+    registered_source = registry[captured_metadata["content_sha256"]]
+    assert registered_source.source_type is SourceType.BOOKLET
+    assert registered_source.source_type is not SourceType.PAPER
+    assert registered_source.source_role is SourceRole.QUESTION_SOURCE

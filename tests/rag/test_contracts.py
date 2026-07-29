@@ -4,18 +4,24 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from pydantic import ValidationError
 
 from app.contracts.rag import (
+    INDEX_DATA_ROOT_ENV,
+    INDEX_SCHEMA_VERSION_ENV,
     IndexConfig,
+    IndexHealth,
+    MigrationDryRun,
     RetrievalHit,
     ScoreKind,
     SourceLocator,
     SourceRole,
     SourceType,
 )
+from app.rag.library_manager import LibraryManager
 
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "initial_retrieval_gold.json"
@@ -43,6 +49,72 @@ def test_index_config_is_json_serializable_and_versioned():
 def test_index_config_rejects_parent_traversal():
     with pytest.raises(ValidationError, match="parent traversal"):
         IndexConfig(data_root="../data")
+
+
+def test_index_config_resolution_precedence_is_env_config_default():
+    config = IndexConfig.resolve(
+        {"data_root": "configured-data", "schema_version": "2.0"},
+        environ={
+            INDEX_DATA_ROOT_ENV: "environment-data",
+            INDEX_SCHEMA_VERSION_ENV: "3.0",
+        },
+    )
+    assert config.data_root == Path("environment-data")
+    assert config.schema_version == "3.0"
+
+    configured = IndexConfig.resolve(
+        {"data_root": "configured-data", "schema_version": "2.0"},
+        environ={},
+    )
+    assert configured.data_root == Path("configured-data")
+    assert configured.schema_version == "2.0"
+    assert IndexConfig.resolve(environ={}) == IndexConfig()
+
+
+def test_library_manager_uses_injected_index_config(tmp_path):
+    config = IndexConfig(data_root=tmp_path / "configured-data")
+    manager = LibraryManager(
+        settings=SimpleNamespace(),
+        uploads_dir=tmp_path / "uploads",
+        index_config=config,
+    )
+    assert manager.index_dir == config.vector_index_dir
+    assert manager.chunks_manifest_path == config.chunks_manifest_path
+
+
+def test_index_health_has_four_exhaustive_states():
+    assert set(IndexHealth) == {
+        IndexHealth.READY,
+        IndexHealth.DEGRADED,
+        IndexHealth.MISSING,
+        IndexHealth.MIGRATION_REQUIRED,
+    }
+
+
+def test_migration_dry_run_is_a_non_executing_serializable_contract():
+    proposal = MigrationDryRun(
+        source="data/index/zvec",
+        target="data/index/user_library/zvec",
+        checksum=SHA256.upper(),
+        rollback_available=True,
+    )
+    assert proposal.checksum == SHA256
+    assert proposal.dry_run is True
+    payload = json.loads(proposal.model_dump_json())
+    assert Path(payload.pop("source")) == Path("data/index/zvec")
+    assert Path(payload.pop("target")) == Path("data/index/user_library/zvec")
+    assert payload == {
+        "checksum": SHA256,
+        "rollback_available": True,
+        "dry_run": True,
+    }
+    with pytest.raises(ValidationError):
+        MigrationDryRun(
+            source="same",
+            target="same",
+            checksum=SHA256,
+            rollback_available=False,
+        )
 
 
 def test_source_type_and_source_role_are_orthogonal():
