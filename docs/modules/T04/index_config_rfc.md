@@ -221,3 +221,36 @@ SHA-256，且 source 与 target 必须不同。构造、校验或序列化该模
 `source_role=user_literature` 且不保留 `source_type=booklet`，因此以断言失败稳定暴露
 booklet 可能在检索端默认成为 paper evidence 的缺口。测试不要求、也不调用
 `classify_source` 方法。
+
+## Migration command
+
+可执行入口为：
+
+```text
+python scripts/migrate_rag_index.py [--data-root PATH]
+```
+
+默认只执行 dry-run：检查旧布局 `index/zvec` 与 `index/chunks.jsonl`、拒绝目标
+`index/user_library` 冲突、逐行解析 manifest，并校验其中出现的 `source_hash` 和
+`content_sha256`。命令计算向量目录与 manifest 的联合 SHA-256，但不创建 staging、
+backup 或 lock。
+
+显式迁移：
+
+```text
+python scripts/migrate_rag_index.py --apply --expected-checksum SHA256
+```
+
+执行顺序为：取得 migration lock、在锁内重新验证源、复制到 staging、验证 staging
+checksum、将旧布局移入 backup，最后切换到 `IndexConfig.vector_index_dir` 和
+`chunks_manifest_path`。目标、staging、backup 或 lock 已存在均视为冲突，不做覆盖。
+
+显式回滚：
+
+```text
+python scripts/migrate_rag_index.py --rollback
+```
+
+回滚要求 backup 及 migration record 完整、旧路径为空、迁移后的目标仍与迁移
+checksum 一致。目标被修改后拒绝回滚，避免以旧备份覆盖未知新数据。成功回滚后恢复
+旧 `index/zvec` 与 `index/chunks.jsonl`，并清除本次 backup。
