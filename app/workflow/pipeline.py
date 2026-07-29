@@ -238,7 +238,49 @@ def _recommended_hypothesis(hyp_result: dict | None) -> dict:
     return hyps[0] if hyps else {}
 
 
-def _experiment_designer_input(state: PipelineState, qdict: dict) -> dict:
+def _review_result_snapshot(review_result: dict) -> dict:
+    """返回可稳定序列化、不会被后续状态更新影响的 ReviewResult 快照。"""
+    return json.loads(json.dumps(review_result, ensure_ascii=False, default=str))
+
+
+def _is_effective_review_pass(review_result: dict | None) -> bool:
+    """仅在 Reviewer 明确通过且不存在关键问题或必要修订时返回 True。"""
+    review_result = review_result or {}
+    return (
+        review_result.get("passed") is True
+        and not (review_result.get("critical_issues") or [])
+        and not (review_result.get("required_revisions") or [])
+    )
+
+
+def _hypothesis_generator_input(
+    state: PipelineState,
+    qdict: dict,
+    *,
+    revision_iteration: int = 1,
+    review_result: dict | None = None,
+) -> dict:
+    """构造带权威语义迭代和可选 Reviewer 反馈的 HypothesisGenerator 输入。"""
+    payload = {"revision_iteration": revision_iteration}
+    if review_result is not None:
+        payload["review_result"] = _review_result_snapshot(review_result)
+    payload.update(
+        {
+            "question_item": qdict,
+            "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
+            "evidence_extraction": state.evidence_extraction,
+        }
+    )
+    return payload
+
+
+def _experiment_designer_input(
+    state: PipelineState,
+    qdict: dict,
+    *,
+    revision_iteration: int = 1,
+    review_result: dict | None = None,
+) -> dict:
     """
     构造 ExperimentDesigner 完整输入（真实模式必须含假设与证据，不能只传 question_item）。
 
@@ -250,17 +292,29 @@ def _experiment_designer_input(state: PipelineState, qdict: dict) -> dict:
         Agent 输入 dict。
     """
     parsed = state.parsed_question or {}
-    return {
-        "question_item": qdict,
-        "question_type": parsed.get("question_type", ""),
-        "recommended_hypothesis": _recommended_hypothesis(state.hypothesis_generation),
-        "hypothesis_generation": state.hypothesis_generation,
-        "evidence_extraction": state.evidence_extraction,
-        "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
-    }
+    payload = {"revision_iteration": revision_iteration}
+    if review_result is not None:
+        payload["review_result"] = _review_result_snapshot(review_result)
+    payload.update(
+        {
+            "question_item": qdict,
+            "question_type": parsed.get("question_type", ""),
+            "recommended_hypothesis": _recommended_hypothesis(state.hypothesis_generation),
+            "hypothesis_generation": state.hypothesis_generation,
+            "evidence_extraction": state.evidence_extraction,
+            "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
+        }
+    )
+    return payload
 
 
-def _reviewer_input(state: PipelineState, qdict: dict) -> dict:
+def _reviewer_input(
+    state: PipelineState,
+    qdict: dict,
+    *,
+    revision_iteration: int = 1,
+    review_result: dict | None = None,
+) -> dict:
     """
     构造 ScientificReviewer 完整输入。
 
@@ -271,14 +325,20 @@ def _reviewer_input(state: PipelineState, qdict: dict) -> dict:
     返回：
         Agent 输入 dict。
     """
-    return {
-        "question_item": qdict,
-        "recommended_hypothesis": _recommended_hypothesis(state.hypothesis_generation),
-        "hypothesis_generation": state.hypothesis_generation,
-        "experiment_design": state.experiment_design,
-        "evidence_extraction": state.evidence_extraction,
-        "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
-    }
+    payload = {"revision_iteration": revision_iteration}
+    if review_result is not None:
+        payload["review_result"] = _review_result_snapshot(review_result)
+    payload.update(
+        {
+            "question_item": qdict,
+            "recommended_hypothesis": _recommended_hypothesis(state.hypothesis_generation),
+            "hypothesis_generation": state.hypothesis_generation,
+            "experiment_design": state.experiment_design,
+            "evidence_extraction": state.evidence_extraction,
+            "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
+        }
+    )
+    return payload
 
 
 def _resolve_references(ref_ids: list[str], evidence_pool: list[EvidenceCard]) -> list[EvidenceCard]:
@@ -497,11 +557,7 @@ def _run_pipeline_with_state_impl(
 
     # 9) HypothesisGenerator。
     hyp_result = HypothesisGeneratorAgent(settings).run(
-        {
-            "question_item": qdict,
-            "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
-            "evidence_extraction": state.evidence_extraction,
-        },
+        _hypothesis_generator_input(state, qdict, revision_iteration=1),
         state,
         step,
     )
@@ -523,34 +579,66 @@ def _run_pipeline_with_state_impl(
             continue
 
     # 10) ExperimentDesigner（必须传入假设+证据，否则真实 Qwen 易回显 question_item 导致校验失败）。
-    exp_result = ExperimentDesignerAgent(settings).run(_experiment_designer_input(state, qdict), state, step)
+    exp_result = ExperimentDesignerAgent(settings).run(
+        _experiment_designer_input(state, qdict, revision_iteration=1),
+        state,
+        step,
+    )
     step += 1
     state.experiment_design = exp_result
     state.execution_metadata = exp_result.get("execution_metadata", {})
 
     # 11) ScientificReviewer（最多 1 次自动修订）。
-    review = ScientificReviewerAgent(settings).run(_reviewer_input(state, qdict), state, step)
+    review = ScientificReviewerAgent(settings).run(
+        _reviewer_input(state, qdict, revision_iteration=1),
+        state,
+        step,
+    )
     step += 1
     state.review_result = review
-    if (not review.get("passed")) and reviewer_auto_revision and not state.revision_history:
+    if (
+        not _is_effective_review_pass(review)
+        and reviewer_auto_revision
+        and not state.revision_history
+    ):
         # 记录一次自动修订，重跑假设与实验，再评审一次（严格上限 1 次）。
+        first_review = _review_result_snapshot(review)
         state.revision_history.append("auto_revision_1: 依据评审意见重做假设与实验设计。")
         hyp_result = HypothesisGeneratorAgent(settings).run(
-            {
-                "question_item": qdict,
-                "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
-                "evidence_extraction": state.evidence_extraction,
-            },
+            _hypothesis_generator_input(
+                state,
+                qdict,
+                revision_iteration=2,
+                review_result=first_review,
+            ),
             state,
             step,
         )
         step += 1
         state.hypothesis_generation = hyp_result
-        exp_result = ExperimentDesignerAgent(settings).run(_experiment_designer_input(state, qdict), state, step)
+        exp_result = ExperimentDesignerAgent(settings).run(
+            _experiment_designer_input(
+                state,
+                qdict,
+                revision_iteration=2,
+                review_result=first_review,
+            ),
+            state,
+            step,
+        )
         step += 1
         state.experiment_design = exp_result
         state.execution_metadata = exp_result.get("execution_metadata", {})
-        review = ScientificReviewerAgent(settings).run(_reviewer_input(state, qdict), state, step)
+        review = ScientificReviewerAgent(settings).run(
+            _reviewer_input(
+                state,
+                qdict,
+                revision_iteration=2,
+                review_result=first_review,
+            ),
+            state,
+            step,
+        )
         step += 1
         state.review_result = review
 
@@ -585,6 +673,8 @@ def _run_pipeline_with_state_impl(
         tentative = "draft"
     else:
         tentative = "ready_for_validation"
+    if not _is_effective_review_pass(state.review_result) and tentative == "ready_for_validation":
+        tentative = "draft"
 
     # 构建 ResearchPlan。
     plan = _build_research_plan(

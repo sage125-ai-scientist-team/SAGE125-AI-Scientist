@@ -43,6 +43,8 @@ class ExperimentDesignerAgent(BaseAgent):
             OpenAI 风格消息列表。
         """
         payload = {
+            "revision_iteration": input_data.get("revision_iteration", 1),
+            "review_result": input_data.get("review_result") or {},
             "question_type": input_data.get("question_type", ""),
             "recommended_hypothesis": input_data.get("recommended_hypothesis") or {},
             "hypothesis_generation": input_data.get("hypothesis_generation") or {},
