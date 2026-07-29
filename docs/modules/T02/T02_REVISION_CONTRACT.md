@@ -168,7 +168,12 @@ json.dumps(
 `test_passed_review_with_blocking_revisions_is_not_effectively_passing`
 补充验证pipeline最终状态不得保留“有效通过但仍有阻断修订”的矛盾组合。
 
-## 10. 非目标
+## 10. 生产契约落点与边界
 
-本阶段不实现生产代码，不新增 `stop_reason`，不修改 `ReviewResult` schema，不改变
-mock输出，也不实现超过两轮的通用循环。
+正式状态对象、确定性 Prompt Builder、PlanVersion 存储、兼容迁移、序列化往返和
+IssueClosure 已落在 `app/contracts/revision.py`，权威生产说明见
+`docs/contracts/T02.md`。`app/workflow/pipeline.py` 使用这些正式对象构造真实输入，
+并保持最多两轮及阻断终态规则。
+
+本阶段不修改公共 `ReviewResult` 或 `PipelineState` schema，不实现超过两轮的通用
+循环，也不擅自增加公共 `stop_reason` 字段。

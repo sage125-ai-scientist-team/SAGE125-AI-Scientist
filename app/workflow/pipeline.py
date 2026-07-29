@@ -34,6 +34,11 @@ from app.agents import (
     SupervisorAgent,
 )
 from app.agents.base import AgentOutputError
+from app.contracts.revision import (
+    ReviewFeedback,
+    RevisionContext,
+    RevisionPromptBuilder,
+)
 from app.core.config import get_settings
 from app.core.execution_mode import execution_mode, is_mock_mode
 from app.core.logging import get_logger, mask_text
@@ -240,16 +245,32 @@ def _recommended_hypothesis(hyp_result: dict | None) -> dict:
 
 def _review_result_snapshot(review_result: dict) -> dict:
     """返回可稳定序列化、不会被后续状态更新影响的 ReviewResult 快照。"""
-    return json.loads(json.dumps(review_result, ensure_ascii=False, default=str))
+    return ReviewFeedback.from_review_result(review_result).model_dump(mode="json")
 
 
 def _is_effective_review_pass(review_result: dict | None) -> bool:
     """仅在 Reviewer 明确通过且不存在关键问题或必要修订时返回 True。"""
-    review_result = review_result or {}
-    return (
-        review_result.get("passed") is True
-        and not (review_result.get("critical_issues") or [])
-        and not (review_result.get("required_revisions") or [])
+    return ReviewFeedback.from_review_result(
+        review_result
+    ).is_effective_pass
+
+
+def _revision_context(
+    state: PipelineState,
+    *,
+    revision_iteration: int,
+    review_result: dict | None,
+) -> RevisionContext:
+    """构造正式 RevisionContext，避免以临时 dict 表示修订状态。"""
+    feedback = (
+        ReviewFeedback.from_review_result(review_result)
+        if review_result is not None
+        else None
+    )
+    return RevisionContext(
+        run_id=state.run_id,
+        revision_iteration=revision_iteration,
+        review_feedback=feedback,
     )
 
 
@@ -261,17 +282,17 @@ def _hypothesis_generator_input(
     review_result: dict | None = None,
 ) -> dict:
     """构造带权威语义迭代和可选 Reviewer 反馈的 HypothesisGenerator 输入。"""
-    payload = {"revision_iteration": revision_iteration}
-    if review_result is not None:
-        payload["review_result"] = _review_result_snapshot(review_result)
-    payload.update(
-        {
-            "question_item": qdict,
-            "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
-            "evidence_extraction": state.evidence_extraction,
-        }
+    context = _revision_context(
+        state,
+        revision_iteration=revision_iteration,
+        review_result=review_result,
     )
-    return payload
+    return RevisionPromptBuilder.build_hypothesis_input(
+        context,
+        question_item=qdict,
+        evidence_catalog=_evidence_catalog(state.retrieved_evidence),
+        evidence_extraction=state.evidence_extraction,
+    )
 
 
 def _experiment_designer_input(
@@ -292,20 +313,22 @@ def _experiment_designer_input(
         Agent 输入 dict。
     """
     parsed = state.parsed_question or {}
-    payload = {"revision_iteration": revision_iteration}
-    if review_result is not None:
-        payload["review_result"] = _review_result_snapshot(review_result)
-    payload.update(
-        {
-            "question_item": qdict,
-            "question_type": parsed.get("question_type", ""),
-            "recommended_hypothesis": _recommended_hypothesis(state.hypothesis_generation),
-            "hypothesis_generation": state.hypothesis_generation,
-            "evidence_extraction": state.evidence_extraction,
-            "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
-        }
+    context = _revision_context(
+        state,
+        revision_iteration=revision_iteration,
+        review_result=review_result,
     )
-    return payload
+    return RevisionPromptBuilder.build_experiment_input(
+        context,
+        question_item=qdict,
+        question_type=parsed.get("question_type", ""),
+        recommended_hypothesis=_recommended_hypothesis(
+            state.hypothesis_generation
+        ),
+        hypothesis_generation=state.hypothesis_generation,
+        evidence_extraction=state.evidence_extraction,
+        evidence_catalog=_evidence_catalog(state.retrieved_evidence),
+    )
 
 
 def _reviewer_input(
@@ -325,20 +348,22 @@ def _reviewer_input(
     返回：
         Agent 输入 dict。
     """
-    payload = {"revision_iteration": revision_iteration}
-    if review_result is not None:
-        payload["review_result"] = _review_result_snapshot(review_result)
-    payload.update(
-        {
-            "question_item": qdict,
-            "recommended_hypothesis": _recommended_hypothesis(state.hypothesis_generation),
-            "hypothesis_generation": state.hypothesis_generation,
-            "experiment_design": state.experiment_design,
-            "evidence_extraction": state.evidence_extraction,
-            "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
-        }
+    context = _revision_context(
+        state,
+        revision_iteration=revision_iteration,
+        review_result=review_result,
     )
-    return payload
+    return RevisionPromptBuilder.build_reviewer_input(
+        context,
+        question_item=qdict,
+        recommended_hypothesis=_recommended_hypothesis(
+            state.hypothesis_generation
+        ),
+        hypothesis_generation=state.hypothesis_generation,
+        experiment_design=state.experiment_design,
+        evidence_extraction=state.evidence_extraction,
+        evidence_catalog=_evidence_catalog(state.retrieved_evidence),
+    )
 
 
 def _resolve_references(ref_ids: list[str], evidence_pool: list[EvidenceCard]) -> list[EvidenceCard]:
