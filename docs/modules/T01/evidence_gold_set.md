@@ -1,21 +1,44 @@
-# T01 Evidence Gold Set v3
+# T01 Evidence Gold Set v4
 
 ## Purpose
 
-This document defines 20 initial evidence validation pairs for the T01 evidence contract layer.
+This document defines 20 provisional evidence contract validation pairs for the T01 evidence contract layer.
 
-These pairs are contract validation samples used to verify:
+These pairs are NOT scientific evidence claims.
 
-- evidence provenance representation;
+They are controlled validation fixtures used to verify:
+
+- evidence object completeness;
+
 - claim-evidence linkage;
+
 - evidence traceability;
-- unsupported evidence rejection.
 
-The entries in this file are validation placeholders.
+- unsupported reference rejection.
 
-They are not treated as verified scientific evidence.
+Each pair contains:
 
-All placeholder evidence fields must be replaced by verified source evidence before establishing scientific facts.
+- claim_id
+
+- claim
+
+- evidence_id
+
+- source_id
+
+- source_type
+
+- quote
+
+- locator
+
+- relation
+
+- validation_status
+
+The fixtures are designed for machine validation.
+
+They must not be interpreted as verified scientific findings.
 
 ---
 
@@ -27,33 +50,33 @@ CLAIM-001
 
 claim:
 
-Scientific factual claims require traceable evidence objects.
+Evidence objects require stable identifiers for traceability.
 
 evidence_id:
 
-EV-PENDING-001
+EV-CONTRACT-001
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-001
 
 source_type:
 
-paper
+contract
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence objects require stable identifiers."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
+  "section": "EvidenceCardContract",
 
-  "location_value": "pending_verification"
+  "field": "evidence_id"
 
 }
 
@@ -66,8 +89,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 002
 
@@ -77,33 +98,33 @@ CLAIM-002
 
 claim:
 
-Evidence objects should preserve source identification information.
+Evidence objects require source identification information.
 
 evidence_id:
 
-EV-PENDING-002
+EV-CONTRACT-002
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-002
 
 source_type:
 
-paper
+contract
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence objects preserve source identification information."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
+  "section": "EvidenceCardContract",
 
-  "location_value": "pending_verification"
+  "field": "source_id"
 
 }
 
@@ -116,8 +137,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 003
 
@@ -127,33 +146,33 @@ CLAIM-003
 
 claim:
 
-Evidence records should preserve original quoted content.
+Evidence records require explicit source categories.
 
 evidence_id:
 
-EV-PENDING-003
+EV-CONTRACT-003
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-003
 
 source_type:
 
-paper
+specification
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence source types must be explicitly represented."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
+  "section": "EvidenceCardContract",
 
-  "location_value": "pending_verification"
+  "field": "source_type"
 
 }
 
@@ -166,8 +185,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 004
 
@@ -177,47 +194,45 @@ CLAIM-004
 
 claim:
 
-Title-only information cannot establish verified scientific facts.
+Evidence records require quoted content for provenance checking.
 
 evidence_id:
 
-EV-PENDING-004
+EV-CONTRACT-004
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-004
 
 source_type:
 
-web
+contract
 
 quote:
 
-[placeholder] Title-only content without verified quotation.
+"Evidence quotation content is required for provenance."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "metadata",
+  "section": "EvidenceCardContract",
 
-  "location_value": "title_only"
+  "field": "quoted_text"
 
 }
 
 relation:
 
-contradicts
+supports
 
 validation_status:
 
 pending
 
 ---
-
-
 
 # Evidence Pair 005
 
@@ -227,33 +242,33 @@ CLAIM-005
 
 claim:
 
-Evidence identifiers should map to existing evidence objects.
+Evidence records require location information.
 
 evidence_id:
 
-EV-PENDING-005
+EV-CONTRACT-005
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-005
 
 source_type:
 
-paper
+specification
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence location information enables traceability."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
+  "section": "EvidenceCardContract",
 
-  "location_value": "pending_verification"
+  "field": "locator"
 
 }
 
@@ -266,8 +281,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 006
 
@@ -277,33 +290,33 @@ CLAIM-006
 
 claim:
 
-Unsupported factual statements should remain unvalidated.
+Claim and evidence relationships require explicit relation types.
 
 evidence_id:
 
-EV-PENDING-006
+EV-CONTRACT-006
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-006
 
 source_type:
 
-paper
+contract
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Claim evidence links define explicit relationship categories."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
+  "section": "ClaimEvidenceLink",
 
-  "location_value": "pending_verification"
+  "field": "relation"
 
 }
 
@@ -316,8 +329,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 007
 
@@ -327,33 +338,33 @@ CLAIM-007
 
 claim:
 
-Generated research summaries require downstream evidence verification.
+Evidence links require referenced evidence identifiers.
 
 evidence_id:
 
-EV-PENDING-007
+EV-CONTRACT-007
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-007
 
 source_type:
 
-web
+contract
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence references must point to identifiable evidence objects."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "document_section",
+  "section": "ClaimEvidenceLink",
 
-  "location_value": "pending_verification"
+  "field": "evidence_id"
 
 }
 
@@ -366,8 +377,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 008
 
@@ -377,33 +386,33 @@ CLAIM-008
 
 claim:
 
-Evidence provenance should remain available during processing.
+Evidence confidence values require bounded representation.
 
 evidence_id:
 
-EV-PENDING-008
+EV-CONTRACT-008
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-008
 
 source_type:
 
-dataset
+specification
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Confidence values must remain within defined validation boundaries."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "record_identifier",
+  "section": "ClaimEvidenceLink",
 
-  "location_value": "pending_verification"
+  "field": "confidence"
 
 }
 
@@ -416,8 +425,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 009
 
@@ -427,33 +434,33 @@ CLAIM-009
 
 claim:
 
-Evidence location information improves reproducibility.
+Evidence bundles require controlled evidence collections.
 
 evidence_id:
 
-EV-PENDING-009
+EV-CONTRACT-009
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-009
 
 source_type:
 
-paper
+contract
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence bundles contain controlled evidence objects."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
+  "section": "EvidenceBundle",
 
-  "location_value": "pending_verification"
+  "field": "evidences"
 
 }
 
@@ -466,8 +473,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 010
 
@@ -477,33 +482,33 @@ CLAIM-010
 
 claim:
 
-Evidence verification status should be explicitly represented.
+Evidence bundles require claim evidence links.
 
 evidence_id:
 
-EV-PENDING-010
+EV-CONTRACT-010
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-010
 
 source_type:
 
-paper
+contract
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence bundles maintain links between claims and evidence."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
+  "section": "EvidenceBundle",
 
-  "location_value": "pending_verification"
+  "field": "links"
 
 }
 
@@ -516,8 +521,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 011
 
@@ -527,47 +530,45 @@ CLAIM-011
 
 claim:
 
-Question booklet content should not directly become scientific evidence.
+Missing evidence quotations should be rejected.
 
 evidence_id:
 
-EV-PENDING-011
+EV-TEST-011
 
 source_id:
 
-pending
+T01-TEST-011
 
 source_type:
 
-web
+test_fixture
 
 quote:
 
-[placeholder] Question booklet excerpt requiring validation.
+"Empty quoted_text values must fail validation."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Tests",
 
-  "location_type": "booklet_location",
+  "section": "invalid evidence cases",
 
-  "location_value": "pending_verification"
+  "case": "missing quote"
 
 }
 
 relation:
 
-contradicts
+supports
 
 validation_status:
 
 pending
 
 ---
-
-
 
 # Evidence Pair 012
 
@@ -577,33 +578,33 @@ CLAIM-012
 
 claim:
 
-Cross-domain evidence transfer requires additional validation.
+Missing evidence locations should be rejected.
 
 evidence_id:
 
-EV-PENDING-012
+EV-TEST-012
 
 source_id:
 
-pending
+T01-TEST-012
 
 source_type:
 
-paper
+test_fixture
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Empty locator values must fail validation."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Tests",
 
-  "location_type": "page_or_section",
+  "section": "invalid evidence cases",
 
-  "location_value": "pending_verification"
+  "case": "missing locator"
 
 }
 
@@ -616,8 +617,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 013
 
@@ -627,33 +626,33 @@ CLAIM-013
 
 claim:
 
-Evidence bundles should control context size.
+Unknown evidence references should be rejected.
 
 evidence_id:
 
-EV-PENDING-013
+EV-TEST-013
 
 source_id:
 
-pending
+T01-TEST-013
 
 source_type:
 
-experiment
+test_fixture
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Unknown evidence identifiers must fail reference validation."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Tests",
 
-  "location_type": "experiment_record",
+  "section": "invalid link cases",
 
-  "location_value": "pending_verification"
+  "case": "unknown evidence id"
 
 }
 
@@ -666,8 +665,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 014
 
@@ -677,33 +674,31 @@ CLAIM-014
 
 claim:
 
-Evidence relationships should distinguish support and contradiction.
+Evidence identifiers must remain unique.
 
 evidence_id:
 
-EV-PENDING-014
+EV-TEST-014
 
 source_id:
 
-pending
+T01-TEST-014
 
 source_type:
 
-paper
+test_fixture
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence identifiers are used as unique traceability keys."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Tests",
 
-  "location_type": "page_or_section",
-
-  "location_value": "pending_verification"
+  "section": "identifier validation"
 
 }
 
@@ -716,8 +711,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 015
 
@@ -727,33 +720,31 @@ CLAIM-015
 
 claim:
 
-Evidence objects should maintain stable identifiers.
+Evidence provenance requires reproducible metadata.
 
 evidence_id:
 
-EV-PENDING-015
+EV-CONTRACT-015
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-015
 
 source_type:
 
-dataset
+specification
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence provenance requires reproducible metadata fields."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "record_identifier",
-
-  "location_value": "pending_verification"
+  "section": "provenance"
 
 }
 
@@ -766,8 +757,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 016
 
@@ -777,33 +766,31 @@ CLAIM-016
 
 claim:
 
-Unverified evidence should not be treated as established fact.
+Evidence validation status must be explicitly represented.
 
 evidence_id:
 
-EV-PENDING-016
+EV-CONTRACT-016
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-016
 
 source_type:
 
-paper
+contract
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Validation status records the current evidence checking state."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
-
-  "location_value": "pending_verification"
+  "section": "validation_status"
 
 }
 
@@ -816,8 +803,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 017
 
@@ -827,47 +812,43 @@ CLAIM-017
 
 claim:
 
-Conflicting evidence should be represented explicitly.
+Evidence processing requires traceable intermediate objects.
 
 evidence_id:
 
-EV-PENDING-017
+EV-CONTRACT-017
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-017
 
 source_type:
 
-paper
+specification
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Intermediate evidence objects preserve traceability."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
-
-  "location_value": "pending_verification"
+  "section": "traceability"
 
 }
 
 relation:
 
-contradicts
+supports
 
 validation_status:
 
 pending
 
 ---
-
-
 
 # Evidence Pair 018
 
@@ -877,33 +858,31 @@ CLAIM-018
 
 claim:
 
-Evidence quality depends on provenance completeness.
+Evidence rejection requires explicit validation failure states.
 
 evidence_id:
 
-EV-PENDING-018
+EV-TEST-018
 
 source_id:
 
-pending
+T01-TEST-018
 
 source_type:
 
-dataset
+test_fixture
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Invalid evidence objects must produce validation failures."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Tests",
 
-  "location_type": "record_identifier",
-
-  "location_value": "pending_verification"
+  "section": "negative validation"
 
 }
 
@@ -916,8 +895,6 @@ validation_status:
 pending
 
 ---
-
-
 
 # Evidence Pair 019
 
@@ -927,33 +904,31 @@ CLAIM-019
 
 claim:
 
-Evidence bundles should prevent uncontrolled context expansion.
+Evidence contracts support downstream agent verification.
 
 evidence_id:
 
-EV-PENDING-019
+EV-CONTRACT-019
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-019
 
 source_type:
 
-experiment
+specification
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Validated evidence objects can be consumed by downstream processes."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "experiment_record",
-
-  "location_value": "pending_verification"
+  "section": "downstream usage"
 
 }
 
@@ -967,8 +942,6 @@ pending
 
 ---
 
-
-
 # Evidence Pair 020
 
 claim_id:
@@ -977,33 +950,31 @@ CLAIM-020
 
 claim:
 
-Established scientific facts should be traceable to evidence objects.
+Evidence objects should remain traceable throughout processing.
 
 evidence_id:
 
-EV-PENDING-020
+EV-CONTRACT-020
 
 source_id:
 
-pending
+T01-CONTRACT-SPEC-020
 
 source_type:
 
-paper
+contract
 
 quote:
 
-[placeholder] Original source quotation required before validation.
+"Evidence objects maintain traceability throughout processing."
 
 locator:
 
 {
 
-  "source_id": "pending",
+  "document": "T01 Evidence Contract Specification",
 
-  "location_type": "page_or_section",
-
-  "location_value": "pending_verification"
+  "section": "traceability requirement"
 
 }
 
