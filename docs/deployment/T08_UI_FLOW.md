@@ -25,7 +25,7 @@
 |---|---|
 | `queued` | 展示排队时间，不显示假进度 |
 | `running` | 展示真实 stage、更新时间和 correlation ID |
-| `waiting_feedback` | 打开反馈入口，明确目标 version |
+| `waiting_feedback` | 按 stage 区分人工反馈或完成资格待核验；只有目标 version 可用时才打开反馈入口 |
 | `retrying` | 展示 attempt、失败摘要和有限重试状态 |
 | `completed` | 加载证据、版本、执行、多模态和产物入口 |
 | `failed` | 展示错误码、是否可重试、correlation ID |
@@ -52,6 +52,8 @@
 - 只有 T05 明确返回 `actual_execution=true` 才显示“真实执行”；
 - Reviewer issue closure、Feedback decision 和 GateResult 只展示上游字段；
 - 低置信度、多模态单位、bbox、来源和人工核验状态不得隐藏。
+- `stage=awaiting_completion_verification` 时必须显示“完成资格待核验”，不得显示
+  “已完成”；保留 `upstream_run_id` 仅用于追踪，不代表质量门通过。
 
 ## 5. 交互幂等
 

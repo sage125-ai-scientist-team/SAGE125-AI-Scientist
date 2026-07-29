@@ -6,12 +6,19 @@ import json
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
+from types import SimpleNamespace
 
 import pytest
 from fastapi.testclient import TestClient
 
 from app.api.contracts import JobCreateRequest, JobStatus
-from app.api.job_queue import InProcessJobQueue, QueueCapacityError
+from app.api.job_queue import (
+    CompletionEvidence,
+    InProcessJobQueue,
+    JobRunResult,
+    PipelineJobRunner,
+    QueueCapacityError,
+)
 from app.api.job_store import (
     IdempotencyConflict,
     InvalidTransition,
@@ -109,7 +116,27 @@ def test_sqlite_store_keeps_five_concurrent_jobs_isolated(tmp_path):
 class _SuccessfulRunner:
     def run(self, job, progress_callback):
         progress_callback({"stage": "retrieval", "status": "running"})
-        return "upstream-run-1"
+        return JobRunResult(
+            upstream_run_id="upstream-run-1",
+            completion_evidence=CompletionEvidence(
+                required_artifacts_present=True,
+                quality_gate_passed=True,
+                blocking_issues_closed=True,
+                truth_status_explicit=True,
+                traceable_and_serializable=True,
+            ),
+        )
+
+
+class _UnverifiedSuccessfulRunner:
+    def run(self, job, progress_callback):
+        progress_callback({"stage": "artifacts", "status": "running"})
+        return JobRunResult(upstream_run_id="upstream-run-unverified")
+
+
+class _LegacyStringRunner:
+    def run(self, job, progress_callback):
+        return "upstream-run-legacy"
 
 
 class _BlockingRunner:
@@ -120,12 +147,60 @@ class _BlockingRunner:
     def run(self, job, progress_callback):
         self.started.set()
         self.release.wait(timeout=3)
-        return f"run-{job.job_id}"
+        return JobRunResult(upstream_run_id=f"run-{job.job_id}")
 
 
 class _MissingSourceRunner:
     def run(self, job, progress_callback):
         raise FileNotFoundError("/private/project/data/questions.json is missing")
+
+
+@pytest.mark.parametrize(
+    "missing_requirement",
+    [
+        "required_artifacts_present",
+        "quality_gate_passed",
+        "blocking_issues_closed",
+        "truth_status_explicit",
+        "traceable_and_serializable",
+    ],
+)
+def test_completion_evidence_requires_every_guard(missing_requirement):
+    checks = {
+        "required_artifacts_present": True,
+        "quality_gate_passed": True,
+        "blocking_issues_closed": True,
+        "truth_status_explicit": True,
+        "traceable_and_serializable": True,
+    }
+    checks[missing_requirement] = False
+
+    evidence = CompletionEvidence(**checks)
+
+    assert evidence.allows_completion is False
+    assert evidence.missing_requirements == (missing_requirement,)
+
+
+def test_pipeline_runner_does_not_infer_completion_without_owner_contract(
+    tmp_path,
+    monkeypatch,
+):
+    from app.workflow import pipeline
+
+    monkeypatch.setattr(
+        pipeline,
+        "run_pipeline_with_state",
+        lambda **kwargs: (object(), SimpleNamespace(run_id="upstream-run-guarded")),
+    )
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    job, _ = store.create_job(request=_request(), correlation_id="corr")
+
+    result = PipelineJobRunner().run(job, lambda payload: None)
+
+    assert result.upstream_run_id == "upstream-run-guarded"
+    assert result.completion_evidence is None
+    assert result.completion_verified is False
 
 
 def test_queue_runs_job_and_persists_upstream_run_id(tmp_path):
@@ -140,6 +215,52 @@ def test_queue_runs_job_and_persists_upstream_run_id(tmp_path):
         completed = store.get_job(job.job_id)
         assert completed.stage == "completed"
         assert completed.upstream_run_id == "upstream-run-1"
+    finally:
+        queue.stop()
+
+
+def test_queue_does_not_complete_without_explicit_completion_evidence(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    queue = InProcessJobQueue(
+        store,
+        _UnverifiedSuccessfulRunner(),
+        capacity=2,
+        worker_count=1,
+    )
+    queue.start()
+    try:
+        job, _ = store.create_job(request=_request(), correlation_id="corr")
+        queue.submit(job.job_id)
+
+        assert (
+            _wait_for_status(store, job.job_id, {"waiting_feedback"})
+            == "waiting_feedback"
+        )
+        waiting = store.get_job(job.job_id)
+        assert waiting.stage == "awaiting_completion_verification"
+        assert waiting.upstream_run_id == "upstream-run-unverified"
+        assert waiting.finished_at is None
+    finally:
+        queue.stop()
+
+
+def test_legacy_string_runner_is_unverified_instead_of_completed(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    queue = InProcessJobQueue(store, _LegacyStringRunner(), capacity=2)
+    queue.start()
+    try:
+        job, _ = store.create_job(request=_request(), correlation_id="corr")
+        queue.submit(job.job_id)
+
+        assert (
+            _wait_for_status(store, job.job_id, {"waiting_feedback"})
+            == "waiting_feedback"
+        )
+        waiting = store.get_job(job.job_id)
+        assert waiting.upstream_run_id == "upstream-run-legacy"
+        assert waiting.stage == "awaiting_completion_verification"
     finally:
         queue.stop()
 
@@ -264,6 +385,29 @@ def test_v1_job_api_is_non_blocking_idempotent_and_correlated(tmp_path):
         assert listing.json()["items"][0]["job_id"] == body["job_id"]
 
         runner.release.set()
+
+
+def test_v1_status_exposes_unverified_completion_as_waiting(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    app = create_app(job_store=store, job_runner=_UnverifiedSuccessfulRunner())
+
+    with TestClient(app) as client:
+        accepted = client.post("/api/v1/jobs", json=_request().model_dump())
+        assert accepted.status_code == 202
+        job_id = accepted.json()["job_id"]
+        assert (
+            _wait_for_status(store, job_id, {"waiting_feedback"})
+            == "waiting_feedback"
+        )
+
+        response = client.get(f"/api/v1/jobs/{job_id}")
+
+        assert response.status_code == 200
+        body = response.json()
+        assert body["status"] == "waiting_feedback"
+        assert body["stage"] == "awaiting_completion_verification"
+        assert body["upstream_run_id"] == "upstream-run-unverified"
+        assert body["finished_at"] is None
 
 
 def test_v1_queue_capacity_and_validation_errors_are_structured(tmp_path):

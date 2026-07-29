@@ -211,6 +211,9 @@ RESULT: PASS
 - v1 统一错误结构；
 - Artifact、Version、Feedback OpenAPI projection 与明确 unavailable 响应；
 - 旧 `POST /runs` 标记 deprecated，行为保持兼容。
+- 完成资格门禁：上游正常返回但缺少产物、质量门、阻断问题、真实性或回链证明时，
+  状态停在 `waiting_feedback / awaiting_completion_verification`，不再伪报
+  `completed`。
 
 契约和 UI flow 分别见：
 
@@ -221,11 +224,15 @@ RESULT: PASS
 
 ```text
 .venv/bin/python -m pytest -q tests/api
-18 passed in 0.83s
+27 passed in 1.29s
 
 .venv/bin/python -m pytest -q
-255 passed, 35 skipped in 5.74s
+264 passed, 35 skipped in 8.62s
 ```
+
+完成资格门禁先以缺失 `CompletionEvidence` 的 ImportError 建立红灯，再实现并转绿；
+测试覆盖完整证明允许完成、无证明进入待核验、默认 pipeline adapter 不自行推断，
+五个证明条件任一缺失均不得完成，以及旧 runner 的裸 run ID 只能进入待核验。
 
 真实进程验证中，`POST /api/v1/jobs` 返回 HTTP 202 和调用方提供的
 `X-Correlation-ID`。由于当前缺少 `questions_125.json`，worker 随后如实进入

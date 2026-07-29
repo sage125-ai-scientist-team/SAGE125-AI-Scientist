@@ -97,8 +97,8 @@ X-Correlation-ID: judge-demo-001
 }
 ```
 
-`job_id` 是 T08 任务 ID。pipeline 生成的 `run_id` 只在完成后出现在
-`upstream_run_id`，不得把两者当作同一标识。
+`job_id` 是 T08 任务 ID。pipeline 生成的 `run_id` 在上游返回后记录为
+`upstream_run_id`，即使完成资格仍待核验，也不得把两者当作同一标识。
 
 ### 查询
 
@@ -130,6 +130,26 @@ terminal -> no transition
 
 `stage` 来自真实 worker/pipeline 事件。API 不根据耗时生成百分比。
 
+### 完成资格门禁
+
+上游函数正常返回只代表本轮 pipeline 执行结束，不自动代表对外交付完成。
+worker 只有在 adapter 通过冻结 owner 契约明确提供以下全部证明时，才允许写入
+`completed`：
+
+- 必需产物存在；
+- T03 质量门通过；
+- P0/P1 阻断问题已关闭；
+- `planned/expected/mock/actual` 真实性状态明确；
+- 关键字段可序列化并可回链。
+
+任一证明缺失时，任务进入
+`waiting_feedback / awaiting_completion_verification`，保留 `upstream_run_id`，
+但不得显示为已完成。当前 T02/T03/T05 公开契约尚未冻结，因此默认 pipeline
+adapter 不自行推断这些证明。
+
+为兼容 Wave A 早期的 runner 抽象，旧实现若只返回裸 `upstream_run_id`，会被
+集中转换为“无完成证明”的结果并进入待核验；裸字符串绝不等价于 `completed`。
+
 ## 4. 持久化、队列与恢复
 
 默认数据库：`${EXPORT_DIR}/.api-state/jobs.sqlite3`。
@@ -139,6 +159,8 @@ terminal -> no transition
 - SQLite 启用 WAL、foreign keys 和 5 秒 busy timeout；
 - 默认 1 worker、有界队列容量 100；
 - worker 通过现有 `run_pipeline_with_state` 调用上游，不复制 workflow。
+- worker 使用 T08 完成资格门禁保护外部状态，不依据上游函数返回、文件名或
+  内部对象自行推断 `completed`。
 
 启动恢复：
 

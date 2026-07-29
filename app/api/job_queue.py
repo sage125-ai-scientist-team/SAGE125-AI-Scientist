@@ -6,6 +6,7 @@ import queue
 import re
 import threading
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Protocol
 
@@ -21,8 +22,68 @@ class QueueCapacityError(RuntimeError):
     pass
 
 
+@dataclass(frozen=True)
+class CompletionEvidence:
+    """T08 写入外部 completed 前必须具备的最小证明。"""
+
+    required_artifacts_present: bool = False
+    quality_gate_passed: bool = False
+    blocking_issues_closed: bool = False
+    truth_status_explicit: bool = False
+    traceable_and_serializable: bool = False
+
+    @property
+    def allows_completion(self) -> bool:
+        return all(
+            (
+                self.required_artifacts_present,
+                self.quality_gate_passed,
+                self.blocking_issues_closed,
+                self.truth_status_explicit,
+                self.traceable_and_serializable,
+            )
+        )
+
+    @property
+    def missing_requirements(self) -> tuple[str, ...]:
+        checks = {
+            "required_artifacts_present": self.required_artifacts_present,
+            "quality_gate_passed": self.quality_gate_passed,
+            "blocking_issues_closed": self.blocking_issues_closed,
+            "truth_status_explicit": self.truth_status_explicit,
+            "traceable_and_serializable": self.traceable_and_serializable,
+        }
+        return tuple(name for name, passed in checks.items() if not passed)
+
+
+@dataclass(frozen=True)
+class JobRunResult:
+    upstream_run_id: str
+    completion_evidence: CompletionEvidence | None = None
+
+    @property
+    def completion_verified(self) -> bool:
+        return bool(
+            self.completion_evidence
+            and self.completion_evidence.allows_completion
+        )
+
+
+def _normalize_run_result(result: JobRunResult | str) -> JobRunResult:
+    """兼容旧 runner 的裸 run_id，但绝不把它视为完成证明。"""
+    if isinstance(result, JobRunResult):
+        return result
+    if isinstance(result, str) and result.strip():
+        return JobRunResult(upstream_run_id=result.strip())
+    raise TypeError("JobRunner 必须返回 JobRunResult 或非空 upstream_run_id。")
+
+
 class JobRunner(Protocol):
-    def run(self, job: JobRecord, progress_callback: Callable[[dict], None]) -> str: ...
+    def run(
+        self,
+        job: JobRecord,
+        progress_callback: Callable[[dict], None],
+    ) -> JobRunResult | str: ...
 
 
 class JobQueue(Protocol):
@@ -32,9 +93,13 @@ class JobQueue(Protocol):
 
 
 class PipelineJobRunner:
-    """仅通过现有公开 pipeline 入口执行，不复制上游业务逻辑。"""
+    """调用现有 pipeline；完成资格等待冻结的 owner 契约证明。"""
 
-    def run(self, job: JobRecord, progress_callback: Callable[[dict], None]) -> str:
+    def run(
+        self,
+        job: JobRecord,
+        progress_callback: Callable[[dict], None],
+    ) -> JobRunResult:
         from app.core.run_progress import progress_reporting
         from app.workflow.pipeline import run_pipeline_with_state
 
@@ -51,7 +116,9 @@ class PipelineJobRunner:
                 ),
                 mock_mode=request.get("mode", "mock") == "mock",
             )
-        return str(state.run_id)
+        # 当前 T02/T03/T05 还没有向 T08 提供冻结的完成资格 DTO。
+        # 只保留上游引用；不得从内部对象或文件存在性推断外部 completed。
+        return JobRunResult(upstream_run_id=str(state.run_id))
 
 
 def _safe_error(exc: Exception) -> str:
@@ -174,21 +241,40 @@ class InProcessJobQueue:
             self.store.update_progress(job_id, stage)
 
         try:
-            upstream_run_id = self.runner.run(job, progress)
-            self.store.transition(
-                job_id,
-                JobStatus.COMPLETED,
-                stage="completed",
-                actor="worker",
-                source="queue",
-                upstream_run_id=upstream_run_id,
-            )
-            logger.info(
-                "job_completed job_id=%s correlation_id=%s upstream_run_id=%s",
-                job.job_id,
-                job.correlation_id,
-                upstream_run_id,
-            )
+            result = _normalize_run_result(self.runner.run(job, progress))
+            if result.completion_verified:
+                self.store.transition(
+                    job_id,
+                    JobStatus.COMPLETED,
+                    stage="completed",
+                    actor="worker",
+                    source="queue",
+                    upstream_run_id=result.upstream_run_id,
+                )
+                logger.info(
+                    "job_completed job_id=%s correlation_id=%s upstream_run_id=%s",
+                    job.job_id,
+                    job.correlation_id,
+                    result.upstream_run_id,
+                )
+            else:
+                evidence = result.completion_evidence or CompletionEvidence()
+                self.store.transition(
+                    job_id,
+                    JobStatus.WAITING_FEEDBACK,
+                    stage="awaiting_completion_verification",
+                    actor="worker",
+                    source="completion_guard",
+                    upstream_run_id=result.upstream_run_id,
+                )
+                logger.info(
+                    "job_completion_deferred job_id=%s correlation_id=%s "
+                    "upstream_run_id=%s missing=%s",
+                    job.job_id,
+                    job.correlation_id,
+                    result.upstream_run_id,
+                    ",".join(evidence.missing_requirements),
+                )
         except Exception as exc:  # noqa: BLE001
             current = self.store.get_job(job_id)
             error_code, retryable = _classify_error(exc)
