@@ -1,0 +1,1293 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T04
+title: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理
+mission: 消除新旧索引路径不一致，统一检索配置，保证问题册不被当作论文证据，并向证据链提供带页码的真实全文片段。
+scoring_dimensions:
+- 科学事实准确性
+- 知识整合
+- 检索效果
+- 可复现性
+owner_paths:
+- app/rag/**
+- app/contracts/rag.py
+- tests/rag/**
+- docs/modules/T04/**
+forbidden_paths:
+- 不负责事实支持判定（T01），不直接修改工作流状态机（T02）
+dependencies:
+  raw: 上游外部文献/数据源；下游 T01。
+  upstream: []
+  downstream:
+  - T01
+branch_series:
+- t04/a-rag-contract
+- t04/b-rag-core
+- t04/c-rag-hardening
+paired_reviewer: T01
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- 唯一 IndexConfig 和索引根路径；旧路径迁移、回滚和健康检查；Supervisor/LibraryManager 读取同一配置。
+- 论文、问题册、网页、数据集等 source_type 治理；问题册不得进入论文证据集合。
+- PDF 全文页码/章节解析、DOI+内容哈希去重、缓存、原子重建、损坏恢复，以及 30 查询检索黄金集。
+definition_of_done:
+- 系统不存在 data/index/zvec 与 data/index/user_library/zvec 双重真相。
+- 检索结果含全文片段、页码/章节、来源类型和哈希；问题册仅作问题输入。
+- 30 查询 recall@10 目标不低于 0.80；空索引、损坏索引、并发重建和迁移失败均安全处理。
+quantitative_thresholds:
+- requirement_id: T04-METRIC-001
+  raw_text: 30 查询
+  comparator: quantity
+  value: 30
+  unit: 查询
+  source_requirement_id: T04-MUST-003
+- requirement_id: T04-METRIC-002
+  raw_text: 30 查询
+  comparator: quantity
+  value: 30
+  unit: 查询
+  source_requirement_id: T04-DOD-003
+- requirement_id: T04-METRIC-003
+  raw_text: 不低于 0.80
+  comparator: at_least
+  value: 0.8
+  unit: not_specified
+  source_requirement_id: T04-DOD-003
+- requirement_id: T04-METRIC-004
+  raw_text: 20 个
+  comparator: quantity
+  value: 20
+  unit: 个
+  source_requirement_id: T04-A-004
+- requirement_id: T04-METRIC-005
+  raw_text: 30 查询
+  comparator: quantity
+  value: 30
+  unit: 查询
+  source_requirement_id: T04-B-013
+- requirement_id: T04-METRIC-006
+  raw_text: 12 领域
+  comparator: quantity
+  value: 12
+  unit: 领域
+  source_requirement_id: T04-C-007
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与 RAG 审计
+      work: 完成协作接入；复现 Supervisor/LibraryManager 路径不一致与问题册污染；记录索引结构、调用方和失败路径。
+      deliverable: RAG 审计；失败测试；T04 任务笔记。
+      evidence: 两类问题可重复；任务分支来自最新 integration。
+    - date: 07/28（周二）
+      focus: 配置契约与红灯测试
+      work: 设计唯一 IndexConfig、source_type、迁移策略和 20 个初始检索查询；编写路径分裂、问题册污染和缺页码红灯测试；开启 Draft PR-A。
+      deliverable: 配置 RFC；初始 gold set；Draft PR-A。
+      evidence: 所有调用方有明确接口；旧代码稳定失败。
+    - date: 07/29（周三）
+      focus: 路径统一与 PR-A
+      work: 实现共享配置，修复 Supervisor/LibraryManager，提交迁移命令、兼容警告和回滚；同步 integration、测试，20:00 前转 Ready。
+      deliverable: PR-A Ready；迁移命令。
+      evidence: 新旧组件指向唯一路径；迁移可回滚。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: 来源类型治理
+      work: 新建 B 分支；实现论文、问题册、数据集和网页分类；排除问题册进入 evidentiary corpus。
+      deliverable: SourcePolicy。
+      evidence: 问题册只能作为问题上下文，不能支持科学事实。
+    - date: 07/31（周五）
+      focus: 全文解析
+      work: 保留 PDF 页码、章节、作者、摘要、DOI/URL、quote 和内容哈希；处理扫描件、空页和解析失败。
+      deliverable: document loader v2。
+      evidence: T01 可获得可定位片段；失败有明确状态。
+    - date: 08/01（周六）
+      focus: 去重、缓存与 Draft PR-B
+      work: 实现 DOI+内容哈希去重、解析缓存、原子写入和索引重建骨架；开启 Draft PR-B。
+      deliverable: dedupe/cache/rebuild 模块；Draft PR-B。
+      evidence: 重复入库不产生重复 chunk；中断不破坏现有索引。
+    - date: 08/02（周日）
+      focus: 损坏与并发恢复
+      work: 增加空索引、损坏索引、并发重建、锁超时和迁移失败测试；实现安全恢复。
+      deliverable: recovery tests；健康状态。
+      evidence: 失败不污染索引；现有索引可回退。
+    - date: 08/03（周一）
+      focus: 检索调优与配对审查
+      work: 实现 query expansion、top-k、年份/领域过滤和来源优先级；完成 T01 配对审查；扩展黄金集至 30 查询。
+      deliverable: 检索配置实验；30-query gold set。
+      evidence: 相关性有量化对比；标注可审计。
+    - date: 08/04（周二）
+      focus: 评测与多模态接入
+      work: 运行 recall@10、MRR、延迟、缓存命中；整理失败查询；接入 T06 表格/图像/时序元数据但不将二进制直接塞入文本索引。
+      deliverable: 评测报告；multimodal index adapter。
+      evidence: 来源、坐标和单位不丢失；未达标查询有错误分析。
+    - date: 08/05（周三）
+      focus: PR-B Ready
+      work: 同步 integration、运行模块/契约/E2E；补迁移、健康检查和回滚文档；@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；检索指标。
+      evidence: recall@10 达标或有整改清单；P0/P1 关闭。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: 安全与性能加固
+      work: 新建 C 分支；增加恶意 PDF、超大文件、路径穿越、损坏元数据、超时、并发检索和确定性测试；20:00 前开启 Draft PR-C。
+      deliverable: 安全测试；性能报告；Draft PR-C。
+      evidence: 失败不污染索引；同版本同查询结果稳定。
+    - date: 08/07（周五）
+      focus: 干净重建与文档
+      work: 从空目录重建索引，完成迁移文档、诊断命令、索引健康检查和复现步骤；处理审查。
+      deliverable: clean rebuild report；诊断命令。
+      evidence: 干净环境可一键构建；无本地硬编码路径。
+    - date: 08/08（周六）
+      focus: 冻结前评测
+      work: 抽查 12 领域和旗舰案例，确认无题册污染、无重复文献和定位字段完整；同步 integration、全测试、@codex review，18:00 前转 Ready。
+      deliverable: 索引清单；PR-C Ready。
+      evidence: P0/P1 关闭；索引可发布。
+code_freeze:
+  date: 08/09（周日）
+  focus: Code Freeze 与交接
+  work: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  deliverable: 阻断修复或“无变更”确认；最终 handoff 包。
+  evidence: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不负责事实支持判定（T01），不直接修改工作流状态机（T02）。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 152
+  info_table_index: 66
+  must_deliver_table_index: 67
+  daily_table_index: 68
+requirements:
+- id: T04-MUST-001
+  task_id: T04
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 唯一 IndexConfig 和索引根路径；旧路径迁移、回滚和健康检查；Supervisor/LibraryManager 读取同一配置。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.1 必须交付
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 07e766ebfb53246c1f33d18d5c2d32abab4727ef2addd00ddb80ed239363d03f
+  evidence_required:
+  - artifact_file
+  - documentation
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-MUST-002
+  task_id: T04
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 论文、问题册、网页、数据集等 source_type 治理；问题册不得进入论文证据集合。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.1 必须交付
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 54510314b811de03ca4da96ec8bd6a13bf42735fdad8f1dfe80d789461a687c3
+  evidence_required:
+  - dataset_manifest
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-MUST-003
+  task_id: T04
+  wave: FINAL
+  category: must_deliver
+  requirement_text: PDF 全文页码/章节解析、DOI+内容哈希去重、缓存、原子重建、损坏恢复，以及 30 查询检索黄金集。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.1 必须交付
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 13a2c2de256c8f9f1aeef25e3d2534c29950ec2eefac9159577435ce01901a8a
+  evidence_required:
+  - dataset_manifest
+  - artifact_file
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T04-METRIC-001
+- id: T04-METRIC-001
+  task_id: T04
+  wave: FINAL
+  category: quantitative_metric
+  requirement_text: PDF 全文页码/章节解析、DOI+内容哈希去重、缓存、原子重建、损坏恢复，以及 30 查询检索黄金集。（定量阈值：30 查询）
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.1 必须交付
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: ef727bc2dd86a98ecdca8c53233de1e7dca85854426b6551b0bb4c347413003e
+  evidence_required:
+  - dataset_manifest
+  - artifact_file
+  - source_code
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T04-MUST-003
+- id: T04-DOD-001
+  task_id: T04
+  wave: C
+  category: definition_of_done
+  requirement_text: 系统不存在 data/index/zvec 与 data/index/user_library/zvec 双重真相。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.2 Definition of Done
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 8dcf1e3fc1dffcaafe4d4d24db899abaecc2a4f6cffb6e160a95694093c55025
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-DOD-002
+  task_id: T04
+  wave: C
+  category: definition_of_done
+  requirement_text: 检索结果含全文片段、页码/章节、来源类型和哈希；问题册仅作问题输入。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.2 Definition of Done
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 7b0baa2d858607760e089688ee6b257b0515561361a23790d4723638d6c180d1
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-DOD-003
+  task_id: T04
+  wave: C
+  category: definition_of_done
+  requirement_text: 30 查询 recall@10 目标不低于 0.80；空索引、损坏索引、并发重建和迁移失败均安全处理。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.2 Definition of Done
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: cc53055d0fb0c5d6b131b7f638e4a938c7ea27bf03a097768c268d1b0753cf58
+  evidence_required:
+  - metrics_file
+  - artifact_file
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T04-METRIC-002
+  - T04-METRIC-003
+- id: T04-METRIC-002
+  task_id: T04
+  wave: C
+  category: quantitative_metric
+  requirement_text: 30 查询 recall@10 目标不低于 0.80；空索引、损坏索引、并发重建和迁移失败均安全处理。（定量阈值：30 查询）
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.2 Definition of Done
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: ff9d7c1b159441d83112549869d306d58ddba955216f143be484bb9fafe6e325
+  evidence_required:
+  - metrics_file
+  - artifact_file
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T04-DOD-003
+- id: T04-METRIC-003
+  task_id: T04
+  wave: C
+  category: quantitative_metric
+  requirement_text: 30 查询 recall@10 目标不低于 0.80；空索引、损坏索引、并发重建和迁移失败均安全处理。（定量阈值：不低于 0.80）
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.2 Definition of Done
+  source_paragraph_index: 152
+  source_table_index: 67
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 09b7aa0c85600cafec1ca2bc5f67c104e17e93d9efa9368fc7540b045702be43
+  evidence_required:
+  - metrics_file
+  - artifact_file
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T04-DOD-003
+- id: T04-A-001
+  task_id: T04
+  wave: A
+  category: daily_work
+  requirement_text: 完成协作接入；复现 Supervisor/LibraryManager 路径不一致与问题册污染；记录索引结构、调用方和失败路径。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: 2522d3861890b17750f92bab4fbb4a69ecb387cba3b3d107f471672941b2ec3c
+  evidence_required:
+  - artifact_file
+  - documentation
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-A-002
+  task_id: T04
+  wave: A
+  category: daily_deliverable
+  requirement_text: RAG 审计；失败测试；T04 任务笔记。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: f45acfdb9e5fb48569db97b72172a76704a39cf23c36a20671c95d2763eaa691
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-A-003
+  task_id: T04
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 两类问题可重复；任务分支来自最新 integration。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 6564775b2b15ff6af2d49fb153ee4e86b9dc74ab01138a2435b58554fd0dc16b
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-A-004
+  task_id: T04
+  wave: A
+  category: daily_work
+  requirement_text: 设计唯一 IndexConfig、source_type、迁移策略和 20 个初始检索查询；编写路径分裂、问题册污染和缺页码红灯测试；开启 Draft PR-A。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: 2e341bcc7114eae9666202de6fb4cc7729a091da934a0f7fb779af10cc900871
+  evidence_required:
+  - test_output
+  - documentation
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T04-METRIC-004
+- id: T04-METRIC-004
+  task_id: T04
+  wave: A
+  category: quantitative_metric
+  requirement_text: 设计唯一 IndexConfig、source_type、迁移策略和 20 个初始检索查询；编写路径分裂、问题册污染和缺页码红灯测试；开启 Draft PR-A。（定量阈值：20 个）
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: 92fe997a38d55dcb7da5418def9f58ddba49167e4aa3df1dcb4b7eecbd156107
+  evidence_required:
+  - test_output
+  - documentation
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T04-A-004
+- id: T04-A-005
+  task_id: T04
+  wave: A
+  category: daily_deliverable
+  requirement_text: 配置 RFC；初始 gold set；Draft PR-A。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: 6c98e2c38ce62af60fca752659ff5aa5cccf4068dacf81b817599b406075145d
+  evidence_required:
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-A-006
+  task_id: T04
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 所有调用方有明确接口；旧代码稳定失败。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: 29c25a926009ee18f633b3821e4e73906494e7dfa73cbbe5dcb32b035f7d2b1a
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-A-007
+  task_id: T04
+  wave: A
+  category: daily_work
+  requirement_text: 实现共享配置，修复 Supervisor/LibraryManager，提交迁移命令、兼容警告和回滚；同步 integration、测试，20:00 前转 Ready。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: 8ad602701a9630a890d7d9ddd253f296429108efbfb3dae434ddd6270186a665
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-A-008
+  task_id: T04
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；迁移命令。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: 36a11ffd3eafef95f6f91f89f49b1b593cc91aa181bcf49ceadbe5c69b79e177
+  evidence_required:
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-A-009
+  task_id: T04
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 新旧组件指向唯一路径；迁移可回滚。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 213f98a968c13dacebd276db2ed8ffde3ac7ffa27c664e906b000ea486450a07
+  evidence_required:
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-001
+  task_id: T04
+  wave: B
+  category: daily_work
+  requirement_text: 新建 B 分支；实现论文、问题册、数据集和网页分类；排除问题册进入 evidentiary corpus。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: 3d5bff800316a33f6ca949a824b33826ea5ad690b0927277d5cc524fbbab724a
+  evidence_required:
+  - dataset_manifest
+  - source_code
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-002
+  task_id: T04
+  wave: B
+  category: daily_deliverable
+  requirement_text: SourcePolicy。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: e1c88e5bb5acaaafb72f0c85257dca21c100618e9e1e6f33cf64468ba62c59ca
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-003
+  task_id: T04
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 问题册只能作为问题上下文，不能支持科学事实。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: dfd02c714072c00ba7515898ba412e9be5570cf11e700299ded68841e02d187b
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-004
+  task_id: T04
+  wave: B
+  category: daily_work
+  requirement_text: 保留 PDF 页码、章节、作者、摘要、DOI/URL、quote 和内容哈希；处理扫描件、空页和解析失败。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: 121891ab881653eb2d1dd94b54c5f0b889c913604ae70a783b3a1471099acf22
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-005
+  task_id: T04
+  wave: B
+  category: daily_deliverable
+  requirement_text: document loader v2。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: e800d26e069989ae39e0066653ecf5c92f704e6b759eae733f615d7fa36e95f4
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-006
+  task_id: T04
+  wave: B
+  category: acceptance_evidence
+  requirement_text: T01 可获得可定位片段；失败有明确状态。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: d61b7c0a18c56728c4cb1e787b66afb3d57af55f69bc15c6d602e335f4e9fdb1
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-007
+  task_id: T04
+  wave: B
+  category: daily_work
+  requirement_text: 实现 DOI+内容哈希去重、解析缓存、原子写入和索引重建骨架；开启 Draft PR-B。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: 2981fcbefef1a2b8480c309294659804b21ed1e6854ff8b9801dca4dd9d0641c
+  evidence_required:
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-008
+  task_id: T04
+  wave: B
+  category: daily_deliverable
+  requirement_text: dedupe/cache/rebuild 模块；Draft PR-B。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: 46b74132f1371b50bdcfbe7347d1e854c996b5b8d7e82374c9e6c2194b4a6fac
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-009
+  task_id: T04
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 重复入库不产生重复 chunk；中断不破坏现有索引。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: bf850d7c6c464e2ce86e625678f54ab89716e7913529da1056b847f15c018166
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-010
+  task_id: T04
+  wave: B
+  category: daily_work
+  requirement_text: 增加空索引、损坏索引、并发重建、锁超时和迁移失败测试；实现安全恢复。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: ec4dcaf849ee7b8dba1433f585d9eadd0eaa4d5cd5f6c25cb9e0d906434edc8a
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-011
+  task_id: T04
+  wave: B
+  category: daily_deliverable
+  requirement_text: recovery tests；健康状态。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: 148107970b546918a997f345798a87214dbc37dd9f4443e2f2db77e6d69e5347
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-012
+  task_id: T04
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 失败不污染索引；现有索引可回退。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: f88877abdb0368add6a6847f5a1d30e2318a46d006c53dd20c9422489723ec17
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-013
+  task_id: T04
+  wave: B
+  category: daily_work
+  requirement_text: 实现 query expansion、top-k、年份/领域过滤和来源优先级；完成 T01 配对审查；扩展黄金集至 30 查询。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: a529891e54a8a5c3a20f0e3250cfc51e334dd3d87271119c33acd363c865a6f0
+  evidence_required:
+  - dataset_manifest
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T04-METRIC-005
+- id: T04-METRIC-005
+  task_id: T04
+  wave: B
+  category: quantitative_metric
+  requirement_text: 实现 query expansion、top-k、年份/领域过滤和来源优先级；完成 T01 配对审查；扩展黄金集至 30 查询。（定量阈值：30 查询）
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: f0799094c33844877083f43262fdb41df171158a1b5dbf6b03a212377215e9c3
+  evidence_required:
+  - dataset_manifest
+  - source_code
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T04-B-013
+- id: T04-B-014
+  task_id: T04
+  wave: B
+  category: daily_deliverable
+  requirement_text: 检索配置实验；30-query gold set。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: 628285016616d283cc9f8865c67af36673b60d87185193aaa45b55fac5f76aee
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-015
+  task_id: T04
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 相关性有量化对比；标注可审计。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: 42d5600419b74a9e69e18c1dd1feada19d3cc374bceb172401fc00160b716660
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-016
+  task_id: T04
+  wave: B
+  category: daily_work
+  requirement_text: 运行 recall@10、MRR、延迟、缓存命中；整理失败查询；接入 T06 表格/图像/时序元数据但不将二进制直接塞入文本索引。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 6254886239402db34b246bd5b7ab70ce7ccf7bb84f752a1e28a4e7af538d80af
+  evidence_required:
+  - metrics_file
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-017
+  task_id: T04
+  wave: B
+  category: daily_deliverable
+  requirement_text: 评测报告；multimodal index adapter。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: 1bda9b6b9f1a1a3dec649d56ab90ac602281857062c8bba5d79bb671911452f2
+  evidence_required:
+  - computation_script
+  - artifact_file
+  - dataset_manifest
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-018
+  task_id: T04
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 来源、坐标和单位不丢失；未达标查询有错误分析。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: 77444630fe0f9a738eeb43f1fdc2f6b396b03afd1987abb16e77d451c200b965
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-019
+  task_id: T04
+  wave: B
+  category: daily_work
+  requirement_text: 同步 integration、运行模块/契约/E2E；补迁移、健康检查和回滚文档；@codex review，20:00 前转 Ready。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: 74315bfd0a531bb003d981fde75ddccd31d5305f7bc52bfa7ef92d4dfca0130e
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-020
+  task_id: T04
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；检索指标。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: 6c0d44c9f98d0af16c8eea0f1f79307384413a98cb3a6baa5246c46114dc5f40
+  evidence_required:
+  - metrics_file
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-B-021
+  task_id: T04
+  wave: B
+  category: acceptance_evidence
+  requirement_text: recall@10 达标或有整改清单；P0/P1 关闭。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: 835916bd291b63c8b8d8f13c85b9daafac2d71ad4b1f307b8e1a50d69a8cc8e3
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-C-001
+  task_id: T04
+  wave: C
+  category: daily_work
+  requirement_text: 新建 C 分支；增加恶意 PDF、超大文件、路径穿越、损坏元数据、超时、并发检索和确定性测试；20:00 前开启 Draft PR-C。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: 26f3ace62d028b2fc1d1982e830584adb7422beb4b183d98f6e707142ec2b26f
+  evidence_required:
+  - test_output
+  - artifact_file
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-C-002
+  task_id: T04
+  wave: C
+  category: daily_deliverable
+  requirement_text: 安全测试；性能报告；Draft PR-C。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: af7b39ad664c71d2814500326fec5a46de57dfdb779dc33cef1026fb7b4c5af2
+  evidence_required:
+  - test_output
+  - artifact_file
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-C-003
+  task_id: T04
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 失败不污染索引；同版本同查询结果稳定。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: e953cfdcf7c0e8c5cc198c7a15f2e02f8954574bc6c7880a427216300c2b9ca4
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-C-004
+  task_id: T04
+  wave: C
+  category: daily_work
+  requirement_text: 从空目录重建索引，完成迁移文档、诊断命令、索引健康检查和复现步骤；处理审查。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: 92ab1f76b650244edf7cf3f5450d1b60fba86bba979ecd7433c3f1e77ecc8bf8
+  evidence_required:
+  - artifact_file
+  - documentation
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-C-005
+  task_id: T04
+  wave: C
+  category: daily_deliverable
+  requirement_text: clean rebuild report；诊断命令。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: 466abbafefe49729b8d285eca89e27a586142cff0f9e6a982c3c10fcbd66e79a
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-C-006
+  task_id: T04
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 干净环境可一键构建；无本地硬编码路径。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: 6fd44f43e7fb917b1273db761a6d6cd71fcbd2bf9e04960940ce0e73342b8dc6
+  evidence_required:
+  - reproduction_command
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-C-007
+  task_id: T04
+  wave: C
+  category: daily_work
+  requirement_text: 抽查 12 领域和旗舰案例，确认无题册污染、无重复文献和定位字段完整；同步 integration、全测试、@codex review，18:00 前转 Ready。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 32758d118888efb209d28a6c0548b2e2517c7232e56bd93898efbc19558a2679
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T04-METRIC-006
+- id: T04-METRIC-006
+  task_id: T04
+  wave: C
+  category: quantitative_metric
+  requirement_text: 抽查 12 领域和旗舰案例，确认无题册污染、无重复文献和定位字段完整；同步 integration、全测试、@codex review，18:00 前转 Ready。（定量阈值：12 领域）
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 323bae9ac06c575b9f358028c0fbe2a1f61ee301f5fcb12c6501ab71c5d9aef9
+  evidence_required:
+  - test_output
+  - source_code
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T04-C-007
+- id: T04-C-008
+  task_id: T04
+  wave: C
+  category: daily_deliverable
+  requirement_text: 索引清单；PR-C Ready。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: f3888f5cae43a506fb2764f3f3e789af9b1860e4b15f61967e80274928835f48
+  evidence_required:
+  - artifact_file
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-C-009
+  task_id: T04
+  wave: C
+  category: acceptance_evidence
+  requirement_text: P0/P1 关闭；索引可发布。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: b0e10d48a968888224c9e6d18b5e69c217ab0a52a5b74b8e4678baee7e8ec5f6
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-FREEZE-001
+  task_id: T04
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 7d5941104714831cac0e87190db6bbfd2072f1cf43cd0471bd6360ac19217bfb
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-FREEZE-002
+  task_id: T04
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 阻断修复或“无变更”确认；最终 handoff 包。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: 070372ce4f2d5f34256583cc585a87f2c4e26b41a8d6754426d9c8e250e65653
+  evidence_required:
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-FREEZE-003
+  task_id: T04
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+  source_heading: T04. 队员 4（姓名待填）— RAG 索引统一、全文检索与证据源治理 › T04.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 152
+  source_table_index: 68
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: de864e07b9c6ad7d1c585a6a6a67256e2955ed78416873a1fb7d218e99f8a285
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-HANDOFF-001
+  task_id: T04
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-HANDOFF-002
+  task_id: T04
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-HANDOFF-003
+  task_id: T04
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T04-HANDOFF-004
+  task_id: T04
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
