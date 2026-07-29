@@ -87,6 +87,13 @@ class JobStore(Protocol):
         requested_by: str = "anonymous",
     ) -> tuple[JobRecord, bool]: ...
     def get_job(self, job_id: str) -> JobRecord: ...
+    def claim_queue_capacity_retry(
+        self,
+        job_id: str,
+        *,
+        expected_updated_at: str,
+    ) -> tuple[JobRecord, bool]: ...
+    def mark_queue_retry_submitted(self, job_id: str) -> JobRecord: ...
     def list_jobs(
         self,
         *,
@@ -337,6 +344,139 @@ class SQLiteJobStore:
         if row is None:
             raise JobNotFound(job_id)
         return self._record(row)
+
+    @staticmethod
+    def _queue_retry_rejection_reasons(
+        row: sqlite3.Row,
+        *,
+        expected_updated_at: str,
+    ) -> list[str]:
+        reasons: list[str] = []
+        if row["status"] != JobStatus.FAILED.value:
+            reasons.append("status")
+        if row["stage"] != "queue_rejected":
+            reasons.append("stage")
+        if row["error_code"] != "QUEUE_CAPACITY_EXCEEDED":
+            reasons.append("error_code")
+        if not bool(row["retryable"]):
+            reasons.append("retryable")
+        if int(row["attempt"]) != 0:
+            reasons.append("attempt")
+        if row["started_at"] is not None:
+            reasons.append("started_at")
+        if row["upstream_run_id"] is not None:
+            reasons.append("upstream_run_id")
+        if row["updated_at"] != expected_updated_at:
+            reasons.append("stale_retry_snapshot")
+        return reasons
+
+    def claim_queue_capacity_retry(
+        self,
+        job_id: str,
+        *,
+        expected_updated_at: str,
+    ) -> tuple[JobRecord, bool]:
+        """原子认领从未执行过的容量拒绝 Job。
+
+        该入口刻意不加入通用状态机，避免任意 failed Job 被重新执行。
+        expected_updated_at 防止同一批并发请求在首次认领失败后再次认领。
+        """
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(
+                "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
+            ).fetchone()
+            if row is None:
+                raise JobNotFound(job_id)
+
+            reasons = self._queue_retry_rejection_reasons(
+                row,
+                expected_updated_at=expected_updated_at,
+            )
+            if reasons:
+                self._insert_event(
+                    connection,
+                    job_id=job_id,
+                    event_type="queue_retry_rejected",
+                    from_status=row["status"],
+                    to_status=row["status"],
+                    stage=row["stage"],
+                    actor="api",
+                    source="idempotency",
+                    details={"reasons": reasons},
+                )
+                current = connection.execute(
+                    "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
+                ).fetchone()
+                return self._record(current), False
+
+            timestamp = _now()
+            connection.execute(
+                """
+                UPDATE jobs
+                SET status = ?, stage = ?, updated_at = ?, finished_at = NULL,
+                    error_code = NULL, error_message = NULL, retryable = 0
+                WHERE job_id = ?
+                """,
+                (
+                    JobStatus.RETRYING.value,
+                    "queue_retry_claimed",
+                    timestamp,
+                    job_id,
+                ),
+            )
+            self._insert_event(
+                connection,
+                job_id=job_id,
+                event_type="queue_retry_claimed",
+                from_status=JobStatus.FAILED.value,
+                to_status=JobStatus.RETRYING.value,
+                stage="queue_retry_claimed",
+                actor="api",
+                source="idempotency",
+                details={"expected_updated_at": expected_updated_at},
+            )
+            claimed = connection.execute(
+                "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
+            ).fetchone()
+            return self._record(claimed), True
+
+    def mark_queue_retry_submitted(self, job_id: str) -> JobRecord:
+        """审计容量重试已进入队列；worker 已推进时不回写旧状态。"""
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(
+                "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
+            ).fetchone()
+            if row is None:
+                raise JobNotFound(job_id)
+
+            advanced = not (
+                row["status"] == JobStatus.RETRYING.value
+                and row["stage"] == "queue_retry_claimed"
+            )
+            stage = row["stage"]
+            if not advanced:
+                stage = "queue_retry_submitted"
+                connection.execute(
+                    "UPDATE jobs SET stage = ?, updated_at = ? WHERE job_id = ?",
+                    (stage, _now(), job_id),
+                )
+            self._insert_event(
+                connection,
+                job_id=job_id,
+                event_type="queue_retry_submitted",
+                from_status=row["status"],
+                to_status=row["status"],
+                stage=stage,
+                actor="api",
+                source="queue",
+                details={"state_already_advanced": advanced},
+            )
+            current = connection.execute(
+                "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
+            ).fetchone()
+            return self._record(current)
 
     def list_jobs(
         self,

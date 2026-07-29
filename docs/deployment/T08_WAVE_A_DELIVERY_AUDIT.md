@@ -209,11 +209,15 @@ RESULT: PASS
 - 有界进程内 worker、lifespan 启停、Mock/Real 差异化重启恢复；
 - `X-Correlation-ID` 生成、校验、响应头传播和 Job 记录；
 - v1 统一错误结构；
-- Artifact、Version、Feedback OpenAPI projection 与明确 unavailable 响应；
+- Artifact、Version、Feedback 候选 DTO 保留；五个当前 operation 的 OpenAPI
+  与运行时统一为仅失败关闭的 503 `ErrorResponse`，不声明虚假 2xx；
 - 旧 `POST /runs` 标记 deprecated，行为保持兼容。
 - 完成资格门禁：上游正常返回但缺少产物、质量门、阻断问题、真实性或回链证明时，
   状态停在 `waiting_feedback / awaiting_completion_verification`，不再伪报
   `completed`。
+- 队列容量拒绝的同 key 重试只允许原子认领从未执行的原 Job；队列仍满继续
+  返回 503，容量释放后复用原 `job_id` 入队，并记录认领、提交、再次拒绝或
+  不安全恢复原因。
 
 契约和 UI flow 分别见：
 
@@ -223,12 +227,29 @@ RESULT: PASS
 最新全仓回归：
 
 ```text
+.venv/bin/python -m pytest -q tests/api -k capacity -vv
+8 passed, 31 deselected in 0.65s
+
+.venv/bin/python -m pytest -q tests/api -k 'artifact or version or feedback' -vv
+6 passed, 33 deselected in 0.46s
+
 .venv/bin/python -m pytest -q tests/api
-27 passed in 1.29s
+39 passed in 1.13s
 
 .venv/bin/python -m pytest -q
-264 passed, 35 skipped in 8.62s
+276 passed, 35 skipped in 5.55s
+
+.venv/bin/python scripts/api_smoke.py
+API smoke summary: {"health": true, "questions": true, "diagnostics": true, "key_leak": false}
+RESULT: PASS
+
+.venv/bin/python scripts/frontend_smoke.py
+RESULT: PASS
 ```
+
+API smoke 首次在受限沙箱内运行时因本地 8021 端口绑定被操作系统拒绝而失败，
+前台复现为 `[Errno 1] operation not permitted`；在允许本地端口绑定的同一
+工作区重跑后得到上述 PASS。该失败未被计作代码通过，也未修改 smoke 脚本。
 
 完成资格门禁先以缺失 `CompletionEvidence` 的 ImportError 建立红灯，再实现并转绿；
 测试覆盖完整证明允许完成、无证明进入待核验、默认 pipeline adapter 不自行推断，
@@ -237,6 +258,10 @@ RESULT: PASS
 真实进程验证中，`POST /api/v1/jobs` 返回 HTTP 202 和调用方提供的
 `X-Correlation-ID`。由于当前缺少 `questions_125.json`，worker 随后如实进入
 `failed`，未产生假完成或 Mock 正式结果。
+
+队长 Wave A 复审整改采用红灯先行：容量一直满、容量释放后复用原 Job、同一
+状态快照并发认领、执行痕迹拒绝、五个 unavailable operation 运行时错误信封及
+OpenAPI 仅错误响应均有专门测试。最终回归数字以本轮所有验证命令实际输出为准。
 
 发布前只读审计发现并已关闭以下问题：
 

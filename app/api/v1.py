@@ -11,10 +11,8 @@ from datetime import datetime
 from fastapi import APIRouter, Header, Query, Request
 
 from app.api.contracts import (
-    ArtifactListResponse,
     ErrorResponse,
     FeedbackCreateRequest,
-    FeedbackReceipt,
     JobAccepted,
     JobCreateRequest,
     JobError,
@@ -22,8 +20,6 @@ from app.api.contracts import (
     JobListResponse,
     JobStatus,
     JobStatusResponse,
-    VersionDiff,
-    VersionListResponse,
 )
 from app.api.errors import APIError, correlation_id
 from app.api.job_queue import QueueCapacityError
@@ -128,6 +124,12 @@ _ERROR_RESPONSES = {
     },
 }
 
+_UPSTREAM_UNAVAILABLE_RESPONSES = {
+    status_code: response
+    for status_code, response in _ERROR_RESPONSES.items()
+    if status_code in {400, 404, 422, 500, 503}
+}
+
 _JOB_ACCEPTED_EXAMPLE = {
     "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
     "correlation_id": "judge-demo-001",
@@ -158,30 +160,6 @@ _JOB_STATUS_EXAMPLE = {
         "versions": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977/versions",
         "feedback": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977/feedback",
     },
-}
-_UNAVAILABLE_LIST_EXAMPLE = {
-    "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
-    "items": [],
-    "availability": "unavailable",
-}
-_VERSION_DIFF_EXAMPLE = {
-    "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
-    "from_version_id": "v1",
-    "to_version_id": "v2",
-    "changes": [],
-    "issue_changes": [],
-    "score_delta": {},
-    "stop_reason": None,
-    "availability": "unavailable",
-}
-_FEEDBACK_EXAMPLE = {
-    "feedback_id": "feedback-unavailable",
-    "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
-    "target_version_id": "v1",
-    "status": "unavailable",
-    "decision_reason": "T03 公开契约尚未接入。",
-    "resulting_version_id": None,
-    "correlation_id": "judge-demo-001",
 }
 
 
@@ -275,6 +253,86 @@ def _upstream_unavailable(component: str) -> None:
     )
 
 
+def _is_capacity_rejection(record: JobRecord) -> bool:
+    return (
+        record.status == JobStatus.FAILED.value
+        and record.stage == "queue_rejected"
+        and record.error_code == "QUEUE_CAPACITY_EXCEEDED"
+        and record.retryable
+    )
+
+
+def _has_execution_marker(record: JobRecord) -> bool:
+    return bool(
+        record.attempt != 0
+        or record.started_at is not None
+        or record.upstream_run_id is not None
+    )
+
+
+def _raise_queue_capacity(record: JobRecord) -> None:
+    raise APIError(
+        status_code=503,
+        code="QUEUE_CAPACITY_EXCEEDED",
+        message="任务队列已满，请稍后重试。",
+        details={"job_id": record.job_id},
+        retryable=True,
+    )
+
+
+def _reject_unsafe_capacity_retry(record: JobRecord) -> None:
+    raise APIError(
+        status_code=409,
+        code="QUEUE_CAPACITY_RETRY_UNSAFE",
+        message="任务已有执行痕迹，不能通过容量恢复机制重新入队。",
+        details={"job_id": record.job_id},
+        retryable=False,
+    )
+
+
+def _submit_capacity_retry(request: Request, record: JobRecord) -> JobRecord:
+    store = _store(request)
+    claimed_record, claimed = store.claim_queue_capacity_retry(
+        record.job_id,
+        expected_updated_at=record.updated_at,
+    )
+    if not claimed:
+        if (
+            claimed_record.status == JobStatus.RETRYING.value
+            and claimed_record.stage == "queue_retry_claimed"
+        ):
+            raise APIError(
+                status_code=503,
+                code="QUEUE_RETRY_IN_PROGRESS",
+                message="容量重试正在认领并等待入队确认，请稍后重试。",
+                details={"job_id": claimed_record.job_id},
+                retryable=True,
+            )
+        if _is_capacity_rejection(claimed_record):
+            if _has_execution_marker(claimed_record):
+                _reject_unsafe_capacity_retry(claimed_record)
+            _raise_queue_capacity(claimed_record)
+        return claimed_record
+
+    try:
+        _queue(request).submit(claimed_record.job_id)
+    except QueueCapacityError:
+        rejected = store.transition(
+            claimed_record.job_id,
+            JobStatus.FAILED,
+            stage="queue_rejected",
+            actor="api",
+            source="queue_retry",
+            error_code="QUEUE_CAPACITY_EXCEEDED",
+            error_message="任务队列已满，请稍后重试。",
+            retryable=True,
+        )
+        _raise_queue_capacity(rejected)
+
+    store.mark_queue_retry_submitted(claimed_record.job_id)
+    return store.get_job(claimed_record.job_id)
+
+
 @router.post(
     "/jobs",
     response_model=JobAccepted,
@@ -308,11 +366,31 @@ def create_job(
             message="相同 Idempotency-Key 已用于不同请求。",
         ) from None
 
-    if not reused:
+    if reused and _is_capacity_rejection(record):
+        if _has_execution_marker(record):
+            store.claim_queue_capacity_retry(
+                record.job_id,
+                expected_updated_at=record.updated_at,
+            )
+            _reject_unsafe_capacity_retry(record)
+        record = _submit_capacity_retry(request, record)
+    elif (
+        reused
+        and record.status == JobStatus.RETRYING.value
+        and record.stage == "queue_retry_claimed"
+    ):
+        raise APIError(
+            status_code=503,
+            code="QUEUE_RETRY_IN_PROGRESS",
+            message="容量重试正在认领并等待入队确认，请稍后重试。",
+            details={"job_id": record.job_id},
+            retryable=True,
+        )
+    elif not reused:
         try:
             _queue(request).submit(record.job_id)
         except QueueCapacityError:
-            store.transition(
+            rejected = store.transition(
                 record.job_id,
                 JobStatus.FAILED,
                 stage="queue_rejected",
@@ -322,13 +400,7 @@ def create_job(
                 error_message="任务队列已满，请稍后重试。",
                 retryable=True,
             )
-            raise APIError(
-                status_code=503,
-                code="QUEUE_CAPACITY_EXCEEDED",
-                message="任务队列已满，请稍后重试。",
-                details={"job_id": record.job_id},
-                retryable=True,
-            ) from None
+            _raise_queue_capacity(rejected)
 
     return JobAccepted(
         job_id=record.job_id,
@@ -382,11 +454,9 @@ def get_job(job_id: str, request: Request) -> JobStatusResponse:
 
 @router.get(
     "/jobs/{job_id}/artifacts",
-    response_model=ArtifactListResponse,
-    responses={
-        200: _documented_response("任务产物列表", _UNAVAILABLE_LIST_EXAMPLE),
-        **_ERROR_RESPONSES,
-    },
+    response_model=ErrorResponse,
+    status_code=503,
+    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
     summary="列出任务产物（契约冻结）",
 )
 def list_artifacts(job_id: str, request: Request):
@@ -396,11 +466,9 @@ def list_artifacts(job_id: str, request: Request):
 
 @router.get(
     "/jobs/{job_id}/versions/diff",
-    response_model=VersionDiff,
-    responses={
-        200: _documented_response("版本差异", _VERSION_DIFF_EXAMPLE),
-        **_ERROR_RESPONSES,
-    },
+    response_model=ErrorResponse,
+    status_code=503,
+    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
     summary="查询版本差异（契约冻结）",
 )
 def version_diff(
@@ -415,11 +483,9 @@ def version_diff(
 
 @router.get(
     "/jobs/{job_id}/versions",
-    response_model=VersionListResponse,
-    responses={
-        200: _documented_response("任务版本列表", _UNAVAILABLE_LIST_EXAMPLE),
-        **_ERROR_RESPONSES,
-    },
+    response_model=ErrorResponse,
+    status_code=503,
+    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
     summary="列出任务版本（契约冻结）",
 )
 def list_versions(job_id: str, request: Request):
@@ -429,12 +495,9 @@ def list_versions(job_id: str, request: Request):
 
 @router.post(
     "/jobs/{job_id}/feedback",
-    response_model=FeedbackReceipt,
-    status_code=202,
-    responses={
-        202: _documented_response("反馈已接收", _FEEDBACK_EXAMPLE),
-        **_ERROR_RESPONSES,
-    },
+    response_model=ErrorResponse,
+    status_code=503,
+    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
     summary="提交人工反馈（契约冻结）",
 )
 def create_feedback(
@@ -454,11 +517,9 @@ def create_feedback(
 
 @router.get(
     "/jobs/{job_id}/feedback/{feedback_id}",
-    response_model=FeedbackReceipt,
-    responses={
-        200: _documented_response("反馈决策", _FEEDBACK_EXAMPLE),
-        **_ERROR_RESPONSES,
-    },
+    response_model=ErrorResponse,
+    status_code=503,
+    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
     summary="查询人工反馈决策（契约冻结）",
 )
 def get_feedback(job_id: str, feedback_id: str, request: Request):

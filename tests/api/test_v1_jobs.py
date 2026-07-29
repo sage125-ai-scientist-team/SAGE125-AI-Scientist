@@ -143,8 +143,12 @@ class _BlockingRunner:
     def __init__(self):
         self.started = threading.Event()
         self.release = threading.Event()
+        self.calls: list[str] = []
+        self._calls_lock = threading.Lock()
 
     def run(self, job, progress_callback):
+        with self._calls_lock:
+            self.calls.append(job.job_id)
         self.started.set()
         self.release.wait(timeout=3)
         return JobRunResult(upstream_run_id=f"run-{job.job_id}")
@@ -438,6 +442,258 @@ def test_v1_queue_capacity_and_validation_errors_are_structured(tmp_path):
         runner.release.set()
 
 
+def test_v1_capacity_retry_stays_503_with_same_job_id_while_full(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    runner = _BlockingRunner()
+    app = create_app(
+        job_store=store,
+        job_runner=runner,
+        queue_capacity=1,
+        worker_count=1,
+    )
+    with TestClient(app) as client:
+        first = client.post("/api/v1/jobs", json=_request("Q001").model_dump())
+        assert first.status_code == 202
+        assert runner.started.wait(timeout=1)
+        second = client.post("/api/v1/jobs", json=_request("Q002").model_dump())
+        assert second.status_code == 202
+
+        headers = {"Idempotency-Key": "capacity-retry-key"}
+        rejected = client.post(
+            "/api/v1/jobs",
+            headers=headers,
+            json=_request("Q003").model_dump(),
+        )
+        retried = client.post(
+            "/api/v1/jobs",
+            headers=headers,
+            json=_request("Q003").model_dump(),
+        )
+
+        assert rejected.status_code == 503
+        assert retried.status_code == 503
+        assert retried.json()["code"] == "QUEUE_CAPACITY_EXCEEDED"
+        assert (
+            retried.json()["details"]["job_id"]
+            == rejected.json()["details"]["job_id"]
+        )
+        events = store.list_events(rejected.json()["details"]["job_id"])
+        assert any(event["event_type"] == "queue_retry_claimed" for event in events)
+        assert any(
+            event["event_type"] == "transition"
+            and event["source"] == "queue_retry"
+            and event["details"]["error_code"] == "QUEUE_CAPACITY_EXCEEDED"
+            for event in events
+        )
+        runner.release.set()
+
+
+def test_v1_capacity_retry_requeues_original_job_once_after_release(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    runner = _BlockingRunner()
+    app = create_app(
+        job_store=store,
+        job_runner=runner,
+        queue_capacity=1,
+        worker_count=1,
+    )
+    with TestClient(app) as client:
+        first = client.post("/api/v1/jobs", json=_request("Q001").model_dump())
+        assert first.status_code == 202
+        assert runner.started.wait(timeout=1)
+        second = client.post("/api/v1/jobs", json=_request("Q002").model_dump())
+        assert second.status_code == 202
+
+        headers = {"Idempotency-Key": "capacity-release-key"}
+        rejected = client.post(
+            "/api/v1/jobs",
+            headers=headers,
+            json=_request("Q003").model_dump(),
+        )
+        assert rejected.status_code == 503
+        rejected_job_id = rejected.json()["details"]["job_id"]
+
+        runner.release.set()
+        assert (
+            _wait_for_status(
+                store,
+                second.json()["job_id"],
+                {"waiting_feedback"},
+            )
+            == "waiting_feedback"
+        )
+
+        accepted = client.post(
+            "/api/v1/jobs",
+            headers=headers,
+            json=_request("Q003").model_dump(),
+        )
+        assert accepted.status_code == 202
+        assert accepted.json()["job_id"] == rejected_job_id
+        assert accepted.json()["reused"] is True
+        assert (
+            _wait_for_status(store, rejected_job_id, {"waiting_feedback"})
+            == "waiting_feedback"
+        )
+
+        repeated = client.post(
+            "/api/v1/jobs",
+            headers=headers,
+            json=_request("Q003").model_dump(),
+        )
+        assert repeated.status_code == 202
+        assert repeated.json()["job_id"] == rejected_job_id
+        assert runner.calls.count(rejected_job_id) == 1
+        events = store.list_events(rejected_job_id)
+        assert any(event["event_type"] == "queue_retry_claimed" for event in events)
+        assert any(event["event_type"] == "queue_retry_submitted" for event in events)
+
+
+def test_store_capacity_retry_claim_is_atomic_for_same_snapshot(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    job, _ = store.create_job(request=_request(), correlation_id="corr")
+    rejected = store.transition(
+        job.job_id,
+        JobStatus.FAILED,
+        stage="queue_rejected",
+        actor="api",
+        source="queue",
+        error_code="QUEUE_CAPACITY_EXCEEDED",
+        error_message="任务队列已满，请稍后重试。",
+        retryable=True,
+    )
+
+    def claim(_: int):
+        return store.claim_queue_capacity_retry(
+            rejected.job_id,
+            expected_updated_at=rejected.updated_at,
+        )[1]
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        claims = list(pool.map(claim, range(2)))
+
+    assert sorted(claims) == [False, True]
+    claimed = store.get_job(job.job_id)
+    assert claimed.status == "retrying"
+    assert claimed.stage == "queue_retry_claimed"
+    events = store.list_events(job.job_id)
+    assert sum(event["event_type"] == "queue_retry_claimed" for event in events) == 1
+    assert sum(event["event_type"] == "queue_retry_rejected" for event in events) == 1
+
+
+def test_v1_concurrent_capacity_retries_submit_only_once(tmp_path):
+    from app.api.errors import APIError
+    from app.api.v1 import create_job as create_v1_job
+
+    class ClaimBlockingQueue:
+        def __init__(self):
+            self.calls: list[str] = []
+            self.entered = threading.Event()
+            self.release = threading.Event()
+
+        def submit(self, job_id):
+            self.calls.append(job_id)
+            self.entered.set()
+            self.release.wait(timeout=2)
+
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    job, _ = store.create_job(
+        request=_request(),
+        correlation_id="corr",
+        idempotency_key="concurrent-capacity-key",
+    )
+    store.transition(
+        job.job_id,
+        JobStatus.FAILED,
+        stage="queue_rejected",
+        actor="api",
+        source="queue",
+        error_code="QUEUE_CAPACITY_EXCEEDED",
+        error_message="任务队列已满，请稍后重试。",
+        retryable=True,
+    )
+    controlled_queue = ClaimBlockingQueue()
+    application = SimpleNamespace(
+        state=SimpleNamespace(job_store=store, job_queue=controlled_queue)
+    )
+
+    def submit():
+        request = SimpleNamespace(
+            app=application,
+            state=SimpleNamespace(correlation_id="corr"),
+        )
+        return create_v1_job(
+            _request(),
+            request,
+            idempotency_key="concurrent-capacity-key",
+        )
+
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        first = pool.submit(submit)
+        assert controlled_queue.entered.wait(timeout=1)
+        with pytest.raises(APIError) as error:
+            submit()
+        assert error.value.status_code == 503
+        assert error.value.code == "QUEUE_RETRY_IN_PROGRESS"
+        controlled_queue.release.set()
+        accepted = first.result(timeout=2)
+
+    assert accepted.job_id == job.job_id
+    assert accepted.reused is True
+    assert controlled_queue.calls == [job.job_id]
+    assert store.get_job(job.job_id).stage == "queue_retry_submitted"
+
+
+@pytest.mark.parametrize("unsafe_marker", ["attempt", "started_at", "upstream_run_id"])
+def test_store_capacity_retry_refuses_jobs_with_execution_markers(
+    tmp_path,
+    unsafe_marker,
+):
+    store = SQLiteJobStore(tmp_path / f"{unsafe_marker}.sqlite3")
+    store.initialize()
+    job, _ = store.create_job(request=_request(), correlation_id="corr")
+    rejected = store.transition(
+        job.job_id,
+        JobStatus.FAILED,
+        stage="queue_rejected",
+        actor="api",
+        source="queue",
+        error_code="QUEUE_CAPACITY_EXCEEDED",
+        error_message="任务队列已满，请稍后重试。",
+        retryable=True,
+    )
+    with store._connect() as connection:
+        if unsafe_marker == "attempt":
+            connection.execute(
+                "UPDATE jobs SET attempt = 1 WHERE job_id = ?",
+                (job.job_id,),
+            )
+        elif unsafe_marker == "started_at":
+            connection.execute(
+                "UPDATE jobs SET started_at = ? WHERE job_id = ?",
+                ("2026-07-29T00:00:00+00:00", job.job_id),
+            )
+        else:
+            connection.execute(
+                "UPDATE jobs SET upstream_run_id = ? WHERE job_id = ?",
+                ("upstream-existing", job.job_id),
+            )
+    unsafe = store.get_job(job.job_id)
+
+    current, claimed = store.claim_queue_capacity_retry(
+        job.job_id,
+        expected_updated_at=unsafe.updated_at,
+    )
+
+    assert claimed is False
+    assert current.status == "failed"
+    event = store.list_events(job.job_id)[-1]
+    assert event["event_type"] == "queue_retry_rejected"
+    assert unsafe_marker in event["details"]["reasons"]
+
+
 def test_v1_errors_use_stable_envelope_and_openapi_exposes_contracts(tmp_path):
     store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
     app = create_app(job_store=store, job_runner=_SuccessfulRunner())
@@ -468,13 +724,7 @@ def test_v1_errors_use_stable_envelope_and_openapi_exposes_contracts(tmp_path):
         assert "/api/v1/jobs/{job_id}" in schema["paths"]
         assert schema["paths"]["/runs"]["post"]["deprecated"] is True
         serialized = json.dumps(schema)
-        for contract in (
-            "Artifact",
-            "Version",
-            "VersionDiff",
-            "FeedbackCreateRequest",
-        ):
-            assert contract in serialized
+        assert "FeedbackCreateRequest" in serialized
         for path, path_item in schema["paths"].items():
             if not path.startswith("/api/v1"):
                 continue
@@ -488,18 +738,85 @@ def test_v1_errors_use_stable_envelope_and_openapi_exposes_contracts(tmp_path):
                     )
 
 
-def test_future_owner_routes_are_explicitly_unavailable(tmp_path):
+@pytest.mark.parametrize(
+    ("method", "path_suffix", "request_kwargs"),
+    [
+        ("get", "/artifacts", {}),
+        ("get", "/versions", {}),
+        (
+            "get",
+            "/versions/diff",
+            {"params": {"from_version_id": "v1", "to_version_id": "v2"}},
+        ),
+        (
+            "post",
+            "/feedback",
+            {
+                "json": {
+                    "target_version_id": "v1",
+                    "feedback": "请补充证据。",
+                },
+                "headers": {"Idempotency-Key": "feedback-key"},
+            },
+        ),
+        ("get", "/feedback/feedback-1", {}),
+    ],
+)
+def test_future_owner_routes_are_explicitly_unavailable(
+    tmp_path,
+    method,
+    path_suffix,
+    request_kwargs,
+):
     store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
     app = create_app(job_store=store, job_runner=_SuccessfulRunner())
     with TestClient(app) as client:
         created = client.post("/api/v1/jobs", json=_request().model_dump()).json()
-        response = client.get(
-            f"/api/v1/jobs/{created['job_id']}/artifacts",
-            headers={"X-Correlation-ID": "future-contract"},
+        headers = {
+            **request_kwargs.pop("headers", {}),
+            "X-Correlation-ID": "future-contract",
+        }
+        response = client.request(
+            method,
+            f"/api/v1/jobs/{created['job_id']}{path_suffix}",
+            headers=headers,
+            **request_kwargs,
         )
         assert response.status_code == 503
-        assert response.json()["code"] == "UPSTREAM_CONTRACT_UNAVAILABLE"
-        assert response.json()["details"]["availability"] == "unavailable"
+        assert response.json() == {
+            "code": "UPSTREAM_CONTRACT_UNAVAILABLE",
+            "message": response.json()["message"],
+            "details": {
+                "component": response.json()["details"]["component"],
+                "availability": "unavailable",
+            },
+            "correlation_id": "future-contract",
+            "retryable": True,
+        }
+
+
+def test_future_owner_openapi_declares_only_error_responses(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    app = create_app(job_store=store, job_runner=_SuccessfulRunner())
+    operations = [
+        ("get", "/api/v1/jobs/{job_id}/artifacts"),
+        ("get", "/api/v1/jobs/{job_id}/versions"),
+        ("get", "/api/v1/jobs/{job_id}/versions/diff"),
+        ("post", "/api/v1/jobs/{job_id}/feedback"),
+        ("get", "/api/v1/jobs/{job_id}/feedback/{feedback_id}"),
+    ]
+
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
+
+    for method, path in operations:
+        responses = schema["paths"][path][method]["responses"]
+        assert set(responses) == {"400", "404", "422", "500", "503"}
+        assert not any(code.startswith("2") for code in responses)
+        error_schema = responses["503"]["content"]["application/json"]["schema"]
+        assert error_schema == {
+            "$ref": "#/components/schemas/ErrorResponse",
+        }
 
 
 def test_v1_unhandled_errors_do_not_leak_internal_details(tmp_path):

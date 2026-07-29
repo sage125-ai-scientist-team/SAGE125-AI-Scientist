@@ -36,6 +36,11 @@
 `UPSTREAM_CONTRACT_UNAVAILABLE` 时，页面显示 `unavailable` 和缺失原因，
 不得回退到旧缓存后伪装成功。
 
+当运行请求返回 `QUEUE_CAPACITY_EXCEEDED` 时，页面保留响应中的 `job_id` 和原
+`Idempotency-Key`。再次提交只有在原 Job 从未开始执行且真正重新入队后才会
+收到 202；队列仍满或处于 `queue_retry_claimed` 时继续显示可重试 503，不得把
+`failed` 或尚未确认入队的状态展示为“已接受”。
+
 ## 3. 轮询与恢复
 
 - 首次 1 秒轮询，逐步退避到 5 秒；
@@ -59,5 +64,7 @@
 
 - 运行、反馈、导出按钮在请求发出后立即禁用；
 - 网络重试沿用原 `Idempotency-Key`；
+- 容量恢复必须复用原 `job_id`；已有 attempt、启动时间或上游引用时停止自动
+  重试并展示 `QUEUE_CAPACITY_RETRY_UNSAFE`；
 - 相同 key 不同 payload 的 409 必须提示用户刷新上下文，不自动换 key；
 - 浏览器重连不得再次创建任务。
