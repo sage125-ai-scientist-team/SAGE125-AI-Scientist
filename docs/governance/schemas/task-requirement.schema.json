@@ -1,0 +1,305 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sage125-ai-scientist-team.github.io/schemas/task-requirement.schema.json",
+  "title": "SAGE125 task requirement specification (T01-T09)",
+  "description": "Schema for docs/governance/task-requirements/T0X.yaml. Each file is generated from the V3.0 teammate manual by scripts/captain/extract_task_requirements.py and is the machine-readable source of truth for task/wave content acceptance review. Files are validated by scripts/captain/validate_task_requirements.py.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "task_id",
+    "title",
+    "mission",
+    "scoring_dimensions",
+    "owner_paths",
+    "forbidden_paths",
+    "dependencies",
+    "branch_series",
+    "paired_reviewer",
+    "sprint_days",
+    "must_deliver",
+    "definition_of_done",
+    "quantitative_thresholds",
+    "waves",
+    "code_freeze",
+    "handoff",
+    "conflict_boundary",
+    "source",
+    "requirements"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "description": "Schema contract version; bump only together with the validator."
+    },
+    "repository": {
+      "const": "sage125-ai-scientist-team/SAGE125-AI-Scientist"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^T0[1-9]$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Task heading text taken verbatim from the manual."
+    },
+    "mission": {
+      "type": "string",
+      "minLength": 1,
+      "description": "任务使命 row, verbatim."
+    },
+    "scoring_dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "评分映射 row split on Chinese semicolons."
+    },
+    "owner_paths": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "主责路径 row; the only paths this task may modify."
+    },
+    "forbidden_paths": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Explicit out-of-bounds statements from 禁止越界; may be the literal ['not_specified'] when the manual states none."
+    },
+    "dependencies": {
+      "type": "object",
+      "required": ["raw"],
+      "additionalProperties": false,
+      "properties": {
+        "raw": { "type": "string", "minLength": 1 },
+        "upstream": { "type": "array", "items": { "type": "string" } },
+        "downstream": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "branch_series": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Ordered Wave A/B/C branch names, e.g. t01/a-evidence-contract."
+    },
+    "paired_reviewer": { "type": "string", "minLength": 1 },
+    "sprint_days": {
+      "oneOf": [
+        { "type": "integer", "minimum": 1 },
+        { "const": "not_specified" }
+      ]
+    },
+    "workload_note": { "type": "string" },
+    "must_deliver": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "definition_of_done": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "quantitative_thresholds": {
+      "type": "array",
+      "description": "Numeric acceptance thresholds detected in the manual text. Empty only when the manual states none for this task.",
+      "items": {
+        "type": "object",
+        "required": ["requirement_id", "raw_text", "comparator", "value"],
+        "additionalProperties": false,
+        "properties": {
+          "requirement_id": { "type": "string" },
+          "raw_text": { "type": "string", "minLength": 1 },
+          "comparator": {
+            "enum": [
+              "at_least",
+              "at_most",
+              "greater_than",
+              "exact",
+              "ratio",
+              "percentage",
+              "quantity"
+            ],
+            "description": "quantity means the manual states a bare count (e.g. 5 并发, 24 题) without an explicit comparison word; the exact comparison semantics stay in raw_text."
+          },
+          "value": { "type": ["number", "string"] },
+          "unit": { "type": "string" },
+          "source_requirement_id": { "type": "string" }
+        }
+      }
+    },
+    "waves": {
+      "type": "object",
+      "required": ["A", "B", "C"],
+      "additionalProperties": false,
+      "properties": {
+        "A": { "$ref": "#/definitions/wave" },
+        "B": { "$ref": "#/definitions/wave" },
+        "C": { "$ref": "#/definitions/wave" }
+      }
+    },
+    "code_freeze": {
+      "type": "object",
+      "required": ["date", "focus", "work", "deliverable", "evidence"],
+      "additionalProperties": false,
+      "properties": {
+        "date": { "type": "string" },
+        "focus": { "type": "string" },
+        "work": { "type": "string" },
+        "deliverable": { "type": "string" },
+        "evidence": { "type": "string" }
+      }
+    },
+    "handoff": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Handoff requirements from section 7.3 (shared by all nine tasks) plus the task's own 08/09 row."
+    },
+    "conflict_boundary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "禁止越界 text plus the global stop-and-escalate condition."
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "docx_name",
+        "docx_sha256",
+        "docx_size_bytes",
+        "document_version",
+        "execution_period",
+        "task_heading_paragraph_index"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "docx_name": { "type": "string" },
+        "docx_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "docx_size_bytes": { "type": "integer", "minimum": 1 },
+        "document_version": { "type": "string" },
+        "execution_period": { "type": "string" },
+        "task_heading_paragraph_index": { "type": "integer", "minimum": 0 },
+        "info_table_index": { "type": "integer", "minimum": 0 },
+        "must_deliver_table_index": { "type": "integer", "minimum": 0 },
+        "daily_table_index": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/requirement" }
+    }
+  },
+  "definitions": {
+    "wave": {
+      "type": "object",
+      "required": ["label", "date_range", "team_goal", "completion_condition", "days"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" },
+        "date_range": { "type": "string" },
+        "team_goal": { "type": "string" },
+        "completion_condition": { "type": "string" },
+        "days": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["date", "focus", "work", "deliverable", "evidence"],
+            "additionalProperties": false,
+            "properties": {
+              "date": { "type": "string" },
+              "focus": { "type": "string" },
+              "work": { "type": "string" },
+              "deliverable": { "type": "string" },
+              "evidence": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "required": [
+        "id",
+        "task_id",
+        "wave",
+        "category",
+        "requirement_text",
+        "source_heading",
+        "source_paragraph_index",
+        "source_text_sha256",
+        "evidence_required",
+        "verification_type",
+        "blocking_policy",
+        "future_wave_policy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^T0[1-9]-(A|B|C|MUST|DOD|METRIC|HANDOFF|FREEZE)-[0-9]{3}$"
+        },
+        "task_id": { "type": "string", "pattern": "^T0[1-9]$" },
+        "wave": {
+          "enum": ["A", "B", "C", "FREEZE", "FINAL"],
+          "description": "Wave in which the requirement becomes in-scope. FINAL means it is verified cumulatively at Wave C; FREEZE means the 08/09 Code Freeze gate."
+        },
+        "category": {
+          "enum": [
+            "must_deliver",
+            "daily_work",
+            "daily_deliverable",
+            "acceptance_evidence",
+            "definition_of_done",
+            "quantitative_metric",
+            "handoff",
+            "code_freeze_constraint"
+          ]
+        },
+        "requirement_text": { "type": "string", "minLength": 1 },
+        "source_heading": { "type": "string", "minLength": 1 },
+        "source_paragraph_index": { "type": "integer", "minimum": 0 },
+        "source_table_index": { "type": "integer", "minimum": 0 },
+        "source_row_index": { "type": "integer", "minimum": 0 },
+        "source_cell_index": { "type": "integer", "minimum": 0 },
+        "source_text_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "evidence_required": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Evidence classes a reviewer must actually observe before this requirement may be marked PASS."
+        },
+        "verification_type": {
+          "enum": [
+            "code_inspection",
+            "test_execution",
+            "artifact_inspection",
+            "metric_reproduction",
+            "doc_inspection",
+            "manual_signoff"
+          ]
+        },
+        "blocking_policy": {
+          "enum": [
+            "P0_BLOCKING",
+            "P1_BLOCKING",
+            "P2_RECOMMENDATION",
+            "OPTIONAL",
+            "DEFERRED_ALLOWED"
+          ]
+        },
+        "future_wave_policy": {
+          "enum": ["DEFERRED_ALLOWED", "NOT_DEFERRABLE"],
+          "description": "DEFERRED_ALLOWED means the requirement may be marked DEFERRED while the PR's current wave is earlier than the requirement's wave. NOT_DEFERRABLE means it must be evaluated in every wave (integrity and security requirements)."
+        },
+        "related_metric_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "derived_from_requirement_id": { "type": "string" }
+      }
+    }
+  }
+}

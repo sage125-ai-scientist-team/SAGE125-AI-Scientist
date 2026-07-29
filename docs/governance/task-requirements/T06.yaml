@@ -1,0 +1,1247 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T06
+title: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理
+mission: 增加真正的科学多模态能力，至少处理论文表格/图表与 CSV/时序数据两类非纯文本输入，并保留来源、单位与校验信息。
+scoring_dimensions:
+- 多模态技术深度
+- 科学数据处理
+- 应用展示
+owner_paths:
+- app/multimodal/**
+- app/contracts/multimodal.py
+- tests/multimodal/**
+- docs/modules/T06/**
+forbidden_paths:
+- 不负责全局 RAG 存储（T04）或工作流编排（T02）
+- 通过 MultimodalArtifact 交付
+dependencies:
+  raw: 上游科学图表/表格/时序数据；下游 T01、T02、T07、T08。
+  upstream: []
+  downstream:
+  - T01
+  - T02
+  - T07
+  - T08
+branch_series:
+- t06/a-multimodal-contract
+- t06/b-multimodal-core
+- t06/c-multimodal-hardening
+paired_reviewer: T05
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- MultimodalArtifact：模态、来源、页码、bbox/坐标轴、单位、图例、数据数组、置信度和校验状态。
+- PDF 表格/图表解析与 Qwen 视觉调用审计；CSV/时序清洗、字段/单位对齐、缺失和异常检测。
+- 人工/规则校验、两个真实代表案例和量化提取准确率/误差。
+definition_of_done:
+- 至少两种非纯文本科学模态实际进入推理，不以文件名或 OCR 文本冒充多模态。
+- 表格样本单元格精确匹配目标 ≥95%；图表数值相对误差目标 ≤5%，未达标须标记人工核验。
+- 错误坐标轴、单位冲突、缺图例和低置信度不得静默通过；调用审计不暴露密钥。
+quantitative_thresholds:
+- requirement_id: T06-METRIC-001
+  raw_text: 至少两种
+  comparator: at_least
+  value: 2
+  unit: 种
+  source_requirement_id: T06-DOD-001
+- requirement_id: T06-METRIC-002
+  raw_text: ≥95%
+  comparator: at_least
+  value: 95
+  unit: '%'
+  source_requirement_id: T06-DOD-002
+- requirement_id: T06-METRIC-003
+  raw_text: ≤5%
+  comparator: at_most
+  value: 5
+  unit: '%'
+  source_requirement_id: T06-DOD-002
+- requirement_id: T06-METRIC-004
+  raw_text: 至少 3 个
+  comparator: at_least
+  value: 3
+  unit: 个
+  source_requirement_id: T06-A-003
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与模态选型
+      work: 完成协作接入；选定 PDF 表格/图表和 CSV/时序两类模态，建立真实与合成夹具，明确人工真值和评价方法。
+      deliverable: 样本清单；T06 任务笔记。
+      evidence: 每类至少 3 个可核验样本；分支来自最新 integration。
+    - date: 07/28（周二）
+      focus: 数据契约与骨架
+      work: 设计 MultimodalArtifact、provenance、bbox/axis、unit、confidence；实现模态识别、处理队列和 Qwen 视觉适配抽象；编写红灯测试；开启 Draft PR-A。
+      deliverable: 接口 RFC；adapter skeleton；Draft PR-A。
+      evidence: T01/T04/T08 可消费；密钥不写入代码。
+    - date: 07/29（周三）
+      focus: PR-A 完成
+      work: 提交 Schema、fixtures、基础测试和安全日志字段；同步 integration、测试并在 20:00 前转 Ready。
+      deliverable: PR-A Ready；接口冻结记录。
+      evidence: 来源、单位、坐标和置信度字段完整。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: 表格提取
+      work: 新建 B 分支；实现 PDF 页码/bbox、表头、单元格、合并单元格、单位提取和结构化输出。
+      deliverable: table extractor。
+      evidence: 来源定位完整；表格结构可复核。
+    - date: 07/31（周五）
+      focus: 图表解析
+      work: 识别坐标轴、图例、曲线/柱值、置信度、数值范围与单位；对缺图例和错误轴设置失败状态。
+      deliverable: chart extractor。
+      evidence: 错误轴/图例可被发现；不静默给值。
+    - date: 08/01（周六）
+      focus: 时序清洗与 Draft PR-B
+      work: 实现 CSV schema、时间索引、缺失、重复、单位转换和异常标记；把多模态结果转换为受控证据/数据摘要；开启 Draft PR-B。
+      deliverable: time-series adapter；摘要转换器；Draft PR-B。
+      evidence: 无二进制直接进入 prompt；清洗日志可追溯。
+    - date: 08/02（周日）
+      focus: 黄金校验
+      work: 人工标注表格/图表真值，计算单元格准确率和数值误差；完成 T05 配对审查。
+      deliverable: multimodal gold set；初始指标。
+      evidence: 指标计算脚本可复现；误差样本可定位。
+    - date: 08/03（周一）
+      focus: RAG/证据联调
+      work: 与 T04/T01 接入索引和 EvidenceCard，保留 bbox、单位、来源和置信度；补契约/E2E。
+      deliverable: 接口测试；跨模块样例。
+      evidence: 跨模块字段不丢失；低置信度不支持事实。
+    - date: 08/04（周二）
+      focus: 视觉审计与人工节点
+      work: 完成 Qwen 视觉模型、时间、输入摘要、输出、成本审计；向 T02 提供摘要和验证结论，低置信度触发人工确认。
+      deliverable: 调用审计；workflow hook。
+      evidence: 审计可用于赛事材料且不暴露凭证。
+    - date: 08/05（周三）
+      focus: PR-B Ready
+      work: 同步 integration、运行指标/契约/E2E；补性能和限制；@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；核心评测报告。
+      evidence: P0/P1 关闭；分支 up to date。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: 真实案例与前端契约
+      work: 新建 C 分支；完成一个论文表格/图表案例和一个时序/CSV 案例；向 T08 提供缩略图、来源定位、原始/提取值 payload；开启 Draft PR-C。
+      deliverable: 两个案例包；UI contract；Draft PR-C。
+      evidence: 输入、输出与人工真值齐全。
+    - date: 08/07（周五）
+      focus: 性能与安全降级
+      work: 测试性能、配额、超时、无视觉模型、失败回退和单位冲突；完善模块文档与纠错流程。
+      deliverable: 性能/失败回退报告；审查修订提交。
+      evidence: 无视觉模型时安全降级；不产生伪结果。
+    - date: 08/08（周六）
+      focus: 冻结前评测
+      work: 运行最终准确率、误差、单位冲突和人工纠错回归；同步 integration、全测试、@codex review，18:00 前转 Ready。
+      deliverable: 最终评测报告；PR-C Ready。
+      evidence: 达到目标或明确人工核验标记；P0/P1 关闭。
+code_freeze:
+  date: 08/09（周日）
+  focus: Code Freeze 与交接
+  work: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  deliverable: 阻断修复或“无变更”确认；最终 handoff 包。
+  evidence: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不负责全局 RAG 存储（T04）或工作流编排（T02）；通过 MultimodalArtifact 交付。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 164
+  info_table_index: 74
+  must_deliver_table_index: 75
+  daily_table_index: 76
+requirements:
+- id: T06-MUST-001
+  task_id: T06
+  wave: FINAL
+  category: must_deliver
+  requirement_text: MultimodalArtifact：模态、来源、页码、bbox/坐标轴、单位、图例、数据数组、置信度和校验状态。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.1 必须交付
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 231d157bf07440008f508953af01ebc4298369ac626142ebbcafa481d0afc8d4
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-MUST-002
+  task_id: T06
+  wave: FINAL
+  category: must_deliver
+  requirement_text: PDF 表格/图表解析与 Qwen 视觉调用审计；CSV/时序清洗、字段/单位对齐、缺失和异常检测。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.1 必须交付
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 9fee5643b8acde7e4d622aba3da5c2b093ef2f0ad47b05da4cf793e241b3159f
+  evidence_required:
+  - raw_results
+  - artifact_file
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-MUST-003
+  task_id: T06
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 人工/规则校验、两个真实代表案例和量化提取准确率/误差。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.1 必须交付
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 86a7214f611bc5e81daf22b62d91b3cf8207c2d04a49d45ec8c0b59a54be4b6c
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-DOD-001
+  task_id: T06
+  wave: C
+  category: definition_of_done
+  requirement_text: 至少两种非纯文本科学模态实际进入推理，不以文件名或 OCR 文本冒充多模态。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.2 Definition of Done
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 826a691ac7611cc2b70de2ed37fbad69297b44563f46a88dec0568ee065c88fd
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids:
+  - T06-METRIC-001
+- id: T06-METRIC-001
+  task_id: T06
+  wave: C
+  category: quantitative_metric
+  requirement_text: 至少两种非纯文本科学模态实际进入推理，不以文件名或 OCR 文本冒充多模态。（定量阈值：至少两种）
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.2 Definition of Done
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 6912dda9dd1108a74e6cdc65f2df25814856681ad53f0793d8176e32d0004be1
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+  derived_from_requirement_id: T06-DOD-001
+- id: T06-DOD-002
+  task_id: T06
+  wave: C
+  category: definition_of_done
+  requirement_text: 表格样本单元格精确匹配目标 ≥95%；图表数值相对误差目标 ≤5%，未达标须标记人工核验。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.2 Definition of Done
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: db3470a5337137d83fab8bdcac7c6c69a71d9582620be56521fcb7d5a5a62bdd
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - artifact_file
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T06-METRIC-002
+  - T06-METRIC-003
+- id: T06-METRIC-002
+  task_id: T06
+  wave: C
+  category: quantitative_metric
+  requirement_text: 表格样本单元格精确匹配目标 ≥95%；图表数值相对误差目标 ≤5%，未达标须标记人工核验。（定量阈值：≥95%）
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.2 Definition of Done
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: c95bce66b67a7adf9882848d76ae97923d8aba7d3d1d068f372f16b8685e91d6
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - artifact_file
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T06-DOD-002
+- id: T06-METRIC-003
+  task_id: T06
+  wave: C
+  category: quantitative_metric
+  requirement_text: 表格样本单元格精确匹配目标 ≥95%；图表数值相对误差目标 ≤5%，未达标须标记人工核验。（定量阈值：≤5%）
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.2 Definition of Done
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 0dbbf7b252e94b283a5c05af37aa641874a7012c51048fc4312c97a220a9fec1
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - artifact_file
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T06-DOD-002
+- id: T06-DOD-003
+  task_id: T06
+  wave: C
+  category: definition_of_done
+  requirement_text: 错误坐标轴、单位冲突、缺图例和低置信度不得静默通过；调用审计不暴露密钥。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.2 Definition of Done
+  source_paragraph_index: 164
+  source_table_index: 75
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: d543b84bc88228b44031032d30a826376ed641d20dbcaa9d5d6e3c116aca8731
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+- id: T06-A-001
+  task_id: T06
+  wave: A
+  category: daily_work
+  requirement_text: 完成协作接入；选定 PDF 表格/图表和 CSV/时序两类模态，建立真实与合成夹具，明确人工真值和评价方法。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: 84611b96fd8d965bc9b7fec671a5f926ee5bbfffe8e3ea3230ef1deb41d4a4ff
+  evidence_required:
+  - raw_results
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-A-002
+  task_id: T06
+  wave: A
+  category: daily_deliverable
+  requirement_text: 样本清单；T06 任务笔记。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: 0aca5b739fdb35832dff248f9f280ac1f91e0842cd88988dedb0d8820885099a
+  evidence_required:
+  - dataset_manifest
+  - documentation
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-A-003
+  task_id: T06
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 每类至少 3 个可核验样本；分支来自最新 integration。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 340aed3e1450166faa8eb717823dddecfaefd9fb7884bee796a10e9599ae0866
+  evidence_required:
+  - dataset_manifest
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T06-METRIC-004
+- id: T06-METRIC-004
+  task_id: T06
+  wave: A
+  category: quantitative_metric
+  requirement_text: 每类至少 3 个可核验样本；分支来自最新 integration。（定量阈值：至少 3 个）
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: 3c7ec3fab0f3d187f726ac323de726777043efa08592e115f7c5a9e8ba6e645a
+  evidence_required:
+  - dataset_manifest
+  - git_commit_reference
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T06-A-003
+- id: T06-A-004
+  task_id: T06
+  wave: A
+  category: daily_work
+  requirement_text: 设计 MultimodalArtifact、provenance、bbox/axis、unit、confidence；实现模态识别、处理队列和 Qwen 视觉适配抽象；编写红灯测试；开启 Draft PR-A。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: d28596daf2d671a6255767aff12adbaab4c713632cf54205d94e7858979c30b0
+  evidence_required:
+  - test_output
+  - source_code
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-A-005
+  task_id: T06
+  wave: A
+  category: daily_deliverable
+  requirement_text: 接口 RFC；adapter skeleton；Draft PR-A。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: 90a5782a7bbce7a216a287e1ef08dd2f0694e7da56d0ac82c4988b9c0989638c
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-A-006
+  task_id: T06
+  wave: A
+  category: acceptance_evidence
+  requirement_text: T01/T04/T08 可消费；密钥不写入代码。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: 0d2e323294632b169aea5ed159f75380240879b636ffa6eec0488b6f62169794
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-A-007
+  task_id: T06
+  wave: A
+  category: daily_work
+  requirement_text: 提交 Schema、fixtures、基础测试和安全日志字段；同步 integration、测试并在 20:00 前转 Ready。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: 466cea213dd3bc8b0a4a3f673b0e680245729719abf167c79e33e5c6123fe658
+  evidence_required:
+  - test_output
+  - raw_results
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-A-008
+  task_id: T06
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；接口冻结记录。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: 308aa44e39f3ac40ef80c9b9a1133d04cebab70b87ba294e7787e2165c1d1864
+  evidence_required:
+  - source_code
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-A-009
+  task_id: T06
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 来源、单位、坐标和置信度字段完整。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 583ee0e8789fee51332300bc5933de08f2b4191c1f29009c4dec083a3a4bf94b
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-001
+  task_id: T06
+  wave: B
+  category: daily_work
+  requirement_text: 新建 B 分支；实现 PDF 页码/bbox、表头、单元格、合并单元格、单位提取和结构化输出。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: af1be49d8202ed75c80f8202ab14c28091efa80cc2e2ec900a1a4a27845ee6e0
+  evidence_required:
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-002
+  task_id: T06
+  wave: B
+  category: daily_deliverable
+  requirement_text: table extractor。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: 90d039354a823629d5cb68f2d5f419fffbd10a19b469a3154034a2a0b4e6d3eb
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-003
+  task_id: T06
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 来源定位完整；表格结构可复核。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: e2108ddc17d5ff7ce1211ff14f011042831de530bde7f8b91aed52ca55fb9609
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-004
+  task_id: T06
+  wave: B
+  category: daily_work
+  requirement_text: 识别坐标轴、图例、曲线/柱值、置信度、数值范围与单位；对缺图例和错误轴设置失败状态。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: f81d72b0f40b9eb479c8f9d989077abdea914eadd13d9f19cd46d1bb3b7e6337
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-005
+  task_id: T06
+  wave: B
+  category: daily_deliverable
+  requirement_text: chart extractor。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: 52b55e7ea8ac8b83dd19dab734d262b48e6fccf6e59f543e60839ccb797520ac
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-006
+  task_id: T06
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 错误轴/图例可被发现；不静默给值。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: 182048a74cc8663c6ed2f339fd3e88decea2a7a150b66bd25921c07551262f8a
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-007
+  task_id: T06
+  wave: B
+  category: daily_work
+  requirement_text: 实现 CSV schema、时间索引、缺失、重复、单位转换和异常标记；把多模态结果转换为受控证据/数据摘要；开启 Draft PR-B。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: 35407621307d8394c48b12ab8a0077da9df748b3224b8a9a29e5f6bcf8c74588
+  evidence_required:
+  - raw_results
+  - artifact_file
+  - source_code
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-008
+  task_id: T06
+  wave: B
+  category: daily_deliverable
+  requirement_text: time-series adapter；摘要转换器；Draft PR-B。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: ab39741f8b86a7417a4cced58f7ad4b699bb65ba56e035559b12ab8df20e029d
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-009
+  task_id: T06
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 无二进制直接进入 prompt；清洗日志可追溯。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: c5569515a49e1e35846b89b9e4954ec2495c731674031a47a4b624362ee9e5a2
+  evidence_required:
+  - raw_results
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-010
+  task_id: T06
+  wave: B
+  category: daily_work
+  requirement_text: 人工标注表格/图表真值，计算单元格准确率和数值误差；完成 T05 配对审查。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: 303166a1b4ec6f5e0e6b0038b34203795834dc1e544a1f236b0228697ee7b8e2
+  evidence_required:
+  - metrics_file
+  - computation_script
+  - artifact_file
+  - dataset_manifest
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-011
+  task_id: T06
+  wave: B
+  category: daily_deliverable
+  requirement_text: multimodal gold set；初始指标。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: f8307b85c77e19657c2bd04284b1548a44b97876767a86599d2ac009c0e0c6d6
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-012
+  task_id: T06
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 指标计算脚本可复现；误差样本可定位。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: 9e4a5712772afddfac3fcd9b998cc3b36328032edcb2e6add539fc5cef30a656
+  evidence_required:
+  - metrics_file
+  - computation_script
+  - dataset_manifest
+  - reproduction_command
+  - raw_results
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-013
+  task_id: T06
+  wave: B
+  category: daily_work
+  requirement_text: 与 T04/T01 接入索引和 EvidenceCard，保留 bbox、单位、来源和置信度；补契约/E2E。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: af7f54d7383d2927c598071cd1aa88c9c551955e4022e3ece7341ce63382126e
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-014
+  task_id: T06
+  wave: B
+  category: daily_deliverable
+  requirement_text: 接口测试；跨模块样例。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: 160ea337936474164f61199a2b97c829e001216f6cd73dc2de06f5ee2ce19a7d
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-015
+  task_id: T06
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 跨模块字段不丢失；低置信度不支持事实。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: 13b9bcfaaf3ed59d93e5c0e1ea80bb8df7f8d45ff2223cf59102b9b1b6de11aa
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-016
+  task_id: T06
+  wave: B
+  category: daily_work
+  requirement_text: 完成 Qwen 视觉模型、时间、输入摘要、输出、成本审计；向 T02 提供摘要和验证结论，低置信度触发人工确认。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 53896fe2cf794aee32751903b4e95d512c3937b801dbe35ea718fb4947cdfd6e
+  evidence_required:
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-017
+  task_id: T06
+  wave: B
+  category: daily_deliverable
+  requirement_text: 调用审计；workflow hook。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: 7cf589df3776f5c660cf35d28f56ab18c1db785ca355423410a2eb85f3067c18
+  evidence_required:
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-018
+  task_id: T06
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 审计可用于赛事材料且不暴露凭证。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: f124cf2bd7fff4de21b98dd802db0cc168c5abeec19d58221da701fb243b4c0d
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-019
+  task_id: T06
+  wave: B
+  category: daily_work
+  requirement_text: 同步 integration、运行指标/契约/E2E；补性能和限制；@codex review，20:00 前转 Ready。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: 5e87389aff5d8935e6724e40bad3098ad0f66a33524e4829066b744d8c64d6a4
+  evidence_required:
+  - test_output
+  - metrics_file
+  - source_code
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-020
+  task_id: T06
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；核心评测报告。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: 62ad23b0fe0beee5bca390eb87f9733cadf9b3375b8b38bbbb1ffaa8ab50d6dc
+  evidence_required:
+  - computation_script
+  - artifact_file
+  - git_commit_reference
+  - dataset_manifest
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-B-021
+  task_id: T06
+  wave: B
+  category: acceptance_evidence
+  requirement_text: P0/P1 关闭；分支 up to date。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: 52aabfe85c8f6eba41ef875ccce8785e0f7b9a525bbec2db06cc4dc2a083dd04
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-001
+  task_id: T06
+  wave: C
+  category: daily_work
+  requirement_text: 新建 C 分支；完成一个论文表格/图表案例和一个时序/CSV 案例；向 T08 提供缩略图、来源定位、原始/提取值 payload；开启 Draft PR-C。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: f4bb3d9520446117a0cbdad899a4b246bbf50b4abeb452918e0efd9e4a185c12
+  evidence_required:
+  - raw_results
+  - artifact_file
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-002
+  task_id: T06
+  wave: C
+  category: daily_deliverable
+  requirement_text: 两个案例包；UI contract；Draft PR-C。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: afe8ace09cc4e837d8cfd9ad1ef28d96811197a61ebecb5c3f188bce09052c92
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-003
+  task_id: T06
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 输入、输出与人工真值齐全。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: 11059bb3ba748958a094bd3757d4c3e3f2bcb859d2d590abbff645b4d2448d6e
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-004
+  task_id: T06
+  wave: C
+  category: daily_work
+  requirement_text: 测试性能、配额、超时、无视觉模型、失败回退和单位冲突；完善模块文档与纠错流程。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: 5f16adc6c757c695fc9397cf2a79ddf556b7e2b166c68fd185697e3df35d716e
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-005
+  task_id: T06
+  wave: C
+  category: daily_deliverable
+  requirement_text: 性能/失败回退报告；审查修订提交。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: 28199697d3e29ad2bb3f6737cddb877d1b72a21e9784361b5e93d3b1825da209
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-006
+  task_id: T06
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 无视觉模型时安全降级；不产生伪结果。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: ab4c539616e92e96044d9fdc473415696e6ca1036248a8b66e2decb472da7bb9
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-007
+  task_id: T06
+  wave: C
+  category: daily_work
+  requirement_text: 运行最终准确率、误差、单位冲突和人工纠错回归；同步 integration、全测试、@codex review，18:00 前转 Ready。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 28443a93b44ede77951b5ac89c69a6ae5dc66e576a3ab3eeb7f73f2297e1e9f9
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-008
+  task_id: T06
+  wave: C
+  category: daily_deliverable
+  requirement_text: 最终评测报告；PR-C Ready。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: 9488167bdf4438504ce9785992a092a787227f474e54f4ddefd41fd8cb661a9a
+  evidence_required:
+  - computation_script
+  - artifact_file
+  - git_commit_reference
+  - dataset_manifest
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-C-009
+  task_id: T06
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 达到目标或明确人工核验标记；P0/P1 关闭。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: 531b9696fd8f6d4a24e7300a22bd9e02d5367a06b836c2d353a9d16b28b0bd23
+  evidence_required:
+  - source_code
+  verification_type: manual_signoff
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-FREEZE-001
+  task_id: T06
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 只处理队长、CI 或 Codex 指出的发布阻断；不得新增功能、改名公共接口、升级依赖或继续使用已合并旧分支。完成 handoff、复现命令、PR 链接、已知限制与回滚说明。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 7d5941104714831cac0e87190db6bbfd2072f1cf43cd0471bd6360ac19217bfb
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - reproduction_command
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-FREEZE-002
+  task_id: T06
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 阻断修复或“无变更”确认；最终 handoff 包。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: 070372ce4f2d5f34256583cc585a87f2c4e26b41a8d6754426d9c8e250e65653
+  evidence_required:
+  - source_code
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-FREEZE-003
+  task_id: T06
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 无新增范围；P0/P1 关闭或由队长登记阻断；交付可在干净环境复现。
+  source_heading: T06. 队员 6（姓名待填）— 科学多模态数据处理与可校验推理 › T06.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 164
+  source_table_index: 76
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: de864e07b9c6ad7d1c585a6a6a67256e2955ed78416873a1fb7d218e99f8a285
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-HANDOFF-001
+  task_id: T06
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-HANDOFF-002
+  task_id: T06
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-HANDOFF-003
+  task_id: T06
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T06-HANDOFF-004
+  task_id: T06
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []

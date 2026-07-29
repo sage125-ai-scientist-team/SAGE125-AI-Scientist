@@ -1,0 +1,116 @@
+# docs/governance/pr-review-policy.yaml
+#
+# Machine-readable merge-gate policy for the SAGE125-AI-Scientist team project.
+# Consumed by scripts/captain/review_latest_pr.ps1 and by the Cursor Agent PR review
+# workflow (.cursor/rules/sage125-captain-pr-review.mdc). See also
+# docs/governance/task-owner-map.yaml (path ownership) and .cursor/BUGBOT.md
+# (human-readable review rules).
+
+schema_version: 1
+
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+
+# ---- Branch policy ----
+ordinary_base_branch: integration/2026-08-10
+release_base_branch: main
+release_head_branch: integration/2026-08-10
+
+# ---- Merge behavior ----
+merge_method: squash
+latest_pr_order: updatedAt_desc
+
+# ---- Required merge-gate conditions ----
+require_ready: true                  # PR must not be Draft
+require_mergeable: true               # GitHub mergeable=MERGEABLE, no conflicts
+require_up_to_date: true              # branch must not be behind base
+require_all_threads_resolved: true    # no unresolved review threads
+require_no_p0_p1: true                # zero open P0/P1 findings
+require_head_sha_match: true          # head SHA at merge time == head SHA at review start
+forbid_admin_bypass: true             # gh pr merge --admin is never allowed
+forbid_force_push: true               # git push --force[-with-lease] is never allowed
+
+# ---- Task content / Wave acceptance (V3.0) ----
+# Engineering gates alone are never sufficient. Merge requires both:
+# ENGINEERING_COMPLIANCE=PASS and CONTENT_COMPLIANCE=PASS.
+require_task_content_review: true
+require_current_wave_pass: true
+require_acceptance_evidence: true
+allow_future_wave_deferred: true
+require_final_dod_on_wave_c: true
+require_content_review_head_sha_match: true
+block_on_current_wave_unverified: true
+allow_merge_with_p2_only: true
+
+content_statuses:
+  - PASS
+  - FAIL
+  - UNVERIFIED
+  - DEFERRED
+  - NOT_APPLICABLE
+
+content_gate:
+  engineering_pass_required: true
+  content_pass_required: true
+  block_on_fail: true
+  block_on_current_wave_unverified: true
+  block_on_missing_task_spec: true
+  block_on_unknown_task_or_wave: true
+  allow_future_deferred: true
+  allow_p2_recommendations: true
+  content_review_schema: docs/governance/schemas/content-review.schema.json
+  task_requirement_schema: docs/governance/schemas/task-requirement.schema.json
+  task_requirements_dir: docs/governance/task-requirements
+
+# ---- Bugbot handling ----
+# require_bugbot_check is an initial safety-compatible setting: false means Bugbot's
+# absence does not by itself block merge, BUT if a `Cursor Bugbot` check DOES exist on
+# the PR, its result must still be `success` to merge — a non-success Bugbot result
+# always blocks, regardless of this flag. Once the captain's Cursor Team plan has
+# confirmed Bugbot reliably produces a `Cursor Bugbot` check on every teammate PR, the
+# captain should flip this to `true` (see the runbook for the exact steps).
+require_bugbot_check: false
+
+# Explicit statement of intent (for humans reading this file and for the review
+# script's assertions): the following Bugbot outcomes are NEVER treated as passing,
+# no matter what require_bugbot_check is set to:
+bugbot_non_passing_states:
+  - neutral
+  - failure
+  - pending
+  - cancelled
+  - missing        # no Cursor Bugbot check present at all, when require_bugbot_check=true
+
+# ---- Required GitHub check families ----
+# These are logical check "families"; the actual GitHub check/job names must map onto
+# one of these families for the review script to count them. See
+# docs/governance/CURSOR_PR_REVIEW_RUNBOOK.md for how to handle the current transitional
+# state where not all families exist yet in .github/workflows/ci.yml.
+required_check_families:
+  - lint
+  - type
+  - unit
+  - integration
+  - security
+  - build
+
+# GitHub check conclusions that must NEVER be interpreted as "passed", even if the
+# rollup summary looks green:
+non_passing_check_conclusions:
+  - skipped
+  - neutral
+  - cancelled
+  - pending
+  - stale
+  - action_required
+  - startup_failure
+  - timed_out
+
+# ---- Exit code contract for scripts/captain/review_latest_pr.ps1 ----
+exit_codes:
+  0: "pre-flight checks passed (InspectOnly completed without error)"
+  10: "no matching PR found"
+  20: "teammate changes required (P0/P1 findings)"
+  30: "waiting on draft/CI/Bugbot/sync/thread-resolution"
+  40: "security abort (forbidden operation attempted or detected)"
+  50: "merge completed"
+  60: "command or environment error"

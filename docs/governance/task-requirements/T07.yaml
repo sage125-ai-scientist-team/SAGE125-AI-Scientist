@@ -1,0 +1,1792 @@
+schema_version: 1
+repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+task_id: T07
+title: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引
+mission: 构建可恢复、可预算、逐题隔离的批量引擎，并在 8 月 9 日交付 125/125 独立、非 Mock、题文一致的标准研究计划及索引。
+scoring_dimensions:
+- 应用潜力
+- 主题完整性
+- 稳定性
+- 可复现性
+owner_paths:
+- app/batch/**
+- scripts/batch_125/**
+- app/contracts/batch.py
+- tests/batch/**
+- docs/modules/T07/**
+forbidden_paths:
+- 不得绕过 T01/T03 质量门，不得未记录地修改提示词/模型版本，不得将 Mock 标为正式结果
+dependencies:
+  raw: 消费 T01-T06；下游 T08、T09。
+  upstream:
+  - T01
+  - T06
+  downstream:
+  - T08
+  - T09
+branch_series:
+- t07/a-batch-contract
+- t07/b-batch-core
+- t07/c-batch-hardening
+paired_reviewer: T08
+sprint_days: 14
+workload_note: 14 个冲刺日；PR-A、PR-B、PR-C；1 次配对审查；1 份最终 handoff；每天均提交测试或验证证据。
+must_deliver:
+- 逐题独立 workspace/context、checkpoint、retry、resume、预算和模型路由。
+- 标准输出覆盖 Problem、Rationale、Technical Details、Datasets Source/Target、Title、Abstract、Methods、Experiments、Results、References。
+- 串题/重复/题文一致性/引用存在性/Mock 自动检查；125 目录、manifest total=125、索引、汇总、SHA-256 与 24 题随机抽查。
+definition_of_done:
+- 125/125 每题 question_id、标题、假设、领域数据集与题目对应，正式结果不得为 Mock。
+- 每题至少 PDF/MD/JSON、evidence_cards.json、agent_trace.json；缺文件即失败。
+- 相似度 >0.90 的结果进入人工审查；支持断点恢复，单题失败不重跑全部；24 题抽查完成。
+quantitative_thresholds:
+- requirement_id: T07-METRIC-001
+  raw_text: total=125
+  comparator: exact
+  value: 125
+  unit: not_specified
+  source_requirement_id: T07-MUST-003
+- requirement_id: T07-METRIC-002
+  raw_text: 24 题
+  comparator: quantity
+  value: 24
+  unit: 题
+  source_requirement_id: T07-MUST-003
+- requirement_id: T07-METRIC-003
+  raw_text: 125/125
+  comparator: ratio
+  value: 125/125
+  unit: not_specified
+  source_requirement_id: T07-DOD-001
+- requirement_id: T07-METRIC-004
+  raw_text: '>0.90'
+  comparator: greater_than
+  value: 0.9
+  unit: not_specified
+  source_requirement_id: T07-DOD-003
+- requirement_id: T07-METRIC-005
+  raw_text: 24 题
+  comparator: quantity
+  value: 24
+  unit: 题
+  source_requirement_id: T07-DOD-003
+- requirement_id: T07-METRIC-006
+  raw_text: 125 题
+  comparator: quantity
+  value: 125
+  unit: 题
+  source_requirement_id: T07-A-001
+- requirement_id: T07-METRIC-007
+  raw_text: 3 个
+  comparator: quantity
+  value: 3
+  unit: 个
+  source_requirement_id: T07-A-001
+- requirement_id: T07-METRIC-008
+  raw_text: 3 题
+  comparator: quantity
+  value: 3
+  unit: 题
+  source_requirement_id: T07-B-003
+- requirement_id: T07-METRIC-009
+  raw_text: 5 个
+  comparator: quantity
+  value: 5
+  unit: 个
+  source_requirement_id: T07-B-004
+- requirement_id: T07-METRIC-010
+  raw_text: 5 题
+  comparator: quantity
+  value: 5
+  unit: 题
+  source_requirement_id: T07-B-005
+- requirement_id: T07-METRIC-011
+  raw_text: 5 题
+  comparator: quantity
+  value: 5
+  unit: 题
+  source_requirement_id: T07-B-006
+- requirement_id: T07-METRIC-012
+  raw_text: 12 个
+  comparator: quantity
+  value: 12
+  unit: 个
+  source_requirement_id: T07-B-010
+- requirement_id: T07-METRIC-013
+  raw_text: 1 题
+  comparator: quantity
+  value: 1
+  unit: 题
+  source_requirement_id: T07-B-010
+- requirement_id: T07-METRIC-014
+  raw_text: 12 题
+  comparator: quantity
+  value: 12
+  unit: 题
+  source_requirement_id: T07-B-011
+- requirement_id: T07-METRIC-015
+  raw_text: 12 题
+  comparator: quantity
+  value: 12
+  unit: 题
+  source_requirement_id: T07-B-016
+- requirement_id: T07-METRIC-016
+  raw_text: 24 题
+  comparator: quantity
+  value: 24
+  unit: 题
+  source_requirement_id: T07-B-016
+- requirement_id: T07-METRIC-017
+  raw_text: 12 题
+  comparator: quantity
+  value: 12
+  unit: 题
+  source_requirement_id: T07-B-018
+- requirement_id: T07-METRIC-018
+  raw_text: total=125
+  comparator: exact
+  value: 125
+  unit: not_specified
+  source_requirement_id: T07-C-007
+- requirement_id: T07-METRIC-019
+  raw_text: 125/125
+  comparator: ratio
+  value: 125/125
+  unit: not_specified
+  source_requirement_id: T07-C-008
+- requirement_id: T07-METRIC-020
+  raw_text: total=125
+  comparator: exact
+  value: 125
+  unit: not_specified
+  source_requirement_id: T07-C-009
+- requirement_id: T07-METRIC-021
+  raw_text: 24 题
+  comparator: quantity
+  value: 24
+  unit: 题
+  source_requirement_id: T07-FREEZE-001
+- requirement_id: T07-METRIC-022
+  raw_text: 125/125
+  comparator: ratio
+  value: 125/125
+  unit: not_specified
+  source_requirement_id: T07-FREEZE-003
+waves:
+  A:
+    label: Wave A / PR-A
+    date_range: 07/27-07/29
+    team_goal: 邀请接入、基线审计、契约/Schema、红灯测试、最小骨架。
+    completion_condition: 07/28 开 Draft；07/29 20:00 前 Ready。
+    days:
+    - date: 07/27（周一）
+      focus: 接入与批量审计
+      work: 完成协作接入；检查 125 题源、现有 batch_manifest 和 3 个 Mock 串题；设计 per-question workspace、job state 和输出目录。
+      deliverable: 批量审计；失败样例；T07 架构草图。
+      evidence: 能识别同一疫情方案污染不同题目；分支来自最新 integration。
+    - date: 07/28（周二）
+      focus: Runner 契约与 Draft PR-A
+      work: 设计 manifest、budget、resume、模型路由和标准字段；实现队列/checkpoint/retry/dry-run 骨架及红灯测试；开启 Draft PR-A。
+      deliverable: Batch RFC；runner skeleton；Draft PR-A。
+      evidence: dry-run 覆盖 125 ID；每题上下文强隔离。
+    - date: 07/29（周三）
+      focus: PR-A 完成
+      work: 实现 resume、失败隔离、状态序列化和输出契约；同步 integration、测试并在 20:00 前转 Ready。
+      deliverable: PR-A Ready；dry-run/resume 报告。
+      evidence: 不调用 Mock 作为正式结果；缺字段自动失败。
+  B:
+    label: Wave B / PR-B
+    date_range: 07/30-08/05
+    team_goal: 核心实现、单测、最小 E2E、指标、真实案例或 12 领域验证。
+    completion_condition: 08/01 开 Draft；08/05 20:00 前 Ready。
+    days:
+    - date: 07/30（周四）
+      focus: 隔离与反污染
+      work: 新建 B 分支；每题重置 memory/prompt/cache namespace，绑定 question_id/input hash；实现标题/摘要/假设 hash、相似度与关键词泄漏检查。
+      deliverable: context isolation；contamination checker。
+      evidence: 旧 3 题污染被稳定检出。
+    - date: 07/31（周五）
+      focus: 输出规范与 5 题真实运行
+      work: 实现每题目录和 PDF/MD/JSON/evidence/trace 文件验证；运行 5 个真实题，记录 token、时间、失败和题文一致性。
+      deliverable: output contract；5 题包。
+      evidence: 5 题非 Mock 且题文一致；缺文件不进入 complete。
+    - date: 08/01（周六）
+      focus: 预算、缓存与 Draft PR-B
+      work: 实现 flash/plus/max 路由、文献解析缓存、每题 token/cost 上限；完成 T08 配对审查；开启 Draft PR-B。
+      deliverable: budget controller；配对审查记录；Draft PR-B。
+      evidence: 超预算安全失败；缓存不跨题污染。
+    - date: 08/02（周日）
+      focus: 恢复与 12 领域运行
+      work: 测试断网、API 超时、单题失败、进程重启和重复提交；运行 12 个领域各 1 题并记录失败清单。
+      deliverable: resume report；12 题包 v1。
+      evidence: 不重跑已完成题；失败可恢复。
+    - date: 08/03（周一）
+      focus: 统一质量门
+      work: 接入 T01/T03 证据、Schema、串题、重复和 Mock 检查，形成 per-question gate；生成失败回队列机制。
+      deliverable: Batch QA pipeline。
+      evidence: 失败题不进入 complete；错误可定位 owner。
+    - date: 08/04（周二）
+      focus: 12 领域验收与容量估算
+      work: 修复 12 题失败项，统计通过率、成本和延迟；生成 24 题随机抽查清单；估算 125 正式运行资源。
+      deliverable: 12-domain report；容量/成本估算；抽查清单。
+      evidence: 12 题题文一致；资源风险明确。
+    - date: 08/05（周三）
+      focus: PR-B Ready 与冻结配置
+      work: 冻结 prompt/model/schema 版本；同步 integration、全测试、@codex review，20:00 前转 Ready。
+      deliverable: PR-B Ready；冻结记录。
+      evidence: P0/P1 关闭；运行参数可追溯。
+  C:
+    label: Wave C / PR-C
+    date_range: 08/06-08/08
+    team_goal: 安全、稳定、性能、跨领域抽查、部署、文档和发布证据。
+    completion_condition: 08/06 开 Draft；08/08 18:00 前 Ready。
+    days:
+    - date: 08/06（周四）
+      focus: 启动 125 正式运行
+      work: 新建 C 分支；启动 125 正式运行，加入状态监控、失败重试、manifest 和打包校验；20:00 前开启 Draft PR-C。
+      deliverable: 正式运行状态表；Draft PR-C。
+      evidence: 运行可监控、可暂停、可恢复。
+    - date: 08/07（周五）
+      focus: 全量监控与索引
+      work: 继续运行和重试，检查串题、重复、缺文件；生成总索引、状态、耗时、成本和领域分布；处理审查。
+      deliverable: 125 状态报告；index/manifest v1。
+      evidence: 失败有原因和处置；可一键定位每题产物。
+    - date: 08/08（周六）
+      focus: 完成与冻结前验证
+      work: 完成剩余题和失败重跑，运行 total=125、非 Mock、重复、引用和文件完整性校验；同步 integration、@codex review，18:00 前转 Ready。
+      deliverable: 125/125 候选包；PR-C Ready。
+      evidence: manifest total=125；无未处置串题；P0/P1 关闭。
+code_freeze:
+  date: 08/09（周日）
+  focus: 人工抽查与最终交接
+  work: 完成 24 题人工抽查、所有 SHA-256、汇总报告和 handoff；仅重跑被质量门明确判定失败的题，不再改变 Prompt/Schema。
+  deliverable: 最终 125 结果包；抽查表；checksums；handoff。
+  evidence: 125/125 非 Mock、题文一致、可检索；所有失败均已处置或登记阻断。
+handoff:
+- handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+- 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+- 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+- 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+conflict_boundary: 不得绕过 T01/T03 质量门，不得未记录地修改提示词/模型版本，不得将 Mock 标为正式结果。 全局停止条件：冲突涉及其他任务路径、队长专属文件、破坏性公共 Schema、真实密钥或无许可数据时，必须停止自行处理并联系队长（手册 5.x）。
+source:
+  docx_name: SAGE125_队员版_V3.0_私有Fork协作_九项任务每日计划与PR手册_20260727-0809(1).docx
+  docx_sha256: bed5f13ab8150d9c8de55d50e28b4f28f3ae468dc5a3123359db701fb363e57d
+  docx_size_bytes: 104406
+  document_version: V3.0
+  execution_period: 2026-07-27 至 2026-08-09
+  task_heading_paragraph_index: 170
+  info_table_index: 78
+  must_deliver_table_index: 79
+  daily_table_index: 80
+requirements:
+- id: T07-MUST-001
+  task_id: T07
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 逐题独立 workspace/context、checkpoint、retry、resume、预算和模型路由。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.1 必须交付
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c4a393ed56e2a27830f3437431ed104521aed061f8d35da9c0be34f51e206704
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-MUST-002
+  task_id: T07
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 标准输出覆盖 Problem、Rationale、Technical Details、Datasets Source/Target、Title、Abstract、Methods、Experiments、Results、References。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.1 必须交付
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fe66f472d7d9ebbd5d63ab7e5699295f8142baa3f48980773cd3fcf5511e9cb4
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-MUST-003
+  task_id: T07
+  wave: FINAL
+  category: must_deliver
+  requirement_text: 串题/重复/题文一致性/引用存在性/Mock 自动检查；125 目录、manifest total=125、索引、汇总、SHA-256 与 24 题随机抽查。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.1 必须交付
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: f128111a636d341c215a6371954119fff197f8bcfa8c18d09750adb5696f64f9
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-001
+  - T07-METRIC-002
+- id: T07-METRIC-001
+  task_id: T07
+  wave: FINAL
+  category: quantitative_metric
+  requirement_text: 串题/重复/题文一致性/引用存在性/Mock 自动检查；125 目录、manifest total=125、索引、汇总、SHA-256 与 24 题随机抽查。（定量阈值：total=125）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.1 必须交付
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 67418f0b856f6fd2b9a57cb73768ee9f564b2ca39579ace0de7a63324945119c
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - artifact_file
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-MUST-003
+- id: T07-METRIC-002
+  task_id: T07
+  wave: FINAL
+  category: quantitative_metric
+  requirement_text: 串题/重复/题文一致性/引用存在性/Mock 自动检查；125 目录、manifest total=125、索引、汇总、SHA-256 与 24 题随机抽查。（定量阈值：24 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.1 必须交付
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 13eb1c28701f4343efe86f5b0df5e311d8075022a8260f7cd783d2f762a6ece3
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - artifact_file
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-MUST-003
+- id: T07-DOD-001
+  task_id: T07
+  wave: C
+  category: definition_of_done
+  requirement_text: 125/125 每题 question_id、标题、假设、领域数据集与题目对应，正式结果不得为 Mock。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.2 Definition of Done
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 698158843e2bd0cccde29fbf2937c88f896a70026c4a2162d1d278ceef136529
+  evidence_required:
+  - dataset_manifest
+  verification_type: code_inspection
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids:
+  - T07-METRIC-003
+- id: T07-METRIC-003
+  task_id: T07
+  wave: C
+  category: quantitative_metric
+  requirement_text: 125/125 每题 question_id、标题、假设、领域数据集与题目对应，正式结果不得为 Mock。（定量阈值：125/125）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.2 Definition of Done
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 5e50bb1da913214343fb65fb16df7f1a6601eb48b9dbcbc877b79af824487132
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P0_BLOCKING
+  future_wave_policy: NOT_DEFERRABLE
+  related_metric_ids: []
+  derived_from_requirement_id: T07-DOD-001
+- id: T07-DOD-002
+  task_id: T07
+  wave: C
+  category: definition_of_done
+  requirement_text: 每题至少 PDF/MD/JSON、evidence_cards.json、agent_trace.json；缺文件即失败。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.2 Definition of Done
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: d93e6747def81a62588def6737ac99195a19025201131e43b25e66e386a7b88e
+  evidence_required:
+  - raw_results
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-DOD-003
+  task_id: T07
+  wave: C
+  category: definition_of_done
+  requirement_text: 相似度 >0.90 的结果进入人工审查；支持断点恢复，单题失败不重跑全部；24 题抽查完成。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.2 Definition of Done
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 0bd2d006140de6822411a80bcf17e1b344464219c11566d09c481a65f618c3e5
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-004
+  - T07-METRIC-005
+- id: T07-METRIC-004
+  task_id: T07
+  wave: C
+  category: quantitative_metric
+  requirement_text: 相似度 >0.90 的结果进入人工审查；支持断点恢复，单题失败不重跑全部；24 题抽查完成。（定量阈值：>0.90）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.2 Definition of Done
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: f16262f25e7aa7ac8e9676a1a8a56262ac59fcff5b916be67b6d652221921d12
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-DOD-003
+- id: T07-METRIC-005
+  task_id: T07
+  wave: C
+  category: quantitative_metric
+  requirement_text: 相似度 >0.90 的结果进入人工审查；支持断点恢复，单题失败不重跑全部；24 题抽查完成。（定量阈值：24 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.2 Definition of Done
+  source_paragraph_index: 170
+  source_table_index: 79
+  source_row_index: 0
+  source_cell_index: 1
+  source_text_sha256: 232a4e181240706159484b5193272213ec88f0118e9a50406dd09710858bbaa5
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-DOD-003
+- id: T07-A-001
+  task_id: T07
+  wave: A
+  category: daily_work
+  requirement_text: 完成协作接入；检查 125 题源、现有 batch_manifest 和 3 个 Mock 串题；设计 per-question workspace、job state 和输出目录。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: 4d3d823c93cf9560d0c56eece8283e91f6b2934f87691d537aad6d5f653f80b5
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - artifact_file
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-006
+  - T07-METRIC-007
+- id: T07-METRIC-006
+  task_id: T07
+  wave: A
+  category: quantitative_metric
+  requirement_text: 完成协作接入；检查 125 题源、现有 batch_manifest 和 3 个 Mock 串题；设计 per-question workspace、job state 和输出目录。（定量阈值：125 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: e6e559459c25cc7d0868b8c30e9fd25d5dce909bf4494b4bd83c6d147e4b5d18
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - artifact_file
+  - source_code
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-A-001
+- id: T07-METRIC-007
+  task_id: T07
+  wave: A
+  category: quantitative_metric
+  requirement_text: 完成协作接入；检查 125 题源、现有 batch_manifest 和 3 个 Mock 串题；设计 per-question workspace、job state 和输出目录。（定量阈值：3 个）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 1
+  source_cell_index: 2
+  source_text_sha256: b9ff81740d694d2e451c117cff547a5f14dcffd7c3f877a6251173c0e970e9ab
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - artifact_file
+  - source_code
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-A-001
+- id: T07-A-002
+  task_id: T07
+  wave: A
+  category: daily_deliverable
+  requirement_text: 批量审计；失败样例；T07 架构草图。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 1
+  source_cell_index: 3
+  source_text_sha256: 8cd14847e2edfb57ad80db8e6fbd19ab71b8d87fc939f8352c08074c360cb354
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-A-003
+  task_id: T07
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 能识别同一疫情方案污染不同题目；分支来自最新 integration。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/27（周一）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 1
+  source_cell_index: 4
+  source_text_sha256: b2fd78dbc5cf75c058232f24fb15a746a34a012abdf9e1372d066e56c1025b1b
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-A-004
+  task_id: T07
+  wave: A
+  category: daily_work
+  requirement_text: 设计 manifest、budget、resume、模型路由和标准字段；实现队列/checkpoint/retry/dry-run 骨架及红灯测试；开启 Draft PR-A。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 2
+  source_cell_index: 2
+  source_text_sha256: cf339c2c96f868cacb8101ddeeff298fdeb4902837e5bbe8af8b073d4dd2a85a
+  evidence_required:
+  - test_output
+  - dataset_manifest
+  - source_code
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-A-005
+  task_id: T07
+  wave: A
+  category: daily_deliverable
+  requirement_text: Batch RFC；runner skeleton；Draft PR-A。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 2
+  source_cell_index: 3
+  source_text_sha256: 6a5bf588428e4b2ad91fbf83f6f0a3e28a1135204c699e1d9d63fc78b4a89f66
+  evidence_required:
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-A-006
+  task_id: T07
+  wave: A
+  category: acceptance_evidence
+  requirement_text: dry-run 覆盖 125 ID；每题上下文强隔离。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/28（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 2
+  source_cell_index: 4
+  source_text_sha256: 97553ef513b74143e12d652a16d899b1965136e64b60b81b6e97244bbc6ff85f
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-A-007
+  task_id: T07
+  wave: A
+  category: daily_work
+  requirement_text: 实现 resume、失败隔离、状态序列化和输出契约；同步 integration、测试并在 20:00 前转 Ready。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 3
+  source_cell_index: 2
+  source_text_sha256: d3655ac5de7468e6fcf0c2f27c14651e51e59dfa31a8e7cf703e59b352549452
+  evidence_required:
+  - test_output
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-A-008
+  task_id: T07
+  wave: A
+  category: daily_deliverable
+  requirement_text: PR-A Ready；dry-run/resume 报告。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 3
+  source_cell_index: 3
+  source_text_sha256: ae4835ba5394399da0313295cd4aba479678e1c6404b3b2477420183ad182a8f
+  evidence_required:
+  - artifact_file
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-A-009
+  task_id: T07
+  wave: A
+  category: acceptance_evidence
+  requirement_text: 不调用 Mock 作为正式结果；缺字段自动失败。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/29（周三）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 3
+  source_cell_index: 4
+  source_text_sha256: 50a7f8a2a16ead82f456c7bf8eda21b943967167ba21e69f5f6fe203e2563617
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-001
+  task_id: T07
+  wave: B
+  category: daily_work
+  requirement_text: 新建 B 分支；每题重置 memory/prompt/cache namespace，绑定 question_id/input hash；实现标题/摘要/假设 hash、相似度与关键词泄漏检查。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 4
+  source_cell_index: 2
+  source_text_sha256: 353912b6fe3602e160286389febdeaf1d9393373a85e1af497dd5e22ec6083e1
+  evidence_required:
+  - metrics_file
+  - source_code
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-002
+  task_id: T07
+  wave: B
+  category: daily_deliverable
+  requirement_text: context isolation；contamination checker。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 4
+  source_cell_index: 3
+  source_text_sha256: 6359a77b56264a1fc910057d0f400e99ee7498d1d2f5afdf83a89d291efd24c5
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-003
+  task_id: T07
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 旧 3 题污染被稳定检出。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: 3a4ee23bc3bcdb7975530d36c195bf7ce1e97233a9e8f5486bbe6689c9bc20b5
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-008
+- id: T07-METRIC-008
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: 旧 3 题污染被稳定检出。（定量阈值：3 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/30（周四）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 4
+  source_cell_index: 4
+  source_text_sha256: 95b0f4c6367fc357da0dc875e1b5d72ae71e95ca1f0de7152d88e807ce0efd4a
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-003
+- id: T07-B-004
+  task_id: T07
+  wave: B
+  category: daily_work
+  requirement_text: 实现每题目录和 PDF/MD/JSON/evidence/trace 文件验证；运行 5 个真实题，记录 token、时间、失败和题文一致性。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: 4fd90793fd8398d56096150b3b8850f55788f9b4335eb3178871b5a0eacab01f
+  evidence_required:
+  - raw_results
+  - artifact_file
+  - source_code
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-009
+- id: T07-METRIC-009
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: 实现每题目录和 PDF/MD/JSON/evidence/trace 文件验证；运行 5 个真实题，记录 token、时间、失败和题文一致性。（定量阈值：5 个）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 5
+  source_cell_index: 2
+  source_text_sha256: caa7dbd1f2d7fa1d724ee76d5403a8cbb2a636512b938dd52674411da3796f49
+  evidence_required:
+  - raw_results
+  - artifact_file
+  - source_code
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-004
+- id: T07-B-005
+  task_id: T07
+  wave: B
+  category: daily_deliverable
+  requirement_text: output contract；5 题包。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: 7237ff04aa3c590d1742e644a4b5ae084fd25d8f417bf1117a09433a3cd9f24e
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-010
+- id: T07-METRIC-010
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: output contract；5 题包。（定量阈值：5 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 5
+  source_cell_index: 3
+  source_text_sha256: d0e3c100fcab64c8fcfd89af7cbc6425bb26e09264aa5a27103ca177c7cde703
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-005
+- id: T07-B-006
+  task_id: T07
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 5 题非 Mock 且题文一致；缺文件不进入 complete。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: c6ed0f26022ee9930a81cc4bedaa6811da7b396b6d29358d6eb4a84050a77056
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-011
+- id: T07-METRIC-011
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: 5 题非 Mock 且题文一致；缺文件不进入 complete。（定量阈值：5 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 07/31（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 5
+  source_cell_index: 4
+  source_text_sha256: d9a7f238b13b75ce736bd62863122d25a9462399059f4e4b6ee8a8f497a153c9
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-006
+- id: T07-B-007
+  task_id: T07
+  wave: B
+  category: daily_work
+  requirement_text: 实现 flash/plus/max 路由、文献解析缓存、每题 token/cost 上限；完成 T08 配对审查；开启 Draft PR-B。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 6
+  source_cell_index: 2
+  source_text_sha256: 17603e72094aae703653f3e09ca7a4eec603851e91b0fa066f853a2cc7abf046
+  evidence_required:
+  - source_code
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-008
+  task_id: T07
+  wave: B
+  category: daily_deliverable
+  requirement_text: budget controller；配对审查记录；Draft PR-B。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 6
+  source_cell_index: 3
+  source_text_sha256: a6485ac0a13d5c3b786a8eb53ed2633ff8a0a21fd710fda2cc316a624d732fa9
+  evidence_required:
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-009
+  task_id: T07
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 超预算安全失败；缓存不跨题污染。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/01（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 6
+  source_cell_index: 4
+  source_text_sha256: 758a6b8ef589b711186cf013cb45a1072fe6d87be9d7cf4bb00e9fa0c73366c6
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-010
+  task_id: T07
+  wave: B
+  category: daily_work
+  requirement_text: 测试断网、API 超时、单题失败、进程重启和重复提交；运行 12 个领域各 1 题并记录失败清单。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: c224333fc724381194af0afad768a9328b799370989f9c77b19c0fab6f251f7a
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-012
+  - T07-METRIC-013
+- id: T07-METRIC-012
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: 测试断网、API 超时、单题失败、进程重启和重复提交；运行 12 个领域各 1 题并记录失败清单。（定量阈值：12 个）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: b2616dd8d2c76cdd8cda171e9e2b5c3b821969a2213fb297baba428bc2faf119
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-010
+- id: T07-METRIC-013
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: 测试断网、API 超时、单题失败、进程重启和重复提交；运行 12 个领域各 1 题并记录失败清单。（定量阈值：1 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 7
+  source_cell_index: 2
+  source_text_sha256: e7d02409aa169e58333e59ffe9063ae51cec64a0a582a7bdc8255f3e98ee1043
+  evidence_required:
+  - test_output
+  - source_code
+  - documentation
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-010
+- id: T07-B-011
+  task_id: T07
+  wave: B
+  category: daily_deliverable
+  requirement_text: resume report；12 题包 v1。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: 59208f6cd9bc698b40559bdfcf26a8bd2c10b5026afef726464756fc937048e2
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-014
+- id: T07-METRIC-014
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: resume report；12 题包 v1。（定量阈值：12 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 7
+  source_cell_index: 3
+  source_text_sha256: 0dd3e122377f917e9d7cd3d2f4f423ca9c31cfbec3b7750327da2a7a65dd3f02
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-011
+- id: T07-B-012
+  task_id: T07
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 不重跑已完成题；失败可恢复。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/02（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 7
+  source_cell_index: 4
+  source_text_sha256: a58e9fdc3b9838cd798a21660ca49ebb019d58fdfee348b652dc15e9b35732ed
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-013
+  task_id: T07
+  wave: B
+  category: daily_work
+  requirement_text: 接入 T01/T03 证据、Schema、串题、重复和 Mock 检查，形成 per-question gate；生成失败回队列机制。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 8
+  source_cell_index: 2
+  source_text_sha256: 01318a5725edcdcef500ff9528c08605241893dab0da2656784ac2f919729279
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-014
+  task_id: T07
+  wave: B
+  category: daily_deliverable
+  requirement_text: Batch QA pipeline。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 8
+  source_cell_index: 3
+  source_text_sha256: 77eefce8d6bdeaeb040b7a43434add2e2fa1742dacd0269bc45158cf2e0afb8b
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-015
+  task_id: T07
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 失败题不进入 complete；错误可定位 owner。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/03（周一）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 8
+  source_cell_index: 4
+  source_text_sha256: 8a72f7bae04c6d33a379e37049947d67c9f7785f94e5cf9ba9c21200d7e3dd95
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-016
+  task_id: T07
+  wave: B
+  category: daily_work
+  requirement_text: 修复 12 题失败项，统计通过率、成本和延迟；生成 24 题随机抽查清单；估算 125 正式运行资源。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 463cef2fb471b3d7525d98d4be8c218f052a893952521d2a6dcf63b5717e4063
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-015
+  - T07-METRIC-016
+- id: T07-METRIC-015
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: 修复 12 题失败项，统计通过率、成本和延迟；生成 24 题随机抽查清单；估算 125 正式运行资源。（定量阈值：12 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 90975ac79bda94716192f905e8560eeebc2a2b0512956d52c01a7f4f649bc38c
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-016
+- id: T07-METRIC-016
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: 修复 12 题失败项，统计通过率、成本和延迟；生成 24 题随机抽查清单；估算 125 正式运行资源。（定量阈值：24 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 9
+  source_cell_index: 2
+  source_text_sha256: 3513f6b2f7b9caa828b5855232f03ec0ea18a566c7da62f3278fe7ea6f9e5a06
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-016
+- id: T07-B-017
+  task_id: T07
+  wave: B
+  category: daily_deliverable
+  requirement_text: 12-domain report；容量/成本估算；抽查清单。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 9
+  source_cell_index: 3
+  source_text_sha256: c287dd6133d04cd12ec6c4deb1bf3fc173c75a18e7e238201944644accba9f6c
+  evidence_required:
+  - test_output
+  - metrics_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-018
+  task_id: T07
+  wave: B
+  category: acceptance_evidence
+  requirement_text: 12 题题文一致；资源风险明确。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: ff965ce3425dfdf1f3cad8b9cddcbc9be5326f9785f97fc5822b95d0426b7616
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-017
+- id: T07-METRIC-017
+  task_id: T07
+  wave: B
+  category: quantitative_metric
+  requirement_text: 12 题题文一致；资源风险明确。（定量阈值：12 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/04（周二）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 9
+  source_cell_index: 4
+  source_text_sha256: 15b0bd96b076a2323297117da508a41298ff5f202e9aab7ff74a695678ec51a9
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-B-018
+- id: T07-B-019
+  task_id: T07
+  wave: B
+  category: daily_work
+  requirement_text: 冻结 prompt/model/schema 版本；同步 integration、全测试、@codex review，20:00 前转 Ready。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 10
+  source_cell_index: 2
+  source_text_sha256: 029eb74da4249b5f37f9df0ad17f24be3588b73b74fd65cf69b1a8ef3f6552f4
+  evidence_required:
+  - test_output
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-020
+  task_id: T07
+  wave: B
+  category: daily_deliverable
+  requirement_text: PR-B Ready；冻结记录。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 10
+  source_cell_index: 3
+  source_text_sha256: d4301748e6cac2f456e206dc756962fe3b373051d71f42564809e670ad38a1f4
+  evidence_required:
+  - documentation
+  - git_commit_reference
+  verification_type: doc_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-B-021
+  task_id: T07
+  wave: B
+  category: acceptance_evidence
+  requirement_text: P0/P1 关闭；运行参数可追溯。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/05（周三）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 10
+  source_cell_index: 4
+  source_text_sha256: 65dc01e12111eaf5aa780384648adaa71fc0b56313c7ee1137550597d8a9744b
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-C-001
+  task_id: T07
+  wave: C
+  category: daily_work
+  requirement_text: 新建 C 分支；启动 125 正式运行，加入状态监控、失败重试、manifest 和打包校验；20:00 前开启 Draft PR-C。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 11
+  source_cell_index: 2
+  source_text_sha256: 22b6d8ae9b5157a38d9ab1c92796120063b61e7351c626d450e39e3ed2e29ebf
+  evidence_required:
+  - dataset_manifest
+  - git_commit_reference
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-C-002
+  task_id: T07
+  wave: C
+  category: daily_deliverable
+  requirement_text: 正式运行状态表；Draft PR-C。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 11
+  source_cell_index: 3
+  source_text_sha256: 271fca1b5a63bfcf8d3461f787ec28a19c0e4709a9de541d95f0d7c4a044c8df
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-C-003
+  task_id: T07
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 运行可监控、可暂停、可恢复。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/06（周四）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 11
+  source_cell_index: 4
+  source_text_sha256: 6c0be36a823aedb8e4b5bc308117507d3ef19edb56b66e18e3897758d305915e
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-C-004
+  task_id: T07
+  wave: C
+  category: daily_work
+  requirement_text: 继续运行和重试，检查串题、重复、缺文件；生成总索引、状态、耗时、成本和领域分布；处理审查。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 12
+  source_cell_index: 2
+  source_text_sha256: 8f90cc19c31fe8b16aa019ac148bfd61e1646ae3a18b9eb3b4feb3e2cafdb882
+  evidence_required:
+  - metrics_file
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-C-005
+  task_id: T07
+  wave: C
+  category: daily_deliverable
+  requirement_text: 125 状态报告；index/manifest v1。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 12
+  source_cell_index: 3
+  source_text_sha256: 7a28c8f35ae551ea484deb6cce6f8cb7525ce8b781fe5bfbcc6e592b2f20b688
+  evidence_required:
+  - dataset_manifest
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-C-006
+  task_id: T07
+  wave: C
+  category: acceptance_evidence
+  requirement_text: 失败有原因和处置；可一键定位每题产物。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/07（周五）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 12
+  source_cell_index: 4
+  source_text_sha256: 555cdf4b5e44715a529867ac1bc34a7f3772665cb689b58d1ca6f9ac0388a0dc
+  evidence_required:
+  - artifact_file
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-C-007
+  task_id: T07
+  wave: C
+  category: daily_work
+  requirement_text: 完成剩余题和失败重跑，运行 total=125、非 Mock、重复、引用和文件完整性校验；同步 integration、@codex review，18:00 前转 Ready。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: a407e19e08f5ff17588efef022092aaa859c46bfe549c9a45ad0c7e1b6df29c8
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-018
+- id: T07-METRIC-018
+  task_id: T07
+  wave: C
+  category: quantitative_metric
+  requirement_text: 完成剩余题和失败重跑，运行 total=125、非 Mock、重复、引用和文件完整性校验；同步 integration、@codex review，18:00 前转 Ready。（定量阈值：total=125）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 13
+  source_cell_index: 2
+  source_text_sha256: 02dd46d84e4434220872b543cab78a10d055eaf273db519fe69e353c4327f345
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-C-007
+- id: T07-C-008
+  task_id: T07
+  wave: C
+  category: daily_deliverable
+  requirement_text: 125/125 候选包；PR-C Ready。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: 4c4ba0c41d9306f5dce8af49454d662cf836b0ff890f48294485921e36195d1b
+  evidence_required:
+  - git_commit_reference
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-019
+- id: T07-METRIC-019
+  task_id: T07
+  wave: C
+  category: quantitative_metric
+  requirement_text: 125/125 候选包；PR-C Ready。（定量阈值：125/125）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 13
+  source_cell_index: 3
+  source_text_sha256: 4bb7cc0d25ec77b02a006152ef5f0db88e820b65a6cf00f898b8d9830f294186
+  evidence_required:
+  - git_commit_reference
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-C-008
+- id: T07-C-009
+  task_id: T07
+  wave: C
+  category: acceptance_evidence
+  requirement_text: manifest total=125；无未处置串题；P0/P1 关闭。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: 03f5ab01ec3ace8d3e33928a102bb0e4ecf1baafe1542b503b97e547ac08d341
+  evidence_required:
+  - dataset_manifest
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-020
+- id: T07-METRIC-020
+  task_id: T07
+  wave: C
+  category: quantitative_metric
+  requirement_text: manifest total=125；无未处置串题；P0/P1 关闭。（定量阈值：total=125）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/08（周六）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 13
+  source_cell_index: 4
+  source_text_sha256: f79caf359e013b5ec84c732ee88ba2ab81966f799a6673ee2912c6226f09076a
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-C-009
+- id: T07-FREEZE-001
+  task_id: T07
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 完成 24 题人工抽查、所有 SHA-256、汇总报告和 handoff；仅重跑被质量门明确判定失败的题，不再改变 Prompt/Schema。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 3f9c473edf54967750428dd916ffbe1f68d78d88d2a421656fc392c98ee52ff4
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-021
+- id: T07-METRIC-021
+  task_id: T07
+  wave: FREEZE
+  category: quantitative_metric
+  requirement_text: 完成 24 题人工抽查、所有 SHA-256、汇总报告和 handoff；仅重跑被质量门明确判定失败的题，不再改变 Prompt/Schema。（定量阈值：24 题）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 14
+  source_cell_index: 2
+  source_text_sha256: 86a19f9958d7e3dd47a5d395bb06071ecd94872f1ec1d50b62f07168c555e961
+  evidence_required:
+  - test_output
+  - artifact_file
+  - source_code
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-FREEZE-001
+- id: T07-FREEZE-002
+  task_id: T07
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 最终 125 结果包；抽查表；checksums；handoff。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 14
+  source_cell_index: 3
+  source_text_sha256: d1b7c840125a349ebf42002dddd8ace021722f2ae5465cc8afbb84e3398f160c
+  evidence_required:
+  - test_output
+  - artifact_file
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-FREEZE-003
+  task_id: T07
+  wave: FREEZE
+  category: code_freeze_constraint
+  requirement_text: 125/125 非 Mock、题文一致、可检索；所有失败均已处置或登记阻断。
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: 2e55d40ab0c6f43fa5ce59fd6780e4f65266833fbb8615ca7e88c1e1c519d06f
+  evidence_required:
+  - source_code
+  verification_type: code_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids:
+  - T07-METRIC-022
+- id: T07-METRIC-022
+  task_id: T07
+  wave: FREEZE
+  category: quantitative_metric
+  requirement_text: 125/125 非 Mock、题文一致、可检索；所有失败均已处置或登记阻断。（定量阈值：125/125）
+  source_heading: T07. 队员 7（姓名待填）— 125 问题批量生成、隔离、去串题与交付索引 › T07.3 每日计划 › 08/09（周日）
+  source_paragraph_index: 170
+  source_table_index: 80
+  source_row_index: 14
+  source_cell_index: 4
+  source_text_sha256: 2d969b944399794403fa115d76261b7f8694853a7a02d10114ca1bae4a59b9b2
+  evidence_required:
+  - dataset_manifest
+  - computation_script
+  - raw_results
+  - metrics_file
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+  derived_from_requirement_id: T07-FREEZE-003
+- id: T07-HANDOFF-001
+  task_id: T07
+  wave: FREEZE
+  category: handoff
+  requirement_text: handoff.md 写明模块目的、入口、关键类/函数、配置、测试、运行、失败处理、已知限制、回滚和后续 Issue。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 196
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: cc1ccfe59c06049ab2fdaa1654450f2257c13e4d4d519b9dc8d763226ea81989
+  evidence_required:
+  - test_output
+  - documentation
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-HANDOFF-002
+  task_id: T07
+  wave: FREEZE
+  category: handoff
+  requirement_text: 列出 PR-A/PR-B/PR-C、最终 integration commit、测试命令和结果。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 197
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: fad132b874112e38f630fe83666161146ec4fe4ebb7285d21a5148447907b5e0
+  evidence_required:
+  - test_output
+  - git_commit_reference
+  verification_type: test_execution
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-HANDOFF-003
+  task_id: T07
+  wave: FREEZE
+  category: handoff
+  requirement_text: 所有截图、trace 和指标必须对应当前 Commit，不得使用旧 Mock 或旧失败产物。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 198
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: 51f9b60db4b13e15dc35b1861fe9287dca7008b57e6d137ebe6fed567266820a
+  evidence_required:
+  - metrics_file
+  - raw_results
+  - artifact_file
+  - dataset_manifest
+  - computation_script
+  - reproduction_command
+  - git_commit_reference
+  verification_type: metric_reproduction
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
+- id: T07-HANDOFF-004
+  task_id: T07
+  wave: FREEZE
+  category: handoff
+  requirement_text: 队长能够在干净环境按 handoff 命令验证；无法复现不计为完成。
+  source_heading: 第七部分 › 7.3 8 月 9 日 handoff 目录
+  source_paragraph_index: 199
+  source_table_index: 0
+  source_row_index: 0
+  source_cell_index: 0
+  source_text_sha256: c248f02b4f62f933c7bfd6f315cc982d48036c2aa48c44c2f4f092bb6df60086
+  evidence_required:
+  - reproduction_command
+  verification_type: artifact_inspection
+  blocking_policy: P1_BLOCKING
+  future_wave_policy: DEFERRED_ALLOWED
+  related_metric_ids: []
