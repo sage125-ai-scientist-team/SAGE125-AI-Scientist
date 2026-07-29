@@ -1,0 +1,76 @@
+T07 Day 1 question-source search log
+====================================
+
+Recorded: 2026-07-28
+Branch: t07/a-batch-contract
+HEAD: 1642ea0
+
+Excluded from broad content searches:
+
+- .git/**
+- .venv/**
+- node_modules/**
+- data/index/**
+- data/cache/**
+- docs/modules/T07/** (to avoid self-matches)
+
+Commands and fresh results
+--------------------------
+
+1. `rg --files data -g '!data/index/**' -g '!data/cache/**'`
+
+Result:
+`data/raw/README.md`
+
+2. `Test-Path ".\data\processed\questions_125.json"`
+
+Result:
+`False`
+
+3. `Test-Path ".\data\raw\sjtu-booklet.pdf"`
+
+Result:
+`False`
+
+4. `rg -l -i "Q125|S125|questions_125|science_questions|125 questions|booklet" . -g '!.git/**' -g '!.venv/**' -g '!node_modules/**' -g '!data/index/**' -g '!data/cache/**' -g '!docs/modules/T07/**'`
+
+Materially relevant hits:
+
+- scripts/extract_125_questions.py
+- scripts/run_batch_125.py
+- app/workflow/pipeline.py
+- tests/helpers_questions_fixture.py
+- tests/test_batch_125_mock.py
+- tests/test_extract_questions.py
+- tests/test_prime_question_plan.py
+- tests/test_question_report_consistency.py
+- docs/governance/task-requirements/T07.yaml
+
+These are code, tests, or specifications; none is a materialized 125-record catalog.
+
+5. `git log --all --oneline -- data/processed/questions_125.json data/raw/sjtu-booklet.pdf`
+
+Result:
+No commits found.
+
+6. `git rev-list --all --objects | rg -i "questions_125|sjtu-booklet|batch_manifest|batch_outputs|exports/batch"`
+
+Result:
+No matching Git objects found.
+
+7. `rg -n "QUESTIONS_PATH|SAGE_QUESTIONS_PATH|resolve_questions_path|def load_question" app/workflow/pipeline.py`
+
+Key result:
+The production default is `data/processed/questions_125.json`; only explicit/test overrides can
+replace it.
+
+8. `rg -n "PDF_PATH|JSON_PATH|CSV_PATH|TARGET_COUNT|Q{i:03d}" scripts/extract_125_questions.py`
+
+Key result:
+The intended producer reads `data/raw/sjtu-booklet.pdf`, targets 125 records, emits JSON/CSV, and
+assigns sequential `Q001`...`Q125` IDs.
+
+Search conclusion
+-----------------
+
+No real question source exists in the current checkout, current local exports, or local Git history.

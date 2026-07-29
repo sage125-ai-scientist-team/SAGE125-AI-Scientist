@@ -1,0 +1,66 @@
+T07 Day 1 question-source audit
+===============================
+
+Recorded: 2026-07-28
+Branch: t07/a-batch-contract
+HEAD: 1642ea0
+
+Required facts
+--------------
+
+1. Real question-source path:
+   Expected `data/processed/questions_125.json`; file is absent.
+2. Format:
+   Intended runtime format is a UTF-8 JSON array. The extractor also emits CSV and Markdown report.
+3. question_id format:
+   Intended extractor format is sequential `Q001`...`Q125`
+   (`scripts/extract_125_questions.py:613,633`).
+4. Expected count:
+   125 (`scripts/extract_125_questions.py:70-71`; T07 quantitative requirement total=125).
+5. Actual count:
+   Not evaluated because the catalog file is absent.
+6. Duplicate ID count:
+   Not evaluated because there is no catalog to parse. No zero-duplicate claim is made.
+7. Missing ID count:
+   Not evaluated because there is no catalog to parse. Source absence is not reported as a parsed
+   list with 125 missing individual records.
+8. Empty-question count:
+   Not evaluated because there is no catalog to parse.
+9. Loader/producer:
+   `scripts/extract_125_questions.py`, `app.workflow.pipeline.load_question`, and
+   `scripts.run_batch_125.main`.
+10. Conflicting sources:
+    None found. Test fixtures are explicitly synthetic and are not competing production sources.
+
+Schema intended by the extractor
+--------------------------------
+
+Each JSON record is intended to contain:
+
+- id
+- domain
+- question
+- source_page
+- booklet_excerpt
+- metadata.confidence
+- metadata.extraction_method
+- metadata.source_file
+
+Current blockers
+----------------
+
+- `data/raw/sjtu-booklet.pdf` is absent.
+- `data/processed/questions_125.json` is absent.
+
+The Python environment is no longer a blocker: the fresh Python 3.12.10 baseline completed with
+237 passed and 35 source-dependent skips.
+
+Consequences
+------------
+
+- Actual count, duplicate IDs, missing IDs, empty questions, and semantic mapping are all
+  `not evaluated`.
+- `scripts/run_batch_125.py` exits before dry-run or execution when the JSON is absent.
+- Tests guarded by `questions_125.json` cannot exercise their intended cases.
+
+No source file was created, modified, or inferred from unit-test fixtures.
