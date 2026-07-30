@@ -1,10 +1,12 @@
 # T01 Evidence Gold Set v4
 
 > **Machine-readable source of truth (Wave B):**  
-> `docs/modules/T01/evidence_gold_set.json` currently contains **30** provisional pairs  
-> (Wave A 001–020 + Wave B 021–030, with expected_decision labels). Prefer the JSON loader  
-> `app.evidence.gold_set.load_evidence_gold_set()` for tests, metrics, and T08 integration.  
-> This Markdown file keeps the original Wave A narrative pairs (001–020).
+> `docs/modules/T01/evidence_gold_set.json` currently contains **30** manually curated  
+> provisional pairs (`provisional=true` until Wave C DoD). Layout: methodology fixtures  
+> 001–012 + multi-domain samples 013–030 (hand-assigned `expected_decision`). Prefer the  
+> JSON loader `app.evidence.gold_set.load_evidence_gold_set()` for tests/metrics/T08.  
+> These are **validation fixtures**, not peer-reviewed scientific findings, and **not**  
+> live pipeline traces. This Markdown keeps the original Wave A narrative pairs (001–020).
 
 ## Purpose
 

@@ -39,4 +39,9 @@ python -m pytest -q tests/evidence/test_q028_regression.py -vv
 ## Limits
 
 - This is contract-layer regression, not full pipeline E2E on live Q028 question JSON.
-- Full agent-trace E2E remains for 08/03+ with T02/T03.
+- 08/03 adds T01↔T02/T03 **contract** E2E via `integration_bridge` (still no `pipeline.py` edits).
+- Live agent wiring into EvidenceExtractor / HypothesisGenerator / ExperimentDesigner remains T02-owned.
+
+## Daily note
+
+See also `docs/modules/T01/wave_b_2026-08-02.md`.

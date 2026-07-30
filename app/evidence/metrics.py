@@ -133,6 +133,10 @@ def _pair_to_card(pair: dict[str, Any]) -> Optional[EvidenceCardContract]:
     if source_type not in allowed:
         source_type = "test_fixture"
 
+    # claim.domain 用于跨域判定；证据卡可用 evidence_domain 覆盖（CROSS_DOMAIN 夹具）。
+    card_domain = str(
+        pair.get("evidence_domain") or pair.get("domain") or "methodology"
+    )
     return EvidenceCardContract(
         evidence_id=evidence_id,
         source_id=str(pair.get("source_id") or evidence_id),
@@ -143,7 +147,7 @@ def _pair_to_card(pair: dict[str, Any]) -> Optional[EvidenceCardContract]:
         authors=["gold-set"],
         year=2026,
         content_hash=f"sha256:gold:{evidence_id}",
-        domain=str(pair.get("domain") or "methodology"),
+        domain=card_domain,
         verification_status="pending",
     )
 
@@ -289,6 +293,11 @@ def build_domain_audit_12() -> dict[str, Any]:
     """
     构建 12 个领域代表题抽查表（题目相关性 + 跨域外推策略）。
 
+    说明（严格对齐手册 08/04）：
+    - 这是代表题抽查表，不是 live pipeline / agent-trace 跑题产物；
+    - 每行记录题目相关性与跨域外推策略；
+    - 通过 linked_gold_claim_ids 回链 Wave B 黄金集夹具，便于复现。
+
     返回：
         可写入 JSON 的抽查表。
     """
@@ -301,6 +310,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-013"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q012",
@@ -310,6 +321,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-024", "CLAIM-030"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q018",
@@ -319,6 +332,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-014"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q024",
@@ -328,6 +343,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-015"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q028",
@@ -337,6 +354,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "single_cancer_to_all_cancers",
             "policy": "DEGRADE via OVERGENERALIZATION; never unconditional allow",
+            "linked_gold_claim_ids": ["CLAIM-026", "CLAIM-027", "CLAIM-028"],
+            "evidence_consistency": "q028_contract_layer_regression_fixtures",
         },
         {
             "question_id": "Q035",
@@ -346,6 +365,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-023", "CLAIM-029"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q042",
@@ -355,6 +376,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-021", "CLAIM-025"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q051",
@@ -364,6 +387,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-016"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q063",
@@ -373,6 +398,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-017"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q077",
@@ -382,6 +409,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-018"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
         {
             "question_id": "Q089",
@@ -391,6 +420,8 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": False,
             "cross_domain_extrapolation": "climate_claim_with_oncology_evidence",
             "policy": "DEGRADE via CROSS_DOMAIN",
+            "linked_gold_claim_ids": ["CLAIM-020"],
+            "evidence_consistency": "intentional_domain_mismatch_for_red_light",
         },
         {
             "question_id": "Q102",
@@ -400,14 +431,20 @@ def build_domain_audit_12() -> dict[str, Any]:
             "topic_relevant": True,
             "cross_domain_extrapolation": "none",
             "policy": "allow_if_quote_overlaps",
+            "linked_gold_claim_ids": ["CLAIM-019"],
+            "evidence_consistency": "evidence_domain_matches_question_domain",
         },
     ]
     return {
         "schema_version": "t01-domain-audit-12-v1",
         "count": len(rows),
+        "audit_type": "representative_policy_sampling_table",
+        "not_live_pipeline_traces": True,
         "note": (
-            "Representative 12-domain audit table for Wave B 08/04. "
-            "Each row states topic relevance and cross-domain extrapolation policy."
+            "Wave B 08/04 representative 12-domain sampling table. "
+            "Records topic relevance and cross-domain extrapolation policy only; "
+            "not full agent-trace execution. linked_gold_claim_ids point to "
+            "docs/modules/T01/evidence_gold_set.json fixtures for reproduction."
         ),
         "rows": rows,
     }
