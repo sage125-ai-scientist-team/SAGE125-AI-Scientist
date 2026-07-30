@@ -146,7 +146,7 @@ $Python = (Resolve-Path ".\.venv\Scripts\python.exe").Path
 - `tests/execution/conftest.py`：离线测试 fixtures；
 - `tests/execution/fixtures/probe.py`：受控 test entrypoint；
 - `tests/execution/fixtures/legacy_execution_metadata.json`：legacy 输入矩阵；
-- `tests/execution/test_contracts.py`：契约与序列化测试；
+- `tests/execution/test_execution_contracts.py`：契约与序列化测试；
 - `tests/execution/test_actual_execution.py`：真实性证明链测试；
 - `tests/execution/test_manifests.py`：dataset、artifact、metric 与 provenance 测试；
 - `tests/execution/test_runner.py`：命令、进程、输出和 timeout 测试；
