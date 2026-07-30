@@ -22,6 +22,7 @@ from app.evidence.citation_renderer import (
     render_citation_markdown,
 )
 from app.evidence.gold_set import gold_set_count, load_evidence_gold_set
+from app.evidence.q028_regression import Q028RegressionReport, run_q028_regression
 from app.evidence.support_checker import (
     ClaimText,
     SupportCheckResult,
@@ -37,6 +38,7 @@ __all__ = [
     "CitationItem",
     "ClaimSpec",
     "ClaimText",
+    "Q028RegressionReport",
     "SupportCheckResult",
     "SupportDecision",
     "SupportErrorCode",
@@ -52,5 +54,6 @@ __all__ = [
     "gold_set_count",
     "load_evidence_gold_set",
     "render_citation_markdown",
+    "run_q028_regression",
     "runtime_card_to_contract",
 ]

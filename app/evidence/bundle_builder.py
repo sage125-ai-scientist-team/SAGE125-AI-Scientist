@@ -278,11 +278,58 @@ def _select_within_budget(
         used += cost
 
     if truncated and reason is None:
+        preview = ", ".join(dropped[:5])
+        more = "" if len(dropped) <= 5 else f" (+{len(dropped) - 5} more)"
         reason = (
             f"truncated to fit token_budget={token_budget}; "
-            f"kept={len(kept)} dropped={len(dropped)} used_tokens≈{used}"
+            f"kept={len(kept)} dropped={len(dropped)} used_tokens≈{used}; "
+            f"dropped_ids=[{preview}]{more}"
         )
     return kept, dropped, truncated, reason
+
+
+def sort_runtime_cards_by_relevance(
+    cards: Sequence[EvidenceCard],
+) -> list[EvidenceCard]:
+    """
+    按 relevance_score 降序稳定排序运行时证据卡。
+
+    参数：
+        cards: 原始 EvidenceCard 序列。
+
+    返回：
+        新列表（不修改入参顺序对象以外的内容）。
+    """
+    return sorted(
+        cards,
+        key=lambda card: float(getattr(card, "relevance_score", 0.0) or 0.0),
+        reverse=True,
+    )
+
+
+def dedupe_contract_cards(
+    cards: Sequence[EvidenceCardContract],
+) -> tuple[list[EvidenceCardContract], list[str]]:
+    """
+    按 content_hash / quoted_text 去重，保留先出现（更高相关）的卡片。
+
+    参数：
+        cards: 已排序的契约卡。
+
+    返回：
+        (去重后列表, 被去重掉的 evidence_id 列表)。
+    """
+    kept: list[EvidenceCardContract] = []
+    removed: list[str] = []
+    seen_keys: set[str] = set()
+    for card in cards:
+        key = (card.content_hash or "").strip() or card.quoted_text.strip().lower()
+        if key in seen_keys:
+            removed.append(card.evidence_id)
+            continue
+        seen_keys.add(key)
+        kept.append(card)
+    return kept, removed
 
 
 def _build_links(
@@ -379,10 +426,11 @@ def build_evidence_bundle(
         raise ValueError("token_budget must be positive")
 
     locators = locators or {}
+    ordered_cards = sort_runtime_cards_by_relevance(evidence_cards)
     converted: list[EvidenceCardContract] = []
     missing_fields: dict[str, list[str]] = {}
 
-    for card in evidence_cards:
+    for card in ordered_cards:
         contract, missing = runtime_card_to_contract(
             card,
             domain=domain,
@@ -392,10 +440,18 @@ def build_evidence_bundle(
         if missing:
             missing_fields[contract.evidence_id] = missing
 
+    converted, deduped_ids = dedupe_contract_cards(converted)
     kept, dropped, truncated, reason = _select_within_budget(
         converted,
         token_budget,
     )
+    if deduped_ids:
+        dropped = list(deduped_ids) + list(dropped)
+        truncated = True
+        dedupe_note = (
+            f"dedupe_removed={len(deduped_ids)} ids=[{', '.join(deduped_ids[:5])}]"
+        )
+        reason = f"{reason}; {dedupe_note}" if reason else dedupe_note
     if not kept:
         raise ValueError("token budget removed all evidence cards")
 

@@ -70,11 +70,44 @@ class SupportErrorCode(str, Enum):
     """
 
     UNKNOWN_EVIDENCE_ID = "UNKNOWN_EVIDENCE_ID"
+    FAKE_BOOKLET_EVIDENCE_ID = "FAKE_BOOKLET_EVIDENCE_ID"
     METADATA_ONLY = "METADATA_ONLY"
     BOOKLET_EXCLUDED = "BOOKLET_EXCLUDED"
     CROSS_DOMAIN = "CROSS_DOMAIN"
     NON_ENTAILMENT = "NON_ENTAILMENT"
+    OVERGENERALIZATION = "OVERGENERALIZATION"
     UNSUPPORTED_CLAIM = "UNSUPPORTED_CLAIM"
+
+
+# Q028 类虚构证据 ID：booklet_excerpt_Q028 等。
+_FAKE_BOOKLET_EVIDENCE_ID_RE = re.compile(
+    r"^booklet_excerpt_Q\d+$",
+    re.IGNORECASE,
+)
+
+# 单一癌种证据 vs “所有癌症”外推（保守词表）。
+_SPECIFIC_CANCER_PATTERNS = (
+    r"lung adenocarcinoma",
+    r"lung cancer",
+    r"breast cancer",
+    r"prostate cancer",
+    r"colorectal cancer",
+    r"肺癌",
+    r"肺腺癌",
+    r"乳腺癌",
+    r"前列腺癌",
+    r"结直肠癌",
+)
+_GENERAL_CANCER_PATTERNS = (
+    r"all cancers?",
+    r"every cancer",
+    r"any cancer",
+    r"all types of cancer",
+    r"所有癌症",
+    r"全部癌症",
+    r"各种癌症",
+    r"任意癌症",
+)
 
 
 class SupportDecision(str, Enum):
@@ -233,6 +266,37 @@ def has_lexical_entailment(claim_text: str, quoted_text: str) -> bool:
     return bool(claim_tokens & quote_tokens)
 
 
+def is_fake_booklet_evidence_id(evidence_id: str) -> bool:
+    """
+    判断是否为 Q028 类虚构 booklet 证据 ID。
+
+    参数：
+        evidence_id: 证据 ID。
+
+    返回：
+        True 表示匹配 ``booklet_excerpt_Q\\d+``。
+    """
+    return bool(_FAKE_BOOKLET_EVIDENCE_ID_RE.match((evidence_id or "").strip()))
+
+
+def is_cancer_overgeneralization(claim_text: str, quoted_text: str) -> bool:
+    """
+    检测“单一癌种证据 → 所有癌症”外推。
+
+    参数：
+        claim_text: 声明正文。
+        quoted_text: 证据原文。
+
+    返回：
+        True 表示疑似过度外推，应降级而非 allow。
+    """
+    claim_l = (claim_text or "").lower()
+    quote_l = (quoted_text or "").lower()
+    has_specific = any(re.search(p, quote_l) for p in _SPECIFIC_CANCER_PATTERNS)
+    has_general = any(re.search(p, claim_l) for p in _GENERAL_CANCER_PATTERNS)
+    return has_specific and has_general
+
+
 def check_claim_evidence_support(
     claims: Sequence[ClaimText],
     evidences: Sequence[EvidenceCardContract],
@@ -286,6 +350,22 @@ def check_claim_evidence_support(
             continue
 
         for evidence_id in claim.evidence_ids:
+            # 0) Q028 虚构 booklet 证据 ID：无论是否在池中，一律 BLOCK。
+            if is_fake_booklet_evidence_id(evidence_id):
+                result.findings.append(
+                    SupportFinding(
+                        code=SupportErrorCode.FAKE_BOOKLET_EVIDENCE_ID,
+                        decision=SupportDecision.BLOCK,
+                        claim_id=claim.claim_id,
+                        evidence_id=evidence_id,
+                        message=(
+                            f"fabricated booklet evidence_id is forbidden: {evidence_id}"
+                        ),
+                    )
+                )
+                result.blocked = True
+                continue
+
             card = by_id.get(evidence_id)
             if card is None:
                 result.findings.append(
@@ -294,7 +374,10 @@ def check_claim_evidence_support(
                         decision=SupportDecision.BLOCK,
                         claim_id=claim.claim_id,
                         evidence_id=evidence_id,
-                        message=f"unknown evidence_id: {evidence_id}",
+                        message=(
+                            f"unknown evidence_id={evidence_id!r} for claim="
+                            f"{claim.claim_id!r}; not present in evidence pool"
+                        ),
                     )
                 )
                 result.blocked = True
@@ -308,7 +391,10 @@ def check_claim_evidence_support(
                         decision=SupportDecision.BLOCK,
                         claim_id=claim.claim_id,
                         evidence_id=evidence_id,
-                        message="question booklet cannot support established facts",
+                        message=(
+                            f"booklet evidence {evidence_id!r} cannot support "
+                            f"established facts for claim {claim.claim_id!r}"
+                        ),
                     )
                 )
                 result.blocked = True
@@ -322,7 +408,10 @@ def check_claim_evidence_support(
                         decision=SupportDecision.BLOCK,
                         claim_id=claim.claim_id,
                         evidence_id=evidence_id,
-                        message="metadata-only evidence cannot support claims",
+                        message=(
+                            f"metadata-only evidence {evidence_id!r} "
+                            f"(quote equals title) cannot support claim {claim.claim_id!r}"
+                        ),
                     )
                 )
                 result.blocked = True
@@ -350,7 +439,27 @@ def check_claim_evidence_support(
                 degraded.add(claim.claim_id)
                 continue
 
-            # 4) 语义/词法不蕴含 → 降级。
+            # 4) 单一癌种 → 所有癌症 外推 → 降级（Q028 DoD）。
+            if claim.relation == "supports" and is_cancer_overgeneralization(
+                claim.text,
+                card.quoted_text,
+            ):
+                result.findings.append(
+                    SupportFinding(
+                        code=SupportErrorCode.OVERGENERALIZATION,
+                        decision=SupportDecision.DEGRADE,
+                        claim_id=claim.claim_id,
+                        evidence_id=evidence_id,
+                        message=(
+                            "single-cancer evidence cannot unconditionally support "
+                            "all-cancer claims; degraded to pending verification"
+                        ),
+                    )
+                )
+                degraded.add(claim.claim_id)
+                continue
+
+            # 5) 语义/词法不蕴含 → 降级。
             if claim.relation == "supports" and not has_lexical_entailment(
                 claim.text,
                 card.quoted_text,
@@ -361,7 +470,10 @@ def check_claim_evidence_support(
                         decision=SupportDecision.DEGRADE,
                         claim_id=claim.claim_id,
                         evidence_id=evidence_id,
-                        message="claim not lexically supported by quoted_text; degraded",
+                        message=(
+                            f"claim {claim.claim_id!r} not lexically supported by "
+                            f"quoted_text of {evidence_id!r}; degraded"
+                        ),
                     )
                 )
                 degraded.add(claim.claim_id)
