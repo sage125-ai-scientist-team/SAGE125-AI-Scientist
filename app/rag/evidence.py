@@ -22,6 +22,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional, Union
 
+from app.contracts.rag import RetrievalHit, ScoreKind, SourceLocator, SourceRole, SourceType
 from app.core.logging import get_logger
 from app.core.schemas import EvidenceCard
 from app.rag.chunker import Chunk
@@ -143,6 +144,58 @@ def chunk_to_evidence_card(
         summary=summary,
         relevance_score=relevance,
         reliability_note=reliability_note,
+    )
+
+
+def chunk_to_retrieval_hit(
+    chunk: Union[Chunk, dict],
+    score: float,
+    *,
+    source_type: SourceType | str | None = None,
+    source_role: SourceRole | str | None = None,
+    score_kind: ScoreKind | str | None = None,
+) -> RetrievalHit:
+    """Adapt one raw RAG chunk to the lossless T04 retrieval contract."""
+
+    if isinstance(chunk, Chunk):
+        text = chunk.text
+        metadata = dict(chunk.metadata)
+        chunk_id = chunk.chunk_id
+    else:
+        text = str(chunk.get("text", ""))
+        metadata = dict(chunk.get("metadata") or {})
+        chunk_id = str(chunk.get("chunk_id", ""))
+
+    resolved_source_type = source_type or metadata.get("source_type") or SourceType.UNKNOWN
+    resolved_source_role = source_role or metadata.get("source_role") or SourceRole.USER_UPLOAD
+    resolved_score_kind = (
+        score_kind or metadata.get("score_kind") or ScoreKind.VECTOR_SIMILARITY
+    )
+    source_name = str(metadata.get("source_name") or "unknown")
+    page = metadata.get("page")
+    title = f"{source_name} (p{page})" if page is not None else source_name
+
+    locator = SourceLocator(
+        document_id=str(metadata.get("doc_id") or metadata.get("document_id") or ""),
+        page=page,
+        section=metadata.get("section"),
+        chunk_id=chunk_id,
+        char_start=metadata.get("char_start"),
+        char_end=metadata.get("char_end"),
+    )
+    return RetrievalHit(
+        chunk_id=chunk_id,
+        quoted_text=text,
+        retrieval_score=score,
+        score_kind=resolved_score_kind,
+        source_type=resolved_source_type,
+        source_role=resolved_source_role,
+        source_locator=locator,
+        content_hash=str(metadata.get("content_sha256") or ""),
+        title=title,
+        doi=metadata.get("doi"),
+        url=metadata.get("url"),
+        metadata=metadata,
     )
 
 
