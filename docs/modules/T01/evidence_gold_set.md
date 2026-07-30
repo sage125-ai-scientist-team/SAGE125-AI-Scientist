@@ -1,8 +1,14 @@
 # T01 Evidence Gold Set v4
 
+> **Machine-readable source of truth (Wave B):**  
+> `docs/modules/T01/evidence_gold_set.json` currently contains **24** provisional pairs  
+> (Wave A 001–020 + Wave B 021–024). Prefer the JSON loader  
+> `app.evidence.gold_set.load_evidence_gold_set()` for tests and T08 integration.  
+> This Markdown file keeps the original Wave A narrative pairs (001–020).
+
 ## Purpose
 
-This document defines 20 provisional evidence contract validation pairs for the T01 evidence contract layer.
+This document defines the original 20 provisional evidence contract validation pairs for the T01 evidence contract layer.
 
 These pairs are NOT scientific evidence claims.
 
