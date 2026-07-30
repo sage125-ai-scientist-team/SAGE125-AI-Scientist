@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "lineage_id": "lineage-001",
+  "run_id": "run-demo",
+  "question_id": "Q001",
+  "feedback_id": "feedback-001",
+  "feedback_sha256": "7aba2bfdfea7f5229818a1d3169d120a74a64ec1d144a770531e21afa7c2e163",
+  "target_version_id": "run-demo:v1",
+  "correlation_id": "corr-001",
+  "decision_id": "decision-001",
+  "decision_disposition": "partially_accepted",
+  "decision_sha256": "e18b63376e2b9adee4f118d5f698dca92eb3122b1876f66eb57cf9fcd590a8c5",
+  "resulting_version_id": "run-demo:v2",
+  "revision_diff_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "validation_report_id": "report-001",
+  "issue_ids": [],
+  "events": [
+    {
+      "event_id": "event-001",
+      "event_type": "feedback_submitted",
+      "occurred_at": "2026-07-28T08:00:00Z",
+      "actor_id": "human-reviewer",
+      "subject_id": "feedback-001",
+      "payload_sha256": "7aba2bfdfea7f5229818a1d3169d120a74a64ec1d144a770531e21afa7c2e163",
+      "parent_event_id": null,
+      "metadata": {}
+    },
+    {
+      "event_id": "event-002",
+      "event_type": "feedback_decided",
+      "occurred_at": "2026-07-28T08:01:00Z",
+      "actor_id": "feedback-policy-v1",
+      "subject_id": "decision-001",
+      "payload_sha256": "e18b63376e2b9adee4f118d5f698dca92eb3122b1876f66eb57cf9fcd590a8c5",
+      "parent_event_id": "event-001",
+      "metadata": {}
+    },
+    {
+      "event_id": "event-003",
+      "event_type": "revision_requested",
+      "occurred_at": "2026-07-28T08:02:00Z",
+      "actor_id": "feedback-service",
+      "subject_id": "decision-001",
+      "payload_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "parent_event_id": "event-002",
+      "metadata": {}
+    },
+    {
+      "event_id": "event-004",
+      "event_type": "revision_generated",
+      "occurred_at": "2026-07-28T08:03:00Z",
+      "actor_id": "revision-service",
+      "subject_id": "run-demo:v2",
+      "payload_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "parent_event_id": "event-003",
+      "metadata": {}
+    },
+    {
+      "event_id": "event-005",
+      "event_type": "gate_evaluated",
+      "occurred_at": "2026-07-28T08:04:00Z",
+      "actor_id": "quality-gate-runner",
+      "subject_id": "artifact-presence",
+      "payload_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "parent_event_id": "event-004",
+      "metadata": {}
+    },
+    {
+      "event_id": "event-006",
+      "event_type": "validation_completed",
+      "occurred_at": "2026-07-28T08:05:00Z",
+      "actor_id": "validation-service",
+      "subject_id": "report-001",
+      "payload_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "parent_event_id": "event-005",
+      "metadata": {}
+    }
+  ]
+}
