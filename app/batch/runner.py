@@ -96,6 +96,11 @@ class BatchRunner:
     ) -> None:
         self.run_root = Path(run_root)
         self._provider = provider
+        self._provider_calls = 0
+
+    @property
+    def provider_calls(self) -> int:
+        return self._provider_calls
 
     def dry_run(
         self,
@@ -119,6 +124,7 @@ class BatchRunner:
             _build_planned_job(
                 normalized_batch_id,
                 record,
+                source_hash,
                 retry_policy,
                 route,
             )
@@ -146,6 +152,58 @@ class BatchRunner:
             )
         write_model_atomically(batch_root / "manifest.json", manifest)
         return manifest
+
+    def run_isolated(
+        self,
+        manifest: BatchManifest,
+        processor: Callable[[BatchJob], BatchJob],
+    ) -> BatchManifest:
+        """Process every non-terminal job while isolating per-job failures."""
+
+        updated_jobs: list[BatchJob] = []
+        batch_root = self.run_root / manifest.batch_id
+        checkpoint_root = batch_root / "checkpoints"
+
+        for original in manifest.jobs:
+            if original.status in TERMINAL_JOB_STATUSES:
+                updated = original.model_copy(deep=True)
+            else:
+                try:
+                    candidate = processor(original.model_copy(deep=True))
+                    if not isinstance(candidate, BatchJob):
+                        raise BatchRunnerError(
+                            "JOB_PROCESSOR_RESULT_INVALID",
+                            "Job processor must return a BatchJob",
+                        )
+                    updated = BatchJob.model_validate(candidate.model_dump())
+                    _require_same_job_identity(original, updated)
+                except Exception as exc:
+                    error_code = (
+                        exc.error_code
+                        if isinstance(exc, BatchRunnerError)
+                        else "JOB_EXECUTION_FAILED"
+                    )
+                    message = str(exc).strip() or type(exc).__name__
+                    updated = register_failure(
+                        original,
+                        error_code=error_code,
+                        message=message,
+                        retryable=False,
+                    )
+
+            write_checkpoint(
+                checkpoint_root / f"{updated.question_id}.json",
+                CheckpointRecord.from_job(updated),
+            )
+            updated_jobs.append(updated)
+
+        payload = manifest.model_dump()
+        payload["jobs"] = [job.model_dump() for job in updated_jobs]
+        payload.pop("total", None)
+        payload.pop("status_counts", None)
+        updated_manifest = BatchManifest.model_validate(payload)
+        write_model_atomically(batch_root / "manifest.json", updated_manifest)
+        return updated_manifest
 
 
 def _load_question_source(
@@ -229,6 +287,7 @@ def _load_question_source(
 def _build_planned_job(
     batch_id: str,
     record: dict[str, Any],
+    source_hash: str,
     retry_policy: RetryPolicy,
     route: ModelRoute,
 ) -> BatchJob:
@@ -243,6 +302,7 @@ def _build_planned_job(
     return BatchJob(
         batch_id=batch_id,
         question_id=question_id,
+        source_hash=source_hash,
         input_hash=input_hash,
         workspace=workspace,
         context_id=f"ctx:{batch_id}:{question_id}:{hash_prefix}",
@@ -255,6 +315,34 @@ def _build_planned_job(
         budget=BatchBudget(),
         model_route=route.model_copy(deep=True),
     )
+
+
+def _require_same_job_identity(
+    original: BatchJob,
+    candidate: BatchJob,
+) -> None:
+    immutable_fields = (
+        "schema_version",
+        "batch_id",
+        "question_id",
+        "source_hash",
+        "input_hash",
+        "workspace",
+        "context_id",
+        "cache_namespace",
+        "retry_policy",
+        "model_route",
+    )
+    changed = [
+        field_name
+        for field_name in immutable_fields
+        if getattr(original, field_name) != getattr(candidate, field_name)
+    ]
+    if changed:
+        raise BatchRunnerError(
+            "JOB_IDENTITY_MUTATION",
+            f"Job processor changed immutable fields: {changed}",
+        )
 
 
 def _display_source_path(source_path: Path) -> str:

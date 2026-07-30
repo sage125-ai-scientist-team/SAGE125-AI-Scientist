@@ -31,8 +31,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    runner = BatchRunner(args.run_root)
     try:
-        manifest = BatchRunner(args.run_root).dry_run(
+        manifest = runner.dry_run(
             args.source,
             batch_id=args.batch_id,
             source_kind=SourceKind(args.source_kind),
@@ -48,18 +49,34 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         return 2
 
+    batch_root = args.run_root / manifest.batch_id
+    required_artifacts = {
+        "report.pdf",
+        "report.md",
+        "result.json",
+        "evidence_cards.json",
+        "agent_trace.json",
+    }
+    files = [path for path in batch_root.rglob("*") if path.is_file()]
     summary = {
         "actual_results": sum(
             job.result_kind is ResultKind.ACTUAL for job in manifest.jobs
         ),
         "batch_id": manifest.batch_id,
         "dry_run": manifest.dry_run,
-        "jobs": len(manifest.jobs),
+        "checkpoints": len(
+            list((batch_root / "checkpoints").glob("*.json"))
+        ),
+        "jobs": manifest.total,
         "manifest_path": (
             args.run_root / manifest.batch_id / "manifest.json"
         ).as_posix(),
-        "provider_calls": 0,
+        "provider_calls": runner.provider_calls,
+        "research_artifacts": sum(
+            path.name in required_artifacts for path in files
+        ),
         "source_kind": manifest.source_kind.value,
+        "temporary_files": sum(path.suffix == ".tmp" for path in files),
         "tokens_used": sum(job.budget.tokens_used for job in manifest.jobs),
         "unique_cache_namespaces": len(
             {job.cache_namespace for job in manifest.jobs}

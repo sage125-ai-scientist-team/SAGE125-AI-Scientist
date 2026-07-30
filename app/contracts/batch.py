@@ -102,6 +102,7 @@ class ModelRoute(BaseModel):
     model: str = "none"
     model_version: str = "unassigned"
     prompt_version: str = "unassigned"
+    prompt_hash: str | None = Field(default=None, pattern=SHA256_PATTERN)
 
     _normalize_route_id = field_validator("route_id")(_require_non_empty)
     _normalize_provider = field_validator("provider")(_require_non_empty)
@@ -135,9 +136,12 @@ class RetryPolicy(BaseModel):
 
 class ResumePolicy(BaseModel):
     enabled: bool = True
+    require_source_hash_match: bool = True
     require_input_hash_match: bool = True
+    require_model_route_match: bool = True
     require_model_version_match: bool = True
     require_prompt_version_match: bool = True
+    require_prompt_hash_match: bool = True
     require_schema_version_match: bool = True
     stale_checkpoint_action: StaleCheckpointAction = (
         StaleCheckpointAction.REJECT
@@ -207,6 +211,7 @@ class BatchJob(BaseModel):
     schema_version: Literal["t07.batch.v1"] = BATCH_SCHEMA_VERSION
     batch_id: str
     question_id: str
+    source_hash: str = Field(pattern=SHA256_PATTERN)
     input_hash: str = Field(pattern=SHA256_PATTERN)
     workspace: str
     context_id: str
@@ -278,9 +283,11 @@ class BatchJob(BaseModel):
                 self.model_route.model,
                 self.model_route.model_version,
                 self.model_route.prompt_version,
+                self.model_route.prompt_hash,
             )
             if any(
-                value in {"dry-run", "none", "unassigned"}
+                value is None
+                or value in {"dry-run", "none", "unassigned"}
                 for value in route_values
             ):
                 raise ValueError(
@@ -295,10 +302,15 @@ class CheckpointRecord(BaseModel):
     )
     batch_id: str
     question_id: str
+    source_hash: str = Field(pattern=SHA256_PATTERN)
     input_hash: str = Field(pattern=SHA256_PATTERN)
     schema_version: Literal["t07.batch.v1"]
+    route_id: str
+    provider: str
+    model: str
     model_version: str
     prompt_version: str
+    prompt_hash: str | None = Field(default=None, pattern=SHA256_PATTERN)
     status: JobStatus
     attempt: int = Field(ge=0)
     job: BatchJob
@@ -320,10 +332,15 @@ class CheckpointRecord(BaseModel):
         expected = {
             "batch_id": self.job.batch_id,
             "question_id": self.job.question_id,
+            "source_hash": self.job.source_hash,
             "input_hash": self.job.input_hash,
             "schema_version": self.job.schema_version,
+            "route_id": self.job.model_route.route_id,
+            "provider": self.job.model_route.provider,
+            "model": self.job.model_route.model,
             "model_version": self.job.model_route.model_version,
             "prompt_version": self.job.model_route.prompt_version,
+            "prompt_hash": self.job.model_route.prompt_hash,
             "status": self.job.status,
             "attempt": self.job.attempt,
         }
@@ -341,10 +358,15 @@ class CheckpointRecord(BaseModel):
         return cls(
             batch_id=job.batch_id,
             question_id=job.question_id,
+            source_hash=job.source_hash,
             input_hash=job.input_hash,
             schema_version=job.schema_version,
+            route_id=job.model_route.route_id,
+            provider=job.model_route.provider,
+            model=job.model_route.model,
             model_version=job.model_route.model_version,
             prompt_version=job.model_route.prompt_version,
+            prompt_hash=job.model_route.prompt_hash,
             status=job.status,
             attempt=job.attempt,
             job=job,
@@ -363,6 +385,8 @@ class BatchManifest(BaseModel):
     retry_policy: RetryPolicy = Field(default_factory=RetryPolicy)
     resume_policy: ResumePolicy = Field(default_factory=ResumePolicy)
     jobs: list[BatchJob]
+    total: int = Field(ge=0)
+    status_counts: dict[str, int]
     created_at: datetime = Field(default_factory=_utc_now)
 
     _normalize_schema_version = field_validator("schema_version")(
@@ -377,6 +401,29 @@ class BatchManifest(BaseModel):
         if value.tzinfo is None or value.utcoffset() is None:
             raise ValueError("created_at must be timezone-aware")
         return value
+
+    @model_validator(mode="before")
+    @classmethod
+    def derive_and_validate_summary(cls, value: Any) -> Any:
+        if not isinstance(value, dict):
+            return value
+        payload = dict(value)
+        jobs = payload.get("jobs")
+        if not isinstance(jobs, list):
+            return payload
+
+        expected_total = len(jobs)
+        expected_counts = _status_counts_from_jobs(jobs)
+        if "total" in payload and payload["total"] != expected_total:
+            raise ValueError("manifest total does not match jobs")
+        if (
+            "status_counts" in payload
+            and payload["status_counts"] != expected_counts
+        ):
+            raise ValueError("manifest status_counts do not match jobs")
+        payload["total"] = expected_total
+        payload["status_counts"] = expected_counts
+        return payload
 
     @model_validator(mode="after")
     def enforce_manifest_invariants(self) -> "BatchManifest":
@@ -399,10 +446,41 @@ class BatchManifest(BaseModel):
         for job in self.jobs:
             if job.batch_id != self.batch_id:
                 raise ValueError("job batch_id does not match manifest")
+            if job.source_hash != self.source_hash:
+                raise ValueError("job source_hash does not match manifest")
             if job.schema_version != self.schema_version:
                 raise ValueError("job schema_version does not match manifest")
             if job.retry_policy != self.retry_policy:
                 raise ValueError("job retry_policy does not match manifest")
             if job.model_route != self.model_route:
                 raise ValueError("job model_route does not match manifest")
+            if (
+                self.source_kind is SourceKind.SYNTHETIC
+                and job.status is JobStatus.COMPLETED
+                and job.result_kind is ResultKind.ACTUAL
+            ):
+                raise ValueError(
+                    "synthetic manifest cannot contain completed actual jobs"
+                )
         return self
+
+
+def _status_counts_from_jobs(jobs: list[Any]) -> dict[str, int]:
+    counts = {status.value: 0 for status in JobStatus}
+    for job in jobs:
+        raw_status = (
+            job.status
+            if isinstance(job, BatchJob)
+            else job.get("status", JobStatus.QUEUED)
+        )
+        status = (
+            raw_status
+            if isinstance(raw_status, JobStatus)
+            else JobStatus(str(raw_status))
+        )
+        counts[status.value] += 1
+    return {
+        status.value: counts[status.value]
+        for status in JobStatus
+        if counts[status.value]
+    }

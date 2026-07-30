@@ -58,6 +58,7 @@ cross this boundary.
 | `model` | non-empty string | Model name; Day 2 dry-run uses `none`. |
 | `model_version` | non-empty string | Frozen model/config version used by resume checks. |
 | `prompt_version` | non-empty string | Frozen prompt version used by resume checks. |
+| `prompt_hash` | optional SHA-256 | Exact prompt-content binding; dry-run uses `null`, while actual completion requires a value. |
 
 The Day 2 skeleton does not select or modify a production prompt/model
 version. Its explicit dry-run route is `dry-run/none/none/unassigned`.
@@ -93,9 +94,12 @@ nor resume can raise the serialized hard limit implicitly.
 | Field | Type | Semantics |
 |---|---|---|
 | `enabled` | boolean | Whether checkpoint resume is permitted. |
+| `require_source_hash_match` | boolean | Reject checkpoints from a different source snapshot. |
 | `require_input_hash_match` | boolean | Reject changed canonical question input. |
+| `require_model_route_match` | boolean | Reject changed route, provider, or model identity. |
 | `require_model_version_match` | boolean | Reject changed model version. |
 | `require_prompt_version_match` | boolean | Reject changed prompt version. |
+| `require_prompt_hash_match` | boolean | Reject changed prompt content. |
 | `require_schema_version_match` | boolean | Reject changed contract schema. |
 | `stale_checkpoint_action` | enum | Day 2 supports only `reject`. |
 
@@ -142,6 +146,7 @@ fields, missing artifacts, empty paths, Mock mode, or a non-`actual`
 | `schema_version` | string | Job contract version, currently `t07.batch.v1`. |
 | `batch_id` | non-empty string | Immutable parent batch identity. |
 | `question_id` | non-empty string | Exact source record identity. |
+| `source_hash` | 64-character lowercase SHA-256 | Exact source-file snapshot binding. |
 | `input_hash` | 64-character lowercase SHA-256 | Canonical input binding. |
 | `workspace` | non-empty string | Question-scoped relative workspace path. |
 | `context_id` | non-empty string | Question-scoped context identity. |
@@ -167,10 +172,13 @@ non-empty. Their cross-job uniqueness is enforced when building a manifest.
 | `checkpoint_version` | string | Persistence format, currently `t07.checkpoint.v1`. |
 | `batch_id` | string | Must equal the embedded job. |
 | `question_id` | string | Must equal the embedded job. |
+| `source_hash` | SHA-256 string | Must equal the embedded job and current source snapshot. |
 | `input_hash` | SHA-256 string | Must equal the embedded job. |
 | `schema_version` | string | Must equal the embedded job. |
+| `route_id` / `provider` / `model` | strings | Must equal the embedded model route. |
 | `model_version` | string | Must equal the embedded route. |
 | `prompt_version` | string | Must equal the embedded route. |
+| `prompt_hash` | optional SHA-256 | Must equal the embedded route. |
 | `status` | `JobStatus` | Must equal the embedded job. |
 | `attempt` | integer | Must equal the embedded job. |
 | `job` | `BatchJob` | Complete resumable job snapshot. |
@@ -191,6 +199,8 @@ non-empty. Their cross-job uniqueness is enforced when building a manifest.
 | `retry_policy` | `RetryPolicy` | Default retry policy copied into jobs. |
 | `resume_policy` | `ResumePolicy` | Resume compatibility policy. |
 | `jobs` | list of `BatchJob` | Full job queue. |
+| `total` | integer | Derived from the serialized jobs; inconsistent supplied values are rejected. |
+| `status_counts` | object | Derived status-to-count mapping; inconsistent supplied values are rejected. |
 | `created_at` | timezone-aware datetime | UTC creation timestamp. |
 
 Duplicate `question_id`, `workspace`, `context_id`, or `cache_namespace` values
@@ -256,6 +266,9 @@ Global invariants:
 - State transitions are persisted before the next externally visible action.
 - A failed job does not mutate another job's workspace, context, cache, budget,
   attempt history, or checkpoint.
+- The isolated skeleton processor catches one job exception, records
+  `JOB_EXECUTION_FAILED`, persists that job, and continues remaining jobs.
+  Successful skeleton jobs may reach `checkpointed` but never `actual`.
 - A checkpoint cannot change the manifest's retry, budget, route, prompt,
   model, schema, source, or input identity.
 
@@ -279,8 +292,9 @@ Resume sequence:
 1. Read and Pydantic-validate the checkpoint JSON.
 2. Require resume to be enabled.
 3. Compare batch and question identity.
-4. Compare canonical `input_hash`.
-5. Compare contract schema, prompt version, and model version.
+4. Compare source snapshot `source_hash` and canonical `input_hash`.
+5. Compare route/provider/model identity, model version, prompt version,
+   prompt hash, and contract schema.
 6. Require checkpoint status/attempt to match the embedded job.
 7. Return the validated job snapshot without increasing its retry limit.
 
@@ -310,7 +324,8 @@ manifest contains exactly 125 jobs.
     "provider": "none",
     "model": "none",
     "model_version": "unassigned",
-    "prompt_version": "unassigned"
+    "prompt_version": "unassigned",
+    "prompt_hash": null
   },
   "budget": {
     "token_limit": 0,
@@ -321,9 +336,12 @@ manifest contains exactly 125 jobs.
   "retry_policy": {"max_attempts": 3},
   "resume_policy": {
     "enabled": true,
+    "require_source_hash_match": true,
     "require_input_hash_match": true,
+    "require_model_route_match": true,
     "require_model_version_match": true,
     "require_prompt_version_match": true,
+    "require_prompt_hash_match": true,
     "require_schema_version_match": true,
     "stale_checkpoint_action": "reject"
   },
@@ -332,6 +350,7 @@ manifest contains exactly 125 jobs.
       "schema_version": "t07.batch.v1",
       "batch_id": "day2-synthetic",
       "question_id": "Q001",
+      "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "input_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "workspace": "day2-synthetic/Q001/workspace",
       "context_id": "ctx:day2-synthetic:Q001:bbbbbbbbbbbbbbbb",
@@ -352,7 +371,8 @@ manifest contains exactly 125 jobs.
         "provider": "none",
         "model": "none",
         "model_version": "unassigned",
-        "prompt_version": "unassigned"
+        "prompt_version": "unassigned",
+        "prompt_hash": null
       },
       "output_contract": {
         "required_fields": ["Problem", "Rationale", "Technical Details", "Datasets Source", "Datasets Target", "Title", "Abstract", "Methods", "Experiments", "Results", "References"],
@@ -363,6 +383,8 @@ manifest contains exactly 125 jobs.
       "failures": []
     }
   ],
+  "total": 1,
+  "status_counts": {"queued": 1},
   "created_at": "2026-07-29T00:00:00Z"
 }
 ```

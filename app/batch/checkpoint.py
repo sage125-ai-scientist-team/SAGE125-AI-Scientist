@@ -84,12 +84,39 @@ def resume_job(
             "Checkpoint question_id does not match the requested job",
         )
     if (
+        policy.require_source_hash_match
+        and checkpoint.source_hash != expected_job.source_hash
+    ):
+        raise BatchRunnerError(
+            "STALE_CHECKPOINT_SOURCE_HASH",
+            "Checkpoint source_hash does not match the current source",
+        )
+    if (
         policy.require_input_hash_match
         and checkpoint.input_hash != expected_job.input_hash
     ):
         raise BatchRunnerError(
             "STALE_CHECKPOINT_INPUT_HASH",
             "Checkpoint input_hash does not match the current question",
+        )
+
+    route_mismatch = (
+        checkpoint.route_id != expected_job.model_route.route_id
+        or checkpoint.provider != expected_job.model_route.provider
+        or checkpoint.model != expected_job.model_route.model
+    )
+    if policy.require_model_route_match and route_mismatch:
+        raise BatchRunnerError(
+            "STALE_CHECKPOINT_MODEL_ROUTE",
+            "Checkpoint model route does not match the current job",
+        )
+    if (
+        policy.require_prompt_hash_match
+        and checkpoint.prompt_hash != expected_job.model_route.prompt_hash
+    ):
+        raise BatchRunnerError(
+            "STALE_CHECKPOINT_PROMPT_HASH",
+            "Checkpoint prompt_hash does not match the current job",
         )
 
     version_mismatch = (

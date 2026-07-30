@@ -89,6 +89,7 @@ def test_retry_policy_enforces_hard_attempt_limit() -> None:
     job = contract.BatchJob(
         batch_id="retry-test",
         question_id="Q001",
+        source_hash="b" * 64,
         input_hash="c" * 64,
         workspace="retry-test/Q001/workspace",
         context_id="ctx:retry-test:Q001:cccccccccccccccc",
@@ -130,6 +131,7 @@ def test_terminal_job_rejects_additional_failure_registration() -> None:
     job = contract.BatchJob(
         batch_id="terminal-test",
         question_id="Q001",
+        source_hash="b" * 64,
         input_hash="d" * 64,
         workspace="terminal-test/Q001/workspace",
         context_id="ctx:terminal-test:Q001:dddddddddddddddd",

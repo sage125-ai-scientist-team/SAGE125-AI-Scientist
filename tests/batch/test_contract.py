@@ -16,6 +16,7 @@ def _job(contract: Any, question_id: str = "Q001", **changes: Any) -> Any:
     values = {
         "batch_id": "batch-contract-test",
         "question_id": question_id,
+        "source_hash": "b" * 64,
         "input_hash": "a" * 64,
         "workspace": f"batch-contract-test/{question_id}/workspace",
         "context_id": f"ctx:batch-contract-test:{question_id}:aaaaaaaaaaaaaaaa",
@@ -170,6 +171,7 @@ def test_complete_actual_job_requires_and_accepts_all_outputs() -> None:
             model="test-model",
             model_version="test-model-v1",
             prompt_version="test-prompt-v1",
+            prompt_hash="c" * 64,
         ),
         output_contract=contract.OutputContract(
             fields=fields,
