@@ -14,6 +14,14 @@ from app.evidence.bundle_builder import (
     estimate_token_count,
     runtime_card_to_contract,
 )
+from app.evidence.citation_renderer import (
+    CitationItem,
+    T08CitationPayload,
+    build_citation_item,
+    build_t08_citation_payload,
+    render_citation_markdown,
+)
+from app.evidence.gold_set import gold_set_count, load_evidence_gold_set
 from app.evidence.support_checker import (
     ClaimText,
     SupportCheckResult,
@@ -26,16 +34,23 @@ from app.evidence.support_checker import (
 
 __all__ = [
     "BuildBundleResult",
+    "CitationItem",
     "ClaimSpec",
     "ClaimText",
     "SupportCheckResult",
     "SupportDecision",
     "SupportErrorCode",
     "SupportFinding",
+    "T08CitationPayload",
+    "build_citation_item",
     "build_evidence_bundle",
+    "build_t08_citation_payload",
     "bundle_to_agent_context",
     "check_bundle_support",
     "check_claim_evidence_support",
     "estimate_token_count",
+    "gold_set_count",
+    "load_evidence_gold_set",
+    "render_citation_markdown",
     "runtime_card_to_contract",
 ]
