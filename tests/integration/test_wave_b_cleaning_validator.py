@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib
 import json
 import subprocess
 import sys
@@ -17,7 +18,7 @@ EVAL_ROOT = ROOT / "scripts" / "eval"
 if str(EVAL_ROOT) not in sys.path:
     sys.path.insert(0, str(EVAL_ROOT))
 
-import wave_b_cleaning_validator as cleaning_validator
+cleaning_validator = importlib.import_module("wave_b_cleaning_validator")
 
 
 def write_json(path: Path, payload: object) -> None:

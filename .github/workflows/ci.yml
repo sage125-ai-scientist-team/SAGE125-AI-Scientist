@@ -30,6 +30,8 @@ jobs:
         run: python -X utf8 -m pip install -r requirements.txt
       - name: Run Wave A lint contract
         run: python -X utf8 scripts/eval/wave_a_quality.py lint > "${{ runner.temp }}/lint-result.json"
+      - name: Run Ruff correctness gate
+        run: python -X utf8 -m ruff check scripts/eval tests/integration
       - name: Upload lint result
         if: always()
         uses: actions/upload-artifact@v4
@@ -102,6 +104,30 @@ jobs:
         with:
           name: t09-integration-junit
           path: ${{ runner.temp }}/integration-junit.xml
+          if-no-files-found: error
+          retention-days: 14
+
+  coverage:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: python -X utf8 -m pip install -r requirements.txt
+      - name: Run full suite under coverage
+        run: python -X utf8 -m coverage run --data-file "${{ runner.temp }}/coverage.data" -m pytest -q --junitxml "${{ runner.temp }}/coverage-junit.xml"
+      - name: Enforce progressive coverage gate
+        run: python -X utf8 -m coverage report --data-file "${{ runner.temp }}/coverage.data" --fail-under=65
+      - name: Upload coverage result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t09-coverage-junit
+          path: ${{ runner.temp }}/coverage-junit.xml
           if-no-files-found: error
           retention-days: 14
 
