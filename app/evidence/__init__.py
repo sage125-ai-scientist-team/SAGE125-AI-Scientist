@@ -22,6 +22,11 @@ from app.evidence.citation_renderer import (
     render_citation_markdown,
 )
 from app.evidence.gold_set import gold_set_count, load_evidence_gold_set
+from app.evidence.metrics import (
+    MetricsReport,
+    compute_metrics,
+    generate_wave_b_metrics_artifacts,
+)
 from app.evidence.q028_regression import Q028RegressionReport, run_q028_regression
 from app.evidence.support_checker import (
     ClaimText,
@@ -38,6 +43,7 @@ __all__ = [
     "CitationItem",
     "ClaimSpec",
     "ClaimText",
+    "MetricsReport",
     "Q028RegressionReport",
     "SupportCheckResult",
     "SupportDecision",
@@ -50,7 +56,9 @@ __all__ = [
     "bundle_to_agent_context",
     "check_bundle_support",
     "check_claim_evidence_support",
+    "compute_metrics",
     "estimate_token_count",
+    "generate_wave_b_metrics_artifacts",
     "gold_set_count",
     "load_evidence_gold_set",
     "render_citation_markdown",

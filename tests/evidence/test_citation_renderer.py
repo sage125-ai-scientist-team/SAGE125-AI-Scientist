@@ -76,12 +76,12 @@ def test_t08_payload_includes_upstream_and_fields():
     assert "Citations" in data["markdown"]
 
 
-def test_gold_set_expanded_to_at_least_24_loadable_pairs():
-    """黄金集扩展为 ≥24 条且可机器加载。"""
+def test_gold_set_expanded_to_at_least_30_loadable_pairs():
+    """黄金集扩展为 ≥30 条且可机器加载。"""
     pairs = load_evidence_gold_set()
-    assert gold_set_count() >= 24
-    assert len(pairs) >= 24
+    assert gold_set_count() >= 30
+    assert len(pairs) >= 30
     assert pairs[0]["claim_id"] == "CLAIM-001"
-    assert pairs[-1]["claim_id"] == "CLAIM-024"
+    assert pairs[-1]["claim_id"] == "CLAIM-030"
     assert all(p.get("quote") for p in pairs)
     assert all(isinstance(p.get("locator"), dict) and p["locator"] for p in pairs)
