@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from types import SimpleNamespace
 
 from app.contracts.rag import SourceRecord, SourceRole, SourceType
@@ -59,3 +60,10 @@ def test_renamed_registered_booklet_is_not_treated_as_user_evidence(tmp_path):
     assert captured_metadata["source_type"] != SourceType.PAPER.value
     assert captured_metadata["source_role"] == SourceRole.QUESTION_SOURCE.value
     assert captured_metadata["source_role"] != "user_literature"
+    document = json.loads(
+        (uploads_dir / ".library_manifest.json").read_text(encoding="utf-8")
+    )["documents"][0]
+    assert document["source_id"] == "SOURCE-BOOKLET-125"
+    assert document["content_hash"] == content_hash
+    assert document["source_type"] == SourceType.BOOKLET.value
+    assert document["source_role"] == SourceRole.QUESTION_SOURCE.value
