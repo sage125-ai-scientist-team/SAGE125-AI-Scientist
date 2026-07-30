@@ -43,6 +43,8 @@ class ScientificReviewerAgent(BaseAgent):
             OpenAI 风格消息列表。
         """
         payload = {
+            "revision_iteration": input_data.get("revision_iteration", 1),
+            "review_result": input_data.get("review_result") or {},
             "recommended_hypothesis": input_data.get("recommended_hypothesis") or {},
             "hypothesis_generation": input_data.get("hypothesis_generation") or {},
             "experiment_design": input_data.get("experiment_design") or {},
@@ -59,10 +61,24 @@ class ScientificReviewerAgent(BaseAgent):
         返回 mock ReviewResult。
 
         为便于测试“未通过 -> 自动修订 1 次 -> 通过”，当环境变量
-        MOCK_REVIEW_FAIL=true 且尚未修订过（revision_history 为空）时返回 fail。
+        MOCK_REVIEW_FAIL=true 时，只有带完整首轮反馈的第二轮输入才返回 pass。
+        这避免仅凭 revision_history 增长把重复生成误判为成功修订。
         """
         force_fail = os.getenv("MOCK_REVIEW_FAIL", "").strip().lower() in ("1", "true", "yes")
-        # 仅在首轮返回 fail，第二轮（已修订）返回 pass，避免无限循环。
-        if force_fail and not state.revision_history:
-            return mock_outputs.get_mock("review_fail", input_data.get("question_item", {}))
+        if force_fail:
+            previous_review = input_data.get("review_result")
+            has_feedback_revision = (
+                input_data.get("revision_iteration") == 2
+                and isinstance(previous_review, dict)
+                and all(
+                    field in previous_review
+                    for field in (
+                        "critical_issues",
+                        "required_revisions",
+                        "reviewer_comments",
+                    )
+                )
+            )
+            if not has_feedback_revision:
+                return mock_outputs.get_mock("review_fail", input_data.get("question_item", {}))
         return mock_outputs.get_mock("review", input_data.get("question_item", {}))
