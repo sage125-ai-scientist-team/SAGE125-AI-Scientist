@@ -3,6 +3,7 @@ T01 Evidence 运行时模块（Wave B）。
 
 本包在契约层 ``app.contracts.evidence`` 之上提供可调用的构建与校验能力。
 工作流接入（``pipeline.py``）由 T02 完成；本包不得越权修改 pipeline。
+不修改已通过的 Wave A 契约文件内容（除非队长明确要求改冻结接口）。
 """
 
 from app.evidence.bundle_builder import (
@@ -13,12 +14,28 @@ from app.evidence.bundle_builder import (
     estimate_token_count,
     runtime_card_to_contract,
 )
+from app.evidence.support_checker import (
+    ClaimText,
+    SupportCheckResult,
+    SupportDecision,
+    SupportErrorCode,
+    SupportFinding,
+    check_bundle_support,
+    check_claim_evidence_support,
+)
 
 __all__ = [
     "BuildBundleResult",
     "ClaimSpec",
+    "ClaimText",
+    "SupportCheckResult",
+    "SupportDecision",
+    "SupportErrorCode",
+    "SupportFinding",
     "build_evidence_bundle",
     "bundle_to_agent_context",
+    "check_bundle_support",
+    "check_claim_evidence_support",
     "estimate_token_count",
     "runtime_card_to_contract",
 ]
