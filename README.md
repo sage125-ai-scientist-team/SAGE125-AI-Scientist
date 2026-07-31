@@ -1,4 +1,15 @@
-# SAGE125-AI-Scientist
+> [!IMPORTANT]
+> **公开可见不等于开源 / Publicly viewable does not mean open source.**
+>
+> 本仓库不授予开源许可。除 GitHub 服务条款或适用法律允许的行为外，
+> 项目团队以外的个人或组织未经相关版权所有者书面许可，不得复制、使用、
+> 修改或再分发团队原创内容。详情参见 [NOTICE.md](NOTICE.md)。
+>
+> This repository does not grant an open-source license. External copying,
+> use, modification, or redistribution of original project content beyond
+> rights provided by GitHub's Terms of Service or applicable law requires
+> prior written permission from the relevant copyright holders.
+> See [NOTICE.md](NOTICE.md).# SAGE125-AI-Scientist
 
 ## 1. 项目简介
 
