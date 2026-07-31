@@ -3,10 +3,16 @@
 ## Provenance
 
 - PR: `#12` — https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/12
-- Reviewed/current HEAD: `ea9ca2190457a861782d6c543e989474704039c0`
+- Tested code SHA: `07e1b1e13520db3ab2ca2027ff190fe812ed3d22`
+- Integration SHA: `d2c4650164bc6e03e3bac847911c68ee79a4d0bb`
+- Integration comparison: `ahead=11`, `behind=0`
 - Branch: `t07/a-batch-contract`
+- Validation date: `2026-08-01` (`Asia/Shanghai`)
+- Environment: Windows / PowerShell
 - Python: `3.12.10`
-- Evidence scope: current uncommitted Request Changes fixes in T07 owner paths
+- Python executable: `D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe`
+- Evidence scope: commands were executed against the Tested code SHA above;
+  subsequent report/evidence edits do not change the tested code provenance.
 - Provider/API calls: none
 - Formal/actual research results: none
 
@@ -97,25 +103,39 @@ existence.
 
 | Command | Result |
 |---|---|
-| `python -m compileall app/batch app/contracts/batch.py scripts/batch_125 tests/batch` | exit 0 |
-| `python -m pytest -q tests/batch/test_contamination.py tests/batch/test_review_fixes.py` | 19 passed in 5.10s |
-| `python -m pytest -q tests/batch -vv` | 45 passed in 9.43s |
-| `python -m pytest -q tests/batch` | 45 passed in 9.63s |
-| `python -m pytest -q` | 283 passed, 35 skipped in 60.20s |
-| synthetic dry-run | 125 jobs/checkpoints, 125 unique isolation keys, 0 provider/token/actual/artifact/temp |
+| `& ".\.venv\Scripts\python.exe" -m pytest -q tests\batch` | exit 0; collected 45; 45 passed, 0 failed, 0 skipped, 0 warnings in 7.62s; first failure: none |
+| `& ".\.venv\Scripts\python.exe" -m pytest -q` | exit 0; collected 662; 625 passed, 0 failed, 37 skipped, 0 warnings in 35.39s; first failure: none |
+| `& ".\.venv\Scripts\python.exe" -m scripts.batch_125.dry_run --source "tests/batch/fixtures/questions_125.synthetic.json" --source-kind synthetic --run-root ".pytest_tmp/pr_a_final" --batch-id "pr-a-final"` | exit 0; synthetic dry-run validation passed |
+
+The synthetic dry-run stdout reported exactly:
+
+- `jobs=125`
+- `unique_workspaces=125`
+- `unique_context_ids=125`
+- `unique_cache_namespaces=125`
+- `checkpoints=125`
+- `provider_calls=0`
+- `tokens_used=0`
+- `actual_results=0`
+- `research_artifacts=0`
+- `temporary_files=0`
+- `source_kind=synthetic`
+- `dry_run=true`
+
+Current UTF-8 (no BOM) evidence files:
+
+- `docs/modules/T07/evidence/pr_a_final_batch_tests.txt`
+- `docs/modules/T07/evidence/pr_a_final_dry_run.txt`
+- `docs/modules/T07/evidence/pr_a_final_full_tests.txt`
 
 ## Remaining external and cross-owner items
 
-- Central `integration/2026-08-10` advanced after the reviewed snapshot:
-  current tip `3addcea5eaf0ec582b29c1e6288b9d0351ed2932`, while the PR head is
-  `ea9ca2190457a861782d6c543e989474704039c0`. The GitHub Compare API reports
-  `status=diverged`, `ahead_by=5`, `behind_by=6`, merge base
-  `5c7fbff91bca49498aaa0b01d87dfd70345314f8`. This task forbids merge/rebase,
-  so an authorized integration sync and complete re-verification are required
-  before push/Ready.
-- PR #12 remains Draft. This task explicitly forbids editing the PR or marking
-  it Ready; the team member must perform that action after an authorized
-  commit/push.
+- Current `upstream/integration/2026-08-10` is fully contained in the tested
+  branch: `ahead=11`, `behind=0`. No integration sync blocker remains for this
+  verification snapshot.
+- PR #12 is closed and unmerged per the current task context. Reopening it is
+  an explicit manual action; this task does not edit, reopen, or mark the PR
+  Ready.
 - `docs/contracts/T07.md` is outside the current explicit owner allowlist and
   was not modified. The P2 contract-doc alignment suggestion remains a
   cross-owner follow-up.
