@@ -41,6 +41,8 @@ WDBC_SOURCE_URL = (
 WDBC_CACHE_RELATIVE_DIR = "datasets/uci-wdbc-v1995-10-31"
 WDBC_TARGET_FILENAME = "wdbc.data"
 MAX_DOWNLOAD_BYTES = 1024 * 1024
+WDBC_PIN_SHA256 = "d606af411f3e5be8a317a5a8b652b425aaf0ff38ca683d5327ffff94c3695f4a"
+WDBC_PIN_SIZE_BYTES = 124103
 DATASET_MODULE = "app.execution.datasets"
 
 FROZEN_SYMBOLS = (
@@ -98,7 +100,7 @@ REG_CASES = _family(
         "WDBC schema dimensions and labels are frozen",
         "download ceiling is exactly one MiB",
         "archives are rejected",
-        "default WDBC definition is explicitly pending a hash and size pin",
+        "default WDBC definition carries the independently verified hash and size pin",
         "dataset definitions are immutable",
         "duplicate dataset identifiers are rejected",
         "unknown dataset identifiers have a stable error",
@@ -334,8 +336,8 @@ LICENSE_CASES = _family(
 PIN_CASES = _family(
     "PIN",
     (
-        "an unpinned default hash fails before any network request",
-        "an unpinned exact size fails before any network request",
+        "a test-only unpinned hash fails before any network request",
+        "a test-only unpinned exact size fails before any network request",
         "fetch exposes no caller pin, URL, license, or version overrides",
         "candidate inspection validates only inside staging_root",
         "a candidate cannot become a formal manifest or resolved dataset",
@@ -818,9 +820,9 @@ def _exercise_registry_case(
     elif number == 7:
         assert _enum_value(definition.archive_policy) == "reject"
     elif number == 8:
-        assert definition.expected_sha256 is None
-        assert definition.expected_size_bytes is None
-        assert getattr(definition, "is_pinned", False) is False
+        assert definition.expected_sha256 == WDBC_PIN_SHA256
+        assert definition.expected_size_bytes == WDBC_PIN_SIZE_BYTES
+        assert getattr(definition, "is_pinned", False) is True
     elif number == 9:
         original = definition.version
         with pytest.raises(Exception):
@@ -2467,8 +2469,8 @@ def _exercise_pin_case(
         elif number == 6:
             after = _public_dump(registry.get(api.WDBC_DATASET_ID))
             assert after == before
-            assert after["expected_sha256"] is None
-            assert after["expected_size_bytes"] is None
+            assert after["expected_sha256"] == WDBC_PIN_SHA256
+            assert after["expected_size_bytes"] == WDBC_PIN_SIZE_BYTES
         else:
             summary = dict(_candidate_summary(candidate))
             assert summary["computed_sha256"] == hashlib.sha256(synthetic).hexdigest()
