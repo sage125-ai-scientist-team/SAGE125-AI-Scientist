@@ -7,6 +7,7 @@ from collections import namedtuple
 from pathlib import Path
 from types import SimpleNamespace
 
+from app.contracts.rag import SourceRole
 from app.rag.library_manager import LibraryManager
 
 
@@ -119,7 +120,7 @@ def test_booklet_is_rejected_and_user_documents_use_dedicated_scope(tmp_path):
     call = ledger.index_calls[0]
     assert Path(call["index_dir"]) == tmp_path / "user-index" / "zvec"
     assert call["is_user_upload"] is True
-    assert call["metadata_overrides"]["source_role"] == "user_literature"
+    assert call["metadata_overrides"]["source_role"] == SourceRole.USER_UPLOAD.value
     assert call["metadata_overrides"]["source_path"].startswith("library://DOC-")
     assert "sjtu-booklet" not in json.dumps(call, ensure_ascii=False).lower()
 
