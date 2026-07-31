@@ -1,8 +1,8 @@
 """Pinned, offline-first dataset acquisition for controlled executions.
 
-The default catalogue deliberately describes the WDBC source without claiming
-an integrity pin.  Formal resolution is therefore disabled until a separately
-reviewed download records both its digest and exact byte count.
+The default catalogue records only an independently verified WDBC digest and
+exact byte count.  Formal resolution remains fail-closed for unpinned custom
+definitions.
 """
 
 from __future__ import annotations
@@ -418,8 +418,8 @@ def _default_wdbc_definition() -> DatasetDefinition:
         license_url="https://creativecommons.org/licenses/by/4.0/",
         citation="Wolberg, Street, and Mangasarian; WDBC (1995).",
         doi="10.24432/C5DW2B",
-        expected_sha256=None,
-        expected_size_bytes=None,
+        expected_sha256="d606af411f3e5be8a317a5a8b652b425aaf0ff38ca683d5327ffff94c3695f4a",
+        expected_size_bytes=124103,
         max_download_bytes=1024 * 1024,
         expected_rows=569,
         expected_columns=32,
