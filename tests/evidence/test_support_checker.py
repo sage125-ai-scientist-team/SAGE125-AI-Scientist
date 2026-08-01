@@ -11,6 +11,8 @@ from app.evidence.support_checker import (
     SupportDecision,
     SupportErrorCode,
     check_claim_evidence_support,
+    is_booklet_evidence,
+    is_doi_only_text,
     is_metadata_only,
 )
 
@@ -81,6 +83,92 @@ def test_block_metadata_only_supports():
     )
     assert result.blocked is True
     assert SupportErrorCode.METADATA_ONLY.value in result.error_codes
+
+
+def test_block_doi_only_quoted_text_supports():
+    """
+    队长 P0 / T01-B-004：DOI-only quote 不得支撑事实。
+
+    probe: quoted_text='10.1234/x.y.z' → metadata-only → BLOCK，无 allowed_links。
+    """
+    assert is_doi_only_text("10.1234/x.y.z") is True
+    assert is_doi_only_text("https://doi.org/10.1234/x.y.z") is True
+    assert is_doi_only_text("doi:10.1234/x.y.z") is True
+    assert is_doi_only_text("EGFR inhibition improves response in cohort.") is False
+
+    card = _card(
+        evidence_id="EV-DOI-ONLY",
+        title="Some paper title",
+        quoted_text="10.1234/x.y.z",
+        doi="10.1234/x.y.z",
+    )
+    assert is_metadata_only(card) is True
+    result = check_claim_evidence_support(
+        [
+            ClaimText(
+                claim_id="C-DOI",
+                text="10.1234/x.y.z proves a clinical fact by identifier alone",
+                evidence_ids=["EV-DOI-ONLY"],
+                domain="oncology",
+                relation="supports",
+            )
+        ],
+        [card],
+    )
+    assert result.blocked is True
+    assert SupportErrorCode.METADATA_ONLY.value in result.error_codes
+    assert result.allowed_links == []
+
+
+def test_block_url_only_quoted_text_supports():
+    """纯 URL quote（无正文）→ metadata-only BLOCK。"""
+    card = _card(
+        evidence_id="EV-URL-ONLY",
+        title="Landing page",
+        quoted_text="https://example.org/paper/123",
+        url="https://example.org/paper/123",
+    )
+    assert is_metadata_only(card) is True
+    result = check_claim_evidence_support(
+        [
+            ClaimText(
+                claim_id="C-URL",
+                text="https://example.org/paper/123 alone establishes the fact",
+                evidence_ids=["EV-URL-ONLY"],
+                domain="oncology",
+            )
+        ],
+        [card],
+    )
+    assert result.blocked is True
+    assert SupportErrorCode.METADATA_ONLY.value in result.error_codes
+
+
+def test_booklet_rename_still_excluded():
+    """跨 PR：source_type 改名但仍含 booklet 线索 → 仍排除。"""
+    card = _card(
+        evidence_id="renamed_booklet_excerpt_Q028",
+        source_id="corpus-question-pack-01",
+        source_type="dataset",
+        title="Booklet question pack excerpt",
+        quoted_text="Broad cancer question text from the student booklet.",
+        locator={"collection": "question_booklet_v2"},
+        domain="oncology",
+    )
+    assert is_booklet_evidence(card) is True
+    result = check_claim_evidence_support(
+        [
+            ClaimText(
+                claim_id="C-BOOK-RENAME",
+                text="Broad cancer question text from the student booklet proves therapy",
+                evidence_ids=["renamed_booklet_excerpt_Q028"],
+                domain="oncology",
+            )
+        ],
+        [card],
+    )
+    assert result.blocked is True
+    assert SupportErrorCode.BOOKLET_EXCLUDED.value in result.error_codes
 
 
 def test_block_booklet_supports():

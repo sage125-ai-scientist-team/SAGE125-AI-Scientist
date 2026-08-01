@@ -100,6 +100,10 @@ class MetricsReport:
             "pending_or_degraded_rate": self.pending_or_degraded_rate,
             "precision_target": 0.90,
             "meets_precision_target": self.meets_precision_target,
+            "precision_interpretation": (
+                "fixture_accuracy_vs_hand_assigned_expected_decision"
+            ),
+            "not_independent_scientific_precision": True,
             "degrade_strategy": self.degrade_strategy,
             "pair_evals": [asdict(item) for item in self.pair_evals],
         }
@@ -247,9 +251,11 @@ def compute_metrics(path: Path | None = None) -> MetricsReport:
 
     degrade_strategy = (
         "Uncertain supports are degraded (DEGRADE) rather than ALLOW; "
-        "booklet / fake booklet IDs / metadata-only are BLOCK; "
+        "booklet / fake booklet IDs / metadata-only (title/DOI/URL-only) are BLOCK; "
         "cross-domain and cancer overgeneralization are DEGRADE. "
-        "Precision target is evaluated on predicted ALLOW only."
+        "support_precision is fixture accuracy vs hand-assigned expected_decision "
+        "on predicted ALLOW only — NOT an independent scientific annotator score. "
+        "All gold pairs remain provisional=true until Wave C DoD sign-off."
     )
     meets = support_precision >= 0.90
 

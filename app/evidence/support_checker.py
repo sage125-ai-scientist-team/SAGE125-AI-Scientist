@@ -6,8 +6,8 @@ Claim–Evidence 支持关系检查器 — T01 Wave B（07/31）。
 
 阻断类别（≥5）：
 1. UNKNOWN_EVIDENCE_ID — 引用不存在的 evidence_id
-2. METADATA_ONLY — 标题/元数据冒充原文（quote==title 或空 quote）
-3. BOOKLET_EXCLUDED — 问题册不得支撑 established facts
+2. METADATA_ONLY — 标题/DOI/URL/元数据冒充原文（含 DOI-only quote）
+3. BOOKLET_EXCLUDED — 问题册不得支撑 established facts（含改名线索）
 4. CROSS_DOMAIN — supports 跨域外推
 5. NON_ENTAILMENT — 声明与摘录无明显语义重叠（保守启发式）
 6. UNSUPPORTED_CLAIM — supports 关系但无任何可用证据绑定
@@ -211,39 +211,117 @@ def _normalize_tokens(text: str) -> set[str]:
     return {tok for tok in raw if len(tok) >= 2 and tok not in _STOPWORDS}
 
 
+# DOI / DOI URL：单独出现时不得充当科学原文（手册：标题/DOI/问题册不得单独支撑事实）。
+_DOI_CORE_RE = re.compile(
+    r"^10\.\d{4,9}/[-._;()/:A-Z0-9]+$",
+    re.IGNORECASE,
+)
+_DOI_PREFIXED_RE = re.compile(
+    r"^(?:doi:|https?://(?:dx\.)?doi\.org/)\s*(10\.\d{4,9}/[-._;()/:A-Z0-9]+)$",
+    re.IGNORECASE,
+)
+_URL_ONLY_RE = re.compile(r"^https?://\S+$", re.IGNORECASE)
+
+
+def is_doi_only_text(text: str) -> bool:
+    """
+    判断文本是否仅为 DOI 或 DOI URL（无独立科学原文）。
+
+    参数：
+        text: quoted_text 或同类字段。
+
+    返回：
+        True 表示 DOI-only / DOI-URL-only。
+
+    说明：
+        覆盖队长 DOI probe：``quoted_text='10.1234/x.y.z'`` 必须为 True。
+    """
+    value = (text or "").strip()
+    if not value:
+        return False
+    if _DOI_CORE_RE.match(value):
+        return True
+    prefixed = _DOI_PREFIXED_RE.match(value)
+    if prefixed and _DOI_CORE_RE.match(prefixed.group(1)):
+        return True
+    return False
+
+
 def is_metadata_only(card: EvidenceCardContract) -> bool:
     """
-    判断证据是否仅为标题/元数据（无独立原文）。
+    判断证据是否仅为标题/DOI/URL 等元数据（无独立原文）。
 
     参数：
         card: 契约证据卡。
 
     返回：
-        True 表示 metadata-only。
+        True 表示 metadata-only，supports 必须 BLOCK。
+
+    规则：
+        1. 空 quote；
+        2. quote 与 title 忽略大小写全等；
+        3. quote 仅为 DOI / DOI URL；
+        4. quote 与 ``doi`` / ``url`` 字段规范化后相等；
+        5. quote 仅为裸 http(s) URL（无正文）。
     """
     quote = (card.quoted_text or "").strip()
     title = (card.title or "").strip()
     if not quote:
         return True
-    return quote.lower() == title.lower()
+    if quote.lower() == title.lower():
+        return True
+    if is_doi_only_text(quote):
+        return True
+
+    doi = (card.doi or "").strip()
+    if doi and quote.lower() in {doi.lower(), f"doi:{doi.lower()}", f"https://doi.org/{doi.lower()}"}:
+        return True
+
+    url = (card.url or "").strip()
+    if url and quote.lower() == url.lower():
+        return True
+
+    if _URL_ONLY_RE.match(quote):
+        return True
+
+    return False
 
 
 def is_booklet_evidence(card: EvidenceCardContract) -> bool:
     """
-    判断证据是否来自问题册。
+    判断证据是否来自问题册（含改名/别名绕过的保守识别）。
 
     参数：
         card: 契约证据卡。
 
     返回：
         True 表示 booklet / question_booklet 来源。
+
+    说明：
+        除 ``source_type`` 外，检查 source_id / title / locator / evidence_id
+        中的 booklet / question_booklet / booklet_excerpt 线索，降低 T04 改名孔洞风险。
     """
     if card.source_type == "question_booklet":
         return True
-    if "booklet" in (card.source_id or "").lower():
-        return True
-    source = str(card.locator.get("source", "")).lower()
-    return source == "booklet"
+
+    haystacks = [
+        card.source_id or "",
+        card.evidence_id or "",
+        card.title or "",
+        str(card.locator.get("source", "")),
+        str(card.locator.get("collection", "")),
+        str(card.locator.get("corpus", "")),
+        str(card.locator.get("dataset", "")),
+    ]
+    joined = " ".join(haystacks).lower()
+    markers = (
+        "booklet",
+        "question_booklet",
+        "question-booklet",
+        "booklet_excerpt",
+        "bookletexcerpt",
+    )
+    return any(marker in joined for marker in markers)
 
 
 def has_lexical_entailment(claim_text: str, quoted_text: str) -> bool:
