@@ -19,7 +19,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
-from app.contracts.rag import IndexConfig, SourcePolicy, SourceRecord
+from app.contracts.rag import (
+    IndexConfig,
+    SourcePolicy,
+    SourceRecord,
+    SourceRole,
+    SourceType,
+)
 from app.core.config import PROJECT_ROOT, Settings, get_settings
 from app.core.logging import get_logger
 from app.rag.indexing_service import IndexingService
@@ -61,8 +67,6 @@ def _safe_filename(raw_name: str) -> str:
     ext = Path(name).suffix.lower()
     if ext not in _SUPPORTED_EXTENSIONS:
         raise LibraryValidationError("仅支持 PDF、TXT、MD、CSV。")
-    if name.lower() == _RESERVED_SOURCE_NAME:
-        raise LibraryValidationError("sjtu-booklet.pdf 是问题来源，不能加入本地文献库。")
     if Path(name).stem.upper() in _WINDOWS_RESERVED:
         raise LibraryValidationError("文件名是 Windows 保留名称。")
     if len(name) > 180:
@@ -595,6 +599,12 @@ class LibraryManager:
                     )
                 except (TypeError, ValueError) as exc:
                     rejected.append(f"{name}: 来源分类失败：{exc}")
+                    continue
+                if (
+                    source.source_type is SourceType.BOOKLET
+                    or source.source_role is SourceRole.QUESTION_SOURCE
+                ):
+                    rejected.append(f"{name}: 问题来源不能加入本地文献库。")
                     continue
                 existing = existing_by_sha.get(digest)
                 if existing is not None:

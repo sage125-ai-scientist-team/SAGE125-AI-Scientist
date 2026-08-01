@@ -31,24 +31,37 @@ def test_registry_source_policy_returns_registered_identity():
     assert result is registered
 
 
-def test_registry_source_policy_uses_safe_default_independent_of_filename():
-    content_hash = "b" * 64
-    policy = RegistrySourcePolicy()
+def test_fresh_policies_recognize_renamed_booklet_from_stable_hash():
+    pdf_bytes = b"%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\n%%EOF"
+    content_hash = hashlib.sha256(pdf_bytes).hexdigest()
 
-    paper_named = policy.classify_source(
-        filename="definitely-a-paper.pdf",
-        content_hash=content_hash,
-        registry={},
-    )
-    booklet_named = policy.classify_source(
+    original = RegistrySourcePolicy().classify_source(
         filename="sjtu-booklet.pdf",
         content_hash=content_hash,
         registry={},
     )
+    renamed = RegistrySourcePolicy().classify_source(
+        filename="renamed_booklet.pdf",
+        content_hash=content_hash,
+        registry={},
+    )
 
-    assert paper_named.source_type is SourceType.UNKNOWN
-    assert paper_named.source_role is SourceRole.USER_UPLOAD
-    assert booklet_named == paper_named
+    assert original.source_type is SourceType.BOOKLET
+    assert original.source_role is SourceRole.QUESTION_SOURCE
+    assert renamed == original
+
+
+def test_registry_source_policy_uses_safe_default_for_unregistered_content():
+    content_hash = "e" * 64
+
+    result = RegistrySourcePolicy().classify_source(
+        filename="definitely-a-paper.pdf",
+        content_hash=content_hash,
+        registry={},
+    )
+
+    assert result.source_type is SourceType.UNKNOWN
+    assert result.source_role is SourceRole.USER_UPLOAD
 
 
 def test_registry_source_policy_rejects_invalid_hash_and_registry_mismatch():
