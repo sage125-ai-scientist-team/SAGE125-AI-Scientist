@@ -3,9 +3,9 @@
 ## Provenance
 
 - PR: `#12` — https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/12
-- Tested code SHA: `07e1b1e13520db3ab2ca2027ff190fe812ed3d22`
-- Integration SHA: `d2c4650164bc6e03e3bac847911c68ee79a4d0bb`
-- Integration comparison: `ahead=11`, `behind=0`
+- Tested code SHA: `4fcc99d085d1000e0ed8d4f543203d780109013f`
+- Integration SHA: `898cc08fd434caf926bd3b765870057399f1c788`
+- Integration comparison: `ahead=13`, `behind=0`
 - Branch: `t07/a-batch-contract`
 - Validation date: `2026-08-01` (`Asia/Shanghai`)
 - Environment: Windows / PowerShell
@@ -103,12 +103,14 @@ existence.
 
 | Command | Result |
 |---|---|
-| `& ".\.venv\Scripts\python.exe" -m pytest -q tests\batch` | exit 0; collected 45; 45 passed, 0 failed, 0 skipped, 0 warnings in 7.62s; first failure: none |
-| `& ".\.venv\Scripts\python.exe" -m pytest -q` | exit 0; collected 662; 625 passed, 0 failed, 37 skipped, 0 warnings in 35.39s; first failure: none |
-| `& ".\.venv\Scripts\python.exe" -m scripts.batch_125.dry_run --source "tests/batch/fixtures/questions_125.synthetic.json" --source-kind synthetic --run-root ".pytest_tmp/pr_a_final" --batch-id "pr-a-final"` | exit 0; synthetic dry-run validation passed |
+| `& ".\.venv\Scripts\python.exe" -m pytest -q tests\batch` | exit 0; collected 45; 45 passed, 0 failed, 0 skipped, 0 warnings in 7.16s; first failure: none |
+| `& ".\.venv\Scripts\python.exe" -m pytest -q` | exit 0; collected 701; 664 passed, 0 failed, 37 skipped, 0 warnings in 57.35s; first failure: none |
+| `& ".\.venv\Scripts\python.exe" -m scripts.batch_125.dry_run --source "tests/batch/fixtures/questions_125.synthetic.json" --source-kind synthetic --run-root ".pytest_tmp/pr_a_replacement" --batch-id "pr-a-replacement"` | exit 0; synthetic dry-run validation passed |
 
 The synthetic dry-run stdout reported exactly:
 
+- `batch_id=pr-a-replacement`
+- `manifest_path=.pytest_tmp/pr_a_replacement/pr-a-replacement/manifest.json`
 - `jobs=125`
 - `unique_workspaces=125`
 - `unique_context_ids=125`
@@ -131,7 +133,7 @@ Current UTF-8 (no BOM) evidence files:
 ## Remaining external and cross-owner items
 
 - Current `upstream/integration/2026-08-10` is fully contained in the tested
-  branch: `ahead=11`, `behind=0`. No integration sync blocker remains for this
+  branch: `ahead=13`, `behind=0`. No integration sync blocker remains for this
   verification snapshot.
 - PR #12 is closed and unmerged per the current task context. Reopening it is
   an explicit manual action; this task does not edit, reopen, or mark the PR
