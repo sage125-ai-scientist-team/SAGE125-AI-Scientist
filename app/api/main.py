@@ -7,19 +7,46 @@ app.api.main —— FastAPI 应用入口。
 
 from __future__ import annotations
 
+import os
+import re
+import uuid
+from contextlib import asynccontextmanager
+from pathlib import Path
+
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.api.errors import (
+    APIError,
+    api_error_handler,
+    error_response,
+    http_error_handler,
+    validation_error_handler,
+)
+from app.api.job_queue import InProcessJobQueue, JobRunner, PipelineJobRunner
+from app.api.job_store import JobStore, SQLiteJobStore
 from app.api.routes import router
+from app.api.v1 import router as v1_router
 from app.core.config import get_settings
-from app.core.logging import setup_logging
+from app.core.logging import get_logger, setup_logging
 
 # 项目版本，用于 OpenAPI 文档展示。
 from app import __version__
 
 
-def create_app() -> FastAPI:
+_CORRELATION_ID = re.compile(r"^[A-Za-z0-9._-]{1,128}$")
+logger = get_logger("api.main")
+
+
+def create_app(
+    *,
+    job_store: JobStore | None = None,
+    job_runner: JobRunner | None = None,
+    queue_capacity: int = 100,
+    worker_count: int = 1,
+) -> FastAPI:
     """
     应用工厂：初始化日志、创建 FastAPI 实例并挂载路由与 CORS。
 
@@ -30,11 +57,35 @@ def create_app() -> FastAPI:
     settings = get_settings()
     setup_logging(settings.log_level)
 
+    @asynccontextmanager
+    async def lifespan(application: FastAPI):
+        export_root = Path(
+            os.getenv("SAGE_TEST_EXPORT_DIR") or settings.export_dir
+        )
+        store = job_store or SQLiteJobStore(
+            export_root / ".api-state" / "jobs.sqlite3"
+        )
+        store.initialize()
+        job_queue = InProcessJobQueue(
+            store,
+            job_runner or PipelineJobRunner(),
+            capacity=queue_capacity,
+            worker_count=worker_count,
+        )
+        application.state.job_store = store
+        application.state.job_queue = job_queue
+        job_queue.start()
+        try:
+            yield
+        finally:
+            job_queue.stop()
+
     # 创建应用并声明基础元信息。
     application = FastAPI(
         title="SAGE125-AI-Scientist",
         description="面向赛道 A『科学假设生成与研究计划设计』的 AI Scientist 原型 API。",
         version=__version__,
+        lifespan=lifespan,
     )
     # 仅允许显式配置的本地 Streamlit origin，避免把本地 API 暴露给任意网页。
     allowed_origins = [x.strip() for x in settings.cors_allow_origins.split(",") if x.strip()]
@@ -44,6 +95,12 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    application.add_exception_handler(APIError, api_error_handler)
+    application.add_exception_handler(RequestValidationError, validation_error_handler)
+    from fastapi import HTTPException
+
+    application.add_exception_handler(HTTPException, http_error_handler)
 
     @application.middleware("http")
     async def reject_oversized_upload_request(request: Request, call_next):
@@ -64,8 +121,49 @@ def create_app() -> FastAPI:
                     )
         return await call_next(request)
 
+    # 最后注册，使 correlation middleware 位于其它 HTTP middleware 外层，
+    # 包括 multipart 解析前直接返回的 413。
+    @application.middleware("http")
+    async def propagate_correlation_id(request: Request, call_next):
+        raw = request.headers.get("X-Correlation-ID", "").strip()
+        if raw and not _CORRELATION_ID.fullmatch(raw):
+            request.state.correlation_id = str(uuid.uuid4())
+            if request.url.path.startswith("/api/v1"):
+                return error_response(
+                    request,
+                    APIError(
+                        status_code=400,
+                        code="INVALID_CORRELATION_ID",
+                        message="X-Correlation-ID 格式无效。",
+                    ),
+                )
+            raw = ""
+        request.state.correlation_id = raw or str(uuid.uuid4())
+        try:
+            response = await call_next(request)
+        except Exception as exc:  # noqa: BLE001
+            if not request.url.path.startswith("/api/v1"):
+                raise
+            logger.error(
+                "v1_unhandled_error correlation_id=%s error_type=%s",
+                request.state.correlation_id,
+                type(exc).__name__,
+            )
+            return error_response(
+                request,
+                APIError(
+                    status_code=500,
+                    code="INTERNAL_ERROR",
+                    message="服务发生未预期错误。",
+                    retryable=False,
+                ),
+            )
+        response.headers["X-Correlation-ID"] = request.state.correlation_id
+        return response
+
     # 挂载业务路由。
     application.include_router(router)
+    application.include_router(v1_router)
     return application
 
 
