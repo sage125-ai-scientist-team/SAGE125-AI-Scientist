@@ -9,17 +9,23 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.agents.base import AgentOutputError
+from app.agents.experiment_designer import ExperimentDesignerAgent
+from app.agents.hypothesis_generator import HypothesisGeneratorAgent
+from app.agents.scientific_reviewer import ScientificReviewerAgent
+from app.contracts.evidence import EvidenceBundle
 from app.contracts.revision import (
     IssueClosure,
     PlanVersion,
     ReviewFeedback,
     issues_from_review_feedback,
 )
+from app.contracts.validation import HumanFeedbackDirective
 
 
 ClosureStatus = Literal["open", "resolved"]
@@ -80,6 +86,8 @@ class ExperimentRevisionContext(BaseModel):
     unresolved_issues: list[IssueClosure] = Field(default_factory=list)
     failure_reasons: list[FailureReason] = Field(default_factory=list)
     reviewer_feedback: ReviewFeedback
+    evidence_bundle: EvidenceBundle | None = None
+    human_feedback: HumanFeedbackDirective | None = None
     required_change_fields: tuple[str, ...] = (
         "change_id",
         "issue_id",
@@ -100,7 +108,43 @@ class ExperimentRevisionContext(BaseModel):
         expected_child = self.parent_version_id.rsplit(":v", 1)[0] + ":v2"
         if self.lineage[-1] != expected_child:
             raise ValueError("revision lineage must target V2")
+        if (
+            self.human_feedback is not None
+            and self.human_feedback.target_version_id != self.parent_version_id
+        ):
+            raise ValueError("human feedback must target the parent plan version")
         return self
+
+
+class RevisionRoundInput(BaseModel):
+    """Strict transport boundary for feedback plus revision-only context."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    review_result: ReviewFeedback
+    revision_context: ExperimentRevisionContext
+
+
+class ReviewScoreChange(BaseModel):
+    """One Reviewer score delta between V1 and V2."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    before: float = Field(ge=0.0, le=1.0)
+    after: float = Field(ge=0.0, le=1.0)
+    delta: float
+
+
+class CandidateHypothesisRank(BaseModel):
+    """Deterministic candidate ranking retained in the two-round audit."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    rank: int = Field(ge=1)
+    original_index: int = Field(ge=0)
+    hypothesis: str = Field(min_length=1)
+    overall_score: float = Field(ge=0.0, le=1.0)
+    recommended: bool = False
 
 
 class ExperimentSectionDiff(BaseModel):
@@ -155,6 +199,11 @@ class ExplainableRevisionAudit(BaseModel):
     changes: list[RevisionChange] = Field(default_factory=list)
     issue_closures: list[IssueClosure] = Field(default_factory=list)
     substantive_sections: list[SubstantiveSection] = Field(default_factory=list)
+    score_changes: dict[str, ReviewScoreChange] = Field(default_factory=dict)
+    candidate_hypothesis_ranking: list[CandidateHypothesisRank] = Field(
+        default_factory=list
+    )
+    responded_issue_count: int = Field(default=0, ge=0)
     blocking_reasons: list[str] = Field(default_factory=list)
     remaining_blockers: list[str] = Field(default_factory=list)
     stop_reason: str | None = None
@@ -170,6 +219,7 @@ class ExplainableRevisionAudit(BaseModel):
             or has_open_issue
             or not self.final_reviewer_feedback.is_effective_pass
             or not self.changes
+            or self.responded_issue_count < 1
         ):
             raise ValueError("accepted revision cannot retain blockers")
         return self
@@ -245,6 +295,8 @@ def build_experiment_revision_context(
     previous_version: PlanVersion,
     unresolved_issues: Sequence[IssueClosure],
     failure_reasons: Sequence[FailureReason],
+    evidence_bundle: EvidenceBundle | None = None,
+    human_feedback: HumanFeedbackDirective | None = None,
 ) -> ExperimentRevisionContext:
     """Build the exact structured payload supplied to revision-round agents."""
     if previous_version.version_number != 1:
@@ -263,6 +315,16 @@ def build_experiment_revision_context(
         unresolved_issues=[issue.model_copy(deep=True) for issue in unresolved_issues],
         failure_reasons=[reason.model_copy(deep=True) for reason in failure_reasons],
         reviewer_feedback=previous_version.review_feedback.model_copy(deep=True),
+        evidence_bundle=(
+            evidence_bundle.model_copy(deep=True)
+            if evidence_bundle is not None
+            else None
+        ),
+        human_feedback=(
+            human_feedback.model_copy(deep=True)
+            if human_feedback is not None
+            else None
+        ),
     )
 
 
@@ -270,14 +332,65 @@ def inject_revision_context(
     payload: Mapping[str, Any],
     context: ExperimentRevisionContext,
 ) -> dict[str, Any]:
-    """Expose context at input top level and in the existing Agent message carrier."""
+    """Attach context beside a strict ReviewFeedback without polluting its schema."""
     result = dict(payload)
-    details = context.model_dump(mode="json")
-    result.update(details)
-    review_result = dict(result.get("review_result") or {})
-    review_result["revision_context"] = details
-    result["review_result"] = review_result
+    envelope = RevisionRoundInput(
+        review_result=ReviewFeedback.from_review_result(
+            result.get("review_result")
+        ),
+        revision_context=context.model_copy(deep=True),
+    )
+    result.update(envelope.model_dump(mode="json"))
     return result
+
+
+class _RevisionMessageMixin:
+    """Validate and preserve the strict revision envelope in Agent messages."""
+
+    def build_messages(self, input_data: dict) -> list[dict]:
+        messages = super().build_messages(input_data)  # type: ignore[misc]
+        if input_data.get("revision_context") is None:
+            return messages
+        envelope = RevisionRoundInput.model_validate(
+            {
+                "review_result": input_data.get("review_result"),
+                "revision_context": input_data.get("revision_context"),
+            }
+        )
+        user_payload = json.loads(messages[1]["content"])
+        user_payload.update(envelope.model_dump(mode="json"))
+        return [
+            dict(messages[0]),
+            {
+                **messages[1],
+                "content": json.dumps(
+                    user_payload,
+                    ensure_ascii=False,
+                    default=str,
+                ),
+            },
+        ]
+
+
+class RevisionAwareHypothesisGeneratorAgent(
+    _RevisionMessageMixin,
+    HypothesisGeneratorAgent,
+):
+    """Workflow-owned HypothesisGenerator adapter for strict revision input."""
+
+
+class RevisionAwareExperimentDesignerAgent(
+    _RevisionMessageMixin,
+    ExperimentDesignerAgent,
+):
+    """Workflow-owned ExperimentDesigner adapter for strict revision input."""
+
+
+class RevisionAwareScientificReviewerAgent(
+    _RevisionMessageMixin,
+    ScientificReviewerAgent,
+):
+    """Workflow-owned ScientificReviewer adapter for strict revision input."""
 
 
 _SECTION_ALIASES: tuple[tuple[SubstantiveSection, tuple[str, ...]], ...] = (
@@ -409,6 +522,64 @@ def _validated_evidence_refs(
         allowed = set(available)
         return [ref for ref in declared if ref in allowed]
     return available
+
+
+_REVIEW_SCORE_FIELDS: tuple[str, ...] = (
+    "evidence_grounding_score",
+    "falsifiability_score",
+    "reproducibility_score",
+    "reference_reliability_score",
+)
+
+
+def _review_score_changes(
+    before: ReviewFeedback,
+    after: ReviewFeedback,
+) -> dict[str, ReviewScoreChange]:
+    changes: dict[str, ReviewScoreChange] = {}
+    for field_name in _REVIEW_SCORE_FIELDS:
+        before_value = float(getattr(before, field_name))
+        after_value = float(getattr(after, field_name))
+        changes[field_name] = ReviewScoreChange(
+            before=before_value,
+            after=after_value,
+            delta=after_value - before_value,
+        )
+    return changes
+
+
+def _candidate_hypothesis_ranking(
+    hypothesis_generation: Mapping[str, Any],
+) -> list[CandidateHypothesisRank]:
+    raw_candidates = hypothesis_generation.get("hypotheses") or []
+    if not isinstance(raw_candidates, Sequence) or isinstance(
+        raw_candidates,
+        (str, bytes),
+    ):
+        return []
+    recommended_index = int(
+        hypothesis_generation.get("recommended_hypothesis_index", 0)
+    )
+    candidates: list[tuple[int, str, float]] = []
+    for index, value in enumerate(raw_candidates):
+        if not isinstance(value, Mapping):
+            continue
+        hypothesis = str(value.get("hypothesis") or "").strip()
+        if not hypothesis:
+            continue
+        score = float(value.get("overall_score") or 0.0)
+        candidates.append((index, hypothesis, score))
+    ordered = sorted(candidates, key=lambda item: (-item[2], item[0]))
+    return [
+        CandidateHypothesisRank(
+            rank=rank,
+            original_index=index,
+            hypothesis=hypothesis,
+            overall_score=score,
+            recommended=index == recommended_index,
+        )
+        for rank, (index, hypothesis, score) in enumerate(ordered, start=1)
+    ]
 
 
 def assess_experiment_revision(
@@ -551,9 +722,16 @@ def assess_experiment_revision(
         for issue in closures
         if issue.status == "open"
     ]
+    responded_issue_count = sum(
+        1
+        for issue in closures
+        if issue.opened_in_version == 1 and issue.status == "resolved"
+    )
     accepted = not blocking
     stop_reason = None
-    if not final_snapshot.is_effective_pass:
+    if not diffs:
+        stop_reason = "no_improvement"
+    elif not final_snapshot.is_effective_pass:
         stop_reason = "max_revision_iterations_exhausted"
     elif blocking:
         stop_reason = "revision_acceptance_blocked"
@@ -572,10 +750,345 @@ def assess_experiment_revision(
         changes=changes,
         issue_closures=closures,
         substantive_sections=[diff.section for diff in diffs],
+        score_changes=_review_score_changes(initial_feedback, final_snapshot),
+        candidate_hypothesis_ranking=_candidate_hypothesis_ranking(
+            revised_hypothesis
+        ),
+        responded_issue_count=responded_issue_count,
         blocking_reasons=blocking,
         remaining_blockers=remaining,
         stop_reason=stop_reason,
         accepted=accepted,
+    )
+
+
+class RevisionExecutionState(BaseModel):
+    """Serializable bounded-control checkpoint for one revision run."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal[1] = 1
+    run_id: str = Field(min_length=1)
+    max_iterations: int = Field(default=2, ge=1)
+    max_retries: int = Field(default=1, ge=0)
+    current_iteration: int = Field(default=1, ge=1)
+    retry_count: int = Field(default=0, ge=0)
+    status: Literal["active", "paused", "completed", "stopped"] = "active"
+    processed_event_ids: tuple[str, ...] = ()
+    version_ids: tuple[str, ...] = ()
+    failure_reasons: tuple[str, ...] = ()
+    pause_reason: str | None = None
+    stop_reason: str | None = None
+
+    @model_validator(mode="after")
+    def _validate_checkpoint(self) -> "RevisionExecutionState":
+        if self.current_iteration > self.max_iterations:
+            raise ValueError("current iteration exceeds max_iterations")
+        if len(set(self.processed_event_ids)) != len(self.processed_event_ids):
+            raise ValueError("processed event IDs must be unique")
+        if len(self.version_ids) > self.max_iterations:
+            raise ValueError("version count exceeds max_iterations")
+        expected_versions = tuple(
+            f"{self.run_id}:v{number}"
+            for number in range(1, len(self.version_ids) + 1)
+        )
+        if self.version_ids != expected_versions:
+            raise ValueError("version IDs must be contiguous canonical lineage")
+        if self.status == "paused" and not (self.pause_reason or "").strip():
+            raise ValueError("paused revision requires pause_reason")
+        if self.status != "paused" and self.pause_reason is not None:
+            raise ValueError("pause_reason is only valid while paused")
+        if self.status == "stopped" and not (self.stop_reason or "").strip():
+            raise ValueError("stopped revision requires stop_reason")
+        if self.status != "stopped" and self.stop_reason is not None:
+            raise ValueError("stop_reason is only valid while stopped")
+        return self
+
+
+class RevisionExecutionController:
+    """Small deterministic controller for retry, idempotency, pause, and restore."""
+
+    def __init__(self, state: RevisionExecutionState) -> None:
+        self.state = RevisionExecutionState.model_validate(
+            state.model_dump(mode="json")
+        )
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        run_id: str,
+        max_iterations: int = 2,
+        max_retries: int = 1,
+    ) -> "RevisionExecutionController":
+        return cls(
+            RevisionExecutionState(
+                run_id=run_id,
+                max_iterations=max_iterations,
+                max_retries=max_retries,
+            )
+        )
+
+    def _replace(self, **updates: Any) -> None:
+        payload = self.state.model_dump(mode="json")
+        payload.update(updates)
+        self.state = RevisionExecutionState.model_validate(payload)
+
+    def serialize(self) -> str:
+        return _canonical_json(self.state.model_dump(mode="json"))
+
+    @classmethod
+    def deserialize(
+        cls,
+        payload: str | bytes | Mapping[str, Any],
+    ) -> "RevisionExecutionController":
+        if isinstance(payload, bytes):
+            payload = payload.decode("utf-8")
+        raw = json.loads(payload) if isinstance(payload, str) else dict(payload)
+        return cls(RevisionExecutionState.model_validate(raw))
+
+    def claim_event(self, event_id: str) -> bool:
+        normalized = event_id.strip()
+        if not normalized:
+            raise ValueError("event_id cannot be blank")
+        if normalized in self.state.processed_event_ids:
+            return False
+        self._replace(
+            processed_event_ids=(*self.state.processed_event_ids, normalized)
+        )
+        return True
+
+    def record_version(self, version_id: str) -> bool:
+        if version_id in self.state.version_ids:
+            return False
+        expected = f"{self.state.run_id}:v{len(self.state.version_ids) + 1}"
+        if version_id != expected:
+            raise ValueError(f"expected next version {expected}")
+        self._replace(version_ids=(*self.state.version_ids, version_id))
+        return True
+
+    def advance_iteration(self) -> int:
+        next_iteration = self.state.current_iteration + 1
+        if next_iteration > self.state.max_iterations:
+            self.stop("max_revision_iterations_exhausted")
+            return self.state.current_iteration
+        self._replace(current_iteration=next_iteration)
+        return next_iteration
+
+    def pause(self, reason: str) -> None:
+        normalized = reason.strip()
+        if not normalized:
+            raise ValueError("pause reason cannot be blank")
+        if self.state.status != "active":
+            raise ValueError("only an active revision can be paused")
+        self._replace(status="paused", pause_reason=normalized)
+
+    def resume(self) -> None:
+        if self.state.status != "paused":
+            raise ValueError("only a paused revision can be resumed")
+        self._replace(status="active", pause_reason=None)
+
+    def record_failure(self, reason: str) -> Literal["retry", "stopped"]:
+        normalized = reason.strip()
+        if not normalized:
+            raise ValueError("failure reason cannot be blank")
+        retry_count = self.state.retry_count + 1
+        failures = (*self.state.failure_reasons, normalized)
+        if retry_count <= self.state.max_retries:
+            self._replace(
+                retry_count=retry_count,
+                failure_reasons=failures,
+            )
+            return "retry"
+        self._replace(
+            retry_count=retry_count,
+            failure_reasons=failures,
+            status="stopped",
+            stop_reason="retry_budget_exhausted",
+        )
+        return "stopped"
+
+    def stop(self, reason: str) -> None:
+        normalized = reason.strip()
+        if not normalized:
+            raise ValueError("stop reason cannot be blank")
+        self._replace(
+            status="stopped",
+            pause_reason=None,
+            stop_reason=normalized,
+        )
+
+    def complete(self) -> None:
+        if self.state.status not in {"active", "paused"}:
+            raise ValueError("only an unfinished revision can complete")
+        self._replace(
+            status="completed",
+            pause_reason=None,
+            stop_reason=None,
+        )
+
+    def rollback_last_version(self) -> str:
+        if len(self.state.version_ids) < 2:
+            raise ValueError("rollback requires at least two versions")
+        removed = self.state.version_ids[-1]
+        self._replace(
+            version_ids=self.state.version_ids[:-1],
+            current_iteration=max(1, self.state.current_iteration - 1),
+            status="active",
+            pause_reason=None,
+            stop_reason=None,
+        )
+        return removed
+
+
+def run_revision_step_with_retry(
+    operation: Callable[[], Mapping[str, Any]],
+    *,
+    controller: RevisionExecutionController,
+    step_name: str,
+) -> dict[str, Any]:
+    """Run one revision step with a bounded retry and fail on empty output."""
+    normalized_step = step_name.strip()
+    if not normalized_step:
+        raise ValueError("step_name cannot be blank")
+    while True:
+        try:
+            value = operation()
+        except (TimeoutError, AgentOutputError) as exc:
+            outcome = controller.record_failure(
+                f"{normalized_step}:{type(exc).__name__}"
+            )
+            if outcome == "retry":
+                continue
+            raise
+        if isinstance(value, Mapping) and value:
+            return dict(value)
+        outcome = controller.record_failure(f"{normalized_step}:empty_output")
+        if outcome == "retry":
+            continue
+        raise ValueError(f"{normalized_step} returned empty output")
+
+
+class V1V2InputFingerprints(BaseModel):
+    """Exact complete-input hashes for the two reproduced rounds."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    v1: str = Field(pattern=r"^[0-9a-f]{64}$")
+    v2: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class TwoRoundCaseReport(BaseModel):
+    """Reproducible metric package proving one V1 issue is answered by V2."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: Literal[1] = 1
+    metric_id: Literal["T02-METRIC-003"] = "T02-METRIC-003"
+    case_id: str = Field(min_length=1)
+    run_id: str = Field(min_length=1)
+    v1_version_id: str = Field(min_length=1)
+    v2_version_id: str = Field(min_length=1)
+    input_fingerprints: V1V2InputFingerprints
+    responded_issue_count: int = Field(ge=0)
+    issue_ids: tuple[str, ...]
+    change_ids: tuple[str, ...]
+    score_changes: dict[str, ReviewScoreChange]
+    candidate_hypothesis_ranking: tuple[CandidateHypothesisRank, ...]
+    passed: bool = False
+
+    @model_validator(mode="after")
+    def _validate_result(self) -> "TwoRoundCaseReport":
+        expected_v1 = f"{self.run_id}:v1"
+        expected_v2 = f"{self.run_id}:v2"
+        if (self.v1_version_id, self.v2_version_id) != (expected_v1, expected_v2):
+            raise ValueError("case report requires canonical V1/V2 lineage")
+        if self.passed and (
+            self.responded_issue_count < 1
+            or not self.issue_ids
+            or not self.change_ids
+            or self.input_fingerprints.v1 == self.input_fingerprints.v2
+        ):
+            raise ValueError("passing METRIC-003 report lacks required evidence")
+        return self
+
+    @classmethod
+    def from_audit(
+        cls,
+        *,
+        case_id: str,
+        audit: ExplainableRevisionAudit,
+        input_fingerprints: Mapping[str, str],
+    ) -> "TwoRoundCaseReport":
+        fingerprints = V1V2InputFingerprints.model_validate(input_fingerprints)
+        issue_ids = tuple(
+            issue.issue_id
+            for issue in audit.issue_closures
+            if issue.opened_in_version == 1 and issue.status == "resolved"
+        )
+        change_ids = tuple(change.change_id for change in audit.changes)
+        passed = (
+            audit.accepted
+            and audit.responded_issue_count >= 1
+            and bool(issue_ids)
+            and bool(change_ids)
+            and fingerprints.v1 != fingerprints.v2
+        )
+        run_id = audit.parent_version_id.rsplit(":v", 1)[0]
+        return cls(
+            case_id=case_id,
+            run_id=run_id,
+            v1_version_id=audit.lineage[0],
+            v2_version_id=audit.lineage[-1],
+            input_fingerprints=fingerprints,
+            responded_issue_count=audit.responded_issue_count,
+            issue_ids=issue_ids,
+            change_ids=change_ids,
+            score_changes=audit.score_changes,
+            candidate_hypothesis_ranking=tuple(
+                audit.candidate_hypothesis_ranking
+            ),
+            passed=passed,
+        )
+
+
+class WaveBReadiness(BaseModel):
+    """Technical Ready decision; repository process approval remains external."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    ready: bool
+    blocking_reasons: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def _validate_decision(self) -> "WaveBReadiness":
+        if self.ready == bool(self.blocking_reasons):
+            raise ValueError("Ready decision contradicts blocking reasons")
+        return self
+
+
+def evaluate_wave_b_readiness(
+    *,
+    audit: ExplainableRevisionAudit,
+    case_report: TwoRoundCaseReport,
+    evidence_bundle: EvidenceBundle,
+    branch_up_to_date: bool,
+    quality_gates_passed: bool,
+) -> WaveBReadiness:
+    """Apply the formal Wave B technical gates without approving or merging a PR."""
+    EvidenceBundle.model_validate(evidence_bundle.model_dump(mode="json"))
+    blockers: list[str] = []
+    if not audit.accepted:
+        blockers.append("revision_audit_not_accepted")
+    if not case_report.passed or case_report.responded_issue_count < 1:
+        blockers.append("metric_003_not_reproduced")
+    if not branch_up_to_date:
+        blockers.append("branch_not_up_to_date")
+    if not quality_gates_passed:
+        blockers.append("quality_gates_failed")
+    return WaveBReadiness(
+        ready=not blockers,
+        blocking_reasons=tuple(blockers),
     )
 
 

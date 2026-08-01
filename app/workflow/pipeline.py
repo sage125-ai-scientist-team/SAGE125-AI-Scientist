@@ -34,6 +34,7 @@ from app.agents import (
     SupervisorAgent,
 )
 from app.agents.base import AgentOutputError
+from app.contracts.evidence import EvidenceBundle
 from app.contracts.revision import (
     PlanVersion,
     PlanVersionStore,
@@ -41,6 +42,7 @@ from app.contracts.revision import (
     RevisionContext,
     RevisionPromptBuilder,
 )
+from app.contracts.validation import HumanFeedbackDirective
 from app.core.config import get_settings
 from app.core.execution_mode import execution_mode, is_mock_mode
 from app.core.logging import get_logger, mask_text
@@ -50,12 +52,18 @@ from app.workflow.artifacts import ArtifactManager, generate_run_id, resolve_art
 from app.workflow.context_builder import ContextBuilder
 from app.workflow.explainable_revision import (
     ExperimentRevisionContext,
+    RevisionAwareExperimentDesignerAgent,
+    RevisionAwareHypothesisGeneratorAgent,
+    RevisionAwareScientificReviewerAgent,
+    RevisionExecutionController,
+    TwoRoundCaseReport,
     assess_experiment_revision,
     build_experiment_revision_context,
     failure_reasons_from_feedback,
     inject_revision_context,
     issues_for_revision,
     revision_trace_fields,
+    run_revision_step_with_retry,
 )
 from app.workflow.mock_outputs import PENDING_RESULTS, build_mock_evidence_cards
 from app.workflow.quality_gates import run_all_quality_gates
@@ -490,6 +498,8 @@ def _run_pipeline_with_state_impl(
     use_open_literature: bool = True,
     reviewer_auto_revision: bool = True,
     mock_mode: Optional[bool] = None,
+    evidence_bundle: EvidenceBundle | None = None,
+    human_feedback_directive: HumanFeedbackDirective | None = None,
 ) -> tuple[ResearchPlan, PipelineState]:
     """
     运行完整多智能体流水线，返回 (ResearchPlan, PipelineState)。
@@ -609,7 +619,7 @@ def _run_pipeline_with_state_impl(
         qdict,
         revision_iteration=1,
     )
-    hyp_result = HypothesisGeneratorAgent(settings).run(
+    hyp_result = RevisionAwareHypothesisGeneratorAgent(settings).run(
         first_hypothesis_input,
         state,
         step,
@@ -637,7 +647,7 @@ def _run_pipeline_with_state_impl(
         qdict,
         revision_iteration=1,
     )
-    exp_result = ExperimentDesignerAgent(settings).run(
+    exp_result = RevisionAwareExperimentDesignerAgent(settings).run(
         first_experiment_input,
         state,
         step,
@@ -652,7 +662,7 @@ def _run_pipeline_with_state_impl(
         qdict,
         revision_iteration=1,
     )
-    review = ScientificReviewerAgent(settings).run(
+    review = RevisionAwareScientificReviewerAgent(settings).run(
         first_reviewer_input,
         state,
         step,
@@ -677,6 +687,12 @@ def _run_pipeline_with_state_impl(
             unresolved_issues,
         )
         version_store = PlanVersionStore()
+        revision_controller = RevisionExecutionController.create(
+            run_id=state.run_id,
+            max_iterations=2,
+            max_retries=1,
+        )
+        revision_controller.claim_event(f"{state.run_id}:review:v1")
         first_version = PlanVersion.create(
             run_id=state.run_id,
             version_number=1,
@@ -698,12 +714,16 @@ def _run_pipeline_with_state_impl(
             },
         )
         version_store.save(first_version)
+        revision_controller.record_version(first_version.version_id)
         experiment_revision_context = build_experiment_revision_context(
             previous_version=first_version,
             unresolved_issues=unresolved_issues,
             failure_reasons=failure_reasons,
+            evidence_bundle=evidence_bundle,
+            human_feedback=human_feedback_directive,
         )
         state.revision_history.append("auto_revision_1: 依据评审意见重做假设与实验设计。")
+        revision_controller.advance_iteration()
         second_hypothesis_input = _hypothesis_generator_input(
             state,
             qdict,
@@ -711,10 +731,15 @@ def _run_pipeline_with_state_impl(
             review_result=first_review,
             experiment_revision_context=experiment_revision_context,
         )
-        hyp_result = HypothesisGeneratorAgent(settings).run(
-            second_hypothesis_input,
-            state,
-            step,
+        second_hypothesis_agent = RevisionAwareHypothesisGeneratorAgent(settings)
+        hyp_result = run_revision_step_with_retry(
+            lambda: second_hypothesis_agent.run(
+                second_hypothesis_input,
+                state,
+                step,
+            ),
+            controller=revision_controller,
+            step_name="hypothesis_generator",
         )
         step += 1
         state.hypothesis_generation = hyp_result
@@ -725,10 +750,15 @@ def _run_pipeline_with_state_impl(
             review_result=first_review,
             experiment_revision_context=experiment_revision_context,
         )
-        exp_result = ExperimentDesignerAgent(settings).run(
-            second_experiment_input,
-            state,
-            step,
+        second_experiment_agent = RevisionAwareExperimentDesignerAgent(settings)
+        exp_result = run_revision_step_with_retry(
+            lambda: second_experiment_agent.run(
+                second_experiment_input,
+                state,
+                step,
+            ),
+            controller=revision_controller,
+            step_name="experiment_designer",
         )
         step += 1
         state.experiment_design = exp_result
@@ -740,10 +770,15 @@ def _run_pipeline_with_state_impl(
             review_result=first_review,
             experiment_revision_context=experiment_revision_context,
         )
-        review = ScientificReviewerAgent(settings).run(
-            second_reviewer_input,
-            state,
-            step,
+        second_reviewer_agent = RevisionAwareScientificReviewerAgent(settings)
+        review = run_revision_step_with_retry(
+            lambda: second_reviewer_agent.run(
+                second_reviewer_input,
+                state,
+                step,
+            ),
+            controller=revision_controller,
+            step_name="scientific_reviewer",
         )
         step += 1
         state.review_result = review
@@ -758,34 +793,61 @@ def _run_pipeline_with_state_impl(
                 if item.get("id")
             ],
         )
-        second_version = PlanVersion.create(
-            run_id=state.run_id,
-            version_number=2,
-            parent_version_id=first_version.version_id,
-            revision_iteration=2,
-            hypothesis_generation=state.hypothesis_generation,
-            experiment_design=state.experiment_design,
-            review_feedback=review,
-            issue_closures=revision_audit.issue_closures,
-            prompt_fingerprints={
-                "hypothesis_generator": RevisionPromptBuilder.fingerprint(
-                    second_hypothesis_input
+        if revision_audit.substantive_sections:
+            second_version = PlanVersion.create(
+                run_id=state.run_id,
+                version_number=2,
+                parent_version_id=first_version.version_id,
+                revision_iteration=2,
+                hypothesis_generation=state.hypothesis_generation,
+                experiment_design=state.experiment_design,
+                review_feedback=review,
+                issue_closures=revision_audit.issue_closures,
+                prompt_fingerprints={
+                    "hypothesis_generator": RevisionPromptBuilder.fingerprint(
+                        second_hypothesis_input
+                    ),
+                    "experiment_designer": RevisionPromptBuilder.fingerprint(
+                        second_experiment_input
+                    ),
+                    "scientific_reviewer": RevisionPromptBuilder.fingerprint(
+                        second_reviewer_input
+                    ),
+                },
+            )
+            version_store.save(second_version)
+            revision_controller.record_version(second_version.version_id)
+        if revision_audit.accepted:
+            revision_controller.complete()
+        else:
+            revision_controller.stop(
+                revision_audit.stop_reason or "revision_acceptance_blocked"
+            )
+        case_report = TwoRoundCaseReport.from_audit(
+            case_id=f"{state.run_id}:wave-b-two-round",
+            audit=revision_audit,
+            input_fingerprints={
+                "v1": RevisionPromptBuilder.fingerprint(
+                    first_experiment_input
                 ),
-                "experiment_designer": RevisionPromptBuilder.fingerprint(
+                "v2": RevisionPromptBuilder.fingerprint(
                     second_experiment_input
-                ),
-                "scientific_reviewer": RevisionPromptBuilder.fingerprint(
-                    second_reviewer_input
                 ),
             },
         )
-        version_store.save(second_version)
-        state.agent_trace[-1].update(
-            revision_trace_fields(
-                revision_audit,
-                plan_versions=version_store.list_versions(state.run_id),
-            )
+        trace_fields = revision_trace_fields(
+            revision_audit,
+            plan_versions=version_store.list_versions(state.run_id),
         )
+        trace_fields.update(
+            {
+                "revision_control": revision_controller.state.model_dump(
+                    mode="json"
+                ),
+                "two_round_case_report": case_report.model_dump(mode="json"),
+            }
+        )
+        state.agent_trace[-1].update(trace_fields)
 
     # 12) ReportWriter：生成草稿（含 reference_ids）。
     draft = ReportWriterAgent(settings).run(
@@ -882,6 +944,8 @@ def run_pipeline_with_state(
     reviewer_auto_revision: bool = True,
     mock_mode: Optional[bool] = None,
     progress_callback: ProgressCallback | None = None,
+    evidence_bundle: EvidenceBundle | None = None,
+    human_feedback_directive: HumanFeedbackDirective | None = None,
 ) -> tuple[ResearchPlan, PipelineState]:
     """Run the pipeline in an isolated mode/progress context and persist failures."""
     resolved_mock = _is_mock(mock_mode)
@@ -898,6 +962,8 @@ def run_pipeline_with_state(
                     use_open_literature=use_open_literature,
                     reviewer_auto_revision=reviewer_auto_revision,
                     mock_mode=resolved_mock,
+                    evidence_bundle=evidence_bundle,
+                    human_feedback_directive=human_feedback_directive,
                 )
             except Exception as exc:
                 state = _ACTIVE_STATE.get()
@@ -931,6 +997,8 @@ def run_pipeline(
     use_open_literature: bool = True,
     reviewer_auto_revision: bool = True,
     mock_mode: Optional[bool] = None,
+    evidence_bundle: EvidenceBundle | None = None,
+    human_feedback_directive: HumanFeedbackDirective | None = None,
 ) -> ResearchPlan:
     """
     运行完整多智能体流水线并返回最终 ResearchPlan。
@@ -949,8 +1017,16 @@ def run_pipeline(
         最终 ResearchPlan。
     """
     plan, _state = run_pipeline_with_state(
-        question_id, user_files, user_feedback, use_local_rag, use_deep_research,
-        use_open_literature, reviewer_auto_revision, mock_mode,
+        question_id=question_id,
+        user_files=user_files,
+        user_feedback=user_feedback,
+        use_local_rag=use_local_rag,
+        use_deep_research=use_deep_research,
+        use_open_literature=use_open_literature,
+        reviewer_auto_revision=reviewer_auto_revision,
+        mock_mode=mock_mode,
+        evidence_bundle=evidence_bundle,
+        human_feedback_directive=human_feedback_directive,
     )
     return plan
 

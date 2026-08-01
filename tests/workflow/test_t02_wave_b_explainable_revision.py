@@ -364,9 +364,12 @@ def test_pipeline_experiment_prompt_and_trace_preserve_revision_audit(
         "failure_reasons",
         "reviewer_feedback",
     }
-    assert expected <= second.keys()
+    assert expected <= second["revision_context"].keys()
+    assert ReviewFeedback.from_review_result(second["review_result"])
+    assert "revision_context" not in second["review_result"]
     user_payload = json.loads(captured_agents[1].build_messages(second)[1]["content"])
-    assert expected <= user_payload["review_result"]["revision_context"].keys()
+    assert expected <= user_payload["revision_context"].keys()
+    assert ReviewFeedback.from_review_result(user_payload["review_result"])
 
     audit_events = [
         event for event in state.agent_trace
@@ -376,7 +379,6 @@ def test_pipeline_experiment_prompt_and_trace_preserve_revision_audit(
     audit = audit_events[0]["revision_audit"]
     assert [version["version_id"] for version in audit_events[0]["plan_versions"]] == [
         f"{state.run_id}:v1",
-        f"{state.run_id}:v2",
     ]
     assert audit["parent_version_id"] == f"{state.run_id}:v1"
     assert audit["lineage"] == [f"{state.run_id}:v1", f"{state.run_id}:v2"]
@@ -385,6 +387,11 @@ def test_pipeline_experiment_prompt_and_trace_preserve_revision_audit(
     assert audit["issue_closures"]
     # Existing mock output repeats the experiment; Wave B must expose and block it.
     assert "no_substantive_experiment_change" in audit["blocking_reasons"]
+    assert audit["stop_reason"] == "no_improvement"
+    assert audit_events[0]["revision_control"]["version_ids"] == [
+        f"{state.run_id}:v1"
+    ]
+    assert not audit_events[0]["two_round_case_report"]["passed"]
     assert plan.validation_status not in {"ready_for_validation", "validated"}
 
 
@@ -435,6 +442,14 @@ def test_pipeline_maps_a_substantive_second_round_change_and_closes_issues(
     assert all(change["reason"] and change["evidence_refs"] for change in audit["changes"])
     assert all(issue["status"] == "resolved" for issue in audit["issue_closures"])
     assert audit["blocking_reasons"] == []
+    trace = next(event for event in state.agent_trace if event.get("revision_audit"))
+    assert [version["version_id"] for version in trace["plan_versions"]] == [
+        f"{state.run_id}:v1",
+        f"{state.run_id}:v2",
+    ]
+    assert trace["revision_control"]["status"] == "completed"
+    assert trace["two_round_case_report"]["passed"]
+    assert trace["two_round_case_report"]["responded_issue_count"] >= 1
 
 
 def test_pipeline_keeps_budget_exhaustion_as_an_explicit_blocker(
@@ -459,6 +474,6 @@ def test_pipeline_keeps_budget_exhaustion_as_an_explicit_blocker(
         if event.get("revision_audit")
     )
     assert not audit["accepted"]
-    assert audit["stop_reason"] == "max_revision_iterations_exhausted"
+    assert audit["stop_reason"] == "no_improvement"
     assert any(issue["status"] == "open" for issue in audit["issue_closures"])
     assert plan.validation_status not in {"ready_for_validation", "validated"}

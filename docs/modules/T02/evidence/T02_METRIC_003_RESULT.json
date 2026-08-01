@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "metric_id": "T02-METRIC-003",
+  "source_manifest": "docs/modules/T02/evidence/T02_METRIC_003_CASE.json",
+  "computation_script": "tests/workflow/test_t02_wave_b_contract_hardening.py::test_metric_003_case_report_is_round_trip_safe_and_ready_gated",
+  "reproduction_command": ".venv\\Scripts\\python.exe -B -m pytest tests/workflow/test_t02_wave_b_contract_hardening.py::test_metric_003_case_report_is_round_trip_safe_and_ready_gated -ra",
+  "git_commit_reference": "PENDING_TECHNICAL_COMMIT",
+  "raw_result": {
+    "schema_version": 1,
+    "metric_id": "T02-METRIC-003",
+    "case_id": "metric-003-negative-control",
+    "run_id": "metric-003-run",
+    "v1_version_id": "metric-003-run:v1",
+    "v2_version_id": "metric-003-run:v2",
+    "input_fingerprints": {
+      "v1": "1111111111111111111111111111111111111111111111111111111111111111",
+      "v2": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "responded_issue_count": 2,
+    "issue_ids": [
+      "critical_issue:6521a4748741",
+      "required_revision:ba497377715c"
+    ],
+    "change_ids": [
+      "change:1db9d4425fee9585",
+      "change:f6eeac58fbac5bfc"
+    ],
+    "score_changes": {
+      "evidence_grounding_score": {
+        "before": 0.3,
+        "after": 0.8,
+        "delta": 0.5
+      },
+      "falsifiability_score": {
+        "before": 0.4,
+        "after": 0.8,
+        "delta": 0.4
+      },
+      "reproducibility_score": {
+        "before": 0.5,
+        "after": 0.9,
+        "delta": 0.4
+      },
+      "reference_reliability_score": {
+        "before": 0.6,
+        "after": 0.9,
+        "delta": 0.30000000000000004
+      }
+    },
+    "candidate_hypothesis_ranking": [
+      {
+        "rank": 1,
+        "original_index": 0,
+        "hypothesis": "A negative control will reveal leakage through AUROC collapse.",
+        "overall_score": 0.85,
+        "recommended": true
+      },
+      {
+        "rank": 2,
+        "original_index": 1,
+        "hypothesis": "Accuracy alone detects leakage.",
+        "overall_score": 0.55,
+        "recommended": false
+      }
+    ],
+    "passed": true
+  },
+  "metrics": {
+    "passed": true,
+    "responded_issue_count": 2
+  }
+}
