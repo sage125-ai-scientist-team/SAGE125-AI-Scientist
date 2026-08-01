@@ -74,13 +74,20 @@ def health() -> dict:
         健康信息字典。
     """
     settings = get_settings()
+    questions_count = _questions_count()
+    rag_index_status = _rag_index_status()
+    status = (
+        "ok"
+        if questions_count == 125 and rag_index_status != "unavailable"
+        else "degraded"
+    )
     return {
-        "status": "ok",
+        "status": status,
         "qwen_config_loaded": settings.qwen_configured,
         "deep_research_config_loaded": settings.deep_research_configured,
         "openalex_config_loaded": settings.openalex_configured,
-        "rag_index_status": _rag_index_status(),
-        "questions_count": _questions_count(),
+        "rag_index_status": rag_index_status,
+        "questions_count": questions_count,
         "models": {
             "fast": settings.qwen_fast_model,
             "balanced": settings.qwen_balanced_model,
@@ -274,7 +281,7 @@ def preflight_real(use_local_rag: bool = True, use_deep_research: bool = True) -
     return run_real_preflight(use_local_rag=use_local_rag, use_deep_research=use_deep_research)
 
 
-@router.post("/runs")
+@router.post("/runs", deprecated=True)
 def create_run(req: RunRequest) -> dict:
     """
     运行多智能体 pipeline，返回统一 RunResponse。
