@@ -141,15 +141,31 @@ def _pair_to_card(pair: dict[str, Any]) -> Optional[EvidenceCardContract]:
     card_domain = str(
         pair.get("evidence_domain") or pair.get("domain") or "methodology"
     )
+    locator = dict(pair["locator"])
+    # 保证金标夹具具备 supports 所需完整 provenance（非科学 DOI，仅测试身份）。
+    if not any(
+        key in locator and locator.get(key) not in (None, "", [])
+        for key in ("page", "section", "document", "source_path", "chunk")
+    ):
+        locator = {**locator, "document": "t01-gold-set", "section": "fixture"}
+
+    doi = str(pair.get("doi") or "").strip() or f"10.0000/t01.gold.{evidence_id.lower()}"
+    url = str(pair.get("url") or "").strip() or None
+    authors = pair.get("authors")
+    if not isinstance(authors, list) or not authors:
+        authors = ["gold-set-annotator"]
+
     return EvidenceCardContract(
         evidence_id=evidence_id,
         source_id=str(pair.get("source_id") or evidence_id),
         source_type=source_type,  # type: ignore[arg-type]
         title=str(pair.get("claim") or evidence_id)[:80],
         quoted_text=str(pair["quote"]),
-        locator=dict(pair["locator"]),
-        authors=["gold-set"],
+        locator=locator,
+        authors=[str(item) for item in authors],
         year=2026,
+        doi=doi,
+        url=url,
         content_hash=f"sha256:gold:{evidence_id}",
         domain=card_domain,
         verification_status="pending",

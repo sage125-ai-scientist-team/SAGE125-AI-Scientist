@@ -19,7 +19,7 @@ from app.evidence.support_checker import (
 
 def _card(**overrides) -> EvidenceCardContract:
     """
-    构造默认可用的契约证据卡。
+    构造默认可用的契约证据卡（含完整 supports provenance）。
 
     参数：
         **overrides: 字段覆盖。
@@ -36,6 +36,7 @@ def _card(**overrides) -> EvidenceCardContract:
         "locator": {"page": 3, "section": "Results"},
         "authors": ["A"],
         "year": 2024,
+        "doi": "10.1234/egfr.demo",
         "content_hash": "sha256:demo",
         "domain": "oncology",
         "verification_status": "pending",
@@ -152,7 +153,7 @@ def test_booklet_rename_still_excluded():
         source_type="dataset",
         title="Booklet question pack excerpt",
         quoted_text="Broad cancer question text from the student booklet.",
-        locator={"collection": "question_booklet_v2"},
+        locator={"collection": "question_booklet_v2", "page": 1},
         domain="oncology",
     )
     assert is_booklet_evidence(card) is True
@@ -169,6 +170,43 @@ def test_booklet_rename_still_excluded():
     )
     assert result.blocked is True
     assert SupportErrorCode.BOOKLET_EXCLUDED.value in result.error_codes
+
+
+def test_block_incomplete_provenance_from_loader_gap():
+    """
+    队长联审 T04-B→T01-B：loader 缺 locator/authors/DOI/hash → supports BLOCK。
+
+    T01 不改 T04 代码；在消费侧 fail-closed。
+    """
+    card = _card(
+        evidence_id="EV-INCOMPLETE",
+        authors=[],
+        doi=None,
+        url=None,
+        content_hash="sha256:incomplete",
+        locator={
+            "source": "runtime_evidence_card",
+            "evidence_id": "EV-INCOMPLETE",
+            "note": "locator_inferred_from_card_identity",
+        },
+        quoted_text="Some real looking quote about enzyme kinetics in vitro.",
+        title="Enzyme paper",
+    )
+    result = check_claim_evidence_support(
+        [
+            ClaimText(
+                claim_id="C-INC",
+                text="Some real looking quote about enzyme kinetics in vitro.",
+                evidence_ids=["EV-INCOMPLETE"],
+                domain="oncology",
+                relation="supports",
+            )
+        ],
+        [card],
+    )
+    assert result.blocked is True
+    assert SupportErrorCode.INCOMPLETE_PROVENANCE.value in result.error_codes
+    assert result.allowed_links == []
 
 
 def test_block_booklet_supports():

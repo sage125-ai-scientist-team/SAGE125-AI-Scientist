@@ -77,6 +77,7 @@ class SupportErrorCode(str, Enum):
     NON_ENTAILMENT = "NON_ENTAILMENT"
     OVERGENERALIZATION = "OVERGENERALIZATION"
     UNSUPPORTED_CLAIM = "UNSUPPORTED_CLAIM"
+    INCOMPLETE_PROVENANCE = "INCOMPLETE_PROVENANCE"
 
 
 # Q028 类虚构证据 ID：booklet_excerpt_Q028 等。
@@ -357,6 +358,43 @@ def is_fake_booklet_evidence_id(evidence_id: str) -> bool:
     return bool(_FAKE_BOOKLET_EVIDENCE_ID_RE.match((evidence_id or "").strip()))
 
 
+def incomplete_support_provenance_fields(card: EvidenceCardContract) -> list[str]:
+    """
+    检查 supports 所需的 T01 完整 provenance 字段。
+
+    对应队长联审 T04-B→T01-B FAIL：loader 须产出 locator / authors / DOI(或URL) / hash。
+    T01 侧对不完整卡片 fail-closed，禁止用残缺元数据支撑事实。
+
+    参数：
+        card: EvidenceCardContract。
+
+    返回：
+        缺失字段名列表（空表示可参与 supports 判定的后续门）。
+    """
+    missing: list[str] = []
+    locator = dict(card.locator or {})
+    if not locator:
+        missing.append("locator")
+    elif locator.get("note") == "locator_inferred_from_card_identity":
+        # builder 兜底推断不算 T04/来源完整 locator。
+        missing.append("locator")
+    else:
+        has_position = any(
+            key in locator and locator.get(key) not in (None, "", [])
+            for key in ("page", "section", "document", "source_path", "chunk")
+        )
+        if not has_position:
+            missing.append("locator")
+
+    if not list(card.authors or []):
+        missing.append("authors")
+    if not ((card.doi or "").strip() or (card.url or "").strip()):
+        missing.append("doi_or_url")
+    if not (card.content_hash or "").strip():
+        missing.append("content_hash")
+    return missing
+
+
 def is_cancer_overgeneralization(claim_text: str, quoted_text: str) -> bool:
     """
     检测“单一癌种证据 → 所有癌症”外推。
@@ -478,7 +516,7 @@ def check_claim_evidence_support(
                 result.blocked = True
                 continue
 
-            # 2) metadata-only 不得作为 supports。
+            # 2) metadata-only（含 DOI-only / URL-only）不得作为 supports。
             if claim.relation == "supports" and is_metadata_only(card):
                 result.findings.append(
                     SupportFinding(
@@ -488,12 +526,33 @@ def check_claim_evidence_support(
                         evidence_id=evidence_id,
                         message=(
                             f"metadata-only evidence {evidence_id!r} "
-                            f"(quote equals title) cannot support claim {claim.claim_id!r}"
+                            f"(title/DOI/URL-only quote) cannot support claim "
+                            f"{claim.claim_id!r}"
                         ),
                     )
                 )
                 result.blocked = True
                 continue
+
+            # 2b) T04→T01 完整 provenance：locator/authors/DOI|URL/hash 缺一不可。
+            if claim.relation == "supports":
+                missing_prov = incomplete_support_provenance_fields(card)
+                if missing_prov:
+                    result.findings.append(
+                        SupportFinding(
+                            code=SupportErrorCode.INCOMPLETE_PROVENANCE,
+                            decision=SupportDecision.BLOCK,
+                            claim_id=claim.claim_id,
+                            evidence_id=evidence_id,
+                            message=(
+                                f"incomplete provenance for supports on "
+                                f"{evidence_id!r}: missing={missing_prov}; "
+                                "loader must supply locator/authors/DOI-or-URL/hash"
+                            ),
+                        )
+                    )
+                    result.blocked = True
+                    continue
 
             # 3) 跨域 supports → 降级（不确定，不伪装通过）。
             if (

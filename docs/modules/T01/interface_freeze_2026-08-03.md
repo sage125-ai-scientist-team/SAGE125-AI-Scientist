@@ -49,6 +49,24 @@ PlanVersion.hypothesis_generation["evidence_bundle"] = {
 | `T01_CONFLICT_EVIDENCE` | P1 | 同 claim 同时 supports+contradicts |
 | `T01_EVIDENCE_FIELD_LOSS` | P0 | 投影丢失 quote/locator/hash 等 |
 
+## 4b. Support checker 错误码（消费侧）
+
+| Code | Decision | Meaning |
+|---|---|---|
+| `METADATA_ONLY` | BLOCK | 标题 / DOI-only / URL-only quote |
+| `BOOKLET_EXCLUDED` | BLOCK | 问题册（含改名线索） |
+| `INCOMPLETE_PROVENANCE` | BLOCK | supports 缺少 locator/authors/DOI\|URL/hash（T04 loader 缺口 fail-closed） |
+
+## 4c. T04 loader → T01 最低字段（联审要求）
+
+上游（T04）交付给 T01 的每张可用于 **supports** 的卡，必须完整包含：
+
+1. `locator`（真实页码/章节/路径，禁止仅 identity 兜底）
+2. `authors`
+3. `doi` 或 `url`
+4. `content_hash`（或可由非空 `quoted_text` 确定性生成）
+5. 非空科学 `quoted_text`（不得为 DOI-only）
+
 ## 5. 非所有权（不得改）
 
 - `app/workflow/pipeline.py`（T02）
