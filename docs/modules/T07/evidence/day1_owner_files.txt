@@ -1,0 +1,92 @@
+T07 Day 1 owner-scope inventory
+================================
+
+Recorded: 2026-07-28
+Branch: t07/a-batch-contract
+HEAD: 1642ea0
+
+Declared T07 owner paths
+------------------------
+
+Source: docs/governance/task-requirements/T07.yaml
+
+- app/batch/**
+- scripts/batch_125/**
+- app/contracts/batch.py
+- tests/batch/**
+- docs/modules/T07/**
+
+Fresh path inventory
+--------------------
+
+Command:
+rg --files app/batch scripts/batch_125 app/contracts/batch.py tests/batch docs/modules/T07
+
+Observed:
+
+- `app/batch/`: absent
+- `scripts/batch_125/`: absent
+- `app/contracts/batch.py`: absent
+- `tests/batch/`: absent
+- `docs/modules/T07/`: present; Day 1 documentation/evidence only
+
+Current files under the owner scope
+-----------------------------------
+
+- docs/modules/T07/evidence/day1_baseline.txt
+  Fresh Python 3.12.10 baseline result plus retained historical BLOCKED_ENVIRONMENT evidence.
+- docs/modules/T07/evidence/day1_batch_tests.txt
+  Records that tests/batch does not exist.
+- docs/modules/T07/evidence/day1_owner_files.txt
+  This owner-scope inventory.
+- docs/modules/T07/evidence/day1_question_files.txt
+  Question-source candidate inventory.
+- docs/modules/T07/evidence/day1_question_search.txt
+  Reproducible question-source search log.
+- docs/modules/T07/evidence/day1_question_audit.txt
+  Question-source conclusions and statistics.
+- docs/modules/T07/evidence/day1_mock_search.txt
+  Reproducible Mock/contamination search log.
+- docs/modules/T07/evidence/day1_contamination_audit.txt
+  Confirmed-case count, static risks, and blockers.
+- docs/modules/T07/evidence/day1_manifest_audit.txt
+  Current batch-manifest and recovery-capability audit.
+- docs/modules/T07/T07_DAY1_BATCH_AUDIT.md
+  Day 1 consolidated audit and architecture draft.
+
+Legacy implementation outside the declared T07 owner code paths
+---------------------------------------------------------------
+
+- scripts/run_batch_125.py
+  Existing batch CLI. Loads the expected question JSON, loops over selected questions, calls
+  `run_pipeline_with_state`, copies four artifacts into per-question directories, and writes
+  JSONL/CSV/summary/`batch_manifest.json`. Key lines: 38, 69-82, 100-123, 126-190.
+- app/workflow/pipeline.py
+  Current single-question loader and workflow entrypoint. The default question path is declared
+  at lines 54-56; `load_question` is at lines 84-119; each invocation creates a new run_id and
+  PipelineState at lines 399-409.
+- app/workflow/artifacts.py
+  Current per-run artifact writer. It isolates outputs under `exports/{run_id}/` at lines 51-65
+  and writes a per-run `artifacts_manifest.json` at lines 186-223.
+- tests/test_batch_125_mock.py
+  Legacy three-question mock test. It is outside `tests/batch/**` and is skipped when the expected
+  question JSON is missing.
+- scripts/extract_125_questions.py
+  Intended booklet extractor and question-source producer.
+
+Answers required by the Day 1 inventory
+---------------------------------------
+
+- Batch runner exists: yes, but only as legacy `scripts/run_batch_125.py`, outside the declared
+  `scripts/batch_125/**` owner path.
+- Formal T07 batch contract exists: no.
+- Tests exist: one legacy test exists at `tests/test_batch_125_mock.py`; `tests/batch/**` is absent.
+- Empty directories/placeholders: the four T07 code/test owner paths are absent, not placeholders.
+- Current batch entrypoint: `scripts/run_batch_125.py:main`.
+- Current single-question entrypoint: `app.workflow.pipeline.run_pipeline_with_state`.
+
+Scope conclusion
+----------------
+
+Day 1 did not modify any legacy implementation. A future implementation that needs changes outside
+the declared T07 owner paths must be raised as an owner-boundary blocker rather than edited here.

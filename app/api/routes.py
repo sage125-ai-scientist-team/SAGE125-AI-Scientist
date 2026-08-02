@@ -36,13 +36,25 @@ router = APIRouter()
 
 # 项目根与关键路径。
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-QUESTIONS_PATH = PROJECT_ROOT / "data" / "processed" / "questions_125.json"
 EXPORTS_DIR = PROJECT_ROOT / "exports"
 _REAL_RUN_SLOT = threading.BoundedSemaphore(value=1)
 
 
 def _exports_dir() -> Path:
-    return resolve_artifact_base(EXPORTS_DIR)
+    configured = Path(getattr(get_settings(), "export_dir", "exports"))
+    if not configured.is_absolute():
+        configured = PROJECT_ROOT / configured
+    return resolve_artifact_base(configured)
+
+
+def _questions_path() -> Path:
+    """Resolve the configured persistent data root, with a repository fallback."""
+    configured_root = Path(getattr(get_settings(), "data_dir", "data"))
+    if not configured_root.is_absolute():
+        configured_root = PROJECT_ROOT / configured_root
+    configured = configured_root / "processed" / "questions_125.json"
+    repository = PROJECT_ROOT / "data" / "processed" / "questions_125.json"
+    return configured if configured.exists() or not repository.exists() else repository
 
 
 def _rag_index_status() -> str:
@@ -57,10 +69,11 @@ def _rag_index_status() -> str:
 
 def _questions_count() -> int:
     """返回问题清单数量（文件缺失返回 0）。"""
-    if not QUESTIONS_PATH.exists():
+    questions_path = _questions_path()
+    if not questions_path.exists():
         return 0
     try:
-        return len(json.loads(QUESTIONS_PATH.read_text(encoding="utf-8")))
+        return len(json.loads(questions_path.read_text(encoding="utf-8")))
     except (json.JSONDecodeError, OSError):
         return 0
 
@@ -83,6 +96,11 @@ def health() -> dict:
     )
     return {
         "status": status,
+        "service": "sage125-api",
+        "bailian": {
+            "configured": settings.bailian.configured,
+            "status": "available" if settings.bailian.configured else "unavailable",
+        },
         "qwen_config_loaded": settings.qwen_configured,
         "deep_research_config_loaded": settings.deep_research_configured,
         "openalex_config_loaded": settings.openalex_configured,
@@ -172,9 +190,10 @@ def list_questions() -> dict:
         含 questions 的字典；文件缺失时返回 missing 提示。
     """
     # 文件缺失时给出清晰指引。
-    if not QUESTIONS_PATH.exists():
+    questions_path = _questions_path()
+    if not questions_path.exists():
         return {"status": "missing", "message": "请先运行 python scripts/extract_125_questions.py"}
-    items = json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
+    items = json.loads(questions_path.read_text(encoding="utf-8"))
     return {"status": "ok", "count": len(items), "questions": items}
 
 
@@ -310,7 +329,7 @@ def create_run(req: RunRequest) -> dict:
             resp = failed_run_response(req.question_id, mode, pf.get("errors", []), message="preflight 未通过")
             d = resp.to_api_dict()
             d["preflight"] = pf
-            raise HTTPException(status_code=400, detail=d)
+            raise HTTPException(status_code=503, detail=d)
 
     state = None
     acquired_real_slot = False
@@ -349,7 +368,9 @@ def create_run(req: RunRequest) -> dict:
             try:
                 from app.workflow.artifacts import ArtifactManager
 
-                ArtifactManager(state.run_id)._write_json("errors.json", [mask_text(str(exc))])
+                ArtifactManager(state.run_id, base_dir=_exports_dir())._write_json(
+                    "errors.json", [mask_text(str(exc))]
+                )
             except Exception:  # noqa: BLE001
                 pass
         raise HTTPException(status_code=500, detail=resp.to_api_dict()) from None

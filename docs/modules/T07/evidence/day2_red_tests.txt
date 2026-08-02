@@ -1,0 +1,93 @@
+T07 Day 2 RED test evidence
+============================
+
+Repository: D:\SAGE125-AI-Scientist
+Branch: t07/a-batch-contract
+Starting HEAD: ad9f395cd01775f93e9ad00b0fb11cc712550988
+Python: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+Command: & ".\.venv\Scripts\python.exe" -m pytest -q tests/batch
+Exit code: 1
+Collected: 22
+Passed: 1
+Failed: 21
+Skipped: 0
+Warnings: 0
+Duration: 0.28s
+
+Expected RED cause
+------------------
+
+The tests were written before production code. Contract tests failed with:
+
+    ModuleNotFoundError: No module named 'app.contracts'
+
+Runner tests failed with:
+
+    ModuleNotFoundError: No module named 'app.batch'
+
+The one passing test validated only that the committed test fixture is
+explicitly marked synthetic and contains the literal Q001-Q125 sequence.
+
+Raw pytest summary
+------------------
+
+    FFFFFFFFF.FFFFFFFFFFFF                                                   [100%]
+    ================================== FAILURES ===================================
+    __________________ test_duplicate_question_ids_are_rejected ___________________
+
+        def test_duplicate_question_ids_are_rejected() -> None:
+    >       contract = _contract()
+
+    tests\batch\test_contract.py:40:
+
+        def _contract() -> Any:
+    >       import app.contracts.batch as batch_contract
+    E       ModuleNotFoundError: No module named 'app.contracts'
+
+    tests\batch\test_contract.py:10: ModuleNotFoundError
+
+    __________________ test_dry_run_creates_exactly_125_planned_jobs ________________
+
+    tmp_path = WindowsPath('C:/Users/mmyyrr/AppData/Local/Temp/pytest-of-mmyyrr/pytest-8/test_dry_run_creates_exactly_10')
+
+        def test_dry_run_creates_exactly_125_planned_jobs(tmp_path: Path) -> None:
+    >       contract, _, _ = _modules()
+
+    tests\batch\test_runner.py:45:
+
+        def _modules() -> tuple[Any, Any, Any]:
+    >       import app.batch.checkpoint as checkpoint
+    E       ModuleNotFoundError: No module named 'app.batch'
+
+    tests\batch\test_runner.py:16: ModuleNotFoundError
+    =========================== short test summary info ===========================
+    FAILED tests/batch/test_contract.py::test_duplicate_question_ids_are_rejected
+    FAILED tests/batch/test_contract.py::test_manifest_json_round_trip_preserves_contract
+    FAILED tests/batch/test_contract.py::test_job_binds_all_isolation_and_provenance_fields
+    FAILED tests/batch/test_contract.py::test_retry_policy_rejects_limits_outside_hard_bounds
+    FAILED tests/batch/test_contract.py::test_budget_rejects_usage_above_limit
+    FAILED tests/batch/test_contract.py::test_failure_record_requires_stable_error_code
+    FAILED tests/batch/test_contract.py::test_mock_job_cannot_be_completed
+    FAILED tests/batch/test_contract.py::test_missing_required_artifacts_cannot_be_completed
+    FAILED tests/batch/test_contract.py::test_complete_actual_job_requires_and_accepts_all_outputs
+    FAILED tests/batch/test_runner.py::test_dry_run_creates_exactly_125_planned_jobs
+    FAILED tests/batch/test_runner.py::test_every_dry_run_job_has_a_unique_workspace
+    FAILED tests/batch/test_runner.py::test_every_dry_run_job_has_a_unique_context_id
+    FAILED tests/batch/test_runner.py::test_every_dry_run_job_has_a_unique_cache_namespace
+    FAILED tests/batch/test_runner.py::test_dry_run_never_invokes_model_provider
+    FAILED tests/batch/test_runner.py::test_retry_policy_enforces_hard_attempt_limit
+    FAILED tests/batch/test_runner.py::test_missing_production_source_has_stable_error_code
+    FAILED tests/batch/test_runner.py::test_unmarked_synthetic_source_is_rejected
+    FAILED tests/batch/test_runner.py::test_synthetic_source_cannot_masquerade_as_production
+    FAILED tests/batch/test_runner.py::test_dry_run_writes_readable_checkpoint_and_manifest
+    FAILED tests/batch/test_runner.py::test_resume_rejects_stale_input_hash
+    FAILED tests/batch/test_runner.py::test_resume_rejects_changed_model_version
+    21 failed, 1 passed in 0.28s
+
+Interpretation
+--------------
+
+This is an expected implementation-missing RED state, not an environment
+failure. Pytest collected and executed the new suite under Python 3.12.10.
+No production module existed when this evidence was captured.

@@ -132,10 +132,14 @@ class LibraryManager:
         source_registry: Mapping[str, SourceRecord] | None = None,
     ) -> None:
         self.settings = settings or get_settings()
+        configured_data_root = Path(getattr(self.settings, "data_dir", "data"))
+        if not configured_data_root.is_absolute():
+            configured_data_root = PROJECT_ROOT / configured_data_root
         self.index_config = index_config or IndexConfig.resolve(
-            {"data_root": PROJECT_ROOT / "data"}
+            {"data_root": configured_data_root}
         )
-        self.uploads_dir = Path(uploads_dir or USER_LIBRARY_UPLOADS_DIR)
+        default_uploads_dir = self.index_config.data_root / "raw" / "uploads"
+        self.uploads_dir = Path(uploads_dir or default_uploads_dir)
         self.index_dir = Path(index_dir or self.index_config.vector_index_dir)
         self.index_root = self.index_dir.parent
         self.chunks_manifest_path = (
