@@ -16,13 +16,13 @@
     "license_or_authorization": "Per-pair CC-BY open-access publisher licenses (see pairs.json and sources/*.meta.json). Package schema/scripts follow repository license. Excerpts attributed; redistribution of full PDFs follows each publisher CC-BY terms.",
     "file_sha256_catalog": "docs/modules/T01/eval_gold/v1/checksums.sha256",
     "file_sha256": {
-      "_note": "Authoritative digests are listed in checksums.sha256"
+      "_note": "Authoritative package digests are listed in checksums.sha256; source XML/PDF digests are in sources/SOURCES_INDEX.json"
     },
     "repository_path": "docs/modules/T01/eval_gold/v1",
     "controlled_artifact_path": "docs/modules/T01/eval_gold/v1/sources",
     "reproduce_commands_doc": "docs/modules/T01/eval_gold/v1/REPRODUCE.md",
-    "reproduce_command": "python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --write-checksums --require-ready",
-    "git_commit": "c7bb7face61e7c354b3a57d13e66e34bd7f503fa",
+    "reproduce_command": "python scripts/t01/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1 && python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready",
+    "git_commit": "PENDING_PAYLOAD_COMMIT",
     "labels_expected_results_domain_mapping": {
       "label_fields": [
         "expected_decision",
@@ -36,18 +36,21 @@
         "degrade",
         "block"
       ],
-      "domain_mapping_doc": "docs/modules/T01/domain_audit_12.json",
+      "domain_mapping_doc": "docs/modules/T01/eval_gold/v1/domain_mapping_eval_gold.json",
       "pairs_path": "docs/modules/T01/eval_gold/v1/pairs.json",
       "current_pair_count": 8,
       "decision_counts": {
         "allow": 5,
         "degrade": 2,
         "block": 1
-      }
+      },
+      "fixture_isolation": "Formal gold labels/domain mapping use only EVAL-CLAIM-* from pairs.json; domain_audit_12.json and evidence_gold_set.json are not label authorities for this package."
     },
     "declaration_not_synthetic_provisional_fixture": "TRUE for pairs in pairs.json: each pair sets provisional=false, synthetic=false, fixture=false, evaluation_tier=actual_gold. Harness evidence_gold_set.json remains provisional fixture and is excluded.",
     "corpus_inclusion_status": "NOT_CLAIMED_IN_FORMAL_CORPUS — submitted_for_t09_provenance_review; final admission requires T09 validation + captain confirmation.",
-    "source_sha256_index": "docs/modules/T01/eval_gold/v1/sources/SOURCES_INDEX.json"
+    "source_sha256_index": "docs/modules/T01/eval_gold/v1/sources/SOURCES_INDEX.json",
+    "git_commit_semantics": "payload_commit — SHA of the commit that freezes gold content (pairs/sources/domain mapping). Not the tip commit that only updates this manifest field/checksums.",
+    "xml_byte_semantics": "europepmc_fullTextXML_http_response_body_raw; Path.write_bytes; no newline conversion; git attribute -text"
   },
   "t09_required_fields_coverage": {
     "1_source_uri": "provenance.source_uri (+ per-pair source_uri when curated)",
@@ -60,7 +63,7 @@
     "8_git_commit": "provenance.git_commit",
     "9_not_synthetic_provisional_fixture": "not_synthetic_provisional_fixture + per-pair flags"
   },
-  "status_note": "Provenance-complete actual-gold submission for T09 review. Do NOT treat as already admitted to the formal corpus.",
+  "status_note": "T09 NEEDS_CLARIFICATION remediation: frozen XML bytes, payload_commit semantics, fixture-free domain mapping. NOT claimed in formal corpus.",
   "submitted_at_utc": "2026-08-02T09:14:25Z",
   "corpus_inclusion_status": "NOT_CLAIMED_IN_FORMAL_CORPUS — submitted_for_t09_provenance_review; final admission requires T09 validation + captain confirmation."
 }

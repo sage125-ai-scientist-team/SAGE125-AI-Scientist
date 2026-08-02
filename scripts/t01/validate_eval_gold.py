@@ -1,9 +1,11 @@
 """
-校验 T01 eval_gold 包结构与（可选）正式评测就绪门禁。
+校验 T01 eval_gold 包结构与正式评测就绪门禁。
 
-用途：
-    - 脚手架阶段：确认 T09 所需 provenance 字段齐全；
-    - 正式阶段：``--require-ready`` 拒绝 provisional/synthetic/fixture。
+说明：
+    - ``--require-ready`` **只读**，不改写任何文件；
+    - ``provenance.git_commit`` 语义 = **payload commit**（冻结金标内容的提交），
+      不是“包含 manifest 自身的最终 tip SHA”；
+    - ``--write-checksums`` 可配合 ``--payload-commit`` 写入该字段后重算清单。
 """
 
 from __future__ import annotations
@@ -11,7 +13,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -56,16 +57,28 @@ REQUIRED_PAIR_FIELDS = {
     "evaluation_tier",
 }
 
+CHECKSUM_TARGETS = [
+    "manifest.json",
+    "pairs.json",
+    "REPRODUCE.md",
+    "CURATION_CHECKLIST.md",
+    "T09_HANDOFF.md",
+    "T09_HANDOFF_MESSAGE.md",
+    "pair.example.json",
+    "domain_mapping_eval_gold.json",
+    "sources/SOURCES_INDEX.json",
+]
+
 
 def _sha256_file(path: Path) -> str:
     """
-    计算文件 SHA-256 hex。
+    计算文件原始字节 SHA-256 hex。
 
     参数：
         path: 文件路径。
 
     返回：
-        小写 hex 摘要。
+        小写 hex。
     """
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -76,7 +89,7 @@ def _sha256_file(path: Path) -> str:
 
 def _load_json(path: Path) -> dict[str, Any]:
     """
-    加载 JSON 对象。
+    以 UTF-8（允 BOM）加载 JSON 对象。
 
     参数：
         path: JSON 路径。
@@ -84,44 +97,38 @@ def _load_json(path: Path) -> dict[str, Any]:
     返回：
         dict。
     """
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
-def _git_head(repo_root: Path) -> str:
+def _dump_json(path: Path, data: dict[str, Any]) -> None:
     """
-    读取当前 HEAD commit。
+    以 UTF-8（无 BOM）+ LF + 尾换行写入 JSON。
 
     参数：
-        repo_root: 仓库根。
-
-    返回：
-        commit sha 或 unknown。
+        path: 目标路径。
+        data: 对象。
     """
-    try:
-        out = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"],
-            cwd=str(repo_root),
-            text=True,
-            stderr=subprocess.DEVNULL,
-        )
-        return out.strip()
-    except (subprocess.CalledProcessError, FileNotFoundError, OSError):
-        return "unknown"
+    text = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+    path.write_bytes(text.encode("utf-8"))
 
 
-def write_checksums(package_dir: Path) -> Path:
+def write_checksums(
+    package_dir: Path,
+    *,
+    payload_commit: str | None = None,
+) -> Path:
     """
-    回填 manifest 的 git_commit / pair_count，再写入 checksums.sha256。
+    写入 checksums.sha256；可选更新 payload commit 字段。
 
     参数：
-        package_dir: eval_gold/v1 目录。
+        package_dir: eval_gold/v1。
+        payload_commit: 若提供，写入 ``provenance.git_commit``（payload 语义）。
 
     返回：
         checksums 路径。
 
     说明：
-        SHA-256 权威清单是 ``checksums.sha256``（含 manifest.json）。
-        先冻结 manifest 元数据，再哈希，避免自指循环。
+        **不会**自动写成当前 HEAD。manifest 无法可靠自指最终 tip SHA。
     """
     manifest_path = package_dir / "manifest.json"
     pairs_path = package_dir / "pairs.json"
@@ -129,10 +136,13 @@ def write_checksums(package_dir: Path) -> Path:
     pairs_doc = _load_json(pairs_path)
     pairs = pairs_doc.get("pairs") or []
     provenance = dict(manifest.get("provenance") or {})
-    repo_root = package_dir.resolve()
-    while not (repo_root / ".git").exists() and repo_root != repo_root.parent:
-        repo_root = repo_root.parent
-    provenance["git_commit"] = _git_head(repo_root)
+    if payload_commit:
+        provenance["git_commit"] = payload_commit
+        provenance["git_commit_semantics"] = (
+            "payload_commit — SHA of the commit that freezes gold content "
+            "(pairs/sources/domain mapping). Not the tip commit that only "
+            "updates this manifest field/checksums."
+        )
     provenance["file_sha256_catalog"] = (
         "docs/modules/T01/eval_gold/v1/checksums.sha256"
     )
@@ -140,38 +150,27 @@ def write_checksums(package_dir: Path) -> Path:
     labels["current_pair_count"] = int(pairs_doc.get("pair_count") or len(pairs))
     provenance["labels_expected_results_domain_mapping"] = labels
     provenance["file_sha256"] = {
-        "_note": "Authoritative digests are listed in checksums.sha256"
+        "_note": "Authoritative package digests are listed in checksums.sha256; "
+        "source XML/PDF digests are in sources/SOURCES_INDEX.json"
     }
     manifest["provenance"] = provenance
-    manifest_path.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    _dump_json(manifest_path, manifest)
 
-    targets = [
-        "manifest.json",
-        "pairs.json",
-        "REPRODUCE.md",
-        "CURATION_CHECKLIST.md",
-        "T09_HANDOFF.md",
-        "pair.example.json",
-        "sources/SOURCES_INDEX.json",
-    ]
     hashes: dict[str, str] = {}
-    for name in targets:
+    for name in CHECKSUM_TARGETS:
         path = package_dir / name
         if path.is_file():
             hashes[name] = _sha256_file(path)
 
     checksums_path = package_dir / "checksums.sha256"
     lines = [f"{digest}  {name}" for name, digest in sorted(hashes.items())]
-    checksums_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    checksums_path.write_bytes(("\n".join(lines) + "\n").encode("utf-8"))
     return checksums_path
 
 
 def validate_package(package_dir: Path, *, require_ready: bool = False) -> int:
     """
-    校验 eval_gold 包。
+    只读校验 eval_gold 包。
 
     参数：
         package_dir: 包目录。
@@ -209,6 +208,35 @@ def validate_package(package_dir: Path, *, require_ready: bool = False) -> int:
     ready = bool(manifest.get("ready_for_t09_formal_eval"))
     not_fixture_flag = bool(manifest.get("not_synthetic_provisional_fixture"))
 
+    domain_doc = provenance.get("labels_expected_results_domain_mapping") or {}
+    domain_path = domain_doc.get("domain_mapping_doc")
+    if domain_path:
+        repo_root = package_dir.resolve()
+        while not (repo_root / ".git").exists() and repo_root != repo_root.parent:
+            repo_root = repo_root.parent
+        candidate = Path(domain_path)
+        if not candidate.is_file():
+            candidate = repo_root / domain_path
+        if not candidate.is_file():
+            candidate = package_dir / Path(domain_path).name
+        if candidate.is_file():
+            mapping = _load_json(candidate)
+            if mapping.get("depends_on_harness_fixture"):
+                errors.append(
+                    "domain mapping must not depend on harness fixture "
+                    f"({domain_path})"
+                )
+            linked = mapping.get("rows") or mapping.get("mappings") or []
+            for row in linked:
+                for claim_id in row.get("linked_gold_claim_ids") or []:
+                    if str(claim_id).startswith("CLAIM-"):
+                        errors.append(
+                            "domain mapping references harness fixture claim id "
+                            f"{claim_id} in {domain_path}"
+                        )
+        elif ready:
+            errors.append(f"domain mapping doc missing: {domain_path}")
+
     if ready:
         if not pairs:
             errors.append("ready_for_t09_formal_eval=true but pairs is empty")
@@ -235,6 +263,11 @@ def validate_package(package_dir: Path, *, require_ready: bool = False) -> int:
                 errors.append(f"pair[{index}] quote empty")
             if quote.startswith("10.") and "/" in quote and " " not in quote:
                 errors.append(f"pair[{index}] DOI-only quote forbidden")
+            claim_id = str(pair.get("claim_id") or "")
+            if claim_id.startswith("CLAIM-"):
+                errors.append(
+                    f"pair[{index}] claim_id looks like harness fixture id: {claim_id}"
+                )
 
     if require_ready and not ready:
         errors.append("--require-ready set but ready_for_t09_formal_eval=false")
@@ -253,19 +286,47 @@ def validate_package(package_dir: Path, *, require_ready: bool = False) -> int:
             if not path.is_file():
                 errors.append(f"checksum target missing: {name}")
                 continue
-            # checksums.sha256 自指时跳过严格自洽（内容含自身 hash 时会漂移）
             if name == "checksums.sha256":
                 continue
             actual = _sha256_file(path)
             if actual != expected:
                 errors.append(f"checksum mismatch for {name}: {actual} != {expected}")
+    elif ready:
+        errors.append("checksums.sha256 missing")
+
+    # Cross-check frozen XML hashes vs index (same raw-byte semantics)
+    index_path = package_dir / "sources" / "SOURCES_INDEX.json"
+    if index_path.is_file():
+        raw_index = json.loads(index_path.read_text(encoding="utf-8-sig"))
+        if not isinstance(raw_index, list):
+            errors.append("SOURCES_INDEX.json must be a JSON list")
+        else:
+            for row in raw_index:
+                pmcid = row.get("pmcid")
+                xml_path = package_dir / "sources" / f"{pmcid}.xml"
+                if not xml_path.is_file():
+                    errors.append(f"frozen xml missing: {pmcid}")
+                    continue
+                actual = _sha256_file(xml_path)
+                if actual != row.get("xml_sha256"):
+                    errors.append(
+                        f"index/xml mismatch for {pmcid}: "
+                        f"{actual} != {row.get('xml_sha256')}"
+                    )
 
     print(f"package={package_dir}")
     print(f"ready_for_t09_formal_eval={ready}")
     print(f"not_synthetic_provisional_fixture={not_fixture_flag}")
     print(f"pair_count={len(pairs)}")
     print(f"evaluation_tier={manifest.get('evaluation_tier')}")
-    print(f"git_commit={provenance.get('git_commit')}")
+    print(f"payload_commit={provenance.get('git_commit')}")
+    print(
+        "git_commit_semantics="
+        + str(
+            provenance.get("git_commit_semantics")
+            or "payload_commit (see provenance.git_commit_semantics)"
+        )
+    )
 
     if errors:
         print("RESULT=FAIL")
@@ -303,7 +364,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--write-checksums",
         action="store_true",
-        help="Recompute checksums and refresh manifest provenance hashes/commit",
+        help="Recompute checksums (does not auto-set tip HEAD as git_commit)",
+    )
+    parser.add_argument(
+        "--payload-commit",
+        default=None,
+        help="When writing checksums, set provenance.git_commit to this payload SHA",
     )
     parser.add_argument(
         "--require-ready",
@@ -316,7 +382,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ERROR: package dir not found: {package_dir}", file=sys.stderr)
         return 2
     if args.write_checksums:
-        write_checksums(package_dir)
+        write_checksums(package_dir, payload_commit=args.payload_commit)
         print(f"wrote checksums under {package_dir}")
     return validate_package(package_dir, require_ready=args.require_ready)
 
