@@ -1,0 +1,84 @@
+T07 Day 1 Mock/contamination search log
+=======================================
+
+Recorded: 2026-07-28
+Branch: t07/a-batch-contract
+HEAD: 1642ea0
+
+Search scope
+------------
+
+- repository source, tests, and documentation
+- current local exports/**
+- local Git refs and objects
+
+Excluded:
+
+- .git/** from content scanning (Git history was queried separately)
+- .venv/**
+- node_modules/**
+- data/index/**
+- data/cache/**
+- docs/modules/T07/** to avoid self-matches
+
+Commands
+--------
+
+1. Repository contamination terms:
+
+`rg -n -i "mock|placeholder|dummy|fake|pandemic|epidemic|covid|repeated title|repeated abstract|previous_result|shared memory|shared context|shared cache" app scripts tests docs -g '!docs/modules/T07/**'`
+
+2. Isolation/output terms:
+
+`rg -n -i "previous_result|cache_key|workspace|result\.json|state\.json|context_pack|active_run|session_state|memory" app scripts tests`
+
+3. Existing output inventory:
+
+`rg --files exports`
+
+Result:
+
+- exports/doctor/doctor_report.json
+- exports/smoke_bailian/smoke_report.json
+- exports/smoke_bailian/smoke_report.md
+
+These are doctor/smoke outputs, not per-question or batch research outputs.
+
+4. Batch-output existence:
+
+`Test-Path ".\exports\batch_125"`
+
+Result:
+`False`
+
+5. Local Git history for question and batch artifacts:
+
+`git log --all --oneline -- data/processed/questions_125.json data/raw/sjtu-booklet.pdf`
+
+Result:
+No commits.
+
+`git rev-list --all --objects | rg -i "questions_125|sjtu-booklet|batch_manifest|batch_outputs|exports/batch"`
+
+Result:
+No matching Git objects.
+
+6. Preventive contamination tests:
+
+`rg -n -i "pandemic|prime|question.*consisten|stale" tests app/workflow/mock_outputs.py`
+
+Relevant files:
+
+- tests/test_prime_question_plan.py
+- tests/test_question_report_consistency.py
+- tests/test_no_stale_report_after_failed_run.py
+- app/workflow/mock_outputs.py
+
+These tests and comments describe desired behavior; they are not historical failure artifacts.
+The first two are guarded by the missing `questions_125.json`.
+
+Search result
+-------------
+
+No existing per-question outputs, batch outputs, or historical artifacts were available for
+pairwise title/abstract/hypothesis comparison.

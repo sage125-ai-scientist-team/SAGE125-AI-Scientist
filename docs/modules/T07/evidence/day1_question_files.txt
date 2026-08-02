@@ -1,0 +1,60 @@
+T07 Day 1 question-source candidate files
+==========================================
+
+Recorded: 2026-07-28
+Branch: t07/a-batch-contract
+HEAD: 1642ea0
+
+Authoritative runtime path expected by current code
+---------------------------------------------------
+
+- data/processed/questions_125.json
+  Status: absent
+  References: scripts/run_batch_125.py:38,100-104; app/workflow/pipeline.py:54-56,99-115
+
+Authoritative extraction input expected by current code
+-------------------------------------------------------
+
+- data/raw/sjtu-booklet.pdf
+  Status: absent
+  Reference: scripts/extract_125_questions.py:47
+
+Generated companions expected from the extractor
+-------------------------------------------------
+
+- data/processed/questions_125.csv
+  Status: absent
+- data/processed/extraction_report.md
+  Status: absent
+
+Only current file under data/ outside excluded cache/index paths
+---------------------------------------------------------------
+
+- data/raw/README.md
+
+Loaders and producers
+---------------------
+
+- scripts/extract_125_questions.py
+  Extracts the booklet and generates JSON/CSV/report.
+- app/workflow/pipeline.py:resolve_questions_path
+  Resolves explicit test path, SAGE_QUESTIONS_PATH, then the default JSON.
+- app/workflow/pipeline.py:load_question
+  Loads the JSON array and selects by exact `id`.
+- scripts/run_batch_125.py:main
+  Loads the same default JSON directly for batch execution.
+
+Synthetic/non-authoritative references
+--------------------------------------
+
+- tests/helpers_questions_fixture.py
+  Writes a one-record synthetic JSON under a test temporary path.
+- tests/test_*.py question dictionaries
+  Unit-test fixtures only; not a 125-question source.
+- docs and README references
+  Instructions/specifications only; not machine-readable source data.
+
+Conflicting-source conclusion
+-----------------------------
+
+No competing materialized 125-question source was found. The problem is absence, not conflict.
