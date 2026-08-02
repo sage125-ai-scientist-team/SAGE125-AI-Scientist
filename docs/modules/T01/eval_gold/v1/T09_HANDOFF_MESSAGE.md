@@ -11,7 +11,7 @@ payload_commit 字段语义、fixture 无关 domain mapping，并在隔离 clone
 ## 固定信息（整改完成后由作者填入 / 见 PR 评论）
 
 - 新固定 payload Commit：`14494e7f2e4ba30f5717332e030a65a9da448d6a`
-- 新 PR head：`cbe5145fe7b719a1ef60ed79205a4012360292b0`
+- 新 PR head：以 PR #25 branch tip 为准（`gh pr view 25 --json headRefOid`）；tip ≠ payload commit
 - 路径：`docs/modules/T01/eval_gold/v1/`
 
 ## 验收命令与期望 exit code
