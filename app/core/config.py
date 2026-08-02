@@ -18,7 +18,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # 项目根目录：本文件位于 <root>/app/core/config.py，上溯三级为根。
@@ -28,6 +28,25 @@ ENV_FILE = PROJECT_ROOT / ".env"
 
 # base_url 模板中使用的占位符，配置真实 WORKSPACE_ID 后应被替换。
 _WORKSPACE_PLACEHOLDER = "你的WorkspaceId"
+
+_INVALID_CONFIGURATION_VALUES = {
+    "todo",
+    "placeholder",
+    "your_key",
+    "your-key",
+    "your_workspace_id",
+    "your-workspace-id",
+    _WORKSPACE_PLACEHOLDER.casefold(),
+}
+
+
+def _is_configured_value(value: str | None) -> bool:
+    """Reject empty, padded, and well-known placeholder configuration values."""
+    if not isinstance(value, str) or not value:
+        return False
+    if value != value.strip():
+        return False
+    return value.casefold() not in _INVALID_CONFIGURATION_VALUES
 
 # 明确禁用的非千问生成模型关键字（小写匹配），命中即拒绝。
 FORBIDDEN_MODEL_KEYWORDS: tuple[str, ...] = (
@@ -112,6 +131,22 @@ def assert_qwen_model(model_name: str) -> str:
     return model_name
 
 
+class BailianRuntimeConfig(BaseModel):
+    """Server-only normalized Alibaba Cloud Model Studio configuration."""
+
+    provider: str
+    region: str
+    workspace_id: str
+    api_key: str
+    base_url: str
+    chat_model: str
+    embedding_model: str
+    request_timeout: float
+    max_retries: int
+    configured: bool
+    configuration_error: str | None
+
+
 class Settings(BaseSettings):
     """
     应用配置模型：字段与 .env 键一一对应（通过 alias 映射大写环境变量名）。
@@ -132,6 +167,8 @@ class Settings(BaseSettings):
     )
 
     # ---- 阿里云百炼 / DashScope ----
+    llm_provider: str = Field(default="bailian", alias="LLM_PROVIDER")
+    dashscope_region: str = Field(default="cn-beijing", alias="DASHSCOPE_REGION")
     dashscope_api_key: str = Field(default="", alias="DASHSCOPE_API_KEY")
     workspace_id: str = Field(default="", alias="WORKSPACE_ID")
     dashscope_base_url: str = Field(default="", alias="DASHSCOPE_BASE_URL")
@@ -268,6 +305,22 @@ class Settings(BaseSettings):
         # 复用 assert_qwen_model 的统一判定逻辑，保证全局一致。
         return assert_qwen_model(value)
 
+    @field_validator("llm_provider")
+    @classmethod
+    def _validate_provider_is_bailian(cls, value: str) -> str:
+        normalized = value.strip().lower()
+        if normalized != "bailian":
+            raise ValueError("LLM_PROVIDER 仅允许 bailian。")
+        return normalized
+
+    @field_validator("dashscope_region")
+    @classmethod
+    def _validate_dashscope_region(cls, value: str) -> str:
+        normalized = value.strip().lower()
+        if not normalized or any(ch not in "abcdefghijklmnopqrstuvwxyz0123456789-" for ch in normalized):
+            raise ValueError("DASHSCOPE_REGION 格式无效。")
+        return normalized
+
     @model_validator(mode="after")
     def _fill_base_urls_from_workspace(self) -> "Settings":
         """
@@ -280,21 +333,15 @@ class Settings(BaseSettings):
         返回：
             处理后的 Settings 实例（self）。
         """
-        # 仅在提供了真实 WORKSPACE_ID 时执行替换。
-        wid = self.workspace_id.strip()
-        if wid:
-            # OpenAI-compatible endpoint（chat / embedding 使用）。
-            if (not self.dashscope_base_url) or (_WORKSPACE_PLACEHOLDER in self.dashscope_base_url):
-                self.dashscope_base_url = (
-                    f"https://{wid}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
-                )
-            # 原生 DashScope endpoint（deep research 使用）。
-            if (not self.dashscope_deep_research_base_url) or (
-                _WORKSPACE_PLACEHOLDER in self.dashscope_deep_research_base_url
-            ):
-                self.dashscope_deep_research_base_url = (
-                    f"https://{wid}.cn-beijing.maas.aliyuncs.com/api/v1"
-                )
+        # Base URL 只能由服务端根据已验证的 region + Workspace ID 构建。
+        wid = self.workspace_id
+        if _is_configured_value(wid):
+            host = f"{wid}.{self.dashscope_region}.maas.aliyuncs.com"
+            self.dashscope_base_url = f"https://{host}/compatible-mode/v1"
+            self.dashscope_deep_research_base_url = f"https://{host}/api/v1"
+        else:
+            self.dashscope_base_url = ""
+            self.dashscope_deep_research_base_url = ""
         return self
 
     @property
@@ -305,9 +352,13 @@ class Settings(BaseSettings):
         返回：
             True 表示 DASHSCOPE_API_KEY 与 DASHSCOPE_BASE_URL 均已配置且无占位符。
         """
-        # base_url 仍含占位符时视为未配置。
-        base_ok = bool(self.dashscope_base_url) and _WORKSPACE_PLACEHOLDER not in self.dashscope_base_url
-        return bool(self.dashscope_api_key) and base_ok
+        base_ok = self.dashscope_base_url.startswith("https://")
+        return (
+            self.llm_provider == "bailian"
+            and _is_configured_value(self.dashscope_api_key)
+            and _is_configured_value(self.workspace_id)
+            and base_ok
+        )
 
     @property
     def deep_research_configured(self) -> bool:
@@ -317,10 +368,31 @@ class Settings(BaseSettings):
         返回：
             True 表示 Key 与 DASHSCOPE_DEEP_RESEARCH_BASE_URL 均已配置且无占位符。
         """
-        # 深度研究 base_url 仍含占位符时视为未配置。
-        url = self.dashscope_deep_research_base_url
-        base_ok = bool(url) and _WORKSPACE_PLACEHOLDER not in url
-        return bool(self.dashscope_api_key) and base_ok
+        return self.qwen_configured and self.dashscope_deep_research_base_url.startswith("https://")
+
+    @property
+    def bailian(self) -> BailianRuntimeConfig:
+        """Return the single normalized server-side Bailian configuration object."""
+        configuration_error = None
+        if not _is_configured_value(self.workspace_id):
+            configuration_error = "workspace_id_missing_or_invalid"
+        elif not _is_configured_value(self.dashscope_api_key):
+            configuration_error = "api_key_missing_or_invalid"
+        elif not self.qwen_configured:
+            configuration_error = "bailian_configuration_invalid"
+        return BailianRuntimeConfig(
+            provider=self.llm_provider,
+            region=self.dashscope_region,
+            workspace_id=self.workspace_id,
+            api_key=self.dashscope_api_key,
+            base_url=self.dashscope_base_url,
+            chat_model=self.qwen_balanced_model,
+            embedding_model=self.bailian_embedding_model,
+            request_timeout=self.llm_timeout_seconds,
+            max_retries=self.llm_max_retries,
+            configured=self.qwen_configured,
+            configuration_error=configuration_error,
+        )
 
     @property
     def openalex_configured(self) -> bool:
@@ -344,10 +416,13 @@ class Settings(BaseSettings):
         返回：
             重排序请求的完整 URL；无法推导时返回空串。
         """
-        # 优先由 WORKSPACE_ID 直接拼接，最稳妥。
-        wid = self.workspace_id.strip()
-        if wid:
-            return f"https://{wid}.cn-beijing.maas.aliyuncs.com/compatible-api/v1/reranks"
+        # 优先由 WORKSPACE_ID 与地域直接拼接，最稳妥。
+        wid = self.workspace_id
+        if _is_configured_value(wid):
+            return (
+                f"https://{wid}.{self.dashscope_region}.maas.aliyuncs.com/"
+                "compatible-api/v1/reranks"
+            )
         # 退化路径：从 chat base_url 变换路径段。
         if self.dashscope_base_url and _WORKSPACE_PLACEHOLDER not in self.dashscope_base_url:
             return self.dashscope_base_url.replace("compatible-mode/v1", "compatible-api/v1") + "/reranks"
@@ -362,10 +437,12 @@ class Settings(BaseSettings):
         """
         # 仅暴露掩码 / 状态，避免任何明文密钥进入日志或界面。
         return {
-            "DASHSCOPE_API_KEY": mask_secret(self.dashscope_api_key),
+            "DASHSCOPE_API_KEY": "已配置" if _is_configured_value(self.dashscope_api_key) else "未配置",
             "OPENALEX_API_KEY": "已配置" if self.openalex_api_key else "未配置",
-            "WORKSPACE_ID": self.workspace_id or "未配置",
-            "DASHSCOPE_BASE_URL": self.dashscope_base_url or "未配置",
+            "WORKSPACE_ID": "已配置" if _is_configured_value(self.workspace_id) else "未配置",
+            "DASHSCOPE_BASE_URL": "已配置" if self.qwen_configured else "未配置",
+            "LLM_PROVIDER": self.llm_provider,
+            "DASHSCOPE_REGION": self.dashscope_region,
             "qwen_configured": str(self.qwen_configured),
             "deep_research_configured": str(self.deep_research_configured),
             "APP_ENV": self.app_env,
