@@ -1,6 +1,7 @@
 # T01 Eval Gold — 接口文档
 
-> Context7 MCP 当前环境不可用；本接口以仓库内 `scripts/t01/validate_eval_gold.py` 源码为准。
+> Context7 MCP 当前环境不可用；本接口以仓库内 `scripts/t01/validate_eval_gold.py` /
+> `scripts/t01/fetch_eval_gold_sources.py` 源码为准。
 
 ## 包路径约定
 
@@ -108,9 +109,10 @@ python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1
 
 | 字段 | 类型 | 脚手架期望 |
 |---|---|---|
-| `ready_for_t09_formal_eval` | bool | `false` |
-| `not_synthetic_provisional_fixture` | bool | `false` |
-| `evaluation_tier` | str | `scaffold_pending_actual_gold` |
+| `ready_for_t09_formal_eval` | bool | `true`（可供 T09 校验；≠已入正式 corpus） |
+| `not_synthetic_provisional_fixture` | bool | `true` |
+| `corpus_inclusion_status` | str | 须含 `NOT_CLAIMED` |
+| `evaluation_tier` | str | `actual_gold_submitted_for_t09_review` |
 | `provenance.*` | object | T09 九项字段均有占位 |
 | `explicit_exclusion.harness_gold_path` | str | `docs/modules/T01/evidence_gold_set.json` |
 

@@ -153,7 +153,9 @@ def write_checksums(package_dir: Path) -> Path:
         "pairs.json",
         "REPRODUCE.md",
         "CURATION_CHECKLIST.md",
+        "T09_HANDOFF.md",
         "pair.example.json",
+        "sources/SOURCES_INDEX.json",
     ]
     hashes: dict[str, str] = {}
     for name in targets:
