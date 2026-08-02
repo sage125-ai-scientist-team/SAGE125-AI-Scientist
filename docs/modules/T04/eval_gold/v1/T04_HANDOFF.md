@@ -1,106 +1,46 @@
-\# T04 Wave B Actual Gold Candidate Handoff
+# T04 Wave B Actual Gold Candidate Handoff
 
-
-
-\## Status
-
-
+## Status
 
 This package is an actual gold candidate submission for T09 provenance validation.
 
+It is **NOT_CLAIMED_IN_FORMAL_CORPUS**. Final corpus inclusion remains subject to
+T09 validation and captain approval.
 
+## Task
 
-It is NOT claimed as formal actual gold corpus.
+- task_id: T04
+- wave: B
+- artifact_role: question_source
 
-Final corpus inclusion is decided by T09 validation and captain approval.
+## Artifact
 
+- artifact_name: `sjtu-booklet.pdf`
+- artifact_type: `booklet`
+- local_candidate_path: `data/raw/sjtu-booklet.pdf`
+- sha256: `4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576`
 
+## Provenance Status
 
-\## Task
+- artifact identity: verified against the SHA-256 recorded in the historical
+  PR #23 captain review
+- source_uri: `PENDING_CONFIRMATION`
+- version: `PENDING_CONFIRMATION`
+- license_or_authorization: `PENDING_CONFIRMATION`
 
+The byte identity check is complete. Source retrieval provenance and usage
+authorization remain pending and must be confirmed before formal corpus
+inclusion.
 
-
-\- task\_id: T04
-
-\- wave: B
-
-\- artifact\_role: question\_source
-
-
-
-\## Artifact
-
-
-
-\- artifact\_name: sjtu-booklet.pdf
-
-\- artifact\_type: booklet
-
-\- local\_candidate\_path: data/raw/sjtu-booklet.pdf
-
-
-
-\## Provenance Status
-
-
-
-source\_uri:
-
-pending confirmation
-
-
-
-version:
-
-pending confirmation
-
-
-
-license\_or\_authorization:
-
-pending confirmation
-
-
-
-sha256:
-
-pending artifact identity confirmation
-
-
-
-\## Validation Boundary
-
-
+## Validation Boundary
 
 This candidate must satisfy:
 
+- reproducible retrieval
+- stable SHA-256 identity
+- source authorization
+- non-synthetic, non-provisional, non-fixture declaration
 
+## Corpus Status
 
-\- reproducible retrieval
-
-\- stable SHA-256 identity
-
-\- source authorization
-
-\- non synthetic/provisional/fixture declaration
-
-
-
-\## Current Issue
-
-
-
-The locally received artifact has a SHA-256 different from the hash recorded in previous review notes.
-
-
-
-The artifact identity must be confirmed before registry update.
-
-
-
-\## Corpus Status
-
-
-
-NOT\_CLAIMED\_IN\_FORMAL\_CORPUS
-
+`NOT_CLAIMED_IN_FORMAL_CORPUS`
