@@ -10,8 +10,8 @@ payload_commit 字段语义、fixture 无关 domain mapping，并在隔离 clone
 
 ## 固定信息（整改完成后由作者填入 / 见 PR 评论）
 
-- 新固定 payload Commit：`<PAYLOAD_SHA>`
-- 新 PR head：`<TIP_SHA>`
+- 新固定 payload Commit：`14494e7f2e4ba30f5717332e030a65a9da448d6a`
+- 新 PR head：`see_following_metadata_commit`
 - 路径：`docs/modules/T01/eval_gold/v1/`
 
 ## 验收命令与期望 exit code
