@@ -13,13 +13,17 @@ from app.evidence.metrics import (
 
 
 def test_gold_set_has_30_pairs():
-    """黄金集扩展至 30 条，且保持 provisional 诚实标注。"""
+    """黄金集扩展至 30 条；Wave B 接受夹具层，provisional 明确留给 Wave C 终审。"""
     assert gold_set_count() >= 30
     pairs = load_evidence_gold_set()
     assert len(pairs) >= 30
     assert pairs[-1]["claim_id"] == "CLAIM-030"
     assert all(pair.get("provisional") is True for pair in pairs)
     assert all(pair.get("expected_decision") for pair in pairs)
+    assert all(
+        pair.get("label_tier") == "wave_b_manual_fixture_accepted" for pair in pairs
+    )
+    assert all(pair.get("wave_c_followup") == "human_signoff_required" for pair in pairs)
 
 
 def test_gold_set_covers_multiple_handbook_domains():

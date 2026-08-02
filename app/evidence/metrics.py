@@ -104,6 +104,11 @@ class MetricsReport:
                 "fixture_accuracy_vs_hand_assigned_expected_decision"
             ),
             "not_independent_scientific_precision": True,
+            "gold_label_tier": "wave_b_manual_fixture_accepted",
+            "provisional_policy": (
+                "provisional=true retained; Wave B accepts fixture harness; "
+                "independent scientific precision deferred to Wave C DoD"
+            ),
             "degrade_strategy": self.degrade_strategy,
             "pair_evals": [asdict(item) for item in self.pair_evals],
         }
