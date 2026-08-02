@@ -25,7 +25,14 @@ EXPORTS_DIR = _DEFAULT_EXPORTS_DIR
 
 def _exports_dir() -> Path:
     # Preserve explicit monkeypatches while isolating normal pytest pipeline runs.
-    return EXPORTS_DIR if EXPORTS_DIR != _DEFAULT_EXPORTS_DIR else resolve_artifact_base(EXPORTS_DIR)
+    if EXPORTS_DIR != _DEFAULT_EXPORTS_DIR:
+        return EXPORTS_DIR
+    from app.core.config import get_settings
+
+    configured = Path(get_settings().export_dir)
+    if not configured.is_absolute():
+        configured = PROJECT_ROOT / configured
+    return resolve_artifact_base(configured)
 
 # 非 run 的保留目录（不应被识别为 ResearchPlan 运行）。
 _NON_RUN_DIRS = {"audit", "batch_125", "smoke_bailian", "demo_state", "submission"}

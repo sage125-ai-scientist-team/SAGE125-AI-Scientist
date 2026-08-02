@@ -1,0 +1,92 @@
+T07 Day 1 contamination audit
+=============================
+
+Recorded: 2026-07-28
+Branch: t07/a-batch-contract
+HEAD: 1642ea0
+
+Confirmed reproducible cases
+----------------------------
+
+Count: 0
+
+No case is claimed because the current checkout contains:
+
+- no real 125-question catalog
+- no source booklet PDF
+- no exports/batch_125 directory
+- no per-question report outputs
+- no local Git object/history containing those missing artifacts
+
+The audit requirement explicitly forbids manufacturing failures to reach three cases. Static code
+risks below are therefore not relabeled as confirmed contamination incidents.
+
+Current isolation mechanisms visible in code
+--------------------------------------------
+
+- `app/workflow/pipeline.py:399-409` loads one question, creates a new run_id, and creates a new
+  PipelineState for each invocation.
+- `app/workflow/artifacts.py:51-65` writes each invocation under `exports/{run_id}/`.
+- `scripts/run_batch_125.py:128-145` uses a question-id directory when copying selected artifacts.
+- `app/workflow/mock_outputs.py:271-287` derives a content pack from the selected question/domain.
+- `tests/test_question_report_consistency.py` specifies Q001/Q002 title isolation and UI run
+  consistency behavior.
+- `tests/test_no_stale_report_after_failed_run.py` specifies clearing a stale UI plan on a new or
+  failed run.
+
+Static risks requiring future executable validation
+----------------------------------------------------
+
+1. Stable Mock evidence IDs are global across questions
+
+   Evidence: `app/workflow/mock_outputs.py:27-28,311-314` uses
+   `EV-MOCK-0001..0003` for every selected question.
+
+   Risk: any future cross-run evidence cache or global dedup keyed only by evidence ID can merge
+   unrelated questions. The current per-run state limits this risk, but no batch-level cache
+   namespace contract proves safety.
+
+2. AI topic matching uses substring `"ai"`
+
+   Evidence: `app/workflow/mock_outputs.py:267` includes `"ai"` and lines 283-286 use substring
+   containment.
+
+   Risk: a non-AI question/domain containing the letters `ai` inside another word can select the AI
+   Mock content pack. This is a static risk only; no authoritative question catalog is available
+   to bind it to a real question_id.
+
+3. Resume accepts stale/mismatched report.json
+
+   Evidence: `scripts/run_batch_125.py:130-137` checks only file existence and parses it, then marks
+   the row completed.
+
+   Risk: reusing an output directory across source/prompt/model/schema changes can attach a stale
+   report to the current question. No input_hash/question_id/version comparison is performed.
+   No existing output is available to demonstrate the failure.
+
+Shared-state/cache findings
+---------------------------
+
+- Global previous_result in the batch path: not found.
+- Shared PipelineState across batch questions: not found; a new state is created per invocation.
+- Result cache keyed without question_id/input_hash: no batch result cache implementation found.
+- Per-question input hash namespace: absent.
+- Per-question prompt/cache namespace contract: absent.
+- Multiple questions writing one `result.json`: no such current batch file; legacy batch writes
+  aggregate JSONL/CSV plus per-question copied reports.
+- Exception using the previous question result: not confirmed.
+- Mock represented as completed: legacy runner uses row status `completed` even when batch-level
+  `mock=true`; this is a status-taxonomy risk, not proof that a formal result was delivered.
+- Missing artifacts represented as completed: possible in code at scripts/run_batch_125.py:140-145.
+
+Blocker and requested external evidence
+---------------------------------------
+
+To fix up to three real cases, the team lead must provide at least one of:
+
+- the intended `data/processed/questions_125.json` and licensed/source-verifiable booklet
+- a commit containing the authoritative question catalog
+- historical `exports/batch_125/**`
+- historical failed per-question outputs with their commit, command, and environment metadata
+
+Until then, the confirmed case count remains 0 and all three static risks remain unconfirmed.

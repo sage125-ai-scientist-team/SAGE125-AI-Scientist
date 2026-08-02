@@ -1,0 +1,95 @@
+T07 Day 1 batch_manifest audit
+==============================
+
+Recorded: 2026-07-28
+Branch: t07/a-batch-contract
+HEAD: 1642ea0
+
+Materialized-manifest search
+----------------------------
+
+Commands:
+
+- `Test-Path ".\exports\batch_125"`
+- `Test-Path ".\exports\batch_125\batch_manifest.json"`
+- `rg --files | rg -i "(^|[\\/])batch_manifest\.json$|batch_outputs_125|exports[\\/]batch_125"`
+
+Fresh result:
+
+- exports/batch_125: absent
+- exports/batch_125/batch_manifest.json: absent
+- no batch_manifest.json or batch_outputs_125 artifact exists in the checkout
+
+Conclusion:
+当前未发现正式 batch_manifest。
+
+Code capable of producing a future manifest
+--------------------------------------------
+
+`scripts/run_batch_125.py:173-178` constructs and writes
+`<output-dir>/batch_manifest.json`; the default output directory is `exports/batch_125`
+(`scripts/run_batch_125.py:79`).
+
+This is implementation code, not evidence that a formal manifest currently exists.
+The script cannot reach manifest creation because the required question JSON is absent.
+
+Current field/capability matrix
+-------------------------------
+
+| Requirement | Current code | Current materialized evidence | Audit result |
+|---|---|---|---|
+| Formal batch_manifest | writer exists | none | no formal manifest found |
+| question_id | row field at scripts/run_batch_125.py:43 | none | planned in code only |
+| status | row field at line 46 | none | planned in code only |
+| failure reason | `errors` at lines 58,153 | none | planned in code only |
+| output path | `report_path` at line 57 | none | planned in code only |
+| input hash | absent | none | missing |
+| prompt version/hash | absent from batch manifest | none | missing |
+| model version/route | absent | none | missing |
+| schema version | absent | none | missing |
+| checkpoint | no incremental persisted job state | none | missing |
+| resume | `--resume` at lines 75,130-137 | none | weak/unsafe |
+| retry | no retry option/state/counter | none | missing |
+| budget | `--cost-guard` is parsed at line 81 but never consumed | none | missing |
+| dry-run | option exists at lines 82,118-121 | cannot run without source | unverified |
+| Mock/planned/expected/actual distinction | one batch-level `mock` boolean and results_pending | none | insufficient |
+| single-question failure isolation | exception is recorded and loop continues unless `--fail-fast` | none | code supports continuation |
+| no full rerun after one failure | weak resume based only on report.json existence | none | not guaranteed |
+
+Resume correctness risks
+------------------------
+
+At `scripts/run_batch_125.py:130-137`, resume treats the presence of
+`<output-dir>/<question_id>/report.json` as completed. It does not verify:
+
+- report.question_id equals the directory/current input question
+- input hash or source version
+- prompt/model/schema version
+- Mock versus real mode
+- PDF/MD/JSON/evidence_cards/agent_trace completeness
+- T01/T03 gate results
+- failed/stale/partial state
+
+Missing-file completion risk
+----------------------------
+
+At lines 140-145 the runner copies four files only when each exists, then unconditionally appends
+a row with `status="completed"`. It does not copy or inspect the per-run
+`artifacts_manifest.json`, and it does not require PDF. Therefore a missing required output can
+still be represented as completed in the future batch summary.
+
+Checkpoint/crash behavior
+-------------------------
+
+Rows and the batch manifest are written only after the loop (`scripts/run_batch_125.py:161-178`).
+A process crash before that point loses the in-memory rows and provides no serialized per-job
+checkpoint. Per-run artifacts may survive under `exports/{run_id}`, but the batch has no durable
+mapping to recover them.
+
+Per-run artifact manifest is not the batch manifest
+---------------------------------------------------
+
+`app/workflow/artifacts.py:186-223` writes `artifacts_manifest.json` with run_id, question_id,
+mode, files, missing_files, and warnings. This is useful single-run evidence, but the current
+batch script neither copies nor validates it and it contains none of the required batch-level
+checkpoint/version/hash fields.
