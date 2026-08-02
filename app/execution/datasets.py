@@ -464,6 +464,19 @@ def _ensure_contained(root: Path, candidate: Path) -> None:
         ) from None
 
 
+def _ensure_lock_contained(root: Path, lock_path: Path) -> None:
+    try:
+        _ensure_contained(root, lock_path)
+    except DatasetAdapterError as exc:
+        raise _error(
+            "dataset_concurrent_fetch",
+            "lock",
+            True,
+            "Dataset fetch lock is unavailable.",
+            exc,
+        ) from None
+
+
 def _prepare_directory(root: Path, relative_directory: str) -> tuple[Path, Path]:
     try:
         root = Path(root)
@@ -742,7 +755,7 @@ class DatasetAdapter:
         root, parent = _prepare_directory(root, definition.cache_relative_dir)
         final = parent / definition.target_filename
         lock_path = parent / f"{definition.target_filename}.lock"
-        _ensure_contained(root, lock_path)
+        _ensure_lock_contained(root, lock_path)
         with _DatasetLock(lock_path, self._lock_timeout, self._monotonic):
             if final.exists() or final.is_symlink():
                 return self._resolve_existing(definition, root, final, offline=False)
