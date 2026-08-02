@@ -1,0 +1,211 @@
+T07 PR-A Request Changes targeted test evidence
+================================================
+
+Reviewed PR: #12
+Reviewed head / current starting HEAD:
+ea9ca2190457a861782d6c543e989474704039c0
+Python version: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+
+RED 1 — T07-METRIC-007 / T07-A-003
+-----------------------------------
+
+Test names:
+
+- test_detector_flags_identical_content_across_question_ids
+- test_detector_flags_evidence_id_reused_across_questions
+- test_detector_flags_output_question_identity_mismatch
+- test_contamination_detector_reports_three_distinct_patterns
+
+Command:
+
+    & ".\.venv\Scripts\python.exe" -m pytest -q tests/batch/test_contamination.py
+
+Exit code: 1
+Collected: 5
+Passed: 1
+Failed: 4
+Skipped: 0
+Warnings: 0
+Duration: 1.28s
+First failure:
+test_detector_flags_identical_content_across_question_ids
+Failure reason:
+ModuleNotFoundError: No module named 'app.batch.contamination'
+
+Raw summary:
+
+    .FFFF                                                                    [100%]
+    4 failed, 1 passed in 1.28s
+
+Interpretation:
+
+The explicitly marked synthetic/Mock fixture passed its provenance check. All
+four executable detector expectations failed because no owner-scoped
+contamination detector existed at the reviewed head.
+
+RED 2 — T07-A-007 / T07-A-008 / P2
+-----------------------------------
+
+Command:
+
+    & ".\.venv\Scripts\python.exe" -m pytest -q tests/batch/test_review_fixes.py
+
+Exit code: 1
+Collected: 14
+Passed: 7
+Failed: 7
+Skipped: 0
+Warnings: 0
+Duration: 4.17s
+First failure:
+test_batch_failure_is_isolated_and_remaining_124_jobs_continue
+Failure reason:
+AttributeError: 'BatchRunner' object has no attribute 'run_isolated'
+
+Failing behavior mapping:
+
+- `T07-A-007`: no batch-level isolated runner method.
+- `T07-A-007`: stale `source_hash`, changed route identity, and changed
+  `prompt_hash` were accepted by resume.
+- `T07-A-007` / `T07-A-008`: a synthetic manifest could contain a completed
+  actual job.
+- P2: manifest had no derived `total` or `status_counts` and accepted
+  inconsistent serialized summary values.
+
+Characterization tests already passing before the fix:
+
+- checkpoint from another question rejected
+- corrupt checkpoint JSON rejected fail-closed
+- BatchJob JSON round-trip
+- CheckpointRecord JSON round-trip and persisted identity binding
+- atomic replace failure preserves the previous checkpoint and cleans temp
+- existing `report.json` does not complete a dry-run job
+- `../evil` batch ID rejected
+
+Raw summary:
+
+    FF.FF...FFF...                                                         [100%]
+    7 failed, 7 passed in 4.17s
+
+GREEN 1 — T07-METRIC-007 / T07-A-003
+-------------------------------------
+
+Command:
+
+    & ".\.venv\Scripts\python.exe" -m pytest -q tests/batch/test_contamination.py
+
+Exit code: 0
+Collected: 5
+Passed: 5
+Failed: 0
+Skipped: 0
+Warnings: 0
+Duration: 0.14s
+First failure: none
+Failure reason: none
+
+Raw summary:
+
+    .....                                                                    [100%]
+    5 passed in 0.14s
+
+Executable detector command:
+
+    & ".\.venv\Scripts\python.exe" -m scripts.batch_125.audit_contamination --source tests/batch/fixtures/contamination_cases.synthetic.json
+
+Exit code: 0
+Input classification: `synthetic=true`, `mock=true`
+Records scanned: 3
+Findings computed: 3
+Finding codes and bound question IDs:
+
+- `CROSS_QUESTION_CONTENT_REUSE`: Q901, Q902
+- `CROSS_QUESTION_EVIDENCE_ID_REUSE`: Q901, Q903
+- `OUTPUT_QUESTION_ID_MISMATCH`: Q903, Q999
+
+Raw detector output:
+
+    {"finding_codes": ["CROSS_QUESTION_CONTENT_REUSE", "CROSS_QUESTION_EVIDENCE_ID_REUSE", "OUTPUT_QUESTION_ID_MISMATCH"], "finding_count": 3, "findings": [{"content_fingerprint": "cdbab3aee42b304ad6a3a7f43b6591eefce415b69ad8c6f695348a731d7ad751", "error_code": "CROSS_QUESTION_CONTENT_REUSE", "evidence_id": null, "message": "Identical normalized output content was reused across Q901, Q902: pandemic response optimization with mobility interventions a synthetic pandemic plan combining mobility controls, hospit", "question_ids": ["Q901", "Q902"]}, {"content_fingerprint": null, "error_code": "CROSS_QUESTION_EVIDENCE_ID_REUSE", "evidence_id": "EV-MOCK-0001", "message": "Evidence ID EV-MOCK-0001 was reused across Q901, Q903", "question_ids": ["Q901", "Q903"]}, {"content_fingerprint": null, "error_code": "OUTPUT_QUESTION_ID_MISMATCH", "evidence_id": null, "message": "Output bound to Q903 declares question_id=Q999", "question_ids": ["Q903", "Q999"]}], "mock": true, "record_count": 3, "synthetic": true}
+
+This is executable synthetic Mock detection evidence. It is not a claim that
+the three unavailable historical incidents or authoritative questions were
+reproduced.
+
+GREEN 2 — T07-A-007 / T07-A-008 / P2
+-------------------------------------
+
+Command:
+
+    & ".\.venv\Scripts\python.exe" -m pytest -q tests/batch/test_review_fixes.py
+
+Exit code: 0
+Collected: 14
+Passed: 14
+Failed: 0
+Skipped: 0
+Warnings: 0
+Duration: 4.70s
+First failure: none
+Failure reason: none
+
+Raw summary:
+
+    ..............                                                           [100%]
+    14 passed in 4.70s
+
+The failure-isolation test invoked the processor for all Q001-Q125 records.
+Q063 raised one injected exception and serialized as:
+
+- status: `failed`
+- attempt: 1
+- error_code: `JOB_EXECUTION_FAILED`
+- reason: `synthetic injected single-job failure`
+
+The other 124 jobs serialized as `checkpointed`. The manifest derived:
+
+    total=125
+    status_counts={"checkpointed": 124, "failed": 1}
+
+Final targeted verification
+---------------------------
+
+Command:
+
+    & ".\.venv\Scripts\python.exe" -m pytest -q tests/batch/test_contamination.py tests/batch/test_review_fixes.py
+
+Exit code: 0
+Collected: 19
+Passed: 19
+Failed: 0
+Skipped: 0
+Warnings: 0
+Duration: 5.10s
+First failure: none
+Failure reason: none
+
+Raw summary:
+
+    ...................                                                      [100%]
+    19 passed in 5.10s
+
+Compile verification
+--------------------
+
+Command:
+
+    & ".\.venv\Scripts\python.exe" -m compileall app/batch app/contracts/batch.py scripts/batch_125 tests/batch
+
+Exit code: 0
+Compilation errors: 0
+
+Requirement mapping
+-------------------
+
+- `T07-METRIC-007`: 3 detector findings are computed from the current input.
+- `T07-A-003`: identical pandemic-plan content across Q901/Q902 is detected.
+- `T07-A-007`: failure isolation, source/input/route/prompt resume binding,
+  round-trip serialization, terminal and failure-record behavior.
+- `T07-A-008`: current-head resume/failure and dry-run evidence.
+- P2: derived manifest totals/counts plus path, corrupt JSON, atomic failure,
+  and batch failure negative tests.
