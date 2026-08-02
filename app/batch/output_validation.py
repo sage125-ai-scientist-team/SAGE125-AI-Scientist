@@ -96,7 +96,7 @@ class ArtifactValidationResult:
 
 @dataclass(frozen=True, slots=True)
 class ArtifactManifest:
-    """Non-self-referential manifest for the five required artifacts."""
+    """Non-self-referential manifest for required and frozen extra artifacts."""
 
     batch_id: str
     question_id: str
@@ -406,8 +406,14 @@ def build_artifact_manifest(
     validation_result: ArtifactValidationResult,
     *,
     output_contract_version: str | None = None,
+    supplemental_artifact_paths: Mapping[str, str | Path] | None = None,
 ) -> ArtifactManifest:
-    """Package real file metadata while excluding the manifest's own hash."""
+    """Package real file metadata while excluding the manifest's own hash.
+
+    The five Wave B files remain mandatory. WB5 may add the separately frozen
+    ``llm_call_audit.json``; it is validated, hashed, and carried into the
+    delivery index through the manifest instead of changing the base contract.
+    """
 
     if paths.question_id != job.question_id or not validation_result.passed:
         raise BatchRunnerError(
@@ -421,9 +427,46 @@ def build_artifact_manifest(
             "Artifact manifest requires exactly the five required artifacts",
         )
     version = output_contract_version or job.schema_version
-    ordered = tuple(
-        sorted(validation_result.artifacts, key=lambda item: item.name)
-    )
+    artifacts = list(validation_result.artifacts)
+    for name, raw_path in (supplemental_artifact_paths or {}).items():
+        if name in REQUIRED_ARTIFACTS or name != "llm_call_audit.json":
+            raise BatchRunnerError(
+                "OUTPUT_PATH_INVALID",
+                f"Unsupported or duplicate supplemental artifact: {name}",
+            )
+        candidate = Path(raw_path)
+        issue = _inspect_required_file(candidate, name)
+        if issue is not None:
+            raise BatchRunnerError(issue.error_code, issue.message)
+        question_root = paths.question_root.resolve(strict=True)
+        resolved = candidate.resolve(strict=True)
+        if candidate.is_symlink() or not _is_within(resolved, question_root):
+            raise BatchRunnerError(
+                "OUTPUT_PATH_INVALID",
+                "supplemental artifact must be a regular question-scoped file",
+            )
+        from app.batch.actual_call_audit import (  # avoid an import cycle
+            ActualCallAudit,
+            validate_actual_call_audit,
+        )
+
+        try:
+            audit = ActualCallAudit.from_json(candidate.read_text(encoding="utf-8"))
+            validate_actual_call_audit(audit)
+        except (OSError, UnicodeError, BatchRunnerError) as exc:
+            raise BatchRunnerError(
+                "LLM_CALL_AUDIT_INVALID",
+                "supplemental llm_call_audit.json is not valid",
+            ) from exc
+        artifacts.append(
+            ArtifactFileRecord(
+                name=name,
+                path=PurePosixPath(job.question_id, name).as_posix(),
+                sha256=compute_file_sha256(candidate),
+                size_bytes=candidate.stat().st_size,
+            )
+        )
+    ordered = tuple(sorted(artifacts, key=lambda item: item.name))
     payload = {
         "batch_id": job.batch_id,
         "question_id": job.question_id,
@@ -646,3 +689,11 @@ def _canonical_json(value: Any) -> bytes:
         sort_keys=True,
         separators=(",", ":"),
     ).encode("utf-8")
+
+
+def _is_within(candidate: Path, parent: Path) -> bool:
+    try:
+        candidate.relative_to(parent)
+    except ValueError:
+        return False
+    return True

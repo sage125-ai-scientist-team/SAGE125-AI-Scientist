@@ -114,10 +114,7 @@ class QuestionDeliveryRecord:
             ):
                 raise ValueError("artifact paths must be question-scoped")
 
-        artifact_set_complete = (
-            len(self.artifacts) == len(REQUIRED_ARTIFACTS)
-            and set(artifact_names) == set(REQUIRED_ARTIFACTS)
-        )
+        artifact_set_complete = set(REQUIRED_ARTIFACTS).issubset(artifact_names)
         expected_completed = (
             self.status == JobStatus.COMPLETED.value
             and self.actual
@@ -311,9 +308,8 @@ def build_question_delivery_record(
             )
         artifacts = artifact_manifest.artifacts
 
-    artifact_set_complete = (
-        len(artifacts) == len(REQUIRED_ARTIFACTS)
-        and {artifact.name for artifact in artifacts} == set(REQUIRED_ARTIFACTS)
+    artifact_set_complete = set(REQUIRED_ARTIFACTS).issubset(
+        artifact.name for artifact in artifacts
     )
     actual = result_kind == ResultKind.ACTUAL.value
     mock = result_kind == ResultKind.MOCK.value
