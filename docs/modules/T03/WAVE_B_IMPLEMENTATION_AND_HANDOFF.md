@@ -1,6 +1,6 @@
 # T03 Wave B 实现与交接手册
 
-文档状态：交付草案（T03 实现、本地全仓 CI 等价检查已完成；Draft PR、远端 CI 与跨队配对签字仍待补）
+文档状态：Draft PR 已发布（T03 实现、本地全仓 CI 等价检查已完成；远端 CI 正在运行，跨队配对签字仍待补）
 
 更新日期：2026-08-03
 
@@ -12,12 +12,13 @@
 | integration base SHA | `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c` |
 | Wave A 契约修复提交 | `82a3d254dffd4ce89a94d082fc28af172786d712` |
 | Wave B 核心实现提交 | `a10dbb8ceb821a6a8f5e37b0bf18c58b09c2726f` |
-| T03 Wave B 最终远端 HEAD SHA | 文档提交完成后回填 |
-| T03 Wave B Draft PR | 暂无法创建；PR URL 为 TBD |
+| T03 Wave B PR 开立 HEAD | `337bb412a58c45054a1bff10fb3a24192177c8b6`；后续文档提交见 PR 最新 HEAD |
+| T03 Wave B Draft PR | [#32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32)，`isDraft=true`，`mergeable=MERGEABLE` |
 | T03 本地验证测试 | `tests/validation`：`100 passed in 4.07s` |
 | 本地 CI 等价检查 | unit `730 passed, 37 skipped`；integration `1 passed`；lint/type/build 通过；security PASS |
-| GitHub CI | Draft PR 尚未创建，远端 Checks 为 TBD |
-| 个人仓库状态 | `ybq-music/SAGE125-AI-Scientist`：`isFork=false` |
+| GitHub CI | PR #32 已触发 lint/type/unit/integration/security/build；最终结论见 PR Checks |
+| 发布 Fork | `ybq-music/SAGE125-AI-Scientist-T03`：`isFork=true`，parent 为团队仓库 |
+| 原个人仓库 | `ybq-music/SAGE125-AI-Scientist`：仍为独立备份仓库，未改名、未删除 |
 | 团队仓库权限 | `sage125-ai-scientist-team/SAGE125-AI-Scientist`：`viewerPermission=READ` |
 | T02 配对审查 | PR #21，HEAD `a19e790ed634fd162405434e618cdb9f9c1c08de`，`CHANGES_REQUESTED`；本地候选组合测试 `139 passed, 3 skipped`，生产接线验收未完成 |
 | T08 配对审查 | 当前无 Wave B PR；反馈 POST/GET 仍为 503，占位状态不代表已经接线 |
@@ -25,11 +26,10 @@
 > 本文描述 T03 自有边界、计划中的接线方式和可验收条件。凡是标为 TBD 的内容，
 > 在获得真实测试输出、SHA 或配对签字前，不得改写为“已完成”。
 
-当前发布阻断不是 T03 测试失败：个人仓库并不是团队仓库的 GitHub fork，同时团队仓库只授予
-READ 权限。当前分支因此既不能直接推送到团队仓库，也不能按“个人 fork -> 团队仓库”的
-方式创建 Draft PR。可由仓库管理员授予合适权限，或在不改动现有个人仓库的前提下创建一个
-不同名称的真实 fork，再推送分支并创建 Draft PR。处理完成前，PR URL、最终远端 HEAD 和
-GitHub Checks 都保持 TBD。
+原发布阻断已经解决：原个人仓库不是团队仓库的 GitHub fork，且团队仓库只授予 READ 权限。
+因此新建了不同名称的真实 fork `ybq-music/SAGE125-AI-Scientist-T03`，保留原仓库不变，并从
+该 fork 向团队 `integration/2026-08-10` 创建 Draft PR #32。发布链路已恢复；是否转 Ready
+仍取决于远端 CI 与 T02/T08 配对证据。
 
 本地复核命令与结果：
 
@@ -442,8 +442,8 @@ T08 owner 需要完成：
 7. 授权、限流、密钥管理、数据保留由 API/部署层提供，领域记录中的 actor ID 不能替代鉴权。
 8. 默认质量门集合已有实现，但攻击测试数量、真实案例结果、CI 状态、提交 SHA 和 PR 状态
    均须在主任务完成后用真实证据填写。
-9. 当前个人仓库 `isFork=false`，团队仓库权限为 READ，Draft PR 暂无法按私有 Fork 工作流
-   创建；PR、远端 HEAD 和 GitHub Checks 仍待权限/仓库关系修复后补充。
+9. 已建立真实发布 fork 并创建 Draft PR #32；原独立仓库保留不变。PR 在远端 CI 与
+   T02/T08 配对证据完成前保持 Draft。
 
 ## 9. 最小 E2E 操作步骤
 
@@ -511,7 +511,7 @@ ID、版本 ID、hash 和测试输出；真实值目前均为 TBD。
 
 ## 11. 最终交接时必须回填
 
-- 权限或 fork 关系修复后的 T03 PR URL、远端 HEAD SHA、base SHA、是否 Draft/Ready；
+- PR #32 的最终远端 HEAD、GitHub Checks 结论及是否由 Draft 转为 Ready；
 - 已记录 `tests/validation = 100 passed` 与本地全仓 CI 等价检查；仍需回填远端 GitHub Checks，
   并保留 unit 的 `37 skipped` 说明；
 - lint/type/security/build 的本地结果已记录，远端结果仍待 PR CI；

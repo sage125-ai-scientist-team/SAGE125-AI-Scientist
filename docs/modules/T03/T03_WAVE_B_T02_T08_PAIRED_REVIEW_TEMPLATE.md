@@ -16,10 +16,11 @@
 | T02 负责人 | `Mk007115`（PR #21 作者） |
 | T08 负责人 | TBD |
 | 独立复审人 | TBD |
-| T03 PR / HEAD SHA | 核心实现 `a10dbb8ceb821a6a8f5e37b0bf18c58b09c2726f`；Draft PR/最终 HEAD TBD |
+| T03 PR / HEAD SHA | [Draft PR #32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32)；开立 HEAD `337bb412a58c45054a1bff10fb3a24192177c8b6`；最终 HEAD 见 PR |
 | T02 PR #21 / 被审 SHA | `a19e790ed634fd162405434e618cdb9f9c1c08de`；`CHANGES_REQUESTED` |
 | T08 PR / 被审 SHA | 当前无 Wave B PR；被审 SHA/PR URL TBD；feedback 接口仍为 503 |
-| 个人仓库 | `ybq-music/SAGE125-AI-Scientist`，`isFork=false` |
+| 发布 Fork | `ybq-music/SAGE125-AI-Scientist-T03`，`isFork=true`，parent 为团队仓库 |
+| 原个人仓库 | `ybq-music/SAGE125-AI-Scientist`，保持独立备份，未改动 |
 | 团队仓库权限 | `sage125-ai-scientist-team/SAGE125-AI-Scientist`，`viewerPermission=READ` |
 | T03 本地 validation 测试 | `100 passed in 4.07s` |
 | integration base SHA | `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c` |
@@ -32,8 +33,7 @@
 - [x] 已确认 T02 PR #21 当前 HEAD 为 `a19e790ed634fd162405434e618cdb9f9c1c08de`、
   review decision 为 `CHANGES_REQUESTED`。
 - [x] 已确认 T08 当前没有 Wave B PR，feedback POST/GET 仍为 503 占位。
-- [x] 已确认个人仓库 `isFork=false`、团队仓库权限为 READ；Draft PR 当前无法按私有 Fork
-  流程创建。
+- [x] 已通过新建不同名称的真实 Fork 解决发布阻断，并创建 Draft PR #32；原独立仓库未改动。
 - [x] 已确认 T03 使用 `schema_version=1`，且没有增删冻结字段/枚举；仅修复了一个引用不存在字段的验证器。
 - [ ] 已确认三方分支均基于同一 integration 祖先，记录 merge-base：TBD。
 - [ ] 已确认工作区无与本次配对无关的改动进入补丁。
@@ -156,11 +156,11 @@ skip/xfail 说明：`tests/validation` 无 skip/xfail；全仓 unit 有 `37 skip
 
 ## 8. 阻断项与处理决定
 
-当前协调/发布阻断：
+当前协调/发布状态：
 
 | Blocker ID | 已确认事实 | 所需处理 | Owner | 状态 |
 | --- | --- | --- | --- | --- |
-| PUBLISH-001 | 个人仓库 `isFork=false`，团队仓库权限为 READ，无法按既定 Fork 流程创建 Draft PR | 创建一个不同名称的真实 fork（不改动现有仓库），或由管理员授予写入权限；随后推送并补 PR URL/HEAD | T03 / 仓库管理员 | open |
+| PUBLISH-001 | 已创建真实 fork `ybq-music/SAGE125-AI-Scientist-T03` 并开立 Draft PR #32；原独立仓库不变 | 观察远端 CI；配对完成前保持 Draft | T03 | resolved |
 | PAIR-T02-001 | T02 PR #21 HEAD `a19e790ed634fd162405434e618cdb9f9c1c08de` 与 T03 候选组合测试 `139 passed, 3 skipped`，但 review decision 仍为 `CHANGES_REQUESTED` | T02 处理 requested changes；双方记录最终 SHA、复跑组合测试并签字 | T02 / T03 | open |
 | PAIR-T08-001 | 当前无 T08 Wave B PR，feedback POST/GET 仍为 503 | T08 提交真实 adapter 路由改动并完成 API/idempotency E2E | T08 / T03 | open |
 
@@ -184,7 +184,7 @@ skip/xfail 说明：`tests/validation` 无 skip/xfail；全仓 unit 有 `37 skip
 - [ ] 通过：三方精确 SHA 已验证，T03-B-001..021 均有证据，open P0/P1 为 0。
 - [ ] 有条件通过：仅存在已明确接受的 P2/P3，列于上表。
 - [ ] 不通过：仍有 open P0/P1、T08 仍是占位 503、实际 Prompt 未接入，或 E2E/恢复证据缺失。
-- [x] 待对接/待复审：当前真实状态；存在 PUBLISH-001、PAIR-T02-001、PAIR-T08-001。
+- [x] 待对接/待复审：当前真实状态；发布阻断 PUBLISH-001 已解决，仍存在 PAIR-T02-001、PAIR-T08-001。
 
 | 角色 | 姓名/账号 | 结论 | 日期 | 审查链接/签字 |
 | --- | --- | --- | --- | --- |
