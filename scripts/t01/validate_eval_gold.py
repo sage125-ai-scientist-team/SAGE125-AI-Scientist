@@ -64,6 +64,7 @@ CHECKSUM_TARGETS = [
     "CURATION_CHECKLIST.md",
     "T09_HANDOFF.md",
     "T09_HANDOFF_MESSAGE.md",
+    "FINAL_PROVENANCE_PACKAGE.md",
     "pair.example.json",
     "domain_mapping_eval_gold.json",
     "sources/SOURCES_INDEX.json",
