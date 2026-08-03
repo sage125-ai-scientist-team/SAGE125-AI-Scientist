@@ -40,13 +40,13 @@ and retained under internal project control.
 - source_type: `INTERNAL_CONTROLLED_ARTIFACT`
 - provider: `INTERNAL_CONTROLLED_ARTIFACT`
 - custodian: `INTERNAL_CONTROLLED_ARTIFACT`
-- version: `PENDING_CONFIRMATION`
+- version: `BYTE_IDENTITY_VERIFIED_VERSION_UNSPECIFIED`
 - public source URI: not claimed and not generated
 - public license: not claimed
 - internal authorization scope: `INTERNAL_PROJECT_TEAM_USE`
 - authorization statement: authorized for controlled use within the project
   team; no public-source or redistribution claim is made
-- T09 acceptance: `PENDING_CONFIRMATION`
+- T09 acceptance: `AWAITING_T09_FORMAL_CORPUS_ACCEPTANCE`
 
 The archive and extracted PDF byte identities are recorded as a controlled
 internal provenance chain. Formal-corpus acceptance remains pending T09
