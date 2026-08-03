@@ -26,7 +26,7 @@ T09 validation and captain approval.
 - archive_name: `sjtu-booklet.zip`
 - controlled_archive_path: `data/raw/sjtu-booklet.zip`
 - archive_size_bytes: `7405356`
-- archive_sha256: `f2cc232d0f40ec125593dbecede98dc55093e7ec4c9e29f2bef10e64c1a185`
+- archive_sha256: `f2cc232d0f40ec125593ddbcecede98dc55093e7ce4c9e29f2bef16e64c1a185`
 - extracted_member: `sjtu-booklet.pdf`
 - extraction_method: PowerShell `Expand-Archive` into an isolated directory
 

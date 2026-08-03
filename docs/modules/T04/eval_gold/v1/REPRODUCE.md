@@ -10,12 +10,13 @@ data/raw/sjtu-booklet.zip
 ```
 
 No public source URI is claimed. Do not commit the archive or extracted PDF.
+The acquisition source type is `INTERNAL_CONTROLLED_ARTIFACT`.
 
 ## Expected Identities
 
 | Artifact | Size (bytes) | SHA-256 |
 |---|---:|---|
-| `sjtu-booklet.zip` | 7405356 | `f2cc232d0f40ec125593dbecede98dc55093e7ec4c9e29f2bef10e64c1a185` |
+| `sjtu-booklet.zip` | 7405356 | `f2cc232d0f40ec125593ddbcecede98dc55093e7ce4c9e29f2bef16e64c1a185` |
 | `sjtu-booklet.pdf` | 8422081 | `4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576` |
 
 Archive member path: `sjtu-booklet.pdf`.
@@ -28,7 +29,7 @@ temporary directory so an existing PDF is never overwritten.
 ```powershell
 $archive = Resolve-Path -LiteralPath "data/raw/sjtu-booklet.zip"
 $expectedArchiveSize = 7405356
-$expectedArchiveSha256 = "f2cc232d0f40ec125593dbecede98dc55093e7ec4c9e29f2bef10e64c1a185"
+$expectedArchiveSha256 = "f2cc232d0f40ec125593ddbcecede98dc55093e7ce4c9e29f2bef16e64c1a185"
 $expectedPdfSize = 8422081
 $expectedPdfSha256 = "4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576"
 
