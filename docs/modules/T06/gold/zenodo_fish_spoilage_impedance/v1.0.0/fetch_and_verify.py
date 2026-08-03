@@ -39,6 +39,7 @@ UA = {"User-Agent": "SAGE125-T06-gold-fetch/1.1"}
 # Explicit inventory must match SHA256SUMS paths (excluding SHA256SUMS itself).
 REQUIRED_INVENTORY = [
     "BYTE_SEMANTICS.md",
+    "CONSISTENCY_MATRIX.md",
     "README.md",
     "VALIDATION_REPORT.md",
     "domain_mapping.json",
@@ -56,6 +57,17 @@ REQUIRED_INVENTORY = [
     "raw/zenodo_record_13378442.json",
     "source_metadata.json",
 ]
+
+FORBIDDEN_PLACEHOLDER_MARKERS = (
+    "PENDING_CONFIRMATION",
+    "<EMPTY_TEMP_DIR>",
+    "<empty-temp>",
+    "<filename>",
+    "<sha>",
+    "<url>",
+    "TO_BE_FILLED",
+    "PLACEHOLDER",
+)
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -153,6 +165,13 @@ def validate_package(root: Path) -> int:
         "non_synthetic_assertion",
         "modalities",
         "chart_error_policy_version",
+        "controlled_artifact_applicable",
+        "controlled_artifact_path",
+        "controlled_artifact_na_reason",
+        "reproducible_validate_command",
+        "reproducible_fetch_command",
+        "gold_label_count",
+        "source_version_basis",
     ):
         if key not in manifest:
             return fail(f"manifest missing field: {key}")
@@ -164,6 +183,31 @@ def validate_package(root: Path) -> int:
         return fail("manifest modalities must be table+chart")
     if "manifest_sha256" in manifest or "sha256sums_sha256" in manifest:
         return fail("manifest must not embed self or SHA256SUMS hashes")
+    if manifest.get("controlled_artifact_applicable") is not False:
+        return fail("controlled_artifact_applicable must be false for public Zenodo package")
+    if manifest.get("controlled_artifact_path") != "NOT_APPLICABLE":
+        return fail("controlled_artifact_path must be NOT_APPLICABLE")
+    if not str(manifest.get("controlled_artifact_na_reason") or "").strip():
+        return fail("controlled_artifact_na_reason missing")
+    if manifest.get("gold_label_count") != 100:
+        return fail("manifest gold_label_count must be 100")
+    fetch_cmd = str(manifest.get("reproducible_fetch_command") or "")
+    if "--workdir" not in fetch_cmd or "mkdtemp" not in fetch_cmd:
+        return fail("reproducible_fetch_command must create empty temp workdir via mkdtemp")
+    for marker in FORBIDDEN_PLACEHOLDER_MARKERS:
+        if marker in fetch_cmd or marker in str(manifest.get("reproducible_validate_command") or ""):
+            return fail("manifest reproduce commands contain placeholder marker", actual=marker)
+    for rel in (
+        "README.md",
+        "VALIDATION_REPORT.md",
+        "CONSISTENCY_MATRIX.md",
+        "manifest.json",
+        "source_metadata.json",
+    ):
+        text = (root / rel).read_bytes().decode("utf-8", errors="replace")
+        for marker in FORBIDDEN_PLACEHOLDER_MARKERS:
+            if marker in text:
+                return fail("formal package text contains placeholder marker", path=rel, actual=marker)
 
     for rel, digest in expected.items():
         path = root / rel

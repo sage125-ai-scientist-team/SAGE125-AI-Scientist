@@ -43,6 +43,13 @@ def test_manifest_schema_and_non_synthetic_flags() -> None:
     assert manifest["is_fixture"] is False
     assert "manifest_sha256" not in manifest
     assert set(manifest["modalities"]) == {"table", "chart"}
+    assert manifest["controlled_artifact_applicable"] is False
+    assert manifest["controlled_artifact_path"] == "NOT_APPLICABLE"
+    assert "public" in manifest["controlled_artifact_na_reason"].lower()
+    assert "mkdtemp" in manifest["reproducible_fetch_command"]
+    assert "<EMPTY_TEMP_DIR>" not in manifest["reproducible_fetch_command"]
+    assert "<empty-temp>" not in manifest["reproducible_fetch_command"]
+    assert "PENDING_CONFIRMATION" not in json.dumps(manifest)
 
 
 def test_sha256sums_match_worktree_bytes() -> None:
@@ -57,7 +64,7 @@ def test_sha256sums_match_worktree_bytes() -> None:
         prev = rel
         assert _sha256(PACKAGE / rel) == digest
         checked += 1
-    assert checked == 17
+    assert checked == 18
 
 
 def test_zenodo_csv_bytes_contain_crlf_source_newlines() -> None:
