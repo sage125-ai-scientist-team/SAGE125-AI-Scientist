@@ -1,6 +1,68 @@
-"""T03 feedback ports; production persistence is implemented in Wave B."""
+"""T03 Wave B feedback lifecycle, persistence, and T02 sidecar bridge."""
 
-from app.feedback.service import FeedbackService
-from app.feedback.storage import FeedbackStore
+from app.feedback.errors import (
+    CorruptFeedbackSnapshot,
+    FeedbackConflict,
+    FeedbackError,
+    FeedbackErrorCode,
+    FeedbackNotFound,
+    FeedbackPermissionDenied,
+    FeedbackStorageError,
+    FingerprintConflict,
+    IdempotencyConflict,
+    InvalidFeedbackInput,
+    LineageNotFound,
+    UnsafeFeedbackInput,
+    UnsupportedFeedbackSchema,
+)
+from app.feedback.migration import (
+    import_legacy_feedback,
+    migrate_legacy_feedback,
+    migrate_legacy_feedback_payload,
+)
+from app.feedback.revision import (
+    FeedbackPromptAdapter,
+    RevisionFeedbackContext,
+    RevisionFeedbackContextBuilder,
+    RevisionPromptAdapter,
+)
+from app.feedback.service import (
+    AllowAllFeedbackAuthorizer,
+    DefaultFeedbackService,
+    DenyAllFeedbackAuthorizer,
+    FeedbackAuthorizer,
+    FeedbackService,
+    FeedbackSubmission,
+)
+from app.feedback.storage import FeedbackStore, SQLiteFeedbackStore
 
-__all__ = ["FeedbackService", "FeedbackStore"]
+__all__ = [
+    "AllowAllFeedbackAuthorizer",
+    "CorruptFeedbackSnapshot",
+    "DefaultFeedbackService",
+    "DenyAllFeedbackAuthorizer",
+    "FeedbackAuthorizer",
+    "FeedbackConflict",
+    "FeedbackError",
+    "FeedbackErrorCode",
+    "FeedbackNotFound",
+    "FeedbackPermissionDenied",
+    "FeedbackPromptAdapter",
+    "FeedbackService",
+    "FeedbackStorageError",
+    "FeedbackStore",
+    "FeedbackSubmission",
+    "FingerprintConflict",
+    "IdempotencyConflict",
+    "InvalidFeedbackInput",
+    "LineageNotFound",
+    "RevisionFeedbackContext",
+    "RevisionFeedbackContextBuilder",
+    "RevisionPromptAdapter",
+    "SQLiteFeedbackStore",
+    "UnsafeFeedbackInput",
+    "UnsupportedFeedbackSchema",
+    "import_legacy_feedback",
+    "migrate_legacy_feedback",
+    "migrate_legacy_feedback_payload",
+]
