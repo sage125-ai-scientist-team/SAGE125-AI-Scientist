@@ -3,7 +3,7 @@
 完成每一条后再把 `pairs.json` 写入真实条目，并运行：
 
 ```powershell
-python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
+python docs/modules/T01/scripts/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
 ```
 
 ## 每条 pair 必填

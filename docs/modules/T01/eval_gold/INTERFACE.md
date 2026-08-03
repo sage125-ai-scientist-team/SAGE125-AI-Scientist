@@ -1,7 +1,7 @@
 # T01 Eval Gold — 接口文档
 
-> Context7 MCP 当前环境不可用；本接口以仓库内 `scripts/t01/validate_eval_gold.py` /
-> `scripts/t01/fetch_eval_gold_sources.py` 源码为准。
+> Context7 MCP 当前环境不可用；本接口以仓库内 `docs/modules/T01/scripts/validate_eval_gold.py` /
+> `docs/modules/T01/scripts/fetch_eval_gold_sources.py` 源码为准。
 
 ## 包路径约定
 
@@ -9,7 +9,7 @@
 |---|---|---|
 | `EVAL_GOLD_ROOT` | `docs/modules/T01/eval_gold/` | 包族根目录 |
 | `PACKAGE_V1` | `docs/modules/T01/eval_gold/v1/` | v1 正式评测金标包（当前为脚手架） |
-| `VALIDATOR` | `scripts/t01/validate_eval_gold.py` | 结构 / 就绪门禁校验 CLI |
+| `VALIDATOR` | `docs/modules/T01/scripts/validate_eval_gold.py` | 结构 / 就绪门禁校验 CLI |
 
 ## CLI：`validate_eval_gold.py`
 
@@ -94,13 +94,13 @@
 
 ```powershell
 # 脚手架结构校验
-python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1
+python docs/modules/T01/scripts/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1
 
 # 重算摘要
-python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --write-checksums
+python docs/modules/T01/scripts/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --write-checksums
 
 # 正式就绪门禁（当前脚手架应失败）
-python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
+python docs/modules/T01/scripts/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
 ```
 
 ## 数据契约摘要

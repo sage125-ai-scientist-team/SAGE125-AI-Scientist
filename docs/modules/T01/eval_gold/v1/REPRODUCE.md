@@ -5,7 +5,9 @@
 - Windows 11 + PowerShell（或 Linux/macOS）
 - Python 3.11+
 - 工作目录：仓库根
-- Git 检出需尊重 `.gitattributes`（`sources/*.xml` 为 `-text`，禁止换行改写）
+- Git 检出需尊重包内 attributes：
+  - `docs/modules/T01/eval_gold/v1/.gitattributes`
+  - `docs/modules/T01/eval_gold/v1/sources/.gitattributes`（`*.xml -text`）
 
 ## XML 规范字节语义
 
@@ -19,14 +21,14 @@
 维护者重新冻结（非验收步骤）：
 
 ```powershell
-python scripts/t01/freeze_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1
+python docs/modules/T01/scripts/freeze_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1
 ```
 
 ## 验收命令（只读；期望 exit 0）
 
 ```powershell
-python scripts/t01/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1
-python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
+python docs/modules/T01/scripts/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1
+python docs/modules/T01/scripts/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
 ```
 
 期望：`RESULT=SOURCE_OK` 与 `RESULT=ACTUAL_GOLD_OK`。
@@ -39,7 +41,7 @@ python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1
 ## 可选：PDF
 
 ```powershell
-python scripts/t01/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1 --pdf --refetch-missing
+python docs/modules/T01/scripts/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1 --pdf --refetch-missing
 ```
 
 ## Fixture 隔离

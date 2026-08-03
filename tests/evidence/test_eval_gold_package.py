@@ -8,8 +8,12 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PACKAGE = REPO_ROOT / "docs" / "modules" / "T01" / "eval_gold" / "v1"
-_VALIDATE = REPO_ROOT / "scripts" / "t01" / "validate_eval_gold.py"
-_FETCH = REPO_ROOT / "scripts" / "t01" / "fetch_eval_gold_sources.py"
+_VALIDATE = (
+    REPO_ROOT / "docs" / "modules" / "T01" / "scripts" / "validate_eval_gold.py"
+)
+_FETCH = (
+    REPO_ROOT / "docs" / "modules" / "T01" / "scripts" / "fetch_eval_gold_sources.py"
+)
 
 
 def _load(path: Path, name: str):

@@ -10,7 +10,7 @@
 | 哈希 | 对冻结文件原始字节 SHA-256 |
 | 验收 | `fetch_eval_gold_sources.py` **只读校验**冻结快照，默认不重下 |
 
-重新冻结（维护者）：`python scripts/t01/freeze_eval_gold_sources.py`
+重新冻结（维护者）：`python docs/modules/T01/scripts/freeze_eval_gold_sources.py`
 
 ## 仓库内提交
 

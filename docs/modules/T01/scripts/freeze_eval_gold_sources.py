@@ -18,7 +18,17 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]
+def _repo_root() -> Path:
+    """定位仓库根（含 .git）。"""
+    cur = Path(__file__).resolve().parent
+    while cur != cur.parent:
+        if (cur / ".git").exists():
+            return cur
+        cur = cur.parent
+    raise RuntimeError("repository root not found")
+
+
+REPO = _repo_root()
 DEFAULT_PACKAGE = REPO / "docs" / "modules" / "T01" / "eval_gold" / "v1"
 
 

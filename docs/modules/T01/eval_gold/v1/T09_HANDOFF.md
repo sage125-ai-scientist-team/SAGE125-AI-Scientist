@@ -32,8 +32,8 @@
 ## 验收命令
 
 ```powershell
-python scripts/t01/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1
-python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
+python docs/modules/T01/scripts/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1
+python docs/modules/T01/scripts/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
 ```
 
 ## CC-BY 归属

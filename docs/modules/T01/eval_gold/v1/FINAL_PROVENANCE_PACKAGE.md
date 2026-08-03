@@ -83,9 +83,9 @@ Publisher PDF 默认不入仓；SHA 钉死在 `SOURCES_INDEX.json` / `*.meta.jso
 git clone --depth 1 --branch t01/b-evidence-core https://github.com/Yqqxz/SAGE125-AI-Scientist-t01.git
 cd SAGE125-AI-Scientist-t01
 git rev-parse HEAD   # 须等于本轮固定 HEAD
-python scripts/t01/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1
+python docs/modules/T01/scripts/fetch_eval_gold_sources.py --package docs/modules/T01/eval_gold/v1
 # expect exit 0 / SOURCE_OK
-python scripts/t01/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
+python docs/modules/T01/scripts/validate_eval_gold.py --package docs/modules/T01/eval_gold/v1 --require-ready
 # expect exit 0 / ACTUAL_GOLD_OK
 ```
 

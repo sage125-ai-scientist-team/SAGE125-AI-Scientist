@@ -16,7 +16,17 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]
+def _repo_root() -> Path:
+    """定位仓库根（含 .git）。"""
+    cur = Path(__file__).resolve().parent
+    while cur != cur.parent:
+        if (cur / ".git").exists():
+            return cur
+        cur = cur.parent
+    raise RuntimeError("repository root not found")
+
+
+REPO = _repo_root()
 PACKAGE = REPO / "docs" / "modules" / "T01" / "eval_gold" / "v1"
 SOURCES = PACKAGE / "sources"
 
@@ -431,7 +441,7 @@ def write_package(pairs: list[dict]) -> None:
             "controlled_artifact_path": "docs/modules/T01/eval_gold/v1/sources",
             "reproduce_commands_doc": "docs/modules/T01/eval_gold/v1/REPRODUCE.md",
             "reproduce_command": (
-                "python scripts/t01/validate_eval_gold.py "
+                "python docs/modules/T01/scripts/validate_eval_gold.py "
                 "--package docs/modules/T01/eval_gold/v1 --write-checksums --require-ready"
             ),
             "git_commit": git_head(),
