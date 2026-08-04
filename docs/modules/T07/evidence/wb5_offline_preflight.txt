@@ -1,0 +1,58 @@
+T07-WB5 final pure-offline preflight
+Verification date: 2026-08-05 Asia/Shanghai
+Tested code SHA: 4560d0fd89a658e14eaeaedb2dcf10e3be82f5fc
+Integration SHA: 9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c
+Ahead/behind: 8/0
+Python version: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+
+Command:
+& ".\.venv\Scripts\python.exe" -m scripts.batch_125.preflight_five_real_runs --config docs\modules\T07\run_configs\T07-WB5-20260803-v1.json
+
+Provider execution flag: absent
+Exit code: 2
+Status: FIVE_REAL_RUNS_BLOCKED
+Error codes: PROVIDER_CONFIGURATION_MISSING, PRICE_SNAPSHOT_REQUIRED, T01_GATE_VERSION_UNAVAILABLE
+Provider calls: 0
+Provider preflight executed: false
+Five formal questions executed: 0
+
+Complete stdout:
+{"config_loader_invoked": true, "deep_research_configured": false, "env_file_exists": true, "error_codes": ["PROVIDER_CONFIGURATION_MISSING", "PRICE_SNAPSHOT_REQUIRED", "T01_GATE_VERSION_UNAVAILABLE"], "issues": [{"code": "PROVIDER_CONFIGURATION_MISSING", "message": "provider configuration boolean is false"}, {"code": "PRICE_SNAPSHOT_REQUIRED", "message": "a frozen operator-supplied price snapshot is required"}, {"code": "T01_GATE_VERSION_UNAVAILABLE", "message": "approved T01 commit is not proven to be an ancestor of HEAD"}], "mock_mode_enabled": false, "mode": "offline", "provider_configured": false, "provider_name": "bailian", "provider_preflight_executed": false, "qwen_configured": false, "source_provenance_verified": true, "status": "FIVE_REAL_RUNS_BLOCKED", "t01": {"available": false, "code": "T01_GATE_VERSION_UNAVAILABLE"}, "t03": {"available": true, "code": "T03_GATE_AVAILABLE"}}
+
+Complete stderr: empty
+
+Source verification:
+- data/raw/sjtu-booklet.pdf: regular file; size=8422081; sha256=4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576; verified=true
+- data/processed/questions_125.json: regular file; size=105068; sha256=b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb; UTF-8 no BOM; verified=true
+- JSON: total=125; unique_ids=125; exact_range=Q001-Q125; empty_ids=0; empty_questions=0
+- data/processed/extraction_report.md: regular file; size=1748; sha256=f895cbbd2c3e394040e0068c7c48d6ec35ad43c1c33b84b915d623f73cfbeb27; PASS markers verified
+- Synthetic fallback used: false
+
+Frozen five mapping (question_id = record["id"]):
+- Q001 | Mathematical Sciences | What makes prime numbers so special? | source_page=7 | booklet_excerpt_present=true | canonical_input_hash=310bf14faa04574681fb726cba14f7f12487d8881333b2086a35afdfffc0dc6d
+- Q028 | Biology | Will it be possible to cure all cancers? | source_page=15 | booklet_excerpt_present=true | canonical_input_hash=badcae2fec281a0bbaec81b36d8ed4a149696db855d0f399e7cbe382fdc78da8
+- Q050 | Astronomy | When will the universe die? Will it continue to expand? | source_page=21 | booklet_excerpt_present=true | canonical_input_hash=6f5c2f81f71800c2d3c449231ddfdb8816fd0e3ed1d53f1db1605c7afd118222
+- Q075 | Physics | What are the smallest building blocks of matter? | source_page=27 | booklet_excerpt_present=true | canonical_input_hash=f3f914199353942d7abf4709ffbfe67c6ae8fb8b8cba905dea0cc7f316b8c0eb
+- Q107 | Ecology | Can we stop global climate change? | source_page=37 | booklet_excerpt_present=true | canonical_input_hash=3448280c074284d4c316a8c013df63fb1c66d71c8a151fb4d4d1be119d2713b9
+
+Prompt verification:
+- version=sage125-agent-prompts-20260803-v1
+- normalization amendment=2026-08-04 captain normalization amendment
+- hash_mode=utf8_lf_normalized_text_sha256
+- sha256=fa2d1da7d40ad6a6da800d6a41484973b46b63ebe72ed48da44b437644a5c808
+- verified=true
+- app/agents/prompts.py modified=false
+
+Safe provider diagnostics:
+- env_file_exists=true
+- provider_name=bailian
+- qwen_configured=false
+- deep_research_configured=false
+- mock_mode_enabled=false
+- config_loader_invoked=true
+
+External gates:
+- T01 available=false; code=T01_GATE_VERSION_UNAVAILABLE
+- T03 available=true; code=T03_GATE_AVAILABLE
+- price snapshot status=PRICE_SNAPSHOT_REQUIRED

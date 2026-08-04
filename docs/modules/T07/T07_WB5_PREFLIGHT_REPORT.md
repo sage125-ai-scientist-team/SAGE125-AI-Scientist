@@ -1,6 +1,6 @@
 # T07-WB5 preflight report
 
-Date: 2026-08-03 (Asia/Shanghai)
+Verification date: 2026-08-05 (Asia/Shanghai)
 
 Freeze ID: `T07-WB5-20260803-v1`
 
@@ -8,178 +8,134 @@ Freeze ID: `T07-WB5-20260803-v1`
 
 `FIVE_REAL_RUNS_BLOCKED`
 
-`T01_GATE_VERSION_UNAVAILABLE`
+Current offline blockers:
 
-`PROVIDER_PREFLIGHT_NOT_EXECUTED`
-
-No provider request and no formal five-question run occurred. PR #31 was verified OPEN and Draft before implementation and was not modified.
-
-## Git and test provenance
-
-- Branch: `t07/b-batch-core`
-- Tested code SHA: `20354d62c54cb78e50e2f672e292ffd72d548b73`
-- Origin branch SHA: `20354d62c54cb78e50e2f672e292ffd72d548b73`
-- Integration SHA: `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c`
-- Ahead/behind against integration: `4/0`
-- Merge in progress: no
-- Worktree at the start: clean
-- Worktree during final offline preflight: dirty by design because this WB5 implementation is uncommitted; formal preflight correctly returned `GIT_WORKTREE_DIRTY`
-
-The latest operator-confirmed full-suite run used `.venv\Scripts\python.exe` directly with `pytest -q -rs` and completed successfully. The earlier environment RED and initial collection RED remain preserved in `wb5_preflight_red_tests.txt` as historical pre-implementation evidence; they are not current full-suite results.
-
-## Frozen configuration
-
-- Provider: `bailian`
-- Route: `t07-wb5-bailian-qwen-stack-v1`
-- Models: `qwen3.6-flash`, `qwen3.7-plus`, `qwen3.7-max`, `qwen-deep-research`, `text-embedding-v4`, `qwen3-rerank`
-- Model version: `qwen-stack-20260803-v1`
-- Prompt version: `sage125-agent-prompts-20260803-v1`
-- Batch/checkpoint schemas: `t07.batch.v1` / `t07.checkpoint.v1`
-- Per-question budget: 200,000 tokens and USD 3.00
-- Batch budget: 1,000,000 tokens and USD 15.00
-- Maximum output per call: 8,192 tokens
-- Frozen budget error: `BUDGET_EXHAUSTED`
-- Approved T01 commit: `a4bba2e0b479d5dc0affdf5c2adc4307caed3ec7`
-
-No API key or Secret appears in the freeze or report.
-
-## Authoritative source verification
-
-| Source | Expected size | Expected SHA-256 | Actual result |
-|---|---:|---|---|
-| `data/raw/sjtu-booklet.pdf` | 8,422,081 | `4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576` | `SOURCE_MISSING` |
-| `data/processed/questions_125.json` | 105,068 | `b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb` | `SOURCE_MISSING` |
-
-The implementation requires exactly 125 JSON records, unique non-empty IDs, lookup by `record["id"]`, all five frozen IDs, exact domain/question matches, and canonical JSON hashes. It rejects synthetic sources and never falls back to fixtures.
-
-Because the production JSON is absent, the five mappings are truthfully `not evaluated`:
-
-| Question ID | Domain | Complete question | Canonical input hash |
-|---|---|---|---|
-| `Q001` | not evaluated | not evaluated | not evaluated |
-| `Q028` | not evaluated | not evaluated | not evaluated |
-| `Q050` | not evaluated | not evaluated | not evaluated |
-| `Q075` | not evaluated | not evaluated | not evaluated |
-| `Q107` | not evaluated | not evaluated | not evaluated |
-
-No question text, domain, order, or input hash was guessed.
-
-## Prompt and schema verification
-
-The frozen prompt SHA-256 is `b1afe045af8233f6255e4e1f2dc22645f88a0bae6ebf26b89028b3f2b383c3e0`; the current `app/agents/prompts.py` SHA-256 is `fa2d1da7d40ad6a6da800d6a41484973b46b63ebe72ed48da44b437644a5c808`. Offline preflight correctly returned `CODE_FILE_SHA256_MISMATCH`.
-
-All four selected schema files matched their recorded current size and SHA-256:
-
-| Path | Size | SHA-256 |
-|---|---:|---|
-| `app/core/schemas.py` | 15,743 | `eece52a348093213aad134642a5f9dd611d6ebaa560a9259f93beea8e9c670f5` |
-| `app/core/agent_schemas.py` | 12,951 | `216204b1325439e6b55fb0fb73955dd6584a22d8a2853a120ef805bfda37605b` |
-| `app/contracts/evidence.py` | 9,467 | `d954ae5d023faf67b2aa564113e12a57ccee45b338633fc7d21e16a5887cd7c9` |
-| `app/contracts/validation.py` | 44,304 | `961cfbdbbd291315cc62e51931d38f060a0cac911ac468a27e86444e98c49152` |
-
-Static prompt-file SHA and per-call dynamic prompt SHA are distinct audit fields.
-
-## T01/T03 availability
-
-T01 is blocked. `git cat-file` and `git merge-base --is-ancestor` could not resolve the approved commit in this checkout, and `app.evidence.precheck_bundle_for_validation` is absent. The stable result is `T01_GATE_VERSION_UNAVAILABLE`; no cherry-pick, copy, empty gate, or fabricated pass was used.
-
-T03 is available. The implementation verified and uses:
-
-- `ValidationContext.model_validate`
-- `GateResult.from_legacy`
-- `ValidationReport.from_context`
-- `run_all_quality_gates`
-
-## Completion-gate flow
-
-Every formal question enters `gates_pending`. `evaluate_question_completion` derives the only `completed` decision from these 20 conditions:
-
-1. Verified production source provenance.
-2. Exact frozen question/domain/input mapping.
-3. Batch ID.
-4. Question ID.
-5. Complete question text.
-6. Domain.
-7. Run ID.
-8. Canonical version ID.
-9. Source hash.
-10. Input hash.
-11. A freshly rebuilt `ValidationContext` with both actual-execution flags true.
-12. T01 public evidence precheck passes.
-13. Every T03 quality gate passes after `GateResult.from_legacy` conversion.
-14. No open P0/P1.
-15. All five base artifacts exist in the manifest.
-16. `llm_call_audit.json` exists in the manifest.
-17. Call audit is non-fallback and has known accounted cost.
-18. Manifest identity, checksum, and call-audit hash match.
-19. Delivery-index checksum and per-artifact hashes match the manifest.
-20. Per-question and batch budgets both pass.
-
-`build_actual_validation_context` calls the real T03 model validator and rejects false or mismatched actual-execution values. It never calls a mock context builder. T01/T03 import failures become blocking P1 gates. The five base artifacts remain unchanged; `build_artifact_manifest` accepts only the separately frozen `llm_call_audit.json` as a supplemental file, validates it, and allows its record to flow into the delivery index.
-
-`save_completion_gate_result` persists the exact `validation_report.json`, `gate_results.json`, and 20-condition `completion_gate.json` as UTF-8 question-scoped artifacts; it never recomputes or upgrades a blocked decision while saving.
-
-The call ledger uses `Decimal`, charges retries and provider preflight, checks the next call before execution, deduplicates resume by sanitized request ID, rejects ID collisions, rejects unknown cost, and never raises frozen limits automatically. Price calculations require an injected snapshot with version, source, and acquisition time.
-
-## Offline CLI result
-
-Command: `python -m scripts.batch_125.preflight_five_real_runs`
-
-Exit code: 2 (expected fail-closed result)
-
-Result status: `FIVE_REAL_RUNS_BLOCKED`
-
-Observed codes:
-
-- `SOURCE_MISSING` for both authoritative files
-- `FROZEN_QUESTION_NOT_EVALUATED` for all five IDs
-- `CODE_FILE_SHA256_MISMATCH` for the prompt
-- `GIT_WORKTREE_DIRTY`
-- `PROVIDER_CONFIGURATION_MISSING` (boolean false; no value inspected or emitted)
+- `PROVIDER_CONFIGURATION_MISSING`
 - `PRICE_SNAPSHOT_REQUIRED`
 - `T01_GATE_VERSION_UNAVAILABLE`
 
-T03: `T03_GATE_AVAILABLE`
+`PROVIDER_PREFLIGHT_NOT_EXECUTED`
 
-Provider preflight executed: no (`provider_preflight_executed=false`).
+No provider request and no formal five-question run occurred. Provider calls are 0. PR #31 was verified `OPEN`, `Draft=true`, base `integration/2026-08-10`, and remains Draft.
 
-The CLI defaults to offline. Only `--execute-provider-preflight` can permit one eight-token Bailian request, and even then only after every offline gate passes, `MOCK_LLM` is off, an operator price snapshot is supplied, and the audit target is outside the repository. That flag was not executed in this work.
+## Git and environment provenance
+
+- Branch: `t07/b-batch-core`
+- Tested code SHA: `4560d0fd89a658e14eaeaedb2dcf10e3be82f5fc`
+- Integration SHA: `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c`
+- Ahead/behind against integration: `8/0`
+- Merge required: no; latest fetched integration was already an ancestor
+- Merge in progress: no
+- Python: 3.12.10
+- Python executable: `D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe`
+- `pip check`: `No broken requirements found.`
+
+The `.venv` is operational again because its configured Python 3.12.10 installation is present. No dependency file, lock file, CI workflow, `.env`, or PowerShell execution policy was changed, and no environment replacement was needed.
+
+The PR head repository reported by GitHub is `myr-111/SAGE125-AI-Scientist-fork`; the local `origin` correctly points to that repository. The non-`-fork` origin stated in the supplied runbook is stale and was not substituted because it would not update PR #31.
+
+## Authoritative source verification
+
+| Source | Actual size | SHA-256 | Result |
+|---|---:|---|---|
+| `data/raw/sjtu-booklet.pdf` | 8,422,081 | `4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576` | verified |
+| `data/processed/questions_125.json` | 105,068 | `b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb` | verified; UTF-8 without BOM |
+| `data/processed/extraction_report.md` | 1,748 | `f895cbbd2c3e394040e0068c7c48d6ec35ad43c1c33b84b915d623f73cfbeb27` | verified; count/status/quality PASS |
+
+JSON audit: total 125, unique IDs 125, exact range `Q001`-`Q125`, empty IDs 0, empty questions 0. All inputs remain Git-ignored and untracked. Synthetic fallback was not used.
+
+The PDF is provenance/background, not scientific literature evidence for the eventual answers.
+
+## Frozen five-question mapping
+
+Mapping uses `question_id = record["id"]` and the existing T07 canonical-input function.
+
+| ID | Page | Domain | Complete question | Canonical input hash |
+|---|---:|---|---|---|
+| `Q001` | 7 | Mathematical Sciences | What makes prime numbers so special? | `310bf14faa04574681fb726cba14f7f12487d8881333b2086a35afdfffc0dc6d` |
+| `Q028` | 15 | Biology | Will it be possible to cure all cancers? | `badcae2fec281a0bbaec81b36d8ed4a149696db855d0f399e7cbe382fdc78da8` |
+| `Q050` | 21 | Astronomy | When will the universe die? Will it continue to expand? | `6f5c2f81f71800c2d3c449231ddfdb8816fd0e3ed1d53f1db1605c7afd118222` |
+| `Q075` | 27 | Physics | What are the smallest building blocks of matter? | `f3f914199353942d7abf4709ffbfe67c6ae8fb8b8cba905dea0cc7f316b8c0eb` |
+| `Q107` | 37 | Ecology | Can we stop global climate change? | `3448280c074284d4c316a8c013df63fb1c66d71c8a151fb4d4d1be119d2713b9` |
+
+All five authoritative records include `source_page` and a non-empty `booklet_excerpt`; those fields are bound by each complete-record canonical hash.
+
+## Prompt and schema verification
+
+- Prompt version: `sage125-agent-prompts-20260803-v1`
+- Amendment: `2026-08-04 captain normalization amendment`
+- Hash mode: `utf8_lf_normalized_text_sha256`
+- Verified SHA-256: `fa2d1da7d40ad6a6da800d6a41484973b46b63ebe72ed48da44b437644a5c808`
+- `app/agents/prompts.py` modified: no
+- Four frozen shared schema files: verified by their recorded raw byte size/SHA-256
+
+Tests prove CRLF, CR, and LF Prompt line endings produce the same normalized hash while other text remains significant.
+
+## Safe provider diagnostics
+
+- `env_file_exists=true`
+- `provider_name=bailian`
+- `qwen_configured=false`
+- `deep_research_configured=false`
+- `mock_mode_enabled=false`
+- `config_loader_invoked=true`
+
+The CLI now invokes the existing repository configuration loader but emits only these safe booleans/name. It never prints `.env`, an API key, or an authorization header.
+
+## T01/T03 and price gates
+
+- Approved T01 commit: `a4bba2e0b479d5dc0affdf5c2adc4307caed3ec7`
+- T01: unavailable; `git merge-base --is-ancestor` fails, so `T01_GATE_VERSION_UNAVAILABLE` remains. No T01 code was copied or cherry-picked.
+- T03: `T03_GATE_AVAILABLE`.
+- Price snapshot: absent; `PRICE_SNAPSHOT_REQUIRED` remains. Unknown cost was not treated as zero.
 
 ## Tests
 
-RED:
-
-- Requested `.venv` invocation: exit 101; suite not executed because the venv interpreter target is missing.
-- Read-only fallback before implementation: exit 2, zero collected, four collection errors, two cache warnings, 0.87s.
-- First error: `ModuleNotFoundError: No module named 'app.batch.five_run_preflight'`.
-
-Final:
-
 | Suite | Collected | Passed | Failed | Skipped | Warnings | Duration | Exit |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| WB5 targeted | 38 | 38 | 0 | 0 | 0 | 0.56s | 0 |
-| `tests/batch` | 191 | 189 | 0 | 2 | 0 | 6.94s | 0 |
-| Full pytest | 856 | 817 | 0 | 39 | not reported | 61.04s | 0 |
+| WB5 targeted | 40 | 40 | 0 | 0 | 0 | 0.61s | 0 |
+| `tests/batch` | 193 | 191 | 0 | 2 | 0 | 9.54s | 0 |
+| Full pytest | 858 | 853 | 1 | 4 | 0 | 64.03s | 1 |
 
-The two batch skips are Windows symlink-privilege skips. The 39 full-suite skips remain recorded as skips and primarily reflect missing authoritative PDF/question inputs plus unavailable Windows symlink privilege.
+The two batch skips and two execution skips are Windows symlink-privilege skips. The current full-suite failure is:
 
-Historical full-suite note: an earlier attempt reported one transient Streamlit `AppTest` timeout after 30 seconds. The timeout did not reproduce in the latest complete rerun. No `tests/api` or T08 test, timeout, skip, xfail, or assertion was modified, and this report does not claim that a code change fixed the transient timeout. It is not a current blocker.
+`tests/test_api_run_modes_and_consistency.py::test_post_runs_real_without_key_returns_400`: expected HTTP 400, actual HTTP 503.
 
-## Current blockers
+That test and the corresponding API implementation are outside T07 owner paths and were not changed.
 
-1. Authoritative PDF absent.
-2. Production 125-question JSON absent.
-3. Five domain/question/hash mappings therefore not evaluated.
-4. Approved T01 commit not available/proven in HEAD and T01 public bridge absent.
-5. Frozen prompt SHA does not match the current prompt file.
-6. Provider configuration boolean false in the offline process.
-7. Operator price snapshot not supplied.
-8. Worktree remains dirty until an authorized human commits the reviewed changes.
+Historical Streamlit note: an earlier full run in this verification round reproduced the known 30-second Streamlit AppTest timeout and also had the API failure (2 failed, 852 passed, 4 skipped, 108.86s). The isolated Streamlit rerun passed in 26.22s and the latest complete run did not reproduce it. No `tests/api` test, timeout, skip, xfail, or assertion was modified, and this report does not claim a T07 code fix resolved that transient timeout.
 
-## Suggested commit split (not executed)
+Historical environment and initial collection RED results remain preserved in `docs/modules/T07/evidence/wb5_preflight_red_tests.txt` and are not current.
 
-1. `test(t07): add WB5 fail-closed red and contract coverage`
-2. `feat(t07): add frozen five-run preflight, completion gate, and call audit`
-3. `docs(t07): record WB5 freeze, evidence, and blocked preflight status`
+## Final pure-offline preflight
 
-No commit, push, PR update, Ready transition, merge, provider call, five-question run, or T01 cherry-pick was performed.
+Command:
+
+`& ".\.venv\Scripts\python.exe" -m scripts.batch_125.preflight_five_real_runs --config docs\modules\T07\run_configs\T07-WB5-20260803-v1.json`
+
+- Exit code: 2 (fail-closed)
+- Status: `FIVE_REAL_RUNS_BLOCKED`
+- Source provenance verified: true
+- Five mappings verified: true
+- Prompt verified: true
+- Error codes: `PROVIDER_CONFIGURATION_MISSING`, `PRICE_SNAPSHOT_REQUIRED`, `T01_GATE_VERSION_UNAVAILABLE`
+- T03: `T03_GATE_AVAILABLE`
+- Provider calls: 0
+- Provider preflight executed: false
+- Formal five-question runs: 0
+
+`SOURCE_MISSING`, `FROZEN_QUESTION_NOT_EVALUATED`, `CODE_FILE_SHA256_MISMATCH`, `PROMPT_HASH_MISMATCH`, and `GIT_WORKTREE_DIRTY` are no longer current codes.
+
+## Current blockers and handoff
+
+1. Captain-approved T01 commit/interface must become available on the integration ancestry.
+2. Operator must supply an approved provider price snapshot.
+3. Bailian/Qwen configuration is currently incomplete according to the existing loader.
+4. Captain authorization is required before provider preflight or any of the five formal questions.
+5. The non-T07 API 400/503 full-suite failure requires its owner.
+
+PR #31 must remain Draft. No provider flag, real Bailian call, formal five-question run, Ready transition, merge, rebase, force push, or new PR is authorized by this report.
+
+## Historical 2026-08-03 state
+
+The earlier report accurately recorded absent PDF/JSON, unevaluated mappings, raw Prompt hash mismatch, old test counts, and an uncommitted dirty worktree. Those values are retained here as history only and must not be used as current provenance.
