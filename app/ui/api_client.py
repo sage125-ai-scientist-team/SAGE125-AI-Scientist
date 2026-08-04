@@ -76,6 +76,11 @@ def _prefer_inprocess_run() -> bool:
     return os.getenv("FRONTEND_RUN_VIA_API", "").strip().lower() not in ("1", "true", "yes")
 
 
+def _api_only() -> bool:
+    """Whether this UI is explicitly isolated from all in-process backend work."""
+    return not _prefer_inprocess_run()
+
+
 def api_base() -> str:
     """返回 API 基础 URL（可由 FRONTEND_API_BASE_URL 覆盖）。"""
     return os.getenv("FRONTEND_API_BASE_URL", "http://localhost:8000").rstrip("/")
@@ -100,6 +105,18 @@ def get_health() -> dict:
             return r.json()
     except requests.RequestException:
         pass
+    if _api_only():
+        return {
+            "status": "unavailable",
+            "service": "sage125-api",
+            "bailian": {"configured": False, "status": "unavailable"},
+            "qwen_config_loaded": False,
+            "deep_research_config_loaded": False,
+            "openalex_config_loaded": False,
+            "rag_index_status": "unavailable",
+            "questions_count": 0,
+            "models": {},
+        }
     # 回退：进程内直接读取 settings。
     from app.api.routes import health as _health
 
@@ -114,6 +131,16 @@ def get_diagnostics() -> dict:
             return r.json()
     except requests.RequestException:
         pass
+    if _api_only():
+        return {
+            "status": "error",
+            "api_connected": False,
+            "qwen": {"configured": False},
+            "deepresearch": {"configured": False},
+            "openalex": {"configured": False},
+            "warnings": [],
+            "errors": ["sage125-api 暂不可用。"],
+        }
     # 回退：进程内调用诊断逻辑。
     from app.api.routes import diagnostics as _diag
 
@@ -128,6 +155,8 @@ def get_runs(limit: int = 20) -> list[dict]:
             return r.json().get("runs", [])
     except requests.RequestException:
         pass
+    if _api_only():
+        return []
     from app.ui.run_browser import list_runs
 
     return list_runs(limit=limit)
@@ -141,6 +170,8 @@ def get_questions() -> dict:
             return r.json()
     except requests.RequestException:
         pass
+    if _api_only():
+        return {"status": "unavailable", "message": "sage125-api 暂不可用。"}
     # 回退：直接读文件。
     if not QUESTIONS_PATH.exists():
         return {"status": "missing", "message": "请先运行 python scripts/extract_125_questions.py"}
@@ -372,6 +403,17 @@ def get_library_status() -> dict:
     except (requests.RequestException, ValueError):
         pass
 
+    if _api_only():
+        return _normalize_library_status(
+            {
+                "status": "unavailable",
+                "message": "sage125-api 暂不可用。",
+                "documents": [],
+                "usage": {"document_count": 0, "total_bytes": 0},
+                "quota": {},
+            }
+        )
+
     try:
         manager = _new_library_manager()
         payload = _call_library_method(manager, ("get_status", "status", "library_status"))
@@ -483,6 +525,16 @@ def ingest_files(files: list[tuple[str, bytes]]) -> dict:
         except requests.RequestException:
             pass
 
+    if _api_only():
+        return {
+            "status": "failed",
+            "files": [],
+            "chunks_added": 0,
+            "error_type": "api_unavailable",
+            "message": "sage125-api 暂不可用，未在 UI 服务内执行索引。",
+            "errors": ["sage125-api 暂不可用。"],
+        }
+
     # 回退：与 HTTP /ingest 使用同一 LibraryManager，不允许绕过治理层。
     try:
         manager = _new_library_manager()
@@ -536,6 +588,14 @@ def delete_library_document(document_id: str) -> dict:
             return {**body, "status": "failed", "error_type": body.get("error_type", "http_error")}
     except requests.RequestException:
         pass
+
+    if _api_only():
+        return {
+            "status": "failed",
+            "document_id": document_id,
+            "error_type": "api_unavailable",
+            "message": "sage125-api 暂不可用，未在 UI 服务内删除数据。",
+        }
 
     try:
         manager = _new_library_manager()
@@ -604,7 +664,26 @@ def run_preflight(
     check_connectivity: bool = False,
     progress_callback: Callable[[dict], None] | None = None,
 ) -> dict:
-    """运行真实模式 preflight（进程内，不泄露 Key）。"""
+    """运行真实模式 preflight；API-only UI 不得加载后端配置或模型客户端。"""
+    if _api_only():
+        try:
+            response = requests.get(
+                f"{api_base()}/preflight",
+                params={
+                    "use_local_rag": use_local_rag,
+                    "use_deep_research": use_deep_research,
+                },
+                timeout=_SHORT_TIMEOUT,
+            )
+            if response.status_code == 200:
+                return response.json()
+        except (requests.RequestException, ValueError):
+            pass
+        return {
+            "ok": False,
+            "errors": ["sage125-api 暂不可用。"],
+            "warnings": [],
+        }
     from app.workflow.preflight import run_real_preflight
     from app.core.run_progress import progress_reporting
 
@@ -707,8 +786,16 @@ def start_run(
         "reviewer_auto_revision": switches.get("reviewer_auto_revision", True),
     }
     # 默认进程内运行（真实模式常需 15–25 分钟，HTTP 易触发读超时）。
-    if _prefer_inprocess_run() or not api_available():
+    if _prefer_inprocess_run():
         return _start_run_inprocess(payload, mode, progress_callback=progress_callback)
+
+    if not api_available():
+        return {
+            "status": "failed",
+            "errors": ["sage125-api 暂不可用，未在 UI 服务内执行模型调用。"],
+            "mock": mode == "mock",
+            "error_type": "api_unavailable",
+        }
 
     # 显式 FRONTEND_RUN_VIA_API=1 时走 HTTP；超时后尝试从 exports 恢复。
     import time
@@ -765,6 +852,8 @@ def get_llm_calls(run_id: str) -> dict:
                 return r.json()
         except requests.RequestException:
             pass
+    if _api_only():
+        return {"exists": False, "status": "unavailable", "records": [], "summary": {}}
     from app.ui.run_browser import get_llm_call_audit
 
     return get_llm_call_audit(run_id)
@@ -779,6 +868,8 @@ def get_run(run_id: str) -> dict:
                 return r.json()
         except requests.RequestException:
             pass
+    if _api_only():
+        return {"status": "unavailable", "message": "sage125-api 暂不可用。"}
     run_dir = _exports_dir() / run_id
     if not run_dir.exists():
         return {"status": "missing", "message": f"运行不存在：{run_id}"}
@@ -809,6 +900,12 @@ def revise_run(run_id: str, feedback: str) -> dict:
             return {"status": "failed", "message": r.text}
         except requests.RequestException as exc:
             return {"status": "failed", "message": str(exc)}
+    if _api_only():
+        return {
+            "status": "failed",
+            "error_type": "api_unavailable",
+            "message": "sage125-api 暂不可用。",
+        }
     from app.workflow.pipeline import revise_with_feedback
 
     try:

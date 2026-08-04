@@ -1,0 +1,61 @@
+T07 PR-A Request Changes synthetic dry-run evidence
+====================================================
+
+PR: #12
+Current HEAD: ea9ca2190457a861782d6c543e989474704039c0
+Evidence scope: uncommitted owner-scoped Request Changes fixes
+Python version: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+Source: tests/batch/fixtures/questions_125.synthetic.json
+Source classification: `synthetic=true` / `--source-kind synthetic`
+
+Command:
+
+    & ".\.venv\Scripts\python.exe" -m scripts.batch_125.dry_run --source tests/batch/fixtures/questions_125.synthetic.json --source-kind synthetic --run-root .pytest_tmp/pr_a_review_round1 --batch-id pr-a-review-round1
+
+Exit code: 0
+Collected: not applicable (CLI)
+Passed: command completed and manifest validated
+Failed: 0
+Skipped: 0
+Warnings: 0
+Duration: 0.699s
+First failure: none
+Failure reason: none
+
+Raw CLI output:
+
+    {"actual_results": 0, "batch_id": "pr-a-review-round1", "checkpoints": 125, "dry_run": true, "jobs": 125, "manifest_path": ".pytest_tmp/pr_a_review_round1/pr-a-review-round1/manifest.json", "provider_calls": 0, "research_artifacts": 0, "source_kind": "synthetic", "temporary_files": 0, "tokens_used": 0, "unique_cache_namespaces": 125, "unique_context_ids": 125, "unique_workspaces": 125}
+
+Metrics from current execution:
+
+- jobs: 125
+- unique_workspaces: 125
+- unique_context_ids: 125
+- unique_cache_namespaces: 125
+- checkpoints: 125, scanned from materialized checkpoint files
+- provider_calls: 0, read from the runner call counter
+- tokens_used: 0, aggregated from actual job budgets
+- actual_results: 0, aggregated from actual job result kinds
+- research_artifacts: 0, scanned from the materialized run directory
+- temporary_files: 0, scanned from the materialized run directory
+
+Independent filesystem/manifest check:
+
+    Jobs              : 125
+    ManifestTotal     : 125
+    Queued            : 125
+    Checkpoints       : 125
+    TemporaryFiles    : 0
+    ResearchArtifacts : 0
+    SourceKind        : synthetic
+    DryRun            : True
+
+Requirement mapping:
+
+- `T07-A-007`: serialized source/input/route/prompt provenance and checkpoints
+- `T07-A-008`: reproducible dry-run/resume report input
+- P2: derived `total` and `status_counts`, real filesystem metrics
+
+This is marked-synthetic contract evidence only. It is not an authoritative
+125-question validation or a formal model run.
