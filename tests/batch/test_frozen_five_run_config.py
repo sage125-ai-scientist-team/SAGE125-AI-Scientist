@@ -51,7 +51,8 @@ def _write_fixture_repo(root: Path) -> tuple[list[dict], dict]:
     source_path.parent.mkdir(parents=True)
     source_path.write_bytes(source_bytes)
 
-    prompt = b"PROMPT = 'frozen'\n"
+    prompt = b"PROMPT = 'frozen'\r\n"
+    normalized_prompt = b"PROMPT = 'frozen'\n"
     prompt_path = root / "app/agents/prompts.py"
     prompt_path.parent.mkdir(parents=True)
     prompt_path.write_bytes(prompt)
@@ -109,8 +110,9 @@ def _write_fixture_repo(root: Path) -> tuple[list[dict], dict]:
         "prompt": {
             "version": "test-prompt-v1",
             "path": prompt_path.relative_to(root).as_posix(),
-            "size": len(prompt),
-            "sha256": _sha(prompt),
+            "size": None,
+            "hash_mode": "utf8_lf_normalized_text_sha256",
+            "sha256": _sha(normalized_prompt),
         },
         "batch_schema": "t07.batch.v1",
         "checkpoint_schema": "t07.checkpoint.v1",
@@ -155,6 +157,18 @@ def test_all_frozen_hashes_and_five_id_mappings_pass(tmp_path: Path) -> None:
     assert verify_frozen_question_text(config, mapped) == ()
     assert verify_frozen_code_files(config, tmp_path) == ()
     assert tuple(mapped) == QUESTION_IDS
+
+
+def test_prompt_hash_normalizes_crlf_and_cr_to_lf(tmp_path: Path) -> None:
+    _, payload = _write_fixture_repo(tmp_path)
+    prompt_path = tmp_path / payload["prompt"]["path"]
+    config = load_frozen_run_config(_write_config(tmp_path, payload))
+
+    assert verify_frozen_code_files(config, tmp_path) == ()
+
+    prompt_path.write_bytes(b"PROMPT = 'frozen'\r")
+
+    assert verify_frozen_code_files(config, tmp_path) == ()
 
 
 @pytest.mark.parametrize("field", ["size", "sha256"])

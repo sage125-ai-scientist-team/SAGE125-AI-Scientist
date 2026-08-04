@@ -11,10 +11,13 @@ import hashlib
 import json
 import os
 import sys
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
+
+from app.core.config import get_settings
 
 from app.batch.actual_call_audit import (
     ActualCallAudit,
@@ -34,6 +37,32 @@ from app.batch.five_run_preflight import (
 DEFAULT_CONFIG = Path(
     "docs/modules/T07/run_configs/T07-WB5-20260803-v1.json"
 )
+
+
+def _safe_provider_diagnostics(
+    repo_root: Path,
+    *,
+    environment: Mapping[str, str] | None = None,
+    settings_loader: Callable[[], Any] = get_settings,
+) -> dict[str, object]:
+    """Load repository configuration while returning no secret values."""
+
+    settings = settings_loader()
+    source = os.environ if environment is None else environment
+    mock_enabled = str(source.get("MOCK_LLM", "")).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    return {
+        "env_file_exists": (repo_root / ".env").is_file(),
+        "provider_name": str(settings.llm_provider),
+        "qwen_configured": bool(settings.qwen_configured),
+        "deep_research_configured": bool(settings.deep_research_configured),
+        "mock_mode_enabled": mock_enabled,
+        "config_loader_invoked": True,
+    }
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -237,12 +266,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     try:
         raw_snapshot, snapshot = _load_price_snapshot(args.price_snapshot)
+        provider_diagnostics = _safe_provider_diagnostics(repo_root)
         result = run_five_run_preflight(
             config_path,
             repo_root,
             injected_price_snapshot=raw_snapshot,
+            provider_configured_override=bool(
+                provider_diagnostics["qwen_configured"]
+            ),
         )
         output = result.to_dict()
+        output.update(provider_diagnostics)
         output["mode"] = "offline"
         if not args.execute_provider_preflight:
             print(json.dumps(output, ensure_ascii=False, sort_keys=True))

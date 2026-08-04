@@ -24,6 +24,13 @@ FROZEN_QUESTION_IDS: Final[tuple[str, ...]] = (
 )
 EXPECTED_QUESTION_COUNT: Final[int] = 125
 SHA256_LENGTH: Final[int] = 64
+RAW_BYTES_SHA256: Final[str] = "raw_bytes_sha256"
+UTF8_LF_NORMALIZED_TEXT_SHA256: Final[str] = (
+    "utf8_lf_normalized_text_sha256"
+)
+SUPPORTED_HASH_MODES: Final[frozenset[str]] = frozenset(
+    {RAW_BYTES_SHA256, UTF8_LF_NORMALIZED_TEXT_SHA256}
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -42,6 +49,7 @@ class FrozenFileRecord:
     size: int | None
     sha256: str
     name: str | None = None
+    hash_mode: str = RAW_BYTES_SHA256
 
     def __post_init__(self) -> None:
         if not self.path.strip():
@@ -50,6 +58,8 @@ class FrozenFileRecord:
             raise ValueError("frozen file size must be non-negative")
         if not _is_sha256(self.sha256):
             raise ValueError("frozen file sha256 must be lowercase SHA-256")
+        if self.hash_mode not in SUPPORTED_HASH_MODES:
+            raise ValueError(f"unsupported frozen file hash mode: {self.hash_mode}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -186,6 +196,7 @@ def _file_record(value: Any, label: str) -> FrozenFileRecord:
             path=str(raw["path"]),
             size=None if size is None else int(size),
             sha256=str(raw["sha256"]),
+            hash_mode=str(raw.get("hash_mode") or RAW_BYTES_SHA256),
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise BatchRunnerError(
@@ -338,12 +349,18 @@ def _owned_path(repo_root: Path, frozen_path: str) -> Path:
     return candidate
 
 
-def _hash_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def _hash_file(path: Path, hash_mode: str) -> str:
+    if hash_mode == RAW_BYTES_SHA256:
+        digest = hashlib.sha256()
+        with path.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        return digest.hexdigest()
+    if hash_mode == UTF8_LF_NORMALIZED_TEXT_SHA256:
+        text = path.read_bytes().decode("utf-8-sig")
+        normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    raise ValueError(f"unsupported frozen file hash mode: {hash_mode}")
 
 
 def _verify_file(
@@ -372,7 +389,17 @@ def _verify_file(
                 f"Frozen size mismatch for {record.path}",
             )
         )
-    if _hash_file(candidate) != record.sha256:
+    try:
+        actual_hash = _hash_file(candidate, record.hash_mode)
+    except UnicodeError:
+        issues.append(
+            PreflightIssue(
+                f"{prefix}_TEXT_ENCODING_INVALID",
+                f"Frozen text file is not valid UTF-8: {record.path}",
+            )
+        )
+        return tuple(issues)
+    if actual_hash != record.sha256:
         issues.append(
             PreflightIssue(
                 f"{prefix}_SHA256_MISMATCH",
@@ -650,6 +677,7 @@ def run_five_run_preflight(
     repo_root: str | Path,
     *,
     environment: Mapping[str, str] | None = None,
+    provider_configured_override: bool | None = None,
     injected_price_snapshot: Mapping[str, Any] | None = None,
     git_runner: GitRunner = _default_git_runner,
 ) -> FiveRunPreflightResult:
@@ -682,9 +710,13 @@ def run_five_run_preflight(
     dirty = _verify_clean_worktree(root, git_runner)
     if dirty is not None:
         issues.append(dirty)
-    provider_configured = verify_provider_configuration_boolean(
-        config.provider_environment_variables,
-        environment=environment,
+    provider_configured = (
+        verify_provider_configuration_boolean(
+            config.provider_environment_variables,
+            environment=environment,
+        )
+        if provider_configured_override is None
+        else provider_configured_override
     )
     if not provider_configured:
         issues.append(

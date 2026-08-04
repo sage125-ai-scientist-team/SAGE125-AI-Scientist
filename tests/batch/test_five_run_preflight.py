@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
+from types import SimpleNamespace
 
 from app.batch.five_run_preflight import (
     verify_provider_configuration_boolean,
     verify_t01_gate_availability,
     verify_t03_gate_availability,
 )
-from scripts.batch_125.preflight_five_real_runs import build_parser
+from scripts.batch_125.preflight_five_real_runs import (
+    _safe_provider_diagnostics,
+    build_parser,
+)
 
 
 def test_provider_configuration_returns_only_boolean() -> None:
@@ -22,6 +26,34 @@ def test_provider_configuration_returns_only_boolean() -> None:
         ("DASHSCOPE_API_KEY",),
         environment={},
     ) is False
+
+
+def test_cli_provider_diagnostics_are_loader_backed_and_secret_free(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / ".env").write_text("must-not-be-read-by-test\n", encoding="utf-8")
+    sentinel_secret = "must-never-be-returned"
+
+    diagnostics = _safe_provider_diagnostics(
+        tmp_path,
+        environment={"MOCK_LLM": "false"},
+        settings_loader=lambda: SimpleNamespace(
+            llm_provider="bailian",
+            qwen_configured=True,
+            deep_research_configured=False,
+            dashscope_api_key=sentinel_secret,
+        ),
+    )
+
+    assert diagnostics == {
+        "env_file_exists": True,
+        "provider_name": "bailian",
+        "qwen_configured": True,
+        "deep_research_configured": False,
+        "mock_mode_enabled": False,
+        "config_loader_invoked": True,
+    }
+    assert sentinel_secret not in repr(diagnostics)
 
 
 def test_t01_commit_not_in_head_is_stably_blocked(tmp_path: Path) -> None:
