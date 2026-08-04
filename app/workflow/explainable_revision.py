@@ -55,6 +55,10 @@ def _stable_id(prefix: str, *parts: Any) -> str:
     return f"{prefix}:{hashlib.sha256(encoded).hexdigest()[:16]}"
 
 
+def _json_sha256(value: Any) -> str:
+    return hashlib.sha256(_canonical_json(value).encode("utf-8")).hexdigest()
+
+
 def _unique_strings(values: Sequence[str]) -> list[str]:
     return sorted({str(value).strip() for value in values if str(value).strip()})
 
@@ -71,6 +75,33 @@ class FailureReason(BaseModel):
     ]
     reason: str = Field(min_length=1)
     issue_id: str | None = None
+
+
+class HumanFeedbackReceipt(BaseModel):
+    """Frozen accepted-only T03 receipt sent at the Agent payload boundary."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: Literal[1] = 1
+    feedback_id: str = Field(min_length=1)
+    source_version_id: str = Field(min_length=1)
+    disposition: Literal["accepted", "partially_accepted"]
+    applied_instructions: tuple[str, ...] = Field(min_length=1)
+    original_feedback_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @classmethod
+    def from_directive(
+        cls,
+        directive: HumanFeedbackDirective,
+    ) -> "HumanFeedbackReceipt":
+        """Snapshot one strict directive without exposing rejected/raw feedback."""
+        return cls(
+            feedback_id=directive.feedback_id,
+            source_version_id=directive.target_version_id,
+            disposition=directive.disposition,
+            applied_instructions=tuple(directive.instructions),
+            original_feedback_sha256=directive.original_feedback_sha256,
+        )
 
 
 class ExperimentRevisionContext(BaseModel):
@@ -123,6 +154,7 @@ class RevisionRoundInput(BaseModel):
 
     review_result: ReviewFeedback
     revision_context: ExperimentRevisionContext
+    human_feedback: HumanFeedbackReceipt | None = None
 
 
 class ReviewScoreChange(BaseModel):
@@ -223,6 +255,250 @@ class ExplainableRevisionAudit(BaseModel):
         ):
             raise ValueError("accepted revision cannot retain blockers")
         return self
+
+
+class StructuredRevisionDiff(BaseModel):
+    """The one canonical diff representation shared by trace and T03 receipts."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    changes: tuple[RevisionChange, ...]
+    substantive_sections: tuple[SubstantiveSection, ...]
+
+    @classmethod
+    def from_audit(
+        cls,
+        audit: ExplainableRevisionAudit,
+    ) -> "StructuredRevisionDiff":
+        return cls(
+            changes=tuple(
+                RevisionChange.model_validate(change.model_dump(mode="json"))
+                for change in audit.changes
+            ),
+            substantive_sections=tuple(audit.substantive_sections),
+        )
+
+    def fingerprint(self) -> str:
+        return _json_sha256(self.model_dump(mode="json"))
+
+
+def _require_direct_child(source_version_id: str, resulting_version_id: str) -> None:
+    source_run, source_marker, source_number = source_version_id.rpartition(":v")
+    result_run, result_marker, result_number = resulting_version_id.rpartition(":v")
+    if (
+        source_marker != ":v"
+        or result_marker != ":v"
+        or not source_run
+        or source_run != result_run
+        or not source_number.isdigit()
+        or not result_number.isdigit()
+        or int(result_number) != int(source_number) + 1
+    ):
+        raise ValueError("resulting_version_id must directly follow source_version_id")
+
+
+class RevisionMetadata(BaseModel):
+    """Strict execution receipt consumed by T03's feedback propagation gate."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: Literal[1] = 1
+    feedback_id: str = Field(min_length=1)
+    source_version_id: str = Field(min_length=1)
+    resulting_version_id: str = Field(min_length=1)
+    prompt_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    diff_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    applied_instructions: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _validate_direct_child(self) -> "RevisionMetadata":
+        _require_direct_child(self.source_version_id, self.resulting_version_id)
+        return self
+
+
+class RevisionLineageHandoffEvent(BaseModel):
+    """One deterministic T02 event awaiting append to T03's sidecar lineage."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    event_id: str = Field(min_length=1)
+    event_type: Literal[
+        "revision_requested",
+        "revision_generated",
+        "issue_closed",
+    ]
+    sequence: int = Field(ge=1)
+    subject_id: str = Field(min_length=1)
+    payload_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    parent_event_id: str | None = None
+    feedback_id: str = Field(min_length=1)
+    source_version_id: str = Field(min_length=1)
+    resulting_version_id: str = Field(min_length=1)
+
+
+class RevisionLineageHandoff(BaseModel):
+    """Strict T02 outcome that T03 can append after ``feedback_decided``."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: Literal[1] = 1
+    feedback_id: str = Field(min_length=1)
+    source_version_id: str = Field(min_length=1)
+    resulting_version_id: str = Field(min_length=1)
+    prompt_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    revision_diff_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    required_parent_event_type: Literal["feedback_decided"] = "feedback_decided"
+    issue_ids: tuple[str, ...] = ()
+    events: tuple[RevisionLineageHandoffEvent, ...] = Field(min_length=2)
+
+    @model_validator(mode="after")
+    def _validate_handoff(self) -> "RevisionLineageHandoff":
+        _require_direct_child(self.source_version_id, self.resulting_version_id)
+        event_ids = tuple(event.event_id for event in self.events)
+        if len(event_ids) != len(set(event_ids)):
+            raise ValueError("revision handoff event IDs must be unique")
+        if tuple(event.sequence for event in self.events) != tuple(
+            range(1, len(self.events) + 1)
+        ):
+            raise ValueError("revision handoff event sequence must be contiguous")
+        if tuple(event.event_type for event in self.events[:2]) != (
+            "revision_requested",
+            "revision_generated",
+        ):
+            raise ValueError("revision handoff must start requested -> generated")
+        if any(event.event_type != "issue_closed" for event in self.events[2:]):
+            raise ValueError("only issue closure events may follow revision_generated")
+        if self.events[0].parent_event_id is not None:
+            raise ValueError("first T02 event must await T03 feedback_decided parent")
+        for index, event in enumerate(self.events):
+            if index and event.parent_event_id != self.events[index - 1].event_id:
+                raise ValueError("revision handoff event parent chain is broken")
+            if (
+                event.feedback_id != self.feedback_id
+                or event.source_version_id != self.source_version_id
+                or event.resulting_version_id != self.resulting_version_id
+            ):
+                raise ValueError("revision handoff event identity mismatch")
+        requested, generated = self.events[:2]
+        if requested.subject_id != self.feedback_id:
+            raise ValueError("revision_requested must reference feedback_id")
+        if requested.payload_sha256 != self.prompt_fingerprint:
+            raise ValueError("revision_requested hash must match the prompt fingerprint")
+        if generated.subject_id != self.resulting_version_id:
+            raise ValueError("revision_generated must reference the result version")
+        if generated.payload_sha256 != self.revision_diff_sha256:
+            raise ValueError("revision_generated hash must match the structured diff")
+        closed_ids = tuple(event.subject_id for event in self.events[2:])
+        if closed_ids != self.issue_ids or len(closed_ids) != len(set(closed_ids)):
+            raise ValueError("issue closure events must match unique issue_ids")
+        return self
+
+
+def attach_revision_metadata(
+    execution_metadata: Mapping[str, Any],
+    revision_metadata: RevisionMetadata,
+) -> dict[str, Any]:
+    """Attach one validated receipt without overwriting conflicting metadata."""
+    payload = dict(execution_metadata)
+    existing = payload.get("revision_metadata")
+    if existing is not None:
+        if RevisionMetadata.model_validate(existing) != revision_metadata:
+            raise ValueError("execution metadata contains conflicting revision_metadata")
+        return json.loads(_canonical_json(payload))
+    payload["revision_metadata"] = revision_metadata.model_dump(mode="json")
+    return json.loads(_canonical_json(payload))
+
+
+def build_revision_pairing_outputs(
+    *,
+    audit: ExplainableRevisionAudit,
+    human_feedback: HumanFeedbackDirective,
+    resulting_version_id: str,
+    prompt_fingerprint: str,
+) -> tuple[RevisionMetadata, RevisionLineageHandoff]:
+    """Build metadata and append-ready events from one canonical diff snapshot."""
+    receipt = HumanFeedbackReceipt.from_directive(human_feedback)
+    structured_diff = StructuredRevisionDiff.from_audit(audit)
+    diff_hash = structured_diff.fingerprint()
+    metadata = RevisionMetadata(
+        feedback_id=receipt.feedback_id,
+        source_version_id=receipt.source_version_id,
+        resulting_version_id=resulting_version_id,
+        prompt_fingerprint=prompt_fingerprint,
+        diff_hash=diff_hash,
+        applied_instructions=receipt.applied_instructions,
+    )
+    requested_id = _stable_id(
+        "event",
+        "revision_requested",
+        metadata.feedback_id,
+        metadata.source_version_id,
+        metadata.prompt_fingerprint,
+    )
+    generated_id = _stable_id(
+        "event",
+        "revision_generated",
+        metadata.resulting_version_id,
+        metadata.diff_hash,
+    )
+    events: list[RevisionLineageHandoffEvent] = [
+        RevisionLineageHandoffEvent(
+            event_id=requested_id,
+            event_type="revision_requested",
+            sequence=1,
+            subject_id=metadata.feedback_id,
+            payload_sha256=metadata.prompt_fingerprint,
+            feedback_id=metadata.feedback_id,
+            source_version_id=metadata.source_version_id,
+            resulting_version_id=metadata.resulting_version_id,
+        ),
+        RevisionLineageHandoffEvent(
+            event_id=generated_id,
+            event_type="revision_generated",
+            sequence=2,
+            subject_id=metadata.resulting_version_id,
+            payload_sha256=metadata.diff_hash,
+            parent_event_id=requested_id,
+            feedback_id=metadata.feedback_id,
+            source_version_id=metadata.source_version_id,
+            resulting_version_id=metadata.resulting_version_id,
+        ),
+    ]
+    parent_event_id = generated_id
+    resolved_issues = tuple(
+        issue for issue in audit.issue_closures if issue.status == "resolved"
+    )
+    for issue in resolved_issues:
+        event_id = _stable_id(
+            "event",
+            "issue_closed",
+            issue.issue_id,
+            issue.model_dump(mode="json"),
+        )
+        events.append(
+            RevisionLineageHandoffEvent(
+                event_id=event_id,
+                event_type="issue_closed",
+                sequence=len(events) + 1,
+                subject_id=issue.issue_id,
+                payload_sha256=_json_sha256(issue.model_dump(mode="json")),
+                parent_event_id=parent_event_id,
+                feedback_id=metadata.feedback_id,
+                source_version_id=metadata.source_version_id,
+                resulting_version_id=metadata.resulting_version_id,
+            )
+        )
+        parent_event_id = event_id
+    handoff = RevisionLineageHandoff(
+        feedback_id=metadata.feedback_id,
+        source_version_id=metadata.source_version_id,
+        resulting_version_id=metadata.resulting_version_id,
+        prompt_fingerprint=metadata.prompt_fingerprint,
+        revision_diff_sha256=metadata.diff_hash,
+        issue_ids=tuple(issue.issue_id for issue in resolved_issues),
+        events=tuple(events),
+    )
+    return metadata, handoff
 
 
 def issues_for_revision(
@@ -339,8 +615,16 @@ def inject_revision_context(
             result.get("review_result")
         ),
         revision_context=context.model_copy(deep=True),
+        human_feedback=(
+            HumanFeedbackReceipt.from_directive(context.human_feedback)
+            if context.human_feedback is not None
+            else None
+        ),
     )
-    result.update(envelope.model_dump(mode="json"))
+    envelope_payload = envelope.model_dump(mode="json")
+    if envelope.human_feedback is None:
+        envelope_payload.pop("human_feedback")
+    result.update(envelope_payload)
     return result
 
 
@@ -355,10 +639,14 @@ class _RevisionMessageMixin:
             {
                 "review_result": input_data.get("review_result"),
                 "revision_context": input_data.get("revision_context"),
+                "human_feedback": input_data.get("human_feedback"),
             }
         )
         user_payload = json.loads(messages[1]["content"])
-        user_payload.update(envelope.model_dump(mode="json"))
+        envelope_payload = envelope.model_dump(mode="json")
+        if envelope.human_feedback is None:
+            envelope_payload.pop("human_feedback")
+        user_payload.update(envelope_payload)
         return [
             dict(messages[0]),
             {

@@ -58,7 +58,9 @@ from app.workflow.explainable_revision import (
     RevisionExecutionController,
     TwoRoundCaseReport,
     assess_experiment_revision,
+    attach_revision_metadata,
     build_experiment_revision_context,
+    build_revision_pairing_outputs,
     failure_reasons_from_feedback,
     inject_revision_context,
     issues_for_revision,
@@ -793,6 +795,7 @@ def _run_pipeline_with_state_impl(
                 if item.get("id")
             ],
         )
+        second_version: PlanVersion | None = None
         if revision_audit.substantive_sections:
             second_version = PlanVersion.create(
                 run_id=state.run_id,
@@ -839,6 +842,28 @@ def _run_pipeline_with_state_impl(
             revision_audit,
             plan_versions=version_store.list_versions(state.run_id),
         )
+        if human_feedback_directive is not None and second_version is not None:
+            revision_metadata, lineage_handoff = build_revision_pairing_outputs(
+                audit=revision_audit,
+                human_feedback=human_feedback_directive,
+                resulting_version_id=second_version.version_id,
+                prompt_fingerprint=RevisionPromptBuilder.fingerprint(
+                    second_experiment_input
+                ),
+            )
+            state.execution_metadata = attach_revision_metadata(
+                state.execution_metadata,
+                revision_metadata,
+            )
+            exp_result["execution_metadata"] = state.execution_metadata
+            trace_fields.update(
+                {
+                    "revision_diff_sha256": revision_metadata.diff_hash,
+                    "revision_lineage_handoff": lineage_handoff.model_dump(
+                        mode="json"
+                    ),
+                }
+            )
         trace_fields.update(
             {
                 "revision_control": revision_controller.state.model_dump(
