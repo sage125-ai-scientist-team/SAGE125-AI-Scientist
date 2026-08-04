@@ -1,5 +1,11 @@
 # Reproduce T04 Retrieval Metrics
 
+Status: `NOT_READY_FOR_ACTUAL_EVAL`.
+
+The checked-in dataset is only a provisional contract fixture. It is not an
+approved actual-evaluation relevance gold set and must not be used to produce
+or claim formal recall@10 or MRR results.
+
 The checked-in `evaluation_result.json` is intentionally `not_run`. Running the command against that template must fail instead of creating synthetic metric values.
 
 After a controlled retrieval run produces a JSON file with `status: "completed"` and exactly 30 query records, compute metrics with:

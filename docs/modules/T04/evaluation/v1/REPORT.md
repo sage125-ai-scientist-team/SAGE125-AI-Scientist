@@ -4,6 +4,12 @@
 
 `PROVISIONAL_NOT_RUN`
 
+`NOT_READY_FOR_ACTUAL_EVAL`
+
+This dataset is only a provisional contract fixture. It is not an approved
+actual-evaluation relevance gold set and must not be used to produce or claim
+formal recall@10 or MRR results.
+
 This package defines the 30-query evaluation contract and the offline metric computation path. It does not claim a formal retrieval score. The repository does not currently contain a completed result produced by a controlled real embedding, rerank, and indexed-corpus environment, so recall@10, MRR, latency, and cache hit rate remain `null` in `metrics.json`.
 
 ## Implemented metrics
