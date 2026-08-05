@@ -1,4 +1,4 @@
-"""Railway API process entrypoint with an explicit host and platform port."""
+"""Platform-neutral API process entrypoint for hosted preview environments."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ import os
 import uvicorn
 
 
-def railway_port(default: int = 8000) -> int:
-    """Return a validated Railway PORT without accepting invalid placeholders."""
+def service_port(default: int = 8000) -> int:
+    """Return a validated platform port and reject malformed placeholders."""
     raw = os.getenv("PORT", str(default)).strip()
     if not raw.isdigit() or not 1 <= int(raw) <= 65535:
         raise RuntimeError("PORT must be an integer between 1 and 65535.")
@@ -19,7 +19,7 @@ def main() -> None:
     uvicorn.run(
         "app.api.main:app",
         host="0.0.0.0",
-        port=railway_port(),
+        port=service_port(),
         proxy_headers=True,
         forwarded_allow_ips="*",
     )

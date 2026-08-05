@@ -232,6 +232,9 @@ class Settings(BaseSettings):
 
     # ---- 应用配置 ----
     app_env: str = Field(default="development", alias="APP_ENV")
+    preview_ephemeral_storage: bool = Field(
+        default=False, alias="PREVIEW_EPHEMERAL_STORAGE"
+    )
     export_dir: str = Field(default="exports", alias="EXPORT_DIR")
     data_dir: str = Field(default="data", alias="DATA_DIR")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
