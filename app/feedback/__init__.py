@@ -22,8 +22,12 @@ from app.feedback.migration import (
 )
 from app.feedback.revision import (
     FeedbackPromptAdapter,
+    RevisionExecutionMetadata,
     RevisionFeedbackContext,
     RevisionFeedbackContextBuilder,
+    RevisionLineageConsumer,
+    RevisionLineageHandoff,
+    RevisionLineageHandoffEvent,
     RevisionPromptAdapter,
 )
 from app.feedback.service import (
@@ -56,8 +60,12 @@ __all__ = [
     "IdempotencyConflict",
     "InvalidFeedbackInput",
     "LineageNotFound",
+    "RevisionExecutionMetadata",
     "RevisionFeedbackContext",
     "RevisionFeedbackContextBuilder",
+    "RevisionLineageConsumer",
+    "RevisionLineageHandoff",
+    "RevisionLineageHandoffEvent",
     "RevisionPromptAdapter",
     "SQLiteFeedbackStore",
     "UnsafeFeedbackInput",

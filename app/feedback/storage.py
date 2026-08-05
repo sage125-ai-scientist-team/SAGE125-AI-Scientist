@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import sqlite3
 import uuid
+from collections.abc import Sequence
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator
@@ -722,6 +723,127 @@ class SQLiteFeedbackStore:
             ) from exc
         except sqlite3.Error as exc:
             raise FeedbackStorageError("unable to append feedback lineage") from exc
+
+    @staticmethod
+    def _same_handoff_event(
+        stored: AuditLineageEvent,
+        incoming: AuditLineageEvent,
+    ) -> bool:
+        """Compare one stable handoff event while retaining its first write time.
+
+        T02 event IDs do not include the T03-owned ``occurred_at`` envelope.  A
+        retry can therefore arrive later with the same actor and immutable T02
+        payload.  The first committed timestamp remains authoritative; every
+        other field must still match exactly.
+        """
+        stored_payload = stored.model_dump(mode="json")
+        incoming_payload = incoming.model_dump(mode="json")
+        stored_payload.pop("occurred_at")
+        incoming_payload.pop("occurred_at")
+        return stored_payload == incoming_payload
+
+    def append_lineage_events_atomically(
+        self,
+        lineage_id: str,
+        events: Sequence[AuditLineageEvent],
+    ) -> AuditLineage:
+        """Append one contiguous event batch in a single SQLite transaction.
+
+        Existing events may only be an exact prefix immediately after the
+        supplied first parent.  This makes complete retries idempotent, permits
+        recovery from data written by an older one-event implementation, and
+        rejects forks or attempts to insert history before later events.
+        """
+        if not events:
+            raise ValueError("audit event batch cannot be empty")
+        snapshots = tuple(
+            AuditLineageEvent.model_validate_json(
+                json.dumps(
+                    event.model_dump(mode="json"),
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            for event in events
+        )
+        if len({event.event_id for event in snapshots}) != len(snapshots):
+            raise FeedbackConflict("audit event batch contains duplicate event IDs")
+
+        try:
+            with self._write_transaction() as connection:
+                lineage = self._lineage_by_id(connection, lineage_id)
+                if lineage is None:
+                    raise LineageNotFound(f"lineage not found: {lineage_id}")
+
+                first_parent_id = snapshots[0].parent_event_id
+                parent_index = next(
+                    (
+                        index
+                        for index, event in enumerate(lineage.events)
+                        if event.event_id == first_parent_id
+                    ),
+                    None,
+                )
+                if parent_index is None:
+                    raise FeedbackConflict(
+                        "audit event batch parent is absent from the lineage"
+                    )
+
+                existing_after_parent = lineage.events[parent_index + 1 :]
+                overlap = min(len(existing_after_parent), len(snapshots))
+                for index in range(overlap):
+                    stored = existing_after_parent[index]
+                    incoming = snapshots[index]
+                    if stored.event_id != incoming.event_id:
+                        raise FeedbackConflict(
+                            "audit event batch would fork existing history"
+                        )
+                    if not self._same_handoff_event(stored, incoming):
+                        raise FeedbackConflict(
+                            "event_id already identifies another audit event"
+                        )
+
+                if len(existing_after_parent) > len(snapshots):
+                    # A complete handoff may be replayed after T03 has appended
+                    # gate/validation events.  A shorter handoff must not be
+                    # accepted merely because it is a prefix of more T02-owned
+                    # issue events.
+                    first_extra = existing_after_parent[len(snapshots)]
+                    if first_extra.event_type not in {
+                        "gate_evaluated",
+                        "validation_completed",
+                    }:
+                        raise FeedbackConflict(
+                            "audit event batch omits persisted handoff events"
+                        )
+                    return lineage
+
+                updated = lineage
+                for event in snapshots[overlap:]:
+                    updated = updated.append(event)
+                if updated == lineage:
+                    return lineage
+
+                connection.execute(
+                    "UPDATE feedback_lineages SET payload_json = ? WHERE lineage_id = ?",
+                    (_canonical_payload(updated), lineage_id),
+                )
+                return _lineage_snapshot(_canonical_payload(updated))
+        except (
+            FeedbackConflict,
+            LineageNotFound,
+            CorruptFeedbackSnapshot,
+        ):
+            raise
+        except (ValidationError, ValueError) as exc:
+            raise FeedbackConflict(
+                "audit event batch conflicts with its lineage"
+            ) from exc
+        except sqlite3.Error as exc:
+            raise FeedbackStorageError(
+                "unable to append feedback lineage batch"
+            ) from exc
 
     def get_lineage(self, lineage_id: str) -> AuditLineage:
         try:

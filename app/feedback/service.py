@@ -52,6 +52,17 @@ class FeedbackService(Protocol):
         """Return accepted prompt instructions; rejected feedback yields ``None``."""
         ...
 
+    def consume_revision_lineage_handoff(
+        self,
+        revision_lineage_handoff: Any,
+        *,
+        revision_metadata: Any,
+        actor_id: str,
+        occurred_at: datetime | None = None,
+    ) -> AuditLineage:
+        """Atomically persist T02 revision events after a real decision."""
+        ...
+
 
 class FeedbackSubmission(BaseModel):
     """Transport-neutral request used to create a frozen ``FeedbackRecord``."""
@@ -531,6 +542,26 @@ class DefaultFeedbackService:
             )
         except (ValidationError, ValueError) as exc:
             raise InvalidFeedbackInput("stored feedback cannot form a directive") from exc
+
+    def consume_revision_lineage_handoff(
+        self,
+        revision_lineage_handoff: Any,
+        *,
+        revision_metadata: Any,
+        actor_id: str,
+        occurred_at: datetime | None = None,
+    ) -> AuditLineage:
+        """Validate T02 outputs and atomically bind them to this feedback store."""
+        # Import locally so minimal feedback adapters do not load the revision
+        # bridge until they actually consume a T02 handoff.
+        from app.feedback.revision import RevisionLineageConsumer
+
+        return RevisionLineageConsumer(self.store, clock=self._now).consume(
+            revision_lineage_handoff,
+            revision_metadata=revision_metadata,
+            actor_id=actor_id,
+            occurred_at=occurred_at,
+        )
 
 
 __all__ = [

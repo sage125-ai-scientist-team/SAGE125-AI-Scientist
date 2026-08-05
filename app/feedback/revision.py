@@ -5,14 +5,25 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
+from datetime import datetime, timezone
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from app.contracts.revision import RevisionContext, RevisionPromptBuilder
-from app.contracts.validation import FeedbackDecision, FeedbackRecord
-from app.feedback.errors import FeedbackConflict, InvalidFeedbackInput
+from app.contracts.validation import (
+    AuditLineage,
+    AuditLineageEvent,
+    FeedbackDecision,
+    FeedbackRecord,
+)
+from app.feedback.errors import (
+    FeedbackConflict,
+    FeedbackStorageError,
+    InvalidFeedbackInput,
+)
+from app.feedback.storage import FeedbackStore
 
 
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -32,6 +43,340 @@ def _json_copy(value: Any) -> Any:
         return json.loads(_canonical_json(value))
     except (TypeError, ValueError) as exc:
         raise InvalidFeedbackInput("revision prompt boundary requires JSON values") from exc
+
+
+def _wire_payload(value: Any, *, label: str) -> dict[str, Any]:
+    """Normalize a foreign Pydantic model or mapping through canonical JSON."""
+    if isinstance(value, Mapping):
+        payload = dict(value)
+    else:
+        model_dump = getattr(value, "model_dump", None)
+        if not callable(model_dump):
+            raise InvalidFeedbackInput(f"{label} must be a mapping or model")
+        payload = model_dump(mode="json")
+    snapshot = _json_copy(payload)
+    if not isinstance(snapshot, dict):
+        raise InvalidFeedbackInput(f"{label} must serialize to an object")
+    return snapshot
+
+
+def _require_direct_child(source_version_id: str, resulting_version_id: str) -> None:
+    source_run, source_marker, source_number = source_version_id.rpartition(":v")
+    result_run, result_marker, result_number = resulting_version_id.rpartition(":v")
+    if (
+        source_marker != ":v"
+        or result_marker != ":v"
+        or not source_run
+        or source_run != result_run
+        or not source_number.isdigit()
+        or not result_number.isdigit()
+        or int(result_number) != int(source_number) + 1
+    ):
+        raise ValueError("resulting_version_id must directly follow source_version_id")
+
+
+class RevisionExecutionMetadata(BaseModel):
+    """T03 snapshot of T02's complete revision execution receipt."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: Literal[1] = 1
+    feedback_id: str = Field(min_length=1)
+    source_version_id: str = Field(min_length=1)
+    resulting_version_id: str = Field(min_length=1)
+    prompt_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    diff_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    applied_instructions: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _validate_direct_child(self) -> "RevisionExecutionMetadata":
+        _require_direct_child(self.source_version_id, self.resulting_version_id)
+        if any(not instruction.strip() for instruction in self.applied_instructions):
+            raise ValueError("applied_instructions cannot contain blank values")
+        return self
+
+
+class RevisionLineageHandoffEvent(BaseModel):
+    """Strict wire snapshot of one T02-owned revision lineage event."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    event_id: str = Field(min_length=1)
+    event_type: Literal[
+        "revision_requested",
+        "revision_generated",
+        "issue_closed",
+    ]
+    sequence: int = Field(ge=1)
+    subject_id: str = Field(min_length=1)
+    payload_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    parent_event_id: str | None = None
+    feedback_id: str = Field(min_length=1)
+    source_version_id: str = Field(min_length=1)
+    resulting_version_id: str = Field(min_length=1)
+
+
+class RevisionLineageHandoff(BaseModel):
+    """T03's strict consumer boundary for T02's append-ready handoff."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: Literal[1] = 1
+    feedback_id: str = Field(min_length=1)
+    source_version_id: str = Field(min_length=1)
+    resulting_version_id: str = Field(min_length=1)
+    prompt_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    revision_diff_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    required_parent_event_type: Literal["feedback_decided"] = "feedback_decided"
+    issue_ids: tuple[str, ...] = ()
+    events: tuple[RevisionLineageHandoffEvent, ...] = Field(min_length=2)
+
+    @model_validator(mode="after")
+    def _validate_handoff(self) -> "RevisionLineageHandoff":
+        _require_direct_child(self.source_version_id, self.resulting_version_id)
+        event_ids = tuple(event.event_id for event in self.events)
+        if len(event_ids) != len(set(event_ids)):
+            raise ValueError("revision handoff event IDs must be unique")
+        if tuple(event.sequence for event in self.events) != tuple(
+            range(1, len(self.events) + 1)
+        ):
+            raise ValueError("revision handoff event sequence must be contiguous")
+        if tuple(event.event_type for event in self.events[:2]) != (
+            "revision_requested",
+            "revision_generated",
+        ):
+            raise ValueError("revision handoff must start requested -> generated")
+        if any(event.event_type != "issue_closed" for event in self.events[2:]):
+            raise ValueError("only issue closure events may follow revision_generated")
+        if self.events[0].parent_event_id is not None:
+            raise ValueError("first T02 event must await T03 feedback_decided parent")
+        for index, event in enumerate(self.events):
+            if index and event.parent_event_id != self.events[index - 1].event_id:
+                raise ValueError("revision handoff event parent chain is broken")
+            if (
+                event.feedback_id != self.feedback_id
+                or event.source_version_id != self.source_version_id
+                or event.resulting_version_id != self.resulting_version_id
+            ):
+                raise ValueError("revision handoff event identity mismatch")
+        requested, generated = self.events[:2]
+        if requested.subject_id != self.feedback_id:
+            raise ValueError("revision_requested must reference feedback_id")
+        if requested.payload_sha256 != self.prompt_fingerprint:
+            raise ValueError("revision_requested hash must match prompt fingerprint")
+        if generated.subject_id != self.resulting_version_id:
+            raise ValueError("revision_generated must reference result version")
+        if generated.payload_sha256 != self.revision_diff_sha256:
+            raise ValueError("revision_generated hash must match structured diff")
+        closed_ids = tuple(event.subject_id for event in self.events[2:])
+        if closed_ids != self.issue_ids or len(closed_ids) != len(set(closed_ids)):
+            raise ValueError("issue closure events must match unique issue_ids")
+        return self
+
+
+class RevisionLineageConsumer:
+    """Validate and atomically persist one T02 revision lineage handoff."""
+
+    def __init__(
+        self,
+        store: FeedbackStore,
+        *,
+        clock: Callable[[], datetime] | None = None,
+    ) -> None:
+        self._store = store
+        self._clock = clock or (lambda: datetime.now(timezone.utc))
+
+    @staticmethod
+    def _snapshot_handoff(value: Any) -> RevisionLineageHandoff:
+        try:
+            return RevisionLineageHandoff.model_validate(
+                _wire_payload(value, label="revision_lineage_handoff")
+            )
+        except (ValidationError, ValueError) as exc:
+            raise InvalidFeedbackInput(
+                "revision_lineage_handoff is invalid"
+            ) from exc
+
+    @staticmethod
+    def _snapshot_metadata(value: Any) -> RevisionExecutionMetadata:
+        try:
+            return RevisionExecutionMetadata.model_validate(
+                _wire_payload(value, label="revision_metadata")
+            )
+        except (ValidationError, ValueError) as exc:
+            raise InvalidFeedbackInput("revision_metadata is invalid") from exc
+
+    @staticmethod
+    def _validate_pair(
+        handoff: RevisionLineageHandoff,
+        metadata: RevisionExecutionMetadata,
+    ) -> None:
+        if (
+            metadata.feedback_id != handoff.feedback_id
+            or metadata.source_version_id != handoff.source_version_id
+            or metadata.resulting_version_id != handoff.resulting_version_id
+            or metadata.prompt_fingerprint != handoff.prompt_fingerprint
+            or metadata.diff_hash != handoff.revision_diff_sha256
+        ):
+            raise FeedbackConflict(
+                "revision metadata conflicts with revision lineage handoff"
+            )
+
+    def consume(
+        self,
+        revision_lineage_handoff: Any,
+        *,
+        revision_metadata: Any,
+        actor_id: str,
+        occurred_at: datetime | None = None,
+    ) -> AuditLineage:
+        """Bind T02 events to the real decision and persist the batch once."""
+        handoff = self._snapshot_handoff(revision_lineage_handoff)
+        metadata = self._snapshot_metadata(revision_metadata)
+        self._validate_pair(handoff, metadata)
+        normalized_actor = actor_id.strip()
+        if not normalized_actor:
+            raise InvalidFeedbackInput("revision lineage actor_id cannot be blank")
+
+        lineage = self._store.get_lineage_by_feedback(handoff.feedback_id)
+        decision = self._store.get_decision(handoff.feedback_id)
+        if decision is None:
+            raise FeedbackConflict(
+                "revision handoff requires a persisted feedback decision"
+            )
+        if decision.disposition == "rejected":
+            raise FeedbackConflict("rejected feedback cannot produce a revision")
+        if tuple(decision.accepted_items) != metadata.applied_instructions:
+            raise FeedbackConflict(
+                "revision metadata instructions differ from the persisted decision"
+            )
+        if (
+            lineage.feedback_id != handoff.feedback_id
+            or lineage.target_version_id != handoff.source_version_id
+            or decision.target_version_id != handoff.source_version_id
+        ):
+            raise FeedbackConflict(
+                "revision handoff source does not match persisted feedback"
+            )
+        if (
+            lineage.decision_id != decision.decision_id
+            or lineage.decision_disposition != decision.disposition
+            or lineage.decision_sha256 != decision.fingerprint()
+        ):
+            raise FeedbackConflict(
+                "persisted decision is not bound to the feedback lineage"
+            )
+        if lineage.resulting_version_id not in {
+            None,
+            handoff.resulting_version_id,
+        } or lineage.revision_diff_sha256 not in {
+            None,
+            handoff.revision_diff_sha256,
+        }:
+            raise FeedbackConflict("lineage already contains another revision")
+        if tuple(handoff.issue_ids[: len(lineage.issue_ids)]) != lineage.issue_ids:
+            raise FeedbackConflict(
+                "revision handoff conflicts with persisted issue history"
+            )
+
+        decision_events = tuple(
+            event
+            for event in lineage.events
+            if event.event_type == handoff.required_parent_event_type
+        )
+        if len(decision_events) != 1:
+            raise FeedbackConflict(
+                "revision handoff requires one real feedback_decided event"
+            )
+        decision_event = decision_events[0]
+        incoming_ids = {event.event_id for event in handoff.events}
+        if (
+            not incoming_ids.intersection(event.event_id for event in lineage.events)
+            and lineage.events[-1].event_id != decision_event.event_id
+        ):
+            raise FeedbackConflict(
+                "revision handoff cannot be inserted after later audit events"
+            )
+
+        timestamp = occurred_at or self._clock()
+        if timestamp.tzinfo is None or timestamp.utcoffset() is None:
+            raise InvalidFeedbackInput("revision lineage occurred_at needs a timezone")
+        if timestamp < decision_event.occurred_at:
+            raise InvalidFeedbackInput(
+                "revision lineage cannot predate feedback_decided"
+            )
+        # An older one-event writer may have left a valid handoff prefix.  The
+        # remaining events must not move backwards relative to that first write.
+        timestamp = max(timestamp, lineage.events[-1].occurred_at)
+
+        revision_metadata_payload = metadata.model_dump(mode="json")
+        events: list[AuditLineageEvent] = []
+        for event in handoff.events:
+            audit_metadata: dict[str, Any] = {
+                "handoff_source": "T02",
+                "handoff_schema_version": handoff.schema_version,
+                "handoff_sequence": event.sequence,
+                "feedback_id": handoff.feedback_id,
+                "source_version_id": handoff.source_version_id,
+                "resulting_version_id": handoff.resulting_version_id,
+                "t02_parent_event_id": event.parent_event_id,
+            }
+            if event.event_type == "revision_requested":
+                audit_metadata.update(
+                    {
+                        "required_parent_event_type": (
+                            handoff.required_parent_event_type
+                        ),
+                        "prompt_fingerprint": handoff.prompt_fingerprint,
+                        "revision_metadata": revision_metadata_payload,
+                    }
+                )
+            elif event.event_type == "revision_generated":
+                audit_metadata.update(
+                    {
+                        "revision_diff_sha256": handoff.revision_diff_sha256,
+                        "revision_metadata": revision_metadata_payload,
+                    }
+                )
+            else:
+                audit_metadata["issue_id"] = event.subject_id
+
+            events.append(
+                AuditLineageEvent(
+                    event_id=event.event_id,
+                    event_type=event.event_type,
+                    occurred_at=timestamp,
+                    actor_id=normalized_actor,
+                    subject_id=event.subject_id,
+                    payload_sha256=event.payload_sha256,
+                    parent_event_id=(
+                        decision_event.event_id
+                        if event.sequence == 1
+                        else event.parent_event_id
+                    ),
+                    metadata=audit_metadata,
+                )
+            )
+
+        append_batch = getattr(
+            self._store,
+            "append_lineage_events_atomically",
+            None,
+        )
+        if not callable(append_batch):
+            raise FeedbackStorageError(
+                "feedback store lacks atomic revision handoff support"
+            )
+        persisted = append_batch(lineage.lineage_id, tuple(events))
+        if (
+            persisted.resulting_version_id != handoff.resulting_version_id
+            or persisted.revision_diff_sha256 != handoff.revision_diff_sha256
+            or persisted.issue_ids != handoff.issue_ids
+        ):
+            raise FeedbackConflict(
+                "persisted lineage does not match the complete revision handoff"
+            )
+        return persisted
 
 
 class RevisionFeedbackContext(BaseModel):
@@ -265,7 +610,11 @@ FeedbackPromptAdapter = RevisionPromptAdapter
 
 __all__ = [
     "FeedbackPromptAdapter",
+    "RevisionExecutionMetadata",
     "RevisionFeedbackContext",
     "RevisionFeedbackContextBuilder",
+    "RevisionLineageConsumer",
+    "RevisionLineageHandoff",
+    "RevisionLineageHandoffEvent",
     "RevisionPromptAdapter",
 ]
