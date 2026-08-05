@@ -110,6 +110,7 @@ def get_health() -> dict:
             "status": "unavailable",
             "service": "sage125-api",
             "bailian": {"configured": False, "status": "unavailable"},
+            "storage": {"mode": "unavailable", "persistent": False},
             "qwen_config_loaded": False,
             "deep_research_config_loaded": False,
             "openalex_config_loaded": False,

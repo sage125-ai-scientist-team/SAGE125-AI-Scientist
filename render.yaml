@@ -1,0 +1,69 @@
+previews:
+  generation: off
+
+projects:
+  - name: SAGE125-AI-Scientist-Preview
+    environments:
+      - name: preview
+        services:
+          - type: web
+            name: sage125-api-preview
+            runtime: python
+            repo: https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist
+            branch: integration/2026-08-10
+            plan: free
+            region: singapore
+            autoDeployTrigger: checksPass
+            buildCommand: pip install -r requirements.txt
+            startCommand: python -m scripts.start_api
+            healthCheckPath: /health
+            envVars:
+              - key: APP_ENV
+                value: preview
+              - key: LOG_LEVEL
+                value: INFO
+              - key: LLM_PROVIDER
+                value: bailian
+              - key: DASHSCOPE_REGION
+                value: cn-beijing
+              - key: QWEN_FAST_MODEL
+                value: qwen3.6-flash
+              - key: QWEN_BALANCED_MODEL
+                value: qwen3.7-plus
+              - key: QWEN_STRONG_MODEL
+                value: qwen3.7-max
+              - key: QWEN_DEEP_RESEARCH_MODEL
+                value: qwen-deep-research
+              - key: EMBEDDING_BACKEND
+                value: bailian
+              - key: BAILIAN_EMBEDDING_MODEL
+                value: text-embedding-v4
+              - key: BAILIAN_RERANK_MODEL
+                value: qwen3-rerank
+              - key: MOCK_LLM
+                value: "false"
+              - key: DATA_DIR
+                value: /tmp/sage125/data
+              - key: EXPORT_DIR
+                value: /tmp/sage125/exports
+              - key: PREVIEW_EPHEMERAL_STORAGE
+                value: "true"
+
+          - type: web
+            name: sage125-ui-preview
+            runtime: python
+            repo: https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist
+            branch: integration/2026-08-10
+            plan: free
+            region: singapore
+            autoDeployTrigger: checksPass
+            buildCommand: pip install -r requirements.txt
+            startCommand: python -m scripts.start_ui
+            healthCheckPath: /_stcore/health
+            envVars:
+              - key: APP_ENV
+                value: preview
+              - key: LOG_LEVEL
+                value: INFO
+              - key: FRONTEND_RUN_VIA_API
+                value: "1"

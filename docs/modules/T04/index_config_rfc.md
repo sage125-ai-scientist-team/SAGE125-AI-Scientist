@@ -170,10 +170,11 @@ content hash、document/source ID、source type/role、score 及 score kind；
 
 ## 已知限制
 
-- 尚未定义生产 source registry 的持久化格式。
-- 未定义 OCR、TXT/MD section 抽取和 CSV 行列 locator。
-- 20-query 集只是 `contract_fixture`，annotation 为 provisional。
-- 仓库缺少明确 T01 contract；最终 adapter 需跨 owner 确认。
+- 已有稳定 booklet registry；通用生产 source registry 的持久化格式仍需确认。
+- loader v2 可标记 `needs_ocr`，但尚未执行 OCR；CSV 精细单元格 locator 仍未定义。
+- 30-query 集仍是 `contract_fixture`，annotation 为 provisional；尚未在真实检索环境运行。
+- T01 relevance 配对审核与最终 adapter 跨 owner 确认尚未完成。
+- T09 隔离环境复现尚未完成，仓库内 recall@10/MRR/latency/cache hit rate 均未计算。
 - 历史索引的废弃和保留周期仍需产品决策。
 
 ## 07/29 Wave A 契约补充
