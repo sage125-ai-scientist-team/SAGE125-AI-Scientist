@@ -2,7 +2,9 @@
 
 ## 1. 模块定位
 
-当前交付阶段是 **Wave A / PR-A**。
+当前交付阶段是 **Wave B / PR-B**。正式 WDBC Round 1 的方法、结果、复现命令和边界见
+[`WAVE_B_ROUND1.md`](WAVE_B_ROUND1.md)，失败注入证据见
+[`FAILURE_INJECTION.md`](FAILURE_INJECTION.md)。
 
 当前实现范围：
 
@@ -14,15 +16,17 @@
 - bounded stdout/stderr；
 - timeout and cleanup；
 - artifact/metric/provenance verification；
-- `actual_execution` guard。
+- `actual_execution` guard；
+- 已固定并复核的 WDBC 数据适配器；
+- 确定性逻辑回归基线与正式 Round 1；
+- runner 生成的 `ExecutionResult`、指标、表格、SVG、模型和可复现包；
+- 显式的 CSV/SVG media type、unit 和 validation status 消费映射；
+- 基于 Round 1 观察证据的 Round 2 配置计划（Round 2 尚未执行）。
 
 当前尚未实现：
 
-- 真实旗舰数据适配；
-- 正式基线；
-- Round 1；
 - Round 2；
-- T02 pipeline 接入；
+- T02 owner 路径中的 pipeline 变更（T05 已交付可复核的 typed `ExecutionResult`）；
 - API/UI；
 - container backend；
 - 网络隔离；

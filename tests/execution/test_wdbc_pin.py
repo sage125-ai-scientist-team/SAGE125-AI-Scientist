@@ -173,7 +173,18 @@ def test_T05_B_PINMETA_013_schema_and_verification_evidence_is_complete() -> Non
     assert manifest["source"]["archive_detected"] is False
     assert storage["raw_data_committed"] is False
     assert storage["local_cache_path_embedded"] is False
-    assert verification["formal_round1_executed"] is False
+    assert verification["formal_round1_executed"] is True
+    assert verification["formal_round1_source_git_sha"] == (
+        "18c86f1e1963b13cbed09356201d92f38a2a2880"
+    )
+    assert verification["formal_round1_offline_reproduction_match"] is True
+    result_path = (
+        DATASET_MANIFEST.parent / verification["formal_round1_result"]
+    ).resolve()
+    assert result_path == ROOT / "docs" / "modules" / "T05" / "round1" / (
+        "execution_result.json"
+    )
+    assert result_path.is_file()
 
 
 def test_T05_B_PINMETA_014_official_provenance_is_exact() -> None:

@@ -8,8 +8,14 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+from pydantic import ValidationError
 
-from app.contracts.execution import ArtifactManifest, DatasetManifest, MetricRecord
+from app.contracts.execution import (
+    ArtifactManifest,
+    DatasetManifest,
+    ExecutionResult,
+    MetricRecord,
+)
 from app.execution.wdbc_baseline import (
     ARTIFACT_FILES,
     BaselineConfig,
@@ -27,6 +33,10 @@ from app.execution.run_round1 import (
     metric_requirements,
     validate_formal_result,
 )
+
+
+ROOT = Path(__file__).resolve().parents[2]
+ROUND1_PACKAGE = ROOT / "docs" / "modules" / "T05" / "round1"
 
 
 def _synthetic_wdbc_bytes() -> bytes:
@@ -264,3 +274,55 @@ def test_load_wdbc_rejects_wrong_row_count_with_matching_pin(tmp_path: Path) -> 
 
     with pytest.raises(BaselineInputError, match="exactly 569"):
         load_wdbc(dataset, _config(shortened))
+
+
+def test_committed_round1_package_index_covers_and_verifies_every_file() -> None:
+    package_manifest = json.loads(
+        (ROUND1_PACKAGE / "package_manifest.json").read_text(encoding="utf-8")
+    )
+    indexed = {item["path"]: item for item in package_manifest["files"]}
+    actual = {
+        path.relative_to(ROUND1_PACKAGE).as_posix(): path
+        for path in ROUND1_PACKAGE.rglob("*")
+        if path.is_file() and path.name != "package_manifest.json"
+    }
+
+    assert set(indexed) == set(actual)
+    for relative_path, path in actual.items():
+        assert indexed[relative_path]["size_bytes"] == path.stat().st_size
+        assert indexed[relative_path]["sha256"] == hashlib.sha256(
+            path.read_bytes()
+        ).hexdigest()
+
+
+def test_committed_round1_evidence_is_actual_observed_and_clean() -> None:
+    payload = json.loads(
+        (ROUND1_PACKAGE / "execution_result.json").read_text(encoding="utf-8")
+    )
+    with pytest.raises(ValidationError, match="runner-owned truth"):
+        ExecutionResult.model_validate(payload)
+
+    assert payload["status"] == "succeeded"
+    assert payload["mode"] == "actual"
+    assert payload["actual_execution"] is True
+    assert payload["scientific_result_usable"] is True
+    assert payload["environment_fingerprint"]["git_dirty"] is False
+    assert payload["environment_fingerprint"]["git_sha"] == (
+        "18c86f1e1963b13cbed09356201d92f38a2a2880"
+    )
+    assert {metric["name"]: metric["value"] for metric in payload["metrics"]} == {
+        "balanced_accuracy": 0.9642857142857143,
+        "malignant_recall": 0.9285714285714286,
+    }
+    assert all(metric["source"] == "observed" for metric in payload["metrics"])
+    assert all(
+        artifact["validation_status"] == "valid"
+        for artifact in payload["artifacts"]
+    )
+
+    metadata = json.loads(
+        (ROUND1_PACKAGE / "run_metadata.json").read_text(encoding="utf-8")
+    )
+    assert metadata["actual_execution"] is True
+    assert metadata["formal_round1_executed"] is True
+    assert metadata["git_dirty"] is False
