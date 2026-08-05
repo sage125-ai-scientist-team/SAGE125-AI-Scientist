@@ -431,7 +431,10 @@ T08 owner 需要完成：
 
 ## 8. 已知限制
 
-1. T02 PR #21 仍需配对审查；本文不证明实际 Prompt 已含 `human_feedback`。
+1. T02 PR #21 HEAD `20a5b356364051c86dac3698fc836c790b6c2c79` 的实际 Agent
+   Prompt、revision metadata 和 lineage handoff 已与 T03 实现提交
+   `e4248e8ad215b0b77279990eb2bf6553b60b52d1` 完成技术组合复验；仍需 T02 owner
+   使用 PR #32 新远端 HEAD 复跑并签字，队长仍需处理既有 review decision。
 2. T08 feedback POST/GET 仍返回 503；生产 API 尚未接通。
 3. T03 不修改 pipeline，因此完整上下文如何从生产产物收集，仍需 T02/T08 或公共 owner 接线。
 4. SQLite 适合单节点最小持久化；不提供跨主机分布式锁或高可用复制。
@@ -479,11 +482,52 @@ ID、版本 ID、hash 和测试输出；真实值目前均为 TBD。
 
 - `examples/wave_b_offline_e2e_summary.json`
 - `examples/wave_b_e2e_metrics.json`
+- `examples/t02_t03_revision_lineage_pairing_evidence.json`（T02/T03 精确 SHA 技术配对；
+  不含 T08 live API）
+
+### 9.1 2026-08-06 T02 revision lineage 持久化接线整改
+
+T03 新增 `RevisionLineageConsumer` 与
+`DefaultFeedbackService.consume_revision_lineage_handoff()`，以纯 JSON 边界校验 T02 的
+`revision_lineage_handoff` 和完整 `revision_metadata`，不导入 T02 私有实现类，也不修改
+T02 workflow。消费器执行以下步骤：
+
+1. 核对 persisted feedback/decision、source version、直接子版本、prompt/diff hash 与
+   accepted-only instructions；rejected、篡改、断链或身份冲突全部 fail closed。
+2. 把 T02 首个 `revision_requested.parent_event_id=None` 绑定到 SQLite 中真实的
+   `feedback_decided.event_id`，保留其余 T02 event ID、subject、payload hash 和父链。
+3. 由 `SQLiteFeedbackStore.append_lineage_events_atomically()` 在单个
+   `BEGIN IMMEDIATE` 事务内完成整批 requested -> generated -> issue_closed 写入，最后只
+   更新一次 lineage snapshot；完整重放为 no-op，冲突不会留下半条事件链。
+4. 将完整 revision metadata 放入冻结事件的 `metadata` sidecar；SQLite 关闭并重开后
+   `feedback_id`、source/resulting version、prompt fingerprint、diff hash、instructions、
+   issues 和事件父链全部恢复。
+5. 之后复用 `ValidationAuditWriter.record()` 继续追加 9 个 `gate_evaluated` 和一个
+   `validation_completed`；重复完成回写不产生第二条事件。
+
+真实 T02 组合案例恢复出的 diff hash 为
+`4f0f9fda9eef9b57a467fd243101aa4fce43af1789561f5ba92f7902d0070397`，父链为：
+
+```text
+feedback_decided
+-> event:55f7ecda13127579 (revision_requested)
+-> event:73f66880eefc20da (revision_generated)
+-> event:a2c31e666da5b460 (issue_closed)
+-> event:d9d644bc57841591 (issue_closed)
+-> gate_evaluated x 9
+-> validation_completed
+```
+
+验证结果：指定配对文件 `5 passed`；T03 validation `105 passed`；T02
+`20a5b356…` + T03 `e4248e8…` 临时普通合并无冲突，validation、T02 handoff 与实际
+模型消费合计 `109 passed`；全仓 unit `735 passed, 37 skipped`。这些结果关闭本次
+T03-owned SQLite consumer 技术缺口，但不替代 T02 签字、T08 live API E2E 或队长 Ready
+授权。
 
 ## 10. 验收矩阵（T03-B-001..021）
 
-本地 `tests/validation` 已有 `100 passed in 4.07s` 的套件级证据；但单项状态仍保持 TBD，
-直到主任务把每一项对应到精确测试名/输出。尤其 T02/T08 配对和生产 API E2E 尚未完成。
+本地 `tests/validation` 已有 `105 passed in 4.34s` 的套件级证据。T02 lineage consumer
+相关项已回填精确测试与 SHA；T08 配对和生产 API E2E 仍未完成。
 
 | ID | 验收项 | 最低证据 | 状态 |
 | --- | --- | --- | --- |
@@ -497,9 +541,9 @@ ID、版本 ID、hash 和测试输出；真实值目前均为 TBD。
 | T03-B-008 | accepted 决策有理由、accepted items 和审计 hash，并可生成 directive | service + lineage 测试 | TBD |
 | T03-B-009 | partially accepted 只把 accepted items 送入 directive，拒绝片段不进入 Prompt | Prompt payload 精确断言 | TBD |
 | T03-B-010 | rejected 决策不生成 directive、revision 或 resulting version | 负向状态机与 lineage 测试 | TBD |
-| T03-B-011 | directive 保留 feedback ID、目标版本和原文 SHA，且能证明下一轮实际输入发生变化 | T02 配对集成测试与 payload fingerprint | TBD |
-| T03-B-012 | resulting version 是目标版本直接子版本；diff hash 与 revision_generated 事件一致 | PlanVersion + AuditLineage 集成测试 | TBD |
-| T03-B-013 | 审计链可在重启后由 feedback ID 回查，事件单链、时序、subject 与 hash 一致 | 持久化恢复/篡改测试 | TBD |
+| T03-B-011 | directive 保留 feedback ID、目标版本和原文 SHA，且能证明下一轮实际输入发生变化 | T02 `test_t02_t03_revision_handoff.py` + 精确 SHA 实际模型消费 | PASS（T03/T02 technical；待双边签字） |
+| T03-B-012 | resulting version 是目标版本直接子版本；diff hash 与 revision_generated 事件一致 | `test_t02_t03_final_pairing_recheck.py` + evidence JSON | PASS |
+| T03-B-013 | 审计链可在重启后由 feedback ID 回查，事件单链、时序、subject 与 hash 一致 | 原子批量、重启、篡改、重复与 16 线程并发测试 | PASS |
 | T03-B-014 | ValidationContext 同时接收五类完整产物并绑定 run/question/version | 完整上下文正向测试 | TBD |
 | T03-B-015 | 缺 EvidenceCards/AgentTrace 等关键产物时输出结构化阻断，不静默跳过 | presence gate 负向测试 | TBD |
 | T03-B-016 | 计划中的伪造/未知 evidence reference 被阻断 | reference gate 负向测试 | TBD |
@@ -507,18 +551,19 @@ ID、版本 ID、hash 和测试输出；真实值目前均为 TBD。
 | T03-B-018 | 跨问题、跨 run、未来版本和不匹配 question text 均被拒绝 | identity/contamination 测试 | TBD |
 | T03-B-019 | open P0/P1、无 gates、重复 gate ID、gate/runner 异常均不能 false pass | Validator fail-closed 测试 | TBD |
 | T03-B-020 | 至少 10 个无效输入、恶意反馈、缺失产物和并发失败案例；指标按 question/version 幂等聚合 | 攻击测试清单 + metrics 测试输出 | TBD |
-| T03-B-021 | 最小 E2E 闭环通过，T02/T08 配对审查签字，T08 不再返回占位 503，迁移/回滚证据齐全 | E2E 输出、PR/SHA/CI、配对记录、恢复演练 | TBD |
+| T03-B-021 | 最小 E2E 闭环通过，T02/T08 配对审查签字，T08 不再返回占位 503，迁移/回滚证据齐全 | E2E 输出、PR/SHA/CI、配对记录、恢复演练 | PARTIAL：T02 technical PASS；T02 签字与 T08 live API 尚缺 |
 
 ## 11. 最终交接时必须回填
 
 - PR #32 的最终远端 HEAD、GitHub Checks 结论及是否由 Draft 转为 Ready；
-- 已记录 `tests/validation = 100 passed` 与本地全仓 CI 等价检查；仍需回填远端 GitHub Checks，
+- 已记录 `tests/validation = 105 passed` 与本地全仓 CI 等价检查；仍需回填新 HEAD 的远端 GitHub Checks，
   并保留 unit 的 `37 skipped` 说明；
 - lint/type/security/build 的本地结果已记录，远端结果仍待 PR CI；
 - 默认 gate 列表与稳定 finding code 的交付 SHA 复核结果；
 - `DefaultFeedbackService`、`RevisionFeedbackContextBuilder`、`RevisionPromptAdapter` 等公开
   符号的最终签名复核结果；
-- T02 PR #21 的完整 SHA、`CHANGES_REQUESTED` 后续处理及双方最终审查结论；
+- T02 PR #21 完整 SHA `20a5b356364051c86dac3698fc836c790b6c2c79` 已用于技术组合；
+  仍需回填 T02 owner 复跑/签字、`CHANGES_REQUESTED` 后续处理及双方最终审查结论；
 - T08 Wave B PR/SHA（当前无），以及 503 替换后的 API E2E；
 - SQLite 备份/恢复演练记录、迁移负责人、实际 DB 配置；
 - 每一项 T03-B-001..021 的证据链接与状态。
