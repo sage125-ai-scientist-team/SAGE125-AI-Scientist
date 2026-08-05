@@ -1,68 +1,58 @@
 T07-WB5 full repository regression
-Verification date: 2026-08-05 Asia/Shanghai
-Tested code SHA: 4560d0fd89a658e14eaeaedb2dcf10e3be82f5fc
-Integration SHA: 9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c
-Ahead/behind: 8/0
+Verification date: 2026-08-06 Asia/Shanghai
+Tested code SHA: 7929fed9fccc18160d90fc9cae5949a4a3fd83d4
+Integration SHA: 73ce7c0731a2aeaaa1b254e8b6d4c1382eab052c
+Ahead/behind at tested code SHA: 11/0
 Python version: 3.12.10
 Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
 
-Command:
+Latest complete command:
 & ".\.venv\Scripts\python.exe" -m pytest -q -rs
 
 Exit code: 1
-Collected: 858
-Passed: 853
+Collected: 964
+Passed: 959
 Failed: 1
 Skipped: 4
 Warnings: 0
-Duration: 64.03s
+Duration: 59.95s
 First failure: tests/test_api_run_modes_and_consistency.py::test_post_runs_real_without_key_returns_400; expected HTTP 400, actual HTTP 503.
 
-........................................................................ [  8%]
-........................................................................ [ 16%]
-................................................s....................... [ 25%]
-....s................................................................... [ 33%]
-........................................................................ [ 41%]
-........................................................................ [ 50%]
-.................s...................s.................................. [ 58%]
-..................................................F..................... [ 67%]
-........................................................................ [ 75%]
-........................................................................ [ 83%]
-........................................................................ [ 92%]
-..................................................................       [100%]
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 22%]
+...............s...........................s............................ [ 29%]
+........................................................................ [ 37%]
+........................................................................ [ 44%]
+........................................................................ [ 52%]
+......................s...................s............................. [ 59%]
+........................................................................ [ 67%]
+....................F................................................... [ 74%]
+........................................................................ [ 82%]
+........................................................................ [ 89%]
+........................................................................ [ 97%]
+............................                                             [100%]
 ================================== FAILURES ===================================
 _________________ test_post_runs_real_without_key_returns_400 _________________
 
-client = <starlette.testclient.TestClient object at 0x000002D2794927E0>
-monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002D279491250>
-
-    def test_post_runs_real_without_key_returns_400(client, monkeypatch):
-        """real 模式未配置百炼时应 400，不 fallback mock。"""
-        import app.api.routes as routes
-
-        class _Stub:
-            qwen_configured = False
-
-        monkeypatch.setattr(routes, "get_settings", lambda: _Stub())
-        resp = client.post("/runs", json={"question_id": "Q001", "mode": "real"})
->       assert resp.status_code == 400
-E       assert 503 == 400
-E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+The test stubs qwen_configured=False, posts a real-mode run, expects HTTP 400,
+and receives HTTP 503. The failure is outside T07 owner paths.
 
 tests\test_api_run_modes_and_consistency.py:60: AssertionError
 =========================== short test summary info ===========================
-SKIPPED [1] tests\batch\test_wave_b_output_layout.py:125: symlink creation unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\Users\mmyyrr\AppData\Local\Temp\pytest-of-mmyyrr\pytest-73\test_symlink_question_target_i0\external' -> 'C:\Users\mmyyrr\AppData\Local\Temp\pytest-of-mmyyrr\pytest-73\test_symlink_question_target_i0\batch\Q001'
-SKIPPED [1] tests\batch\test_wave_b_output_validation.py:294: symlink creation unavailable: [WinError 1314] 客户端没有所需的特权。: 'C:\Users\mmyyrr\AppData\Local\Temp\pytest-of-mmyyrr\pytest-73\test_symlink_artifact_is_rejec0\external.md' -> 'C:\Users\mmyyrr\AppData\Local\Temp\pytest-of-mmyyrr\pytest-73\test_symlink_artifact_is_rejec0\batch-five\Q001\report.md'
-SKIPPED [1] tests\execution\test_security.py:212: T05-A-PATH-004: symlink capability probe failed: OSError: [WinError 1314] 客户端没有所需的特权。: 'C:\Users\mmyyrr\AppData\Local\Temp\pytest-of-mmyyrr\pytest-73\test_t05_a_path_004_rejects_ar0\symlink-target' -> 'C:\Users\mmyyrr\AppData\Local\Temp\pytest-of-mmyyrr\pytest-73\test_t05_a_path_004_rejects_ar0\symlink-probe'
-SKIPPED [1] tests\execution\test_security.py:446: T05-A-SECURITY-001: symlink capability probe failed: OSError: [WinError 1314] 客户端没有所需的特权。: 'C:\Users\mmyyrr\AppData\Local\Temp\pytest-of-mmyyrr\pytest-73\test_t05_a_security_001_reject0\symlink-target' -> 'C:\Users\mmyyrr\AppData\Local\Temp\pytest-of-mmyyrr\pytest-73\test_t05_a_security_001_reject0\symlink-probe'
-1 failed, 853 passed, 4 skipped in 64.03s (0:01:04)
+SKIPPED [1] tests\batch\test_wave_b_output_layout.py:125: Windows symlink privilege unavailable.
+SKIPPED [1] tests\batch\test_wave_b_output_validation.py:294: Windows symlink privilege unavailable.
+SKIPPED [1] tests\execution\test_security.py:212: Windows symlink capability unavailable.
+SKIPPED [1] tests\execution\test_security.py:446: Windows symlink capability unavailable.
+1 failed, 959 passed, 4 skipped in 59.95s
 
-Historical Streamlit timeout record:
-- An earlier full-suite run in this verification round produced a 30-second
-  Streamlit AppTest timeout in tests/api/test_delivery_smoke.py and the same
-  API 400/503 failure: 2 failed, 852 passed, 4 skipped in 108.86s.
-- An isolated rerun of the Streamlit test then passed in 26.22s, and the latest
-  complete run above did not reproduce the timeout.
-- No tests/api file, timeout, skip, xfail, or assertion was modified. This
-  evidence does not claim a code change fixed the transient timeout.
-- The current API 400/503 failure is outside T07 owner paths and remains open.
+Historical transient Streamlit record:
+- The immediately preceding complete run reproduced the known Streamlit
+  AppTest 30-second timeout and the same API failure: 2 failed, 958 passed,
+  4 skipped in 101.74s.
+- The isolated Streamlit rerun passed in 26.23s.
+- The latest complete run above did not reproduce the Streamlit timeout.
+- No tests/api file, timeout, skip, xfail, or assertion was modified, and no
+  code-fix claim is made for the transient timeout.
+- The full-suite test generated timestamps in two T01 documentation files;
+  those test side effects were restored exactly to HEAD and were not committed.

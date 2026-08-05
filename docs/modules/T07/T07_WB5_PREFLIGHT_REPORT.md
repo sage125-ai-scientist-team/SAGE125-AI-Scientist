@@ -1,6 +1,6 @@
 # T07-WB5 preflight report
 
-Verification date: 2026-08-05 (Asia/Shanghai)
+Verification date: 2026-08-06 (Asia/Shanghai)
 
 Freeze ID: `T07-WB5-20260803-v1`
 
@@ -8,134 +8,123 @@ Freeze ID: `T07-WB5-20260803-v1`
 
 `FIVE_REAL_RUNS_BLOCKED`
 
-Current offline blockers:
+The only current offline preflight error code is:
 
-- `PROVIDER_CONFIGURATION_MISSING`
-- `PRICE_SNAPSHOT_REQUIRED`
-- `T01_GATE_VERSION_UNAVAILABLE`
+`PRICE_SNAPSHOT_REQUIRED`
 
-`PROVIDER_PREFLIGHT_NOT_EXECUTED`
+No actual price snapshot was supplied or validated. No provider preflight or formal five-question run occurred.
 
-No provider request and no formal five-question run occurred. Provider calls are 0. PR #31 was verified `OPEN`, `Draft=true`, base `integration/2026-08-10`, and remains Draft.
-
-## Git and environment provenance
+## Git and test provenance
 
 - Branch: `t07/b-batch-core`
-- Tested code SHA: `4560d0fd89a658e14eaeaedb2dcf10e3be82f5fc`
-- Integration SHA: `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c`
-- Ahead/behind against integration: `8/0`
-- Merge required: no; latest fetched integration was already an ancestor
-- Merge in progress: no
+- Tested code SHA: `7929fed9fccc18160d90fc9cae5949a4a3fd83d4`
+- Final docs HEAD: the docs-only commit containing this report; its SHA is
+  reported after commit creation in the final PR receipt rather than embedded
+  self-referentially
+- Integration tip: `73ce7c0731a2aeaaa1b254e8b6d4c1382eab052c`
+- Ahead/behind at tested code SHA: `11/0`
+- Existing integration merge commit preserved: `76941d072072dfb91fe5eb4faa1e3bdaa9c025f9`
 - Python: 3.12.10
 - Python executable: `D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe`
-- `pip check`: `No broken requirements found.`
+- Validation logs were captured under the system temporary directory, outside the repository.
 
-The `.venv` is operational again because its configured Python 3.12.10 installation is present. No dependency file, lock file, CI workflow, `.env`, or PowerShell execution policy was changed, and no environment replacement was needed.
+## T01/T03 gates
 
-The PR head repository reported by GitHub is `myr-111/SAGE125-AI-Scientist-fork`; the local `origin` correctly points to that repository. The non-`-fork` origin stated in the supplied runbook is stale and was not substituted because it would not update PR #31.
+Old T01 freeze SHA `a4bba2e0b479d5dc0affdf5c2adc4307caed3ec7` is unresolvable (`exit=128`) and is no longer used.
 
-## Authoritative source verification
+Captain-approved T01 commit: `73ce7c0731a2aeaaa1b254e8b6d4c1382eab052c`.
 
-| Source | Actual size | SHA-256 | Result |
-|---|---:|---|---|
-| `data/raw/sjtu-booklet.pdf` | 8,422,081 | `4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576` | verified |
-| `data/processed/questions_125.json` | 105,068 | `b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb` | verified; UTF-8 without BOM |
-| `data/processed/extraction_report.md` | 1,748 | `f895cbbd2c3e394040e0068c7c48d6ec35ad43c1c33b84b915d623f73cfbeb27` | verified; count/status/quality PASS |
+- Approval reference: `captain_written_approval_confirmed_by_t07_owner`
+- Ancestry command exit: 0
+- Public interface imported: true
+- Public interface callable: true
+- Result: `T01_GATE_AVAILABLE`
+- T01 owner files changed or copied: none
 
-JSON audit: total 125, unique IDs 125, exact range `Q001`-`Q125`, empty IDs 0, empty questions 0. All inputs remain Git-ignored and untracked. Synthetic fallback was not used.
+Tests cover available ancestor, missing SHA, non-ancestor SHA, missing interface, and non-callable interface. No ancestry or interface check was removed.
 
-The PDF is provenance/background, not scientific literature evidence for the eventual answers.
+T03 result: `T03_GATE_AVAILABLE`.
 
-## Frozen five-question mapping
+## Price snapshot input contract
 
-Mapping uses `question_id = record["id"]` and the existing T07 canonical-input function.
+- Schema version: `t07.price-snapshot-input.v1`
+- Actual price snapshot supplied: false
+- Actual price snapshot validated: false
+- Existing frozen config remains `price_snapshot=null`
+- Runtime target remains the existing `PriceSnapshot.from_mapping()` contract
+- Network calls: 0
+- Provider calls: 0
 
-| ID | Page | Domain | Complete question | Canonical input hash |
-|---|---:|---|---|---|
-| `Q001` | 7 | Mathematical Sciences | What makes prime numbers so special? | `310bf14faa04574681fb726cba14f7f12487d8881333b2086a35afdfffc0dc6d` |
-| `Q028` | 15 | Biology | Will it be possible to cure all cancers? | `badcae2fec281a0bbaec81b36d8ed4a149696db855d0f399e7cbe382fdc78da8` |
-| `Q050` | 21 | Astronomy | When will the universe die? Will it continue to expand? | `6f5c2f81f71800c2d3c449231ddfdb8816fd0e3ed1d53f1db1605c7afd118222` |
-| `Q075` | 27 | Physics | What are the smallest building blocks of matter? | `f3f914199353942d7abf4709ffbfe67c6ae8fb8b8cba905dea0cc7f316b8c0eb` |
-| `Q107` | 37 | Ecology | Can we stop global climate change? | `3448280c074284d4c316a8c013df63fb1c66d71c8a151fb4d4d1be119d2713b9` |
+The contract freezes exactly six models: `qwen3.6-flash`, `qwen3.7-plus`, `qwen3.7-max`, `qwen-deep-research`, `text-embedding-v4`, and `qwen3-rerank`.
 
-All five authoritative records include `source_page` and a non-empty `booklet_excerpt`; those fields are bound by each complete-record canonical hash.
+It validates provenance, timezone-aware timestamps, lowercase content hashes, exact model names, plain-string Decimal values, explicit official zero-price provenance, unique price-tier applicability, unsupported fees, currency direction, and frozen FX. Production CLI rejects test-only/synthetic inputs and repository-internal normalized output. Safe output omits all price values and account locators.
 
-## Prompt and schema verification
+Self-check result:
 
-- Prompt version: `sage125-agent-prompts-20260803-v1`
-- Amendment: `2026-08-04 captain normalization amendment`
-- Hash mode: `utf8_lf_normalized_text_sha256`
-- Verified SHA-256: `fa2d1da7d40ad6a6da800d6a41484973b46b63ebe72ed48da44b437644a5c808`
-- `app/agents/prompts.py` modified: no
-- Four frozen shared schema files: verified by their recorded raw byte size/SHA-256
+```json
+{"actual_price_snapshot_supplied": false, "actual_price_snapshot_validated": false, "decimal_rules_present": true, "fx_rules_present": true, "model_set_matches_frozen_config": true, "provider_calls": 0, "provider_preflight_executed": false, "required_models": 6, "source_provenance_rules_present": true, "spec_schema_valid": true, "timezone_rules_present": true}
+```
 
-Tests prove CRLF, CR, and LF Prompt line endings produce the same normalized hash while other text remains significant.
-
-## Safe provider diagnostics
+## Safe provider configuration
 
 - `env_file_exists=true`
 - `provider_name=bailian`
-- `qwen_configured=false`
-- `deep_research_configured=false`
+- `qwen_configured=true`
+- `deep_research_configured=true`
+- `configuration_error=None`
 - `mock_mode_enabled=false`
-- `config_loader_invoked=true`
 
-The CLI now invokes the existing repository configuration loader but emits only these safe booleans/name. It never prints `.env`, an API key, or an authorization header.
-
-## T01/T03 and price gates
-
-- Approved T01 commit: `a4bba2e0b479d5dc0affdf5c2adc4307caed3ec7`
-- T01: unavailable; `git merge-base --is-ancestor` fails, so `T01_GATE_VERSION_UNAVAILABLE` remains. No T01 code was copied or cherry-picked.
-- T03: `T03_GATE_AVAILABLE`.
-- Price snapshot: absent; `PRICE_SNAPSHOT_REQUIRED` remains. Unknown cost was not treated as zero.
+The existing configuration loader supplied these booleans. No API key, Workspace ID, `.env`, derived account URL, authorization header, or account balance was printed.
 
 ## Tests
 
 | Suite | Collected | Passed | Failed | Skipped | Warnings | Duration | Exit |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| WB5 targeted | 40 | 40 | 0 | 0 | 0 | 0.61s | 0 |
-| `tests/batch` | 193 | 191 | 0 | 2 | 0 | 9.54s | 0 |
-| Full pytest | 858 | 853 | 1 | 4 | 0 | 64.03s | 1 |
+| Price input specification | 36 | 36 | 0 | 0 | 0 | 0.21s | 0 |
+| WB5 targeted | 79 | 79 | 0 | 0 | 0 | 0.59s | 0 |
+| `tests/batch` | 232 | 230 | 0 | 2 | 0 | 8.03s | 0 |
+| Full pytest | 964 | 959 | 1 | 4 | 0 | 59.95s | 1 |
 
-The two batch skips and two execution skips are Windows symlink-privilege skips. The current full-suite failure is:
+The two batch and two execution skips are Windows symlink-privilege skips. The only latest full-suite failure is outside T07 owner paths:
 
 `tests/test_api_run_modes_and_consistency.py::test_post_runs_real_without_key_returns_400`: expected HTTP 400, actual HTTP 503.
 
-That test and the corresponding API implementation are outside T07 owner paths and were not changed.
+The previous complete run also reproduced the known Streamlit AppTest 30-second timeout (2 failed, 958 passed, 4 skipped, 101.74s). Its isolated rerun passed in 26.23s and the latest complete suite did not reproduce it. No `tests/api` test, timeout, skip, xfail, assertion, or API implementation was changed.
 
-Historical Streamlit note: an earlier full run in this verification round reproduced the known 30-second Streamlit AppTest timeout and also had the API failure (2 failed, 852 passed, 4 skipped, 108.86s). The isolated Streamlit rerun passed in 26.22s and the latest complete run did not reproduce it. No `tests/api` test, timeout, skip, xfail, or assertion was modified, and this report does not claim a T07 code fix resolved that transient timeout.
+Full pytest regenerated timestamps in two T01 documentation files. Those known test side effects were restored exactly to HEAD and were not committed.
 
-Historical environment and initial collection RED results remain preserved in `docs/modules/T07/evidence/wb5_preflight_red_tests.txt` and are not current.
-
-## Final pure-offline preflight
+## Final pure-offline WB5 preflight
 
 Command:
 
-`& ".\.venv\Scripts\python.exe" -m scripts.batch_125.preflight_five_real_runs --config docs\modules\T07\run_configs\T07-WB5-20260803-v1.json`
+`& ".\.venv\Scripts\python.exe" -m scripts.batch_125.preflight_five_real_runs --config docs/modules/T07/run_configs/T07-WB5-20260803-v1.json`
 
-- Exit code: 2 (fail-closed)
+- Exit code: 2
 - Status: `FIVE_REAL_RUNS_BLOCKED`
-- Source provenance verified: true
-- Five mappings verified: true
-- Prompt verified: true
-- Error codes: `PROVIDER_CONFIGURATION_MISSING`, `PRICE_SNAPSHOT_REQUIRED`, `T01_GATE_VERSION_UNAVAILABLE`
+- Error codes: `PRICE_SNAPSHOT_REQUIRED`
+- Source provenance: verified
+- Five frozen mappings: verified
+- Prompt: verified
+- Provider configured: true
+- T01: `T01_GATE_AVAILABLE`
 - T03: `T03_GATE_AVAILABLE`
 - Provider calls: 0
 - Provider preflight executed: false
 - Formal five-question runs: 0
 
-`SOURCE_MISSING`, `FROZEN_QUESTION_NOT_EVALUATED`, `CODE_FILE_SHA256_MISMATCH`, `PROMPT_HASH_MISMATCH`, and `GIT_WORKTREE_DIRTY` are no longer current codes.
+`T01_GATE_VERSION_UNAVAILABLE`, `T01_INTERFACE_UNAVAILABLE`, `PROVIDER_CONFIGURATION_MISSING`, and `GIT_WORKTREE_DIRTY` are not current errors.
 
-## Current blockers and handoff
+## Stop point
 
-1. Captain-approved T01 commit/interface must become available on the integration ancestry.
-2. Operator must supply an approved provider price snapshot.
-3. Bailian/Qwen configuration is currently incomplete according to the existing loader.
-4. Captain authorization is required before provider preflight or any of the five formal questions.
-5. The non-T07 API 400/503 full-suite failure requires its owner.
+- `actual_price_snapshot_supplied=false`
+- `actual_price_snapshot_validated=false`
+- `provider_calls=0`
+- `provider_preflight_executed=false`
+- `PRICE_SNAPSHOT_REQUIRED remains active`
+- `FIVE_REAL_RUNS_BLOCKED remains active`
 
-PR #31 must remain Draft. No provider flag, real Bailian call, formal five-question run, Ready transition, merge, rebase, force push, or new PR is authorized by this report.
+The next step requires an operator-supplied, provenance-complete price snapshot that passes the new offline contract. This report does not authorize price lookup, provider preflight, any formal question run, Ready transition, or merge.
 
-## Historical 2026-08-03 state
+## Historical record
 
-The earlier report accurately recorded absent PDF/JSON, unevaluated mappings, raw Prompt hash mismatch, old test counts, and an uncommitted dirty worktree. Those values are retained here as history only and must not be used as current provenance.
+Earlier WB5 reports accurately captured old SHA, unavailable T01, missing sources, Prompt mismatch, provider configuration false, and older test totals. Those entries remain historical evidence and are not current provenance.

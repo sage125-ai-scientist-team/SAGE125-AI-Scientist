@@ -1,0 +1,62 @@
+T07-WB5 price snapshot input contract validation
+Verification date: 2026-08-06 Asia/Shanghai
+Schema version: t07.price-snapshot-input.v1
+Tested code SHA: 7929fed9fccc18160d90fc9cae5949a4a3fd83d4
+Final docs HEAD: the docs-only commit containing this evidence; reported in the final PR receipt rather than embedded self-referentially
+Integration SHA: 73ce7c0731a2aeaaa1b254e8b6d4c1382eab052c
+Ahead/behind at tested code SHA: 11/0
+Python version: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+
+Historical RED:
+Command collected the new test before implementation.
+Exit code: 1
+Result: collection error
+First error: ModuleNotFoundError: No module named 'app.batch.price_snapshot_input'
+
+Latest price-spec test command:
+& ".\.venv\Scripts\python.exe" -m pytest -q tests\batch\test_price_snapshot_input_spec.py -rs
+
+Exit code: 0
+Collected: 36
+Passed: 36
+Failed: 0
+Skipped: 0
+Warnings: 0
+Duration: 0.21s
+First failure: none
+
+....................................                                     [100%]
+36 passed in 0.21s
+
+Self-check command:
+& ".\.venv\Scripts\python.exe" -m scripts.batch_125.validate_price_snapshot --self-check
+
+Exit code: 0
+Complete stdout:
+{"actual_price_snapshot_supplied": false, "actual_price_snapshot_validated": false, "decimal_rules_present": true, "fx_rules_present": true, "model_set_matches_frozen_config": true, "provider_calls": 0, "provider_preflight_executed": false, "required_models": 6, "source_provenance_rules_present": true, "spec_schema_valid": true, "timezone_rules_present": true}
+Complete stderr: empty
+
+Coverage includes:
+- valid USD test-only fixture and valid non-USD + FX test-only fixture
+- required identity/version fields and timezone-aware timestamps
+- approved source types, specific locator, and lowercase content SHA-256
+- exact six-model set with no aliases or extras
+- plain-string Decimal, NaN/Infinity/negative/scientific/placeholder rejection
+- zero-price provenance
+- FX requiredness, direction, timestamp, method, and positive Decimal rate
+- unique price-tier selection and unsupported extra-fee rejection
+- PriceSnapshot.from_mapping compatibility
+- no .env read, no provider call, safe default CLI output
+- repository-internal normalized-output rejection
+- production CLI rejection of synthetic/test_only input
+
+actual_price_snapshot_supplied=false
+actual_price_snapshot_validated=false
+provider_calls=0
+provider_preflight_executed=false
+PRICE_SNAPSHOT_REQUIRED remains active
+FIVE_REAL_RUNS_BLOCKED remains active
+
+No actual or guessed model prices appear in this evidence.
+No API key, Workspace ID, .env content, authorization header, or account balance was read or printed.
