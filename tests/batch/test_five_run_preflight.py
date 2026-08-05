@@ -74,6 +74,38 @@ def test_t01_commit_not_in_head_is_stably_blocked(tmp_path: Path) -> None:
     assert calls == [("git", "merge-base", "--is-ancestor", "a" * 40, "HEAD")]
 
 
+def test_t01_non_ancestor_commit_is_stably_blocked(tmp_path: Path) -> None:
+    def non_ancestor(command: tuple[str, ...], cwd: Path):
+        return subprocess.CompletedProcess(command, 1, "", "")
+
+    result = verify_t01_gate_availability(
+        "a" * 40,
+        tmp_path,
+        git_runner=non_ancestor,
+    )
+
+    assert not result.available
+    assert result.code == "T01_GATE_VERSION_UNAVAILABLE"
+
+
+def test_t01_ancestor_and_callable_interface_are_available(
+    tmp_path: Path,
+) -> None:
+    def ancestor(command: tuple[str, ...], cwd: Path):
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    module = SimpleNamespace(precheck_bundle_for_validation=lambda value: value)
+    result = verify_t01_gate_availability(
+        "a" * 40,
+        tmp_path,
+        git_runner=ancestor,
+        import_module=lambda name: module,
+    )
+
+    assert result.available
+    assert result.code == "T01_GATE_AVAILABLE"
+
+
 def test_t01_commit_must_have_public_interface_even_when_ancestor(
     tmp_path: Path,
 ) -> None:
@@ -85,6 +117,22 @@ def test_t01_commit_must_have_public_interface_even_when_ancestor(
         tmp_path,
         git_runner=ancestor,
         import_module=lambda name: object(),
+    )
+
+    assert not result.available
+    assert result.code == "T01_INTERFACE_UNAVAILABLE"
+
+
+def test_t01_public_interface_must_be_callable(tmp_path: Path) -> None:
+    def ancestor(command: tuple[str, ...], cwd: Path):
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    module = SimpleNamespace(precheck_bundle_for_validation=object())
+    result = verify_t01_gate_availability(
+        "a" * 40,
+        tmp_path,
+        git_runner=ancestor,
+        import_module=lambda name: module,
     )
 
     assert not result.available

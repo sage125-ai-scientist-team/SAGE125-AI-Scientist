@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sage125.invalid/schemas/t07.price-snapshot-input.v1.json",
+  "title": "T07 WB5 operator price snapshot input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "obtained_at",
+    "currency",
+    "pricing_unit",
+    "source",
+    "models"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "t07.price-snapshot-input.v1"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "obtained_at": {
+      "$ref": "#/$defs/timezoneDateTime"
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "pricing_unit": {
+      "const": "per_1m_tokens"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "models": {
+      "$ref": "#/$defs/models"
+    },
+    "fx": {
+      "anyOf": [
+        {"$ref": "#/$defs/fx"},
+        {"type": "null"}
+      ]
+    },
+    "synthetic": {
+      "type": "boolean",
+      "default": false
+    },
+    "test_only": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"currency": {"const": "USD"}},
+        "required": ["currency"]
+      },
+      "then": {
+        "properties": {"fx": {"type": "null"}}
+      },
+      "else": {
+        "required": ["fx"],
+        "properties": {"fx": {"$ref": "#/$defs/fx"}}
+      }
+    }
+  ],
+  "$defs": {
+    "decimalString": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+    },
+    "timezoneDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "title", "locator", "captured_at", "content_sha256"],
+      "properties": {
+        "type": {
+          "enum": [
+            "official_pricing_page",
+            "official_account_page",
+            "captain_material"
+          ]
+        },
+        "title": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 8},
+        "captured_at": {"$ref": "#/$defs/timezoneDateTime"},
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "region",
+        "billing_basis",
+        "tier",
+        "description",
+        "applicability_confirmed",
+        "pricing_dimensions",
+        "selected_dimensions"
+      ],
+      "properties": {
+        "region": {"const": "cn-beijing"},
+        "billing_basis": {"const": "per_1m_input_output_tokens"},
+        "tier": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "applicability_confirmed": {"const": true},
+        "pricing_dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "flat",
+              "tier",
+              "context_length",
+              "cache",
+              "batch",
+              "region",
+              "call",
+              "task",
+              "extra_fee"
+            ]
+          }
+        },
+        "selected_dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "context_length": {"type": "string", "minLength": 1},
+            "cache": {"type": "string", "minLength": 1},
+            "batch": {"type": "string", "minLength": 1},
+            "region": {"const": "cn-beijing"}
+          }
+        },
+        "additional_fees": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    },
+    "modelPrice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_per_million", "output_per_million", "conditions"],
+      "properties": {
+        "input_per_million": {"$ref": "#/$defs/decimalString"},
+        "output_per_million": {"$ref": "#/$defs/decimalString"},
+        "conditions": {"$ref": "#/$defs/conditions"},
+        "zero_price_confirmed": {"type": "boolean"},
+        "zero_price_source_locator": {"type": "string", "minLength": 8}
+      }
+    },
+    "models": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qwen3.6-flash",
+        "qwen3.7-plus",
+        "qwen3.7-max",
+        "qwen-deep-research",
+        "text-embedding-v4",
+        "qwen3-rerank"
+      ],
+      "properties": {
+        "qwen3.6-flash": {"$ref": "#/$defs/modelPrice"},
+        "qwen3.7-plus": {"$ref": "#/$defs/modelPrice"},
+        "qwen3.7-max": {"$ref": "#/$defs/modelPrice"},
+        "qwen-deep-research": {"$ref": "#/$defs/modelPrice"},
+        "text-embedding-v4": {"$ref": "#/$defs/modelPrice"},
+        "qwen3-rerank": {"$ref": "#/$defs/modelPrice"}
+      }
+    },
+    "fx": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from_currency",
+        "to_currency",
+        "usd_per_source_currency_unit",
+        "source",
+        "obtained_at",
+        "method"
+      ],
+      "properties": {
+        "from_currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+        "to_currency": {"const": "USD"},
+        "usd_per_source_currency_unit": {"$ref": "#/$defs/decimalString"},
+        "source": {"type": "string", "minLength": 8},
+        "obtained_at": {"$ref": "#/$defs/timezoneDateTime"},
+        "method": {
+          "const": "multiply_source_currency_price_by_usd_per_source_currency_unit"
+        }
+      }
+    }
+  }
+}
