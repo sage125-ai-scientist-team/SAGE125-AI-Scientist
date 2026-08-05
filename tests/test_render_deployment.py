@@ -1,9 +1,8 @@
-"""Deployment contracts for Railway staging and server-only Bailian access."""
+"""Deployment contracts for the Render preview and server-only Bailian access."""
 
 from __future__ import annotations
 
 import json
-import tomllib
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -12,7 +11,8 @@ from app.api.main import app
 from app.core.config import Settings
 from app.rag.library_manager import LibraryManager
 from app.ui import api_client
-from scripts.start_railway_api import railway_port
+from scripts.start_api import service_port as api_port
+from scripts.start_ui import service_port as ui_port
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,16 +53,21 @@ def test_bailian_configuration_is_server_derived_and_safe_to_summarize():
     assert ".maas.aliyuncs.com" not in summary_blob
 
 
-def test_health_exposes_only_bailian_configuration_state(monkeypatch):
+def test_health_exposes_only_bailian_and_ephemeral_storage_state(monkeypatch):
     from app.api import routes
 
-    monkeypatch.setattr(routes, "get_settings", lambda: _settings())
+    monkeypatch.setattr(
+        routes,
+        "get_settings",
+        lambda: _settings(PREVIEW_EPHEMERAL_STORAGE=True),
+    )
     response = TestClient(app).get("/health")
 
     assert response.status_code == 200
     body = response.json()
     assert body["service"] == "sage125-api"
     assert body["bailian"] == {"configured": False, "status": "unavailable"}
+    assert body["storage"] == {"mode": "ephemeral", "persistent": False}
     blob = json.dumps(body)
     assert "workspace_id" not in blob.lower()
     assert "base_url" not in blob.lower()
@@ -112,18 +117,37 @@ def test_library_manager_uses_configured_data_root(tmp_path):
     assert manager.index_config.data_root == tmp_path
 
 
-def test_railway_config_and_entrypoint_contracts(monkeypatch):
-    api_cfg = tomllib.loads((ROOT / "railway-api.toml").read_text(encoding="utf-8"))
-    ui_cfg = tomllib.loads((ROOT / "railway-ui.toml").read_text(encoding="utf-8"))
+def test_render_blueprint_and_entrypoint_contracts(monkeypatch):
+    blueprint = (ROOT / "render.yaml").read_text(encoding="utf-8")
 
-    assert api_cfg["build"]["builder"] == "RAILPACK"
-    assert api_cfg["deploy"]["healthcheckPath"] == "/health"
-    assert ui_cfg["deploy"]["healthcheckPath"] == "/_stcore/health"
-    assert "start_railway_api.py" in api_cfg["deploy"]["startCommand"]
-    assert "start_railway_ui.py" in ui_cfg["deploy"]["startCommand"]
+    assert "generation: off" in blueprint
+    assert "name: SAGE125-AI-Scientist-Preview" in blueprint
+    assert "name: preview" in blueprint
+    assert "name: sage125-api-preview" in blueprint
+    assert "name: sage125-ui-preview" in blueprint
+    assert blueprint.count("repo: https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist") == 2
+    assert blueprint.count("branch: integration/2026-08-10") == 2
+    assert blueprint.count("plan: free") == 2
+    assert blueprint.count("region: singapore") == 2
+    assert blueprint.count("autoDeployTrigger: checksPass") == 2
+    assert "startCommand: python -m scripts.start_api" in blueprint
+    assert "startCommand: python -m scripts.start_ui" in blueprint
+    assert "healthCheckPath: /health" in blueprint
+    assert "healthCheckPath: /_stcore/health" in blueprint
+    assert "DASHSCOPE_API_KEY" not in blueprint
+    assert "WORKSPACE_ID" not in blueprint
+    assert "domains:" not in blueprint
 
     monkeypatch.setenv("PORT", "4321")
-    assert railway_port() == 4321
+    assert api_port() == 4321
+    assert ui_port() == 4321
+
+
+def test_hosted_ui_hides_internal_error_details():
+    start_ui = (ROOT / "scripts" / "start_ui.py").read_text(encoding="utf-8")
+
+    assert '"--client.showErrorDetails"' in start_ui
+    assert '"false"' in start_ui
 
 
 def test_ci_covers_integration_and_main_pushes_and_pull_requests():

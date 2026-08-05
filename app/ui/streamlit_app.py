@@ -211,6 +211,8 @@ def main() -> None:
     }
     components.render_hero(hero_status, {"questions": len(questions), "agents": 10})
     components.render_mode_badges(mode, api_connected, last_run_mode, qwen_calls)
+    if health.get("storage", {}).get("mode") == "ephemeral":
+        st.warning("当前为临时预览环境；重新部署、休眠或重启后，任务历史与上传资料可能重置。")
 
     # ---- Sidebar ----
     with st.sidebar:

@@ -101,6 +101,10 @@ def health() -> dict:
             "configured": settings.bailian.configured,
             "status": "available" if settings.bailian.configured else "unavailable",
         },
+        "storage": {
+            "mode": "ephemeral" if settings.preview_ephemeral_storage else "local",
+            "persistent": not settings.preview_ephemeral_storage,
+        },
         "qwen_config_loaded": settings.qwen_configured,
         "deep_research_config_loaded": settings.deep_research_configured,
         "openalex_config_loaded": settings.openalex_configured,
