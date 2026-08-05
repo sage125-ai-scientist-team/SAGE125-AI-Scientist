@@ -19,10 +19,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
-from app.contracts.rag import IndexConfig, SourceRecord
+from app.contracts.rag import (
+    IndexConfig,
+    SourcePolicy,
+    SourceRecord,
+    SourceRole,
+    SourceType,
+)
 from app.core.config import PROJECT_ROOT, Settings, get_settings
 from app.core.logging import get_logger
 from app.rag.indexing_service import IndexingService
+from app.rag.source_policy import RegistrySourcePolicy
 from app.rag.zvec_store import get_vector_store
 
 logger = get_logger("rag.library_manager")
@@ -60,8 +67,6 @@ def _safe_filename(raw_name: str) -> str:
     ext = Path(name).suffix.lower()
     if ext not in _SUPPORTED_EXTENSIONS:
         raise LibraryValidationError("仅支持 PDF、TXT、MD、CSV。")
-    if name.lower() == _RESERVED_SOURCE_NAME:
-        raise LibraryValidationError("sjtu-booklet.pdf 是问题来源，不能加入本地文献库。")
     if Path(name).stem.upper() in _WINDOWS_RESERVED:
         raise LibraryValidationError("文件名是 Windows 保留名称。")
     if len(name) > 180:
@@ -130,6 +135,7 @@ class LibraryManager:
         vector_store_factory: Callable[..., Any] | None = None,
         index_config: IndexConfig | None = None,
         source_registry: Mapping[str, SourceRecord] | None = None,
+        source_policy: SourcePolicy | None = None,
     ) -> None:
         self.settings = settings or get_settings()
         configured_data_root = Path(getattr(self.settings, "data_dir", "data"))
@@ -155,6 +161,7 @@ class LibraryManager:
             str(content_hash).strip().lower(): SourceRecord.model_validate(record)
             for content_hash, record in (source_registry or {}).items()
         }
+        self.source_policy = source_policy or RegistrySourcePolicy()
         self.uploads_dir.mkdir(parents=True, exist_ok=True)
         self._cleanup_stale_parts()
 
@@ -469,20 +476,12 @@ class LibraryManager:
             "source_name": record["original_name"],
             "doc_id": record["document_id"],
             "library_document_id": record["document_id"],
-            "content_sha256": record["sha256"],
-            "source_role": "user_literature",
+            "source_id": record["source_id"],
+            "content_sha256": record["content_hash"],
+            "source_type": record["source_type"],
+            "source_role": record["source_role"],
             "is_user_upload": True,
         }
-        registered_source = self.source_registry.get(str(record["sha256"]).lower())
-        if (
-            registered_source is not None
-            and registered_source.content_hash == str(record["sha256"]).lower()
-        ):
-            overrides.update(
-                source_id=registered_source.source_id,
-                source_type=registered_source.source_type.value,
-                source_role=registered_source.source_role.value,
-            )
         try:
             service = self.indexing_service_factory(index_dir=str(self.index_dir))
             result = service.index_files(
@@ -592,8 +591,30 @@ class LibraryManager:
                     continue
 
                 digest = hashlib.sha256(content).hexdigest()
+                try:
+                    source = self.source_policy.classify_source(
+                        filename=name,
+                        content_hash=digest,
+                        registry=self.source_registry,
+                    )
+                except (TypeError, ValueError) as exc:
+                    rejected.append(f"{name}: 来源分类失败：{exc}")
+                    continue
+                if (
+                    source.source_type is SourceType.BOOKLET
+                    or source.source_role is SourceRole.QUESTION_SOURCE
+                ):
+                    rejected.append(f"{name}: 问题来源不能加入本地文献库。")
+                    continue
                 existing = existing_by_sha.get(digest)
                 if existing is not None:
+                    existing.update(
+                        source_id=source.source_id,
+                        content_hash=source.content_hash,
+                        source_type=source.source_type.value,
+                        source_role=source.source_role.value,
+                    )
+                    self._save_manifest(manifest)
                     duplicate_names.append(name)
                     stored_path = self.uploads_dir / str(existing.get("stored_name", ""))
                     if not stored_path.exists():
@@ -650,12 +671,15 @@ class LibraryManager:
                 record = {
                     "document_id": document_id,
                     "sha256": digest,
+                    "source_id": source.source_id,
+                    "content_hash": source.content_hash,
+                    "source_type": source.source_type.value,
+                    "source_role": source.source_role.value,
                     "original_name": name,
                     "stored_name": stored_name,
                     "size_bytes": len(content),
                     "uploaded_at": _utc_now(),
                     "status": "stored",
-                    "source_role": "user_literature",
                     "chunk_count": 0,
                     "chunk_ids": [],
                     "error": "",

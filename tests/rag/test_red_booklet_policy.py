@@ -5,23 +5,17 @@ from __future__ import annotations
 import hashlib
 from types import SimpleNamespace
 
-from app.contracts.rag import SourceRecord, SourceRole, SourceType
+from app.contracts.rag import SourceRole, SourceType
 from app.rag.library_manager import LibraryManager
 
 
-def test_renamed_registered_booklet_is_not_treated_as_user_evidence(tmp_path):
-    """An ingest hash must resolve registry identity independently of filename."""
+def test_fresh_manager_excludes_renamed_booklet_by_stable_content_identity(
+    tmp_path,
+):
+    """A cold-start manager rejects a renamed booklet using only its hash."""
 
     pdf_bytes = b"%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\n%%EOF"
     content_hash = hashlib.sha256(pdf_bytes).hexdigest()
-    registry = {
-        content_hash: SourceRecord(
-            source_id="SOURCE-BOOKLET-125",
-            content_hash=content_hash,
-            source_type=SourceType.BOOKLET,
-            source_role=SourceRole.QUESTION_SOURCE,
-        )
-    }
     captured_metadata = {}
 
     class CapturingIndexingService:
@@ -48,14 +42,16 @@ def test_renamed_registered_booklet_is_not_treated_as_user_evidence(tmp_path):
         index_dir=tmp_path / "index" / "user_library" / "zvec",
         manifest_path=uploads_dir / ".library_manifest.json",
         indexing_service_factory=CapturingIndexingService,
-        source_registry=registry,
     )
 
-    result = manager.ingest_files([("renamed booklet.pdf", pdf_bytes)])
+    renamed = manager.ingest_files([("renamed_booklet.pdf", pdf_bytes)])
 
-    assert result["status"] == "ok"
-    assert captured_metadata["content_sha256"] == content_hash
-    assert captured_metadata["source_type"] == SourceType.BOOKLET.value
-    assert captured_metadata["source_type"] != SourceType.PAPER.value
-    assert captured_metadata["source_role"] == SourceRole.QUESTION_SOURCE.value
-    assert captured_metadata["source_role"] != "user_literature"
+    assert renamed["status"] == "failed"
+    assert captured_metadata == {}
+    classified = manager.source_policy.classify_source(
+        filename="another_name.pdf", content_hash=content_hash, registry={}
+    )
+    assert classified.source_type is SourceType.BOOKLET
+    assert classified.source_role is SourceRole.QUESTION_SOURCE
+    assert manager.get_status()["documents"] == []
+    assert manager.get_status()["usage"]["file_count"] == 0

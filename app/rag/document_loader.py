@@ -11,11 +11,13 @@ app.rag.document_loader —— 原始文档加载器。
 
 from __future__ import annotations
 
+import hashlib
+import re
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from app.core.logging import get_logger
 
@@ -27,6 +29,12 @@ _SUPPORTED_EXTENSIONS = {".pdf": "pdf", ".txt": "txt", ".md": "md", ".csv": "csv
 
 # CSV 分批转文本时，每个 Document 承载的最大行数，避免超大文本。
 _CSV_ROWS_PER_DOC = 50
+
+LOADER_VERSION = "2.0"
+ParseStatus = Literal["parsed", "empty", "needs_ocr", "failed"]
+
+_DOI_RE = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Z0-9+]+", re.IGNORECASE)
+_URL_RE = re.compile(r"https?://[^\s<>\]\[\"']+")
 
 
 class UnsupportedFileTypeError(Exception):
@@ -48,7 +56,23 @@ class Document:
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
-def _base_metadata(path: Path, file_type: str, is_user_upload: bool) -> dict[str, Any]:
+def _content_sha256(path: Path) -> str:
+    """Return the byte identity used by loader v2, registries, and caches."""
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _base_metadata(
+    path: Path,
+    file_type: str,
+    is_user_upload: bool,
+    *,
+    content_sha256: str | None = None,
+    parse_status: ParseStatus = "parsed",
+) -> dict[str, Any]:
     """
     构造 Document 的基础元数据（不含 page，由各 loader 补充）。
 
@@ -68,7 +92,35 @@ def _base_metadata(path: Path, file_type: str, is_user_upload: bool) -> dict[str
         "doc_id": uuid.uuid5(uuid.NAMESPACE_URL, str(path)).hex,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "is_user_upload": is_user_upload,
+        "content_sha256": content_sha256 or _content_sha256(path),
+        "loader_version": LOADER_VERSION,
+        "parse_status": parse_status,
+        "authors": [],
+        "abstract": None,
+        "doi": None,
+        "url": None,
+        "sections": [],
     }
+
+
+def _first_match(pattern: re.Pattern[str], values: list[str]) -> str | None:
+    for value in values:
+        match = pattern.search(value or "")
+        if match:
+            return match.group(0).rstrip(".,;)")
+    return None
+
+
+def _pdf_authors(value: str) -> list[str]:
+    return [item.strip() for item in re.split(r"[;,]", value or "") if item.strip()]
+
+
+def _sections_for_page(toc: list, page_number: int) -> list[str]:
+    return [
+        str(entry[1]).strip()
+        for entry in toc
+        if len(entry) >= 3 and int(entry[2]) == page_number and str(entry[1]).strip()
+    ]
 
 
 def load_pdf(path: str, is_user_upload: bool = False) -> list[Document]:
@@ -96,19 +148,72 @@ def load_pdf(path: str, is_user_upload: bool = False) -> list[Document]:
     except ImportError as exc:
         raise RuntimeError("未安装 PyMuPDF，请先 pip install pymupdf。") from exc
 
+    content_hash = _content_sha256(p)
     docs: list[Document] = []
-    doc = fitz.open(str(p))
-    for pno in range(doc.page_count):
-        # 使用 sort=True 缓解多栏顺序错乱。
-        text = doc[pno].get_text("text", sort=True).strip()
-        # 跳过空页。
-        if not text:
-            continue
-        meta = _base_metadata(p, "pdf", is_user_upload)
-        # 1-based 页码，便于前端展示。
-        meta["page"] = pno + 1
-        docs.append(Document(text=text, metadata=meta))
-    doc.close()
+    try:
+        doc = fitz.open(str(p))
+    except Exception as exc:
+        meta = _base_metadata(
+            p,
+            "pdf",
+            is_user_upload,
+            content_sha256=content_hash,
+            parse_status="failed",
+        )
+        meta.update(page=1, parse_error=f"{type(exc).__name__}: {exc}")
+        return [Document(text="", metadata=meta)]
+
+    try:
+        pdf_meta = doc.metadata or {}
+        toc = doc.get_toc(simple=True) or []
+        page_texts = [doc[pno].get_text("text", sort=True).strip() for pno in range(doc.page_count)]
+        searchable = [
+            str(pdf_meta.get("subject") or ""),
+            str(pdf_meta.get("keywords") or ""),
+            *page_texts,
+        ]
+        doi = _first_match(_DOI_RE, searchable)
+        url = _first_match(_URL_RE, searchable)
+        authors = _pdf_authors(str(pdf_meta.get("author") or ""))
+        abstract = str(pdf_meta.get("subject") or "").strip() or None
+
+        if not page_texts:
+            meta = _base_metadata(
+                p,
+                "pdf",
+                is_user_upload,
+                content_sha256=content_hash,
+                parse_status="empty",
+            )
+            meta.update(page=1, authors=authors, abstract=abstract, doi=doi, url=url)
+            return [Document(text="", metadata=meta)]
+
+        for pno, text in enumerate(page_texts):
+            page = doc[pno]
+            if text:
+                status: ParseStatus = "parsed"
+            elif page.get_images(full=True):
+                status = "needs_ocr"
+            else:
+                status = "empty"
+            meta = _base_metadata(
+                p,
+                "pdf",
+                is_user_upload,
+                content_sha256=content_hash,
+                parse_status=status,
+            )
+            meta.update(
+                page=pno + 1,
+                authors=authors,
+                abstract=abstract,
+                doi=doi,
+                url=url,
+                sections=_sections_for_page(toc, pno + 1),
+            )
+            docs.append(Document(text=text, metadata=meta))
+    finally:
+        doc.close()
     # 仅记录非敏感统计信息。
     logger.info("load_pdf：%s，页数=%d", p.name, len(docs))
     return docs
@@ -143,7 +248,12 @@ def load_txt(path: str, is_user_upload: bool = False) -> list[Document]:
     # 全部失败则清晰报错。
     if text is None:
         raise UnicodeError(f"无法解码文本文件（尝试 utf-8/utf-8-sig/gbk 均失败）：{path}")
-    meta = _base_metadata(p, "txt", is_user_upload)
+    meta = _base_metadata(
+        p,
+        "txt",
+        is_user_upload,
+        parse_status="parsed" if text.strip() else "empty",
+    )
     meta["page"] = 1
     logger.info("load_txt：%s，chars=%d", p.name, len(text))
     return [Document(text=text, metadata=meta)]
@@ -168,7 +278,17 @@ def load_md(path: str, is_user_upload: bool = False) -> list[Document]:
         raise FileNotFoundError(f"Markdown 文件不存在：{path}")
     # Markdown 直接按 utf-8 读取，保留标题符号。
     text = p.read_text(encoding="utf-8")
-    meta = _base_metadata(p, "md", is_user_upload)
+    meta = _base_metadata(
+        p,
+        "md",
+        is_user_upload,
+        parse_status="parsed" if text.strip() else "empty",
+    )
+    meta["sections"] = [
+        line.lstrip("#").strip()
+        for line in text.splitlines()
+        if line.startswith("#") and line.lstrip("#").strip()
+    ]
     meta["page"] = 1
     logger.info("load_md：%s，chars=%d", p.name, len(text))
     return [Document(text=text, metadata=meta)]
