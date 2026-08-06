@@ -452,7 +452,14 @@ def build_artifact_manifest(
 
         try:
             audit = ActualCallAudit.from_json(candidate.read_text(encoding="utf-8"))
-            validate_actual_call_audit(audit)
+            budget_policy = getattr(job, "budget_policy", None)
+            if budget_policy is None:
+                validate_actual_call_audit(audit)
+            else:
+                validate_actual_call_audit(
+                    audit,
+                    budget_mode=budget_policy.mode,
+                )
         except (OSError, UnicodeError, BatchRunnerError) as exc:
             raise BatchRunnerError(
                 "LLM_CALL_AUDIT_INVALID",

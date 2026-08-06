@@ -22,10 +22,12 @@ from app.core.config import get_settings
 from app.batch.actual_call_audit import (
     ActualCallAudit,
     BudgetLedger,
+    CostAccountingMode,
     PriceSnapshot,
     compute_estimated_cost,
     sanitize_request_id,
 )
+from app.contracts.batch import BudgetMode
 from app.batch.errors import BatchRunnerError
 from app.batch.five_run_preflight import (
     FrozenFiveRunConfig,
@@ -35,7 +37,7 @@ from app.batch.five_run_preflight import (
 
 
 DEFAULT_CONFIG = Path(
-    "docs/modules/T07/run_configs/T07-WB5-20260803-v1.json"
+    "docs/modules/T07/run_configs/T07-WB5-20260807-v2.json"
 )
 
 
@@ -125,14 +127,21 @@ def _budget_ledger(config: FrozenFiveRunConfig) -> BudgetLedger:
             raise TypeError("budget scopes must be objects")
         return BudgetLedger(
             per_question_token_limit=int(per_question["token_limit"]),
-            per_question_cost_limit_usd=Decimal(
-                str(per_question["cost_limit_usd"])
+            per_question_cost_limit_usd=(
+                None
+                if config.budget_mode is BudgetMode.TOKEN_ONLY
+                else Decimal(str(per_question["cost_limit_usd"]))
             ),
             batch_token_limit=int(batch["token_limit"]),
-            batch_cost_limit_usd=Decimal(str(batch["cost_limit_usd"])),
+            batch_cost_limit_usd=(
+                None
+                if config.budget_mode is BudgetMode.TOKEN_ONLY
+                else Decimal(str(batch["cost_limit_usd"]))
+            ),
             max_output_tokens_per_call=int(
                 config.budgets["max_output_tokens_per_call"]
             ),
+            budget_mode=config.budget_mode,
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise BatchRunnerError(
@@ -143,7 +152,7 @@ def _budget_ledger(config: FrozenFiveRunConfig) -> BudgetLedger:
 
 def _execute_minimal_provider_preflight(
     config: FrozenFiveRunConfig,
-    snapshot: PriceSnapshot,
+    snapshot: PriceSnapshot | None,
     run_root: Path,
 ) -> ActualCallAudit:
     """Make one eight-token Bailian request after every offline gate passes."""
@@ -176,11 +185,15 @@ def _execute_minimal_provider_preflight(
     maximum_output_tokens = 8
     planned_input_tokens = 64
     ledger = _budget_ledger(config)
-    planned_cost = compute_estimated_cost(
-        snapshot,
-        model,
-        planned_input_tokens,
-        maximum_output_tokens,
+    planned_cost = (
+        None
+        if config.budget_mode is BudgetMode.TOKEN_ONLY
+        else compute_estimated_cost(
+            _require_price_snapshot(snapshot),
+            model,
+            planned_input_tokens,
+            maximum_output_tokens,
+        )
     )
     ledger.require_capacity(
         "PROVIDER_PREFLIGHT",
@@ -222,11 +235,15 @@ def _execute_minimal_provider_preflight(
             "PROVIDER_USAGE_MISSING",
             "provider preflight returned no complete token usage",
         )
-    estimated_cost = compute_estimated_cost(
-        snapshot,
-        model,
-        input_tokens,
-        output_tokens,
+    estimated_cost = (
+        None
+        if config.budget_mode is BudgetMode.TOKEN_ONLY
+        else compute_estimated_cost(
+            _require_price_snapshot(snapshot),
+            model,
+            input_tokens,
+            output_tokens,
+        )
     )
     audit = ActualCallAudit(
         provider="bailian",
@@ -244,7 +261,12 @@ def _execute_minimal_provider_preflight(
         settled_cost_usd=None,
         retry_attempt=1,
         fallback=False,
-        price_snapshot_version=snapshot.version,
+        price_snapshot_version=(None if snapshot is None else snapshot.version),
+        cost_accounting_mode=(
+            CostAccountingMode.TOKEN_ONLY
+            if config.budget_mode is BudgetMode.TOKEN_ONLY
+            else CostAccountingMode.PRICE_SNAPSHOT
+        ),
     )
     ledger.record_call("PROVIDER_PREFLIGHT", audit)
     target = run_root / config.freeze_id / "provider_preflight"
@@ -254,6 +276,15 @@ def _execute_minimal_provider_preflight(
         encoding="utf-8",
     )
     return audit
+
+
+def _require_price_snapshot(snapshot: PriceSnapshot | None) -> PriceSnapshot:
+    if snapshot is None:
+        raise BatchRunnerError(
+            "PRICE_SNAPSHOT_REQUIRED",
+            "token_and_cost provider preflight requires a frozen price snapshot",
+        )
+    return snapshot
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -285,14 +316,20 @@ def main(argv: Sequence[str] | None = None) -> int:
             output["provider_preflight_executed"] = False
             print(json.dumps(output, ensure_ascii=False, sort_keys=True))
             return 2
-        if snapshot is None or args.run_root is None:
+        config = load_frozen_run_config(config_path)
+        if args.run_root is None or (
+            config.price_snapshot_required and snapshot is None
+        ):
             raise BatchRunnerError(
                 "PROVIDER_PREFLIGHT_INPUT_MISSING",
-                "--price-snapshot and --run-root are required for provider preflight",
+                (
+                    "--run-root is required; --price-snapshot is also required "
+                    "for token_and_cost provider preflight"
+                ),
             )
         run_root = _outside_repo(args.run_root, repo_root)
         audit = _execute_minimal_provider_preflight(
-            load_frozen_run_config(config_path),
+            config,
             snapshot,
             run_root,
         )
@@ -311,6 +348,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "estimated_cost_usd": str(audit.estimated_cost_usd),
                     "fallback": audit.fallback,
                     "provider_preflight_executed": True,
+                    "provider_calls": 1,
                 },
                 ensure_ascii=False,
                 sort_keys=True,

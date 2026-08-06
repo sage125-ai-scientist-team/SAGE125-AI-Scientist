@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from app.batch.actual_call_audit import ActualCallAudit
+from app.batch.actual_call_audit import ActualCallAudit, CostAccountingMode
 from app.batch.completion_gate import (
     CompletionGateInput,
     CompletionGateIssue,
@@ -25,7 +25,12 @@ from app.batch.delivery_index import (
     build_delivery_index,
 )
 from app.batch.output_validation import ArtifactFileRecord, ArtifactManifest
-from app.contracts.batch import REQUIRED_ARTIFACTS
+from app.contracts.batch import (
+    REQUIRED_ARTIFACTS,
+    TOKEN_ONLY_BUDGET_POLICY_VERSION,
+    BudgetMode,
+    BudgetPolicy,
+)
 from app.contracts.validation import GateFinding, GateResult, Severity
 
 
@@ -59,16 +64,22 @@ def _failed_gate(gate_id: str) -> GateResult:
     )
 
 
-def _artifacts(*, include_audit: bool = True, omit: str | None = None):
+def _artifacts(
+    *,
+    include_audit: bool = True,
+    omit: str | None = None,
+    audit: ActualCallAudit | None = None,
+):
     names = list(REQUIRED_ARTIFACTS)
     if include_audit:
         names.append(AUDIT_NAME)
+    effective_audit = _audit() if audit is None else audit
     return tuple(
         ArtifactFileRecord(
             name=name,
             path=f"Q001/{name}",
             sha256=(
-                hashlib.sha256(_audit().to_json().encode("utf-8")).hexdigest()
+                hashlib.sha256(effective_audit.to_json().encode("utf-8")).hexdigest()
                 if name == AUDIT_NAME
                 else hashlib.sha256(name.encode()).hexdigest()
             ),
@@ -79,8 +90,17 @@ def _artifacts(*, include_audit: bool = True, omit: str | None = None):
     )
 
 
-def _manifest(*, include_audit: bool = True, omit: str | None = None):
-    artifacts = _artifacts(include_audit=include_audit, omit=omit)
+def _manifest(
+    *,
+    include_audit: bool = True,
+    omit: str | None = None,
+    audit: ActualCallAudit | None = None,
+):
+    artifacts = _artifacts(
+        include_audit=include_audit,
+        omit=omit,
+        audit=audit,
+    )
     payload = {
         "batch_id": "batch-five",
         "question_id": "Q001",
@@ -109,7 +129,10 @@ def _manifest(*, include_audit: bool = True, omit: str | None = None):
     )
 
 
-def _delivery(manifest: ArtifactManifest):
+def _delivery(
+    manifest: ArtifactManifest,
+    budget_policy: BudgetPolicy | None = None,
+):
     record = QuestionDeliveryRecord(
         batch_id="batch-five",
         question_id="Q001",
@@ -138,6 +161,29 @@ def _delivery(manifest: ArtifactManifest):
         mock=False,
         synthetic=False,
         completed=False,
+        budget_policy_version=(
+            None if budget_policy is None else budget_policy.version
+        ),
+        budget_mode=(
+            None if budget_policy is None else budget_policy.mode.value
+        ),
+        cost_accounting_required=(
+            None
+            if budget_policy is None
+            else budget_policy.cost_accounting_required
+        ),
+        price_snapshot_required=(
+            None
+            if budget_policy is None
+            else budget_policy.price_snapshot_required
+        ),
+        captain_waiver_reference=(
+            None
+            if budget_policy is None
+            else budget_policy.captain_waiver_reference
+        ),
+        estimated_cost_usd=None,
+        settled_cost_usd=None,
     )
     return build_delivery_index("batch-five", (record,))
 
@@ -165,9 +211,37 @@ def _audit(**updates) -> ActualCallAudit:
     return ActualCallAudit(**payload)
 
 
+def _token_only_policy() -> BudgetPolicy:
+    return BudgetPolicy(
+        version=TOKEN_ONLY_BUDGET_POLICY_VERSION,
+        mode=BudgetMode.TOKEN_ONLY,
+        cost_accounting_required=False,
+        price_snapshot_required=False,
+        captain_waiver_reference="captain-option-b-approved-2026-08-07",
+    )
+
+
+def _token_only_audit(**updates) -> ActualCallAudit:
+    return _audit(
+        estimated_cost_usd=None,
+        settled_cost_usd=None,
+        price_snapshot_version=None,
+        cost_accounting_mode=CostAccountingMode.TOKEN_ONLY,
+        **updates,
+    )
+
+
 def _input(**updates) -> CompletionGateInput:
-    manifest = updates.pop("artifact_manifest", _manifest())
-    delivery = updates.pop("delivery_index", _delivery(manifest))
+    audit = updates.get("call_audit", _audit())
+    budget_policy = updates.get("budget_policy")
+    manifest = updates.pop(
+        "artifact_manifest",
+        _manifest(audit=audit if audit is not None else None),
+    )
+    delivery = updates.pop(
+        "delivery_index",
+        _delivery(manifest, budget_policy=budget_policy),
+    )
     payload = {
         "batch_id": "batch-five",
         "question_id": "Q001",
@@ -214,6 +288,11 @@ def _input(**updates) -> CompletionGateInput:
         "source_provenance_verified": True,
         "frozen_question_verified": True,
         "budgets_verified": True,
+        "question_tokens_used": 120,
+        "question_token_limit": 200000,
+        "batch_tokens_used": 120,
+        "batch_token_limit": 1000000,
+        "max_output_tokens_per_call": 8192,
         "created_at": NOW,
     }
     payload.update(updates)
@@ -335,6 +414,81 @@ def test_unknown_cost_blocks_completed() -> None:
 
     assert not result.completed
     assert "UNKNOWN_COST" in result.error_codes
+
+
+def test_v2_token_only_completion_requires_audit_but_not_cost() -> None:
+    policy = _token_only_policy()
+    audit = _token_only_audit()
+    result = _evaluate(
+        _input(
+            call_audit=audit,
+            budget_policy=policy,
+            frozen_provider="bailian",
+            frozen_model="qwen3.7-max",
+        )
+    )
+
+    assert result.completed
+    assert result.conditions["17_call_audit_truth_and_budget_policy"]
+    assert result.conditions["20_token_budget_and_policy"]
+    assert "UNKNOWN_COST" not in result.error_codes
+    assert "PRICE_SNAPSHOT_REQUIRED" not in result.error_codes
+
+
+def test_v2_token_only_completion_still_requires_call_audit() -> None:
+    policy = _token_only_policy()
+    result = _evaluate(
+        _input(
+            call_audit=None,
+            budget_policy=policy,
+            frozen_provider="bailian",
+            frozen_model="qwen3.7-max",
+        )
+    )
+
+    assert not result.completed
+    assert "LLM_CALL_AUDIT_MISSING" in result.error_codes
+
+
+def test_v2_token_only_completion_rejects_unverified_token_budget() -> None:
+    policy = _token_only_policy()
+    audit = _token_only_audit()
+    result = _evaluate(
+        _input(
+            call_audit=audit,
+            budget_policy=policy,
+            frozen_provider="bailian",
+            frozen_model="qwen3.7-max",
+            question_tokens_used=200001,
+        )
+    )
+
+    assert not result.completed
+    assert "BUDGET_EXHAUSTED" in result.error_codes
+
+
+def test_v2_token_only_completion_still_requires_t01_t03_and_artifacts() -> None:
+    policy = _token_only_policy()
+    audit = _token_only_audit()
+    manifest = _manifest(omit="report.pdf", audit=audit)
+    value = _input(
+        call_audit=audit,
+        budget_policy=policy,
+        frozen_provider="bailian",
+        frozen_model="qwen3.7-max",
+        artifact_manifest=manifest,
+        delivery_index=_delivery(manifest, budget_policy=policy),
+    )
+    result = _evaluate(
+        value,
+        t01=lambda *_: _failed_gate("t01"),
+        t03=lambda *_: (_failed_gate("t03"),),
+    )
+
+    assert not result.completed
+    assert {"T01_GATE_FAILED", "T03_GATE_FAILED", "REQUIRED_ARTIFACT_MISSING"}.issubset(
+        result.error_codes
+    )
 
 
 def test_delivery_index_hash_mismatch_blocks_completed() -> None:

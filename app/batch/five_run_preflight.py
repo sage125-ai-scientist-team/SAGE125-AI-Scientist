@@ -13,6 +13,16 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any, Final
 
 from app.batch.errors import BatchRunnerError
+from app.contracts.batch import (
+    BATCH_SCHEMA_VERSION,
+    BATCH_SCHEMA_VERSION_V2,
+    CHECKPOINT_SCHEMA_VERSION,
+    CHECKPOINT_SCHEMA_VERSION_V2,
+    TOKEN_AND_COST_BUDGET_POLICY_VERSION,
+    TOKEN_ONLY_BUDGET_POLICY_VERSION,
+    BudgetMode,
+    BudgetPolicy,
+)
 
 
 FROZEN_QUESTION_IDS: Final[tuple[str, ...]] = (
@@ -30,6 +40,10 @@ UTF8_LF_NORMALIZED_TEXT_SHA256: Final[str] = (
 )
 SUPPORTED_HASH_MODES: Final[frozenset[str]] = frozenset(
     {RAW_BYTES_SHA256, UTF8_LF_NORMALIZED_TEXT_SHA256}
+)
+APPROVED_TOKEN_ONLY_FREEZE_ID: Final[str] = "T07-WB5-20260807-v2"
+CAPTAIN_OPTION_B_REFERENCE: Final[str] = (
+    "captain-option-b-approved-2026-08-07"
 )
 
 
@@ -101,8 +115,25 @@ class FrozenFiveRunConfig:
     approved_t01_commit: str
     t01_public_interface: str
     t03_public_interfaces: tuple[str, ...]
+    budget_policy: BudgetPolicy
     budgets: Mapping[str, Any]
     price_snapshot: Mapping[str, Any] | None
+
+    @property
+    def budget_policy_version(self) -> str:
+        return self.budget_policy.version
+
+    @property
+    def budget_mode(self) -> BudgetMode:
+        return self.budget_policy.mode
+
+    @property
+    def cost_accounting_required(self) -> bool:
+        return self.budget_policy.cost_accounting_required
+
+    @property
+    def price_snapshot_required(self) -> bool:
+        return self.budget_policy.price_snapshot_required
 
 
 @dataclass(frozen=True, slots=True)
@@ -133,7 +164,12 @@ class FiveRunPreflightResult:
     provider_configured: bool
     t01: GateAvailabilityResult
     t03: GateAvailabilityResult
+    budget_policy_version: str
+    budget_mode: BudgetMode
+    cost_accounting_required: bool
+    price_snapshot_required: bool
     provider_preflight_executed: bool = False
+    provider_calls: int = 0
 
     @property
     def passed(self) -> bool:
@@ -162,6 +198,11 @@ class FiveRunPreflightResult:
                 "code": self.t03.code,
             },
             "provider_preflight_executed": self.provider_preflight_executed,
+            "provider_calls": self.provider_calls,
+            "budget_policy_version": self.budget_policy_version,
+            "budget_mode": self.budget_mode.value,
+            "cost_accounting_required": self.cost_accounting_required,
+            "price_snapshot_required": self.price_snapshot_required,
         }
 
 
@@ -205,6 +246,68 @@ def _file_record(value: Any, label: str) -> FrozenFileRecord:
         ) from exc
 
 
+def _budget_policy(
+    root: Mapping[str, Any],
+    *,
+    freeze_id: str,
+    batch_schema: str,
+    checkpoint_schema: str,
+) -> BudgetPolicy:
+    raw = root.get("budget_policy")
+    if raw is None:
+        if (
+            batch_schema != BATCH_SCHEMA_VERSION
+            or checkpoint_schema != CHECKPOINT_SCHEMA_VERSION
+        ):
+            raise ValueError("legacy budget policy requires v1 schemas")
+        return BudgetPolicy(
+            version=TOKEN_AND_COST_BUDGET_POLICY_VERSION,
+            mode=BudgetMode.TOKEN_AND_COST,
+            cost_accounting_required=True,
+            price_snapshot_required=True,
+        )
+    policy = BudgetPolicy.model_validate(_as_mapping(raw, "budget_policy"))
+    if policy.mode is BudgetMode.TOKEN_ONLY:
+        if (
+            freeze_id != APPROVED_TOKEN_ONLY_FREEZE_ID
+            or batch_schema != BATCH_SCHEMA_VERSION_V2
+            or checkpoint_schema != CHECKPOINT_SCHEMA_VERSION_V2
+            or policy.version != TOKEN_ONLY_BUDGET_POLICY_VERSION
+            or policy.captain_waiver_reference != CAPTAIN_OPTION_B_REFERENCE
+        ):
+            raise ValueError("token_only policy is not the approved WB5 v2 freeze")
+    elif (
+        batch_schema != BATCH_SCHEMA_VERSION
+        or checkpoint_schema != CHECKPOINT_SCHEMA_VERSION
+    ):
+        raise ValueError("token_and_cost policy requires v1 schemas")
+    return policy
+
+
+def _validate_budgets(
+    budgets: Mapping[str, Any],
+    policy: BudgetPolicy,
+) -> None:
+    per_question = _as_mapping(budgets.get("per_question"), "budgets.per_question")
+    batch = _as_mapping(budgets.get("batch"), "budgets.batch")
+    for label, scope in (("per_question", per_question), ("batch", batch)):
+        token_limit = scope.get("token_limit")
+        if type(token_limit) is not int or token_limit < 0:
+            raise ValueError(f"{label} token_limit must be non-negative")
+    maximum = budgets.get("max_output_tokens_per_call")
+    if type(maximum) is not int or maximum < 0:
+        raise ValueError("max_output_tokens_per_call must be non-negative")
+    cost_fields = (
+        per_question.get("cost_limit_usd"),
+        batch.get("cost_limit_usd"),
+    )
+    if policy.mode is BudgetMode.TOKEN_ONLY:
+        if any(value is not None for value in cost_fields):
+            raise ValueError("token_only freeze cannot contain cost limits")
+    elif any(value is None for value in cost_fields):
+        raise ValueError("token_and_cost freeze requires cost limits")
+
+
 def load_frozen_run_config(path: str | Path) -> FrozenFiveRunConfig:
     """Load the frozen config without accepting a synthetic source."""
 
@@ -224,6 +327,17 @@ def load_frozen_run_config(path: str | Path) -> FrozenFiveRunConfig:
             "formal five-run config requires source_kind=production",
         )
     try:
+        freeze_id = str(root["freeze_id"])
+        batch_schema = str(root["batch_schema"])
+        checkpoint_schema = str(root["checkpoint_schema"])
+        policy = _budget_policy(
+            root,
+            freeze_id=freeze_id,
+            batch_schema=batch_schema,
+            checkpoint_schema=checkpoint_schema,
+        )
+        budgets = _as_mapping(root["budgets"], "budgets")
+        _validate_budgets(budgets, policy)
         raw_questions = root["questions"]
         if not isinstance(raw_questions, Sequence) or isinstance(
             raw_questions, (str, bytes)
@@ -284,7 +398,7 @@ def load_frozen_run_config(path: str | Path) -> FrozenFiveRunConfig:
             for name, model in _as_mapping(provider["models"], "models").items()
         }
         return FrozenFiveRunConfig(
-            freeze_id=str(root["freeze_id"]),
+            freeze_id=freeze_id,
             frozen_at=str(root["frozen_at"]),
             source_kind=source_kind,
             authoritative_pdf=_file_record(
@@ -303,15 +417,16 @@ def load_frozen_run_config(path: str | Path) -> FrozenFiveRunConfig:
             provider_environment_variables=env_names,
             prompt_version=str(prompt["version"]),
             prompt_file=_file_record(prompt, "prompt"),
-            batch_schema=str(root["batch_schema"]),
-            checkpoint_schema=str(root["checkpoint_schema"]),
+            batch_schema=batch_schema,
+            checkpoint_schema=checkpoint_schema,
             schema_files=schema_files,
             approved_t01_commit=str(root["approved_t01_commit"]),
             t01_public_interface=str(root["t01_public_interface"]),
             t03_public_interfaces=tuple(
                 str(item) for item in root["t03_public_interfaces"]
             ),
-            budgets=_as_mapping(root["budgets"], "budgets"),
+            budget_policy=policy,
+            budgets=budgets,
             price_snapshot=(
                 None
                 if root.get("price_snapshot") is None
@@ -725,7 +840,11 @@ def run_five_run_preflight(
                 "provider configuration boolean is false",
             )
         )
-    if config.price_snapshot is None and injected_price_snapshot is None:
+    if (
+        config.price_snapshot_required
+        and config.price_snapshot is None
+        and injected_price_snapshot is None
+    ):
         issues.append(
             PreflightIssue(
                 "PRICE_SNAPSHOT_REQUIRED",
@@ -761,5 +880,10 @@ def run_five_run_preflight(
         provider_configured=provider_configured,
         t01=t01,
         t03=t03,
+        budget_policy_version=config.budget_policy_version,
+        budget_mode=config.budget_mode,
+        cost_accounting_required=config.cost_accounting_required,
+        price_snapshot_required=config.price_snapshot_required,
         provider_preflight_executed=False,
+        provider_calls=0,
     )

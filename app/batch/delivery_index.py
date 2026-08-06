@@ -9,6 +9,7 @@ import re
 from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from decimal import Decimal, InvalidOperation
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any, Final
 
@@ -21,7 +22,10 @@ from app.batch.output_validation import (
 )
 from app.contracts.batch import (
     REQUIRED_ARTIFACTS,
+    TOKEN_ONLY_BUDGET_POLICY_VERSION,
     BatchJob,
+    BudgetMode,
+    BudgetPolicy,
     JobStatus,
     ResultKind,
     SourceKind,
@@ -30,6 +34,18 @@ from app.contracts.batch import (
 
 DELIVERY_INDEX_VERSION: Final[str] = "t07.delivery-index.v1"
 SHA256: Final[re.Pattern[str]] = re.compile(r"^[0-9a-f]{64}$")
+
+
+def _optional_decimal(value: Any, field_name: str) -> Decimal | None:
+    if value is None:
+        return None
+    try:
+        parsed = Decimal(str(value))
+    except (InvalidOperation, TypeError, ValueError) as exc:
+        raise ValueError(f"{field_name} must be a Decimal or null") from exc
+    if not parsed.is_finite() or parsed < 0:
+        raise ValueError(f"{field_name} must be finite and non-negative")
+    return parsed
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,6 +77,13 @@ class QuestionDeliveryRecord:
     mock: bool
     synthetic: bool
     completed: bool
+    budget_policy_version: str | None = None
+    budget_mode: str | None = None
+    cost_accounting_required: bool | None = None
+    price_snapshot_required: bool | None = None
+    captain_waiver_reference: str | None = None
+    estimated_cost_usd: Decimal | None = None
+    settled_cost_usd: Decimal | None = None
 
     def __post_init__(self) -> None:
         required_text = (
@@ -130,9 +153,42 @@ class QuestionDeliveryRecord:
             raise ValueError(
                 "completed must be derived from valid actual artifacts"
             )
+        for field_name in ("estimated_cost_usd", "settled_cost_usd"):
+            object.__setattr__(
+                self,
+                field_name,
+                _optional_decimal(getattr(self, field_name), field_name),
+            )
+        policy_values = (
+            self.budget_policy_version,
+            self.budget_mode,
+            self.cost_accounting_required,
+            self.price_snapshot_required,
+            self.captain_waiver_reference,
+        )
+        if any(value is not None for value in policy_values):
+            if any(value is None for value in policy_values):
+                raise ValueError("delivery budget policy fields must be complete")
+            try:
+                mode = BudgetMode(str(self.budget_mode))
+            except ValueError as exc:
+                raise ValueError("delivery budget_mode is invalid") from exc
+            if mode is BudgetMode.TOKEN_ONLY:
+                if (
+                    self.budget_policy_version
+                    != TOKEN_ONLY_BUDGET_POLICY_VERSION
+                    or self.cost_accounting_required is not False
+                    or self.price_snapshot_required is not False
+                    or not str(self.captain_waiver_reference).strip()
+                    or self.estimated_cost_usd is not None
+                    or self.settled_cost_usd is not None
+                ):
+                    raise ValueError(
+                        "token_only delivery requires explicit null-cost policy"
+                    )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        payload = {
             "batch_id": self.batch_id,
             "question_id": self.question_id,
             "status": self.status,
@@ -161,6 +217,27 @@ class QuestionDeliveryRecord:
             "synthetic": self.synthetic,
             "completed": self.completed,
         }
+        if self.budget_policy_version is not None:
+            payload.update(
+                {
+                    "budget_policy_version": self.budget_policy_version,
+                    "budget_mode": self.budget_mode,
+                    "cost_accounting_required": self.cost_accounting_required,
+                    "price_snapshot_required": self.price_snapshot_required,
+                    "captain_waiver_reference": self.captain_waiver_reference,
+                    "estimated_cost_usd": (
+                        None
+                        if self.estimated_cost_usd is None
+                        else str(self.estimated_cost_usd)
+                    ),
+                    "settled_cost_usd": (
+                        None
+                        if self.settled_cost_usd is None
+                        else str(self.settled_cost_usd)
+                    ),
+                }
+            )
+        return payload
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "QuestionDeliveryRecord":
@@ -207,6 +284,29 @@ class QuestionDeliveryRecord:
                 mock=bool(value["mock"]),
                 synthetic=bool(value["synthetic"]),
                 completed=bool(value["completed"]),
+                budget_policy_version=(
+                    None
+                    if value.get("budget_policy_version") is None
+                    else str(value["budget_policy_version"])
+                ),
+                budget_mode=(
+                    None
+                    if value.get("budget_mode") is None
+                    else str(value["budget_mode"])
+                ),
+                cost_accounting_required=value.get("cost_accounting_required"),
+                price_snapshot_required=value.get("price_snapshot_required"),
+                captain_waiver_reference=(
+                    None
+                    if value.get("captain_waiver_reference") is None
+                    else str(value["captain_waiver_reference"])
+                ),
+                estimated_cost_usd=_optional_decimal(
+                    value.get("estimated_cost_usd"), "estimated_cost_usd"
+                ),
+                settled_cost_usd=_optional_decimal(
+                    value.get("settled_cost_usd"), "settled_cost_usd"
+                ),
             )
         except (KeyError, TypeError, ValueError) as exc:
             raise BatchRunnerError(
@@ -284,6 +384,9 @@ def build_question_delivery_record(
     input_tokens: int = 0,
     output_tokens: int = 0,
     duration_seconds: float = 0.0,
+    budget_policy: BudgetPolicy | None = None,
+    estimated_cost_usd: Decimal | None = None,
+    settled_cost_usd: Decimal | None = None,
 ) -> QuestionDeliveryRecord:
     """Derive one record; no caller-supplied completed flag is accepted."""
 
@@ -331,6 +434,13 @@ def build_question_delivery_record(
         if artifact_manifest is not None
         else output_contract_version or job.schema_version
     )
+    job_policy = getattr(job, "budget_policy", None)
+    if budget_policy is not None and job_policy is not None and budget_policy != job_policy:
+        raise BatchRunnerError(
+            "BUDGET_POLICY_MISMATCH",
+            "delivery budget policy does not match the job",
+        )
+    effective_policy = budget_policy or job_policy
     return QuestionDeliveryRecord(
         batch_id=job.batch_id,
         question_id=job.question_id,
@@ -359,6 +469,29 @@ def build_question_delivery_record(
         mock=mock,
         synthetic=synthetic,
         completed=completed,
+        budget_policy_version=(
+            None if effective_policy is None else effective_policy.version
+        ),
+        budget_mode=(
+            None if effective_policy is None else effective_policy.mode.value
+        ),
+        cost_accounting_required=(
+            None
+            if effective_policy is None
+            else effective_policy.cost_accounting_required
+        ),
+        price_snapshot_required=(
+            None
+            if effective_policy is None
+            else effective_policy.price_snapshot_required
+        ),
+        captain_waiver_reference=(
+            None
+            if effective_policy is None
+            else effective_policy.captain_waiver_reference
+        ),
+        estimated_cost_usd=estimated_cost_usd,
+        settled_cost_usd=settled_cost_usd,
     )
 
 

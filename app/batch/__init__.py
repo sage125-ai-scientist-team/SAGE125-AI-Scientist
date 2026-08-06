@@ -3,6 +3,7 @@
 from app.batch.actual_call_audit import (
     ActualCallAudit,
     BudgetLedger,
+    CostAccountingMode,
     PriceSnapshot,
     compute_estimated_cost,
     sanitize_request_id,
@@ -106,6 +107,7 @@ __all__ = (
     "CompletionGateInput",
     "CompletionGateIssue",
     "CompletionGateResult",
+    "CostAccountingMode",
     "ContaminationFinding",
     "DeliveryIndex",
     "FiveRunPreflightResult",

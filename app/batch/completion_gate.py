@@ -18,7 +18,7 @@ from app.batch.actual_call_audit import (
 from app.batch.delivery_index import DeliveryIndex, validate_delivery_index
 from app.batch.errors import BatchRunnerError
 from app.batch.output_validation import ArtifactManifest
-from app.contracts.batch import REQUIRED_ARTIFACTS
+from app.contracts.batch import REQUIRED_ARTIFACTS, BudgetMode, BudgetPolicy
 from app.contracts.validation import (
     GateFinding,
     GateResult,
@@ -74,6 +74,14 @@ class CompletionGateInput:
     budgets_verified: bool
     created_at: datetime
     open_issues: tuple[CompletionGateIssue, ...] = field(default_factory=tuple)
+    budget_policy: BudgetPolicy | None = None
+    frozen_provider: str | None = None
+    frozen_model: str | None = None
+    question_tokens_used: int | None = None
+    question_token_limit: int | None = None
+    batch_tokens_used: int | None = None
+    batch_token_limit: int | None = None
+    max_output_tokens_per_call: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -409,15 +417,86 @@ def evaluate_question_completion(
             "llm_call_audit.json must be present in the artifact manifest",
         )
 
+    policy_valid = value.budget_policy is None or isinstance(
+        value.budget_policy, BudgetPolicy
+    )
+    budget_mode = (
+        BudgetMode.TOKEN_AND_COST
+        if value.budget_policy is None
+        else value.budget_policy.mode
+    )
+    if value.budget_policy is not None and budget_mode is BudgetMode.TOKEN_ONLY:
+        policy_valid = policy_valid and bool(
+            value.frozen_provider and value.frozen_model
+        )
+        if not policy_valid:
+            _add_issue(
+                issues,
+                "BUDGET_POLICY_MISMATCH",
+                "token_only completion requires the frozen provider/model identity",
+            )
+
+    token_budget_valid = value.budgets_verified
+    if budget_mode is BudgetMode.TOKEN_ONLY:
+        token_values = (
+            value.question_tokens_used,
+            value.question_token_limit,
+            value.batch_tokens_used,
+            value.batch_token_limit,
+            value.max_output_tokens_per_call,
+        )
+        if not all(type(item) is int and item >= 0 for item in token_values):
+            token_budget_valid = False
+            _add_issue(
+                issues,
+                "BUDGET_EVIDENCE_MISSING",
+                "token_only completion requires explicit non-negative token evidence",
+            )
+        else:
+            assert value.question_tokens_used is not None
+            assert value.question_token_limit is not None
+            assert value.batch_tokens_used is not None
+            assert value.batch_token_limit is not None
+            assert value.max_output_tokens_per_call is not None
+            token_budget_valid = token_budget_valid and (
+                value.question_tokens_used <= value.question_token_limit
+                and value.batch_tokens_used <= value.batch_token_limit
+            )
+
     audit_valid = False
     if value.call_audit is not None:
         try:
-            validate_actual_call_audit(value.call_audit)
+            validate_actual_call_audit(
+                value.call_audit,
+                budget_mode=budget_mode,
+            )
         except BatchRunnerError as exc:
             _add_issue(issues, exc.error_code, str(exc))
         else:
             audit_valid = True
-    conditions["17_call_audit_truth_and_cost"] = audit_valid
+            if budget_mode is BudgetMode.TOKEN_ONLY and (
+                value.call_audit.provider != value.frozen_provider
+                or value.call_audit.model != value.frozen_model
+            ):
+                audit_valid = False
+                _add_issue(
+                    issues,
+                    "CALL_AUDIT_IDENTITY_MISMATCH",
+                    "call audit provider/model does not match the v2 freeze",
+                )
+            if budget_mode is BudgetMode.TOKEN_ONLY:
+                assert value.max_output_tokens_per_call is not None
+                token_budget_valid = token_budget_valid and (
+                    value.call_audit.output_tokens
+                    <= value.max_output_tokens_per_call
+                    and value.question_tokens_used is not None
+                    and value.question_tokens_used >= value.call_audit.total_tokens
+                    and value.batch_tokens_used is not None
+                    and value.batch_tokens_used >= value.call_audit.total_tokens
+                )
+    conditions["17_call_audit_truth_and_budget_policy"] = (
+        audit_valid and policy_valid
+    )
 
     manifest_valid = (
         value.artifact_manifest.batch_id == value.batch_id
@@ -474,6 +553,18 @@ def evaluate_question_completion(
             for artifact in value.artifact_manifest.artifacts
         }
         delivery_valid = delivery_valid and delivery_artifacts == manifest_artifacts
+        if value.budget_policy is not None:
+            record = records[0]
+            delivery_valid = delivery_valid and (
+                record.budget_policy_version == value.budget_policy.version
+                and record.budget_mode == value.budget_policy.mode.value
+                and record.cost_accounting_required
+                is value.budget_policy.cost_accounting_required
+                and record.price_snapshot_required
+                is value.budget_policy.price_snapshot_required
+                and record.captain_waiver_reference
+                == value.budget_policy.captain_waiver_reference
+            )
     conditions["19_delivery_index_integrity"] = delivery_valid
     if not delivery_valid and "DELIVERY_CHECKSUM_MISMATCH" not in {
         issue.code for issue in issues
@@ -484,12 +575,24 @@ def evaluate_question_completion(
             "delivery index does not bind the exact manifest artifacts",
         )
 
-    conditions["20_question_and_batch_budgets"] = value.budgets_verified
-    if not conditions["20_question_and_batch_budgets"]:
+    conditions["20_token_budget_and_policy"] = (
+        token_budget_valid and policy_valid
+    )
+    if not token_budget_valid and "BUDGET_EVIDENCE_MISSING" not in {
+        issue.code for issue in issues
+    }:
         _add_issue(
             issues,
             "BUDGET_EXHAUSTED",
-            "question and batch budgets must both remain within the freeze",
+            "question and batch token budgets must both remain within the freeze",
+        )
+    if not policy_valid and "BUDGET_POLICY_MISMATCH" not in {
+        issue.code for issue in issues
+    }:
+        _add_issue(
+            issues,
+            "BUDGET_POLICY_MISMATCH",
+            "completion budget policy does not match the approved freeze",
         )
 
     unique: list[CompletionGateIssue] = []

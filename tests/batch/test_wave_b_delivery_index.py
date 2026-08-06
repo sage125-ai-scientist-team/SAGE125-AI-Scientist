@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import replace
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -283,6 +284,49 @@ def test_delivery_index_json_round_trip() -> None:
 
     assert restored == index
     assert restored.index_sha256 == index.index_sha256
+
+
+def test_v2_token_only_delivery_uses_null_cost_and_explicit_policy() -> None:
+    delivery = _apis()[0]
+    record = replace(
+        _record("Q001"),
+        output_contract_version="t07.batch.v2",
+        schema_version="t07.batch.v2",
+        budget_policy_version="t07.budget.token-only.v2",
+        budget_mode="token_only",
+        cost_accounting_required=False,
+        price_snapshot_required=False,
+        captain_waiver_reference="captain-option-b-approved-2026-08-07",
+        estimated_cost_usd=None,
+        settled_cost_usd=None,
+    )
+
+    payload = delivery.build_delivery_index("batch-five", (record,)).to_dict()
+    delivered = payload["records"][0]
+
+    assert delivered["budget_policy_version"] == "t07.budget.token-only.v2"
+    assert delivered["budget_mode"] == "token_only"
+    assert delivered["cost_accounting_required"] is False
+    assert delivered["price_snapshot_required"] is False
+    assert delivered["estimated_cost_usd"] is None
+    assert delivered["settled_cost_usd"] is None
+    assert "not_evaluated" not in json.dumps(payload)
+
+
+def test_v2_token_only_delivery_rejects_zero_or_sentinel_cost() -> None:
+    record = replace(
+        _record("Q001"),
+        budget_policy_version="t07.budget.token-only.v2",
+        budget_mode="token_only",
+        cost_accounting_required=False,
+        price_snapshot_required=False,
+        captain_waiver_reference="captain-option-b-approved-2026-08-07",
+    )
+
+    with pytest.raises(ValueError):
+        replace(record, estimated_cost_usd=Decimal("0"))
+    with pytest.raises(ValueError):
+        replace(record, settled_cost_usd="not_evaluated")
 
 
 def test_checksum_is_deterministic_order_independent_and_not_self_referential() -> None:

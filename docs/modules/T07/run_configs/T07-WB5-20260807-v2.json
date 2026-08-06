@@ -1,0 +1,131 @@
+{
+  "freeze_id": "T07-WB5-20260807-v2",
+  "frozen_at": "2026-08-07T00:00:00+08:00",
+  "source_kind": "production",
+  "authoritative_pdf": {
+    "path": "data/raw/sjtu-booklet.pdf",
+    "size": 8422081,
+    "sha256": "4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576"
+  },
+  "production_question_source": {
+    "path": "data/processed/questions_125.json",
+    "size": 105068,
+    "sha256": "b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb"
+  },
+  "question_id_field": "id",
+  "questions": [
+    {
+      "question_id": "Q001",
+      "domain": "Mathematical Sciences",
+      "question": "What makes prime numbers so special?",
+      "canonical_input_hash": "310bf14faa04574681fb726cba14f7f12487d8881333b2086a35afdfffc0dc6d",
+      "mapping_status": "verified"
+    },
+    {
+      "question_id": "Q028",
+      "domain": "Biology",
+      "question": "Will it be possible to cure all cancers?",
+      "canonical_input_hash": "badcae2fec281a0bbaec81b36d8ed4a149696db855d0f399e7cbe382fdc78da8",
+      "mapping_status": "verified"
+    },
+    {
+      "question_id": "Q050",
+      "domain": "Astronomy",
+      "question": "When will the universe die? Will it continue to expand?",
+      "canonical_input_hash": "6f5c2f81f71800c2d3c449231ddfdb8816fd0e3ed1d53f1db1605c7afd118222",
+      "mapping_status": "verified"
+    },
+    {
+      "question_id": "Q075",
+      "domain": "Physics",
+      "question": "What are the smallest building blocks of matter?",
+      "canonical_input_hash": "f3f914199353942d7abf4709ffbfe67c6ae8fb8b8cba905dea0cc7f316b8c0eb",
+      "mapping_status": "verified"
+    },
+    {
+      "question_id": "Q107",
+      "domain": "Ecology",
+      "question": "Can we stop global climate change?",
+      "canonical_input_hash": "3448280c074284d4c316a8c013df63fb1c66d71c8a151fb4d4d1be119d2713b9",
+      "mapping_status": "verified"
+    }
+  ],
+  "provider": {
+    "name": "bailian",
+    "route_id": "t07-wb5-bailian-qwen-stack-v1",
+    "models": {
+      "fast": "qwen3.6-flash",
+      "balanced": "qwen3.7-plus",
+      "strong": "qwen3.7-max",
+      "deep_research": "qwen-deep-research",
+      "embedding": "text-embedding-v4",
+      "rerank": "qwen3-rerank"
+    },
+    "model_version": "qwen-stack-20260803-v1",
+    "configuration_environment_variables": [
+      "DASHSCOPE_API_KEY",
+      "WORKSPACE_ID"
+    ]
+  },
+  "prompt": {
+    "version": "sage125-agent-prompts-20260803-v1",
+    "path": "app/agents/prompts.py",
+    "size": null,
+    "hash_mode": "utf8_lf_normalized_text_sha256",
+    "sha256": "fa2d1da7d40ad6a6da800d6a41484973b46b63ebe72ed48da44b437644a5c808"
+  },
+  "batch_schema": "t07.batch.v2",
+  "checkpoint_schema": "t07.checkpoint.v2",
+  "schema_files": [
+    {
+      "name": "core_schemas",
+      "path": "app/core/schemas.py",
+      "size": 15743,
+      "sha256": "eece52a348093213aad134642a5f9dd611d6ebaa560a9259f93beea8e9c670f5"
+    },
+    {
+      "name": "agent_schemas",
+      "path": "app/core/agent_schemas.py",
+      "size": 12951,
+      "sha256": "216204b1325439e6b55fb0fb73955dd6584a22d8a2853a120ef805bfda37605b"
+    },
+    {
+      "name": "evidence_contract",
+      "path": "app/contracts/evidence.py",
+      "size": 9467,
+      "sha256": "d954ae5d023faf67b2aa564113e12a57ccee45b338633fc7d21e16a5887cd7c9"
+    },
+    {
+      "name": "validation_contract",
+      "path": "app/contracts/validation.py",
+      "size": 44304,
+      "sha256": "961cfbdbbd291315cc62e51931d38f060a0cac911ac468a27e86444e98c49152"
+    }
+  ],
+  "approved_t01_commit": "73ce7c0731a2aeaaa1b254e8b6d4c1382eab052c",
+  "t01_public_interface": "app.evidence.precheck_bundle_for_validation",
+  "t03_public_interfaces": [
+    "app.contracts.validation.ValidationContext",
+    "app.contracts.validation.GateResult.from_legacy",
+    "app.contracts.validation.ValidationReport.from_context",
+    "app.workflow.quality_gates.run_all_quality_gates"
+  ],
+  "budget_policy": {
+    "version": "t07.budget.token-only.v2",
+    "mode": "token_only",
+    "cost_accounting_required": false,
+    "price_snapshot_required": false,
+    "captain_waiver_reference": "captain-option-b-approved-2026-08-07"
+  },
+  "budgets": {
+    "per_question": {
+      "token_limit": 200000
+    },
+    "batch": {
+      "token_limit": 1000000
+    },
+    "max_output_tokens_per_call": 8192,
+    "exhausted_error_code": "BUDGET_EXHAUSTED"
+  },
+  "price_snapshot": null
+}
