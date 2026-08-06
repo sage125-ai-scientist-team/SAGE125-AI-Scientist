@@ -38,6 +38,9 @@ from app.contracts.batch import (
     CheckpointRecordV2,
     ResumePolicy,
 )
+from scripts.batch_125.preflight_five_real_runs import (
+    _provider_preflight_success_summary,
+)
 
 
 NOW = datetime(2026, 8, 7, 1, 2, tzinfo=timezone.utc)
@@ -186,6 +189,42 @@ def test_token_only_audit_accepts_null_cost_but_never_fallback_or_zero() -> None
 
     with pytest.raises(ValueError):
         _audit(estimated_cost_usd="not_evaluated")
+
+
+def test_token_only_provider_preflight_receipt_and_audit_use_json_null(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    secret_sentinel = "secret-value-must-not-appear"
+    monkeypatch.setenv("DASHSCOPE_API_KEY", secret_sentinel)
+    audit = _audit()
+
+    receipt = _provider_preflight_success_summary(audit)
+    rendered_receipt = json.dumps(receipt, sort_keys=True)
+    audit_path = tmp_path / "llm_call_audit.json"
+    audit_path.write_text(audit.to_json() + "\n", encoding="utf-8")
+    rendered_audit = audit_path.read_text(encoding="utf-8")
+    audit_payload = json.loads(rendered_audit)
+
+    assert json.loads(rendered_receipt)["estimated_cost_usd"] is None
+    assert audit_payload["estimated_cost_usd"] is None
+    assert audit_payload["settled_cost_usd"] is None
+    assert "not_evaluated" not in rendered_receipt
+    assert '"None"' not in rendered_receipt
+    assert secret_sentinel not in rendered_receipt
+    assert secret_sentinel not in rendered_audit
+
+
+def test_price_snapshot_provider_preflight_receipt_keeps_decimal_string() -> None:
+    audit = _audit(
+        estimated_cost_usd=Decimal("0.001230"),
+        price_snapshot_version="captain-snapshot-v1",
+        cost_accounting_mode=CostAccountingMode.PRICE_SNAPSHOT,
+    )
+
+    receipt = _provider_preflight_success_summary(audit)
+
+    assert receipt["estimated_cost_usd"] == "0.001230"
 
 
 def test_token_only_audit_still_requires_complete_token_usage() -> None:

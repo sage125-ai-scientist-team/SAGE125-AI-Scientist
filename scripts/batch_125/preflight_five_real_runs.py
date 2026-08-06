@@ -67,6 +67,32 @@ def _safe_provider_diagnostics(
     }
 
 
+def _provider_preflight_success_summary(
+    audit: ActualCallAudit,
+) -> dict[str, object]:
+    """Build the secret-free JSON receipt for a successful provider preflight."""
+
+    return {
+        "status": "PROVIDER_PREFLIGHT_PASSED",
+        "configured": True,
+        "provider": audit.provider,
+        "model": audit.model,
+        "request_timestamp": audit.request_timestamp.isoformat(),
+        "sanitized_request_id": audit.sanitized_request_id,
+        "input_tokens": audit.input_tokens,
+        "output_tokens": audit.output_tokens,
+        "total_tokens": audit.total_tokens,
+        "estimated_cost_usd": (
+            None
+            if audit.estimated_cost_usd is None
+            else str(audit.estimated_cost_usd)
+        ),
+        "fallback": audit.fallback,
+        "provider_preflight_executed": True,
+        "provider_calls": 1,
+    }
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
@@ -335,21 +361,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         print(
             json.dumps(
-                {
-                    "status": "PROVIDER_PREFLIGHT_PASSED",
-                    "configured": True,
-                    "provider": audit.provider,
-                    "model": audit.model,
-                    "request_timestamp": audit.request_timestamp.isoformat(),
-                    "sanitized_request_id": audit.sanitized_request_id,
-                    "input_tokens": audit.input_tokens,
-                    "output_tokens": audit.output_tokens,
-                    "total_tokens": audit.total_tokens,
-                    "estimated_cost_usd": str(audit.estimated_cost_usd),
-                    "fallback": audit.fallback,
-                    "provider_preflight_executed": True,
-                    "provider_calls": 1,
-                },
+                _provider_preflight_success_summary(audit),
                 ensure_ascii=False,
                 sort_keys=True,
             )
