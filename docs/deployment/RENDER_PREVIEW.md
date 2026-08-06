@@ -26,7 +26,7 @@ Both processes bind `0.0.0.0` and consume Render's `PORT`. The public entry poin
 - API docs: `https://sage125-api-preview.onrender.com/docs`
 - UI: `https://sage125-ui-preview.onrender.com`
 
-After the API service exists, set the UI-only non-secret variable `FRONTEND_API_BASE_URL` to the API's actual generated HTTPS URL. Do not hardcode that value in application source.
+After the API service exists, set the UI-only non-secret variable `FRONTEND_API_BASE_URL` to the API's actual generated HTTPS URL. Do not hardcode that value in application source. The Blueprint also sets `FRONTEND_API_SHORT_TIMEOUT_SECONDS=10`, `FRONTEND_API_WAKE_TIMEOUT_SECONDS=75`, and `FRONTEND_INGEST_TIMEOUT_SECONDS=900`. The longer wake timeout lets a sleeping Free API start before the UI declares it unavailable; ingestion posts directly to `/ingest` and is never automatically retried because uploads are not idempotent.
 
 ## Automatic deployment
 
@@ -57,7 +57,7 @@ The API starts without either value. `/health` reports Bailian as unavailable, a
 
 The integration branch intentionally does not track `data/processed`, `data/index`, PDFs, local databases, or exports. Consequently, the base preview can expose `/health`, `/docs`, `/openapi.json`, and the UI while reporting a missing question dataset until an approved redistributable source is added through a separate reviewed change. Do not claim this preview preserves task history or contains production data.
 
-Free services can spin down after inactivity; the next request can incur a cold start of approximately one minute. Do not use an external keep-alive workaround.
+Free services can spin down after inactivity; the next request can incur a cold start of approximately one minute. The UI waits for that wake-up and reports an unconfirmed result separately from a definite rejection. Do not use an external keep-alive workaround.
 
 ## Verification and logs
 
