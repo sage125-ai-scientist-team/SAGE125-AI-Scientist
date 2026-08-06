@@ -4,7 +4,16 @@ Verification date: 2026-08-06 (Asia/Shanghai)
 
 Freeze ID: `T07-WB5-20260803-v1`
 
-## Decision
+Record status: historical and retained; `superseded_for_execution=true`
+
+Superseded by: `T07-WB5-20260807-v2`
+
+All price-required and blocked conclusions below apply to the v1
+`token_and_cost` verification point. The current v2 result is recorded in
+`T07_WB5_V2_PREFLIGHT_REPORT.md`; this report and its evidence are not deleted
+or rewritten as if v1 had passed.
+
+## Historical v1 decision
 
 `FIVE_REAL_RUNS_BLOCKED`
 

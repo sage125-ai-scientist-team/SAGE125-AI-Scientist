@@ -1,10 +1,20 @@
 # T07-WB5 price snapshot input specification
 
-Decision: **PRICE GATE — HOLD**
+Applicability: retained for cost-enabled runs and v1 `token_and_cost` reads.
+
+WB5 v2 status: not required by `T07-WB5-20260807-v2`; superseded for WB5
+execution by `t07.budget.token-only.v2`. The specification, schema, validator,
+tests, and evidence remain valid and are not deleted or weakened.
+
+Historical decision at creation: **PRICE GATE — HOLD**
 
 Schema version: `t07.price-snapshot-input.v1`
 
-This contract defines the operator-supplied provenance and price input needed before the existing WB5 runtime `PriceSnapshot` may be constructed. It contains no actual model price, guessed price, live exchange rate, account value, or provider response. `PRICE_SNAPSHOT_REQUIRED` remains active.
+This contract defines the operator-supplied provenance and price input needed
+before the existing cost-enabled runtime `PriceSnapshot` may be constructed. It
+contains no actual model price, guessed price, live exchange rate, account
+value, or provider response. `PRICE_SNAPSHOT_REQUIRED` remains active for v1
+and all `token_and_cost` runs, but not for the approved WB5 v2 token-only run.
 
 ## Required top-level fields
 
@@ -119,11 +129,12 @@ Input and normalized-output targets for production use must be outside the repos
 
 The validator uses only standard-library parsing, `Decimal`, datetime, hashing/regex rules, and the existing `PriceSnapshot`. It performs no network or provider call.
 
-## Current status
+## Applicability status
 
 - `actual_price_snapshot_supplied=false`
 - `actual_price_snapshot_validated=false`
 - `provider_calls=0`
 - `provider_preflight_executed=false`
-- `PRICE_SNAPSHOT_REQUIRED remains active`
-- `FIVE_REAL_RUNS_BLOCKED remains active`
+- `PRICE_SNAPSHOT_REQUIRED` remains active for cost-enabled runs
+- T07-WB5 v2 uses `price_snapshot_required=false`
+- no price or cost-completion claim is created by the v2 waiver
