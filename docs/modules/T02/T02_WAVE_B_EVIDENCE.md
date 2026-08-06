@@ -253,3 +253,150 @@ failures. This remediation does not change PR Draft/Ready state.
 
 PR #11 closure and the #11/#21 relationship remain captain-owned process work. This
 technical change does not modify, close, review, approve, or merge PR #11 or PR #21.
+
+## 2026-08-06 final T02/T03 exact-head pairing sign-off
+
+This section is the authoritative T02-owner recheck for the frozen pair below and
+supersedes the earlier cross-owner persistence blockers in this document for this
+exact pair only. It does not approve either PR, clear `CHANGES_REQUESTED`, authorize a
+merge, or claim that the branches include later integration changes.
+
+### Frozen inputs and isolation
+
+- T02 PR #21 HEAD:
+  `20a5b356364051c86dac3698fc836c790b6c2c79`
+- T03 PR #32 HEAD:
+  `b3c1746530fa9c6f228e030ef281c255ab6b4c47`
+- Common PR base used by both frozen heads:
+  `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c`
+- Latest remote `integration/2026-08-10` at sign-off time:
+  `f1e2ecd68b075bb8df82992a58397dee71795a60`
+- Sign-off time: `2026-08-06T21:50:48+08:00` (Asia/Shanghai)
+- Reviewer role/account: T02 owner / `Mk007115`
+- Isolation method: detached local clone of the exact T02 HEAD plus the official
+  six-commit PR #32 patch whose final `From` commit is the exact T03 HEAD. The patch
+  passed three-way apply checking and applied without conflicts. The temporary
+  combination was neither committed nor pushed.
+- The remote heads were checked before and after creating the combination and were
+  unchanged. At sign-off time T02 was `ahead=7, behind=4` relative to the newer
+  integration tip; no later integration code was folded into this frozen pairing
+  result.
+
+### Independent commands and results
+
+| Layer | Command | Collected | Passed | Failed | Skipped | Warnings | Duration | Exit |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Formal five-test pairing | `.\.venv\Scripts\python.exe -m pytest -q tests\validation\test_t02_t03_final_pairing_recheck.py` | 5 | 5 | 0 | 0 | 0 | 0.73s | 0 |
+| T02 real pipeline/Agent boundary | `.\.venv\Scripts\python.exe -m pytest -q tests\workflow\test_t02_t03_revision_handoff.py` | 3 | 3 | 0 | 0 | 0 | 0.94s | 0 |
+| T02 handoff + all T03 validation regressions | `.\.venv\Scripts\python.exe -m pytest -q tests\workflow\test_t02_t03_revision_handoff.py tests\validation` | 108 | 108 | 0 | 0 | 0 | 3.12s | 0 |
+| Ephemeral actual-output persistence probe | `.\.venv\Scripts\python.exe -m pytest -q -s pairing_runtime_probe.py` in the isolated combination | 1 | 1 | 0 | 0 | 0 | 1.00s | 0 |
+
+The ephemeral probe invoked T02's production pipeline and three real Agent message
+builders, then passed their actual JSON `revision_metadata` and
+`revision_lineage_handoff` to T03's `DefaultFeedbackService` and
+`SQLiteFeedbackStore`. It used no replacement persistence mock and is not part of the
+commit. Its first draft compared an in-memory frozen mapping directly with a mutable
+`dict` and failed once; changing only that temporary probe to compare serialized JSON
+values produced the final result above. No production or repository test file was
+changed for that probe.
+
+### Receipt, versions, hashes, persistence, and replay
+
+- All three V2 Agent JSON messages contained the same top-level frozen, strict
+  `human_feedback` receipt with `feedback_id=feedback-pair-001`, source
+  `t02-t03-pair:v1`, `partially_accepted`, and only
+  `Keep the reviewer-requested negative control explicit.` The rejected instruction
+  and the raw combined feedback were absent. Strict JSON round-trip and unknown-field
+  rejection passed in the T02 tests.
+- The actual plan versions were exactly `[1, 2]`; V1 had no parent, V2 was
+  `t02-t03-pair:v2`, and `V2.parent_version_id=t02-t03-pair:v1`.
+- The complete actual diff SHA-256 was
+  `4f0f9fda9eef9b57a467fd243101aa4fce43af1789561f5ba92f7902d0070397`.
+  It matched the canonical `{changes, substantive_sections}` structured diff,
+  `execution_metadata.revision_metadata.diff_hash`, AgentTrace
+  `revision_diff_sha256`, `RevisionLineageHandoff.revision_diff_sha256`, the
+  `revision_generated.payload_sha256`, and the value reloaded from SQLite after
+  close/reopen.
+- The restored IDs were `feedback-pair-001` and `lineage-lineage-001`; source/result
+  were `t02-t03-pair:v1` / `t02-t03-pair:v2`. The stored full revision metadata,
+  issue IDs, event order, event IDs, parent IDs, subjects, payload hashes, and times
+  survived restart.
+- The real SQLite row counts after sequential replay, 8 concurrent duplicate
+  submissions, 16 concurrent duplicate handoff consumptions, duplicate validation
+  completion, close/reopen, and a post-restart handoff replay were exactly one row in
+  each of `feedback_records`, `feedback_decisions`, and `feedback_lineages`.
+- Same key/same payload returned the original record; same key/different payload and
+  tampered metadata/handoff failed closed. Only one `revision_generated` and one
+  `validation_completed` event existed after all replays.
+
+### Restored event chain
+
+The lineage identity for every event is `feedback-pair-001`, source
+`t02-t03-pair:v1`, resulting version `t02-t03-pair:v2`, and revision diff
+`4f0f9fda9eef9b57a467fd243101aa4fce43af1789561f5ba92f7902d0070397`.
+The restored chain was:
+
+| # | event_type | event_id | parent_event_id |
+| ---: | --- | --- | --- |
+| 1 | `feedback_submitted` | `event-submitted-001` | `None` |
+| 2 | `feedback_decided` | `event-decision-ad126a2392737c79be6b` | `event-submitted-001` |
+| 3 | `revision_requested` | `event:55f7ecda13127579` | `event-decision-ad126a2392737c79be6b` |
+| 4 | `revision_generated` | `event:73f66880eefc20da` | `event:55f7ecda13127579` |
+| 5 | `issue_closed` | `event:a2c31e666da5b460` | `event:73f66880eefc20da` |
+| 6 | `issue_closed` | `event:d9d644bc57841591` | `event:a2c31e666da5b460` |
+| 7 | `gate_evaluated` | `gate-event-3019c994a7200a9645a6bb68` | `event:d9d644bc57841591` |
+| 8 | `gate_evaluated` | `gate-event-ac7045178d1f915253a3adf3` | `gate-event-3019c994a7200a9645a6bb68` |
+| 9 | `gate_evaluated` | `gate-event-20da65329d7df2da0aba9df6` | `gate-event-ac7045178d1f915253a3adf3` |
+| 10 | `gate_evaluated` | `gate-event-b35ca5f041491261281cc723` | `gate-event-20da65329d7df2da0aba9df6` |
+| 11 | `gate_evaluated` | `gate-event-793cc28800e2521be7658771` | `gate-event-b35ca5f041491261281cc723` |
+| 12 | `gate_evaluated` | `gate-event-f57c95ad37f73ff8e3f839c9` | `gate-event-793cc28800e2521be7658771` |
+| 13 | `gate_evaluated` | `gate-event-611a6162589cee9fa3ebd39b` | `gate-event-f57c95ad37f73ff8e3f839c9` |
+| 14 | `gate_evaluated` | `gate-event-3437942472af41fc6a61f2a5` | `gate-event-611a6162589cee9fa3ebd39b` |
+| 15 | `gate_evaluated` | `gate-event-f1ad0467092e23423863c261` | `gate-event-3437942472af41fc6a61f2a5` |
+| 16 | `validation_completed` | `validation-event-cdcba9ca99320fbc91cec730` | `gate-event-f1ad0467092e23423863c261` |
+
+The formerly missing binding is explicit: `revision_requested.parent_event_id` is
+the actual restored `feedback_decided.event_id`.
+
+### Final pre-commit gates
+
+| Gate | Current command/result | Exit |
+| --- | --- | ---: |
+| lint | `wave_a_quality.py lint`: 3 files, `failures=[]` | 0 |
+| type | `wave_a_quality.py type`: `failures=[]` | 0 |
+| unit | CI-equivalent UTF-8 command: 700 passed, 37 existing conditional skips in 63.39s | 0 |
+| integration | CI command: 1 passed in 0.22s | 0 |
+| security | `audit_project.py`: PASS, critical=0, 2 existing warnings outside T02 | 0 |
+| build | compileall + benchmark dry-run + validate-result: PASS | 0 |
+| T02 targeted | five revision/pipeline/pairing files: 42 passed in 1.53s | 0 |
+| formal pairing final rerun | exact frozen combination: 5 passed in 0.63s | 0 |
+| owner/diff/secrets | one T02-owned evidence file; no violations or secret matches; `git diff --check` PASS | 0 |
+
+The unit skips are the existing missing booklet/questions fixtures and two Windows
+symlink privilege probes. The security warnings point to pre-existing non-T02
+evidence files. No test was changed, deleted, skipped, xfailed, or weakened.
+
+### T02 owner conclusion and text for the T03-owned pairing record
+
+T02 owner conclusion: **PASS for the exact frozen T02/T03 technical pairing**. The
+former T03 persistence blocker for T02-B-013/T02-B-014 is closed for these two HEADs.
+T02-B-019/T02-B-021 pairing-path evidence is also technically satisfied, while the
+newer integration tip, PR #21 `CHANGES_REQUESTED`, the T03-owned common record, T08
+503 work, Ready authorization, approval, and merge remain outside this sign-off.
+
+Text for T03 owner to copy into the T03-owned common pairing record:
+
+> T02 owner `Mk007115` independently rechecked T02 PR #21
+> `20a5b356364051c86dac3698fc836c790b6c2c79` with T03 PR #32
+> `b3c1746530fa9c6f228e030ef281c255ab6b4c47` on 2026-08-06T21:50:48+08:00.
+> The official five-test suite passed 5/5 in 0.73s; T02 production-path plus T03
+> validation regressions passed 108/108 in 3.12s. Actual diff hash
+> `4f0f9fda9eef9b57a467fd243101aa4fce43af1789561f5ba92f7902d0070397`
+> matched structured diff, execution metadata, AgentTrace, handoff, generated event,
+> and restarted SQLite. Accepted-only receipt, V1-to-V2 direct lineage, the complete
+> 16-event parent chain, same/different-key behavior, 8-way submission concurrency,
+> 16-way handoff concurrency, duplicate completion, restart recovery and post-restart
+> replay all passed with one child and one lineage. T02 pairing verdict: PASS. This is
+> T02 technical sign-off only, not captain approval or merge authorization. Common
+> base was `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c`; latest integration observed at
+> sign-off was `f1e2ecd68b075bb8df82992a58397dee71795a60`.
