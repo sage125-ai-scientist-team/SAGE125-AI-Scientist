@@ -10,9 +10,11 @@ from pathlib import Path
 
 import pytest
 
+import app.batch.formal_five_runs as formal_runner
 from app.batch.actual_call_audit import ActualCallAudit, CostAccountingMode
 from app.batch.completion_gate import CompletionGateResult, evaluate_question_completion
 from app.batch.errors import BatchRunnerError
+from app.batch.five_run_preflight import load_frozen_run_config
 from app.batch.formal_five_runs import (
     AUTHORIZATION_TEXT,
     FROZEN_EXECUTION_ORDER,
@@ -32,6 +34,40 @@ AUTHORIZATION_URL = (
     "SAGE125-AI-Scientist/pull/31#issuecomment-5212109429"
 )
 NOW = datetime(2026, 8, 7, 3, 58, tzinfo=timezone.utc)
+
+
+@pytest.fixture(autouse=True)
+def _isolate_runner_contract_from_untracked_authoritative_sources(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Keep runner unit tests independent from production-only data files.
+
+    Source-file existence, size, hashes, and frozen mapping are exercised in
+    ``test_frozen_five_run_config.py`` with temporary synthetic inputs.  This
+    module tests orchestration behavior, so it injects the already tracked
+    frozen metadata instead of requiring local ``data/**`` material in CI.
+    Production defaults remain unchanged.
+    """
+
+    config = load_frozen_run_config(CONFIG)
+    mapped = {
+        item.question_id: {
+            "id": item.question_id,
+            "question": item.question,
+            "domain": item.domain,
+        }
+        for item in config.questions
+    }
+    monkeypatch.setattr(
+        formal_runner,
+        "_validate_frozen_config",
+        lambda _path, _repo_root: config,
+    )
+    monkeypatch.setattr(
+        formal_runner,
+        "load_and_map_authoritative_questions",
+        lambda _config, _repo_root: mapped,
+    )
 
 
 def _audit(**updates) -> ActualCallAudit:
@@ -193,6 +229,59 @@ def test_cli_is_dry_run_by_default_and_accepts_required_contract() -> None:
     assert args.execute is False
     assert args.resume is False
     assert args.question_id == ["Q001"]
+
+
+def test_cli_initializes_and_injects_production_executor(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    import scripts.batch_125.run_five_real_runs as command
+
+    executor = object()
+    captured = {}
+
+    class _Settings:
+        qwen_configured = True
+        deep_research_configured = True
+        llm_provider = "bailian"
+
+    class _Receipt:
+        status = "failed"
+
+        @staticmethod
+        def to_dict():
+            return {"status": "failed"}
+
+    monkeypatch.setattr(command, "get_settings", lambda: _Settings())
+    monkeypatch.setattr(
+        command,
+        "build_formal_provider_executor",
+        lambda _settings: executor,
+    )
+
+    def fake_run(request, *, executor=None):
+        captured["request"] = request
+        captured["executor"] = executor
+        return _Receipt()
+
+    monkeypatch.setattr(command, "run_formal_five_runs", fake_run)
+    code = command.main(
+        [
+            "--run-root",
+            str(tmp_path / "outside"),
+            "--authorization-reference",
+            AUTHORIZATION_URL,
+            "--provider-preflight-audit",
+            str(tmp_path / "preflight.json"),
+            "--question-id",
+            "Q001",
+            "--execute",
+        ]
+    )
+
+    assert code == 2
+    assert captured["request"].execute is True
+    assert captured["executor"] is executor
 
 
 @pytest.mark.parametrize("reference", ["", "   "])

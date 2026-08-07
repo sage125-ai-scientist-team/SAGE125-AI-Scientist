@@ -1,9 +1,8 @@
 """CLI for the frozen WB5 formal execution contract.
 
 Without ``--execute`` this command performs validation and writes only an
-external dry-run manifest.  The default production executor is intentionally
-fail-closed until every possible provider boundary exposes a complete audit
-hook.
+external dry-run manifest.  Execute mode initializes the audited single-call
+provider runtime before handing control to the fail-closed batch runner.
 """
 
 from __future__ import annotations
@@ -17,6 +16,7 @@ from pathlib import Path
 
 from app.batch.errors import BatchRunnerError
 from app.batch.formal_five_runs import FormalRunRequest, run_formal_five_runs
+from app.batch.formal_provider_runtime import build_formal_provider_executor
 from app.core.config import get_settings
 
 
@@ -69,7 +69,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             ),
             mock_environment=_mock_enabled(),
         )
-        receipt = run_formal_five_runs(request)
+        executor = (
+            build_formal_provider_executor(settings) if args.execute else None
+        )
+        receipt = run_formal_five_runs(request, executor=executor)
     except BatchRunnerError as exc:
         print(
             json.dumps(
