@@ -503,6 +503,45 @@ def test_failed_provider_response_preserves_call_count_and_tokens(
     assert diagnostic["field"] == "source_id"
 
 
+def test_missing_evidence_collection_diagnostic_is_persisted(
+    tmp_path: Path,
+) -> None:
+    audit = _audit()
+
+    def failing(_context):
+        raise BatchRunnerError(
+            "FORMAL_PROVIDER_EVIDENCE_INVALID",
+            "provider response did not contain a valid traceable evidence contract",
+            stage="response_validation",
+            exception_type="EvidenceContractError",
+            call_audits=(audit,),
+            diagnostic_details={"validation_code": "EVIDENCE_CARDS_MISSING"},
+        )
+
+    receipt = run_formal_five_runs(
+        _request(tmp_path),
+        executor=failing,
+        completion_evaluator=_evaluate,
+    )
+
+    question_root = Path(receipt.batch_root) / "Q001"
+    diagnostic = json.loads(
+        (question_root / "provider_failure_diagnostic.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert receipt.provider_calls == 1
+    assert receipt.questions[0].tokens_used == 19
+    assert diagnostic == {
+        "error_code": "FORMAL_PROVIDER_EVIDENCE_INVALID",
+        "exception_type": "EvidenceContractError",
+        "http_status": None,
+        "schema_version": "t07.provider-failure-diagnostic.v1",
+        "stage": "response_validation",
+        "validation_code": "EVIDENCE_CARDS_MISSING",
+    }
+
+
 def test_call_audit_persist_failure_has_safe_specific_code(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

@@ -204,8 +204,37 @@ def test_missing_evidence_fails_closed_after_sealing_call_audit() -> None:
 
     assert captured.value.error_code == "FORMAL_PROVIDER_EVIDENCE_INVALID"
     assert captured.value.stage == "response_validation"
+    assert captured.value.diagnostic_details == {
+        "validation_code": "EVIDENCE_CARDS_MISSING"
+    }
     assert len(captured.value.call_audits) == 1
     assert captured.value.call_audits[0].total_tokens == 124
+
+
+def test_request_requires_nonempty_top_level_evidence_cards() -> None:
+    hook = ProviderAuditHook()
+    client = _FakeClient(hook)
+    original = client.chat_json
+
+    def inspect_contract(messages, model, temperature=0.1):
+        request = json.loads(messages[-1]["content"])
+        contract = request["contract"]
+        assert "evidence_cards" in contract["required_top_level_fields"]
+        assert contract["evidence_cards_required"] is True
+        assert contract["evidence_cards_min_items"] == 1
+        return original(messages, model, temperature)
+
+    client.chat_json = inspect_contract
+    executor = build_formal_provider_executor(
+        _Settings(),
+        hook=hook,
+        client_factory=lambda _settings: client,
+        pdf_renderer=lambda _markdown, _root: b"%PDF-1.7\n",
+    )
+
+    execution = executor(_context())
+
+    assert execution.evidence_cards
 
 
 def test_provider_content_hash_is_recomputed_by_runtime() -> None:
