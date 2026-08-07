@@ -23,6 +23,7 @@ from app.batch.formal_five_runs import (
     run_formal_five_runs,
     validate_provider_preflight_audit,
 )
+from app.batch.formal_provider_runtime import build_formal_provider_executor
 from app.contracts.validation import GateFinding, GateResult, Severity
 from scripts.batch_125.run_five_real_runs import build_parser
 
@@ -728,3 +729,43 @@ def test_default_executor_fails_before_provider_call(tmp_path: Path) -> None:
     assert receipt.status == "failed"
     assert receipt.provider_calls == 0
     assert receipt.questions[0].error_codes == ("CALL_AUDIT_HOOK_UNAVAILABLE",)
+
+
+def test_formal_provider_executor_without_evidence_stops_with_zero_calls(
+    tmp_path: Path,
+) -> None:
+    class Settings:
+        llm_provider = "bailian"
+        qwen_fast_model = "qwen3.6-flash"
+        llm_max_retries = 1
+        llm_max_output_tokens = 8192
+
+        def model_copy(self, *, update):
+            result = Settings()
+            for key, value in update.items():
+                setattr(result, key, value)
+            return result
+
+    client_factory_calls = 0
+
+    def forbidden_client_factory(_settings):
+        nonlocal client_factory_calls
+        client_factory_calls += 1
+        raise AssertionError("provider client must not be constructed")
+
+    executor = build_formal_provider_executor(
+        Settings(),
+        client_factory=forbidden_client_factory,
+    )
+    receipt = run_formal_five_runs(
+        _request(tmp_path),
+        executor=executor,
+        completion_evaluator=_evaluate,
+    )
+
+    assert client_factory_calls == 0
+    assert receipt.provider_calls == 0
+    assert receipt.questions[0].tokens_used == 0
+    assert receipt.questions[0].error_codes == (
+        "FORMAL_EVIDENCE_CONTEXT_UNAVAILABLE",
+    )

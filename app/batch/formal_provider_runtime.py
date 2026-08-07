@@ -19,8 +19,6 @@ from tempfile import TemporaryDirectory
 from time import perf_counter
 from typing import Any, Protocol
 
-from pydantic import ValidationError
-
 from app.agents.prompts import REPORT_WRITER_PROMPT
 from app.batch.actual_call_audit import (
     ActualCallAudit,
@@ -29,6 +27,11 @@ from app.batch.actual_call_audit import (
 )
 from app.batch.completion_gate import CompletionGateIssue
 from app.batch.errors import BatchRunnerError
+from app.batch.formal_evidence_context import (
+    FormalEvidenceContext,
+    FormalEvidenceContextAdapter,
+    FormalEvidenceQuery,
+)
 from app.batch.formal_five_runs import (
     EXPECTED_PRIMARY_MODEL,
     EXPECTED_PROVIDER,
@@ -40,7 +43,6 @@ from app.clients.qwen_chat_client import QwenChatClient, QwenClientError
 from app.contracts.evidence import (
     ClaimEvidenceLink,
     EvidenceBundle,
-    EvidenceCardContract,
 )
 from app.evidence import ClaimText
 from app.exporters.pdf_exporter import export_markdown_to_pdf
@@ -49,6 +51,7 @@ from app.exporters.pdf_exporter import export_markdown_to_pdf
 Clock = Callable[[], datetime]
 ClientFactory = Callable[[Any], Any]
 PdfRenderer = Callable[[str, Path], bytes | None]
+EvidenceContextLoader = Callable[[FormalEvidenceQuery], FormalEvidenceContext]
 
 
 _HTTP_STATUS_PATTERN = re.compile(
@@ -253,6 +256,7 @@ def build_formal_provider_executor(
     hook: ProviderAuditHook | None = None,
     client_factory: ClientFactory = QwenChatClient,
     pdf_renderer: PdfRenderer | None = None,
+    evidence_context_loader: EvidenceContextLoader | None = None,
 ) -> FormalExecutor:
     """Initialize the production executor and inject its pre-call audit hook."""
 
@@ -274,9 +278,36 @@ def build_formal_provider_executor(
         update={"llm_max_retries": 0, "llm_max_output_tokens": 8192}
     )
     render_pdf = pdf_renderer or _render_pdf
+    load_evidence_context = (
+        evidence_context_loader or FormalEvidenceContextAdapter().build
+    )
 
     def execute(context: FormalExecutionContext) -> FormalQuestionExecution:
-        messages = _build_messages(context)
+        query = FormalEvidenceQuery(
+            question_id=context.question_id,
+            run_id=context.run_id,
+            question=_text(context.question.get("question")),
+            domain=_text(context.question.get("domain")) or None,
+        )
+        try:
+            evidence_context = load_evidence_context(query)
+        except BatchRunnerError:
+            raise
+        except Exception:
+            raise BatchRunnerError(
+                "FORMAL_EVIDENCE_CONTEXT_UNAVAILABLE",
+                "trusted evidence context is unavailable for formal execution",
+                stage="evidence_context",
+                exception_type="EvidenceContextError",
+            ) from None
+        if not isinstance(evidence_context, FormalEvidenceContext):
+            raise BatchRunnerError(
+                "FORMAL_EVIDENCE_CONTEXT_UNAVAILABLE",
+                "trusted evidence context is unavailable for formal execution",
+                stage="evidence_context",
+                exception_type="EvidenceContextError",
+            )
+        messages = _build_messages(context, evidence_context)
         dynamic_prompt_hash = _canonical_hash(messages)
         client: FormalProviderClient = client_factory(runtime_settings)
         registration = audit_hook.register(
@@ -321,6 +352,7 @@ def build_formal_provider_executor(
                 dynamic_prompt_hash,
                 duration_seconds,
                 render_pdf,
+                evidence_context,
             )
         except BatchRunnerError as exc:
             raise BatchRunnerError(
@@ -431,11 +463,15 @@ def _canonical_hash(value: Any) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _build_messages(context: FormalExecutionContext) -> list[dict[str, str]]:
+def _build_messages(
+    context: FormalExecutionContext,
+    evidence_context: FormalEvidenceContext,
+) -> list[dict[str, str]]:
     request = {
         "question_id": context.question_id,
         "domain": context.question.get("domain"),
         "question": context.question.get("question"),
+        "trusted_evidence_context": list(evidence_context.cards),
         "contract": {
             "no_fabricated_results": True,
             "references_must_be_traceable": True,
@@ -450,25 +486,16 @@ def _build_messages(context: FormalExecutionContext) -> list[dict[str, str]]:
                 "methods",
                 "experiments",
                 "results",
-                "evidence_cards",
                 "generated_hypotheses",
                 "reference_ids",
             ],
-            "evidence_cards_required": True,
-            "evidence_cards_min_items": 1,
-            "evidence_card_fields": [
-                "evidence_id",
-                "source_id",
-                "source_type",
-                "title",
-                "quoted_text",
-                "locator",
-                "domain",
-                "verification_status",
+            "provider_output_forbidden_fields": [
+                "evidence_cards",
+                "evidence_bundle",
+                "trusted_evidence_context",
             ],
-            "content_hash_ownership": (
-                "runtime computes sha256 from exact quoted_text; provider should omit"
-            ),
+            "provider_may_reference_only_supplied_evidence_ids": True,
+            "provider_may_not_create_or_modify_evidence": True,
             "generated_hypothesis_fields": [
                 "hypothesis",
                 "supporting_evidence_ids",
@@ -502,9 +529,10 @@ def _build_execution(
     dynamic_prompt_hash: str,
     duration_seconds: float,
     pdf_renderer: PdfRenderer,
+    evidence_context: FormalEvidenceContext,
 ) -> FormalQuestionExecution:
     payload = dict(value) if isinstance(value, Mapping) else {}
-    evidence = _build_formal_evidence(context, payload)
+    evidence = _build_formal_evidence(context, payload, evidence_context)
     datasets = payload.get("datasets")
     datasets = datasets if isinstance(datasets, Mapping) else {}
     fields = {
@@ -575,9 +603,10 @@ def _build_execution(
 def _build_formal_evidence(
     context: FormalExecutionContext,
     payload: Mapping[str, Any],
+    evidence_context: FormalEvidenceContext,
 ) -> FormalEvidencePayload:
     try:
-        return _validate_formal_evidence(context, payload)
+        return _validate_formal_evidence(context, payload, evidence_context)
     except FormalEvidenceValidationError as exc:
         raise BatchRunnerError(
             "FORMAL_PROVIDER_EVIDENCE_INVALID",
@@ -598,92 +627,29 @@ def _build_formal_evidence(
 def _validate_formal_evidence(
     context: FormalExecutionContext,
     payload: Mapping[str, Any],
+    evidence_context: FormalEvidenceContext,
 ) -> FormalEvidencePayload:
-    raw_cards = payload.get("evidence_cards")
-    if not isinstance(raw_cards, list) or not raw_cards:
-        raise FormalEvidenceValidationError("EVIDENCE_CARDS_MISSING")
-
-    contracts: list[EvidenceCardContract] = []
-    wires: list[Mapping[str, Any]] = []
-    wire_by_id: dict[str, Mapping[str, Any]] = {}
-    for card_index, raw_card in enumerate(raw_cards):
-        if not isinstance(raw_card, Mapping):
-            raise FormalEvidenceValidationError(
-                "EVIDENCE_CARD_NOT_OBJECT",
-                card_index=card_index,
-            )
-        card_payload = dict(raw_card)
-        evidence_id = _text(card_payload.get("evidence_id") or card_payload.get("id"))
-        quoted_text = _text(card_payload.get("quoted_text"))
-        if not evidence_id:
-            raise FormalEvidenceValidationError(
-                "EVIDENCE_CARD_FIELD_MISSING",
-                card_index=card_index,
-                field="evidence_id",
-            )
-        if not quoted_text:
-            raise FormalEvidenceValidationError(
-                "EVIDENCE_CARD_FIELD_MISSING",
-                card_index=card_index,
-                evidence_id=evidence_id,
-                field="quoted_text",
-            )
-        expected_hash = "sha256:" + hashlib.sha256(
-            quoted_text.encode("utf-8")
-        ).hexdigest()
-        card_payload["evidence_id"] = evidence_id
-        card_payload["quoted_text"] = quoted_text
-        # Hashing is a deterministic runtime integrity operation.  A language
-        # model is neither trusted nor required to calculate this digest.
-        card_payload["content_hash"] = expected_hash
-        card_payload.setdefault("domain", context.question.get("domain"))
-        card_payload.setdefault("verification_status", "pending")
-        try:
-            contract = EvidenceCardContract.model_validate(card_payload)
-        except ValidationError as exc:
-            first = exc.errors(include_url=False, include_context=False)[0]
-            location = first.get("loc", ())
-            field = str(location[0]) if location else "evidence_card"
-            validation_code = (
-                "EVIDENCE_CARD_FIELD_MISSING"
-                if first.get("type") == "missing"
-                else "EVIDENCE_CARD_FIELD_INVALID"
-            )
-            raise FormalEvidenceValidationError(
-                validation_code,
-                card_index=card_index,
-                evidence_id=evidence_id,
-                field=field,
-            ) from None
-        if (
-            contract.source_type == "question_booklet"
-            or "booklet" in contract.source_id.lower()
-            or str(contract.locator.get("source", "")).lower() == "booklet"
-        ):
-            raise FormalEvidenceValidationError(
-                "BOOKLET_EVIDENCE_FORBIDDEN",
-                card_index=card_index,
-                evidence_id=evidence_id,
-                field="source_type",
-            )
-        relevance = card_payload.get("relevance_score", 1.0)
-        if isinstance(relevance, bool) or not isinstance(relevance, (int, float)):
-            raise TypeError("relevance score must be numeric")
-        if not 0.0 <= float(relevance) <= 1.0:
-            raise ValueError("relevance score out of range")
-        wire = contract.model_dump(mode="json")
-        wire["id"] = evidence_id
-        wire["relevance_score"] = float(relevance)
-        if evidence_id in wire_by_id:
-            raise FormalEvidenceValidationError(
-                "EVIDENCE_ID_DUPLICATE",
-                card_index=card_index,
-                evidence_id=evidence_id,
-                field="evidence_id",
-            )
-        contracts.append(contract)
-        wires.append(wire)
-        wire_by_id[evidence_id] = wire
+    forbidden_fields = (
+        "evidence_cards",
+        "evidence_bundle",
+        "trusted_evidence_context",
+    )
+    mutated_field = next((field for field in forbidden_fields if field in payload), None)
+    if mutated_field is not None:
+        raise FormalEvidenceValidationError(
+            "MODEL_EVIDENCE_MUTATION_FORBIDDEN",
+            field=mutated_field,
+        )
+    contracts = list(evidence_context.bundle.evidences)
+    wires = list(evidence_context.cards)
+    wire_by_id = {
+        str(wire.get("id") or wire.get("evidence_id")): wire
+        for wire in wires
+    }
+    if not contracts or set(wire_by_id) != {
+        contract.evidence_id for contract in contracts
+    }:
+        raise FormalEvidenceValidationError("TRUSTED_EVIDENCE_CONTEXT_INVALID")
 
     raw_hypotheses = payload.get("generated_hypotheses")
     if not isinstance(raw_hypotheses, list) or not raw_hypotheses:
@@ -837,11 +803,30 @@ def _reference_ids(value: Any) -> tuple[str, ...]:
         return ()
     identifiers = []
     for item in value:
-        identifier = (
-            _text(item.get("id") or item.get("evidence_id"))
-            if isinstance(item, Mapping)
-            else _text(item)
-        )
+        if isinstance(item, Mapping):
+            identifier = _text(item.get("id") or item.get("evidence_id"))
+            protected = next(
+                (
+                    field
+                    for field in (
+                        "quoted_text",
+                        "locator",
+                        "source_id",
+                        "source_type",
+                        "content_hash",
+                    )
+                    if field in item
+                ),
+                None,
+            )
+            if protected is not None:
+                raise FormalEvidenceValidationError(
+                    "MODEL_EVIDENCE_MUTATION_FORBIDDEN",
+                    evidence_id=identifier or None,
+                    field=protected,
+                )
+        else:
+            identifier = _text(item)
         if not identifier:
             raise ValueError("reference id missing")
         identifiers.append(identifier)
