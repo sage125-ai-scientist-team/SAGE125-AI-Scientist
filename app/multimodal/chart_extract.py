@@ -1,7 +1,9 @@
 """
-T06 Wave B：图表提取——PDF 页文本块解析 + 显式 offline_fixture packet。
+图表提取：
 
-不得从 gold/配套 CSV/文件名偷答案。缺图例、未知单位、错误轴 → fail-closed。
+1) JSON offline_fixture / preprocessed_input packet
+2) PDF 内嵌 LEGEND/AXIS/SERIES 文本指令 → 明确降级为 preprocessed_input（非真实曲线解析）
+3) 真实视觉路径见 qwen_vision + vision_schema（渲染页/图片 → 结构化 JSON）
 """
 
 from __future__ import annotations
@@ -36,10 +38,7 @@ _LEGEND_LINE = re.compile(r"^LEGEND\s+(?P<items>.+)$")
 def _require_bbox(raw: Any) -> BoundingBox:
     if not isinstance(raw, dict):
         raise ExtractionError("chart requires bbox object")
-    try:
-        box = BoundingBox.model_validate(raw)
-    except Exception as exc:  # noqa: BLE001
-        raise ExtractionError(f"illegal bbox: {exc}") from exc
+    box = BoundingBox.model_validate(raw)
     if box.x1 <= box.x0 or box.y1 <= box.y0:
         raise ExtractionError("illegal bbox: degenerate rectangle")
     return box
@@ -64,6 +63,7 @@ def _finalize(
     legend: list[str],
     rows: list[list[str]],
     confidence: float,
+    file_sha256: str | None = None,
 ) -> MultimodalArtifact:
     axis_names = {a.name for a in axes}
     if "x" not in axis_names or "y" not in axis_names:
@@ -75,13 +75,16 @@ def _finalize(
             raise ExtractionError(f"axis {a.name!r} inverted")
     if not legend:
         raise ExtractionError("missing legend: refuse to invent series labels")
+    path_out = source_path
+    if file_sha256:
+        path_out = f"{source_path}#sha256={file_sha256}"
     x_unit = next(a.unit for a in axes if a.name == "x")
     y_unit = next(a.unit for a in axes if a.name == "y")
     return MultimodalArtifact(
         artifact_id=artifact_id,
         modality="chart",
         provenance=Provenance(
-            source_path=source_path,
+            source_path=path_out,
             source_type=source_type,  # type: ignore[arg-type]
             page=page,
             bbox=bbox,
@@ -99,15 +102,14 @@ def _finalize(
     )
 
 
-def extract_chart_from_pdf(source_path: str, *, page: int = 1) -> MultimodalArtifact:
+def extract_chart_from_preprocessed_pdf_directives(
+    source_path: str, *, page: int = 1
+) -> MultimodalArtifact:
     """
-    Parse machine-readable chart annotations embedded as text on a PDF page.
+    Parse embedded LEGEND/AXIS/SERIES text directives.
 
-    Format (one directive per text block/line):
-      LEGEND run_a,run_b
-      AXIS x unit=s min=0 max=10
-      AXIS y unit=K min=270 max=310
-      SERIES run_a x=0 y=298.1
+    This is NOT real curve/bar chart vision. Marked as synthetic_fixture /
+    preprocessed_input semantics (source_type=synthetic_fixture).
     """
     meta = load_source_bytes(source_path)
     doc = open_pdf(source_path)
@@ -116,7 +118,7 @@ def extract_chart_from_pdf(source_path: str, *, page: int = 1) -> MultimodalArti
     finally:
         doc.close()
     if not blocks:
-        raise ExtractionError("PDF page has no text blocks for chart parse")
+        raise ExtractionError("PDF page has no text blocks for preprocessed chart parse")
 
     legend: list[str] = []
     axes: list[AxisSpec] = []
@@ -158,7 +160,6 @@ def extract_chart_from_pdf(source_path: str, *, page: int = 1) -> MultimodalArti
                     union_bbox["y0"] = min(union_bbox["y0"], bb["y0"])
                     union_bbox["x1"] = max(union_bbox["x1"], bb["x1"])
                     union_bbox["y1"] = max(union_bbox["y1"], bb["y1"])
-                # range check when axes known
                 for a in axes:
                     if a.name == "x" and a.min_value is not None and a.max_value is not None:
                         if x_v < a.min_value or x_v > a.max_value:
@@ -168,25 +169,33 @@ def extract_chart_from_pdf(source_path: str, *, page: int = 1) -> MultimodalArti
                             raise ExtractionError("y value outside declared axis range")
 
     if not legend:
-        raise ExtractionError("missing legend on PDF chart page")
+        raise ExtractionError("missing legend on preprocessed PDF chart page")
     if len(axes) < 2:
-        raise ExtractionError("PDF chart missing x/y AXIS directives")
+        raise ExtractionError("preprocessed PDF chart missing x/y AXIS directives")
     if not rows:
-        raise ExtractionError("PDF chart missing SERIES points")
+        raise ExtractionError("preprocessed PDF chart missing SERIES points")
     if union_bbox is None:
-        raise ExtractionError("PDF chart bbox unavailable")
+        raise ExtractionError("preprocessed PDF chart bbox unavailable")
 
+    # Cap confidence: never claim high-confidence "vision" for directive packets.
+    confidence = 0.55
     return _finalize(
-        artifact_id=f"pdf-chart-{meta.sha256[:12]}-{page}",
+        artifact_id=f"preprocessed-chart-{meta.sha256[:12]}-{page}",
         source_path=source_path,
-        source_type="pdf",
+        source_type="synthetic_fixture",
         page=page,
         bbox=_require_bbox(union_bbox),
         axes=axes,
         legend=legend,
         rows=rows,
-        confidence=0.84,
+        confidence=confidence,
+        file_sha256=meta.sha256,
     )
+
+
+# Backward-compatible name — explicitly demoted.
+def extract_chart_from_pdf(source_path: str, *, page: int = 1) -> MultimodalArtifact:
+    return extract_chart_from_preprocessed_pdf_directives(source_path, page=page)
 
 
 def extract_chart_from_packet(source_path: str) -> MultimodalArtifact:
@@ -224,18 +233,23 @@ def extract_chart_from_packet(source_path: str) -> MultimodalArtifact:
         legend=[str(x) for x in legend],
         rows=rows,
         confidence=float(packet["confidence"]),
+        file_sha256=meta.sha256,
     )
 
 
 def extract_chart_artifact(source_path: str, **kwargs: Any) -> MultimodalArtifact:
+    """
+    Non-vision chart entrypoints only.
+    Raster images must go through QwenVisionAdapter / run_qwen_vision_*.
+    """
     suffix = Path(source_path).suffix.lower()
     if suffix == ".pdf":
-        return extract_chart_from_pdf(source_path, **kwargs)
+        return extract_chart_from_preprocessed_pdf_directives(source_path, **kwargs)
     if suffix == ".json":
         return extract_chart_from_packet(source_path)
     if suffix in {".png", ".jpg", ".jpeg", ".webp"}:
         raise ExtractionError(
-            "raw raster chart requires authorized vision call path; "
-            "offline image-only parse without annotations is fail-closed"
+            "raster chart requires Qwen vision path (QwenVisionAdapter); "
+            "ChartAdapter will not pretend to parse pixels"
         )
     raise ExtractionError(f"unsupported chart source type: {suffix!r}")

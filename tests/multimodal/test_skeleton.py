@@ -1,4 +1,4 @@
-"""T06 PR36：detect / adapters / audit / EvidenceCard live / PDF / relative error."""
+"""T06 PR36：detect / adapters / vision schema / EvidenceCard→T04 / PDF / relative error."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pydantic
 import pytest
+from PIL import Image
 
 from app.contracts.multimodal import MultimodalArtifact
 from app.multimodal.adapters import (
@@ -25,10 +26,12 @@ from app.multimodal.evidence_bridge import (
     low_confidence_blocks_fact,
 )
 from app.multimodal.evidence_live import index_multimodal_artifacts
+from app.multimodal.evidence_rag import index_and_retrieve_via_t04_store
 from app.multimodal.metrics_relative import evaluate_chart_series, relative_or_absolute_error
 from app.multimodal.queue import MultimodalQueue, QueueRejection
-from app.multimodal.qwen_vision import credential_status, run_qwen_vision_on_pdf_page
+from app.multimodal.qwen_vision import credential_status, run_qwen_vision
 from app.multimodal.summary import build_consumer_summary
+from app.multimodal.vision_schema import mock_vision_chart_response, parse_vision_chart_json
 from app.multimodal.workflow_hook import build_revision_hook_payload
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
@@ -41,6 +44,39 @@ def _load_valid_table() -> MultimodalArtifact:
         (FIXTURES / "tables" / "sample_001.json").read_text(encoding="utf-8")
     )
     return MultimodalArtifact.model_validate(payload)
+
+
+def _mock_chart_json(*, confidence: float = 0.88) -> str:
+    return mock_vision_chart_response(
+        legend=["run_a"],
+        axes=[
+            {
+                "name": "x",
+                "label": "time",
+                "unit": "s",
+                "min_value": 0.0,
+                "max_value": 10.0,
+            },
+            {
+                "name": "y",
+                "label": "temperature",
+                "unit": "K",
+                "min_value": 270.0,
+                "max_value": 310.0,
+            },
+        ],
+        series=[
+            {
+                "name": "run_a",
+                "points": [
+                    {"x": 0, "y": 298.1},
+                    {"x": 5, "y": 301.4},
+                    {"x": 10, "y": 305.0},
+                ],
+            }
+        ],
+        confidence=confidence,
+    )
 
 
 def test_detect_modality_by_extension_and_hint() -> None:
@@ -86,14 +122,34 @@ def test_table_adapter_offline_fixture_packet() -> None:
     assert art.modality == "table"
     assert art.provenance.page == 2
     assert art.data.rows[0] == ["accuracy", "91.2", "91.2"]
+    assert "#sha256=" in art.provenance.source_path
+    card = artifact_to_evidence_card(art)
+    assert "file_sha256" in card.locator
 
 
 def test_table_adapter_real_pdf_extraction() -> None:
     art = TableAdapter().process(str(PDF / "sample_table.pdf"))
     assert art.provenance.source_type == "pdf"
     assert art.provenance.bbox is not None
+    assert "#sha256=" in art.provenance.source_path
     assert "metric" in art.data.headers[0]
     assert any("91.2" in cell for row in art.data.rows for cell in row)
+    # Units not reliably in sample PDF → must not claim high-confidence PASS
+    assert art.validation_status == "needs_review"
+    assert art.confidence < 0.80
+
+
+def test_table_adapter_pdf_units_from_header_and_caller() -> None:
+    # Inspect headers from PDF, then bind units using real column names.
+    preview = TableAdapter().process(str(PDF / "sample_table.pdf"))
+    bindings = [{"column": h, "unit": "%" if i else "name"} for i, h in enumerate(preview.data.headers)]
+    art = TableAdapter().process(str(PDF / "sample_table.pdf"), column_units=bindings)
+    assert art.column_units
+    assert len(art.units) == len(art.data.headers)
+    # With units present, confidence scoring may pass or still review on merges.
+    assert art.validation_status in {"passed", "needs_review"}
+    assert art.confidence >= 0.5
+    assert "#sha256=" in art.provenance.source_path
 
 
 def test_table_adapter_fail_closed_on_missing_bbox_and_bad_bbox() -> None:
@@ -103,8 +159,8 @@ def test_table_adapter_fail_closed_on_missing_bbox_and_bad_bbox() -> None:
         TableAdapter().process(str(WAVE_B / "invalid" / "table_bad_bbox.json"))
 
 
-def test_unlabeled_json_packet_rejected() -> None:
-    path = WAVE_B / "invalid" / "table_unlabeled.json"
+def test_unlabeled_json_packet_rejected(tmp_path: Path) -> None:
+    path = tmp_path / "table_unlabeled.json"
     path.write_text(
         json.dumps(
             {
@@ -121,12 +177,51 @@ def test_unlabeled_json_packet_rejected() -> None:
         TableAdapter().process(str(path))
 
 
-def test_chart_adapter_packet_and_pdf() -> None:
+def test_table_raster_image_fail_closed(tmp_path: Path) -> None:
+    img = tmp_path / "scanned_table.png"
+    Image.new("RGB", (32, 32), color=(255, 255, 255)).save(img)
+    with pytest.raises(ExtractionError, match="vision path"):
+        TableAdapter().process(str(img))
+
+
+def test_table_packet_missing_units_needs_review(tmp_path: Path) -> None:
+    path = tmp_path / "table_no_units.json"
+    path.write_text(
+        json.dumps(
+            {
+                "input_kind": "offline_fixture",
+                "page": 1,
+                "bbox": {"x0": 1, "y0": 1, "x1": 10, "y1": 10},
+                "headers": ["a", "b"],
+                "rows": [["1", "2"]],
+                "confidence": 0.95,
+                "legend": ["a", "b"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    art = TableAdapter().process(str(path))
+    assert art.validation_status == "needs_review"
+    assert art.confidence <= 0.79
+
+
+def test_chart_adapter_packet_and_preprocessed_pdf() -> None:
     art = ChartAdapter().process(str(WAVE_B / "charts" / "packet_001.json"))
     assert art.legend == ["run_a"]
     pdf_art = ChartAdapter().process(str(PDF / "sample_chart.pdf"))
-    assert pdf_art.provenance.source_type == "pdf"
+    # Demoted: NOT real vision chart parse
+    assert pdf_art.provenance.source_type == "synthetic_fixture"
+    assert pdf_art.confidence <= 0.79
+    assert pdf_art.validation_status == "needs_review"
     assert len(pdf_art.data.rows) == 3
+    assert "#sha256=" in pdf_art.provenance.source_path
+
+
+def test_chart_adapter_raster_requires_vision(tmp_path: Path) -> None:
+    img = tmp_path / "chart.png"
+    Image.new("RGB", (64, 64), color=(240, 240, 240)).save(img)
+    with pytest.raises(ExtractionError, match="Qwen vision"):
+        ChartAdapter().process(str(img))
 
 
 def test_chart_adapter_fail_closed_missing_legend_or_unit() -> None:
@@ -150,7 +245,9 @@ def test_consumer_summary_from_skeleton_helper() -> None:
 
 
 def test_vision_audit_stub_blocks_sensitive_markers() -> None:
-    VisionCallAuditStub(call_id="c1", input_summary="page=1 chart crop", key_masked=True).ensure_safe()
+    VisionCallAuditStub(
+        call_id="c1", input_summary="page=1 chart crop", key_masked=True
+    ).ensure_safe()
     with pytest.raises(ValueError):
         VisionCallAuditStub(
             call_id="c2",
@@ -160,23 +257,100 @@ def test_vision_audit_stub_blocks_sensitive_markers() -> None:
 
 
 def test_qwen_vision_phase_gate_denies_without_allow_actual() -> None:
-    meta, audit = run_qwen_vision_on_pdf_page(
-        str(PDF / "sample_chart.pdf"), allow_actual=False
-    )
+    meta, audit = run_qwen_vision(str(PDF / "sample_chart.pdf"), allow_actual=False)
     assert audit.actual_external_call is False
     assert audit.status == "denied_no_paid_auth"
+    assert audit.started_utc and audit.finished_utc
+    assert audit.attempt_count == 1
     assert "DASHSCOPE_API_KEY" in meta["credential_status"]
-    assert meta["credential_status"]["DASHSCOPE_API_KEY"] in {"PRESENT", "MISSING"}
-    # never leak values
     assert all(v in {"PRESENT", "MISSING"} for v in meta["credential_status"].values())
 
 
-def test_qwen_adapter_offline_pdf_chart() -> None:
+def test_qwen_adapter_preprocessed_pdf_demoted_when_denied() -> None:
     adapter = QwenVisionAdapter()
     art = adapter.process(str(PDF / "sample_chart.pdf"), allow_actual=False)
     assert art.modality == "chart"
+    assert art.provenance.source_type == "synthetic_fixture"
     assert adapter.last_audit is not None
     assert adapter.last_audit.actual_external_call is False
+
+
+def test_vision_schema_mock_success_and_fail_closed() -> None:
+    good = parse_vision_chart_json(
+        _mock_chart_json(),
+        source_path="x.pdf",
+        source_type="pdf",
+        page=1,
+        file_sha256="abc123",
+    )
+    assert good.legend == ["run_a"]
+    assert good.axes is not None and len(good.axes) >= 2
+    assert good.validation_status == "passed"
+    with pytest.raises(ExtractionError, match="empty"):
+        parse_vision_chart_json(
+            "", source_path="x.pdf", source_type="pdf", page=1, file_sha256="a"
+        )
+    with pytest.raises(ExtractionError, match="JSON"):
+        parse_vision_chart_json(
+            "not-json", source_path="x.pdf", source_type="pdf", page=1, file_sha256="a"
+        )
+    bad_legend = json.loads(_mock_chart_json())
+    bad_legend["legend"] = []
+    with pytest.raises(ExtractionError, match="legend"):
+        parse_vision_chart_json(
+            json.dumps(bad_legend),
+            source_path="x.pdf",
+            source_type="pdf",
+            page=1,
+            file_sha256="a",
+        )
+
+
+def test_qwen_mock_success_png_and_no_fallback_discard(tmp_path: Path) -> None:
+    img = tmp_path / "chart.webp"
+    Image.new("RGB", (48, 48), color=(200, 200, 200)).save(img, format="WEBP")
+    adapter = QwenVisionAdapter()
+    art = adapter.process(
+        str(img),
+        allow_actual=False,
+        mock_response_json=_mock_chart_json(confidence=0.9),
+    )
+    assert art.modality == "chart"
+    assert art.legend == ["run_a"]
+    assert "#sha256=" in art.provenance.source_path
+    assert adapter.last_audit is not None
+    assert adapter.last_audit.status == "success"
+    assert adapter.last_audit.actual_external_call is False
+    assert adapter.last_call_meta is not None
+    assert adapter.last_call_meta.get("artifact") is not None
+
+
+def test_qwen_mock_invalid_empty_timeout_auth(tmp_path: Path) -> None:
+    img = tmp_path / "chart.jpg"
+    Image.new("RGB", (40, 40), color=(180, 180, 180)).save(img, format="JPEG")
+    adapter = QwenVisionAdapter()
+    with pytest.raises(ExtractionError):
+        adapter.process(str(img), mock_response_json="")
+    with pytest.raises(ExtractionError):
+        adapter.process(str(img), mock_response_json="{bad")
+    with pytest.raises(ExtractionError, match="vision"):
+        adapter.process(str(img), simulate_error="timeout", mock_response_json="{}")
+    with pytest.raises(ExtractionError, match="vision"):
+        adapter.process(str(img), simulate_error="auth", mock_response_json="{}")
+    low = adapter.process(
+        str(PDF / "sample_chart.pdf"),
+        mock_response_json=_mock_chart_json(confidence=0.4),
+    )
+    assert low.validation_status == "failed"
+    assert low_confidence_blocks_fact(low) is True
+
+
+def test_qwen_refuses_silent_non_vision_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("QWEN_VL_MODEL", "qwen-plus")
+    from app.multimodal.qwen_vision import resolve_vision_model
+
+    with pytest.raises(ExtractionError, match="vision model"):
+        resolve_vision_model()
 
 
 def test_relative_error_canonical_cases() -> None:
@@ -203,11 +377,13 @@ def test_relative_error_canonical_cases() -> None:
         [["a", "0", "1.0"], ["b", "0", "-2.0"]],
     )
     assert multi["meets_threshold"] is True
-    missing = evaluate_chart_series([["a", "0", "1.0"]], [["a", "0", "1.0"], ["a", "1", "2.0"]])
+    missing = evaluate_chart_series(
+        [["a", "0", "1.0"]], [["a", "0", "1.0"], ["a", "1", "2.0"]]
+    )
     assert missing["needs_human_review"] is True
 
 
-def test_evidence_card_bridge_and_live_index_consume() -> None:
+def test_evidence_bundle_helper_not_t04_store() -> None:
     table = TableAdapter().process(str(WAVE_B / "tables" / "packet_001.json"))
     chart = ChartAdapter().process(str(PDF / "sample_chart.pdf"))
     ts = TimeseriesAdapter().process(str(WAVE_B / "timeseries" / "sample_clean.csv"))
@@ -221,14 +397,43 @@ def test_evidence_card_bridge_and_live_index_consume() -> None:
     assert low_confidence_blocks_fact(low) is True
     index, bundle, meta = index_multimodal_artifacts([table, chart, ts, low])
     assert bundle.evidences
-    assert meta["n_evidences"] == 4
-    assert meta["supports_ids"] == []  # no fabricated supports
+    assert meta["index_kind"].startswith("t06_evidence_bundle_helper")
+    assert meta["supports_ids"] == []
     for eid in meta["consumed_evidence_ids"]:
         card = index.get(eid)
         assert card is not None
         assert "page" in card.locator and "source_path" in card.locator
-    assert meta["hook"]["binary_in_prompt"] is False
-    assert meta["hook"]["human_review_required"] is True
+
+
+def test_evidence_card_t04_memory_vector_store_e2e() -> None:
+    """MultimodalArtifact → EvidenceCard → T04 MemoryVectorStore → retrieve."""
+    table = TableAdapter().process(str(WAVE_B / "tables" / "packet_001.json"))
+    chart = ChartAdapter().process(str(WAVE_B / "charts" / "packet_001.json"))
+    low = table.model_copy(
+        update={
+            "artifact_id": table.artifact_id + "-low",
+            "confidence": 0.4,
+            "validation_status": "needs_review",
+        }
+    )
+    result = index_and_retrieve_via_t04_store([table, chart, low])
+    assert result["store"] == "app.rag.zvec_store.MemoryVectorStore"
+    assert result["n_indexed"] == 3
+    assert result["binary_in_prompt"] is False
+    for item in result["retrieved"]:
+        loc = item["locator"]
+        assert "bbox" in loc or loc.get("page") is not None
+        assert "units" in loc
+        assert "confidence" in loc
+        assert "validation_status" in loc
+        assert "file_sha256" in loc or "sha256=" in str(loc.get("source_path", ""))
+    # Low confidence must not support facts
+    low_ids = {f"t06-{low.artifact_id}"}
+    for sid in result["supports_ids"]:
+        assert sid not in low_ids
+    for item in result["retrieved"]:
+        if item["evidence_id"] in low_ids:
+            assert item["supports_fact"] is False
 
 
 def test_minimal_e2e_queue_evidence_and_hook() -> None:

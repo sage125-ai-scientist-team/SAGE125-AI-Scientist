@@ -1,11 +1,15 @@
 """
-T06 Wave B：表格提取——真实 PDF（PyMuPDF find_tables）+ 显式 offline_fixture packet。
+表格提取：真实 PDF（PyMuPDF）+ offline_fixture packet。
+
+- 单位无法可靠提取 → needs_review
+- confidence 由可解释检查计算，不固定高分
+- 文件 SHA-256 写入 provenance.source_path 的 #sha256= 后缀，并进入 EvidenceCard locator
 """
 
 from __future__ import annotations
 
-import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -21,18 +25,24 @@ from app.multimodal.pdf_io import extract_pdf_tables, load_source_bytes, open_pd
 
 _CONFIDENCE_PASS = 0.80
 _CONFIDENCE_REVIEW = 0.50
+_UNIT_IN_HEADER = re.compile(
+    r"^(?P<name>.+?)\s*[\(\[](?P<unit>[^\)\]]+)[\)\]]\s*$"
+)
 
 
 def _require_bbox(raw: Any) -> BoundingBox:
     if not isinstance(raw, dict):
         raise ExtractionError("table requires bbox object")
-    try:
-        box = BoundingBox.model_validate(raw)
-    except Exception as exc:  # noqa: BLE001
-        raise ExtractionError(f"illegal bbox: {exc}") from exc
+    box = BoundingBox.model_validate(raw)
     if box.x1 <= box.x0 or box.y1 <= box.y0:
         raise ExtractionError("illegal bbox: degenerate rectangle")
     return box
+
+
+def _norm_cell(value: str) -> str:
+    text = str(value).replace("\r", " ").replace("\n", " ")
+    text = " ".join(text.split())
+    return text.replace(" _", " ").replace("_ ", " ").strip(" _")
 
 
 def _expand_merged_cells(
@@ -62,20 +72,93 @@ def _expand_merged_cells(
     return grid
 
 
-def _status_from_confidence(confidence: float) -> str:
-    if confidence < _CONFIDENCE_REVIEW:
-        return "failed"
-    if confidence < _CONFIDENCE_PASS:
-        return "needs_review"
-    return "passed"
+def _detect_probable_merges(rows: list[list[str]]) -> list[dict[str, Any]]:
+    """Heuristic: identical non-empty adjacent cells in a row → probable merge marker."""
+    found: list[dict[str, Any]] = []
+    for r_i, row in enumerate(rows):
+        c = 0
+        while c < len(row):
+            val = row[c]
+            span = 1
+            while c + span < len(row) and row[c + span] == val and val != "":
+                span += 1
+            if span > 1:
+                found.append(
+                    {
+                        "row": r_i,
+                        "col": c,
+                        "row_span": 1,
+                        "col_span": span,
+                        "value": val,
+                        "detection": "adjacent_identical_heuristic",
+                    }
+                )
+            c += span
+    return found
 
 
-def _norm_cell(value: str) -> str:
-    """Normalize PDF-extracted cell text without inventing new values."""
-    text = str(value).replace("\r", " ").replace("\n", " ")
-    text = " ".join(text.split())
-    text = text.replace(" _", " ").replace("_ ", " ").strip(" _")
-    return text
+def _units_from_headers(headers: list[str]) -> tuple[list[str], list[ColumnUnitBinding]]:
+    clean_headers: list[str] = []
+    bindings: list[ColumnUnitBinding] = []
+    for h in headers:
+        m = _UNIT_IN_HEADER.match(h)
+        if m:
+            name = m.group("name").strip()
+            unit = m.group("unit").strip()
+            clean_headers.append(name)
+            if unit:
+                bindings.append(ColumnUnitBinding(column=name, unit=unit))
+        else:
+            clean_headers.append(h)
+    return clean_headers, bindings
+
+
+def _score_table_confidence(
+    *,
+    headers: list[str],
+    rows: list[list[str]],
+    column_units: list[ColumnUnitBinding],
+    merged_marked: bool,
+) -> tuple[float, str, list[str]]:
+    notes: list[str] = []
+    score = 0.45
+    if headers and all(h.strip() for h in headers):
+        score += 0.15
+    else:
+        notes.append("weak_headers")
+    if rows and all(len(r) == len(headers) for r in rows):
+        score += 0.15
+    else:
+        notes.append("row_width_issue")
+    empty_cells = sum(1 for r in rows for c in r if not str(c).strip())
+    total = max(1, sum(len(r) for r in rows))
+    empty_ratio = empty_cells / total
+    if empty_ratio < 0.1:
+        score += 0.10
+    elif empty_ratio > 0.4:
+        score -= 0.10
+        notes.append("many_empty_cells")
+    if column_units:
+        score += 0.15
+        notes.append("units_present")
+    else:
+        notes.append("units_missing")
+        score -= 0.05
+    if merged_marked:
+        notes.append("merged_cells_detected_or_declared")
+        score -= 0.05
+    score = max(0.0, min(1.0, score))
+    if not column_units:
+        # Force review when units unknown
+        status = "needs_review"
+        score = min(score, 0.79)
+    elif score < _CONFIDENCE_REVIEW:
+        status = "failed"
+    elif score < _CONFIDENCE_PASS:
+        status = "needs_review"
+    else:
+        status = "passed"
+    return score, status, notes
 
 
 def _build_artifact(
@@ -90,19 +173,19 @@ def _build_artifact(
     column_units: list[ColumnUnitBinding],
     legend: list[str],
     confidence: float,
-    file_sha256: str | None,
+    status: str,
+    file_sha256: str,
 ) -> MultimodalArtifact:
     if len(headers) != len(set(headers)):
         raise ExtractionError("duplicate headers are structurally ambiguous")
     for i, row in enumerate(rows):
         if len(row) != len(headers):
             raise ExtractionError(f"row {i} width mismatch")
-    status = _status_from_confidence(confidence)
     return MultimodalArtifact(
         artifact_id=artifact_id,
         modality="table",
         provenance=Provenance(
-            source_path=source_path,
+            source_path=f"{source_path}#sha256={file_sha256}",
             source_type=source_type,  # type: ignore[arg-type]
             page=page,
             bbox=bbox,
@@ -135,24 +218,37 @@ def extract_table_from_pdf(
     if table_index < 0 or table_index >= len(tables):
         raise ExtractionError(f"table_index {table_index} out of range")
     chosen = tables[table_index]
-    headers = [_norm_cell(h) for h in chosen["headers"]]
+    raw_headers = [_norm_cell(h) for h in chosen["headers"]]
     rows = [[_norm_cell(c) for c in row] for row in chosen["rows"]]
-    # Drop fully empty trailing rows from detector noise.
     rows = [r for r in rows if any(c.strip() for c in r)]
-    if not headers or any(not h for h in headers):
+    if not raw_headers or any(not h for h in raw_headers):
         raise ExtractionError("PDF table headers incomplete")
-    bindings: list[ColumnUnitBinding] = []
+
+    headers, inferred_units = _units_from_headers(raw_headers)
+    bindings: list[ColumnUnitBinding] = list(inferred_units)
     for item in column_units or []:
         if "column" not in item or "unit" not in item or not str(item["unit"]).strip():
             raise ExtractionError("column_units need non-empty column/unit")
         bindings.append(
             ColumnUnitBinding(column=str(item["column"]), unit=str(item["unit"]).strip())
         )
-    # Heuristic confidence: structure ok but OCR-less PDF table → slightly below 1
-    confidence = 0.86 if rows else 0.4
-    digest = meta.sha256[:12]
+    # Deduplicate by column name (caller overrides inferred)
+    by_col: dict[str, ColumnUnitBinding] = {b.column: b for b in bindings}
+    bindings = list(by_col.values())
+
+    merges = _detect_probable_merges(rows)
+    confidence, status, notes = _score_table_confidence(
+        headers=headers,
+        rows=rows,
+        column_units=bindings,
+        merged_marked=bool(merges),
+    )
+    legend = list(headers) + [f"note:{n}" for n in notes]
+    if merges:
+        legend.append(f"probable_merges:{len(merges)}")
+
     return _build_artifact(
-        artifact_id=f"pdf-table-{digest}-{page}-{table_index}",
+        artifact_id=f"pdf-table-{meta.sha256[:12]}-{page}-{table_index}",
         source_path=source_path,
         source_type="pdf",
         page=page,
@@ -160,8 +256,9 @@ def extract_table_from_pdf(
         headers=headers,
         rows=rows,
         column_units=bindings,
-        legend=list(headers),
+        legend=legend,
         confidence=confidence,
+        status=status,
         file_sha256=meta.sha256,
     )
 
@@ -174,17 +271,14 @@ def extract_table_from_packet(source_path: str) -> MultimodalArtifact:
     kind = str(packet.get("input_kind") or "").strip()
     if kind not in {"offline_fixture", "preprocessed_input"}:
         raise ExtractionError(
-            "JSON table packet must set input_kind=offline_fixture|preprocessed_input; "
-            "unlabeled packets cannot claim raw PDF/vision extraction"
+            "JSON table packet must set input_kind=offline_fixture|preprocessed_input"
         )
     required = ("page", "bbox", "headers", "rows", "confidence")
     missing = [k for k in required if k not in packet]
     if missing:
         raise ExtractionError(f"table packet missing fields: {missing}")
-    headers = packet["headers"]
-    rows = packet["rows"]
-    if not isinstance(headers, list) or not headers:
-        raise ExtractionError("headers must be non-empty list")
+    headers = [_norm_cell(h) for h in packet["headers"]]
+    rows = [[_norm_cell(c) for c in row] for row in packet["rows"]]
     merged = packet.get("merged_cells") or []
     expanded = _expand_merged_cells(headers, rows, merged)
     column_units = []
@@ -193,6 +287,15 @@ def extract_table_from_packet(source_path: str) -> MultimodalArtifact:
             ColumnUnitBinding(column=str(item["column"]), unit=str(item["unit"]).strip())
         )
     confidence = float(packet["confidence"])
+    if not column_units:
+        status = "needs_review"
+        confidence = min(confidence, 0.79)
+    elif confidence < _CONFIDENCE_REVIEW:
+        status = "failed"
+    elif confidence < _CONFIDENCE_PASS:
+        status = "needs_review"
+    else:
+        status = "passed"
     meta = load_source_bytes(source_path)
     source_type = packet.get("source_type", "synthetic_fixture")
     return _build_artifact(
@@ -204,8 +307,10 @@ def extract_table_from_packet(source_path: str) -> MultimodalArtifact:
         headers=list(headers),
         rows=expanded,
         column_units=column_units,
-        legend=list(packet.get("legend") or []),
+        legend=list(packet.get("legend") or [])
+        + ([f"merged_cells:{len(merged)}"] if merged else []),
         confidence=confidence,
+        status=status,
         file_sha256=meta.sha256,
     )
 
@@ -216,4 +321,8 @@ def extract_table_artifact(source_path: str, **kwargs: Any) -> MultimodalArtifac
         return extract_table_from_pdf(source_path, **kwargs)
     if suffix == ".json":
         return extract_table_from_packet(source_path)
+    if suffix in {".png", ".jpg", ".jpeg", ".webp"}:
+        raise ExtractionError(
+            "scanned/raster table image requires vision path; fail-closed in TableAdapter"
+        )
     raise ExtractionError(f"unsupported table source type: {suffix!r}")

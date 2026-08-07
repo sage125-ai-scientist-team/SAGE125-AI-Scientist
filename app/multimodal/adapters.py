@@ -1,13 +1,18 @@
-"""适配器实现（PR #36 fix）：真实 PDF + offline_fixture packet + Qwen 路径。"""
+"""适配器：表格/图表/时序 + 真实视觉路径（Qwen VL schema → MultimodalArtifact）。"""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from app.contracts.multimodal import MultimodalArtifact, Modality
-from app.multimodal.chart_extract import extract_chart_artifact
+from app.multimodal.chart_extract import (
+    extract_chart_artifact,
+    extract_chart_from_packet,
+    extract_chart_from_preprocessed_pdf_directives,
+)
 from app.multimodal.errors import ExtractionError
-from app.multimodal.qwen_vision import run_qwen_vision_on_pdf_page
+from app.multimodal.qwen_vision import run_qwen_vision
 from app.multimodal.table_extract import extract_table_artifact
 from app.multimodal.timeseries_extract import extract_timeseries_artifact
 
@@ -21,33 +26,62 @@ class MultimodalAdapter(ABC):
 
 
 class QwenVisionAdapter(MultimodalAdapter):
+    """
+    真实视觉路径入口。
+
+    - 成功解析的 VL JSON → MultimodalArtifact（不得丢弃再回退文本指令 parser）
+    - 无授权/失败时：栅格图 fail-closed；PDF 仅允许降级的 preprocessed 文本指令路径
+    """
+
     modality: Modality = "chart"
     last_audit = None
     last_call_meta = None
 
-    def process(self, source_path: str, *, allow_actual: bool = False, page: int = 1) -> MultimodalArtifact:
-        # Phase gates decide allow_actual; default False (Case A / tests).
-        meta, audit = run_qwen_vision_on_pdf_page(
-            source_path, page=page, allow_actual=allow_actual
+    def process(
+        self,
+        source_path: str,
+        *,
+        allow_actual: bool = False,
+        page: int = 1,
+        mock_response_json: str | None = None,
+        simulate_error: str | None = None,
+    ) -> MultimodalArtifact:
+        meta, audit = run_qwen_vision(
+            source_path,
+            page=page,
+            allow_actual=allow_actual,
+            mock_response_json=mock_response_json,
+            simulate_error=simulate_error,
         )
         self.last_audit = audit
         self.last_call_meta = meta
-        if audit.actual_external_call and audit.status == "success":
-            # Successful VL response still must be parsed into artifact by a
-            # follow-up structured parser; until then mark needs_review.
-            # Offline deterministic PDF chart parse remains available.
-            pass
-        try:
-            artifact = extract_chart_artifact(source_path, page=page)
-        except ExtractionError as exc:
+
+        if meta.get("artifact") is not None:
+            # Never discard a successfully schema-validated vision artifact.
+            return MultimodalArtifact.model_validate(meta["artifact"])
+
+        if audit.status == "success":
+            raise ExtractionError("vision reported success but artifact missing")
+
+        suffix = Path(source_path).suffix.lower()
+        if suffix in {".png", ".jpg", ".jpeg", ".webp"}:
             raise ExtractionError(
-                f"vision path did not yield usable chart artifact: {exc}"
-            ) from exc
-        if not audit.actual_external_call and artifact.validation_status == "passed":
-            # Offline PDF annotation parse can stay passed; JSON fixture stays as-is.
-            if source_path.lower().endswith(".json"):
-                artifact = artifact.model_copy(update={"validation_status": "needs_review"})
-        return artifact
+                "raster chart requires successful vision parse; "
+                "no silent fallback to text-directive parser"
+            )
+        if suffix == ".pdf":
+            # Explicit demotion: embedded LEGEND/AXIS/SERIES only.
+            return extract_chart_from_preprocessed_pdf_directives(
+                source_path, page=page
+            )
+        if suffix == ".json":
+            art = extract_chart_from_packet(source_path)
+            if art.validation_status == "passed":
+                return art.model_copy(update={"validation_status": "needs_review"})
+            return art
+        raise ExtractionError(
+            f"vision path did not yield artifact and no offline fallback for {suffix!r}"
+        )
 
 
 class TableAdapter(MultimodalAdapter):

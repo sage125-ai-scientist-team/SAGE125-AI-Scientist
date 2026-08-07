@@ -1,8 +1,4 @@
-"""
-T06 Wave B：Qwen/视觉调用脱敏审计与离线策略。
-
-无付费调用授权时不得发起真实外部请求；tokens/cost 仅在真实可得时记录。
-"""
+"""审计记录：脱敏、tokens/cost 仅记录服务返回值，不得编造。"""
 
 from __future__ import annotations
 
@@ -34,10 +30,18 @@ class VisionCallAudit(BaseModel):
         "needs_human_review",
     ] = "denied_no_paid_auth"
     input_summary: str = Field(default="", max_length=200)
+    started_utc: Optional[str] = None
+    finished_utc: Optional[str] = None
     latency_ms: Optional[float] = None
     tokens_in: Optional[int] = None
     tokens_out: Optional[int] = None
     cost_usd: Optional[float] = None
+    service_reported_cost: Optional[float] = None
+    response_id: Optional[str] = None
+    response_content_sha256: Optional[str] = None
+    attempt_count: int = Field(default=1, ge=1)
+    timeout: bool = False
+    retry_count: int = Field(default=0, ge=0)
     error_type: Optional[str] = None
     key_masked: bool = Field(default=True)
     actual_external_call: bool = Field(default=False)
@@ -60,6 +64,8 @@ class VisionCallAudit(BaseModel):
             raise ValueError("inconsistent audit: external call with denied status")
         if self.cost_usd is not None and not self.actual_external_call:
             raise ValueError("cost_usd only allowed for actual external calls")
+        if self.service_reported_cost is not None and not self.actual_external_call:
+            raise ValueError("service_reported_cost only for actual external calls")
         if (self.tokens_in is not None or self.tokens_out is not None) and not (
             self.actual_external_call
         ):
@@ -67,7 +73,6 @@ class VisionCallAudit(BaseModel):
         return self
 
 
-# 向后兼容 PR-A 测试名。
 class VisionCallAuditStub(VisionCallAudit):
     """PR-A 兼容别名。"""
 
@@ -82,7 +87,7 @@ class VisionCallAuditStub(VisionCallAudit):
 
 
 def paid_vision_authorized() -> bool:
-    """本轮无付费授权：仅当显式环境变量允许时才视为授权（默认 False）。"""
+    """显式环境变量允许时才视为授权（默认 False）。"""
     return os.environ.get("T06_PAID_VISION_AUTHORIZED", "").strip().lower() in {
         "1",
         "true",
@@ -102,8 +107,6 @@ def begin_vision_audit(input_summary: str) -> VisionCallAudit:
 
 def run_vision_or_deny(source_path: str) -> tuple[dict[str, Any], VisionCallAudit]:
     """
-    尝试视觉调用的唯一入口。
-
     无付费授权时返回 denied 审计，不发起网络请求，不猜测 tokens/cost。
     """
     started = time.perf_counter()
@@ -114,7 +117,6 @@ def run_vision_or_deny(source_path: str) -> tuple[dict[str, Any], VisionCallAudi
         audit.latency_ms = (time.perf_counter() - started) * 1000.0
         audit.actual_external_call = False
         return {}, audit.ensure_safe()
-    # 即使授权标志打开，本 PR 仍拒绝真实调用，要求额外队长授权通道。
     audit.status = "failed"
     audit.error_type = "paid_call_implementation_blocked_pending_extra_auth"
     audit.latency_ms = (time.perf_counter() - started) * 1000.0
