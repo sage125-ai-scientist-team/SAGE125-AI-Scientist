@@ -211,6 +211,8 @@ def main() -> None:
     }
     components.render_hero(hero_status, {"questions": len(questions), "agents": 10})
     components.render_mode_badges(mode, api_connected, last_run_mode, qwen_calls)
+    if health.get("storage", {}).get("mode") == "ephemeral":
+        st.warning("当前为临时预览环境；重新部署、休眠或重启后，任务历史与上传资料可能重置。")
 
     # ---- Sidebar ----
     with st.sidebar:
@@ -264,10 +266,16 @@ def main() -> None:
         state.select_question(qid, (selected_q or {}).get("question", ""))
 
     # ---- 3) Data & RAG Workspace ----
+    ephemeral_storage = health.get("storage", {}).get("mode") == "ephemeral"
+    workspace_subtitle = (
+        "当前预览使用临时存储；原文与索引在 API 实例存续期间可跨问题复用。"
+        if ephemeral_storage
+        else "原文与向量索引保存在项目数据目录；真实嵌入按当前配置调用百炼。"
+    )
     components.section_title(
         "STEP 02",
         "Data & RAG Workspace",
-        "原文与向量索引在项目本地持久化；真实嵌入按当前配置调用百炼。",
+        workspace_subtitle,
     )
     library_status = api_client.get_library_status()
     components.render_upload_panel(
@@ -275,6 +283,7 @@ def main() -> None:
         library_status=library_status,
         delete_fn=api_client.delete_library_document,
         validate_fn=api_client.validate_upload_batch,
+        ephemeral_storage=ephemeral_storage,
     )
 
     # ---- 4) AI Scientist Run Console ----

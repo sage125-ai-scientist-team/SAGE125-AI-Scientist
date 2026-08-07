@@ -26,8 +26,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXPORTS_DIR = PROJECT_ROOT / "exports"
 QUESTIONS_PATH = PROJECT_ROOT / "data" / "processed" / "questions_125.json"
 
-# 请求超时（秒）：短请求与长运行分开配置。
-_SHORT_TIMEOUT = 3
+# 请求超时（秒）：普通短请求、Render 冷启动探测、上传和长运行分开配置。
+# Render Free API 唤醒可能明显超过本地短请求时延，因此不能用 3 秒健康探测
+# 作为上传前置门禁。
 
 
 def _positive_env_int(name: str, default: int) -> int:
@@ -36,6 +37,21 @@ def _positive_env_int(name: str, default: int) -> int:
         return max(int(os.getenv(name, str(default)) or default), 1)
     except (TypeError, ValueError):
         return default
+
+
+def _short_timeout_seconds() -> int:
+    """普通 API 查询的超时；本地默认保持紧凑，部署时可显式覆盖。"""
+    return _positive_env_int("FRONTEND_API_SHORT_TIMEOUT_SECONDS", 10)
+
+
+def _wake_timeout_seconds() -> int:
+    """允许托管 API 从休眠中唤醒的健康探测超时。"""
+    return max(_positive_env_int("FRONTEND_API_WAKE_TIMEOUT_SECONDS", 75), 10)
+
+
+def _ingest_timeout_seconds() -> int:
+    """PDF 解析、远程嵌入和索引构建的 HTTP 读超时。"""
+    return max(_positive_env_int("FRONTEND_INGEST_TIMEOUT_SECONDS", 900), 60)
 
 
 # 上传批次的前端早期保护。LibraryManager 返回更严格的配额时，
@@ -87,9 +103,9 @@ def api_base() -> str:
 
 
 def api_available() -> bool:
-    """探测本地 API 是否可达（短超时）。"""
+    """探测 API 是否可达，并为托管环境冷启动预留时间。"""
     try:
-        r = requests.get(f"{api_base()}/health", timeout=_SHORT_TIMEOUT)
+        r = requests.get(f"{api_base()}/health", timeout=_wake_timeout_seconds())
         return r.status_code == 200
     except requests.RequestException:
         return False
@@ -98,9 +114,9 @@ def api_available() -> bool:
 # ---- 各接口：HTTP 优先，失败回退进程内 ----
 
 def get_health() -> dict:
-    """获取健康状态（HTTP 优先，回退进程内）。"""
+    """获取健康状态（HTTP 优先，首次加载允许托管 API 唤醒）。"""
     try:
-        r = requests.get(f"{api_base()}/health", timeout=_SHORT_TIMEOUT)
+        r = requests.get(f"{api_base()}/health", timeout=_wake_timeout_seconds())
         if r.status_code == 200:
             return r.json()
     except requests.RequestException:
@@ -110,6 +126,7 @@ def get_health() -> dict:
             "status": "unavailable",
             "service": "sage125-api",
             "bailian": {"configured": False, "status": "unavailable"},
+            "storage": {"mode": "unavailable", "persistent": False},
             "qwen_config_loaded": False,
             "deep_research_config_loaded": False,
             "openalex_config_loaded": False,
@@ -126,7 +143,7 @@ def get_health() -> dict:
 def get_diagnostics() -> dict:
     """获取系统诊断（HTTP 优先，回退进程内）。"""
     try:
-        r = requests.get(f"{api_base()}/diagnostics", timeout=_SHORT_TIMEOUT)
+        r = requests.get(f"{api_base()}/diagnostics", timeout=_short_timeout_seconds())
         if r.status_code == 200:
             return r.json()
     except requests.RequestException:
@@ -150,7 +167,11 @@ def get_diagnostics() -> dict:
 def get_runs(limit: int = 20) -> list[dict]:
     """获取最近运行列表（HTTP 优先，回退进程内 run_browser）。"""
     try:
-        r = requests.get(f"{api_base()}/runs", params={"limit": limit}, timeout=_SHORT_TIMEOUT)
+        r = requests.get(
+            f"{api_base()}/runs",
+            params={"limit": limit},
+            timeout=_short_timeout_seconds(),
+        )
         if r.status_code == 200:
             return r.json().get("runs", [])
     except requests.RequestException:
@@ -165,7 +186,7 @@ def get_runs(limit: int = 20) -> list[dict]:
 def get_questions() -> dict:
     """获取 125 问题清单（HTTP 优先，回退读取本地文件）。"""
     try:
-        r = requests.get(f"{api_base()}/questions", timeout=_SHORT_TIMEOUT)
+        r = requests.get(f"{api_base()}/questions", timeout=_short_timeout_seconds())
         if r.status_code == 200:
             return r.json()
     except requests.RequestException:
@@ -397,7 +418,9 @@ def _normalize_library_status(payload: Any) -> dict:
 def get_library_status() -> dict:
     """读取本地文献库配额与文档清单（HTTP 优先，进程内回退）。"""
     try:
-        response = requests.get(f"{api_base()}/library/status", timeout=_SHORT_TIMEOUT)
+        response = requests.get(
+            f"{api_base()}/library/status", timeout=_short_timeout_seconds()
+        )
         if response.status_code == 200:
             return _normalize_library_status(response.json())
     except (requests.RequestException, ValueError):
@@ -504,35 +527,57 @@ def ingest_files(files: list[tuple[str, bytes]]) -> dict:
             "chunks_added": 0,
         }
 
-    # HTTP 优先。服务端已返回明确错误时不再二次回退，避免重复落盘。
-    if api_available():
+    # 直接提交，不再用短时 GET /health 作为上传门禁。Render Free API 可能正在
+    # 冷启动，而 POST 本身有足够的连接/处理等待时间。非幂等上传不自动重试，
+    # 避免服务端已完成但响应丢失时重复入库。
+    remote_failure: dict | None = None
+    try:
+        multipart = [("files", (name, content)) for name, content in files]
+        r = requests.post(
+            f"{api_base()}/ingest",
+            files=multipart,
+            timeout=(_short_timeout_seconds(), _ingest_timeout_seconds()),
+        )
+        if r.status_code == 200:
+            return r.json()
         try:
-            multipart = [("files", (name, content)) for name, content in files]
-            r = requests.post(f"{api_base()}/ingest", files=multipart, timeout=_run_timeout_seconds("mock"))
-            if r.status_code == 200:
-                return r.json()
-            try:
-                body = r.json()
-            except ValueError:
-                body = {"message": r.text or f"HTTP {r.status_code}"}
-            return {
-                **body,
-                "status": "failed",
-                "error_type": body.get("error_type", "http_error"),
-                "files": body.get("files", []),
-                "chunks_added": body.get("chunks_added", 0),
-            }
-        except requests.RequestException:
-            pass
-
-    if _api_only():
+            body = r.json()
+        except ValueError:
+            body = {"message": r.text or f"HTTP {r.status_code}"}
         return {
+            **body,
+            "status": "failed",
+            "error_type": body.get("error_type", "http_error"),
+            "files": body.get("files", []),
+            "chunks_added": body.get("chunks_added", 0),
+        }
+    except requests.Timeout:
+        remote_failure = {
+            "status": "failed",
+            "files": [],
+            "chunks_added": 0,
+            "error_type": "ingest_result_unconfirmed",
+            "message": (
+                "API 唤醒或索引处理超时，本次上传结果尚未确认。"
+                "请先刷新文献清单；确认未入库后再重试。"
+            ),
+        }
+    except requests.RequestException:
+        remote_failure = {
             "status": "failed",
             "files": [],
             "chunks_added": 0,
             "error_type": "api_unavailable",
-            "message": "sage125-api 暂不可用，未在 UI 服务内执行索引。",
-            "errors": ["sage125-api 暂不可用。"],
+            "message": "sage125-api 正在唤醒或暂不可达，本次上传未写入。请稍后重试。",
+        }
+
+    if _api_only():
+        return remote_failure or {
+            "status": "failed",
+            "files": [],
+            "chunks_added": 0,
+            "error_type": "api_unavailable",
+            "message": "sage125-api 正在唤醒或暂不可达，本次上传未写入。请稍后重试。",
         }
 
     # 回退：与 HTTP /ingest 使用同一 LibraryManager，不允许绕过治理层。
@@ -573,7 +618,8 @@ def delete_library_document(document_id: str) -> dict:
 
     try:
         response = requests.delete(
-            f"{api_base()}/library/documents/{quote(document_id, safe='')}", timeout=_SHORT_TIMEOUT
+            f"{api_base()}/library/documents/{quote(document_id, safe='')}",
+            timeout=_short_timeout_seconds(),
         )
         if response.status_code in (200, 202, 204):
             if response.status_code == 204 or not response.content:
@@ -673,7 +719,7 @@ def run_preflight(
                     "use_local_rag": use_local_rag,
                     "use_deep_research": use_deep_research,
                 },
-                timeout=_SHORT_TIMEOUT,
+                timeout=_short_timeout_seconds(),
             )
             if response.status_code == 200:
                 return response.json()
@@ -847,7 +893,10 @@ def get_llm_calls(run_id: str) -> dict:
     """获取某次运行的脱敏 LLM 调用审计（HTTP 优先，回退读取本地文件）。"""
     if api_available():
         try:
-            r = requests.get(f"{api_base()}/runs/{run_id}/llm-calls", timeout=_SHORT_TIMEOUT)
+            r = requests.get(
+                f"{api_base()}/runs/{run_id}/llm-calls",
+                timeout=_short_timeout_seconds(),
+            )
             if r.status_code == 200:
                 return r.json()
         except requests.RequestException:
@@ -863,7 +912,9 @@ def get_run(run_id: str) -> dict:
     """读取某次运行产物（HTTP 优先，回退读取 exports）。"""
     if api_available():
         try:
-            r = requests.get(f"{api_base()}/runs/{run_id}", timeout=_SHORT_TIMEOUT)
+            r = requests.get(
+                f"{api_base()}/runs/{run_id}", timeout=_short_timeout_seconds()
+            )
             if r.status_code == 200:
                 return r.json()
         except requests.RequestException:
