@@ -19,6 +19,8 @@ from tempfile import TemporaryDirectory
 from time import perf_counter
 from typing import Any, Protocol
 
+from pydantic import ValidationError
+
 from app.agents.prompts import REPORT_WRITER_PROMPT
 from app.batch.actual_call_audit import (
     ActualCallAudit,
@@ -113,6 +115,32 @@ class FormalEvidencePayload:
     claims: tuple[ClaimText, ...]
     hypotheses: tuple[Mapping[str, Any], ...]
     references: tuple[Mapping[str, Any], ...]
+
+
+class FormalEvidenceValidationError(ValueError):
+    """Secret-free structural context for a rejected provider evidence payload."""
+
+    def __init__(
+        self,
+        validation_code: str,
+        *,
+        card_index: int | None = None,
+        hypothesis_index: int | None = None,
+        evidence_id: str | None = None,
+        field: str | None = None,
+    ) -> None:
+        super().__init__(validation_code)
+        details: dict[str, str | int] = {"validation_code": validation_code}
+        if card_index is not None:
+            details["card_index"] = card_index
+        if hypothesis_index is not None:
+            details["hypothesis_index"] = hypothesis_index
+        safe_evidence_id = _safe_diagnostic_id(evidence_id)
+        if safe_evidence_id is not None:
+            details["evidence_id"] = safe_evidence_id
+        if field is not None:
+            details["field"] = field
+        self.details = details
 
 
 class ProviderAuditHook:
@@ -302,6 +330,7 @@ def build_formal_provider_executor(
                 stage=exc.stage,
                 exception_type=exc.exception_type,
                 call_audits=(audit,),
+                diagnostic_details=exc.diagnostic_details,
             ) from None
 
     return execute
@@ -419,11 +448,12 @@ def _build_messages(context: FormalExecutionContext) -> list[dict[str, str]]:
                 "title",
                 "quoted_text",
                 "locator",
-                "content_hash",
                 "domain",
                 "verification_status",
             ],
-            "content_hash_format": "sha256:<sha256 of exact quoted_text UTF-8>",
+            "content_hash_ownership": (
+                "runtime computes sha256 from exact quoted_text; provider should omit"
+            ),
             "generated_hypothesis_fields": [
                 "hypothesis",
                 "supporting_evidence_ids",
@@ -532,6 +562,14 @@ def _build_formal_evidence(
 ) -> FormalEvidencePayload:
     try:
         return _validate_formal_evidence(context, payload)
+    except FormalEvidenceValidationError as exc:
+        raise BatchRunnerError(
+            "FORMAL_PROVIDER_EVIDENCE_INVALID",
+            "provider response did not contain a valid traceable evidence contract",
+            stage="response_validation",
+            exception_type="EvidenceContractError",
+            diagnostic_details=exc.details,
+        ) from None
     except (KeyError, TypeError, ValueError):
         raise BatchRunnerError(
             "FORMAL_PROVIDER_EVIDENCE_INVALID",
@@ -547,36 +585,71 @@ def _validate_formal_evidence(
 ) -> FormalEvidencePayload:
     raw_cards = payload.get("evidence_cards")
     if not isinstance(raw_cards, list) or not raw_cards:
-        raise ValueError("evidence cards missing")
+        raise FormalEvidenceValidationError("EVIDENCE_CARDS_MISSING")
 
     contracts: list[EvidenceCardContract] = []
     wires: list[Mapping[str, Any]] = []
     wire_by_id: dict[str, Mapping[str, Any]] = {}
-    for raw_card in raw_cards:
+    for card_index, raw_card in enumerate(raw_cards):
         if not isinstance(raw_card, Mapping):
-            raise TypeError("evidence card must be a mapping")
+            raise FormalEvidenceValidationError(
+                "EVIDENCE_CARD_NOT_OBJECT",
+                card_index=card_index,
+            )
         card_payload = dict(raw_card)
         evidence_id = _text(card_payload.get("evidence_id") or card_payload.get("id"))
         quoted_text = _text(card_payload.get("quoted_text"))
-        if not evidence_id or not quoted_text:
-            raise ValueError("evidence identity and quote are required")
+        if not evidence_id:
+            raise FormalEvidenceValidationError(
+                "EVIDENCE_CARD_FIELD_MISSING",
+                card_index=card_index,
+                field="evidence_id",
+            )
+        if not quoted_text:
+            raise FormalEvidenceValidationError(
+                "EVIDENCE_CARD_FIELD_MISSING",
+                card_index=card_index,
+                evidence_id=evidence_id,
+                field="quoted_text",
+            )
         expected_hash = "sha256:" + hashlib.sha256(
             quoted_text.encode("utf-8")
         ).hexdigest()
-        supplied_hash = _text(card_payload.get("content_hash"))
-        if supplied_hash and supplied_hash != expected_hash:
-            raise ValueError("evidence content hash mismatch")
         card_payload["evidence_id"] = evidence_id
+        card_payload["quoted_text"] = quoted_text
+        # Hashing is a deterministic runtime integrity operation.  A language
+        # model is neither trusted nor required to calculate this digest.
         card_payload["content_hash"] = expected_hash
         card_payload.setdefault("domain", context.question.get("domain"))
         card_payload.setdefault("verification_status", "pending")
-        contract = EvidenceCardContract.model_validate(card_payload)
+        try:
+            contract = EvidenceCardContract.model_validate(card_payload)
+        except ValidationError as exc:
+            first = exc.errors(include_url=False, include_context=False)[0]
+            location = first.get("loc", ())
+            field = str(location[0]) if location else "evidence_card"
+            validation_code = (
+                "EVIDENCE_CARD_FIELD_MISSING"
+                if first.get("type") == "missing"
+                else "EVIDENCE_CARD_FIELD_INVALID"
+            )
+            raise FormalEvidenceValidationError(
+                validation_code,
+                card_index=card_index,
+                evidence_id=evidence_id,
+                field=field,
+            ) from None
         if (
             contract.source_type == "question_booklet"
             or "booklet" in contract.source_id.lower()
             or str(contract.locator.get("source", "")).lower() == "booklet"
         ):
-            raise ValueError("question source cannot become research evidence")
+            raise FormalEvidenceValidationError(
+                "BOOKLET_EVIDENCE_FORBIDDEN",
+                card_index=card_index,
+                evidence_id=evidence_id,
+                field="source_type",
+            )
         relevance = card_payload.get("relevance_score", 1.0)
         if isinstance(relevance, bool) or not isinstance(relevance, (int, float)):
             raise TypeError("relevance score must be numeric")
@@ -586,31 +659,77 @@ def _validate_formal_evidence(
         wire["id"] = evidence_id
         wire["relevance_score"] = float(relevance)
         if evidence_id in wire_by_id:
-            raise ValueError("duplicate evidence id")
+            raise FormalEvidenceValidationError(
+                "EVIDENCE_ID_DUPLICATE",
+                card_index=card_index,
+                evidence_id=evidence_id,
+                field="evidence_id",
+            )
         contracts.append(contract)
         wires.append(wire)
         wire_by_id[evidence_id] = wire
 
     raw_hypotheses = payload.get("generated_hypotheses")
     if not isinstance(raw_hypotheses, list) or not raw_hypotheses:
-        raise ValueError("generated hypotheses missing")
+        raise FormalEvidenceValidationError("HYPOTHESES_MISSING")
     claims: list[ClaimText] = []
     links: list[ClaimEvidenceLink] = []
     hypotheses: list[Mapping[str, Any]] = []
     for index, raw_hypothesis in enumerate(raw_hypotheses, start=1):
         if not isinstance(raw_hypothesis, Mapping):
-            raise TypeError("hypothesis must be a mapping")
+            raise FormalEvidenceValidationError(
+                "HYPOTHESIS_NOT_OBJECT",
+                hypothesis_index=index - 1,
+            )
         hypothesis = dict(raw_hypothesis)
         text = _text(hypothesis.get("hypothesis"))
-        supporting = _evidence_ids(hypothesis.get("supporting_evidence_ids"))
-        contradicted = _evidence_ids(
-            hypothesis.get("contradicted_by_evidence_ids"),
-            allow_empty=True,
+        if not text:
+            raise FormalEvidenceValidationError(
+                "HYPOTHESIS_FIELD_MISSING",
+                hypothesis_index=index - 1,
+                field="hypothesis",
+            )
+        try:
+            supporting = _evidence_ids(hypothesis.get("supporting_evidence_ids"))
+        except (TypeError, ValueError):
+            raise FormalEvidenceValidationError(
+                "HYPOTHESIS_SUPPORT_BINDING_INVALID",
+                hypothesis_index=index - 1,
+                field="supporting_evidence_ids",
+            ) from None
+        try:
+            contradicted = _evidence_ids(
+                hypothesis.get("contradicted_by_evidence_ids"),
+                allow_empty=True,
+            )
+        except (TypeError, ValueError):
+            raise FormalEvidenceValidationError(
+                "HYPOTHESIS_CONTRADICTION_BINDING_INVALID",
+                hypothesis_index=index - 1,
+                field="contradicted_by_evidence_ids",
+            ) from None
+        unknown_support = next(
+            (item for item in supporting if item not in wire_by_id),
+            None,
         )
-        if not text or not supporting:
-            raise ValueError("hypothesis support binding missing")
-        if any(item not in wire_by_id for item in (*supporting, *contradicted)):
-            raise ValueError("hypothesis references unknown evidence")
+        if unknown_support is not None:
+            raise FormalEvidenceValidationError(
+                "SUPPORTING_EVIDENCE_ID_UNKNOWN",
+                hypothesis_index=index - 1,
+                evidence_id=unknown_support,
+                field="supporting_evidence_ids",
+            )
+        unknown_contradiction = next(
+            (item for item in contradicted if item not in wire_by_id),
+            None,
+        )
+        if unknown_contradiction is not None:
+            raise FormalEvidenceValidationError(
+                "CONTRADICTING_EVIDENCE_ID_UNKNOWN",
+                hypothesis_index=index - 1,
+                evidence_id=unknown_contradiction,
+                field="contradicted_by_evidence_ids",
+            )
         claim_id = _text(hypothesis.get("claim_id")) or (
             f"{context.question_id}-hypothesis-{index}"
         )
@@ -653,8 +772,21 @@ def _validate_formal_evidence(
     if not isinstance(reference_source, list) or not reference_source:
         reference_source = payload.get("references")
     reference_ids = _reference_ids(reference_source)
-    if not reference_ids or any(item not in wire_by_id for item in reference_ids):
-        raise ValueError("traceable references missing")
+    if not reference_ids:
+        raise FormalEvidenceValidationError(
+            "REFERENCE_BINDING_MISSING",
+            field="reference_ids",
+        )
+    unknown_reference = next(
+        (item for item in reference_ids if item not in wire_by_id),
+        None,
+    )
+    if unknown_reference is not None:
+        raise FormalEvidenceValidationError(
+            "REFERENCE_EVIDENCE_ID_UNKNOWN",
+            evidence_id=unknown_reference,
+            field="reference_ids",
+        )
     references = tuple(dict(wire_by_id[item]) for item in reference_ids)
     bundle = EvidenceBundle(
         bundle_id=f"{context.run_id}:evidence",
@@ -704,6 +836,15 @@ def _reference_ids(value: Any) -> tuple[str, ...]:
 
 def _text(value: Any) -> str:
     return value.strip() if isinstance(value, str) else ""
+
+
+def _safe_diagnostic_id(value: str | None) -> str | None:
+    if (
+        value is None
+        or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}", value) is None
+    ):
+        return None
+    return value
 
 
 def _json_text(value: Any) -> str:

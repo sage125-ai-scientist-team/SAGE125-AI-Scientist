@@ -461,6 +461,12 @@ def test_failed_provider_response_preserves_call_count_and_tokens(
             stage="response_validation",
             exception_type="EvidenceContractError",
             call_audits=(audit,),
+            diagnostic_details={
+                "validation_code": "EVIDENCE_CARD_FIELD_MISSING",
+                "card_index": 0,
+                "evidence_id": "EV-Q001-001",
+                "field": "source_id",
+            },
         )
 
     receipt = run_formal_five_runs(
@@ -491,6 +497,10 @@ def test_failed_provider_response_preserves_call_count_and_tokens(
     )
     assert diagnostic["stage"] == "response_validation"
     assert diagnostic["exception_type"] == "EvidenceContractError"
+    assert diagnostic["validation_code"] == "EVIDENCE_CARD_FIELD_MISSING"
+    assert diagnostic["card_index"] == 0
+    assert diagnostic["evidence_id"] == "EV-Q001-001"
+    assert diagnostic["field"] == "source_id"
 
 
 def test_call_audit_persist_failure_has_safe_specific_code(

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -205,6 +206,103 @@ def test_missing_evidence_fails_closed_after_sealing_call_audit() -> None:
     assert captured.value.stage == "response_validation"
     assert len(captured.value.call_audits) == 1
     assert captured.value.call_audits[0].total_tokens == 124
+
+
+def test_provider_content_hash_is_recomputed_by_runtime() -> None:
+    hook = ProviderAuditHook()
+    client = _FakeClient(hook)
+    original = client.chat_json
+
+    def with_untrusted_hash(messages, model, temperature=0.1):
+        payload = original(messages, model, temperature)
+        payload["evidence_cards"][0]["content_hash"] = "sha256:not-a-real-digest"
+        return payload
+
+    client.chat_json = with_untrusted_hash
+    executor = build_formal_provider_executor(
+        _Settings(),
+        hook=hook,
+        client_factory=lambda _settings: client,
+        pdf_renderer=lambda _markdown, _root: b"%PDF-1.7\n",
+    )
+
+    execution = executor(_context())
+
+    quote = execution.evidence_cards[0]["quoted_text"]
+    expected = "sha256:" + hashlib.sha256(quote.encode()).hexdigest()
+    assert execution.evidence_cards[0]["content_hash"] == expected
+
+
+@pytest.mark.parametrize(
+    ("mutate", "expected"),
+    [
+        (
+            lambda payload: payload["evidence_cards"][0].pop("source_id"),
+            {
+                "validation_code": "EVIDENCE_CARD_FIELD_MISSING",
+                "card_index": 0,
+                "evidence_id": "EV-Q001-001",
+                "field": "source_id",
+            },
+        ),
+        (
+            lambda payload: payload["evidence_cards"][0].update(
+                {"source_type": "question_booklet"}
+            ),
+            {
+                "validation_code": "BOOKLET_EVIDENCE_FORBIDDEN",
+                "card_index": 0,
+                "evidence_id": "EV-Q001-001",
+                "field": "source_type",
+            },
+        ),
+        (
+            lambda payload: payload["generated_hypotheses"][0].update(
+                {"supporting_evidence_ids": ["EV-UNKNOWN"]}
+            ),
+            {
+                "validation_code": "SUPPORTING_EVIDENCE_ID_UNKNOWN",
+                "hypothesis_index": 0,
+                "evidence_id": "EV-UNKNOWN",
+                "field": "supporting_evidence_ids",
+            },
+        ),
+        (
+            lambda payload: payload["generated_hypotheses"][0].pop(
+                "supporting_evidence_ids"
+            ),
+            {
+                "validation_code": "HYPOTHESIS_SUPPORT_BINDING_INVALID",
+                "hypothesis_index": 0,
+                "field": "supporting_evidence_ids",
+            },
+        ),
+    ],
+)
+def test_invalid_evidence_reports_only_structural_diagnostics(mutate, expected) -> None:
+    hook = ProviderAuditHook()
+    client = _FakeClient(hook)
+    original = client.chat_json
+
+    def invalid_payload(messages, model, temperature=0.1):
+        payload = original(messages, model, temperature)
+        mutate(payload)
+        return payload
+
+    client.chat_json = invalid_payload
+    executor = build_formal_provider_executor(
+        _Settings(),
+        hook=hook,
+        client_factory=lambda _settings: client,
+        pdf_renderer=lambda _markdown, _root: b"%PDF-1.7\n",
+    )
+
+    with pytest.raises(BatchRunnerError) as captured:
+        executor(_context())
+
+    assert captured.value.error_code == "FORMAL_PROVIDER_EVIDENCE_INVALID"
+    assert captured.value.diagnostic_details == expected
+    assert len(captured.value.call_audits) == 1
 
 
 def test_unavailable_hook_blocks_before_provider_call() -> None:

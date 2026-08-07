@@ -957,13 +957,15 @@ def _provider_failure_diagnostic(exc: Exception) -> dict[str, Any] | None:
         return None
     if exc.stage is None or exc.exception_type is None:
         return None
-    return {
+    diagnostic: dict[str, Any] = {
         "schema_version": PROVIDER_FAILURE_DIAGNOSTIC_VERSION,
         "error_code": exc.error_code,
         "http_status": exc.http_status,
         "stage": exc.stage,
         "exception_type": exc.exception_type,
     }
+    diagnostic.update(exc.diagnostic_details)
+    return diagnostic
 
 
 def _resume_completed_question(
