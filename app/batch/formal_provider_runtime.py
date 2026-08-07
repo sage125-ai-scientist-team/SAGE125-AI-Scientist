@@ -35,6 +35,12 @@ from app.batch.formal_five_runs import (
     FormalQuestionExecution,
 )
 from app.clients.qwen_chat_client import QwenChatClient, QwenClientError
+from app.contracts.evidence import (
+    ClaimEvidenceLink,
+    EvidenceBundle,
+    EvidenceCardContract,
+)
+from app.evidence import ClaimText
 from app.exporters.pdf_exporter import export_markdown_to_pdf
 
 
@@ -96,6 +102,17 @@ class ProviderFailureClassification:
     http_status: int | None
     stage: str
     exception_type: str
+
+
+@dataclass(frozen=True, slots=True)
+class FormalEvidencePayload:
+    """Validated T01/T03 evidence inputs derived without inventing evidence."""
+
+    cards: tuple[Mapping[str, Any], ...]
+    bundle: EvidenceBundle
+    claims: tuple[ClaimText, ...]
+    hypotheses: tuple[Mapping[str, Any], ...]
+    references: tuple[Mapping[str, Any], ...]
 
 
 class ProviderAuditHook:
@@ -268,14 +285,24 @@ def build_formal_provider_executor(
             raw_request_id=getattr(client, "last_request_id", None),
             usage=getattr(client, "last_usage", None),
         )
-        return _build_execution(
-            context,
-            payload,
-            audit,
-            dynamic_prompt_hash,
-            duration_seconds,
-            render_pdf,
-        )
+        try:
+            return _build_execution(
+                context,
+                payload,
+                audit,
+                dynamic_prompt_hash,
+                duration_seconds,
+                render_pdf,
+            )
+        except BatchRunnerError as exc:
+            raise BatchRunnerError(
+                exc.error_code,
+                str(exc),
+                http_status=exc.http_status,
+                stage=exc.stage,
+                exception_type=exc.exception_type,
+                call_audits=(audit,),
+            ) from None
 
     return execute
 
@@ -384,6 +411,28 @@ def _build_messages(context: FormalExecutionContext) -> list[dict[str, str]]:
             "no_fabricated_results": True,
             "references_must_be_traceable": True,
             "return_json_only": True,
+            "evidence_cards_required": True,
+            "evidence_card_fields": [
+                "evidence_id",
+                "source_id",
+                "source_type",
+                "title",
+                "quoted_text",
+                "locator",
+                "content_hash",
+                "domain",
+                "verification_status",
+            ],
+            "content_hash_format": "sha256:<sha256 of exact quoted_text UTF-8>",
+            "generated_hypothesis_fields": [
+                "hypothesis",
+                "supporting_evidence_ids",
+                "contradicted_by_evidence_ids",
+            ],
+            "reference_ids_required": True,
+            "evidence_id_integrity_required": True,
+            "question_booklet_is_not_research_evidence": True,
+            "fail_closed_if_traceable_evidence_is_unavailable": True,
         },
     }
     return [
@@ -409,9 +458,9 @@ def _build_execution(
     pdf_renderer: PdfRenderer,
 ) -> FormalQuestionExecution:
     payload = dict(value) if isinstance(value, Mapping) else {}
+    evidence = _build_formal_evidence(context, payload)
     datasets = payload.get("datasets")
     datasets = datasets if isinstance(datasets, Mapping) else {}
-    references = payload.get("references", payload.get("reference_ids", []))
     fields = {
         "Problem": _text(payload.get("problem_statement")),
         "Rationale": _text(payload.get("rationale")),
@@ -423,7 +472,7 @@ def _build_execution(
         "Methods": _text(payload.get("methods")),
         "Experiments": _json_text(payload.get("experiments")),
         "Results": _text(payload.get("results")),
-        "References": _json_text(references),
+        "References": _json_text(evidence.references),
     }
     missing = tuple(name for name, item in fields.items() if not item.strip())
     issues = (
@@ -437,22 +486,22 @@ def _build_execution(
         else ()
     )
     markdown = _report_markdown(fields)
-    evidence_cards = _mapping_sequence(payload.get("evidence_cards"))
-    claims = tuple(payload.get("claims", ())) if isinstance(payload.get("claims", ()), list) else ()
     plan = {
         **payload,
         "question_id": context.question_id,
         "input_question": context.question.get("question"),
         "domain": context.question.get("domain"),
         "actual_execution": True,
-        "references": references if isinstance(references, list) else [],
+        "generated_hypotheses": list(evidence.hypotheses),
+        "references": list(evidence.references),
+        "reference_ids": [str(item["id"]) for item in evidence.references],
     }
     return FormalQuestionExecution(
         report_pdf=pdf_renderer(markdown, context.question_root),
         report_markdown=markdown,
         standard_fields=fields,
         research_plan=plan,
-        evidence_cards=evidence_cards,
+        evidence_cards=evidence.cards,
         agent_trace=(
             {
                 "run_id": context.run_id,
@@ -469,12 +518,188 @@ def _build_execution(
             "provider": EXPECTED_PROVIDER,
             "model": EXPECTED_PRIMARY_MODEL,
         },
-        evidence_bundle=payload.get("evidence_bundle", {}),
-        claims=claims,
+        evidence_bundle=evidence.bundle,
+        claims=evidence.claims,
         call_audits=(audit,),
         duration_seconds=duration_seconds,
         open_issues=issues,
     )
+
+
+def _build_formal_evidence(
+    context: FormalExecutionContext,
+    payload: Mapping[str, Any],
+) -> FormalEvidencePayload:
+    try:
+        return _validate_formal_evidence(context, payload)
+    except (KeyError, TypeError, ValueError):
+        raise BatchRunnerError(
+            "FORMAL_PROVIDER_EVIDENCE_INVALID",
+            "provider response did not contain a valid traceable evidence contract",
+            stage="response_validation",
+            exception_type="EvidenceContractError",
+        ) from None
+
+
+def _validate_formal_evidence(
+    context: FormalExecutionContext,
+    payload: Mapping[str, Any],
+) -> FormalEvidencePayload:
+    raw_cards = payload.get("evidence_cards")
+    if not isinstance(raw_cards, list) or not raw_cards:
+        raise ValueError("evidence cards missing")
+
+    contracts: list[EvidenceCardContract] = []
+    wires: list[Mapping[str, Any]] = []
+    wire_by_id: dict[str, Mapping[str, Any]] = {}
+    for raw_card in raw_cards:
+        if not isinstance(raw_card, Mapping):
+            raise TypeError("evidence card must be a mapping")
+        card_payload = dict(raw_card)
+        evidence_id = _text(card_payload.get("evidence_id") or card_payload.get("id"))
+        quoted_text = _text(card_payload.get("quoted_text"))
+        if not evidence_id or not quoted_text:
+            raise ValueError("evidence identity and quote are required")
+        expected_hash = "sha256:" + hashlib.sha256(
+            quoted_text.encode("utf-8")
+        ).hexdigest()
+        supplied_hash = _text(card_payload.get("content_hash"))
+        if supplied_hash and supplied_hash != expected_hash:
+            raise ValueError("evidence content hash mismatch")
+        card_payload["evidence_id"] = evidence_id
+        card_payload["content_hash"] = expected_hash
+        card_payload.setdefault("domain", context.question.get("domain"))
+        card_payload.setdefault("verification_status", "pending")
+        contract = EvidenceCardContract.model_validate(card_payload)
+        if (
+            contract.source_type == "question_booklet"
+            or "booklet" in contract.source_id.lower()
+            or str(contract.locator.get("source", "")).lower() == "booklet"
+        ):
+            raise ValueError("question source cannot become research evidence")
+        relevance = card_payload.get("relevance_score", 1.0)
+        if isinstance(relevance, bool) or not isinstance(relevance, (int, float)):
+            raise TypeError("relevance score must be numeric")
+        if not 0.0 <= float(relevance) <= 1.0:
+            raise ValueError("relevance score out of range")
+        wire = contract.model_dump(mode="json")
+        wire["id"] = evidence_id
+        wire["relevance_score"] = float(relevance)
+        if evidence_id in wire_by_id:
+            raise ValueError("duplicate evidence id")
+        contracts.append(contract)
+        wires.append(wire)
+        wire_by_id[evidence_id] = wire
+
+    raw_hypotheses = payload.get("generated_hypotheses")
+    if not isinstance(raw_hypotheses, list) or not raw_hypotheses:
+        raise ValueError("generated hypotheses missing")
+    claims: list[ClaimText] = []
+    links: list[ClaimEvidenceLink] = []
+    hypotheses: list[Mapping[str, Any]] = []
+    for index, raw_hypothesis in enumerate(raw_hypotheses, start=1):
+        if not isinstance(raw_hypothesis, Mapping):
+            raise TypeError("hypothesis must be a mapping")
+        hypothesis = dict(raw_hypothesis)
+        text = _text(hypothesis.get("hypothesis"))
+        supporting = _evidence_ids(hypothesis.get("supporting_evidence_ids"))
+        contradicted = _evidence_ids(
+            hypothesis.get("contradicted_by_evidence_ids"),
+            allow_empty=True,
+        )
+        if not text or not supporting:
+            raise ValueError("hypothesis support binding missing")
+        if any(item not in wire_by_id for item in (*supporting, *contradicted)):
+            raise ValueError("hypothesis references unknown evidence")
+        claim_id = _text(hypothesis.get("claim_id")) or (
+            f"{context.question_id}-hypothesis-{index}"
+        )
+        claim_domain = _text(context.question.get("domain")) or None
+        claims.append(
+            ClaimText(
+                claim_id=claim_id,
+                text=text,
+                evidence_ids=supporting,
+                domain=claim_domain,
+            )
+        )
+        links.extend(
+            ClaimEvidenceLink(
+                claim_id=claim_id,
+                evidence_id=evidence_id,
+                relation="supports",
+                confidence=0.5,
+                claim_domain=claim_domain,
+                validation_status="pending",
+            )
+            for evidence_id in supporting
+        )
+        links.extend(
+            ClaimEvidenceLink(
+                claim_id=claim_id,
+                evidence_id=evidence_id,
+                relation="contradicts",
+                confidence=0.5,
+                claim_domain=claim_domain,
+                validation_status="pending",
+            )
+            for evidence_id in contradicted
+        )
+        hypothesis["supporting_evidence_ids"] = list(supporting)
+        hypothesis["contradicted_by_evidence_ids"] = list(contradicted)
+        hypotheses.append(hypothesis)
+
+    reference_source = payload.get("reference_ids")
+    if not isinstance(reference_source, list) or not reference_source:
+        reference_source = payload.get("references")
+    reference_ids = _reference_ids(reference_source)
+    if not reference_ids or any(item not in wire_by_id for item in reference_ids):
+        raise ValueError("traceable references missing")
+    references = tuple(dict(wire_by_id[item]) for item in reference_ids)
+    bundle = EvidenceBundle(
+        bundle_id=f"{context.run_id}:evidence",
+        evidences=contracts,
+        links=links,
+        token_budget=8000,
+    )
+    return FormalEvidencePayload(
+        cards=tuple(wires),
+        bundle=bundle,
+        claims=tuple(claims),
+        hypotheses=tuple(hypotheses),
+        references=references,
+    )
+
+
+def _evidence_ids(value: Any, *, allow_empty: bool = False) -> tuple[str, ...]:
+    if value is None and allow_empty:
+        return ()
+    if not isinstance(value, list):
+        raise TypeError("evidence id collection must be a list")
+    identifiers = tuple(_text(item) for item in value)
+    if any(not item for item in identifiers) or len(identifiers) != len(set(identifiers)):
+        raise ValueError("evidence id collection is invalid")
+    if not identifiers and not allow_empty:
+        raise ValueError("evidence id collection is empty")
+    return identifiers
+
+
+def _reference_ids(value: Any) -> tuple[str, ...]:
+    if not isinstance(value, list):
+        return ()
+    identifiers = []
+    for item in value:
+        identifier = (
+            _text(item.get("id") or item.get("evidence_id"))
+            if isinstance(item, Mapping)
+            else _text(item)
+        )
+        if not identifier:
+            raise ValueError("reference id missing")
+        identifiers.append(identifier)
+    if len(identifiers) != len(set(identifiers)):
+        raise ValueError("duplicate reference id")
+    return tuple(identifiers)
 
 
 def _text(value: Any) -> str:

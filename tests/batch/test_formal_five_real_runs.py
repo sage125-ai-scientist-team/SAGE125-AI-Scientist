@@ -449,6 +449,50 @@ def test_q001_failure_prevents_q028_execution(tmp_path: Path) -> None:
     assert receipt.questions[0].error_codes == ("Q001_FAILED",)
 
 
+def test_failed_provider_response_preserves_call_count_and_tokens(
+    tmp_path: Path,
+) -> None:
+    audit = _audit()
+
+    def failing(_context):
+        raise BatchRunnerError(
+            "FORMAL_PROVIDER_EVIDENCE_INVALID",
+            "provider response did not contain a valid traceable evidence contract",
+            stage="response_validation",
+            exception_type="EvidenceContractError",
+            call_audits=(audit,),
+        )
+
+    receipt = run_formal_five_runs(
+        _request(tmp_path),
+        executor=failing,
+        completion_evaluator=_evaluate,
+    )
+
+    manifest = json.loads(
+        (Path(receipt.batch_root) / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert receipt.questions[0].error_codes == (
+        "FORMAL_PROVIDER_EVIDENCE_INVALID",
+    )
+    assert receipt.questions[0].tokens_used == 19
+    assert manifest["provider_calls"] == 1
+    persisted_audit = json.loads(
+        (Path(receipt.batch_root) / "Q001/llm_call_audit.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert persisted_audit["total_tokens"] == 19
+    diagnostic = json.loads(
+        (
+            Path(receipt.batch_root)
+            / "Q001/provider_failure_diagnostic.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert diagnostic["stage"] == "response_validation"
+    assert diagnostic["exception_type"] == "EvidenceContractError"
+
+
 def test_call_audit_persist_failure_has_safe_specific_code(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

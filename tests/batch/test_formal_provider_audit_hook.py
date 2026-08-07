@@ -15,6 +15,8 @@ from app.batch.formal_provider_runtime import (
     build_formal_provider_executor,
 )
 from app.clients.qwen_chat_client import QwenClientError
+from app.evidence import precheck_bundle_for_validation
+from app.workflow.quality_gates import run_all_quality_gates
 
 
 PROMPT_HASH = "a" * 64
@@ -59,7 +61,33 @@ class _FakeClient:
             "methods": "Structured mathematical analysis.",
             "experiments": {"validation_protocol": "formal checks"},
             "results": "No empirical result is claimed.",
-            "references": [],
+            "evidence_cards": [
+                {
+                    "evidence_id": "EV-Q001-001",
+                    "source_id": "prime-source-001",
+                    "source_type": "paper",
+                    "title": "Prime-number factorization evidence",
+                    "quoted_text": (
+                        "Every integer greater than one has a unique factorization "
+                        "into prime numbers."
+                    ),
+                    "locator": {"section": "Fundamental theorem of arithmetic"},
+                    "domain": "Mathematical Sciences",
+                    "verification_status": "pending",
+                    "relevance_score": 1.0,
+                }
+            ],
+            "generated_hypotheses": [
+                {
+                    "hypothesis": (
+                        "Prime numbers are fundamental because they uniquely "
+                        "factorize integers."
+                    ),
+                    "supporting_evidence_ids": ["EV-Q001-001"],
+                    "contradicted_by_evidence_ids": [],
+                }
+            ],
+            "reference_ids": ["EV-Q001-001"],
         }
 
 
@@ -120,6 +148,63 @@ def test_hook_is_registered_before_provider_call_and_seals_legal_audit() -> None
     assert audit.settled_cost_usd is None
     assert audit.fallback is False
     assert "req-live-do-not-persist" not in audit.to_json()
+    assert execution.evidence_cards[0]["id"] == "EV-Q001-001"
+    assert execution.evidence_bundle.evidences[0].evidence_id == "EV-Q001-001"
+    assert execution.claims[0].evidence_ids == ("EV-Q001-001",)
+
+
+def test_compliant_provider_evidence_passes_t01_and_t03_grounding() -> None:
+    hook = ProviderAuditHook()
+    executor = build_formal_provider_executor(
+        _Settings(),
+        hook=hook,
+        client_factory=lambda _settings: _FakeClient(hook),
+        pdf_renderer=lambda _markdown, _root: b"%PDF-1.7\n",
+    )
+    execution = executor(_context())
+    context = SimpleNamespace(evidence_cards=execution.evidence_cards)
+
+    t01 = precheck_bundle_for_validation(
+        bundle=execution.evidence_bundle,
+        claims=execution.claims,
+        context=context,
+    ).gate
+    t03 = run_all_quality_gates(
+        execution.research_plan,
+        list(execution.evidence_cards),
+        list(execution.agent_trace),
+    )
+
+    assert t01.passed
+    assert t03["gates"]["evidence_grounding"]["passed"]
+    assert t03["gates"]["reference_integrity"]["passed"]
+
+
+def test_missing_evidence_fails_closed_after_sealing_call_audit() -> None:
+    hook = ProviderAuditHook()
+    client = _FakeClient(hook)
+    original = client.chat_json
+
+    def without_evidence(messages, model, temperature=0.1):
+        payload = original(messages, model, temperature)
+        payload.pop("evidence_cards")
+        return payload
+
+    client.chat_json = without_evidence
+    executor = build_formal_provider_executor(
+        _Settings(),
+        hook=hook,
+        client_factory=lambda _settings: client,
+        pdf_renderer=lambda _markdown, _root: b"%PDF-1.7\n",
+    )
+
+    with pytest.raises(BatchRunnerError) as captured:
+        executor(_context())
+
+    assert captured.value.error_code == "FORMAL_PROVIDER_EVIDENCE_INVALID"
+    assert captured.value.stage == "response_validation"
+    assert len(captured.value.call_audits) == 1
+    assert captured.value.call_audits[0].total_tokens == 124
 
 
 def test_unavailable_hook_blocks_before_provider_call() -> None:

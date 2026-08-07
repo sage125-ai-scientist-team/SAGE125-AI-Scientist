@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from typing import Any
 
 
 _SAFE_DIAGNOSTIC_TOKEN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")
@@ -19,6 +20,7 @@ class BatchRunnerError(RuntimeError):
         http_status: int | None = None,
         stage: str | None = None,
         exception_type: str | None = None,
+        call_audits: tuple[Any, ...] = (),
     ) -> None:
         normalized_code = error_code.strip()
         normalized_message = message.strip()
@@ -40,4 +42,5 @@ class BatchRunnerError(RuntimeError):
         self.http_status = http_status
         self.stage = stage
         self.exception_type = exception_type
+        self.call_audits = call_audits
         super().__init__(normalized_message)

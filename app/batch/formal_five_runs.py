@@ -497,6 +497,17 @@ def run_formal_five_runs(
                 artifacts=artifact_manifest.artifacts,
             )
         except Exception as exc:
+            failed_call_audits = (
+                exc.call_audits if isinstance(exc, BatchRunnerError) else ()
+            )
+            for failed_audit in failed_call_audits:
+                if not isinstance(failed_audit, ActualCallAudit):
+                    raise BatchRunnerError(
+                        "CALL_AUDIT_INCOMPLETE",
+                        "failed formal execution exposed an invalid call audit",
+                    ) from None
+                ledger.record_call(question_id, failed_audit)
+            provider_calls += len(failed_call_audits)
             receipt, failed_record = _persist_question_failure(
                 config,
                 context,
@@ -858,6 +869,18 @@ def _persist_question_failure(
     ledger,
 ) -> tuple[FormalQuestionReceipt, QuestionDeliveryRecord]:
     code = exc.error_code if isinstance(exc, BatchRunnerError) else "FORMAL_RUN_FAILED"
+    failed_call_audits = (
+        exc.call_audits if isinstance(exc, BatchRunnerError) else ()
+    )
+    if failed_call_audits:
+        try:
+            (context.question_root / "llm_call_audit.json").write_text(
+                failed_call_audits[0].to_json(),
+                encoding="utf-8",
+                newline="\n",
+            )
+        except (OSError, UnicodeError, TypeError, ValueError):
+            code = "AUDIT_PERSIST_FAILED"
     diagnostic = _provider_failure_diagnostic(exc)
     if diagnostic is not None:
         _write_json(
@@ -929,7 +952,7 @@ def _persist_question_failure(
 
 def _provider_failure_diagnostic(exc: Exception) -> dict[str, Any] | None:
     if not isinstance(exc, BatchRunnerError) or not exc.error_code.startswith(
-        "PROVIDER_"
+        ("PROVIDER_", "FORMAL_PROVIDER_")
     ):
         return None
     if exc.stage is None or exc.exception_type is None:
