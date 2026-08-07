@@ -34,11 +34,15 @@ from app.agents import (
     SupervisorAgent,
 )
 from app.agents.base import AgentOutputError
+from app.contracts.evidence import EvidenceBundle
 from app.contracts.revision import (
+    PlanVersion,
+    PlanVersionStore,
     ReviewFeedback,
     RevisionContext,
     RevisionPromptBuilder,
 )
+from app.contracts.validation import HumanFeedbackDirective
 from app.core.config import get_settings
 from app.core.execution_mode import execution_mode, is_mock_mode
 from app.core.logging import get_logger, mask_text
@@ -46,6 +50,23 @@ from app.core.run_progress import ProgressCallback, emit_progress, progress_repo
 from app.core.schemas import EvidenceCard, PipelineState, QuestionItem, ResearchPlan, ScientificHypothesis
 from app.workflow.artifacts import ArtifactManager, generate_run_id, resolve_artifact_base
 from app.workflow.context_builder import ContextBuilder
+from app.workflow.explainable_revision import (
+    ExperimentRevisionContext,
+    RevisionAwareExperimentDesignerAgent,
+    RevisionAwareHypothesisGeneratorAgent,
+    RevisionAwareScientificReviewerAgent,
+    RevisionExecutionController,
+    TwoRoundCaseReport,
+    assess_experiment_revision,
+    attach_revision_metadata,
+    build_experiment_revision_context,
+    build_revision_pairing_outputs,
+    failure_reasons_from_feedback,
+    inject_revision_context,
+    issues_for_revision,
+    revision_trace_fields,
+    run_revision_step_with_retry,
+)
 from app.workflow.mock_outputs import PENDING_RESULTS, build_mock_evidence_cards
 from app.workflow.quality_gates import run_all_quality_gates
 
@@ -280,6 +301,7 @@ def _hypothesis_generator_input(
     *,
     revision_iteration: int = 1,
     review_result: dict | None = None,
+    experiment_revision_context: ExperimentRevisionContext | None = None,
 ) -> dict:
     """构造带权威语义迭代和可选 Reviewer 反馈的 HypothesisGenerator 输入。"""
     context = _revision_context(
@@ -287,12 +309,15 @@ def _hypothesis_generator_input(
         revision_iteration=revision_iteration,
         review_result=review_result,
     )
-    return RevisionPromptBuilder.build_hypothesis_input(
+    payload = RevisionPromptBuilder.build_hypothesis_input(
         context,
         question_item=qdict,
         evidence_catalog=_evidence_catalog(state.retrieved_evidence),
         evidence_extraction=state.evidence_extraction,
     )
+    if experiment_revision_context is not None:
+        payload = inject_revision_context(payload, experiment_revision_context)
+    return payload
 
 
 def _experiment_designer_input(
@@ -301,6 +326,7 @@ def _experiment_designer_input(
     *,
     revision_iteration: int = 1,
     review_result: dict | None = None,
+    experiment_revision_context: ExperimentRevisionContext | None = None,
 ) -> dict:
     """
     构造 ExperimentDesigner 完整输入（真实模式必须含假设与证据，不能只传 question_item）。
@@ -318,7 +344,7 @@ def _experiment_designer_input(
         revision_iteration=revision_iteration,
         review_result=review_result,
     )
-    return RevisionPromptBuilder.build_experiment_input(
+    payload = RevisionPromptBuilder.build_experiment_input(
         context,
         question_item=qdict,
         question_type=parsed.get("question_type", ""),
@@ -329,6 +355,9 @@ def _experiment_designer_input(
         evidence_extraction=state.evidence_extraction,
         evidence_catalog=_evidence_catalog(state.retrieved_evidence),
     )
+    if experiment_revision_context is not None:
+        payload = inject_revision_context(payload, experiment_revision_context)
+    return payload
 
 
 def _reviewer_input(
@@ -337,6 +366,7 @@ def _reviewer_input(
     *,
     revision_iteration: int = 1,
     review_result: dict | None = None,
+    experiment_revision_context: ExperimentRevisionContext | None = None,
 ) -> dict:
     """
     构造 ScientificReviewer 完整输入。
@@ -353,7 +383,7 @@ def _reviewer_input(
         revision_iteration=revision_iteration,
         review_result=review_result,
     )
-    return RevisionPromptBuilder.build_reviewer_input(
+    payload = RevisionPromptBuilder.build_reviewer_input(
         context,
         question_item=qdict,
         recommended_hypothesis=_recommended_hypothesis(
@@ -364,6 +394,9 @@ def _reviewer_input(
         evidence_extraction=state.evidence_extraction,
         evidence_catalog=_evidence_catalog(state.retrieved_evidence),
     )
+    if experiment_revision_context is not None:
+        payload = inject_revision_context(payload, experiment_revision_context)
+    return payload
 
 
 def _resolve_references(ref_ids: list[str], evidence_pool: list[EvidenceCard]) -> list[EvidenceCard]:
@@ -467,6 +500,8 @@ def _run_pipeline_with_state_impl(
     use_open_literature: bool = True,
     reviewer_auto_revision: bool = True,
     mock_mode: Optional[bool] = None,
+    evidence_bundle: EvidenceBundle | None = None,
+    human_feedback_directive: HumanFeedbackDirective | None = None,
 ) -> tuple[ResearchPlan, PipelineState]:
     """
     运行完整多智能体流水线，返回 (ResearchPlan, PipelineState)。
@@ -581,8 +616,13 @@ def _run_pipeline_with_state_impl(
     step += 1
 
     # 9) HypothesisGenerator。
-    hyp_result = HypothesisGeneratorAgent(settings).run(
-        _hypothesis_generator_input(state, qdict, revision_iteration=1),
+    first_hypothesis_input = _hypothesis_generator_input(
+        state,
+        qdict,
+        revision_iteration=1,
+    )
+    hyp_result = RevisionAwareHypothesisGeneratorAgent(settings).run(
+        first_hypothesis_input,
         state,
         step,
     )
@@ -604,8 +644,13 @@ def _run_pipeline_with_state_impl(
             continue
 
     # 10) ExperimentDesigner（必须传入假设+证据，否则真实 Qwen 易回显 question_item 导致校验失败）。
-    exp_result = ExperimentDesignerAgent(settings).run(
-        _experiment_designer_input(state, qdict, revision_iteration=1),
+    first_experiment_input = _experiment_designer_input(
+        state,
+        qdict,
+        revision_iteration=1,
+    )
+    exp_result = RevisionAwareExperimentDesignerAgent(settings).run(
+        first_experiment_input,
         state,
         step,
     )
@@ -614,58 +659,220 @@ def _run_pipeline_with_state_impl(
     state.execution_metadata = exp_result.get("execution_metadata", {})
 
     # 11) ScientificReviewer（最多 1 次自动修订）。
-    review = ScientificReviewerAgent(settings).run(
-        _reviewer_input(state, qdict, revision_iteration=1),
+    first_reviewer_input = _reviewer_input(
+        state,
+        qdict,
+        revision_iteration=1,
+    )
+    review = RevisionAwareScientificReviewerAgent(settings).run(
+        first_reviewer_input,
         state,
         step,
     )
     step += 1
     state.review_result = review
+    revision_audit = None
     if (
         not _is_effective_review_pass(review)
         and reviewer_auto_revision
         and not state.revision_history
     ):
-        # 记录一次自动修订，重跑假设与实验，再评审一次（严格上限 1 次）。
+        # 保存完整 V1，再以结构化计划、问题和失败来源驱动 V2（严格上限 1 次）。
         first_review = _review_result_snapshot(review)
+        first_feedback = ReviewFeedback.from_review_result(first_review)
+        unresolved_issues = issues_for_revision(
+            first_feedback,
+            opened_in_version=1,
+        )
+        failure_reasons = failure_reasons_from_feedback(
+            first_feedback,
+            unresolved_issues,
+        )
+        version_store = PlanVersionStore()
+        revision_controller = RevisionExecutionController.create(
+            run_id=state.run_id,
+            max_iterations=2,
+            max_retries=1,
+        )
+        revision_controller.claim_event(f"{state.run_id}:review:v1")
+        first_version = PlanVersion.create(
+            run_id=state.run_id,
+            version_number=1,
+            revision_iteration=1,
+            hypothesis_generation=state.hypothesis_generation,
+            experiment_design=state.experiment_design,
+            review_feedback=first_feedback,
+            issue_closures=unresolved_issues,
+            prompt_fingerprints={
+                "hypothesis_generator": RevisionPromptBuilder.fingerprint(
+                    first_hypothesis_input
+                ),
+                "experiment_designer": RevisionPromptBuilder.fingerprint(
+                    first_experiment_input
+                ),
+                "scientific_reviewer": RevisionPromptBuilder.fingerprint(
+                    first_reviewer_input
+                ),
+            },
+        )
+        version_store.save(first_version)
+        revision_controller.record_version(first_version.version_id)
+        experiment_revision_context = build_experiment_revision_context(
+            previous_version=first_version,
+            unresolved_issues=unresolved_issues,
+            failure_reasons=failure_reasons,
+            evidence_bundle=evidence_bundle,
+            human_feedback=human_feedback_directive,
+        )
         state.revision_history.append("auto_revision_1: 依据评审意见重做假设与实验设计。")
-        hyp_result = HypothesisGeneratorAgent(settings).run(
-            _hypothesis_generator_input(
-                state,
-                qdict,
-                revision_iteration=2,
-                review_result=first_review,
-            ),
+        revision_controller.advance_iteration()
+        second_hypothesis_input = _hypothesis_generator_input(
             state,
-            step,
+            qdict,
+            revision_iteration=2,
+            review_result=first_review,
+            experiment_revision_context=experiment_revision_context,
+        )
+        second_hypothesis_agent = RevisionAwareHypothesisGeneratorAgent(settings)
+        hyp_result = run_revision_step_with_retry(
+            lambda: second_hypothesis_agent.run(
+                second_hypothesis_input,
+                state,
+                step,
+            ),
+            controller=revision_controller,
+            step_name="hypothesis_generator",
         )
         step += 1
         state.hypothesis_generation = hyp_result
-        exp_result = ExperimentDesignerAgent(settings).run(
-            _experiment_designer_input(
-                state,
-                qdict,
-                revision_iteration=2,
-                review_result=first_review,
-            ),
+        second_experiment_input = _experiment_designer_input(
             state,
-            step,
+            qdict,
+            revision_iteration=2,
+            review_result=first_review,
+            experiment_revision_context=experiment_revision_context,
+        )
+        second_experiment_agent = RevisionAwareExperimentDesignerAgent(settings)
+        exp_result = run_revision_step_with_retry(
+            lambda: second_experiment_agent.run(
+                second_experiment_input,
+                state,
+                step,
+            ),
+            controller=revision_controller,
+            step_name="experiment_designer",
         )
         step += 1
         state.experiment_design = exp_result
         state.execution_metadata = exp_result.get("execution_metadata", {})
-        review = ScientificReviewerAgent(settings).run(
-            _reviewer_input(
-                state,
-                qdict,
-                revision_iteration=2,
-                review_result=first_review,
-            ),
+        second_reviewer_input = _reviewer_input(
             state,
-            step,
+            qdict,
+            revision_iteration=2,
+            review_result=first_review,
+            experiment_revision_context=experiment_revision_context,
+        )
+        second_reviewer_agent = RevisionAwareScientificReviewerAgent(settings)
+        review = run_revision_step_with_retry(
+            lambda: second_reviewer_agent.run(
+                second_reviewer_input,
+                state,
+                step,
+            ),
+            controller=revision_controller,
+            step_name="scientific_reviewer",
         )
         step += 1
         state.review_result = review
+        revision_audit = assess_experiment_revision(
+            previous_version=first_version,
+            revised_hypothesis=state.hypothesis_generation,
+            revised_experiment=state.experiment_design,
+            final_feedback=review,
+            available_evidence_refs=[
+                item["id"]
+                for item in _evidence_catalog(state.retrieved_evidence)
+                if item.get("id")
+            ],
+        )
+        second_version: PlanVersion | None = None
+        if revision_audit.substantive_sections:
+            second_version = PlanVersion.create(
+                run_id=state.run_id,
+                version_number=2,
+                parent_version_id=first_version.version_id,
+                revision_iteration=2,
+                hypothesis_generation=state.hypothesis_generation,
+                experiment_design=state.experiment_design,
+                review_feedback=review,
+                issue_closures=revision_audit.issue_closures,
+                prompt_fingerprints={
+                    "hypothesis_generator": RevisionPromptBuilder.fingerprint(
+                        second_hypothesis_input
+                    ),
+                    "experiment_designer": RevisionPromptBuilder.fingerprint(
+                        second_experiment_input
+                    ),
+                    "scientific_reviewer": RevisionPromptBuilder.fingerprint(
+                        second_reviewer_input
+                    ),
+                },
+            )
+            version_store.save(second_version)
+            revision_controller.record_version(second_version.version_id)
+        if revision_audit.accepted:
+            revision_controller.complete()
+        else:
+            revision_controller.stop(
+                revision_audit.stop_reason or "revision_acceptance_blocked"
+            )
+        case_report = TwoRoundCaseReport.from_audit(
+            case_id=f"{state.run_id}:wave-b-two-round",
+            audit=revision_audit,
+            input_fingerprints={
+                "v1": RevisionPromptBuilder.fingerprint(
+                    first_experiment_input
+                ),
+                "v2": RevisionPromptBuilder.fingerprint(
+                    second_experiment_input
+                ),
+            },
+        )
+        trace_fields = revision_trace_fields(
+            revision_audit,
+            plan_versions=version_store.list_versions(state.run_id),
+        )
+        if human_feedback_directive is not None and second_version is not None:
+            revision_metadata, lineage_handoff = build_revision_pairing_outputs(
+                audit=revision_audit,
+                human_feedback=human_feedback_directive,
+                resulting_version_id=second_version.version_id,
+                prompt_fingerprint=RevisionPromptBuilder.fingerprint(
+                    second_experiment_input
+                ),
+            )
+            state.execution_metadata = attach_revision_metadata(
+                state.execution_metadata,
+                revision_metadata,
+            )
+            exp_result["execution_metadata"] = state.execution_metadata
+            trace_fields.update(
+                {
+                    "revision_diff_sha256": revision_metadata.diff_hash,
+                    "revision_lineage_handoff": lineage_handoff.model_dump(
+                        mode="json"
+                    ),
+                }
+            )
+        trace_fields.update(
+            {
+                "revision_control": revision_controller.state.model_dump(
+                    mode="json"
+                ),
+                "two_round_case_report": case_report.model_dump(mode="json"),
+            }
+        )
+        state.agent_trace[-1].update(trace_fields)
 
     # 12) ReportWriter：生成草稿（含 reference_ids）。
     draft = ReportWriterAgent(settings).run(
@@ -699,6 +906,8 @@ def _run_pipeline_with_state_impl(
     else:
         tentative = "ready_for_validation"
     if not _is_effective_review_pass(state.review_result) and tentative == "ready_for_validation":
+        tentative = "draft"
+    if revision_audit is not None and not revision_audit.accepted:
         tentative = "draft"
 
     # 构建 ResearchPlan。
@@ -760,6 +969,8 @@ def run_pipeline_with_state(
     reviewer_auto_revision: bool = True,
     mock_mode: Optional[bool] = None,
     progress_callback: ProgressCallback | None = None,
+    evidence_bundle: EvidenceBundle | None = None,
+    human_feedback_directive: HumanFeedbackDirective | None = None,
 ) -> tuple[ResearchPlan, PipelineState]:
     """Run the pipeline in an isolated mode/progress context and persist failures."""
     resolved_mock = _is_mock(mock_mode)
@@ -776,6 +987,8 @@ def run_pipeline_with_state(
                     use_open_literature=use_open_literature,
                     reviewer_auto_revision=reviewer_auto_revision,
                     mock_mode=resolved_mock,
+                    evidence_bundle=evidence_bundle,
+                    human_feedback_directive=human_feedback_directive,
                 )
             except Exception as exc:
                 state = _ACTIVE_STATE.get()
@@ -809,6 +1022,8 @@ def run_pipeline(
     use_open_literature: bool = True,
     reviewer_auto_revision: bool = True,
     mock_mode: Optional[bool] = None,
+    evidence_bundle: EvidenceBundle | None = None,
+    human_feedback_directive: HumanFeedbackDirective | None = None,
 ) -> ResearchPlan:
     """
     运行完整多智能体流水线并返回最终 ResearchPlan。
@@ -827,8 +1042,16 @@ def run_pipeline(
         最终 ResearchPlan。
     """
     plan, _state = run_pipeline_with_state(
-        question_id, user_files, user_feedback, use_local_rag, use_deep_research,
-        use_open_literature, reviewer_auto_revision, mock_mode,
+        question_id=question_id,
+        user_files=user_files,
+        user_feedback=user_feedback,
+        use_local_rag=use_local_rag,
+        use_deep_research=use_deep_research,
+        use_open_literature=use_open_literature,
+        reviewer_auto_revision=reviewer_auto_revision,
+        mock_mode=mock_mode,
+        evidence_bundle=evidence_bundle,
+        human_feedback_directive=human_feedback_directive,
     )
     return plan
 
