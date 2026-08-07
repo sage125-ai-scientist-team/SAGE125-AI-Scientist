@@ -449,6 +449,33 @@ def test_q001_failure_prevents_q028_execution(tmp_path: Path) -> None:
     assert receipt.questions[0].error_codes == ("Q001_FAILED",)
 
 
+def test_call_audit_persist_failure_has_safe_specific_code(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    request = _request(tmp_path)
+    original_write_text = Path.write_text
+
+    def fail_only_formal_call_audit(path: Path, *args, **kwargs):
+        if path.name == "llm_call_audit.json" and path.parent.name == "Q001":
+            raise OSError("SENSITIVE_TEST_VALUE")
+        return original_write_text(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", fail_only_formal_call_audit)
+    receipt = run_formal_five_runs(
+        request,
+        executor=lambda _context: _execution(),
+        completion_evaluator=_evaluate,
+    )
+
+    assert receipt.status == "failed"
+    assert receipt.questions[0].error_codes == ("AUDIT_PERSIST_FAILED",)
+    checkpoint = (
+        Path(receipt.batch_root) / "Q001/checkpoint.json"
+    ).read_text(encoding="utf-8")
+    assert "SENSITIVE_TEST_VALUE" not in checkpoint
+
+
 def test_completed_status_only_comes_from_completion_evaluator(tmp_path: Path) -> None:
     pending = CompletionGateResult(
         status="gates_pending",

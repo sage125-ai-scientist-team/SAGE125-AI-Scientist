@@ -33,7 +33,7 @@ from app.batch.formal_five_runs import (
     FormalExecutor,
     FormalQuestionExecution,
 )
-from app.clients.qwen_chat_client import QwenChatClient
+from app.clients.qwen_chat_client import QwenChatClient, QwenClientError
 from app.exporters.pdf_exporter import export_markdown_to_pdf
 
 
@@ -228,10 +228,8 @@ def build_formal_provider_executor(
             audit_hook.abort(registration)
             if isinstance(exc, BatchRunnerError):
                 raise
-            raise BatchRunnerError(
-                "PROVIDER_CALL_FAILED",
-                f"formal provider call failed: {type(exc).__name__}",
-            ) from None
+            error_code, safe_message = _classify_provider_failure(exc)
+            raise BatchRunnerError(error_code, safe_message) from None
         duration_seconds = perf_counter() - started
         audit = audit_hook.seal(
             registration,
@@ -248,6 +246,41 @@ def build_formal_provider_executor(
         )
 
     return execute
+
+
+def _classify_provider_failure(exc: Exception) -> tuple[str, str]:
+    """Map an already-sanitized client failure to a stable, secret-free code.
+
+    ``QwenChatClient`` deliberately hides transport details behind
+    :class:`QwenClientError`.  Only its fixed friendly categories are inspected
+    here; the original message is never copied into runner receipts.
+    """
+
+    if not isinstance(exc, QwenClientError):
+        return "PROVIDER_CALL_FAILED", "formal provider call failed"
+
+    friendly = str(exc)
+    if "不是合法 JSON" in friendly:
+        return (
+            "PROVIDER_RESPONSE_PARSE_ERROR",
+            "formal provider response was not valid JSON",
+        )
+    if "超时" in friendly:
+        return "PROVIDER_TIMEOUT", "formal provider call timed out"
+
+    http_markers = (
+        "鉴权失败",
+        "拒绝访问",
+        "模型或端点不存在",
+        "限流或额度不足",
+        "请求参数不兼容",
+        "HTTPS/TLS",
+        "无法连接百炼 HTTPS",
+        "百炼调用失败",
+    )
+    if any(marker in friendly for marker in http_markers):
+        return "PROVIDER_HTTP_ERROR", "formal provider HTTP request failed"
+    return "PROVIDER_CALL_FAILED", "formal provider call failed"
 
 
 def _strict_token_count(value: Any, field_name: str) -> int:

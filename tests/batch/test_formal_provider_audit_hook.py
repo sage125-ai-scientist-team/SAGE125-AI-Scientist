@@ -14,6 +14,7 @@ from app.batch.formal_provider_runtime import (
     ProviderAuditHook,
     build_formal_provider_executor,
 )
+from app.clients.qwen_chat_client import QwenClientError
 
 
 PROMPT_HASH = "a" * 64
@@ -60,6 +61,20 @@ class _FakeClient:
             "results": "No empirical result is claimed.",
             "references": [],
         }
+
+
+class _FailingClient:
+    def __init__(self, hook: ProviderAuditHook, failure: Exception):
+        self.hook = hook
+        self.failure = failure
+        self.calls = 0
+        self.last_request_id = None
+        self.last_usage = {}
+
+    def chat_json(self, messages, model, temperature=0.1):
+        assert self.hook.is_registered("formal-run-001")
+        self.calls += 1
+        raise self.failure
 
 
 def _context():
@@ -183,3 +198,51 @@ def test_runtime_receipt_does_not_serialize_secret() -> None:
     assert "req-live-do-not-persist" not in serialized
     assert "api_key" not in serialized.lower()
 
+
+@pytest.mark.parametrize(
+    ("failure", "expected_code", "expected_message"),
+    [
+        (
+            QwenClientError("百炼请求超时；系统已停止继续重试。"),
+            "PROVIDER_TIMEOUT",
+            "formal provider call timed out",
+        ),
+        (
+            QwenClientError("千问返回内容不是合法 JSON；已停止本次步骤。"),
+            "PROVIDER_RESPONSE_PARSE_ERROR",
+            "formal provider response was not valid JSON",
+        ),
+        (
+            QwenClientError("百炼拒绝访问（403）：测试用脱敏消息。"),
+            "PROVIDER_HTTP_ERROR",
+            "formal provider HTTP request failed",
+        ),
+        (
+            RuntimeError("Authorization: Bearer SENSITIVE_TEST_VALUE"),
+            "PROVIDER_CALL_FAILED",
+            "formal provider call failed",
+        ),
+    ],
+)
+def test_provider_failures_are_safely_classified_without_leaking_details(
+    failure: Exception,
+    expected_code: str,
+    expected_message: str,
+) -> None:
+    hook = ProviderAuditHook()
+    client = _FailingClient(hook, failure)
+    executor = build_formal_provider_executor(
+        _Settings(),
+        hook=hook,
+        client_factory=lambda _settings: client,
+        pdf_renderer=lambda _markdown, _root: b"%PDF-1.7\n",
+    )
+
+    with pytest.raises(BatchRunnerError) as captured:
+        executor(_context())
+
+    assert captured.value.error_code == expected_code
+    assert str(captured.value) == expected_message
+    assert "SENSITIVE_TEST_VALUE" not in str(captured.value)
+    assert client.calls == 1
+    assert not hook.is_registered("formal-run-001")

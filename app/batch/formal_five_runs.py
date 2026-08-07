@@ -720,7 +720,13 @@ def _materialize_and_validate(
     _write_json(paths.agent_trace_json, {**identity, "events": events})
     audit = execution.call_audits[0]
     audit_path = paths.question_root / "llm_call_audit.json"
-    audit_path.write_text(audit.to_json(), encoding="utf-8", newline="\n")
+    try:
+        audit_path.write_text(audit.to_json(), encoding="utf-8", newline="\n")
+    except (OSError, UnicodeError, TypeError, ValueError):
+        raise BatchRunnerError(
+            "AUDIT_PERSIST_FAILED",
+            "formal provider call audit could not be persisted",
+        ) from None
     validation = validate_required_artifacts(job, paths)
     if not validation.passed:
         first = validation.issues[0]
