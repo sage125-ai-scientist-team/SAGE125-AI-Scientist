@@ -476,6 +476,46 @@ def test_call_audit_persist_failure_has_safe_specific_code(
     assert "SENSITIVE_TEST_VALUE" not in checkpoint
 
 
+def test_provider_failure_diagnostics_persist_only_allowlisted_fields(
+    tmp_path: Path,
+) -> None:
+    failure = BatchRunnerError(
+        "PROVIDER_PERMISSION_ERROR",
+        "formal provider HTTP request failed",
+        http_status=403,
+        stage="provider_call",
+        exception_type="QwenClientError",
+    )
+
+    def failing(_context):
+        raise failure
+
+    receipt = run_formal_five_runs(
+        _request(tmp_path),
+        executor=failing,
+        completion_evaluator=_evaluate,
+    )
+
+    diagnostic_path = (
+        Path(receipt.batch_root) / "Q001/provider_failure_diagnostic.json"
+    )
+    diagnostic = json.loads(diagnostic_path.read_text(encoding="utf-8"))
+    assert diagnostic == {
+        "error_code": "PROVIDER_PERMISSION_ERROR",
+        "exception_type": "QwenClientError",
+        "http_status": 403,
+        "schema_version": "t07.provider-failure-diagnostic.v1",
+        "stage": "provider_call",
+    }
+    serialized_run = b"".join(
+        path.read_bytes()
+        for path in Path(receipt.batch_root).rglob("*")
+        if path.is_file()
+    )
+    assert b"Authorization" not in serialized_run
+    assert b"Workspace" not in serialized_run
+
+
 def test_completed_status_only_comes_from_completion_evaluator(tmp_path: Path) -> None:
     pending = CompletionGateResult(
         status="gates_pending",

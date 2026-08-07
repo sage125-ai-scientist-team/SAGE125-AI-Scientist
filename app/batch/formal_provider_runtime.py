@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -42,6 +43,20 @@ ClientFactory = Callable[[Any], Any]
 PdfRenderer = Callable[[str, Path], bytes | None]
 
 
+_HTTP_STATUS_PATTERN = re.compile(
+    r"(?:[（(]\s*|(?:http(?:\s+status)?|status(?:_code)?|error\s+code)"
+    r"\s*[:=]?\s*)([1-5]\d{2})(?:\s*[）)]|\b)",
+    re.IGNORECASE,
+)
+_HTTP_ERROR_CODES = {
+    400: "PROVIDER_BAD_REQUEST",
+    401: "PROVIDER_AUTH_ERROR",
+    403: "PROVIDER_PERMISSION_ERROR",
+    404: "PROVIDER_NOT_FOUND",
+    429: "PROVIDER_RATE_LIMITED",
+}
+
+
 class FormalProviderClient(Protocol):
     """Minimal client surface used by the audited provider boundary."""
 
@@ -70,6 +85,17 @@ class ProviderAuditRegistration:
     static_prompt_hash: str
     dynamic_prompt_hash: str
     retry_attempt: int
+
+
+@dataclass(frozen=True, slots=True)
+class ProviderFailureClassification:
+    """Allowlisted diagnostics safe to persist for a failed provider boundary."""
+
+    error_code: str
+    message: str
+    http_status: int | None
+    stage: str
+    exception_type: str
 
 
 class ProviderAuditHook:
@@ -228,8 +254,14 @@ def build_formal_provider_executor(
             audit_hook.abort(registration)
             if isinstance(exc, BatchRunnerError):
                 raise
-            error_code, safe_message = _classify_provider_failure(exc)
-            raise BatchRunnerError(error_code, safe_message) from None
+            failure = _classify_provider_failure(exc)
+            raise BatchRunnerError(
+                failure.error_code,
+                failure.message,
+                http_status=failure.http_status,
+                stage=failure.stage,
+                exception_type=failure.exception_type,
+            ) from None
         duration_seconds = perf_counter() - started
         audit = audit_hook.seal(
             registration,
@@ -248,7 +280,7 @@ def build_formal_provider_executor(
     return execute
 
 
-def _classify_provider_failure(exc: Exception) -> tuple[str, str]:
+def _classify_provider_failure(exc: Exception) -> ProviderFailureClassification:
     """Map an already-sanitized client failure to a stable, secret-free code.
 
     ``QwenChatClient`` deliberately hides transport details behind
@@ -256,17 +288,41 @@ def _classify_provider_failure(exc: Exception) -> tuple[str, str]:
     here; the original message is never copied into runner receipts.
     """
 
-    if not isinstance(exc, QwenClientError):
-        return "PROVIDER_CALL_FAILED", "formal provider call failed"
+    exception_type = type(exc).__name__
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,63}", exception_type):
+        exception_type = "Exception"
+    friendly = str(exc) if isinstance(exc, QwenClientError) else ""
+    stage = "response_parse" if "不是合法 JSON" in friendly else "provider_call"
+    http_status = _extract_http_status(exc, friendly)
 
-    friendly = str(exc)
-    if "不是合法 JSON" in friendly:
-        return (
-            "PROVIDER_RESPONSE_PARSE_ERROR",
-            "formal provider response was not valid JSON",
+    if http_status is not None:
+        error_code = _HTTP_ERROR_CODES.get(http_status)
+        if error_code is None and 500 <= http_status <= 599:
+            error_code = "PROVIDER_SERVER_ERROR"
+        return ProviderFailureClassification(
+            error_code=error_code or "PROVIDER_HTTP_ERROR",
+            message="formal provider HTTP request failed",
+            http_status=http_status,
+            stage=stage,
+            exception_type=exception_type,
+        )
+
+    if stage == "response_parse":
+        return ProviderFailureClassification(
+            error_code="PROVIDER_RESPONSE_PARSE_ERROR",
+            message="formal provider response was not valid JSON",
+            http_status=None,
+            stage=stage,
+            exception_type=exception_type,
         )
     if "超时" in friendly:
-        return "PROVIDER_TIMEOUT", "formal provider call timed out"
+        return ProviderFailureClassification(
+            error_code="PROVIDER_TIMEOUT",
+            message="formal provider call timed out",
+            http_status=None,
+            stage=stage,
+            exception_type=exception_type,
+        )
 
     http_markers = (
         "鉴权失败",
@@ -279,8 +335,28 @@ def _classify_provider_failure(exc: Exception) -> tuple[str, str]:
         "百炼调用失败",
     )
     if any(marker in friendly for marker in http_markers):
-        return "PROVIDER_HTTP_ERROR", "formal provider HTTP request failed"
-    return "PROVIDER_CALL_FAILED", "formal provider call failed"
+        return ProviderFailureClassification(
+            error_code="PROVIDER_HTTP_ERROR",
+            message="formal provider HTTP request failed",
+            http_status=None,
+            stage=stage,
+            exception_type=exception_type,
+        )
+    return ProviderFailureClassification(
+        error_code="PROVIDER_CALL_FAILED",
+        message="formal provider call failed",
+        http_status=None,
+        stage=stage,
+        exception_type=exception_type,
+    )
+
+
+def _extract_http_status(exc: Exception, friendly: str) -> int | None:
+    raw_status = getattr(exc, "status_code", None)
+    if type(raw_status) is int and 100 <= raw_status <= 599:
+        return raw_status
+    match = _HTTP_STATUS_PATTERN.search(friendly)
+    return int(match.group(1)) if match is not None else None
 
 
 def _strict_token_count(value: Any, field_name: str) -> int:

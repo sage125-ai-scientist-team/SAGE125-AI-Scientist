@@ -200,34 +200,33 @@ def test_runtime_receipt_does_not_serialize_secret() -> None:
 
 
 @pytest.mark.parametrize(
-    ("failure", "expected_code", "expected_message"),
+    ("failure", "expected_code", "expected_status", "expected_stage"),
     [
         (
             QwenClientError("百炼请求超时；系统已停止继续重试。"),
             "PROVIDER_TIMEOUT",
-            "formal provider call timed out",
+            None,
+            "provider_call",
         ),
         (
             QwenClientError("千问返回内容不是合法 JSON；已停止本次步骤。"),
             "PROVIDER_RESPONSE_PARSE_ERROR",
-            "formal provider response was not valid JSON",
-        ),
-        (
-            QwenClientError("百炼拒绝访问（403）：测试用脱敏消息。"),
-            "PROVIDER_HTTP_ERROR",
-            "formal provider HTTP request failed",
+            None,
+            "response_parse",
         ),
         (
             RuntimeError("Authorization: Bearer SENSITIVE_TEST_VALUE"),
             "PROVIDER_CALL_FAILED",
-            "formal provider call failed",
+            None,
+            "provider_call",
         ),
     ],
 )
-def test_provider_failures_are_safely_classified_without_leaking_details(
+def test_non_http_provider_failures_preserve_only_safe_diagnostics(
     failure: Exception,
     expected_code: str,
-    expected_message: str,
+    expected_status: int | None,
+    expected_stage: str,
 ) -> None:
     hook = ProviderAuditHook()
     client = _FailingClient(hook, failure)
@@ -242,7 +241,56 @@ def test_provider_failures_are_safely_classified_without_leaking_details(
         executor(_context())
 
     assert captured.value.error_code == expected_code
-    assert str(captured.value) == expected_message
+    assert captured.value.http_status == expected_status
+    assert captured.value.stage == expected_stage
+    assert captured.value.exception_type == type(failure).__name__
+    assert "SENSITIVE_TEST_VALUE" not in str(captured.value)
+    assert client.calls == 1
+    assert not hook.is_registered("formal-run-001")
+
+
+@pytest.mark.parametrize(
+    ("status", "friendly", "expected_code"),
+    [
+        (
+            400,
+            "百炼请求参数不兼容（400）：Authorization: Bearer SENSITIVE_TEST_VALUE",
+            "PROVIDER_BAD_REQUEST",
+        ),
+        (401, "百炼鉴权失败（401）：测试用脱敏消息。", "PROVIDER_AUTH_ERROR"),
+        (403, "百炼拒绝访问（403）：测试用脱敏消息。", "PROVIDER_PERMISSION_ERROR"),
+        (404, "百炼模型或端点不存在（404）：测试用脱敏消息。", "PROVIDER_NOT_FOUND"),
+        (429, "百炼限流或额度不足（429）：测试用脱敏消息。", "PROVIDER_RATE_LIMITED"),
+        (
+            503,
+            "百炼调用失败：Error code: 503 - SENSITIVE_TEST_VALUE",
+            "PROVIDER_SERVER_ERROR",
+        ),
+    ],
+)
+def test_http_failures_are_safely_classified_with_status(
+    status: int,
+    friendly: str,
+    expected_code: str,
+) -> None:
+    hook = ProviderAuditHook()
+    failure = QwenClientError(friendly)
+    client = _FailingClient(hook, failure)
+    executor = build_formal_provider_executor(
+        _Settings(),
+        hook=hook,
+        client_factory=lambda _settings: client,
+        pdf_renderer=lambda _markdown, _root: b"%PDF-1.7\n",
+    )
+
+    with pytest.raises(BatchRunnerError) as captured:
+        executor(_context())
+
+    assert captured.value.error_code == expected_code
+    assert str(captured.value) == "formal provider HTTP request failed"
+    assert captured.value.http_status == status
+    assert captured.value.stage == "provider_call"
+    assert captured.value.exception_type == "QwenClientError"
     assert "SENSITIVE_TEST_VALUE" not in str(captured.value)
     assert client.calls == 1
     assert not hook.is_registered("formal-run-001")

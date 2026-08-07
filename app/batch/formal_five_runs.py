@@ -84,6 +84,9 @@ AUTHORIZATION_TEXT: Final[str] = "FIVE_REAL_RUNS_AUTHORIZED=true"
 FROZEN_EXECUTION_ORDER: Final[tuple[str, ...]] = FROZEN_QUESTION_IDS
 FORMAL_MANIFEST_VERSION: Final[str] = "t07.wb5-formal-run-manifest.v1"
 FORMAL_OUTPUT_CONTRACT_VERSION: Final[str] = "t07.wb5-formal-output.v1"
+PROVIDER_FAILURE_DIAGNOSTIC_VERSION: Final[str] = (
+    "t07.provider-failure-diagnostic.v1"
+)
 EXPECTED_FREEZE_ID: Final[str] = APPROVED_TOKEN_ONLY_FREEZE_ID
 EXPECTED_PROVIDER: Final[str] = "bailian"
 EXPECTED_PRIMARY_MODEL: Final[str] = "qwen3.6-flash"
@@ -855,6 +858,12 @@ def _persist_question_failure(
     ledger,
 ) -> tuple[FormalQuestionReceipt, QuestionDeliveryRecord]:
     code = exc.error_code if isinstance(exc, BatchRunnerError) else "FORMAL_RUN_FAILED"
+    diagnostic = _provider_failure_diagnostic(exc)
+    if diagnostic is not None:
+        _write_json(
+            context.question_root / "provider_failure_diagnostic.json",
+            diagnostic,
+        )
     payload = base_job.model_dump()
     payload["status"] = JobStatus.FAILED.value
     payload["budget"]["tokens_used"] = ledger.question_tokens(base_job.question_id)
@@ -916,6 +925,22 @@ def _persist_question_failure(
         ),
         record,
     )
+
+
+def _provider_failure_diagnostic(exc: Exception) -> dict[str, Any] | None:
+    if not isinstance(exc, BatchRunnerError) or not exc.error_code.startswith(
+        "PROVIDER_"
+    ):
+        return None
+    if exc.stage is None or exc.exception_type is None:
+        return None
+    return {
+        "schema_version": PROVIDER_FAILURE_DIAGNOSTIC_VERSION,
+        "error_code": exc.error_code,
+        "http_status": exc.http_status,
+        "stage": exc.stage,
+        "exception_type": exc.exception_type,
+    }
 
 
 def _resume_completed_question(
