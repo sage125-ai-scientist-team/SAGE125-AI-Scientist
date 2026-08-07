@@ -164,9 +164,9 @@ owner-path test failure. It is not counted as production/live E2E success.
 | T02-B-017 | 两轮 trace；差异报告；排名结果。 | AgentTrace sidecars, `ExplainableRevisionAudit`, frozen metric result | `T02_METRIC_003_RESULT.json`; pipeline audit test | PASS |
 | T02-B-018 | V2 明确回应 V1 问题；差异可解释。 | resolved V1 issue count and issue-change-evidence mapping | metric report resolves 2 V1 issues with 2 mapped changes | PASS |
 | T02-METRIC-003 | V2 明确回应 V1 问题；差异可解释。（定量阈值：1 问题） | strict `TwoRoundCaseReport` and frozen manifest/result | responded_issue_count=2, threshold=1, passed=true | PASS |
-| T02-B-019 | 同步最新 integration，全测试与最小 E2E；trace 导出、迁移和回滚；review 后转 Ready。 | latest integration merge; trace handoff; Wave A migration; controller rollback; full verification | commands below | T02 gates PASS; cross-owner persisted E2E BLOCKED at T03 consumption |
+| T02-B-019 | 同步最新 integration，全测试与最小 E2E；trace 导出、迁移和回滚；review 后转 Ready。 | latest integration merge; trace handoff; Wave A migration; controller rollback; full verification | commands below and 2026-08-07 final sync section | PASS: merged `f1e2ecd68b075bb8df82992a58397dee71795a60`, behind=0, all local gates and exact-head pairing recheck PASS |
 | T02-B-020 | PR-B Ready；可复现案例包。 | manifest, raw result, command, implementation commit, PR #21 | evidence files and post-push remote check | T02 package PASS; no new Ready/status action performed |
-| T02-B-021 | 关键链路可复现；P0/P1 关闭；分支 up to date。 | T02 path reproducible; behind=0; six local gates PASS | final verification below | BLOCKED: paired persisted lineage P1 remains T03-owned |
+| T02-B-021 | 关键链路可复现；P0/P1 关闭；分支 up to date。 | T02 path reproducible; behind=0; six local gates PASS | final verification below and 2026-08-07 final sync section | PASS: branch up to date, six gates PASS, persisted exact-head pairing recheck PASS; captain approval/merge remains external |
 
 ## METRIC-003 reproducibility package
 
@@ -400,3 +400,98 @@ Text for T03 owner to copy into the T03-owned common pairing record:
 > T02 technical sign-off only, not captain approval or merge authorization. Common
 > base was `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c`; latest integration observed at
 > sign-off was `f1e2ecd68b075bb8df82992a58397dee71795a60`.
+
+## 2026-08-07 final integration sync and post-merge revalidation
+
+This section records only the T02-owned response to the captain review on PR #21
+`b2445944262c9a935dac9bf27fc281505a1c9b9f`. The review accepted the technical
+implementation, METRIC-003, and the frozen T02/T03 pairing, and identified the
+four-commit integration lag as the sole remaining hard blocker. This section is not
+a captain approval, merge authorization, review dismissal, or Wave C authorization.
+
+### Sync identity and branch proof
+
+- Pre-sync reviewed T02 HEAD:
+  `b2445944262c9a935dac9bf27fc281505a1c9b9f`
+- Merged `upstream/integration/2026-08-10` HEAD:
+  `f1e2ecd68b075bb8df82992a58397dee71795a60`
+- Post-merge verification HEAD:
+  `52a732629c78bbff1c54e2b4dba63e2a66678a4b`
+- Final evidence commit: the commit containing this section. Its full pushed SHA is
+  recorded in the PR #21 re-review comment because a commit cannot contain its own
+  hash without creating a new commit.
+- Frozen T03 pairing HEAD (read-only input; PR #32 was not modified):
+  `b3c1746530fa9c6f228e030ef281c255ab6b4c47`
+- Verification time: `2026-08-07T12:19:07.9791216+08:00` (Asia/Shanghai)
+- Merge command: `git merge --no-ff --no-edit upstream/integration/2026-08-10`
+- Merge conflicts: none. No rebase, force push, amend, squash, or cross-owner
+  conflict resolution was performed.
+- Sync proof: `git rev-list --left-right --count
+  HEAD...upstream/integration/2026-08-10` returned `9 0`; therefore behind=0.
+
+### Fresh post-sync commands and results
+
+All commands used the repository virtual environment with the CI UTF-8 and
+`MOCK_LLM=true` environment. Results below are from this synchronization run, not
+from a previous HEAD.
+
+| Layer | Command | Collected | Passed | Failed | Skipped | Warnings | Duration | Exit |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| T02 workflow | `python -X utf8 -m pytest -q tests/workflow` | 42 | 42 | 0 | 0 | 0 | 1.65s | 0 |
+| Full pytest | `python -X utf8 -m pytest -q` | 809 | 772 | 0 | 37 existing conditional skips | 0 | 63.32s | 0 |
+| lint | `python -X utf8 scripts/eval/wave_a_quality.py lint` | 3 files | 3 files | 0 | n/a | 0 | 0.9s | 0 |
+| type | `python -X utf8 scripts/eval/wave_a_quality.py type` | n/a | PASS | 0 | n/a | 0 | 1.0s | 0 |
+| unit | `python -X utf8 -m pytest -q --ignore=tests/integration` | 808 | 771 | 0 | 37 existing conditional skips | 0 | 59.71s | 0 |
+| integration | `python -X utf8 -m pytest -q tests/integration` | 1 | 1 | 0 | 0 | 0 | 0.23s | 0 |
+| security | `python -X utf8 scripts/audit_project.py` | n/a | PASS, critical=0 | 0 | n/a | 2 existing warnings outside T02 | 1.0s | 0 |
+| build | compileall + benchmark dry-run + `validate-result` | 3 steps | 3 steps | 0 | n/a | 0 | 1.6s | 0 |
+| Formal pairing | isolated exact T02/T03 combination, `pytest -q tests/validation/test_t02_t03_final_pairing_recheck.py` | 5 | 5 | 0 | 0 | 0 | 0.58s | 0 |
+| T02 handoff + T03 validation | isolated combination, `pytest -q tests/workflow/test_t02_t03_revision_handoff.py tests/validation` | 108 | 108 | 0 | 0 | 0 | 2.63s | 0 |
+| Actual-object persistence probe | production T02 pipeline output through T03 service and SQLite, then restart/replay | assertions | PASS | 0 | 0 | 0 | 1.9s | 0 |
+
+The 37 skips remain the repository's conditional missing booklet/questions fixtures
+and two Windows symlink-privilege probes. No test was deleted, weakened, skipped, or
+xfail-marked. The security warnings remain the two non-T02 private-path warnings in
+`T09_QUALITY_BASELINE.md` and `day1_baseline.txt`; critical findings are zero.
+
+Full pytest changed only a generated timestamp in T01 `metrics.json` and created a
+`.pytest_tmp` governance-test directory. The pre-test worktree was proven clean, so
+those two test-generated artifacts were precisely restored/removed before the T02
+evidence change. No T01, T03, T08, or captain-owned change is included in the PR
+diff.
+
+### Exact pairing non-regression after synchronization
+
+The isolated worktree combined post-merge T02 HEAD
+`52a732629c78bbff1c54e2b4dba63e2a66678a4b` with exact T03 HEAD
+`b3c1746530fa9c6f228e030ef281c255ab6b4c47` by applying the T03 content delta from
+their frozen common base. The temporary combination was neither committed nor
+pushed and was deleted after the checks.
+
+- The actual T02 production pipeline still emitted diff SHA-256
+  `4f0f9fda9eef9b57a467fd243101aa4fce43af1789561f5ba92f7902d0070397`.
+  The value matched revision metadata, AgentTrace, lineage handoff, and the value
+  reloaded from SQLite after restart.
+- The actual versions remained V1 `t02-t03-pair:v1` with no parent and direct V2
+  `t02-t03-pair:v2` with `parent_version_id=t02-t03-pair:v1`; direct child count=1.
+- Accepted-only feedback persisted for `feedback-pair-001`; rejected feedback was
+  absent after serialization and restart.
+- Same request, same handoff, 16 concurrent handoff replays, duplicate validation
+  completion, and post-restart replay all returned the original record/lineage.
+  Same idempotency key with a different payload failed closed.
+- SQLite counts after replay and restart were exactly one each for
+  `feedback_records`, `feedback_decisions`, and `feedback_lineages`; valid
+  lineage count=1, `revision_generated` count=1, and `validation_completed` count=1.
+- The restored audit lineage contained 16 events with a complete parent chain.
+
+### Final local hygiene and process state
+
+- Owner-map check against `docs/governance/task-owner-map.yaml`: 8 PR files, 0
+  violations. All files are within T02 allowed paths.
+- Credential-pattern scan across the 8 PR files: 0 matches.
+- `git diff --check` and branch-diff check: PASS.
+- Local branch comparison after merge: ahead=9, behind=0.
+- Working tree before this evidence edit: clean.
+- PR #21 remains OPEN and Ready. The contributor did not approve, merge, close,
+  dismiss the old review, or start T02 Wave C. The next actor after push and six
+  successful remote checks is the captain reviewer.
