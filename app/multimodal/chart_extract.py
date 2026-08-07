@@ -1,13 +1,13 @@
 """
-T06 Wave B：图表结构化提取（确定性；缺图例/错误轴 fail-closed）。
+T06 Wave B：图表提取——PDF 页文本块解析 + 显式 offline_fixture packet。
 
-不根据像素视觉猜测数值；仅接受显式 chart 包 JSON。
+不得从 gold/配套 CSV/文件名偷答案。缺图例、未知单位、错误轴 → fail-closed。
 """
 
 from __future__ import annotations
 
-import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -20,14 +20,22 @@ from app.contracts.multimodal import (
     TableData,
 )
 from app.multimodal.errors import ExtractionError
+from app.multimodal.pdf_io import extract_page_text_blocks, load_source_bytes, open_pdf
 
 _CONFIDENCE_PASS = 0.80
 _CONFIDENCE_REVIEW = 0.50
+_SERIES_LINE = re.compile(
+    r"^SERIES\s+(?P<name>\S+)\s+x=(?P<x>[-+0-9.eE]+)\s+y=(?P<y>[-+0-9.eE]+)\s*$"
+)
+_AXIS_LINE = re.compile(
+    r"^AXIS\s+(?P<name>[xy])\s+unit=(?P<unit>\S+)\s+min=(?P<min>[-+0-9.eE]+)\s+max=(?P<max>[-+0-9.eE]+)\s*$"
+)
+_LEGEND_LINE = re.compile(r"^LEGEND\s+(?P<items>.+)$")
 
 
 def _require_bbox(raw: Any) -> BoundingBox:
     if not isinstance(raw, dict):
-        raise ExtractionError("chart packet requires bbox object")
+        raise ExtractionError("chart requires bbox object")
     try:
         box = BoundingBox.model_validate(raw)
     except Exception as exc:  # noqa: BLE001
@@ -37,119 +45,38 @@ def _require_bbox(raw: Any) -> BoundingBox:
     return box
 
 
-def load_chart_packet(source_path: str) -> dict[str, Any]:
-    path = Path(source_path)
-    if not path.is_file():
-        raise ExtractionError(f"chart source not found: {source_path}")
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise ExtractionError(f"chart packet is not valid JSON: {exc}") from exc
-    if not isinstance(payload, dict):
-        raise ExtractionError("chart packet root must be an object")
-    return payload
+def _status(confidence: float) -> str:
+    if confidence < _CONFIDENCE_REVIEW:
+        return "failed"
+    if confidence < _CONFIDENCE_PASS:
+        return "needs_review"
+    return "passed"
 
 
-def extract_chart_artifact(source_path: str) -> MultimodalArtifact:
-    packet = load_chart_packet(source_path)
-    required = ("page", "bbox", "axes", "legend", "series", "confidence")
-    missing = [k for k in required if k not in packet]
-    if missing:
-        raise ExtractionError(f"chart packet missing fields: {missing}")
-
-    page = int(packet["page"])
-    if page < 1:
-        raise ExtractionError("page must be >= 1")
-    bbox = _require_bbox(packet["bbox"])
-
-    legend = packet["legend"]
-    if not isinstance(legend, list) or not legend:
-        raise ExtractionError("missing legend: refuse to invent series labels")
-    if any(not isinstance(x, str) or not x.strip() for x in legend):
-        raise ExtractionError("legend entries must be non-empty strings")
-
-    axes_raw = packet["axes"]
-    if not isinstance(axes_raw, list) or len(axes_raw) < 2:
-        raise ExtractionError("chart requires at least x and y axes")
-    axes: list[AxisSpec] = []
-    for item in axes_raw:
-        if not isinstance(item, dict):
-            raise ExtractionError("axis entry must be object")
-        unit = item.get("unit")
-        if unit is None or str(unit).strip() == "":
-            raise ExtractionError("axis unit unknown: refuse silent values")
-        try:
-            axis = AxisSpec.model_validate(item)
-        except Exception as exc:  # noqa: BLE001
-            raise ExtractionError(f"invalid axis: {exc}") from exc
-        if axis.min_value is not None and axis.max_value is not None:
-            if axis.max_value < axis.min_value:
-                raise ExtractionError(f"axis {axis.name!r} has inverted range")
-        axes.append(axis)
-
+def _finalize(
+    *,
+    artifact_id: str,
+    source_path: str,
+    source_type: str,
+    page: int,
+    bbox: BoundingBox,
+    axes: list[AxisSpec],
+    legend: list[str],
+    rows: list[list[str]],
+    confidence: float,
+) -> MultimodalArtifact:
     axis_names = {a.name for a in axes}
     if "x" not in axis_names or "y" not in axis_names:
         raise ExtractionError("axes must include named x and y")
-
-    series = packet["series"]
-    if not isinstance(series, list) or not series:
-        raise ExtractionError("series values missing")
-
-    headers = ["series", "x", "y"]
-    rows: list[list[str]] = []
-    for s in series:
-        if not isinstance(s, dict):
-            raise ExtractionError("series entry must be object")
-        name = s.get("name")
-        if name not in legend:
-            raise ExtractionError(
-                f"series name {name!r} not in legend {legend!r}"
-            )
-        points = s.get("points")
-        if not isinstance(points, list) or not points:
-            raise ExtractionError(f"series {name!r} has no points")
-        for p in points:
-            if not isinstance(p, dict) or "x" not in p or "y" not in p:
-                raise ExtractionError("points require explicit x and y")
-            try:
-                x_v = float(p["x"])
-                y_v = float(p["y"])
-            except (TypeError, ValueError) as exc:
-                raise ExtractionError(f"non-numeric point in series {name!r}") from exc
-            x_axis = next(a for a in axes if a.name == "x")
-            y_axis = next(a for a in axes if a.name == "y")
-            if x_axis.min_value is not None and x_v < x_axis.min_value:
-                raise ExtractionError("x value outside declared axis range")
-            if x_axis.max_value is not None and x_v > x_axis.max_value:
-                raise ExtractionError("x value outside declared axis range")
-            if y_axis.min_value is not None and y_v < y_axis.min_value:
-                raise ExtractionError("y value outside declared axis range")
-            if y_axis.max_value is not None and y_v > y_axis.max_value:
-                raise ExtractionError("y value outside declared axis range")
-            rows.append([str(name), str(p["x"]), str(p["y"])])
-
-    confidence = float(packet["confidence"])
-    if confidence < 0.0 or confidence > 1.0:
-        raise ExtractionError("confidence must be in [0, 1]")
-    if confidence < _CONFIDENCE_REVIEW:
-        status = "failed"
-    elif confidence < _CONFIDENCE_PASS:
-        status = "needs_review"
-    else:
-        status = "passed"
-
-    source_type = packet.get("source_type", "pdf")
-    if source_type not in ("pdf", "synthetic_fixture", "real_fixture", "csv", "user_upload"):
-        raise ExtractionError(f"unsupported source_type: {source_type!r}")
-
-    digest = hashlib.sha256(Path(source_path).read_bytes()).hexdigest()[:12]
-    artifact_id = str(packet.get("artifact_id") or f"chart-{digest}")
-    x_unit = next(a.unit for a in axes if a.name == "x") or ""
-    y_unit = next(a.unit for a in axes if a.name == "y") or ""
-    column_units = [
-        ColumnUnitBinding(column="x", unit=str(x_unit)),
-        ColumnUnitBinding(column="y", unit=str(y_unit)),
-    ]
+    for a in axes:
+        if not a.unit or not str(a.unit).strip():
+            raise ExtractionError("axis unit unknown: refuse silent values")
+        if a.min_value is not None and a.max_value is not None and a.max_value < a.min_value:
+            raise ExtractionError(f"axis {a.name!r} inverted")
+    if not legend:
+        raise ExtractionError("missing legend: refuse to invent series labels")
+    x_unit = next(a.unit for a in axes if a.name == "x")
+    y_unit = next(a.unit for a in axes if a.name == "y")
     return MultimodalArtifact(
         artifact_id=artifact_id,
         modality="chart",
@@ -160,10 +87,155 @@ def extract_chart_artifact(source_path: str) -> MultimodalArtifact:
             bbox=bbox,
         ),
         units=[str(x_unit), str(y_unit)],
-        column_units=column_units,
+        column_units=[
+            ColumnUnitBinding(column="x", unit=str(x_unit)),
+            ColumnUnitBinding(column="y", unit=str(y_unit)),
+        ],
+        axes=axes,
+        legend=legend,
+        data=TableData(headers=["series", "x", "y"], rows=rows),
+        confidence=confidence,
+        validation_status=_status(confidence),  # type: ignore[arg-type]
+    )
+
+
+def extract_chart_from_pdf(source_path: str, *, page: int = 1) -> MultimodalArtifact:
+    """
+    Parse machine-readable chart annotations embedded as text on a PDF page.
+
+    Format (one directive per text block/line):
+      LEGEND run_a,run_b
+      AXIS x unit=s min=0 max=10
+      AXIS y unit=K min=270 max=310
+      SERIES run_a x=0 y=298.1
+    """
+    meta = load_source_bytes(source_path)
+    doc = open_pdf(source_path)
+    try:
+        blocks = extract_page_text_blocks(doc, page)
+    finally:
+        doc.close()
+    if not blocks:
+        raise ExtractionError("PDF page has no text blocks for chart parse")
+
+    legend: list[str] = []
+    axes: list[AxisSpec] = []
+    rows: list[list[str]] = []
+    union_bbox = None
+    for block in blocks:
+        for line in str(block["text"]).splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            m = _LEGEND_LINE.match(line)
+            if m:
+                legend = [x.strip() for x in m.group("items").split(",") if x.strip()]
+                continue
+            m = _AXIS_LINE.match(line)
+            if m:
+                axes.append(
+                    AxisSpec(
+                        name=m.group("name"),
+                        label=m.group("name"),
+                        unit=m.group("unit"),
+                        min_value=float(m.group("min")),
+                        max_value=float(m.group("max")),
+                    )
+                )
+                continue
+            m = _SERIES_LINE.match(line)
+            if m:
+                name = m.group("name")
+                if legend and name not in legend:
+                    raise ExtractionError(f"series {name!r} not in legend")
+                x_v, y_v = float(m.group("x")), float(m.group("y"))
+                rows.append([name, m.group("x"), m.group("y")])
+                bb = block["bbox"]
+                if union_bbox is None:
+                    union_bbox = dict(bb)
+                else:
+                    union_bbox["x0"] = min(union_bbox["x0"], bb["x0"])
+                    union_bbox["y0"] = min(union_bbox["y0"], bb["y0"])
+                    union_bbox["x1"] = max(union_bbox["x1"], bb["x1"])
+                    union_bbox["y1"] = max(union_bbox["y1"], bb["y1"])
+                # range check when axes known
+                for a in axes:
+                    if a.name == "x" and a.min_value is not None and a.max_value is not None:
+                        if x_v < a.min_value or x_v > a.max_value:
+                            raise ExtractionError("x value outside declared axis range")
+                    if a.name == "y" and a.min_value is not None and a.max_value is not None:
+                        if y_v < a.min_value or y_v > a.max_value:
+                            raise ExtractionError("y value outside declared axis range")
+
+    if not legend:
+        raise ExtractionError("missing legend on PDF chart page")
+    if len(axes) < 2:
+        raise ExtractionError("PDF chart missing x/y AXIS directives")
+    if not rows:
+        raise ExtractionError("PDF chart missing SERIES points")
+    if union_bbox is None:
+        raise ExtractionError("PDF chart bbox unavailable")
+
+    return _finalize(
+        artifact_id=f"pdf-chart-{meta.sha256[:12]}-{page}",
+        source_path=source_path,
+        source_type="pdf",
+        page=page,
+        bbox=_require_bbox(union_bbox),
+        axes=axes,
+        legend=legend,
+        rows=rows,
+        confidence=0.84,
+    )
+
+
+def extract_chart_from_packet(source_path: str) -> MultimodalArtifact:
+    packet = json.loads(Path(source_path).read_text(encoding="utf-8"))
+    if not isinstance(packet, dict):
+        raise ExtractionError("chart packet root must be object")
+    kind = str(packet.get("input_kind") or "").strip()
+    if kind not in {"offline_fixture", "preprocessed_input"}:
+        raise ExtractionError(
+            "JSON chart packet must set input_kind=offline_fixture|preprocessed_input"
+        )
+    required = ("page", "bbox", "axes", "legend", "series", "confidence")
+    missing = [k for k in required if k not in packet]
+    if missing:
+        raise ExtractionError(f"chart packet missing fields: {missing}")
+    legend = packet["legend"]
+    if not isinstance(legend, list) or not legend:
+        raise ExtractionError("missing legend")
+    axes = [AxisSpec.model_validate(a) for a in packet["axes"]]
+    rows: list[list[str]] = []
+    for s in packet["series"]:
+        name = s["name"]
+        if name not in legend:
+            raise ExtractionError(f"series name {name!r} not in legend")
+        for p in s["points"]:
+            rows.append([str(name), str(p["x"]), str(p["y"])])
+    meta = load_source_bytes(source_path)
+    return _finalize(
+        artifact_id=str(packet.get("artifact_id") or f"chart-{meta.sha256[:12]}"),
+        source_path=source_path,
+        source_type=str(packet.get("source_type", "synthetic_fixture")),
+        page=int(packet["page"]),
+        bbox=_require_bbox(packet["bbox"]),
         axes=axes,
         legend=[str(x) for x in legend],
-        data=TableData(headers=headers, rows=rows),
-        confidence=confidence,
-        validation_status=status,  # type: ignore[arg-type]
+        rows=rows,
+        confidence=float(packet["confidence"]),
     )
+
+
+def extract_chart_artifact(source_path: str, **kwargs: Any) -> MultimodalArtifact:
+    suffix = Path(source_path).suffix.lower()
+    if suffix == ".pdf":
+        return extract_chart_from_pdf(source_path, **kwargs)
+    if suffix == ".json":
+        return extract_chart_from_packet(source_path)
+    if suffix in {".png", ".jpg", ".jpeg", ".webp"}:
+        raise ExtractionError(
+            "raw raster chart requires authorized vision call path; "
+            "offline image-only parse without annotations is fail-closed"
+        )
+    raise ExtractionError(f"unsupported chart source type: {suffix!r}")
