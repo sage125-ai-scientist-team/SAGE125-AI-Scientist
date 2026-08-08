@@ -1,6 +1,6 @@
 # T01 Wave C — 2026-08-08 人工核验签字表（草稿）
 
-**Checked HEAD (fill/push):** `8bdfbe7181ad4ef99f37f87a6a81673f756b8599`
+**Checked HEAD (fill/push):** `30a66f940120aa39235d29cb1290d82492a3195f`
 **Q028 regression:** `PASS`
 **Machine locator coverage:** `100%`
 **Machine all ok:** `True`
