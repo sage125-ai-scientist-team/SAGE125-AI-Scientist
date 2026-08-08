@@ -26,6 +26,7 @@ from app.contracts.revision import (
     issues_from_review_feedback,
 )
 from app.contracts.validation import HumanFeedbackDirective
+from app.workflow.revision_feedback import RevisionFeedbackProjection
 
 
 ClosureStatus = Literal["open", "resolved"]
@@ -119,6 +120,7 @@ class ExperimentRevisionContext(BaseModel):
     reviewer_feedback: ReviewFeedback
     evidence_bundle: EvidenceBundle | None = None
     human_feedback: HumanFeedbackDirective | None = None
+    wave_c_feedback: RevisionFeedbackProjection | None = None
     required_change_fields: tuple[str, ...] = (
         "change_id",
         "issue_id",
@@ -155,6 +157,20 @@ class RevisionRoundInput(BaseModel):
     review_result: ReviewFeedback
     revision_context: ExperimentRevisionContext
     human_feedback: HumanFeedbackReceipt | None = None
+    revision_feedback_fingerprint: str | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{64}$",
+    )
+
+    @model_validator(mode="after")
+    def _match_feedback_fingerprint(self) -> "RevisionRoundInput":
+        feedback = self.revision_context.wave_c_feedback
+        expected = feedback.fingerprint if feedback is not None else None
+        if self.revision_feedback_fingerprint != expected:
+            raise ValueError(
+                "revision feedback fingerprint must match the bounded projection"
+            )
+        return self
 
 
 class ReviewScoreChange(BaseModel):
@@ -573,6 +589,7 @@ def build_experiment_revision_context(
     failure_reasons: Sequence[FailureReason],
     evidence_bundle: EvidenceBundle | None = None,
     human_feedback: HumanFeedbackDirective | None = None,
+    wave_c_feedback: RevisionFeedbackProjection | None = None,
 ) -> ExperimentRevisionContext:
     """Build the exact structured payload supplied to revision-round agents."""
     if previous_version.version_number != 1:
@@ -601,6 +618,11 @@ def build_experiment_revision_context(
             if human_feedback is not None
             else None
         ),
+        wave_c_feedback=(
+            wave_c_feedback.model_copy(deep=True)
+            if wave_c_feedback is not None
+            else None
+        ),
     )
 
 
@@ -620,11 +642,26 @@ def inject_revision_context(
             if context.human_feedback is not None
             else None
         ),
+        revision_feedback_fingerprint=(
+            context.wave_c_feedback.fingerprint
+            if context.wave_c_feedback is not None
+            else None
+        ),
     )
     envelope_payload = envelope.model_dump(mode="json")
     if envelope.human_feedback is None:
         envelope_payload.pop("human_feedback")
+    if envelope.revision_feedback_fingerprint is None:
+        envelope_payload.pop("revision_feedback_fingerprint")
+        envelope_payload["revision_context"].pop("wave_c_feedback")
     result.update(envelope_payload)
+    if envelope.revision_feedback_fingerprint is not None:
+        result = {
+            "revision_feedback_fingerprint": (
+                envelope.revision_feedback_fingerprint
+            ),
+            **result,
+        }
     return result
 
 
@@ -640,12 +677,18 @@ class _RevisionMessageMixin:
                 "review_result": input_data.get("review_result"),
                 "revision_context": input_data.get("revision_context"),
                 "human_feedback": input_data.get("human_feedback"),
+                "revision_feedback_fingerprint": input_data.get(
+                    "revision_feedback_fingerprint"
+                ),
             }
         )
         user_payload = json.loads(messages[1]["content"])
         envelope_payload = envelope.model_dump(mode="json")
         if envelope.human_feedback is None:
             envelope_payload.pop("human_feedback")
+        if envelope.revision_feedback_fingerprint is None:
+            envelope_payload.pop("revision_feedback_fingerprint")
+            envelope_payload["revision_context"].pop("wave_c_feedback")
         user_payload.update(envelope_payload)
         return [
             dict(messages[0]),

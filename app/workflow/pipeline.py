@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Sequence
 from contextvars import ContextVar
 from pathlib import Path
 from typing import Optional
@@ -35,6 +36,8 @@ from app.agents import (
 )
 from app.agents.base import AgentOutputError
 from app.contracts.evidence import EvidenceBundle
+from app.contracts.execution import ExecutionResult
+from app.contracts.multimodal import MultimodalArtifact
 from app.contracts.revision import (
     PlanVersion,
     PlanVersionStore,
@@ -69,6 +72,7 @@ from app.workflow.explainable_revision import (
 )
 from app.workflow.mock_outputs import PENDING_RESULTS, build_mock_evidence_cards
 from app.workflow.quality_gates import run_all_quality_gates
+from app.workflow.revision_feedback import build_revision_feedback
 
 # 模块级日志器。
 logger = get_logger("workflow.pipeline")
@@ -502,6 +506,8 @@ def _run_pipeline_with_state_impl(
     mock_mode: Optional[bool] = None,
     evidence_bundle: EvidenceBundle | None = None,
     human_feedback_directive: HumanFeedbackDirective | None = None,
+    execution_result: ExecutionResult | None = None,
+    multimodal_artifacts: Sequence[MultimodalArtifact] | None = None,
 ) -> tuple[ResearchPlan, PipelineState]:
     """
     运行完整多智能体流水线，返回 (ResearchPlan, PipelineState)。
@@ -513,6 +519,10 @@ def _run_pipeline_with_state_impl(
     """
     settings = get_settings()
     mock = _is_mock(mock_mode)
+    wave_c_feedback = build_revision_feedback(
+        execution_result=execution_result,
+        multimodal_artifacts=multimodal_artifacts,
+    )
     export_base = resolve_artifact_base(settings.export_dir)
     emit_progress("initializing", status="running", message="正在初始化 AI Scientist 运行环境")
 
@@ -723,6 +733,7 @@ def _run_pipeline_with_state_impl(
             failure_reasons=failure_reasons,
             evidence_bundle=evidence_bundle,
             human_feedback=human_feedback_directive,
+            wave_c_feedback=wave_c_feedback,
         )
         state.revision_history.append("auto_revision_1: 依据评审意见重做假设与实验设计。")
         revision_controller.advance_iteration()
@@ -971,6 +982,8 @@ def run_pipeline_with_state(
     progress_callback: ProgressCallback | None = None,
     evidence_bundle: EvidenceBundle | None = None,
     human_feedback_directive: HumanFeedbackDirective | None = None,
+    execution_result: ExecutionResult | None = None,
+    multimodal_artifacts: Sequence[MultimodalArtifact] | None = None,
 ) -> tuple[ResearchPlan, PipelineState]:
     """Run the pipeline in an isolated mode/progress context and persist failures."""
     resolved_mock = _is_mock(mock_mode)
@@ -989,6 +1002,8 @@ def run_pipeline_with_state(
                     mock_mode=resolved_mock,
                     evidence_bundle=evidence_bundle,
                     human_feedback_directive=human_feedback_directive,
+                    execution_result=execution_result,
+                    multimodal_artifacts=multimodal_artifacts,
                 )
             except Exception as exc:
                 state = _ACTIVE_STATE.get()
@@ -1024,6 +1039,8 @@ def run_pipeline(
     mock_mode: Optional[bool] = None,
     evidence_bundle: EvidenceBundle | None = None,
     human_feedback_directive: HumanFeedbackDirective | None = None,
+    execution_result: ExecutionResult | None = None,
+    multimodal_artifacts: Sequence[MultimodalArtifact] | None = None,
 ) -> ResearchPlan:
     """
     运行完整多智能体流水线并返回最终 ResearchPlan。
@@ -1052,6 +1069,8 @@ def run_pipeline(
         mock_mode=mock_mode,
         evidence_bundle=evidence_bundle,
         human_feedback_directive=human_feedback_directive,
+        execution_result=execution_result,
+        multimodal_artifacts=multimodal_artifacts,
     )
     return plan
 
