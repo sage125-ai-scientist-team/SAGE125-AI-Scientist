@@ -23,6 +23,7 @@ from app.contracts.execution import (
     MetricRequirement,
 )
 from app.contracts.multimodal import MultimodalArtifact, to_consumer_summary
+from app.contracts.revision import PlanVersion
 from app.core.config import get_settings
 from app.execution import EntrypointRegistry, LocalProcessRunner
 from app.workflow import pipeline
@@ -30,7 +31,10 @@ from app.workflow.explainable_revision import (
     ExperimentRevisionContext,
     RevisionAwareExperimentDesignerAgent,
     ReviewFeedback,
+    build_experiment_revision_context,
+    failure_reasons_from_feedback,
     inject_revision_context,
+    issues_for_revision,
 )
 from tests.helpers_questions_fixture import write_minimal_questions_fixture
 
@@ -190,13 +194,22 @@ def _review_result() -> dict[str, Any]:
 
 def _revision_context(feedback: Any | None) -> ExperimentRevisionContext:
     review = ReviewFeedback.from_review_result(_review_result())
-    return ExperimentRevisionContext(
-        previous_plan={"experiment_design": {"experiments": {}}},
-        previous_plan_version={"version_id": "wave-c-context:v1"},
-        parent_version_id="wave-c-context:v1",
-        lineage=["wave-c-context:v1", "wave-c-context:v2"],
-        reviewer_feedback=review,
+    issues = issues_for_revision(review, opened_in_version=1)
+    previous = PlanVersion.create(
+        run_id="wave-c-context",
+        version_number=1,
+        revision_iteration=1,
+        hypothesis_generation={"hypotheses": [{"hypothesis": "H1"}]},
+        experiment_design={"experiments": {}},
+        review_feedback=review,
+        issue_closures=issues,
+    )
+    return build_experiment_revision_context(
+        previous_version=previous,
+        unresolved_issues=issues,
+        failure_reasons=failure_reasons_from_feedback(review, issues),
         wave_c_feedback=feedback,
+        generated_at="2026-08-08T08:00:00+00:00",
     )
 
 
@@ -317,7 +330,10 @@ def test_T02_C_001_success_execution_summary_is_bounded_and_sourced() -> None:
 
 def test_T02_C_002_failure_reason_enters_the_next_round_message() -> None:
     api = _wave_c_api()
-    projection = api.build_revision_feedback(execution_result=_failed_execution())
+    projection = api.build_revision_feedback(
+        execution_result=_failed_execution(),
+        multimodal_artifacts=[_multimodal_artifact()],
+    )
     payload = json.loads(
         RevisionAwareExperimentDesignerAgent()
         .build_messages(_prompt_input(projection))[1]["content"]
@@ -408,8 +424,14 @@ def test_T02_C_005_large_inputs_have_explicit_caps_and_drop_counts() -> None:
 
 def test_T02_C_006_feedback_changes_input_fingerprint_and_prompt_hash() -> None:
     api = _wave_c_api()
-    first = api.build_revision_feedback(execution_result=_successful_execution())
-    second = api.build_revision_feedback(execution_result=_failed_execution())
+    first = api.build_revision_feedback(
+        execution_result=_successful_execution(),
+        multimodal_artifacts=[_multimodal_artifact()],
+    )
+    second = api.build_revision_feedback(
+        execution_result=_failed_execution(),
+        multimodal_artifacts=[_multimodal_artifact()],
+    )
     first_input = _prompt_input(first)
     second_input = _prompt_input(second)
     agent = RevisionAwareExperimentDesignerAgent()
@@ -515,13 +537,27 @@ def test_T02_C_007_actual_results_drive_a_substantive_pipeline_revision(
         "observed score=0.875 ratio" in metric
         for metric in state.experiment_design["experiments"]["metrics"]
     )
-    audit = next(
-        event["revision_audit"]
-        for event in state.agent_trace
-        if event.get("revision_audit")
+    revision_trace = next(
+        event for event in state.agent_trace if event.get("revision_audit")
     )
+    audit = revision_trace["revision_audit"]
     assert "evaluation_metrics" in audit["substantive_sections"]
     assert "stopping_conditions" in audit["substantive_sections"]
+    consumer = revision_trace["revision_consumer_summary"]
+    checkpoint = revision_trace["revision_recovery_checkpoint"]
+    assert consumer["version"]["source_version_id"] == "wave-c-production:v1"
+    assert consumer["version"]["generated_version_id"] == "wave-c-production:v2"
+    assert consumer["issues"] and consumer["diff"]
+    assert consumer["status_events"][-1]["event_type"] in {
+        "revision_completed",
+        "revision_stopped",
+    }
+    assert len(consumer["summary_hash"]) == 64
+    assert checkpoint["controller"]["version_ids"] == [
+        "wave-c-production:v1",
+        "wave-c-production:v2",
+    ]
+    assert len(checkpoint["checkpoint_hash"]) == 64
     assert api.MAX_PROJECTION_BYTES > 0
 
 

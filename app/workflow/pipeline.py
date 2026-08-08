@@ -40,7 +40,6 @@ from app.contracts.execution import ExecutionResult
 from app.contracts.multimodal import MultimodalArtifact
 from app.contracts.revision import (
     PlanVersion,
-    PlanVersionStore,
     ReviewFeedback,
     RevisionContext,
     RevisionPromptBuilder,
@@ -58,7 +57,6 @@ from app.workflow.explainable_revision import (
     RevisionAwareExperimentDesignerAgent,
     RevisionAwareHypothesisGeneratorAgent,
     RevisionAwareScientificReviewerAgent,
-    RevisionExecutionController,
     TwoRoundCaseReport,
     assess_experiment_revision,
     attach_revision_metadata,
@@ -73,6 +71,7 @@ from app.workflow.explainable_revision import (
 from app.workflow.mock_outputs import PENDING_RESULTS, build_mock_evidence_cards
 from app.workflow.quality_gates import run_all_quality_gates
 from app.workflow.revision_feedback import build_revision_feedback
+from app.workflow.revision_recovery import RevisionRecoveryCoordinator
 
 # 模块级日志器。
 logger = get_logger("workflow.pipeline")
@@ -698,13 +697,13 @@ def _run_pipeline_with_state_impl(
             first_feedback,
             unresolved_issues,
         )
-        version_store = PlanVersionStore()
-        revision_controller = RevisionExecutionController.create(
+        revision_recovery = RevisionRecoveryCoordinator.create(
             run_id=state.run_id,
+            issue_closures=unresolved_issues,
             max_iterations=2,
             max_retries=1,
         )
-        revision_controller.claim_event(f"{state.run_id}:review:v1")
+        revision_controller = revision_recovery.controller
         first_version = PlanVersion.create(
             run_id=state.run_id,
             version_number=1,
@@ -725,8 +724,13 @@ def _run_pipeline_with_state_impl(
                 ),
             },
         )
-        version_store.save(first_version)
-        revision_controller.record_version(first_version.version_id)
+        revision_recovery.apply_version_event(
+            event_id=f"{state.run_id}:review:v1",
+            event_type="reviewer_callback",
+            version=first_version,
+        )
+        if execution_result is not None:
+            revision_recovery.record_execution_result(execution_result)
         experiment_revision_context = build_experiment_revision_context(
             previous_version=first_version,
             unresolved_issues=unresolved_issues,
@@ -829,8 +833,13 @@ def _run_pipeline_with_state_impl(
                     ),
                 },
             )
-            version_store.save(second_version)
-            revision_controller.record_version(second_version.version_id)
+            revision_recovery.apply_version_event(
+                event_id=f"{state.run_id}:revision:v2",
+                event_type="revision_event",
+                version=second_version,
+            )
+        if second_version is not None:
+            revision_recovery.set_issue_closures(revision_audit.issue_closures)
         if revision_audit.accepted:
             revision_controller.complete()
         else:
@@ -849,9 +858,19 @@ def _run_pipeline_with_state_impl(
                 ),
             },
         )
-        trace_fields = revision_trace_fields(
-            revision_audit,
-            plan_versions=version_store.list_versions(state.run_id),
+        plan_versions = revision_recovery.list_versions()
+        trace_fields = (
+            revision_trace_fields(
+                revision_audit,
+                plan_versions=plan_versions,
+                revision_control=revision_controller.state,
+                integrity=experiment_revision_context.integrity,
+            )
+            if experiment_revision_context.integrity is not None
+            else revision_trace_fields(
+                revision_audit,
+                plan_versions=plan_versions,
+            )
         )
         if human_feedback_directive is not None and second_version is not None:
             revision_metadata, lineage_handoff = build_revision_pairing_outputs(
@@ -879,6 +898,9 @@ def _run_pipeline_with_state_impl(
             {
                 "revision_control": revision_controller.state.model_dump(
                     mode="json"
+                ),
+                "revision_recovery_checkpoint": (
+                    revision_recovery.checkpoint().model_dump(mode="json")
                 ),
                 "two_round_case_report": case_report.model_dump(mode="json"),
             }

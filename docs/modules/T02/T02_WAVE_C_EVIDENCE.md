@@ -1,19 +1,20 @@
-# T02 Wave C Day 1 evidence
+# T02 Wave C hardening evidence
 
 ## Scope and authority
 
-- Requirements completed: `T02-C-001`, `T02-C-002`, `T02-C-003` only.
+- Requirements completed in this branch: `T02-C-001` through `T02-C-006`.
 - Integration start: `c683ab29dae73705ea49d2d59faa813d8f6660ca`.
 - Branch: `t02/c-revision-hardening`, created directly from
   `upstream/integration/2026-08-10` at the integration start above with
   ahead/behind `0/0` and a clean worktree.
 - PR #21 was `MERGED` before the branch was created; the integration start is
   its merge commit.
-- This evidence is not authorization to mark a PR Ready, approve it, merge it,
-  or start `T02-C-004` through `T02-C-009`.
+- Existing PR: `#37` (`Draft`). No rebase, force-push, replacement PR, approval,
+  or merge is part of this hardening work.
 
-No shared contract, T05/T06/T08 implementation, API, frontend, CI, dependency,
-lockfile, or governance file is changed.
+No frozen shared contract, T05/T06/T08 implementation, API, frontend, CI,
+dependency, lockfile, or governance file is changed. New stability contracts
+are workflow-owned sidecars under `app/workflow/**`.
 
 ## Red test evidence
 
@@ -34,14 +35,30 @@ T02-C: bounded execution/multimodal feedback adapter is missing
 The failures were produced by importing the required production adapter during
 each test. No `assert False`, skip, or xfail was used.
 
+The C-004/005 hardening test file was likewise added before its production
+modules. Its first run was:
+
+```text
+.\.venv\Scripts\python.exe -m pytest -q tests\workflow\test_t02_wave_c_revision_integrity_recovery.py
+```
+
+Initial result: `13 failed in 0.50s` (exit 1). Five failures showed the missing
+strict context builder timestamp/integrity behavior, and eight showed the
+missing durable recovery coordinator/T08 consumer projection. These were real
+capability failures; no forced failure, skip, xfail, removed assertion, or
+formal mock result was introduced.
+
 ## Implementation and data flow
 
 Implementation files:
 
 - `app/workflow/revision_feedback.py`
+- `app/workflow/revision_integrity.py`
+- `app/workflow/revision_recovery.py`
 - `app/workflow/explainable_revision.py`
 - `app/workflow/pipeline.py`
 - `tests/workflow/test_t02_wave_c_execution_multimodal_feedback.py`
+- `tests/workflow/test_t02_wave_c_revision_integrity_recovery.py`
 
 Data flow:
 
@@ -118,6 +135,84 @@ No unit or confidence is synthesized: empty T06 units remain empty, confidence
 `0.0` remains `0.0`, missing required confidence is rejected by the frozen T06
 contract, and execution feedback has no invented confidence field.
 
+## T02-C-004 context integrity
+
+`build_experiment_revision_context()` is the authoritative production builder.
+When Wave C evidence is supplied it now requires both a frozen
+`ExecutionResult` projection and at least one
+`MultimodalArtifact.to_consumer_summary()` projection. Partial Wave C context
+fails explicitly instead of entering the next agent round.
+
+The workflow-owned `RevisionContextIntegrity` sidecar contains and cross-checks:
+
+- deterministic `review_id`, critical issues, required revisions, comments,
+  and severity from the exact V1 `ReviewFeedback`;
+- the bounded execution summary's execution/status/metrics/artifacts/failure
+  and provenance flags/identifiers;
+- modality, source, value shape (`header_count`/`row_count`), units,
+  confidence, and validation status from the frozen multimodal consumer view;
+- issue ID, previous/current status, and a required closure reason for every
+  resolved issue;
+- source version, parent version, generated version, timezone-aware timestamp,
+  and a canonical SHA-256 binding all integrity fields.
+
+The context model revalidates the complete V1 snapshot and rebuilds the
+integrity envelope on restore. Missing reviewer feedback, execution feedback,
+multimodal feedback, lineage provenance, mismatched generated versions, forged
+feedback fingerprints, and mismatched context hashes all fail closed.
+Legacy Wave A/B calls with no Wave C evidence retain the prior payload shape;
+the optional Wave C fields are omitted rather than serialized as null.
+
+## T02-C-005 idempotency and recovery
+
+`RevisionRecoveryCoordinator` replaces the pipeline's separate event claim and
+version-save steps with one event-to-version operation. A callback/event ID is
+persisted as `in_progress` before generation and then bound to its exact
+`PlanVersion`. Re-delivery returns the original version and never appends a
+second V1/V2. A checkpoint taken during a paused operation restores the claim,
+existing V1, issue state, retry count, failures, and controller status; resume
+continues the same event.
+
+Every checkpoint contains controller state, ordered plan snapshots, ordered
+event records, issue closures, and a canonical SHA-256. Restore rejects:
+
+- controller/version or controller/event lineage mismatches;
+- non-contiguous parents or cross-run versions;
+- events referencing missing versions;
+- duplicate event/issue IDs;
+- resolved issues when generated V2 does not exist;
+- any checkpoint whose content no longer matches its digest.
+
+LLM timeouts, empty outputs, and `AgentOutputError` use the existing bounded
+retry controller. Frozen terminal execution failures are deduplicated by
+`execution_id` before incrementing the same persisted retry/failure record.
+The final state records the failure reason, retry count, and stop reason.
+Neither a failed nor interrupted run can close an issue without V2; new issues
+found by the V2 reviewer may only enter as `not_present -> open`.
+
+## T02-C-006 external consumer view and conflict audit
+
+The V2 AgentTrace now carries `revision_consumer_summary`, a flat self-hashed
+projection for T08/UI consumers. It exposes only:
+
+- source/parent/generated version provenance and context hash;
+- issue transitions and closure reasons;
+- compact change ID, issue ID, affected section, evidence references, and
+  closure status;
+- current status, retry count, failure/stop reasons, and ordered status events.
+
+It does not contain previous plan objects, hypothesis/experiment snapshots,
+stdout/stderr, multimodal rows, or raw execution objects. Therefore no frontend
+or T08 parser change is required for consumers to read versions, issues, diffs,
+status events, and the stop reason. The internal self-hashed recovery checkpoint
+is retained separately for replay and is not the external projection.
+
+The owner-map scan permits every changed path (`app/workflow/**`,
+`tests/workflow/**`, `docs/modules/T02/**`). `app/contracts/revision.py` remains
+byte-for-byte unchanged, and there are no changes under API, frontend, T05/T06,
+CI, or another task owner's path. This satisfies the no-unregistered-shared-file
+conflict gate for the current diff.
+
 ## Determinism evidence
 
 For the fixed valid test ExecutionResult plus T06 artifact:
@@ -137,17 +232,19 @@ timed-out failure changes both the complete input fingerprint and prompt hash.
 | Layer | Command/result | Exit |
 | --- | --- | ---: |
 | Wave C red | targeted test before implementation: 12 failed, missing adapter | 1 |
-| Wave C green | targeted test: `12 passed in 1.03s` | 0 |
-| workflow | `pytest -q tests\workflow`: `54 passed in 2.19s` | 0 |
-| full pytest | `pytest -q`: `784 passed, 37 skipped in 59.78s` | 0 |
+| hardening red | C-004/005 test before implementation: 13 failed on missing integrity/recovery behavior | 1 |
+| C-001..005 green | two Wave C files: `25 passed in 1.00s` | 0 |
+| production trace + hardening | production pipeline case plus C-004/005 file: `14 passed in 0.97s` | 0 |
+| workflow | `pytest -q tests\workflow`: `67 passed in 2.24s` | 0 |
+| full pytest | `pytest -q`: `797 passed, 37 skipped in 62.21s` | 0 |
 | lint | `wave_a_quality.py lint`: 3 files, no failures | 0 |
 | type | `wave_a_quality.py type`: no failures | 0 |
-| unit | CI command with inherited UTF-8: `783 passed, 37 skipped in 59.46s` | 0 |
+| unit | CI command with inherited UTF-8: `796 passed, 37 skipped in 60.04s` | 0 |
 | integration | CI command: `1 passed in 0.22s` | 0 |
 | security | `scripts/audit_project.py`: PASS, critical=0, 2 existing warnings | 0 |
 | build | compileall + benchmark dry-run + validate-result: all PASS | 0 |
-| owner map | repository review-script parser/glob check: 5 owned, 0 violations | 0 |
-| sensitive scan | final five-file credential/private-key pattern scan: 0 matches | 0 |
+| owner map | final seven-file diff: 7 owned, 0 violations | 0 |
+| sensitive scan | final seven-file credential/private-key pattern scan: 0 matches | 0 |
 | whitespace | `git diff --check`: PASS | 0 |
 
 The 37 skips are existing conditional tests for unavailable booklet/questions
@@ -162,7 +259,7 @@ the full suite. Re-running the unchanged CI unit command with inherited
 `PYTHONUTF8=1`, matching the CI UTF-8 environment, passed as reported above; no
 test or production behavior was modified to hide it.
 
-Full/unit pytest generated a T01 metrics timestamp and `.pytest_tmp` governance
+Full/unit pytest generated T01 metrics timestamps and `.pytest_tmp` governance
 fixtures. The pre-test worktree was clean, so those exact test artifacts were
 restored/removed before this evidence file. They are absent from the final diff.
 
@@ -175,6 +272,9 @@ restored/removed before this evidence file. They are absent from the final diff.
 - Dropped counts report bounded omission; omitted raw values are intentionally
   unrecoverable from the prompt projection and must be retrieved from their
   source systems by trace ID when authorized.
-- `T02-C-004` through `T02-C-009` have not started.
-- The resulting PR must remain Draft. Ready, Approve, Merge, and Close are not
-  authorized by this work.
+- `T02-C-007` through `T02-C-009` are outside this execution scope and have not
+  started.
+- The technical C-004/005/006 gates are satisfied. PR #37 remains Draft until
+  the omitted remainder of the user's C-006 instruction and any required human
+  review/Ready transition are explicitly confirmed; this work does not approve
+  or merge the PR.
