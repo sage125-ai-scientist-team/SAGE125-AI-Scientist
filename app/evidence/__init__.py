@@ -73,6 +73,12 @@ from app.evidence.support_checker import (
     check_bundle_support,
     check_claim_evidence_support,
 )
+from app.evidence.wave_c_signoff import (
+    WaveCSignoffReport,
+    build_wave_c_signoff_report,
+    render_signoff_markdown,
+    write_signoff_artifacts,
+)
 
 __all__ = [
     "BUNDLE_FINGERPRINT_KEY",
@@ -94,7 +100,9 @@ __all__ = [
     "SupportErrorCode",
     "SupportFinding",
     "T08CitationPayload",
+    "WaveCSignoffReport",
     "assert_same_input_stable_evidence_set",
+    "build_wave_c_signoff_report",
     "attach_bundle_to_plan_version",
     "build_api_example_payload",
     "build_citation_item",
@@ -120,6 +128,7 @@ __all__ = [
     "load_evidence_gold_set",
     "precheck_bundle_for_validation",
     "render_citation_markdown",
+    "render_signoff_markdown",
     "round_trip_revision_state",
     "run_q028_regression",
     "run_quality_gate",
@@ -128,4 +137,5 @@ __all__ = [
     "serialize_quality_gate_report",
     "stable_evidence_set_fingerprint",
     "stable_sort_evidence_ids",
+    "write_signoff_artifacts",
 ]
