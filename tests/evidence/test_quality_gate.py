@@ -1,5 +1,5 @@
 """
-T01 Wave C：冲突/反例证据不被静默覆盖；撤稿占位门禁。
+T01 Wave C：冲突/反例证据不被静默覆盖；撤稿占位门禁红灯。
 """
 
 from app.contracts.evidence import (
@@ -76,6 +76,33 @@ def _conflict_bundle() -> EvidenceBundle:
     )
 
 
+def _one_sided_after_overwrite_bundle() -> EvidenceBundle:
+    """
+    模拟上游静默丢弃 contradicts 侧后的 Bundle（仅剩 supports）。
+
+    返回：
+        EvidenceBundle。
+    """
+    return EvidenceBundle(
+        bundle_id="B-OVERWRITE",
+        evidences=[
+            _card("EV-SUP", "EGFR inhibition improves response in lung adenocarcinoma."),
+            _card(
+                "EV-CON",
+                "EGFR inhibition failed to improve response in the same cohort.",
+            ),
+        ],
+        links=[
+            ClaimEvidenceLink(
+                claim_id="C1",
+                evidence_id="EV-SUP",
+                relation="supports",
+                claim_domain="oncology",
+            ),
+        ],
+    )
+
+
 def test_conflict_preserves_both_sides():
     """冲突两侧证据 ID 均保留，禁止静默覆盖。"""
     bundle = _conflict_bundle()
@@ -89,8 +116,8 @@ def test_conflict_preserves_both_sides():
     assert record.silently_overwritten is False
 
 
-def test_quality_gate_flags_retracted_support():
-    """撤稿证据不得伪装支撑 established facts。"""
+def test_quality_gate_retracted_fails_under_keep_both_flagged():
+    """红灯：KEEP_BOTH_FLAGGED 下撤稿 supports 必须 passed=False。"""
     bundle = _conflict_bundle()
     statuses = {
         "EV-SUP": EvidenceSourceStatus(
@@ -110,12 +137,69 @@ def test_quality_gate_flags_retracted_support():
         disposition=ConflictDisposition.KEEP_BOTH_FLAGGED,
     )
     assert "EV-SUP" in report.retracted_blocked_ids
-    assert report.conflict_records[0].support_evidence_ids == ("EV-SUP",)
-    assert report.conflict_records[0].contradict_evidence_ids == ("EV-CON",)
+    assert report.passed is False
+
+
+def test_quality_gate_withdrawn_fails_independent_of_disposition():
+    """红灯：WITHDRAWN supports 失败不依赖 disposition。"""
+    bundle = _conflict_bundle()
+    statuses = {
+        "EV-SUP": EvidenceSourceStatus(
+            evidence_id="EV-SUP",
+            lifecycle=SourceLifecycleStatus.WITHDRAWN,
+            note="withdrawn",
+        ),
+        "EV-CON": EvidenceSourceStatus(
+            evidence_id="EV-CON",
+            lifecycle=SourceLifecycleStatus.ACTIVE,
+            note="ok",
+        ),
+    }
+    for disposition in (
+        ConflictDisposition.KEEP_BOTH_FLAGGED,
+        ConflictDisposition.BLOCK_CLAIM,
+    ):
+        report = run_quality_gate(
+            bundle,
+            status_by_id=statuses,
+            disposition=disposition,
+        )
+        assert report.passed is False
+        assert "EV-SUP" in report.retracted_blocked_ids
+
+
+def test_silent_overwrite_detectable_via_prior_links():
+    """红灯：prior 双侧齐全、当前丢一侧 → silently_overwritten=True。"""
+    prior = _conflict_bundle().links
+    current = _one_sided_after_overwrite_bundle()
+    records = detect_conflicts_preserving_both_sides(
+        current,
+        prior_links=prior,
+    )
+    assert len(records) == 1
+    assert records[0].silently_overwritten is True
+    assert records[0].support_evidence_ids == ("EV-SUP",)
+    assert records[0].contradict_evidence_ids == ()
+
+
+def test_silent_overwrite_detectable_via_expected_claim_ids():
+    """红灯：expected_conflict_claim_ids 在丢一侧时可到达。"""
+    current = _one_sided_after_overwrite_bundle()
+    records = detect_conflicts_preserving_both_sides(
+        current,
+        expected_conflict_claim_ids=["C1"],
+    )
+    assert len(records) == 1
+    assert records[0].silently_overwritten is True
+    report = run_quality_gate(
+        current,
+        expected_conflict_claim_ids=["C1"],
+    )
+    assert report.passed is False
 
 
 def test_default_statuses_are_placeholders():
-    """默认来源状态为 PLACEHOLDER，不得伪装 ACTIVE。"""
+    """默认来源状态为 PLACEHOLDER，不得伪装 ACTIVE；无撤稿时可通过。"""
     bundle = _conflict_bundle()
     report = run_quality_gate(bundle)
     assert set(report.placeholder_status_ids) >= {"EV-SUP", "EV-CON"}

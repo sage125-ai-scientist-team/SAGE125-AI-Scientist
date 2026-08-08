@@ -2,21 +2,21 @@
 
 本文档描述 Wave C 新增公共函数级接口。注释密度按函数说明维护；实现见 `app/evidence/`。
 
-## `run_quality_gate(bundle, status_by_id=None, disposition=KEEP_BOTH_FLAGGED) -> QualityGateReport`
+## `run_quality_gate(bundle, status_by_id=None, disposition=KEEP_BOTH_FLAGGED, expected_conflict_claim_ids=None, prior_links=None) -> QualityGateReport`
 
 运行冲突保留 + 撤稿占位质量门。
 
-- 输入：`EvidenceBundle`；可选来源生命周期映射。
+- 输入：`EvidenceBundle`；可选来源生命周期映射；可选 `expected_conflict_claim_ids` / `prior_links`。
 - 输出：`QualityGateReport`（冲突两侧 ID、撤稿阻断列表、占位列表、passed）。
-- 不变量：冲突两侧不得静默丢弃。
+- 不变量：冲突两侧不得静默丢弃；**任一 RETRACTED/WITHDRAWN supports → passed=False**（与 disposition 无关）。
 
-## `detect_conflicts_preserving_both_sides(bundle) -> list[ConflictRecord]`
+## `detect_conflicts_preserving_both_sides(bundle, expected_conflict_claim_ids=None, prior_links=None) -> list[ConflictRecord]`
 
-仅检测冲突并强制两侧 ID 完整。
+检测冲突并强制两侧 ID 完整；可通过 `prior_links` / `expected_conflict_claim_ids` 发现上游静默丢一侧（`silently_overwritten=True`）。
 
-## `ContentHashCache.get_or_compute(quoted_text) -> str`
+## `ContentHashCache.get_or_compute(quoted_text, hash_fn=...) -> str`
 
-按摘录计算/复用 content_hash，并缓存正文。
+按摘录计算/复用 content_hash；**命中时不调用 `hash_fn`**。
 
 ## `deterministic_bundle_digest(bundle) -> str`
 

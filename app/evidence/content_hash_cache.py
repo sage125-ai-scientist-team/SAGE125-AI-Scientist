@@ -1,8 +1,8 @@
 """
 T01 Wave C — 内容哈希缓存与确定性工具。
 
-同输入必须产生稳定证据集合顺序与稳定指纹；缓存按 content_hash 键控，
-避免重复哈希计算，且不得因 dict 遍历顺序导致非确定性。
+同输入必须产生稳定证据集合顺序与稳定指纹；缓存按原文键控，
+命中时不得再次调用 ``hash_fn``，且不得因 dict 遍历顺序导致非确定性。
 """
 
 from __future__ import annotations
@@ -23,27 +23,31 @@ class CacheStats:
     缓存命中统计。
 
     属性：
-        hits: 命中次数。
-        misses: 未命中次数。
+        hits: 命中次数（未调用 hash_fn）。
+        misses: 未命中次数（调用了 hash_fn）。
         size: 当前条目数。
+        hash_fn_calls: hash_fn 实际调用次数。
     """
 
     hits: int = 0
     misses: int = 0
     size: int = 0
+    hash_fn_calls: int = 0
 
 
 @dataclass
 class ContentHashCache:
     """
-    线程安全的 content_hash → 规范化摘录缓存。
+    线程安全的原文 → content_hash 缓存（附 hash→原文反查）。
 
     属性：
-        _store: 内部映射。
+        _text_to_hash: quoted_text → digest（命中时跳过 hash_fn）。
+        _store: digest → quoted_text。
         _lock: 线程锁。
         stats: 命中统计。
     """
 
+    _text_to_hash: dict[str, str] = field(default_factory=dict)
     _store: dict[str, str] = field(default_factory=dict)
     _lock: threading.Lock = field(default_factory=threading.Lock)
     stats: CacheStats = field(default_factory=CacheStats)
@@ -69,7 +73,7 @@ class ContentHashCache:
 
     def put(self, content_hash: str, quoted_text: str) -> None:
         """
-        写入缓存条目。
+        写入缓存条目（双向索引）。
 
         参数：
             content_hash: 哈希键。
@@ -77,6 +81,7 @@ class ContentHashCache:
         """
         with self._lock:
             self._store[content_hash] = quoted_text
+            self._text_to_hash[quoted_text] = content_hash
             self.stats.size = len(self._store)
 
     def get_or_compute(
@@ -86,7 +91,7 @@ class ContentHashCache:
         hash_fn: Callable[[str], str] = compute_content_hash,
     ) -> str:
         """
-        计算或复用 content_hash，并缓存摘录。
+        计算或复用 content_hash；命中时不调用 ``hash_fn``。
 
         参数：
             quoted_text: 原文摘录。
@@ -95,11 +100,19 @@ class ContentHashCache:
         返回：
             content_hash 字符串。
         """
-        digest = hash_fn(quoted_text)
-        cached = self.get(digest)
-        if cached is None:
-            self.put(digest, quoted_text)
-        return digest
+        with self._lock:
+            cached_digest = self._text_to_hash.get(quoted_text)
+            if cached_digest is not None:
+                self.stats.hits += 1
+                self.stats.size = len(self._store)
+                return cached_digest
+            self.stats.misses += 1
+            digest = hash_fn(quoted_text)
+            self.stats.hash_fn_calls += 1
+            self._text_to_hash[quoted_text] = digest
+            self._store[digest] = quoted_text
+            self.stats.size = len(self._store)
+            return digest
 
     def clear(self) -> None:
         """
@@ -107,6 +120,7 @@ class ContentHashCache:
         """
         with self._lock:
             self._store.clear()
+            self._text_to_hash.clear()
             self.stats = CacheStats()
 
 

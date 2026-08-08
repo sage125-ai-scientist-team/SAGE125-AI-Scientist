@@ -5,7 +5,8 @@ T01 Wave C 质量门 — 冲突/反例证据与撤稿/来源状态占位。
 1. 不得修改 ``app/workflow/pipeline.py``；
 2. 不得改写已冻结 Wave A ``app/contracts/evidence.py`` 字段；
 3. 冲突证据两侧必须保留并显式标记，禁止静默覆盖/丢弃任一侧；
-4. 撤稿/来源生命周期以占位元数据叠加，不伪装为已核验正式状态。
+4. 撤稿/来源生命周期以占位元数据叠加，不伪装为已核验正式状态；
+5. 撤稿门禁与冲突处置策略解耦：RETRACTED/WITHDRAWN supports 一律使 passed=False。
 """
 
 from __future__ import annotations
@@ -67,7 +68,7 @@ class EvidenceSourceStatus:
 @dataclass(frozen=True)
 class ConflictRecord:
     """
-    单条声明的冲突证据记录（两侧完整保留）。
+    单条声明的冲突证据记录（两侧应完整保留）。
 
     属性：
         claim_id: 声明 ID。
@@ -75,7 +76,7 @@ class ConflictRecord:
         contradict_evidence_ids: contradicts 侧证据 ID（排序）。
         counterexample_evidence_ids: 反例侧别名（= contradicts）。
         disposition: 处置方式。
-        silently_overwritten: 恒为 False；若检测到来自上游的丢弃则置门禁失败。
+        silently_overwritten: 期望双侧冲突但当前丢失任一侧时为 True。
     """
 
     claim_id: str
@@ -95,7 +96,7 @@ class QualityGateReport:
         conflict_records: 冲突记录列表。
         retracted_blocked_ids: 因撤稿/撤回被阻断的证据 ID。
         placeholder_status_ids: 仍为占位/未知的证据 ID。
-        passed: 是否通过（无静默覆盖且撤稿未伪装 allow）。
+        passed: 是否通过（无静默覆盖且无撤稿 supports）。
         notes: 人类可读说明。
     """
 
@@ -123,82 +124,159 @@ def _links_for_claim(
     return [link for link in links if link.claim_id == claim_id]
 
 
+def _relation_ids_for_claim(
+    links: Sequence[ClaimEvidenceLink],
+    claim_id: str,
+) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """
+    提取声明的 supports / contradicts 证据 ID（排序去重）。
+
+    参数：
+        links: 链接序列。
+        claim_id: 声明 ID。
+
+    返回：
+        (support_ids, contradict_ids)。
+    """
+    claim_links = _links_for_claim(links, claim_id)
+    support_ids = tuple(
+        sorted(
+            {
+                link.evidence_id
+                for link in claim_links
+                if link.relation == "supports"
+            }
+        )
+    )
+    contradict_ids = tuple(
+        sorted(
+            {
+                link.evidence_id
+                for link in claim_links
+                if link.relation == "contradicts"
+            }
+        )
+    )
+    return support_ids, contradict_ids
+
+
 def build_conflict_record(
     *,
     claim_id: str,
     links: Sequence[ClaimEvidenceLink],
     disposition: ConflictDisposition = ConflictDisposition.KEEP_BOTH_FLAGGED,
+    silently_overwritten: bool = False,
 ) -> ConflictRecord:
     """
-    为冲突声明构建两侧完整保留的记录。
+    为冲突声明构建记录；可标记静默覆盖。
 
     参数：
         claim_id: 声明 ID。
         links: 全量链接。
         disposition: 处置策略。
+        silently_overwritten: 是否检测到上游丢弃一侧。
 
     返回：
-        ConflictRecord；supports 与 contradicts ID 均非空时视为真冲突。
+        ConflictRecord。
     """
-    claim_links = _links_for_claim(links, claim_id)
-    support_ids = sorted(
-        {
-            link.evidence_id
-            for link in claim_links
-            if link.relation == "supports"
-        }
-    )
-    contradict_ids = sorted(
-        {
-            link.evidence_id
-            for link in claim_links
-            if link.relation == "contradicts"
-        }
-    )
+    support_ids, contradict_ids = _relation_ids_for_claim(links, claim_id)
     return ConflictRecord(
         claim_id=claim_id,
-        support_evidence_ids=tuple(support_ids),
-        contradict_evidence_ids=tuple(contradict_ids),
-        counterexample_evidence_ids=tuple(contradict_ids),
+        support_evidence_ids=support_ids,
+        contradict_evidence_ids=contradict_ids,
+        counterexample_evidence_ids=contradict_ids,
         disposition=disposition,
-        silently_overwritten=False,
+        silently_overwritten=silently_overwritten,
     )
+
+
+def _candidate_conflict_claim_ids(
+    *,
+    current_links: Sequence[ClaimEvidenceLink],
+    expected_conflict_claim_ids: Optional[Sequence[str]],
+    prior_links: Optional[Sequence[ClaimEvidenceLink]],
+) -> list[str]:
+    """
+    汇总需要检查双侧完整性的声明 ID。
+
+    来源：
+    1. 当前仍同时存在 supports+contradicts 的声明；
+    2. 调用方声明的 expected_conflict_claim_ids；
+    3. prior_links 中曾同时存在两侧的声明（用于检测上游静默丢弃）。
+
+    参数：
+        current_links: 当前 Bundle 链接。
+        expected_conflict_claim_ids: 期望保持冲突的声明。
+        prior_links: 上游覆盖前的链接快照。
+
+    返回：
+        排序后的 claim_id 列表。
+    """
+    candidates: set[str] = set(find_conflict_claim_ids(current_links))
+    if expected_conflict_claim_ids:
+        candidates.update(str(item) for item in expected_conflict_claim_ids)
+    if prior_links is not None:
+        candidates.update(find_conflict_claim_ids(prior_links))
+    return sorted(candidates)
 
 
 def detect_conflicts_preserving_both_sides(
     bundle: EvidenceBundle,
     *,
     disposition: ConflictDisposition = ConflictDisposition.KEEP_BOTH_FLAGGED,
+    expected_conflict_claim_ids: Optional[Sequence[str]] = None,
+    prior_links: Optional[Sequence[ClaimEvidenceLink]] = None,
 ) -> list[ConflictRecord]:
     """
-    检测 supports∩contradicts 冲突，并强制两侧证据 ID 均写入记录。
+    检测冲突并强制两侧证据 ID 均保留；上游丢一侧时可标记 silently_overwritten。
+
+    仅遍历“当前仍双侧齐全”的 claim 无法发现静默覆盖，因此额外接受：
+    - ``expected_conflict_claim_ids``：调用方声明应保持冲突的 claim；
+    - ``prior_links``：覆盖前链接快照（其中双侧齐全的 claim 必须在当前仍双侧齐全）。
 
     参数：
         bundle: EvidenceBundle。
         disposition: 冲突处置。
+        expected_conflict_claim_ids: 期望冲突声明 ID。
+        prior_links: 上游覆盖前的链接。
 
     返回：
-        ConflictRecord 列表（按 claim_id 排序）。
-
-    异常：
-        ValueError: 若冲突声明任一侧为空（表示上游已静默丢弃）。
+        ConflictRecord 列表（按 claim_id 排序）。丢失一侧时不抛错，
+        而是 ``silently_overwritten=True``，供质量门失败。
     """
     records: list[ConflictRecord] = []
-    for claim_id in find_conflict_claim_ids(bundle.links):
-        record = build_conflict_record(
-            claim_id=claim_id,
-            links=bundle.links,
-            disposition=disposition,
+    for claim_id in _candidate_conflict_claim_ids(
+        current_links=bundle.links,
+        expected_conflict_claim_ids=expected_conflict_claim_ids,
+        prior_links=prior_links,
+    ):
+        support_ids, contradict_ids = _relation_ids_for_claim(
+            bundle.links,
+            claim_id,
         )
-        if (
-            not record.support_evidence_ids
-            or not record.contradict_evidence_ids
-        ):
-            raise ValueError(
-                f"conflict claim {claim_id!r} lost one side "
-                "(silent overwrite forbidden)"
+        missing_side = (not support_ids) or (not contradict_ids)
+        # 仅当该 claim 被期望为冲突（expected/prior/当前双侧）时才记记录。
+        was_expected = (
+            claim_id in find_conflict_claim_ids(bundle.links)
+            or (
+                expected_conflict_claim_ids is not None
+                and claim_id in set(expected_conflict_claim_ids)
             )
-        records.append(record)
+            or (
+                prior_links is not None
+                and claim_id in set(find_conflict_claim_ids(prior_links))
+            )
+        )
+        if not was_expected:
+            continue
+        records.append(
+            build_conflict_record(
+                claim_id=claim_id,
+                links=bundle.links,
+                disposition=disposition,
+                silently_overwritten=missing_side,
+            )
+        )
     return records
 
 
@@ -271,14 +349,21 @@ def run_quality_gate(
     *,
     status_by_id: Optional[Mapping[str, EvidenceSourceStatus]] = None,
     disposition: ConflictDisposition = ConflictDisposition.KEEP_BOTH_FLAGGED,
+    expected_conflict_claim_ids: Optional[Sequence[str]] = None,
+    prior_links: Optional[Sequence[ClaimEvidenceLink]] = None,
 ) -> QualityGateReport:
     """
     运行 Wave C 质量门：冲突保留 + 撤稿占位门禁。
 
+    撤稿门禁独立于 ``disposition``：任一 RETRACTED/WITHDRAWN supports
+    均使 ``passed=False``（含默认 KEEP_BOTH_FLAGGED）。
+
     参数：
         bundle: EvidenceBundle。
         status_by_id: 可选生命周期映射；缺省为全 PLACEHOLDER。
-        disposition: 冲突处置。
+        disposition: 冲突处置（不影响撤稿失败判定）。
+        expected_conflict_claim_ids: 期望保持冲突的声明。
+        prior_links: 上游覆盖前链接快照。
 
     返回：
         QualityGateReport。
@@ -291,6 +376,8 @@ def run_quality_gate(
     conflicts = detect_conflicts_preserving_both_sides(
         bundle,
         disposition=disposition,
+        expected_conflict_claim_ids=expected_conflict_claim_ids,
+        prior_links=prior_links,
     )
     supporting_ids = [
         link.evidence_id
@@ -310,15 +397,18 @@ def run_quality_gate(
     )
     notes = [
         "conflicts preserve both support and contradict evidence ids",
-        "retracted/withdrawn supports are blocked; placeholders are not treated as active",
+        "retracted/withdrawn supports fail the gate independent of disposition",
+        "placeholders are not treated as active",
     ]
     if conflicts:
         notes.append(f"conflict_claim_count={len(conflicts)}")
     if retracted:
         notes.append(f"retracted_blocked={','.join(retracted)}")
-    passed = all(not record.silently_overwritten for record in conflicts)
-    if retracted and disposition == ConflictDisposition.BLOCK_CLAIM:
-        passed = False
+    overwritten = any(record.silently_overwritten for record in conflicts)
+    if overwritten:
+        notes.append("silent_overwrite_detected=true")
+    # 撤稿失败不依赖 disposition；静默覆盖也独立失败。
+    passed = (not retracted) and (not overwritten)
     return QualityGateReport(
         conflict_records=conflicts,
         retracted_blocked_ids=retracted,

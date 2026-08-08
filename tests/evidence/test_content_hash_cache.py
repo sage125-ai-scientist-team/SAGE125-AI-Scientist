@@ -54,6 +54,35 @@ def test_cache_hit_and_miss():
     assert cache.stats.hits >= 1
 
 
+def test_get_or_compute_skips_hash_fn_on_hit():
+    """红灯：命中时不得再次调用 hash_fn（真正避免重复哈希）。"""
+    calls: list[str] = []
+
+    def counting_hash(text: str) -> str:
+        """
+        记录调用次数的测试用哈希。
+
+        参数：
+            text: 原文。
+
+        返回：
+            伪哈希字符串。
+        """
+        calls.append(text)
+        return f"sha256:count:{len(calls)}:{text}"
+
+    cache = ContentHashCache()
+    quote = "same quote must not re-hash"
+    first = cache.get_or_compute(quote, hash_fn=counting_hash)
+    second = cache.get_or_compute(quote, hash_fn=counting_hash)
+    third = cache.get_or_compute(quote, hash_fn=counting_hash)
+    assert first == second == third
+    assert len(calls) == 1
+    assert cache.stats.hash_fn_calls == 1
+    assert cache.stats.hits == 2
+    assert cache.stats.misses == 1
+
+
 def test_stable_evidence_id_sort():
     """证据 ID 排序确定性。"""
     assert stable_sort_evidence_ids(["EV-B", "EV-A", "EV-B"]) == [
