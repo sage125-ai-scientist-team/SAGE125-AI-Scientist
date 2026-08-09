@@ -1,46 +1,83 @@
-# T06 Wave B evaluation notes (PR #36 substantive fix)
+# T06 Wave B evaluation notes (PR #36 Wave B close)
 
 ## Labels
 
 | Kind | Status |
 | --- | --- |
-| `synthetic_fixture_offline` | RUN |
-| `actual_gold` | **BLOCKED** — PR #29 not merged into integration |
-| Paid / actual Qwen VL calls | **NOT PERFORMED** (`WAIT_PR29_MERGE` + credentials) |
+| `synthetic_fixture_offline` | RUN — see `metrics.json` |
+| `actual_zenodo_gold` | **RUN against external PR #29 package** — see `actual_gold_metrics.json` |
+| `ACTUAL_GOLD_IN_INTEGRATION` | **NO** (PR #29 still unmerged) |
+| Paid / actual Qwen VL | **NOT PERFORMED** (credentials + paid auth missing) |
+
+## Reproduction
+
+Synthetic offline:
+
+```bash
+python -X utf8 -m app.multimodal.eval_metrics
+```
+
+Actual gold (external package checkout of PR #29 tip; does not copy bytes into this branch):
+
+```bash
+python -X utf8 -m app.multimodal.eval_actual_gold \
+  --gold-root <path-to>/docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0 \
+  --package-head 7b4a4c366f4ce25e5f05e2e948ec3938f11739ac
+```
 
 ## Chart metric (canonical)
 
-- Non-zero gold: `relative_error = abs(pred-gold)/abs(gold)`; PASS iff `<= 0.05`
-- Zero gold: absolute tolerance `1e-6` (declared in metrics.json)
-- Implemented in `app/multimodal/metrics_relative.py` (not report-only)
-- B012: canonical metric code + tests PASS; actual gold separately WAIT
+- Non-zero: `relative_error = abs(pred-gold)/abs(gold)` ≤ 0.05
+- Zero gold: absolute tolerance from gold `domain_mapping` (deposited CSV exact zeros → 0.0)
+- Code: `app/multimodal/metrics_relative.py`
+- B012 (script/threshold code + tests): PASS
+- Actual chart digitization from `Picture1.png`: **blocked without Qwen VL** (not fabricated)
 
-## PDF / image honesty
+## Actual gold result (this close)
 
-- PDF `LEGEND/AXIS/SERIES` text directives = **preprocessed / synthetic_fixture**, confidence capped ≤0.55 — **not** real chart vision
-- `sample_chart.pdf` is **not** evidence of real chart extraction (B004–B006 PARTIAL)
-- Real vision path: PDF page render or PNG/JPEG/WebP → Qwen VL JSON → `vision_schema.parse_vision_chart_json` → `MultimodalArtifact`
-- Successful VL parse is never discarded in favor of the text-directive parser
-- Raster tables/charts without vision fail-closed
+- Package Head: `7b4a4c366f4ce25e5f05e2e948ec3938f11739ac`
+- DOI: `10.5281/zenodo.13378442`
+- Table (`raw/fishtrial_resistance.csv`, 84 labeled cells): **cell_accuracy=1.0** (≥0.95)
+- Chart (`raw/Picture1.png`): **NOT OK** — vision path fail-closed without credentials (`vision_blocked=true`)
+- `meets_full_wave_b_gold_bar=false` until chart VL succeeds after credentials + preferably PR29 in integration
 
-## Tables
+## Acceptance artifacts
 
-- PDF native extract via PyMuPDF; merge heuristics marked; units from header or caller
-- Missing units → `needs_review` + confidence capped; no fixed 0.86 PASS
-- File SHA-256 retained on `source_path#sha256=` and EvidenceCard locator
-- B001–B003 remain PARTIAL until stronger real evidence
+Under `docs/modules/T06/wave_b/acceptance/`:
 
-## EvidenceCard E2E
+- `table_pdf_sample.json` — native PDF table extract (page/bbox/sha; units missing → needs_review)
+- `chart_preprocessed_pdf_demoted.json` — LEGEND/AXIS/SERIES PDF marked synthetic_fixture
+- `timeseries_hook_sample.json` — cleaning_log + `binary_in_prompt=false`
+- `evidence_rag_e2e.json` — T04 MemoryVectorStore retrieve; low confidence not supports
 
-- Bundle helper `evidence_live.py` is **not** a T01/T04 live index
-- Cross-module path: `evidence_rag.index_and_retrieve_via_t04_store` → `MemoryVectorStore.add_documents` → `search` → `chunk_to_retrieval_hit`
-- Locator fields (bbox/units/page/confidence/validation_status/file_sha256) preserved on retrieve
-- Low confidence must not form factual `supports`
-- B013/B014/B017 PARTIAL until production-grade index evidence; B015 PASS
+## Honesty
 
-## Qwen
+- Text-directive PDF chart ≠ real vision
+- Denied/mock Qwen ≠ actual external success
+- Missing units / low confidence → needs_review; no fixed fake high confidence PASS
 
-- Requires explicit `QWEN_VL_MODEL` containing a vision hint; no silent fallback to balanced chat
-- Audit records start/end, latency, attempt/retry, response id/hash, tokens/cost only when returned
-- Mock success / invalid JSON / empty / timeout / auth / low confidence covered offline
-- B016 = `PARTIAL_WAIT_EXTERNAL_EXECUTION` until PR29 merge + real call
+## B001–B021 matrix (implementation vs evidence)
+
+| ID | Implementation | Actual evidence | Notes |
+| --- | --- | --- | --- |
+| B001 | PASS | PASS | `acceptance/table_pdf_sample.json` + PDF path |
+| B002 | PASS | PASS | `TableAdapter` + CSV/PDF extract |
+| B003 | PASS | PASS | SHA/bbox/fail-closed tests + acceptance |
+| B004 | PASS (schema/path) | PARTIAL | real VL chart digits not run |
+| B005 | PASS (adapters) | PARTIAL | no successful actual VL call |
+| B006 | PASS (fail-closed) | PARTIAL | mock/invalid paths only for VL |
+| B007 | PASS | PASS | timeseries + `acceptance/timeseries_hook_sample.json` |
+| B008 | PASS | PASS | adapter + Draft PR-B exists |
+| B009 | PASS | PASS | `binary_in_prompt=false` |
+| B010 | PASS (scripts) | PARTIAL | table actual gold OK; chart blocked; T05 pairing not sent |
+| B011 | PASS (synth+runner) | PARTIAL | `actual_gold_metrics.json`; full bar false |
+| B012 | PASS | PASS (code) / PARTIAL (actual chart) | relative_error≤0.05 canonical |
+| B013 | PASS (test-scope) | PASS | `acceptance/evidence_rag_e2e.json` via T04 store |
+| B014 | PASS (test-scope) | PASS | same; not production index claim |
+| B015 | PASS | PASS | locator retained; low conf not supports |
+| B016 | PASS (non-paid path) | PARTIAL_WAIT_EXTERNAL_EXECUTION | ACTUAL_EXTERNAL_CALLS=0 |
+| B017 | PASS | PASS | audit + workflow hook tests |
+| B018 | PASS | PASS | redaction tests |
+| B019 | PARTIAL | WAIT | sync+tests done; Ready not performed |
+| B020 | PARTIAL | WAIT | report present; Ready not performed |
+| B021 | PARTIAL | WAIT | formal P1 honesty closed in code; Ready/auth pending |

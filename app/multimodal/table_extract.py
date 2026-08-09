@@ -315,12 +315,67 @@ def extract_table_from_packet(source_path: str) -> MultimodalArtifact:
     )
 
 
+def extract_table_from_csv(source_path: str) -> MultimodalArtifact:
+    """
+    Scientific table deposited as CSV (e.g. Zenodo gold).
+
+    Units inferred from header parentheses; missing units → needs_review.
+    """
+    import csv
+
+    meta = load_source_bytes(source_path)
+    with Path(source_path).open("r", encoding="utf-8", newline="") as fh:
+        rows_raw = list(csv.reader(fh))
+    if not rows_raw:
+        raise ExtractionError("CSV table is empty")
+    raw_headers = [_norm_cell(h) for h in rows_raw[0]]
+    if not raw_headers or any(not h for h in raw_headers):
+        raise ExtractionError("CSV table headers incomplete")
+    body = [[_norm_cell(c) for c in row] for row in rows_raw[1:]]
+    body = [r for r in body if any(c.strip() for c in r)]
+    # Pad / trim rows to header width without inventing values beyond empty cells
+    norm_rows: list[list[str]] = []
+    for i, row in enumerate(body):
+        if len(row) < len(raw_headers):
+            row = row + [""] * (len(raw_headers) - len(row))
+        elif len(row) > len(raw_headers):
+            raise ExtractionError(f"CSV row {i} wider than header")
+        norm_rows.append(row)
+    headers, inferred = _units_from_headers(raw_headers)
+    merges = _detect_probable_merges(norm_rows)
+    confidence, status, notes = _score_table_confidence(
+        headers=headers,
+        rows=norm_rows,
+        column_units=inferred,
+        merged_marked=bool(merges),
+    )
+    # CSV tables have no page geometry; use a non-degenerate placeholder bbox
+    # and keep page=1 with explicit note (fail-closed would block all CSV gold).
+    legend = list(headers) + [f"note:{n}" for n in notes] + ["geometry:csv_no_page_bbox"]
+    return _build_artifact(
+        artifact_id=f"csv-table-{meta.sha256[:12]}",
+        source_path=source_path,
+        source_type="csv",
+        page=1,
+        bbox=BoundingBox(x0=0.0, y0=0.0, x1=1.0, y1=1.0),
+        headers=headers,
+        rows=norm_rows,
+        column_units=inferred,
+        legend=legend,
+        confidence=confidence,
+        status=status,
+        file_sha256=meta.sha256,
+    )
+
+
 def extract_table_artifact(source_path: str, **kwargs: Any) -> MultimodalArtifact:
     suffix = Path(source_path).suffix.lower()
     if suffix == ".pdf":
         return extract_table_from_pdf(source_path, **kwargs)
     if suffix == ".json":
         return extract_table_from_packet(source_path)
+    if suffix == ".csv":
+        return extract_table_from_csv(source_path)
     if suffix in {".png", ".jpg", ".jpeg", ".webp"}:
         raise ExtractionError(
             "scanned/raster table image requires vision path; fail-closed in TableAdapter"

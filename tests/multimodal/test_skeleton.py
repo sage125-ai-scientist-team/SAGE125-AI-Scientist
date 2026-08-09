@@ -117,6 +117,16 @@ def test_queue_rejects_failed_validation_status() -> None:
         MultimodalQueue().enqueue(failed)
 
 
+def test_table_adapter_csv_scientific_table(tmp_path: Path) -> None:
+    csv_path = tmp_path / "sci_table.csv"
+    csv_path.write_text("time (s),resistance (ohm)\n1,10.5\n2,11.0\n", encoding="utf-8")
+    art = TableAdapter().process(str(csv_path))
+    assert art.provenance.source_type == "csv"
+    assert "#sha256=" in art.provenance.source_path
+    assert "s" in art.units and "ohm" in art.units
+    assert art.data.rows[0][0] == "1"
+
+
 def test_table_adapter_offline_fixture_packet() -> None:
     art = TableAdapter().process(str(WAVE_B / "tables" / "packet_001.json"))
     assert art.modality == "table"
