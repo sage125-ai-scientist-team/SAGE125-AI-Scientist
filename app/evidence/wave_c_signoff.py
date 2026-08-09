@@ -1,8 +1,11 @@
 """
-T01 Wave C（08/08）关键事实 locator 机器核验。
+T01 Wave C 签字材料构建（契约回归 vs 真实来源人工核验分离）。
 
-生成人工签字表所需的可复现检查结果；**不**伪造人工签字。
-人工签字栏保持 pending，直至负责人书面确认。
+规则（T09）：
+1. 使用 ``reviewed_subject_sha`` 记录被审代码/证据提交，禁止为追 tip 连续 rebind；
+2. Q028 contract regression 不得计入真实原文人工签字样本；
+3. 真实行必须来自可打开 DOI/URL 或仓库原文路径（eval_gold），非 harness fixture；
+4. 人工姓名/日期/签字不得自动生成。
 """
 
 from __future__ import annotations
@@ -15,80 +18,115 @@ from typing import Any, Optional, Sequence
 
 from app.evidence.q028_regression import run_q028_regression
 
-DEFAULT_GOLD_PATH = Path("docs/modules/T01/evidence_gold_set.json")
-# 固定种子：保证「3 个随机题」在同一 gold 上可复现。
-RANDOM_SEED = "T01-WAVE-C-SIGNOFF-2026-08-08"
-FLAGSHIP_CLAIM_ID = "CLAIM-013"
+EVAL_GOLD_PAIRS = Path("docs/modules/T01/eval_gold/v1/pairs.json")
+# 被人工核验针对的代码/证据冻结提交（禁止随 tip rebind）。
+DEFAULT_REVIEWED_SUBJECT_SHA = (
+    "344482e481398fd304782b69d62c93f6441c7b6c"
+)
+# 5 项真实来源样本（eval_gold；非 harness fixture）。
+DEFAULT_HUMAN_CLAIM_IDS = (
+    "EVAL-CLAIM-001",
+    "EVAL-CLAIM-002",
+    "EVAL-CLAIM-003",
+    "EVAL-CLAIM-004",
+    "EVAL-CLAIM-005",
+)
 
 
 @dataclass(frozen=True)
-class FactCheckRow:
+class ContractRegressionRow:
     """
-    单条关键事实核验行。
+    契约层回归行（不得当作真实原文人工签字）。
 
     属性：
-        case_id: 案例标识。
-        claim_id: 声明 ID。
-        evidence_id: 证据 ID。
-        has_locator: locator 是否非空。
-        locator: 定位信息。
-        quote_nonempty: 原文是否非空。
-        machine_ok: 机器核验是否通过。
-        human_signoff: 人工签字状态（默认 pending）。
+        scenario_suite: 套件名。
+        machine_passed: 机器回归是否通过。
+        classification: 固定为 contract_layer_not_human_source_signoff。
         notes: 说明。
     """
 
-    case_id: str
+    scenario_suite: str
+    machine_passed: bool
+    classification: str = "contract_layer_not_human_source_signoff"
+    notes: str = (
+        "Q028 contract-layer regression only; not a live pipeline trace; "
+        "excluded from human original-text signoff sample set"
+    )
+
+
+@dataclass(frozen=True)
+class HumanSourceRow:
+    """
+    真实来源人工核验行（签字前机器预检 + 人工栏）。
+
+    属性见字段；``human_*`` 仅允许负责人手填，默认 pending/空。
+    """
+
+    row_id: str
     claim_id: str
     evidence_id: str
-    has_locator: bool
-    locator: dict[str, Any]
-    quote_nonempty: bool
-    machine_ok: bool
+    claim: str
+    quote: str
+    doi: str
+    source_url: str
+    repo_xml_path: str
+    repo_pdf_path: str
+    locator_section: str
+    locator_page: Optional[str]
+    content_hash: str
+    xml_sha256: str
+    quote_found_in_repo_xml: bool
+    provisional: bool
+    fixture: bool
+    verification_status: str
+    human_opened_source: str = "pending"
+    human_verbatim_match: str = "pending"
     human_signoff: str = "pending"
-    notes: str = ""
+    human_notes: str = ""
 
 
 @dataclass
-class WaveCSignoffReport:
+class SeparatedSignoffPackage:
     """
-    Wave C 签字前机器核验报告。
+    分离后的签字包。
 
     属性：
-        git_commit_placeholder: 填写时的 HEAD（由调用方注入）。
-        q028_all_passed: Q028 回归是否全过。
-        rows: 核验行。
-        locator_coverage: 有 locator 的行占比 0–1。
-        machine_all_ok: 全部机器行是否通过。
-        human_signoff_complete: 人工是否已全部签字（默认 False）。
-        ready_blocked_reason: 阻断 Ready 的原因。
+        reviewed_subject_sha: 被审代码/证据冻结 SHA（不追 tip）。
+        contract_regression: 契约回归行列表。
+        human_source_rows: 真实来源行。
+        machine_precheck_all_ok: 机器预检（quote 在 XML、非 provisional/fixture）。
+        human_signoff_complete: 人工是否已填完（默认 False）。
+        human_reviewer_name: 人工姓名（空=未填）。
+        human_review_date: 人工日期（空=未填）。
+        human_signature: 人工签字（空=未填）。
+        human_conclusion: 人工结论（空=未填）。
     """
 
-    git_commit_placeholder: str
-    q028_all_passed: bool
-    rows: list[FactCheckRow] = field(default_factory=list)
-    locator_coverage: float = 0.0
-    machine_all_ok: bool = False
+    reviewed_subject_sha: str
+    contract_regression: list[ContractRegressionRow] = field(default_factory=list)
+    human_source_rows: list[HumanSourceRow] = field(default_factory=list)
+    machine_precheck_all_ok: bool = False
     human_signoff_complete: bool = False
-    ready_blocked_reason: str = (
-        "T09 revalidation pending and/or human signoff incomplete; keep Draft"
-    )
+    human_reviewer_name: str = ""
+    human_review_date: str = ""
+    human_signature: str = ""
+    human_conclusion: str = ""
 
     def to_dict(self) -> dict[str, Any]:
-        """
-        序列化为 JSON 友好 dict。
-
-        返回：
-            可 dumps 的字典。
-        """
+        """序列化为 JSON 友好 dict。"""
         return {
-            "git_commit_placeholder": self.git_commit_placeholder,
-            "q028_all_passed": self.q028_all_passed,
-            "rows": [asdict(row) for row in self.rows],
-            "locator_coverage": self.locator_coverage,
-            "machine_all_ok": self.machine_all_ok,
+            "reviewed_subject_sha": self.reviewed_subject_sha,
+            "artifact_commit_sha_note": (
+                "Do not embed tip HEAD here; publish artifact commit SHA in PR comment only"
+            ),
+            "contract_regression": [asdict(row) for row in self.contract_regression],
+            "human_source_rows": [asdict(row) for row in self.human_source_rows],
+            "machine_precheck_all_ok": self.machine_precheck_all_ok,
             "human_signoff_complete": self.human_signoff_complete,
-            "ready_blocked_reason": self.ready_blocked_reason,
+            "human_reviewer_name": self.human_reviewer_name,
+            "human_review_date": self.human_review_date,
+            "human_signature": self.human_signature,
+            "human_conclusion": self.human_conclusion,
             "pairing_boundary": {
                 "PAIRING_STRUCTURE": "STRUCTURE_OK",
                 "ACTUAL_RELEVANCE_GOLD": "NOT_READY",
@@ -97,262 +135,288 @@ class WaveCSignoffReport:
         }
 
 
-def _load_pairs(gold_path: Path) -> list[dict[str, Any]]:
+def _load_eval_pairs(path: Path = EVAL_GOLD_PAIRS) -> dict[str, dict[str, Any]]:
     """
-    加载 Wave B gold pairs。
+    加载 eval_gold pairs，按 claim_id 索引。
 
     参数：
-        gold_path: JSON 路径。
+        path: pairs.json 路径。
 
     返回：
-        pair dict 列表。
+        claim_id → pair。
     """
-    payload = json.loads(gold_path.read_text(encoding="utf-8"))
+    payload = json.loads(path.read_text(encoding="utf-8"))
     pairs = payload.get("pairs") or []
-    if not isinstance(pairs, list):
-        raise ValueError("evidence_gold_set.pairs must be a list")
-    return pairs
+    return {str(pair["claim_id"]): pair for pair in pairs}
 
 
-def _stable_pick_claim_ids(
-    pairs: Sequence[dict[str, Any]],
+def _quote_in_xml(quote: str, xml_path: str) -> bool:
+    """
+    检查逐字 quote 是否出现在仓库冻结 XML 中。
+
+    参数：
+        quote: 原文摘录。
+        xml_path: 仓库相对路径。
+
+    返回：
+        True 表示原文命中。
+    """
+    path = Path(xml_path)
+    if not path.is_file():
+        return False
+    return quote in path.read_text(encoding="utf-8")
+
+
+def build_separated_signoff_package(
     *,
-    count: int,
-    seed: str,
-    exclude: Sequence[str],
-) -> list[str]:
+    reviewed_subject_sha: str = DEFAULT_REVIEWED_SUBJECT_SHA,
+    human_claim_ids: Sequence[str] = DEFAULT_HUMAN_CLAIM_IDS,
+    eval_pairs_path: Path = EVAL_GOLD_PAIRS,
+    human_reviewer_name: str = "",
+    human_review_date: str = "",
+    human_signature: str = "",
+    human_conclusion: str = "",
+) -> SeparatedSignoffPackage:
     """
-    用种子做稳定伪随机选取 claim_id。
+    构建分离的契约回归 + 真实来源签字包。
 
     参数：
-        pairs: gold pairs。
-        count: 选取数量。
-        seed: 稳定种子。
-        exclude: 排除的 claim_id。
+        reviewed_subject_sha: 冻结被审 SHA。
+        human_claim_ids: 真实核验 claim 列表（默认 5 项 eval_gold）。
+        eval_pairs_path: eval gold pairs。
+        human_* : 仅当负责人已核对后传入；默认留空。
 
     返回：
-        选中的 claim_id 列表。
-    """
-    exclude_set = set(exclude)
-    candidates = sorted(
-        {
-            str(pair.get("claim_id", ""))
-            for pair in pairs
-            if pair.get("claim_id") and pair.get("claim_id") not in exclude_set
-        }
-    )
-    ranked = sorted(
-        candidates,
-        key=lambda cid: hashlib.sha256(f"{seed}:{cid}".encode("utf-8")).hexdigest(),
-    )
-    return ranked[:count]
-
-
-def _row_from_pair(case_id: str, pair: dict[str, Any]) -> FactCheckRow:
-    """
-    从 gold pair 构造核验行。
-
-    参数：
-        case_id: 案例标签。
-        pair: gold pair。
-
-    返回：
-        FactCheckRow。
-    """
-    locator = pair.get("locator") or {}
-    if not isinstance(locator, dict):
-        locator = {}
-    quote = str(pair.get("quote") or "").strip()
-    has_locator = bool(locator)
-    quote_nonempty = bool(quote)
-    machine_ok = has_locator and quote_nonempty
-    notes = []
-    if not has_locator:
-        notes.append("missing_locator")
-    if not quote_nonempty:
-        notes.append("empty_quote")
-    return FactCheckRow(
-        case_id=case_id,
-        claim_id=str(pair.get("claim_id", "")),
-        evidence_id=str(pair.get("evidence_id", "")),
-        has_locator=has_locator,
-        locator=dict(locator),
-        quote_nonempty=quote_nonempty,
-        machine_ok=machine_ok,
-        human_signoff="pending",
-        notes=";".join(notes),
-    )
-
-
-def build_wave_c_signoff_report(
-    *,
-    gold_path: Path = DEFAULT_GOLD_PATH,
-    git_commit: str = "HEAD",
-    random_count: int = 3,
-    flagship_claim_id: str = FLAGSHIP_CLAIM_ID,
-) -> WaveCSignoffReport:
-    """
-    构建 08/08 签字表机器核验报告。
-
-    覆盖：Q028 回归、旗舰 claim、3 个稳定伪随机题。
-
-    参数：
-        gold_path: gold JSON。
-        git_commit: 当前 HEAD。
-        random_count: 随机题数量。
-        flagship_claim_id: 旗舰 claim。
-
-    返回：
-        WaveCSignoffReport（human_signoff 仍为 pending）。
+        SeparatedSignoffPackage。
     """
     q028 = run_q028_regression()
-    pairs = _load_pairs(gold_path)
-    by_claim = {str(pair.get("claim_id")): pair for pair in pairs}
-    rows: list[FactCheckRow] = []
-
-    # Q028：用回归场景作为关键事实门禁行（locator 由场景卡保证）。
-    rows.append(
-        FactCheckRow(
-            case_id="Q028-regression",
-            claim_id="Q028",
-            evidence_id="(scenario-suite)",
-            has_locator=True,
-            locator={"source": "app.evidence.q028_regression"},
-            quote_nonempty=True,
-            machine_ok=q028.all_passed,
-            human_signoff="pending",
-            notes="contract-layer regression; not live pipeline trace",
+    contract = [
+        ContractRegressionRow(
+            scenario_suite="Q028-contract-regression",
+            machine_passed=q028.all_passed,
         )
-    )
-
-    flagship = by_claim.get(flagship_claim_id)
-    if flagship is None:
-        # 回退到第一对多域样本。
-        flagship = next(
-            (
-                pair
-                for pair in pairs
-                if str(pair.get("claim_id", "")).startswith("CLAIM-")
-            ),
-            pairs[0] if pairs else None,
+    ]
+    by_id = _load_eval_pairs(eval_pairs_path)
+    human_rows: list[HumanSourceRow] = []
+    for index, claim_id in enumerate(human_claim_ids, start=1):
+        pair = by_id[claim_id]
+        if pair.get("provisional") is True or pair.get("fixture") is True:
+            raise ValueError(
+                f"{claim_id} is provisional/fixture; cannot enter human signoff set"
+            )
+        xml_path = str(pair["source_file_sha256"]["xml_path"])
+        pdf_path = str(pair["source_file_sha256"]["pdf_path"])
+        quote = str(pair["quote"])
+        locator = pair.get("locator") or {}
+        found = _quote_in_xml(quote, xml_path)
+        human_rows.append(
+            HumanSourceRow(
+                row_id=f"H{index}",
+                claim_id=claim_id,
+                evidence_id=str(pair["evidence_id"]),
+                claim=str(pair["claim"]),
+                quote=quote,
+                doi=str(pair.get("doi") or ""),
+                source_url=str(pair.get("url") or pair.get("source_uri") or ""),
+                repo_xml_path=xml_path,
+                repo_pdf_path=pdf_path,
+                locator_section=str(locator.get("section") or ""),
+                locator_page=(
+                    str(locator["page"]) if locator.get("page") is not None else None
+                ),
+                content_hash=str(pair.get("content_hash") or ""),
+                xml_sha256=str(pair["source_file_sha256"]["xml"]),
+                quote_found_in_repo_xml=found,
+                provisional=bool(pair.get("provisional")),
+                fixture=bool(pair.get("fixture")),
+                verification_status="machine_precheck_ok" if found else "machine_precheck_fail",
+            )
         )
-    if flagship is not None:
-        rows.append(_row_from_pair("flagship", flagship))
-
-    picked = _stable_pick_claim_ids(
-        pairs,
-        count=random_count,
-        seed=RANDOM_SEED,
-        exclude=[flagship_claim_id, str(flagship.get("claim_id")) if flagship else ""],
+    machine_ok = all(
+        row.quote_found_in_repo_xml
+        and row.source_url
+        and row.doi
+        and not row.provisional
+        and not row.fixture
+        for row in human_rows
     )
-    for index, claim_id in enumerate(picked, start=1):
-        pair = by_claim[claim_id]
-        rows.append(_row_from_pair(f"random-{index}", pair))
-
-    ok_rows = [row for row in rows if row.machine_ok]
-    coverage = (len(ok_rows) / len(rows)) if rows else 0.0
-    machine_all_ok = bool(rows) and all(row.machine_ok for row in rows) and q028.all_passed
-    return WaveCSignoffReport(
-        git_commit_placeholder=git_commit,
-        q028_all_passed=q028.all_passed,
-        rows=rows,
-        locator_coverage=coverage,
-        machine_all_ok=machine_all_ok,
-        human_signoff_complete=False,
-        ready_blocked_reason=(
-            "Keep Draft until T09 revalidation PASS and human signoff completed"
-        ),
+    signed = bool(
+        human_reviewer_name.strip()
+        and human_review_date.strip()
+        and human_signature.strip()
+        and human_conclusion.strip()
+    )
+    return SeparatedSignoffPackage(
+        reviewed_subject_sha=reviewed_subject_sha,
+        contract_regression=contract,
+        human_source_rows=human_rows,
+        machine_precheck_all_ok=machine_ok,
+        human_signoff_complete=signed,
+        human_reviewer_name=human_reviewer_name,
+        human_review_date=human_review_date,
+        human_signature=human_signature,
+        human_conclusion=human_conclusion,
     )
 
 
-def render_signoff_markdown(report: WaveCSignoffReport) -> str:
+def render_contract_regression_markdown(package: SeparatedSignoffPackage) -> str:
     """
-    将报告渲染为签字表 Markdown。
+    渲染契约回归报告（明确排除出人工签字集）。
 
     参数：
-        report: WaveCSignoffReport。
+        package: SeparatedSignoffPackage。
 
     返回：
-        Markdown 文本。
+        Markdown。
     """
     lines = [
-        "# T01 Wave C — 2026-08-08 人工核验签字表（草稿）",
+        "# T01 Wave C — Contract regression report (NOT human source signoff)",
         "",
-        f"**Checked HEAD (fill/push):** `{report.git_commit_placeholder}`",
-        f"**Q028 regression:** `{'PASS' if report.q028_all_passed else 'FAIL'}`",
-        f"**Machine locator coverage:** `{report.locator_coverage:.0%}`",
-        f"**Machine all ok:** `{report.machine_all_ok}`",
-        f"**Human signoff complete:** `{report.human_signoff_complete}`",
+        f"**reviewed_subject_sha:** `{package.reviewed_subject_sha}`",
         "",
-        f"> Ready blocked: {report.ready_blocked_reason}",
+        "This report is **contract-layer only**. It must **not** be counted as",
+        "human original-text verification of live scientific sources.",
         "",
-        "| case_id | claim_id | evidence_id | locator? | quote? | machine_ok | human_signoff | notes |",
-        "|---|---|---|---|---|---|---|---|",
+        "| suite | machine_passed | classification | notes |",
+        "|---|---|---|---|",
     ]
-    for row in report.rows:
+    for row in package.contract_regression:
         lines.append(
-            "| "
-            + " | ".join(
-                [
-                    row.case_id,
-                    row.claim_id,
-                    row.evidence_id,
-                    str(row.has_locator),
-                    str(row.quote_nonempty),
-                    str(row.machine_ok),
-                    row.human_signoff,
-                    row.notes.replace("|", "/"),
-                ]
-            )
-            + " |"
+            f"| {row.scenario_suite} | {row.machine_passed} | "
+            f"{row.classification} | {row.notes} |"
         )
     lines.extend(
         [
             "",
-            "## Human signoff (required before Ready)",
+            "## Reproduce",
             "",
-            "- Reviewer name: ______________",
-            "- Date: ______________",
-            "- Statement: I verified key facts have original-text locators for the rows above.",
-            "- Signature: ______________",
-            "",
-            "## Boundaries",
-            "",
-            "- PAIRING_STRUCTURE=STRUCTURE_OK",
-            "- ACTUAL_RELEVANCE_GOLD=NOT_READY",
-            "- FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false",
-            "- Do not Ready/Merge until T09 revalidation and captain authorization.",
+            "```powershell",
+            "python -c \"from app.evidence.q028_regression import run_q028_regression; "
+            "print(run_q028_regression().to_dict())\"",
+            "```",
             "",
         ]
     )
     return "\n".join(lines) + "\n"
 
 
-def write_signoff_artifacts(
-    *,
-    output_md: Path,
-    output_json: Path,
-    git_commit: str,
-    gold_path: Path = DEFAULT_GOLD_PATH,
-) -> WaveCSignoffReport:
+def render_human_signoff_markdown(package: SeparatedSignoffPackage) -> str:
     """
-    写出签字表 Markdown 与 JSON 工件。
+    渲染真实来源人工签字表（签字栏默认空白）。
 
     参数：
-        output_md / output_json: 输出路径。
-        git_commit: HEAD。
-        gold_path: gold 路径。
+        package: SeparatedSignoffPackage。
 
     返回：
-        WaveCSignoffReport。
+        Markdown。
     """
-    report = build_wave_c_signoff_report(
-        gold_path=gold_path,
-        git_commit=git_commit,
+    lines = [
+        "# T01 Wave C — Human original-text locator signoff",
+        "",
+        f"**reviewed_subject_sha (frozen subject under review):** `{package.reviewed_subject_sha}`",
+        "",
+        "> Do **not** rebind this field to PR tip after each docs commit.",
+        "> Publish the signoff **artifact commit SHA** only in the PR comment.",
+        "",
+        f"**Machine precheck all ok:** `{package.machine_precheck_all_ok}`",
+        f"**Human signoff complete:** `{package.human_signoff_complete}`",
+        "",
+        "## Five human-verification rows (eval_gold actual sources)",
+        "",
+    ]
+    for row in package.human_source_rows:
+        page = row.locator_page if row.locator_page is not None else "N/A (XML section locator)"
+        lines.extend(
+            [
+                f"### {row.row_id} — `{row.claim_id}` / `{row.evidence_id}`",
+                "",
+                f"- **claim:** {row.claim}",
+                f"- **verbatim quote:** {row.quote}",
+                f"- **DOI:** `{row.doi}`",
+                f"- **source URL (openable):** {row.source_url}",
+                f"- **repo XML path:** `{row.repo_xml_path}`",
+                f"- **repo PDF path:** `{row.repo_pdf_path}`",
+                f"- **locator.section:** `{row.locator_section}`",
+                f"- **locator.page:** `{page}`",
+                f"- **content_hash:** `{row.content_hash}`",
+                f"- **xml_sha256:** `{row.xml_sha256}`",
+                f"- **quote_found_in_repo_xml (machine):** `{row.quote_found_in_repo_xml}`",
+                f"- **provisional / fixture:** `{row.provisional}` / `{row.fixture}`",
+                f"- **verification_status:** `{row.verification_status}`",
+                f"- **human_opened_source:** `{row.human_opened_source}`",
+                f"- **human_verbatim_match:** `{row.human_verbatim_match}`",
+                f"- **human_signoff (per-row):** `{row.human_signoff}`",
+                "",
+            ]
+        )
+    name = package.human_reviewer_name or "______________"
+    date = package.human_review_date or "______________"
+    signature = package.human_signature or "______________"
+    conclusion = package.human_conclusion or "______________"
+    lines.extend(
+        [
+            "## Human attestation (must be filled by real owner; never auto-generated)",
+            "",
+            "I opened each source URL and/or repo XML/PDF path above, verified the",
+            "verbatim quote and locator section against the original text, and confirm",
+            "these five rows are suitable as human original-text verification samples",
+            "(not harness fixtures).",
+            "",
+            f"- **Reviewer name:** {name}",
+            f"- **Date:** {date}",
+            f"- **Conclusion:** {conclusion}",
+            f"- **Signature:** {signature}",
+            "",
+            "## Boundaries",
+            "",
+            "- PAIRING_STRUCTURE=STRUCTURE_OK",
+            "- ACTUAL_RELEVANCE_GOLD=NOT_READY",
+            "- FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false",
+            "- Keep PR #35 OPEN / Draft until T09 revalidation and captain authorization.",
+            "",
+        ]
     )
-    output_md.write_text(render_signoff_markdown(report), encoding="utf-8")
-    output_json.write_text(
-        json.dumps(report.to_dict(), ensure_ascii=False, indent=2) + "\n",
+    return "\n".join(lines) + "\n"
+
+
+def write_separated_signoff_artifacts(
+    *,
+    contract_md: Path,
+    human_md: Path,
+    package_json: Path,
+    reviewed_subject_sha: str = DEFAULT_REVIEWED_SUBJECT_SHA,
+    human_reviewer_name: str = "",
+    human_review_date: str = "",
+    human_signature: str = "",
+    human_conclusion: str = "",
+) -> SeparatedSignoffPackage:
+    """
+    写出分离的契约报告、人工签字表与 JSON。
+
+    参数：
+        contract_md / human_md / package_json: 输出路径。
+        reviewed_subject_sha: 冻结被审 SHA。
+        human_* : 负责人手填字段；空表示未签字。
+
+    返回：
+        SeparatedSignoffPackage。
+    """
+    package = build_separated_signoff_package(
+        reviewed_subject_sha=reviewed_subject_sha,
+        human_reviewer_name=human_reviewer_name,
+        human_review_date=human_review_date,
+        human_signature=human_signature,
+        human_conclusion=human_conclusion,
+    )
+    if not package.machine_precheck_all_ok:
+        raise RuntimeError("machine precheck failed for human source rows")
+    contract_md.write_text(
+        render_contract_regression_markdown(package),
         encoding="utf-8",
     )
-    return report
+    human_md.write_text(render_human_signoff_markdown(package), encoding="utf-8")
+    package_json.write_text(
+        json.dumps(package.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return package

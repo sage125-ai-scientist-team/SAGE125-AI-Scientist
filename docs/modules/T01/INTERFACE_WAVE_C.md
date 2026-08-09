@@ -38,6 +38,15 @@ Bundle 确定性 sha256 指纹。
 
 `sort_keys=True` 的确定性 JSON 文本。
 
+## `write_separated_signoff_artifacts(...)`
+
+写出契约回归报告与真实来源人工签字表（分离）。
+
+- `reviewed_subject_sha` 冻结被审提交，禁止为追 tip 连续 rebind。
+- Q028 contract regression 不得计入真实原文签字样本。
+- 真实行仅允许 eval_gold（DOI/URL/仓库路径 + quote 命中 XML）。
+- 人工姓名/日期/签字不得自动生成；artifact commit SHA 只写 PR 评论。
+
 ## 边界
 
 - `PAIRING_STRUCTURE=STRUCTURE_OK`
