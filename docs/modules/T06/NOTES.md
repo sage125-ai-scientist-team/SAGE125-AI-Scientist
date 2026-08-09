@@ -27,3 +27,15 @@
 ## 接口冻结
 
 见同目录 `INTERFACE_FREEZE.md`。
+
+## 真实 gold（Wave B follow-up，非 PR-A 夹具）
+
+正式 provenance-locked 包：
+
+`docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0/`
+
+- DOI：`10.5281/zenodo.13378442`
+- 许可证：CC-BY-4.0
+- 模态：真实表格 CSV + 真实科研图 PNG（同一 Zenodo 记录）
+- `is_synthetic/is_provisional/is_fixture = false`
+- 不得与 `tests/multimodal/fixtures/**` 合成夹具混用为正式评测输入
