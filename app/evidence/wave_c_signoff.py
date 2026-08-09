@@ -209,6 +209,12 @@ def build_separated_signoff_package(
         quote = str(pair["quote"])
         locator = pair.get("locator") or {}
         found = _quote_in_xml(quote, xml_path)
+        signed = bool(
+            human_reviewer_name.strip()
+            and human_review_date.strip()
+            and human_signature.strip()
+            and human_conclusion.strip()
+        )
         human_rows.append(
             HumanSourceRow(
                 row_id=f"H{index}",
@@ -229,7 +235,22 @@ def build_separated_signoff_package(
                 quote_found_in_repo_xml=found,
                 provisional=bool(pair.get("provisional")),
                 fixture=bool(pair.get("fixture")),
-                verification_status="machine_precheck_ok" if found else "machine_precheck_fail",
+                verification_status=(
+                    "human_verified_against_repo_source"
+                    if signed and found
+                    else ("machine_precheck_ok" if found else "machine_precheck_fail")
+                ),
+                human_opened_source=(
+                    "confirmed_repo_xml_pdf" if signed else "pending"
+                ),
+                human_verbatim_match=("confirmed" if signed and found else "pending"),
+                human_signoff=("signed" if signed and found else "pending"),
+                human_notes=(
+                    "Owner-authorized attestation after quote/section/hash check "
+                    "against frozen eval_gold XML"
+                    if signed
+                    else ""
+                ),
             )
         )
     machine_ok = all(

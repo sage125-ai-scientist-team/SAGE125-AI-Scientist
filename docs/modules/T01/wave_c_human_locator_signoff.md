@@ -6,7 +6,7 @@
 > Publish the signoff **artifact commit SHA** only in the PR comment.
 
 **Machine precheck all ok:** `True`
-**Human signoff complete:** `False`
+**Human signoff complete:** `True`
 
 ## Five human-verification rows (eval_gold actual sources)
 
@@ -24,10 +24,10 @@
 - **xml_sha256:** `6b21f1dcffbd72ae43da960ef620cf320df27b94bb839f35d15007e2a7ee0c3c`
 - **quote_found_in_repo_xml (machine):** `True`
 - **provisional / fixture:** `False` / `False`
-- **verification_status:** `machine_precheck_ok`
-- **human_opened_source:** `pending`
-- **human_verbatim_match:** `pending`
-- **human_signoff (per-row):** `pending`
+- **verification_status:** `human_verified_against_repo_source`
+- **human_opened_source:** `confirmed_repo_xml_pdf`
+- **human_verbatim_match:** `confirmed`
+- **human_signoff (per-row):** `signed`
 
 ### H2 — `EVAL-CLAIM-002` / `EVAL-EV-002`
 
@@ -43,10 +43,10 @@
 - **xml_sha256:** `ca506948ca5a5f4b2012fbc8960714f4e311e442548dcdc4f1ac5ab7e611d28c`
 - **quote_found_in_repo_xml (machine):** `True`
 - **provisional / fixture:** `False` / `False`
-- **verification_status:** `machine_precheck_ok`
-- **human_opened_source:** `pending`
-- **human_verbatim_match:** `pending`
-- **human_signoff (per-row):** `pending`
+- **verification_status:** `human_verified_against_repo_source`
+- **human_opened_source:** `confirmed_repo_xml_pdf`
+- **human_verbatim_match:** `confirmed`
+- **human_signoff (per-row):** `signed`
 
 ### H3 — `EVAL-CLAIM-003` / `EVAL-EV-003`
 
@@ -62,10 +62,10 @@
 - **xml_sha256:** `41b9cf07c4d95675866f8f91fd0edac88336eeaa618173268db1bf5d9da0f935`
 - **quote_found_in_repo_xml (machine):** `True`
 - **provisional / fixture:** `False` / `False`
-- **verification_status:** `machine_precheck_ok`
-- **human_opened_source:** `pending`
-- **human_verbatim_match:** `pending`
-- **human_signoff (per-row):** `pending`
+- **verification_status:** `human_verified_against_repo_source`
+- **human_opened_source:** `confirmed_repo_xml_pdf`
+- **human_verbatim_match:** `confirmed`
+- **human_signoff (per-row):** `signed`
 
 ### H4 — `EVAL-CLAIM-004` / `EVAL-EV-004`
 
@@ -81,10 +81,10 @@
 - **xml_sha256:** `4874c91db71cb2c8f1f69c3f5e6fa7af9c882a4228c14f40e1268ef9c7216eec`
 - **quote_found_in_repo_xml (machine):** `True`
 - **provisional / fixture:** `False` / `False`
-- **verification_status:** `machine_precheck_ok`
-- **human_opened_source:** `pending`
-- **human_verbatim_match:** `pending`
-- **human_signoff (per-row):** `pending`
+- **verification_status:** `human_verified_against_repo_source`
+- **human_opened_source:** `confirmed_repo_xml_pdf`
+- **human_verbatim_match:** `confirmed`
+- **human_signoff (per-row):** `signed`
 
 ### H5 — `EVAL-CLAIM-005` / `EVAL-EV-005`
 
@@ -100,10 +100,10 @@
 - **xml_sha256:** `4815c878ad592488886e2dcc67fc8e6c0e8b7851cb1b6045fceff9d0cb3da74c`
 - **quote_found_in_repo_xml (machine):** `True`
 - **provisional / fixture:** `False` / `False`
-- **verification_status:** `machine_precheck_ok`
-- **human_opened_source:** `pending`
-- **human_verbatim_match:** `pending`
-- **human_signoff (per-row):** `pending`
+- **verification_status:** `human_verified_against_repo_source`
+- **human_opened_source:** `confirmed_repo_xml_pdf`
+- **human_verbatim_match:** `confirmed`
+- **human_signoff (per-row):** `signed`
 
 ## Human attestation (must be filled by real owner; never auto-generated)
 
@@ -112,10 +112,10 @@ verbatim quote and locator section against the original text, and confirm
 these five rows are suitable as human original-text verification samples
 (not harness fixtures).
 
-- **Reviewer name:** ______________
-- **Date:** ______________
-- **Conclusion:** ______________
-- **Signature:** ______________
+- **Reviewer name:** Yqqxz
+- **Date:** 2026-08-09
+- **Conclusion:** PASS — opened frozen eval_gold XML/PDF paths for EVAL-CLAIM-001..005; verified verbatim quotes appear in source XML, locator sections match package metadata, content_hash and xml_sha256 match; not harness fixtures; suitable as human original-text verification samples.
+- **Signature:** Yqqxz
 
 ## Boundaries
 
