@@ -87,6 +87,7 @@ def evaluate_actual_gold(
     *,
     package_head: str,
     allow_vision_actual: bool = False,
+    in_integration: bool = False,
 ) -> dict[str, Any]:
     started = time.perf_counter()
     gold_root = gold_root.resolve()
@@ -227,11 +228,38 @@ def evaluate_actual_gold(
         )
 
     table_ok = all(c.get("ok") for c in table_cases) and bool(table_cases)
+    rel_root = "docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0"
+    try:
+        display_root = str(gold_root.relative_to(ROOT)).replace("\\", "/")
+    except ValueError:
+        display_root = rel_root if in_integration else str(gold_root).replace("\\", "/")
+    integration_flag = "YES" if in_integration else "NO"
+    known_limits = [
+        "Chart PNG evaluation requires authorized Qwen VL credentials",
+        "No tokens/cost invented when vision is not called",
+    ]
+    if not in_integration:
+        known_limits.insert(0, "Gold package not yet in integration (PR #29 unmerged)")
+    else:
+        known_limits.insert(0, "Gold package present via merged PR #29 on integration tip")
+    repro = (
+        "python -X utf8 -m app.multimodal.eval_actual_gold "
+        f"--gold-root {rel_root} --package-head {package_head} --in-integration"
+        if in_integration
+        else (
+            "python -X utf8 -m app.multimodal.eval_actual_gold "
+            f"--gold-root <path-to-package> --package-head {package_head}"
+        )
+    )
     return {
         "schema_version": "1.0",
-        "evaluation_kind": "actual_zenodo_gold_external_package",
-        "ACTUAL_GOLD_IN_INTEGRATION": "NO",
-        "gold_package_root": str(gold_root).replace("\\", "/"),
+        "evaluation_kind": (
+            "actual_zenodo_gold_in_integration"
+            if in_integration
+            else "actual_zenodo_gold_external_package"
+        ),
+        "ACTUAL_GOLD_IN_INTEGRATION": integration_flag,
+        "gold_package_root": display_root,
         "gold_package_head_sha": package_head,
         "gold_set_id": "zenodo_fish_spoilage_impedance",
         "doi": "10.5281/zenodo.13378442",
@@ -241,10 +269,7 @@ def evaluate_actual_gold(
             "zero_abs_tol": 0.0,
             "zero_abs_tol_source": "domain_mapping.chart_error_policy",
         },
-        "reproduction_command": (
-            "python -X utf8 -m app.multimodal.eval_actual_gold "
-            f"--gold-root <path-to-package> --package-head {package_head}"
-        ),
+        "reproduction_command": repro,
         "table_cases": table_cases,
         "chart_case": chart_case,
         "overall": {
@@ -255,11 +280,7 @@ def evaluate_actual_gold(
             "meets_full_wave_b_gold_bar": table_ok and bool(chart_case.get("ok")),
         },
         "duration_ms_total": (time.perf_counter() - started) * 1000.0,
-        "known_limits": [
-            "Gold package not yet in integration (PR #29 unmerged)",
-            "Chart PNG evaluation requires authorized Qwen VL credentials",
-            "No tokens/cost invented when vision is not called",
-        ],
+        "known_limits": known_limits,
     }
 
 
@@ -269,6 +290,11 @@ def main() -> None:
     parser.add_argument("--package-head", required=True)
     parser.add_argument("--allow-vision-actual", action="store_true")
     parser.add_argument(
+        "--in-integration",
+        action="store_true",
+        help="Gold package is present on integration (e.g. after PR #29 merge).",
+    )
+    parser.add_argument(
         "--out",
         default=str(ROOT / "docs" / "modules" / "T06" / "wave_b" / "actual_gold_metrics.json"),
     )
@@ -277,6 +303,7 @@ def main() -> None:
         Path(args.gold_root),
         package_head=args.package_head,
         allow_vision_actual=args.allow_vision_actual,
+        in_integration=args.in_integration,
     )
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
