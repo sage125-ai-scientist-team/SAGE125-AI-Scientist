@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "metric_id": "T02-METRIC-003",
+  "case_id": "metric-003-negative-control",
+  "description": "A quasi-real two-round case in which V2 answers one V1 negative-control issue with a structural change and evidence reference.",
+  "v1": {
+    "run_id": "metric-003-run",
+    "hypothesis_generation": {
+      "hypotheses": [
+        {
+          "hypothesis": "A leakage-sensitive classifier will appear accurate without a negative control.",
+          "overall_score": 0.45
+        },
+        {
+          "hypothesis": "Observed accuracy is independent of leakage.",
+          "overall_score": 0.25
+        }
+      ],
+      "recommended_hypothesis_index": 0
+    },
+    "experiment_design": {
+      "experiments": {
+        "baselines": [
+          "positive-control"
+        ],
+        "metrics": [
+          "accuracy"
+        ],
+        "evidence_refs": [
+          "EV-1"
+        ]
+      }
+    },
+    "review_feedback": {
+      "passed": false,
+      "reviewer_comments": [
+        "Add an evidence-backed negative control."
+      ],
+      "critical_issues": [
+        "The design has no negative control."
+      ],
+      "required_revisions": [
+        "Add a negative control and an AUROC metric."
+      ],
+      "risk_level": "high",
+      "evidence_grounding_score": 0.3,
+      "falsifiability_score": 0.4,
+      "reproducibility_score": 0.5,
+      "reference_reliability_score": 0.6
+    }
+  },
+  "v2": {
+    "hypothesis_generation": {
+      "hypotheses": [
+        {
+          "hypothesis": "A negative control will reveal leakage through AUROC collapse.",
+          "overall_score": 0.85
+        },
+        {
+          "hypothesis": "Accuracy alone detects leakage.",
+          "overall_score": 0.55
+        }
+      ],
+      "recommended_hypothesis_index": 0
+    },
+    "experiment_design": {
+      "experiments": {
+        "baselines": [
+          "positive-control",
+          "negative-control"
+        ],
+        "metrics": [
+          "accuracy",
+          "AUROC"
+        ],
+        "evidence_refs": [
+          "EV-1"
+        ]
+      }
+    },
+    "review_feedback": {
+      "passed": true,
+      "reviewer_comments": [
+        "The negative control and AUROC now answer the blocking issue."
+      ],
+      "critical_issues": [],
+      "required_revisions": [],
+      "risk_level": "low",
+      "evidence_grounding_score": 0.8,
+      "falsifiability_score": 0.8,
+      "reproducibility_score": 0.9,
+      "reference_reliability_score": 0.9
+    }
+  },
+  "available_evidence_refs": [
+    "EV-1"
+  ],
+  "input_fingerprints": {
+    "v1": "1111111111111111111111111111111111111111111111111111111111111111",
+    "v2": "2222222222222222222222222222222222222222222222222222222222222222"
+  }
+}

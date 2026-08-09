@@ -353,6 +353,7 @@ def render_upload_panel(
     library_status: Optional[dict] = None,
     delete_fn=None,
     validate_fn=None,
+    ephemeral_storage: bool = False,
 ) -> None:
     """
     渲染 Step 02：上传、配额、持久化策略与可确认删除的本地文献库。
@@ -373,14 +374,20 @@ def render_upload_panel(
             message = notice.get("message") if isinstance(notice, dict) else notice
             st.success(str(message))
 
-    # 将持久化、跨问题复用、题源隔离和显式删除集中说明，
+    storage_copy = (
+        "上传成功后的原文与索引<strong style=\"color:#F8FAFC\">仅保存在当前临时 API 实例</strong>，"
+        "可在实例存续期间跨问题复用；重新部署、休眠或重启后可能重置。"
+        if ephemeral_storage
+        else "上传成功后的原文与索引<strong style=\"color:#F8FAFC\">保存在项目数据目录</strong>，会跨问题复用。"
+    )
+
+    # 将存储策略、跨问题复用、题源隔离和显式删除集中说明，
     # 不改变原有深色 glass-card 视觉语言。
     st.markdown(
-        """<div class="glass-card">
+        f"""<div class="glass-card">
             <div style="font-weight:700;color:#F8FAFC">🗂️ 本地文献库治理</div>
             <div style="color:#B6C4DA;font-size:0.84rem;line-height:1.75;margin-top:7px">
-              上传成功后的原文与索引<strong style="color:#F8FAFC">永久保存在项目本地</strong>，
-              会<strong style="color:#67E8F9">跨问题复用</strong>；
+              {storage_copy}
               题源 <code>sjtu-booklet.pdf</code> <strong style="color:#A7F3D0">不参与用户文献检索</strong>。
               文献只会在下方<strong style="color:#FCA5A5">显式确认删除</strong>后移除。
             </div>
@@ -425,7 +432,7 @@ def render_upload_panel(
                     for message in check.get("errors") or ["上传前检查未通过。"]:
                         st.error(str(message))
                 else:
-                    with st.spinner("正在持久化并加入本地文献库…"):
+                    with st.spinner("正在连接 API、保存文件并构建索引（冷启动可能需要约一分钟）…"):
                         result = ingest_fn(files)
                     result_status = str(result.get("status", "")).lower()
                     if result_status in {"ok", "success", "completed"}:
