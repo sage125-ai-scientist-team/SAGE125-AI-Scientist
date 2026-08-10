@@ -21,6 +21,8 @@
 
 - 同一 SQLite 数据库的进程内 writer 使用共享锁串行化，避免多个
   `SQLiteJobStore` 实例同时执行 `BEGIN IMMEDIATE` 的平台相关竞态；
+- 该共享 `RLock` 只覆盖同一进程内的多个 store 实例；跨进程写入仍由 SQLite
+  `BEGIN IMMEDIATE` 与 `busy_timeout` 保护；
 - 启动恢复直接查询全部 `queued/retrying/running` 任务，不再受 HTTP 列表接口
   100 条上限影响；
 - 恢复任务多于内存队列容量时进入内部 recovery backlog，worker 完成任务后继续
