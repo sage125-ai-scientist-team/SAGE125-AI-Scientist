@@ -113,6 +113,35 @@ def test_sqlite_store_keeps_five_concurrent_jobs_isolated(tmp_path):
     }
 
 
+def test_sqlite_store_coordinates_five_writers_across_store_instances(tmp_path):
+    db_path = tmp_path / "jobs.sqlite3"
+    reader = SQLiteJobStore(db_path)
+    reader.initialize()
+    stores = [SQLiteJobStore(db_path) for _ in range(5)]
+    ready = threading.Barrier(5)
+
+    def create(index: int):
+        ready.wait(timeout=3)
+        return stores[index - 1].create_job(
+            request=_request(f"Q00{index}"),
+            correlation_id=f"corr-{index}",
+            idempotency_key=f"key-{index}",
+        )[0]
+
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        jobs = list(pool.map(create, range(1, 6)))
+
+    assert len({job.job_id for job in jobs}) == 5
+    assert len(reader.list_jobs(limit=10)) == 5
+    assert {job.question_id for job in jobs} == {
+        "Q001",
+        "Q002",
+        "Q003",
+        "Q004",
+        "Q005",
+    }
+
+
 class _SuccessfulRunner:
     def run(self, job, progress_callback):
         progress_callback({"stage": "retrieval", "status": "running"})

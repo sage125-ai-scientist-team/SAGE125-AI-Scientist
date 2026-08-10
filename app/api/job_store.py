@@ -9,13 +9,30 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+import threading
 import uuid
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Iterator, Protocol
 
 from app.api.contracts import JobCreateRequest, JobStatus
+
+
+_WRITE_LOCKS_GUARD = threading.Lock()
+_WRITE_LOCKS: dict[str, Any] = {}
+
+
+def _write_lock_for(path: Path) -> Any:
+    """Return the process-local writer lock shared by one SQLite database."""
+    key = str(path.resolve(strict=False))
+    with _WRITE_LOCKS_GUARD:
+        lock = _WRITE_LOCKS.get(key)
+        if lock is None:
+            lock = threading.RLock()
+            _WRITE_LOCKS[key] = lock
+        return lock
 
 
 def _now() -> str:
@@ -157,6 +174,7 @@ _ALLOWED_TRANSITIONS: dict[str, set[str]] = {
 class SQLiteJobStore:
     def __init__(self, path: str | Path) -> None:
         self.path = Path(path)
+        self._write_lock = _write_lock_for(self.path)
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.path, timeout=5)
@@ -165,12 +183,28 @@ class SQLiteJobStore:
         connection.execute("PRAGMA busy_timeout = 5000")
         return connection
 
+    @contextmanager
+    def _write_transaction(self) -> Iterator[sqlite3.Connection]:
+        """Serialize writers through commit/rollback for this database file.
+
+        SQLite permits only one writer.  Relying only on ``busy_timeout`` leaves a
+        small platform-dependent race when several threads issue
+        ``BEGIN IMMEDIATE`` together, notably on Windows CI.  The per-path lock
+        prevents that in-process race while SQLite's timeout remains the guard
+        for contention from another process.
+        """
+        with self._write_lock:
+            with self._connect() as connection:
+                connection.execute("BEGIN IMMEDIATE")
+                yield connection
+
     def initialize(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self._connect() as connection:
-            connection.execute("PRAGMA journal_mode = WAL")
-            connection.executescript(
-                """
+        with self._write_lock:
+            with self._connect() as connection:
+                connection.execute("PRAGMA journal_mode = WAL")
+                connection.executescript(
+                    """
                 CREATE TABLE IF NOT EXISTS jobs (
                     job_id TEXT PRIMARY KEY,
                     correlation_id TEXT NOT NULL,
@@ -212,8 +246,8 @@ class SQLiteJobStore:
                     created_at TEXT NOT NULL,
                     details_json TEXT NOT NULL
                 );
-                """
-            )
+                    """
+                )
 
     @staticmethod
     def _record(row: sqlite3.Row) -> JobRecord:
@@ -285,8 +319,7 @@ class SQLiteJobStore:
         job_id = str(uuid.uuid4())
         max_attempts = 2 if request.mode == "mock" else 1
 
-        with self._connect() as connection:
-            connection.execute("BEGIN IMMEDIATE")
+        with self._write_transaction() as connection:
             if idempotency_hash:
                 existing = connection.execute(
                     "SELECT * FROM jobs WHERE idempotency_key_hash = ?",
@@ -381,8 +414,7 @@ class SQLiteJobStore:
         该入口刻意不加入通用状态机，避免任意 failed Job 被重新执行。
         expected_updated_at 防止同一批并发请求在首次认领失败后再次认领。
         """
-        with self._connect() as connection:
-            connection.execute("BEGIN IMMEDIATE")
+        with self._write_transaction() as connection:
             row = connection.execute(
                 "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
             ).fetchone()
@@ -443,8 +475,7 @@ class SQLiteJobStore:
 
     def mark_queue_retry_submitted(self, job_id: str) -> JobRecord:
         """审计容量重试已进入队列；worker 已推进时不回写旧状态。"""
-        with self._connect() as connection:
-            connection.execute("BEGIN IMMEDIATE")
+        with self._write_transaction() as connection:
             row = connection.execute(
                 "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
             ).fetchone()
@@ -532,8 +563,7 @@ class SQLiteJobStore:
         increment_attempt: bool = False,
     ) -> JobRecord:
         target = to_status.value if isinstance(to_status, JobStatus) else str(to_status)
-        with self._connect() as connection:
-            connection.execute("BEGIN IMMEDIATE")
+        with self._write_transaction() as connection:
             row = connection.execute(
                 "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
             ).fetchone()
@@ -627,8 +657,7 @@ class SQLiteJobStore:
 
     def update_progress(self, job_id: str, stage: str) -> JobRecord:
         stage = str(stage or "running")[:128]
-        with self._connect() as connection:
-            connection.execute("BEGIN IMMEDIATE")
+        with self._write_transaction() as connection:
             row = connection.execute(
                 "SELECT * FROM jobs WHERE job_id = ?", (job_id,)
             ).fetchone()
