@@ -13,7 +13,7 @@ import threading
 import uuid
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterator, Protocol
 
@@ -90,6 +90,13 @@ class JobRecord:
     error_code: str | None
     error_message: str | None
     retryable: bool
+    last_attempt_at: str | None
+    next_retry_at: str | None
+    retry_backoff_seconds: int | None
+    timeout_seconds: int | None
+    deadline_at: str | None
+    timed_out_at: str | None
+    requested_by: str
     request_payload: dict[str, Any]
 
 
@@ -116,6 +123,7 @@ class JobStore(Protocol):
         *,
         question_id: str | None = None,
         status: JobStatus | None = None,
+        requested_by: str | None = None,
         limit: int = 20,
     ) -> list[JobRecord]: ...
     def transition(
@@ -246,8 +254,43 @@ class SQLiteJobStore:
                     created_at TEXT NOT NULL,
                     details_json TEXT NOT NULL
                 );
+
+                CREATE TABLE IF NOT EXISTS api_schema_migrations (
+                    version INTEGER PRIMARY KEY,
+                    applied_at TEXT NOT NULL
+                );
                     """
                 )
+                self._migrate_jobs_schema(connection)
+
+    @staticmethod
+    def _migrate_jobs_schema(connection: sqlite3.Connection) -> None:
+        """Apply additive, restart-safe migrations to a Wave A database."""
+        columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(jobs)").fetchall()
+        }
+        additions = {
+            "last_attempt_at": "TEXT",
+            "next_retry_at": "TEXT",
+            "retry_backoff_seconds": "INTEGER",
+            "timeout_seconds": "INTEGER",
+            "deadline_at": "TEXT",
+            "timed_out_at": "TEXT",
+        }
+        for name, column_type in additions.items():
+            if name not in columns:
+                connection.execute(f"ALTER TABLE jobs ADD COLUMN {name} {column_type}")
+        connection.execute(
+            """
+            UPDATE jobs
+            SET timeout_seconds = CASE WHEN mode = 'mock' THEN 300 ELSE 7200 END
+            WHERE timeout_seconds IS NULL
+            """
+        )
+        connection.execute(
+            "INSERT OR IGNORE INTO api_schema_migrations(version, applied_at) VALUES (2, ?)",
+            (_now(),),
+        )
 
     @staticmethod
     def _record(row: sqlite3.Row) -> JobRecord:
@@ -269,6 +312,21 @@ class SQLiteJobStore:
             error_code=row["error_code"],
             error_message=row["error_message"],
             retryable=bool(row["retryable"]),
+            last_attempt_at=row["last_attempt_at"],
+            next_retry_at=row["next_retry_at"],
+            retry_backoff_seconds=(
+                int(row["retry_backoff_seconds"])
+                if row["retry_backoff_seconds"] is not None
+                else None
+            ),
+            timeout_seconds=(
+                int(row["timeout_seconds"])
+                if row["timeout_seconds"] is not None
+                else None
+            ),
+            deadline_at=row["deadline_at"],
+            timed_out_at=row["timed_out_at"],
+            requested_by=row["requested_by"],
             request_payload=json.loads(row["request_json"]),
         )
 
@@ -318,6 +376,7 @@ class SQLiteJobStore:
         created_at = _now()
         job_id = str(uuid.uuid4())
         max_attempts = 2 if request.mode == "mock" else 1
+        timeout_seconds = 300 if request.mode == "mock" else 7200
 
         with self._write_transaction() as connection:
             if idempotency_hash:
@@ -337,8 +396,9 @@ class SQLiteJobStore:
                 INSERT INTO jobs(
                     job_id, correlation_id, kind, question_id, mode, status,
                     stage, created_at, updated_at, attempt, max_attempts,
-                    idempotency_key_hash, request_hash, request_json, requested_by
-                ) VALUES (?, ?, 'research_run', ?, ?, 'queued', 'queued', ?, ?, 0, ?, ?, ?, ?, ?)
+                    idempotency_key_hash, request_hash, request_json, requested_by,
+                    timeout_seconds
+                ) VALUES (?, ?, 'research_run', ?, ?, 'queued', 'queued', ?, ?, 0, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     job_id,
@@ -352,6 +412,7 @@ class SQLiteJobStore:
                     request_hash,
                     request_json,
                     requested_by,
+                    timeout_seconds,
                 ),
             )
             self._insert_event(
@@ -514,6 +575,7 @@ class SQLiteJobStore:
         *,
         question_id: str | None = None,
         status: JobStatus | None = None,
+        requested_by: str | None = None,
         limit: int = 20,
     ) -> list[JobRecord]:
         clauses: list[str] = []
@@ -524,6 +586,9 @@ class SQLiteJobStore:
         if status:
             clauses.append("status = ?")
             params.append(status.value if isinstance(status, JobStatus) else str(status))
+        if requested_by:
+            clauses.append("requested_by = ?")
+            params.append(requested_by)
         where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
         params.append(max(1, min(int(limit), 100)))
         with self._connect() as connection:
@@ -603,12 +668,42 @@ class SQLiteJobStore:
                 else None
             )
             attempt = int(row["attempt"]) + (1 if increment_attempt else 0)
+            last_attempt_at = timestamp if increment_attempt else row["last_attempt_at"]
+            deadline_at = row["deadline_at"]
+            if target == JobStatus.RUNNING.value and not deadline_at:
+                timeout_seconds = row["timeout_seconds"]
+                if timeout_seconds is not None:
+                    deadline_at = (
+                        datetime.fromisoformat(timestamp)
+                        + timedelta(seconds=int(timeout_seconds))
+                    ).isoformat()
+            next_retry_at = row["next_retry_at"]
+            retry_backoff_seconds = row["retry_backoff_seconds"]
+            if target == JobStatus.RETRYING.value:
+                retry_backoff_seconds = 0
+                next_retry_at = timestamp
+            elif target in {
+                JobStatus.RUNNING.value,
+                JobStatus.COMPLETED.value,
+                JobStatus.FAILED.value,
+                JobStatus.TIMED_OUT.value,
+                JobStatus.CANCELLED.value,
+            }:
+                next_retry_at = None
+                retry_backoff_seconds = None
+            timed_out_at = (
+                timestamp
+                if target == JobStatus.TIMED_OUT.value
+                else row["timed_out_at"]
+            )
             connection.execute(
                 """
                 UPDATE jobs
                 SET status = ?, stage = ?, updated_at = ?, started_at = ?,
                     finished_at = ?, attempt = ?, upstream_run_id = COALESCE(?, upstream_run_id),
-                    error_code = ?, error_message = ?, retryable = ?
+                    error_code = ?, error_message = ?, retryable = ?,
+                    last_attempt_at = ?, next_retry_at = ?, retry_backoff_seconds = ?,
+                    deadline_at = ?, timed_out_at = ?
                 WHERE job_id = ?
                 """,
                 (
@@ -622,6 +717,11 @@ class SQLiteJobStore:
                     error_code,
                     error_message,
                     int(retryable),
+                    last_attempt_at,
+                    next_retry_at,
+                    retry_backoff_seconds,
+                    deadline_at,
+                    timed_out_at,
                     job_id,
                 ),
             )

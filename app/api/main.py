@@ -18,6 +18,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.api.artifact_registry import SQLiteArtifactRegistry
+from app.api.auth import AuthPolicy, FixedWindowRateLimiter, HashedAPIKeyAuth
 from app.api.errors import (
     APIError,
     api_error_handler,
@@ -27,8 +29,14 @@ from app.api.errors import (
 )
 from app.api.job_queue import InProcessJobQueue, JobRunner, PipelineJobRunner
 from app.api.job_store import JobStore, SQLiteJobStore
-from app.api.routes import router
+from app.api.routes import _questions_path, router
+from app.api.upstream import FilesystemQuestionOwnerAdapter, OwnerContractReadPort
 from app.api.v1 import router as v1_router
+from app.export.canonical import (
+    CanonicalReportSource,
+    UnavailableCanonicalReportSource,
+)
+from app.export.service import ExportService
 from app.core.config import get_settings
 from app.core.logging import get_logger, setup_logging
 
@@ -46,6 +54,12 @@ def create_app(
     job_runner: JobRunner | None = None,
     queue_capacity: int = 100,
     worker_count: int = 1,
+    upstream_read_port: OwnerContractReadPort | None = None,
+    auth_policy: AuthPolicy | None = None,
+    rate_limiter: FixedWindowRateLimiter | None = None,
+    artifact_registry: SQLiteArtifactRegistry | None = None,
+    canonical_report_source: CanonicalReportSource | None = None,
+    artifact_root: str | Path | None = None,
 ) -> FastAPI:
     """
     应用工厂：初始化日志、创建 FastAPI 实例并挂载路由与 CORS。
@@ -66,6 +80,13 @@ def create_app(
             export_root / ".api-state" / "jobs.sqlite3"
         )
         store.initialize()
+        default_artifact_files = Path(artifact_root or export_root / ".api-artifacts")
+        registry = artifact_registry or SQLiteArtifactRegistry(
+            export_root / ".api-state" / "artifacts.sqlite3",
+            root=default_artifact_files,
+        )
+        registry.initialize()
+        artifact_files = registry.root
         job_queue = InProcessJobQueue(
             store,
             job_runner or PipelineJobRunner(),
@@ -74,6 +95,19 @@ def create_app(
         )
         application.state.job_store = store
         application.state.job_queue = job_queue
+        application.state.upstream_read_port = (
+            upstream_read_port or FilesystemQuestionOwnerAdapter(_questions_path())
+        )
+        application.state.auth_policy = (
+            auth_policy or HashedAPIKeyAuth.from_environment()
+        )
+        application.state.rate_limiter = rate_limiter or FixedWindowRateLimiter()
+        application.state.artifact_registry = registry
+        application.state.export_service = ExportService(
+            registry=registry,
+            source=canonical_report_source or UnavailableCanonicalReportSource(),
+            root=artifact_files,
+        )
         job_queue.start()
         try:
             yield

@@ -1,17 +1,30 @@
-"""版本化 API v1 路由。
-
-Wave A 实际接通 Job/Status；Artifact、Version、Feedback 仅冻结外部契约，
-在上游公开契约可用前明确返回 unavailable。
-"""
+"""版本化 API v1 路由与 T08 owner-contract 薄投影。"""
 
 from __future__ import annotations
 
 from datetime import datetime
 
-from fastapi import APIRouter, Header, Query, Request
+from fastapi import APIRouter, Depends, Header, Query, Request, Response
+from fastapi.responses import FileResponse
 
+from app.api.artifact_registry import (
+    ArtifactIntegrityError,
+    ArtifactConflict,
+    ArtifactNotFound,
+    ArtifactPermissionDenied,
+    ArtifactRecord,
+)
+from app.api.auth import authenticate_and_rate_limit, principal
 from app.api.contracts import (
+    Artifact,
+    ArtifactListResponse,
+    ArtifactStatus,
+    EvidenceListResponse,
+    EvidenceProjection,
+    EvidenceRelation,
     ErrorResponse,
+    ExportCreateRequest,
+    ExportResponse,
     FeedbackCreateRequest,
     JobAccepted,
     JobCreateRequest,
@@ -20,6 +33,15 @@ from app.api.contracts import (
     JobListResponse,
     JobStatus,
     JobStatusResponse,
+    QuestionListResponse,
+    QuestionSummary,
+    RetryMetadata,
+    TimeoutMetadata,
+    TruthStatus,
+    Version,
+    VersionDiff,
+    VersionListResponse,
+    IssueProjection,
 )
 from app.api.errors import APIError, correlation_id
 from app.api.job_queue import QueueCapacityError
@@ -28,6 +50,13 @@ from app.api.job_store import (
     JobNotFound,
     JobRecord,
 )
+from app.api.upstream import (
+    OwnerContractInvalid,
+    OwnerContractUnavailable,
+    OwnerResourceNotFound,
+)
+from app.export.canonical import CanonicalReport, CanonicalReportUnavailable
+from app.export.service import CanonicalReportIdentityError
 
 
 router = APIRouter(prefix="/api/v1", tags=["API v1"])
@@ -127,7 +156,13 @@ _ERROR_RESPONSES = {
 _UPSTREAM_UNAVAILABLE_RESPONSES = {
     status_code: response
     for status_code, response in _ERROR_RESPONSES.items()
-    if status_code in {400, 404, 422, 500, 503}
+    if status_code in {400, 401, 403, 404, 413, 422, 429, 500, 503}
+}
+
+_READ_RESPONSES = {
+    status_code: response
+    for status_code, response in _ERROR_RESPONSES.items()
+    if status_code in {400, 401, 403, 404, 409, 413, 422, 429, 500, 503}
 }
 
 _JOB_ACCEPTED_EXAMPLE = {
@@ -152,10 +187,24 @@ _JOB_STATUS_EXAMPLE = {
     "finished_at": None,
     "attempt": 1,
     "max_attempts": 2,
+    "retry": {
+        "attempt": 1,
+        "max_attempts": 2,
+        "retryable": False,
+        "last_attempt_at": "2026-07-28T06:30:01Z",
+        "next_retry_at": None,
+        "backoff_seconds": None,
+    },
+    "timeout": {
+        "timeout_seconds": 300,
+        "deadline_at": "2026-07-28T06:35:01Z",
+        "timed_out_at": None,
+    },
     "upstream_run_id": None,
     "error": None,
     "links": {
         "self": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977",
+        "evidence": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977/evidence",
         "artifacts": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977/artifacts",
         "versions": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977/versions",
         "feedback": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977/feedback",
@@ -187,10 +236,42 @@ def _queue(request: Request):
     return job_queue
 
 
+def _registry(request: Request):
+    registry = getattr(request.app.state, "artifact_registry", None)
+    if registry is None:
+        raise APIError(
+            status_code=503,
+            code="ARTIFACT_REGISTRY_UNAVAILABLE",
+            message="产物注册表尚未就绪。",
+            retryable=True,
+        )
+    return registry
+
+
+def _export_service(request: Request):
+    service = getattr(request.app.state, "export_service", None)
+    if service is None:
+        raise APIError(
+            status_code=503,
+            code="EXPORT_SERVICE_UNAVAILABLE",
+            message="导出服务尚未就绪。",
+            retryable=True,
+        )
+    return service
+
+
+def _upstream(request: Request):
+    port = getattr(request.app.state, "upstream_read_port", None)
+    if port is None:
+        _upstream_unavailable("T01/T02/T07 read port")
+    return port
+
+
 def _links(job_id: str) -> JobLinks:
     base = f"/api/v1/jobs/{job_id}"
     return JobLinks(
         self=base,
+        evidence=f"{base}/evidence",
         artifacts=f"{base}/artifacts",
         versions=f"{base}/versions",
         feedback=f"{base}/feedback",
@@ -225,6 +306,35 @@ def _status(record: JobRecord) -> JobStatusResponse:
         ),
         attempt=record.attempt,
         max_attempts=record.max_attempts,
+        retry=RetryMetadata(
+            attempt=record.attempt,
+            max_attempts=record.max_attempts,
+            retryable=record.retryable,
+            last_attempt_at=(
+                datetime.fromisoformat(record.last_attempt_at)
+                if record.last_attempt_at
+                else None
+            ),
+            next_retry_at=(
+                datetime.fromisoformat(record.next_retry_at)
+                if record.next_retry_at
+                else None
+            ),
+            backoff_seconds=record.retry_backoff_seconds,
+        ),
+        timeout=TimeoutMetadata(
+            timeout_seconds=record.timeout_seconds,
+            deadline_at=(
+                datetime.fromisoformat(record.deadline_at)
+                if record.deadline_at
+                else None
+            ),
+            timed_out_at=(
+                datetime.fromisoformat(record.timed_out_at)
+                if record.timed_out_at
+                else None
+            ),
+        ),
         upstream_run_id=record.upstream_run_id,
         error=error,
         links=_links(record.job_id),
@@ -249,6 +359,41 @@ def _upstream_unavailable(component: str) -> None:
         code="UPSTREAM_CONTRACT_UNAVAILABLE",
         message=f"{component} 公开契约尚未接入。",
         details={"component": component, "availability": "unavailable"},
+        retryable=True,
+    )
+
+
+def _owner_call(component: str, operation):
+    try:
+        return operation()
+    except OwnerContractUnavailable as exc:
+        _upstream_unavailable(exc.component)
+    except OwnerResourceNotFound as exc:
+        raise APIError(
+            status_code=404,
+            code="UPSTREAM_RESOURCE_NOT_FOUND",
+            message="上游资源不存在。",
+            details={"resource": exc.resource, "identifier": exc.identifier},
+            retryable=False,
+        ) from None
+    except OwnerContractInvalid as exc:
+        raise APIError(
+            status_code=503,
+            code="UPSTREAM_CONTRACT_INVALID",
+            message=f"{component} 返回的数据不符合冻结契约。",
+            details={"component": exc.component, "availability": "unavailable"},
+            retryable=False,
+        ) from None
+
+
+def _upstream_run_id(record: JobRecord) -> str:
+    if record.upstream_run_id:
+        return record.upstream_run_id
+    raise APIError(
+        status_code=409,
+        code="UPSTREAM_RESULT_NOT_READY",
+        message="任务尚未绑定可读取的上游运行结果。",
+        details={"job_id": record.job_id, "status": record.status},
         retryable=True,
     )
 
@@ -331,6 +476,87 @@ def _submit_capacity_retry(request: Request, record: JobRecord) -> JobRecord:
 
     store.mark_queue_retry_submitted(claimed_record.job_id)
     return store.get_job(claimed_record.job_id)
+
+
+@router.get(
+    "/questions",
+    response_model=QuestionListResponse,
+    responses={
+        200: _documented_response(
+            "问题列表",
+            {
+                "items": [
+                    {
+                        "question_id": "Q001",
+                        "domain": "materials science",
+                        "question": "How can a stable catalyst be designed?",
+                        "source_page": 12,
+                        "source_excerpt": "Design a stable catalyst.",
+                        "status": "unavailable",
+                        "status_reason": "T07 question status was not supplied.",
+                    }
+                ],
+                "count": 1,
+                "total": 1,
+                "availability": "partial",
+            },
+        ),
+        **_READ_RESPONSES,
+    },
+    summary="查询问题清单与 owner 状态",
+)
+def list_questions(
+    request: Request,
+    domain: str | None = Query(default=None, min_length=1, max_length=128),
+    status: str | None = Query(default=None, min_length=1, max_length=64),
+    query: str | None = Query(default=None, min_length=1, max_length=256),
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=125),
+) -> QuestionListResponse:
+    records = _owner_call(
+        "T07 QuestionItem",
+        lambda: _upstream(request).list_questions(),
+    )
+    normalized_query = query.casefold() if query else None
+    filtered = [
+        record
+        for record in records
+        if (domain is None or record.item.domain == domain)
+        and (status is None or (record.status or "unavailable") == status)
+        and (
+            normalized_query is None
+            or normalized_query in record.item.id.casefold()
+            or normalized_query in record.item.question.casefold()
+        )
+    ]
+    page = filtered[offset : offset + limit]
+    items = [
+        QuestionSummary(
+            question_id=record.item.id,
+            domain=record.item.domain,
+            question=record.item.question,
+            source_page=record.item.source_page,
+            source_excerpt=record.item.booklet_excerpt,
+            status=record.status or "unavailable",
+            status_reason=(
+                record.status_reason
+                if record.status is not None
+                else "T07 question status was not supplied."
+            ),
+        )
+        for record in page
+    ]
+    availability = (
+        "available"
+        if all(record.status is not None for record in filtered)
+        else "partial"
+    )
+    return QuestionListResponse(
+        items=items,
+        count=len(items),
+        total=len(filtered),
+        availability=availability,
+    )
 
 
 @router.post(
@@ -453,6 +679,71 @@ def get_job(job_id: str, request: Request) -> JobStatusResponse:
 
 
 @router.get(
+    "/jobs/{job_id}/evidence",
+    response_model=EvidenceListResponse,
+    responses={
+        200: _documented_response(
+            "证据包",
+            {
+                "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
+                "bundle_id": "bundle-001",
+                "items": [],
+                "truncated": False,
+                "truncation_reason": None,
+                "availability": "available",
+            },
+        ),
+        **_READ_RESPONSES,
+    },
+    summary="读取 T01 证据包",
+)
+def list_evidence(job_id: str, request: Request) -> EvidenceListResponse:
+    record = _get_job(request, job_id)
+    run_id = _upstream_run_id(record)
+    bundle = _owner_call(
+        "T01 EvidenceBundle",
+        lambda: _upstream(request).get_evidence_bundle(run_id),
+    )
+    links_by_evidence: dict[str, list[EvidenceRelation]] = {}
+    for link in bundle.links:
+        links_by_evidence.setdefault(link.evidence_id, []).append(
+            EvidenceRelation(
+                claim_id=link.claim_id,
+                relation=link.relation,
+                confidence=link.confidence,
+                validation_status=link.validation_status,
+            )
+        )
+    items = [
+        EvidenceProjection(
+            evidence_id=card.evidence_id,
+            source_id=card.source_id,
+            source_type=card.source_type,
+            title=card.title,
+            quoted_text=card.quoted_text,
+            locator=card.locator,
+            authors=card.authors,
+            year=card.year,
+            doi=card.doi,
+            url=card.url,
+            content_hash=card.content_hash,
+            domain=card.domain,
+            verification_status=card.verification_status,
+            relations=links_by_evidence.get(card.evidence_id, []),
+        )
+        for card in bundle.evidences
+    ]
+    return EvidenceListResponse(
+        job_id=job_id,
+        bundle_id=bundle.bundle_id,
+        items=items,
+        truncated=bundle.truncated,
+        truncation_reason=bundle.truncation_reason,
+        availability="available",
+    )
+
+
+@router.get(
     "/jobs/{job_id}/artifacts",
     response_model=ErrorResponse,
     status_code=503,
@@ -466,10 +757,24 @@ def list_artifacts(job_id: str, request: Request):
 
 @router.get(
     "/jobs/{job_id}/versions/diff",
-    response_model=ErrorResponse,
-    status_code=503,
-    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
-    summary="查询版本差异（契约冻结）",
+    response_model=VersionDiff,
+    responses={
+        200: _documented_response(
+            "结构化版本差异",
+            {
+                "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
+                "from_version_id": "run-1:v1",
+                "to_version_id": "run-1:v2",
+                "changes": [],
+                "issue_changes": [],
+                "score_delta": {},
+                "stop_reason": None,
+                "availability": "available",
+            },
+        ),
+        **_READ_RESPONSES,
+    },
+    summary="查询 T02 提供的结构化版本差异",
 )
 def version_diff(
     job_id: str,
@@ -477,20 +782,112 @@ def version_diff(
     from_version_id: str = Query(min_length=1, max_length=128),
     to_version_id: str = Query(min_length=1, max_length=128),
 ):
-    _get_job(request, job_id)
-    _upstream_unavailable("T02 PlanVersion/IssueClosure")
+    record = _get_job(request, job_id)
+    run_id = _upstream_run_id(record)
+    diff = _owner_call(
+        "T02 structured version diff",
+        lambda: _upstream(request).get_version_diff(
+            run_id,
+            from_version_id,
+            to_version_id,
+        ),
+    )
+    if (
+        diff.run_id != run_id
+        or diff.from_version_id != from_version_id
+        or diff.to_version_id != to_version_id
+    ):
+        raise APIError(
+            status_code=503,
+            code="UPSTREAM_IDENTITY_MISMATCH",
+            message="上游版本差异与任务运行标识不一致。",
+            details={"component": "T02 structured version diff"},
+            retryable=False,
+        )
+    return VersionDiff(
+        job_id=job_id,
+        from_version_id=diff.from_version_id,
+        to_version_id=diff.to_version_id,
+        changes=diff.changes,
+        issue_changes=diff.issue_changes,
+        score_delta=diff.score_delta,
+        stop_reason=diff.stop_reason,
+        availability="available",
+    )
 
 
 @router.get(
     "/jobs/{job_id}/versions",
-    response_model=ErrorResponse,
-    status_code=503,
-    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
-    summary="列出任务版本（契约冻结）",
+    response_model=VersionListResponse,
+    responses={
+        200: _documented_response(
+            "版本列表",
+            {
+                "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
+                "items": [],
+                "availability": "partial",
+            },
+        ),
+        **_READ_RESPONSES,
+    },
+    summary="列出 T02 计划版本与 Reviewer issue",
 )
 def list_versions(job_id: str, request: Request):
-    _get_job(request, job_id)
-    _upstream_unavailable("T02 PlanVersion/IssueClosure")
+    record = _get_job(request, job_id)
+    run_id = _upstream_run_id(record)
+    versions = _owner_call(
+        "T02 PlanVersion/IssueClosure",
+        lambda: _upstream(request).list_plan_versions(run_id),
+    )
+    items: list[Version] = []
+    for owner_version in versions:
+        if owner_version.run_id != run_id:
+            raise APIError(
+                status_code=503,
+                code="UPSTREAM_IDENTITY_MISMATCH",
+                message="上游版本与任务运行标识不一致。",
+                details={"component": "T02 PlanVersion"},
+                retryable=False,
+            )
+        feedback = owner_version.review_feedback
+        scores = {}
+        if feedback is not None:
+            scores = {
+                "evidence_grounding": feedback.evidence_grounding_score,
+                "falsifiability": feedback.falsifiability_score,
+                "reproducibility": feedback.reproducibility_score,
+                "reference_reliability": feedback.reference_reliability_score,
+            }
+        issues = [
+            IssueProjection(
+                issue_id=issue.issue_id,
+                severity="unavailable",
+                summary=issue.description,
+                closure_status=issue.status,
+                required_revision=(
+                    issue.description
+                    if issue.category == "required_revision"
+                    else None
+                ),
+                category=issue.category,
+                opened_in_version=issue.opened_in_version,
+                closed_in_version=issue.closed_in_version,
+                resolution_note=issue.resolution_note,
+            )
+            for issue in owner_version.issue_closures
+        ]
+        items.append(
+            Version(
+                version_id=owner_version.version_id,
+                ordinal=owner_version.version_number,
+                parent_version_id=owner_version.parent_version_id,
+                revision_iteration=owner_version.revision_iteration,
+                reviewer_issues=issues,
+                scores=scores,
+                availability="partial",
+            )
+        )
+    return VersionListResponse(job_id=job_id, items=items, availability="partial")
 
 
 @router.post(
