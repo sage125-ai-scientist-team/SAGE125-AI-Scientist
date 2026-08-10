@@ -270,3 +270,6 @@ OpenAPI 仅错误响应均有专门测试。最终回归数字以本轮所有验
 - 测试夹具使用疑似真实密钥形态；
 - v1 OpenAPI 成功与失败响应缺少可复制 example；
 - 测试证据与当前 Commit 漂移。
+
+2026-08-10 的最终恢复、并发和 shutdown 加固证据见
+`docs/deployment/T08_WAVE_A_CLOSEOUT.md`。
