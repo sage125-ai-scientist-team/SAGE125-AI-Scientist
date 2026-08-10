@@ -139,8 +139,36 @@ def create_app(
     @application.middleware("http")
     async def reject_oversized_upload_request(request: Request, call_next):
         """在 multipart 解析前按 Content-Length 拒绝明显超限的上传请求。"""
+        raw_length = request.headers.get("content-length", "")
+        if (
+            request.url.path.startswith("/api/v1")
+            and request.method.upper() in {"POST", "PUT", "PATCH"}
+        ):
+            hard_limit = 64 * 1024
+            if raw_length.isdigit() and int(raw_length) > hard_limit:
+                return error_response(
+                    request,
+                    APIError(
+                        status_code=413,
+                        code="REQUEST_BODY_TOO_LARGE",
+                        message="API 请求体超过 64 KiB 上限。",
+                        details={"max_bytes": hard_limit},
+                        retryable=False,
+                    ),
+                )
+            body = await request.body()
+            if len(body) > hard_limit:
+                return error_response(
+                    request,
+                    APIError(
+                        status_code=413,
+                        code="REQUEST_BODY_TOO_LARGE",
+                        message="API 请求体超过 64 KiB 上限。",
+                        details={"max_bytes": hard_limit},
+                        retryable=False,
+                    ),
+                )
         if request.url.path == "/ingest" and request.method.upper() == "POST":
-            raw_length = request.headers.get("content-length", "")
             if raw_length.isdigit():
                 # 为 multipart 边界和每个文件头预留 1 MiB；文献内容本身仍由 LibraryManager
                 # 精确执行单文件/批次上限。

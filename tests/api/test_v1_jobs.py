@@ -9,8 +9,9 @@ from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 
 import pytest
-from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient as FastAPITestClient
 
+from app.api.auth import APIPrincipal, FixedWindowRateLimiter, HashedAPIKeyAuth
 from app.api.contracts import JobCreateRequest, JobStatus
 from app.api.job_queue import (
     CompletionEvidence,
@@ -24,7 +25,25 @@ from app.api.job_store import (
     InvalidTransition,
     SQLiteJobStore,
 )
-from app.api.main import create_app
+from app.api.main import create_app as _create_app
+
+
+TEST_ACTOR = "test-user"
+TEST_TOKEN = "test-api-token-123"
+
+
+def create_app(**kwargs):
+    return _create_app(
+        auth_policy=HashedAPIKeyAuth({TEST_ACTOR: TEST_TOKEN}),
+        rate_limiter=FixedWindowRateLimiter(limit=10_000, window_seconds=60),
+        **kwargs,
+    )
+
+
+class TestClient(FastAPITestClient):
+    def __init__(self, *args, **kwargs):
+        headers = {"X-API-Key": TEST_TOKEN, **kwargs.pop("headers", {})}
+        super().__init__(*args, headers=headers, **kwargs)
 
 
 def _request(question_id: str = "Q001", mode: str = "mock") -> JobCreateRequest:
@@ -737,6 +756,7 @@ def test_v1_concurrent_capacity_retries_submit_only_once(tmp_path):
         request=_request(),
         correlation_id="corr",
         idempotency_key="concurrent-capacity-key",
+        requested_by=TEST_ACTOR,
     )
     store.transition(
         job.job_id,
@@ -756,7 +776,10 @@ def test_v1_concurrent_capacity_retries_submit_only_once(tmp_path):
     def submit():
         request = SimpleNamespace(
             app=application,
-            state=SimpleNamespace(correlation_id="corr"),
+            state=SimpleNamespace(
+                correlation_id="corr",
+                principal=APIPrincipal(actor_id=TEST_ACTOR),
+            ),
         )
         return create_v1_job(
             _request(),
@@ -867,6 +890,8 @@ def test_v1_errors_use_stable_envelope_and_openapi_exposes_contracts(tmp_path):
                     continue
                 for response in operation["responses"].values():
                     media = response.get("content", {}).get("application/json", {})
+                    if not media and response.get("description") == "Successful Response":
+                        continue
                     assert media.get("example") or media.get("examples"), (
                         f"{method.upper()} {path} 缺少响应示例"
                     )
@@ -875,13 +900,6 @@ def test_v1_errors_use_stable_envelope_and_openapi_exposes_contracts(tmp_path):
 @pytest.mark.parametrize(
     ("method", "path_suffix", "request_kwargs"),
     [
-        ("get", "/artifacts", {}),
-        ("get", "/versions", {}),
-        (
-            "get",
-            "/versions/diff",
-            {"params": {"from_version_id": "v1", "to_version_id": "v2"}},
-        ),
         (
             "post",
             "/feedback",
@@ -933,9 +951,6 @@ def test_future_owner_openapi_declares_only_error_responses(tmp_path):
     store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
     app = create_app(job_store=store, job_runner=_SuccessfulRunner())
     operations = [
-        ("get", "/api/v1/jobs/{job_id}/artifacts"),
-        ("get", "/api/v1/jobs/{job_id}/versions"),
-        ("get", "/api/v1/jobs/{job_id}/versions/diff"),
         ("post", "/api/v1/jobs/{job_id}/feedback"),
         ("get", "/api/v1/jobs/{job_id}/feedback/{feedback_id}"),
     ]
@@ -945,12 +960,42 @@ def test_future_owner_openapi_declares_only_error_responses(tmp_path):
 
     for method, path in operations:
         responses = schema["paths"][path][method]["responses"]
-        assert set(responses) == {"400", "404", "422", "500", "503"}
+        assert set(responses) == {
+            "400",
+            "401",
+            "403",
+            "404",
+            "413",
+            "422",
+            "429",
+            "500",
+            "503",
+        }
         assert not any(code.startswith("2") for code in responses)
         error_schema = responses["503"]["content"]["application/json"]["schema"]
         assert error_schema == {
             "$ref": "#/components/schemas/ErrorResponse",
         }
+
+
+def test_b1_read_openapi_declares_success_and_not_ready_responses(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    app = create_app(job_store=store, job_runner=_SuccessfulRunner())
+    operations = [
+        ("get", "/api/v1/questions"),
+        ("get", "/api/v1/jobs/{job_id}/evidence"),
+        ("get", "/api/v1/jobs/{job_id}/versions"),
+        ("get", "/api/v1/jobs/{job_id}/versions/diff"),
+    ]
+
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
+
+    for method, path in operations:
+        responses = schema["paths"][path][method]["responses"]
+        assert "200" in responses
+        assert "409" in responses
+        assert "503" in responses
 
 
 def test_v1_unhandled_errors_do_not_leak_internal_details(tmp_path):

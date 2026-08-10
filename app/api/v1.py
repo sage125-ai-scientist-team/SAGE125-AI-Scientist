@@ -59,7 +59,11 @@ from app.export.canonical import CanonicalReport, CanonicalReportUnavailable
 from app.export.service import CanonicalReportIdentityError
 
 
-router = APIRouter(prefix="/api/v1", tags=["API v1"])
+router = APIRouter(
+    prefix="/api/v1",
+    tags=["API v1"],
+    dependencies=[Depends(authenticate_and_rate_limit)],
+)
 
 
 def _documented_response(description: str, example: dict) -> dict:
@@ -70,6 +74,32 @@ def _documented_response(description: str, example: dict) -> dict:
 
 
 _ERROR_RESPONSES = {
+    401: {
+        "model": ErrorResponse,
+        **_documented_response(
+            "需要 API key",
+            {
+                "code": "AUTHENTICATION_REQUIRED",
+                "message": "需要有效的 API key。",
+                "details": {},
+                "correlation_id": "judge-demo-001",
+                "retryable": False,
+            },
+        ),
+    },
+    403: {
+        "model": ErrorResponse,
+        **_documented_response(
+            "资源不属于当前调用方",
+            {
+                "code": "FORBIDDEN",
+                "message": "无权访问该资源。",
+                "details": {},
+                "correlation_id": "judge-demo-001",
+                "retryable": False,
+            },
+        ),
+    },
     400: {
         "model": ErrorResponse,
         **_documented_response(
@@ -109,6 +139,19 @@ _ERROR_RESPONSES = {
             },
         ),
     },
+    413: {
+        "model": ErrorResponse,
+        **_documented_response(
+            "请求体超限",
+            {
+                "code": "REQUEST_BODY_TOO_LARGE",
+                "message": "API 请求体超过 64 KiB 上限。",
+                "details": {"max_bytes": 65536},
+                "correlation_id": "judge-demo-001",
+                "retryable": False,
+            },
+        ),
+    },
     422: {
         "model": ErrorResponse,
         **_documented_response(
@@ -119,6 +162,19 @@ _ERROR_RESPONSES = {
                 "details": {"errors": []},
                 "correlation_id": "judge-demo-001",
                 "retryable": False,
+            },
+        ),
+    },
+    429: {
+        "model": ErrorResponse,
+        **_documented_response(
+            "请求频率超限",
+            {
+                "code": "RATE_LIMIT_EXCEEDED",
+                "message": "请求频率超过限制，请稍后重试。",
+                "details": {"limit": 60, "window_seconds": 60},
+                "correlation_id": "judge-demo-001",
+                "retryable": True,
             },
         ),
     },
@@ -343,7 +399,7 @@ def _status(record: JobRecord) -> JobStatusResponse:
 
 def _get_job(request: Request, job_id: str) -> JobRecord:
     try:
-        return _store(request).get_job(job_id)
+        record = _store(request).get_job(job_id)
     except JobNotFound:
         raise APIError(
             status_code=404,
@@ -351,6 +407,15 @@ def _get_job(request: Request, job_id: str) -> JobRecord:
             message="任务不存在。",
             details={"job_id": job_id},
         ) from None
+    if record.requested_by != principal(request).actor_id:
+        raise APIError(
+            status_code=403,
+            code="FORBIDDEN",
+            message="无权访问该任务。",
+            details={"job_id": job_id},
+            retryable=False,
+        )
+    return record
 
 
 def _upstream_unavailable(component: str) -> None:
@@ -584,6 +649,7 @@ def create_job(
             request=payload,
             correlation_id=correlation_id(request),
             idempotency_key=idempotency_key,
+            requested_by=principal(request).actor_id,
         )
     except IdempotencyConflict:
         raise APIError(
@@ -592,6 +658,13 @@ def create_job(
             message="相同 Idempotency-Key 已用于不同请求。",
         ) from None
 
+    if reused and record.requested_by != principal(request).actor_id:
+        raise APIError(
+            status_code=409,
+            code="IDEMPOTENCY_CONFLICT",
+            message="相同 Idempotency-Key 已用于其他调用方。",
+            retryable=False,
+        )
     if reused and _is_capacity_rejection(record):
         if _has_execution_marker(record):
             store.claim_queue_capacity_retry(
@@ -659,6 +732,7 @@ def list_jobs(
     records = _store(request).list_jobs(
         question_id=question_id,
         status=status,
+        requested_by=principal(request).actor_id,
         limit=limit,
     )
     items = [_status(record) for record in records]
