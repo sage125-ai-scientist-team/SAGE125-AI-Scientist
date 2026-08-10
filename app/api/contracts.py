@@ -154,6 +154,7 @@ class TruthStatus(str, Enum):
     EXPECTED = "expected"
     MOCK = "mock"
     ACTUAL = "actual"
+    UNAVAILABLE = "unavailable"
 
 
 class Artifact(BaseModel):

@@ -947,7 +947,22 @@ def test_future_owner_routes_are_explicitly_unavailable(
         }
 
 
-def test_future_owner_openapi_declares_only_error_responses(tmp_path):
+def test_artifact_registry_returns_an_empty_available_collection(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    app = create_app(job_store=store, job_runner=_SuccessfulRunner())
+    with TestClient(app) as client:
+        created = client.post("/api/v1/jobs", json=_request().model_dump()).json()
+        response = client.get(f"/api/v1/jobs/{created['job_id']}/artifacts")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "job_id": created["job_id"],
+        "items": [],
+        "availability": "available",
+    }
+
+
+def test_unimplemented_owner_openapi_declares_only_error_responses(tmp_path):
     store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
     app = create_app(job_store=store, job_runner=_SuccessfulRunner())
     operations = [

@@ -819,14 +819,230 @@ def list_evidence(job_id: str, request: Request) -> EvidenceListResponse:
 
 @router.get(
     "/jobs/{job_id}/artifacts",
-    response_model=ErrorResponse,
-    status_code=503,
-    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
-    summary="列出任务产物（契约冻结）",
+    response_model=ArtifactListResponse,
+    responses={200: _documented_response("任务产物", {"items": []}), **_ERROR_RESPONSES},
+    summary="列出当前调用方的任务产物",
 )
-def list_artifacts(job_id: str, request: Request):
+def list_artifacts(job_id: str, request: Request) -> ArtifactListResponse:
     _get_job(request, job_id)
-    _upstream_unavailable("T05 ArtifactManifest")
+    records = _registry(request).list_for_job(
+        job_id,
+        actor_id=principal(request).actor_id,
+    )
+    return ArtifactListResponse(
+        job_id=job_id,
+        items=[_artifact_projection(record) for record in records],
+        availability="available",
+    )
+
+
+def _artifact_projection(record: ArtifactRecord) -> Artifact:
+    return Artifact(
+        artifact_id=record.artifact_id,
+        name=record.name,
+        artifact_type=record.artifact_type,
+        media_type=record.media_type,
+        size_bytes=record.size_bytes,
+        sha256=record.sha256,
+        status=ArtifactStatus(record.status),
+        truth_status=TruthStatus(record.truth_status),
+        created_at=datetime.fromisoformat(record.created_at),
+        download_url=(
+            f"/api/v1/jobs/{record.job_id}/artifacts/"
+            f"{record.artifact_id}/download"
+        ),
+    )
+
+
+@router.get(
+    "/jobs/{job_id}/report",
+    response_model=CanonicalReport,
+    responses={
+        200: _documented_response(
+            "Canonical report",
+            {
+                "schema_version": "t08.report.v1",
+                "generated_at": "2026-08-10T12:00:00Z",
+                "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
+                "question_id": "Q001",
+                "run_id": "run-001",
+                "version_id": "run-001:v2",
+                "title": "Canonical Research Report",
+                "question": "How can a stable catalyst be designed?",
+                "domain": "materials science",
+                "truth_status": "planned",
+                "hypotheses": [],
+                "methods": [],
+                "evidence": [],
+                "reviewer_issues": [],
+                "feedback": [],
+                "gates": [],
+                "execution": {
+                    "availability": "unavailable",
+                    "status": "planned",
+                    "actual_execution": False,
+                    "metrics": [],
+                    "warnings": [],
+                },
+                "multimodal": [],
+                "known_limitations": [],
+                "content_sha256": "3f43d005df1dbde5e79cd613a0779f4ccb6cfa85653a3d1f1cb66b24198bb993",
+            },
+        ),
+        **_ERROR_RESPONSES,
+    },
+    summary="读取 Gate、执行与多模态的 canonical report 投影",
+)
+def get_canonical_report(job_id: str, request: Request) -> CanonicalReport:
+    job = _get_job(request, job_id)
+    run_id = _upstream_run_id(job)
+    try:
+        return _export_service(request).get_report(
+            job_id=job.job_id,
+            question_id=job.question_id,
+            run_id=run_id,
+        )
+    except CanonicalReportUnavailable:
+        raise APIError(
+            status_code=503,
+            code="CANONICAL_REPORT_UNAVAILABLE",
+            message="canonical report 上游投影不可用。",
+            details={"job_id": job.job_id, "run_id": run_id},
+            retryable=True,
+        ) from None
+    except CanonicalReportIdentityError:
+        raise APIError(
+            status_code=503,
+            code="CANONICAL_REPORT_IDENTITY_MISMATCH",
+            message="canonical report 与任务标识不一致。",
+            details={"job_id": job.job_id, "run_id": run_id},
+            retryable=False,
+        ) from None
+
+
+@router.get(
+    "/jobs/{job_id}/artifacts/{artifact_id}/download",
+    response_class=FileResponse,
+    responses=_ERROR_RESPONSES,
+    summary="校验归属与完整性后下载产物",
+)
+def download_artifact(job_id: str, artifact_id: str, request: Request):
+    job = _get_job(request, job_id)
+    actor_id = principal(request).actor_id
+    try:
+        record = _registry(request).get(artifact_id, actor_id=actor_id)
+        if record.job_id != job.job_id or record.question_id != job.question_id:
+            raise ArtifactPermissionDenied(artifact_id)
+        path = _registry(request).resolve_for_download(
+            artifact_id,
+            actor_id=actor_id,
+        )
+    except ArtifactNotFound:
+        raise APIError(
+            status_code=404,
+            code="ARTIFACT_NOT_FOUND",
+            message="产物不存在。",
+            details={"artifact_id": artifact_id},
+        ) from None
+    except ArtifactPermissionDenied:
+        raise APIError(
+            status_code=403,
+            code="FORBIDDEN",
+            message="无权访问该产物。",
+            retryable=False,
+        ) from None
+    except ArtifactIntegrityError:
+        raise APIError(
+            status_code=409,
+            code="ARTIFACT_INTEGRITY_FAILED",
+            message="产物完整性校验失败，已拒绝下载。",
+            details={"artifact_id": artifact_id},
+            retryable=False,
+        ) from None
+    return FileResponse(
+        path,
+        media_type=record.media_type,
+        filename=record.name,
+        headers={
+            "ETag": f'"{record.sha256}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.post(
+    "/jobs/{job_id}/exports",
+    response_model=ExportResponse,
+    status_code=201,
+    responses={201: _documented_response("导出已生成", {"items": []}), **_ERROR_RESPONSES},
+    summary="从 canonical report 生成一致的 JSON/Markdown/PDF",
+)
+def create_export(
+    job_id: str,
+    payload: ExportCreateRequest,
+    request: Request,
+    response: Response,
+    idempotency_key: str | None = Header(
+        default=None,
+        alias="Idempotency-Key",
+        min_length=1,
+        max_length=256,
+    ),
+) -> ExportResponse:
+    job = _get_job(request, job_id)
+    if not idempotency_key:
+        raise APIError(
+            status_code=400,
+            code="IDEMPOTENCY_KEY_REQUIRED",
+            message="导出请求必须提供 Idempotency-Key。",
+            retryable=False,
+        )
+    run_id = _upstream_run_id(job)
+    try:
+        result = _export_service(request).export(
+            job_id=job.job_id,
+            question_id=job.question_id,
+            run_id=run_id,
+            actor_id=principal(request).actor_id,
+            idempotency_key=idempotency_key,
+            formats=payload.formats,
+        )
+    except CanonicalReportUnavailable:
+        raise APIError(
+            status_code=503,
+            code="CANONICAL_REPORT_UNAVAILABLE",
+            message="canonical report 上游投影不可用。",
+            details={"job_id": job.job_id, "run_id": run_id},
+            retryable=True,
+        ) from None
+    except CanonicalReportIdentityError:
+        raise APIError(
+            status_code=503,
+            code="CANONICAL_REPORT_IDENTITY_MISMATCH",
+            message="canonical report 与任务标识不一致。",
+            details={"job_id": job.job_id, "run_id": run_id},
+            retryable=False,
+        ) from None
+    except ArtifactIntegrityError:
+        raise APIError(
+            status_code=409,
+            code="ARTIFACT_INTEGRITY_FAILED",
+            message="已有导出产物完整性校验失败。",
+            retryable=False,
+        ) from None
+    except ArtifactConflict:
+        raise APIError(
+            status_code=409,
+            code="IDEMPOTENCY_CONFLICT",
+            message="相同 Idempotency-Key 已用于不同导出请求。",
+            retryable=False,
+        ) from None
+    response.status_code = 200 if result.reused else 201
+    return ExportResponse(
+        job_id=job.job_id,
+        items=[_artifact_projection(record) for record in result.items],
+        reused=result.reused,
+    )
 
 
 @router.get(
