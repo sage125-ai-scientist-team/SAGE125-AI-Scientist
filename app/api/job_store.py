@@ -687,7 +687,22 @@ class SQLiteJobStore:
             return self._record(updated)
 
     def recover_interrupted_jobs(self) -> list[str]:
-        candidates = self.list_jobs(limit=100)
+        recoverable_statuses = (
+            JobStatus.QUEUED.value,
+            JobStatus.RETRYING.value,
+            JobStatus.RUNNING.value,
+        )
+        placeholders = ", ".join("?" for _ in recoverable_statuses)
+        with self._connect() as connection:
+            rows = connection.execute(
+                f"""
+                SELECT * FROM jobs
+                WHERE status IN ({placeholders})
+                ORDER BY updated_at ASC
+                """,
+                recoverable_statuses,
+            ).fetchall()
+        candidates = [self._record(row) for row in rows]
         recovered: list[str] = []
         for job in candidates:
             if job.status == JobStatus.QUEUED.value:

@@ -6,6 +6,7 @@ import queue
 import re
 import threading
 import time
+from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Protocol
@@ -93,7 +94,7 @@ class JobQueue(Protocol):
 
 
 class PipelineJobRunner:
-    """调用现有 pipeline；完成资格等待冻结的 owner 契约证明。"""
+    """调用现有 pipeline；完成资格等待 Wave B 的 owner 契约适配。"""
 
     def run(
         self,
@@ -116,7 +117,7 @@ class PipelineJobRunner:
                 ),
                 mock_mode=request.get("mode", "mock") == "mock",
             )
-        # 当前 T02/T03/T05 还没有向 T08 提供冻结的完成资格 DTO。
+        # 当前仓库已有 T02/T03/T05 公开契约，但 Wave A runner 尚未完成适配。
         # 只保留上游引用；不得从内部对象或文件存在性推断外部 completed。
         return JobRunResult(upstream_run_id=str(state.run_id))
 
@@ -161,13 +162,16 @@ class InProcessJobQueue:
         self.capacity = capacity
         self.worker_count = worker_count
         self._queue: queue.Queue[str | object] = queue.Queue(maxsize=capacity)
-        self._stop_token = object()
+        self._recovery_backlog: deque[str] = deque()
+        self._recovery_lock = threading.Lock()
+        self._stop_requested = threading.Event()
         self._threads: list[threading.Thread] = []
         self._started = False
 
     def start(self) -> None:
         if self._started:
             return
+        self._stop_requested.clear()
         self._started = True
         for index in range(self.worker_count):
             thread = threading.Thread(
@@ -178,17 +182,28 @@ class InProcessJobQueue:
             thread.start()
             self._threads.append(thread)
 
-        for job_id in self.store.recover_interrupted_jobs():
-            try:
-                self.submit(job_id)
-            except QueueCapacityError:
-                logger.warning(
-                    "恢复队列已满，任务保留 queued：job_id=%s", job_id
-                )
+        with self._recovery_lock:
+            self._recovery_backlog.extend(
+                self.store.recover_interrupted_jobs()
+            )
+        self._pump_recovery_backlog()
+
+    def _pump_recovery_backlog(self) -> None:
+        if self._stop_requested.is_set():
+            return
+        with self._recovery_lock:
+            while self._recovery_backlog:
+                try:
+                    self._queue.put_nowait(self._recovery_backlog[0])
+                except queue.Full:
+                    return
+                self._recovery_backlog.popleft()
 
     def submit(self, job_id: str) -> None:
         if not self._started:
             raise RuntimeError("JobQueue 尚未启动")
+        if self._stop_requested.is_set():
+            raise RuntimeError("JobQueue 正在停止")
         try:
             self._queue.put_nowait(job_id)
         except queue.Full as exc:
@@ -197,31 +212,37 @@ class InProcessJobQueue:
     def stop(self, timeout: float = 2.0) -> None:
         if not self._started:
             return
+        self._stop_requested.set()
         deadline = time.monotonic() + timeout
-        for _ in self._threads:
-            while True:
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    break
-                try:
-                    self._queue.put(self._stop_token, timeout=min(0.1, remaining))
-                    break
-                except queue.Full:
-                    continue
         for thread in self._threads:
             thread.join(timeout=max(0.0, deadline - time.monotonic()))
+        alive = [thread for thread in self._threads if thread.is_alive()]
+        if alive:
+            logger.warning(
+                "job_queue_stop_timed_out alive_workers=%d queued=%d recovery_backlog=%d",
+                len(alive),
+                self._queue.qsize(),
+                len(self._recovery_backlog),
+            )
+            self._threads = alive
+            return
         self._threads.clear()
+        self._queue = queue.Queue(maxsize=self.capacity)
+        with self._recovery_lock:
+            self._recovery_backlog.clear()
         self._started = False
 
     def _worker(self) -> None:
-        while True:
-            item = self._queue.get()
+        while not self._stop_requested.is_set():
             try:
-                if item is self._stop_token:
-                    return
+                item = self._queue.get(timeout=0.1)
+            except queue.Empty:
+                continue
+            try:
                 self._execute(str(item))
             finally:
                 self._queue.task_done()
+                self._pump_recovery_backlog()
 
     def _execute(self, job_id: str) -> None:
         try:
@@ -294,6 +315,13 @@ class InProcessJobQueue:
                     actor="worker",
                     source="queue",
                 )
+                if self._stop_requested.is_set():
+                    logger.info(
+                        "job_retry_deferred_for_restart job_id=%s correlation_id=%s",
+                        job.job_id,
+                        job.correlation_id,
+                    )
+                    return
                 try:
                     self.submit(job_id)
                     return

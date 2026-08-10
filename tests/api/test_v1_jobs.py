@@ -188,6 +188,17 @@ class _MissingSourceRunner:
         raise FileNotFoundError("/private/project/data/questions.json is missing")
 
 
+class _RetryableBlockingRunner:
+    def __init__(self):
+        self.started = threading.Event()
+        self.release = threading.Event()
+
+    def run(self, job, progress_callback):
+        self.started.set()
+        self.release.wait(timeout=3)
+        raise ConnectionError("temporary upstream outage")
+
+
 @pytest.mark.parametrize(
     "missing_requirement",
     [
@@ -375,6 +386,100 @@ def test_recovery_requeues_mock_and_fails_orphaned_real_job(tmp_path):
     failed_real = store.get_job(real_job.job_id)
     assert failed_real.status == "failed"
     assert failed_real.error_code == "PROCESS_RESTARTED_UNSAFE_TO_RETRY"
+
+
+def test_recovery_scans_every_interrupted_job_beyond_public_list_limit(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    jobs = [
+        store.create_job(
+            request=_request(f"Q{index:03d}"),
+            correlation_id=f"corr-{index}",
+        )[0]
+        for index in range(1, 106)
+    ]
+
+    recovered = store.recover_interrupted_jobs()
+
+    assert set(recovered) == {job.job_id for job in jobs}
+
+
+def test_queue_stop_leaves_pending_jobs_for_restart_recovery(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    runner = _BlockingRunner()
+    queue = InProcessJobQueue(store, runner, capacity=2, worker_count=1)
+    queue.start()
+    first, _ = store.create_job(request=_request("Q001"), correlation_id="c1")
+    pending, _ = store.create_job(request=_request("Q002"), correlation_id="c2")
+    queue.submit(first.job_id)
+    assert runner.started.wait(timeout=1)
+    queue.submit(pending.job_id)
+
+    workers = list(queue._threads)
+    queue.stop(timeout=0.05)
+    runner.release.set()
+    for worker in workers:
+        worker.join(timeout=1)
+
+    assert runner.calls == [first.job_id]
+    assert store.get_job(pending.job_id).status == "queued"
+    assert all(not worker.is_alive() for worker in workers)
+
+
+def test_queue_stop_defers_retry_without_uncaught_worker_error(
+    tmp_path,
+    monkeypatch,
+):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    runner = _RetryableBlockingRunner()
+    queue = InProcessJobQueue(store, runner, capacity=1, worker_count=1)
+    queue.start()
+    job, _ = store.create_job(request=_request("Q001"), correlation_id="c1")
+    queue.submit(job.job_id)
+    assert runner.started.wait(timeout=1)
+    uncaught: list[BaseException] = []
+    monkeypatch.setattr(
+        threading,
+        "excepthook",
+        lambda args: uncaught.append(args.exc_value),
+    )
+
+    workers = list(queue._threads)
+    queue.stop(timeout=0.05)
+    runner.release.set()
+    for worker in workers:
+        worker.join(timeout=1)
+
+    assert uncaught == []
+    assert store.get_job(job.job_id).status == "queued"
+    assert all(not worker.is_alive() for worker in workers)
+
+
+def test_queue_drains_recovery_backlog_larger_than_capacity(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    jobs = [
+        store.create_job(
+            request=_request(f"Q{index:03d}"),
+            correlation_id=f"corr-{index}",
+        )[0]
+        for index in range(1, 8)
+    ]
+    runner = _SuccessfulRunner()
+    queue = InProcessJobQueue(store, runner, capacity=2, worker_count=1)
+
+    queue.start()
+    try:
+        deadline = time.monotonic() + 3
+        while time.monotonic() < deadline:
+            if all(store.get_job(job.job_id).status == "completed" for job in jobs):
+                break
+            time.sleep(0.01)
+        assert all(store.get_job(job.job_id).status == "completed" for job in jobs)
+    finally:
+        queue.stop()
 
 
 def test_v1_job_api_is_non_blocking_idempotent_and_correlated(tmp_path):
