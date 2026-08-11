@@ -60,7 +60,7 @@ The integration branch intentionally does not track `data/processed`, `data/inde
 Question catalog bootstrap (API start):
 
 1. Prefer a real booklet extract when `data/raw/sjtu-booklet.pdf` is available.
-2. Otherwise, when `SAGE125_PREVIEW_SEED=1` (set on `sage125-api-preview` in `render.yaml`), `scripts.start_api` runs `scripts/bootstrap_preview_data.py` and writes an explicitly marked `preview_seed` catalog to `data/processed/questions_125.json`.
+2. Otherwise, `scripts.start_api` allows an explicitly marked `preview_seed` catalog when any of these is true: `APP_ENV=preview`, `PREVIEW_EPHEMERAL_STORAGE=true`, or `SAGE125_PREVIEW_SEED=1`. It writes `data/processed/questions_125.json` via `scripts/bootstrap_preview_data.py`.
 3. Preview-seed rows are for Mock UI routing only; they are not booklet gold and must not be treated as T09 formal evaluation input.
 4. The UI must keep calling the API (`FRONTEND_RUN_VIA_API=1`); it does not invent questions client-side.
 

@@ -81,7 +81,29 @@ def test_bootstrap_fails_without_seed_permission(tmp_path: Path, monkeypatch):
     monkeypatch.setattr(bootstrap, "JSON_PATH", processed / "questions_125.json")
     monkeypatch.setattr(bootstrap, "PDF_PATH", tmp_path / "missing.pdf")
     monkeypatch.delenv("SAGE125_PREVIEW_SEED", raising=False)
+    monkeypatch.delenv("APP_ENV", raising=False)
+    monkeypatch.delenv("PREVIEW_EPHEMERAL_STORAGE", raising=False)
 
     code = bootstrap.bootstrap(allow_seed=False, force_seed=False)
     assert code == 2
     assert not (processed / "questions_125.json").exists()
+
+
+def test_bootstrap_allows_seed_when_app_env_preview(tmp_path: Path, monkeypatch):
+    """
+    Render 已有 `APP_ENV=preview` 时，即使未设 SAGE125_PREVIEW_SEED 也应可写 seed。
+
+    参数：
+        tmp_path: 临时目录。
+        monkeypatch: 模拟 Preview 环境变量与路径。
+    """
+    processed = tmp_path / "processed"
+    monkeypatch.setattr(bootstrap, "PROCESSED_DIR", processed)
+    monkeypatch.setattr(bootstrap, "JSON_PATH", processed / "questions_125.json")
+    monkeypatch.setattr(bootstrap, "PDF_PATH", tmp_path / "missing.pdf")
+    monkeypatch.delenv("SAGE125_PREVIEW_SEED", raising=False)
+    monkeypatch.setenv("APP_ENV", "preview")
+
+    code = bootstrap.bootstrap(allow_seed=False, force_seed=False)
+    assert code == 0
+    assert (processed / "questions_125.json").exists()

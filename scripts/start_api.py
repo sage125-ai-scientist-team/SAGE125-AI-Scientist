@@ -26,14 +26,35 @@ def service_port(default: int = 8000) -> int:
     return int(raw)
 
 
+def _preview_seed_allowed() -> bool:
+    """
+    判断 API 启动时是否允许 preview seed。
+
+    返回：
+        满足任一条件即为 True：
+        - `SAGE125_PREVIEW_SEED` 为真；
+        - `APP_ENV=preview`（Render Blueprint 已有）；
+        - `PREVIEW_EPHEMERAL_STORAGE` 为真。
+    """
+    seed = os.getenv("SAGE125_PREVIEW_SEED", "").strip().lower() in {"1", "true", "yes", "on"}
+    app_env = os.getenv("APP_ENV", "").strip().lower() == "preview"
+    ephemeral = os.getenv("PREVIEW_EPHEMERAL_STORAGE", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    return seed or app_env or ephemeral
+
+
 def ensure_preview_questions() -> None:
     """
     在 API 进程启动前确保 questions_125.json 可用。
 
     行为：
         - 正式环境：若已有题库则复用；有 booklet 则抽取；
-        - Preview：当 `SAGE125_PREVIEW_SEED=1`（或 `--allow-seed` 等价环境）时，
-          允许写入显式标记的 preview seed，避免 UI Questions=0。
+        - Preview：`APP_ENV=preview` / 临时存储 / `SAGE125_PREVIEW_SEED=1`
+          时允许写入显式标记的 preview seed，避免 UI Questions=0；
         - 若无法准备题库：记录错误但不阻断进程启动（/health 仍可响应），
           以便冷启动诊断；业务 `/questions` 会如实返回 missing。
     """
@@ -42,8 +63,7 @@ def ensure_preview_questions() -> None:
     except Exception as exc:  # noqa: BLE001 — 启动入口必须容错
         print(f"[start_api] bootstrap import failed: {exc}")
         return
-    allow = os.getenv("SAGE125_PREVIEW_SEED", "").strip().lower() in {"1", "true", "yes", "on"}
-    code = bootstrap(allow_seed=allow, force_seed=False)
+    code = bootstrap(allow_seed=_preview_seed_allowed(), force_seed=False)
     if code != 0:
         print(f"[start_api] questions bootstrap exited with code {code}")
 

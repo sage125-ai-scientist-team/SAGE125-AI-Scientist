@@ -234,6 +234,9 @@ def test_api_entrypoint_bootstraps_preview_questions():
     assert "ensure_preview_questions" in start_api
     assert "bootstrap_preview_data" in start_api
     assert "SAGE125_PREVIEW_SEED" in start_api
+    assert 'APP_ENV' in start_api
+    assert "PREVIEW_EPHEMERAL_STORAGE" in start_api
+    assert "_preview_seed_allowed" in start_api
 
 
 def test_ci_covers_integration_and_main_pushes_and_pull_requests():

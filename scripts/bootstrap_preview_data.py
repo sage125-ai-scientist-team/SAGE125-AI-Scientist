@@ -163,6 +163,34 @@ _KNOWN_DEMO_QUESTIONS: list[dict] = [
 ]
 
 
+def _truthy_env(*names: str) -> bool:
+    """
+    判断任一环境变量是否为显式真值。
+
+    参数：
+        names: 环境变量名列表。
+
+    返回：
+        任一变量取值为 1/true/yes/on（大小写不敏感）时返回 True。
+    """
+    for name in names:
+        if os.getenv(name, "").strip().lower() in {"1", "true", "yes", "on"}:
+            return True
+    return False
+
+
+def _preview_runtime() -> bool:
+    """
+    判断当前是否为托管 Preview 运行时。
+
+    返回：
+        当 `APP_ENV=preview` 或 `PREVIEW_EPHEMERAL_STORAGE` 为真时返回 True。
+        用于 Render 已有服务未同步新 env 时仍能自动引导题库。
+    """
+    app_env = os.getenv("APP_ENV", "").strip().lower()
+    return app_env == "preview" or _truthy_env("PREVIEW_EPHEMERAL_STORAGE")
+
+
 def _seed_allowed(cli_allow: bool) -> bool:
     """
     判断当前是否允许写入 preview seed。
@@ -173,8 +201,7 @@ def _seed_allowed(cli_allow: bool) -> bool:
     返回：
         True 表示允许生成/覆盖为种子题库；False 表示必须依赖正式抽取。
     """
-    env = os.getenv("SAGE125_PREVIEW_SEED", "").strip().lower()
-    return cli_allow or env in {"1", "true", "yes", "on"}
+    return cli_allow or _truthy_env("SAGE125_PREVIEW_SEED") or _preview_runtime()
 
 
 def _existing_questions_ok(min_count: int = 1) -> bool:
