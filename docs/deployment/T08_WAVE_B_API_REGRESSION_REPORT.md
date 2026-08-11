@@ -155,8 +155,9 @@ JSON/Markdown/PDF 统一导出。`JOB_ID` 必须属于当前 key 对应 actor，
 
 ## 6. 仍然阻断 Ready 的事项
 
-- T01/T02/T03/T05/T06 owner 确认未齐，生产 feedback 及 canonical read adapters 继续
-  失败关闭；
+- T01/T02/T03/T05 owner production ports/确认仍未齐；T06 read port 已在 Draft
+  PR #36 `116bb3a9` 获接受并实现，但尚未合入 integration，因此 production
+  feedback/canonical adapters 继续失败关闭；
 - B016/B017 production owner 全闭环 E2E trace/浏览器证据/视频未生成；
 - T07 配对审查尚未签字；模板见
   `T08_WAVE_B_E2E_AND_T07_REVIEW_TEMPLATE.md`；

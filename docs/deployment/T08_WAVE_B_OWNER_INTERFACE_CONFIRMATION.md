@@ -12,10 +12,11 @@
 
 适用 owner：T01、T02、T03、T05、T06、队长
 
-当前回复状态：T01、T05 已在 PR #39 直接 `CONDITIONAL_AGREE`；T02、T03、T06
-已从 owner 历史 PR 与最新 `integration/2026-08-10@2d36df2` 补齐现有冻结事实，
-但所需 production read/orchestration 端口仍不完整；队长最终 composition/实施授权
-仍待回复。
+当前回复状态：T01、T05 已在 PR #39 直接 `CONDITIONAL_AGREE`；T06 已直接
+`ACCEPT` 并在 Draft PR #36 Head `116bb3a9` 实现冻结 read port；T02、T03 已从
+owner 历史 PR 与最新 `integration/2026-08-10@2d36df2` 补齐现有冻结事实。T06
+实现尚未合并，其他 production read/orchestration 端口仍不完整；队长最终
+composition/实施授权仍待回复。
 
 ## 1. 请求目的
 
@@ -60,11 +61,12 @@ API-only 前端的交付骨架，但生产默认 composition 仍对部分 owner 
 | T02 | [PR #10](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/10)、[PR #21](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/21)、[Open PR #37](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/37)、integration | merged contract/audit found；checkpoint candidate 未合并；production read gap | T08 proposed fixture/read boundary 已绑定 run+question；不把 in-process store/checkpoint/AgentTrace 当 production history | 按 question 绑定的持久 version/diff read port 仍缺失 |
 | T03 | [PR #14](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/14)、[Draft PR #32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32)、integration | Wave A merged；Wave B candidate 未合并 | feedback submit/status 继续 503；Gate 不自行计算 | production store/orchestration/read port 未进 integration；共享契约冲突待 T03/队长处理 |
 | T05 | [issuecomment-5250843063](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/39#issuecomment-5250843063) | `CONDITIONAL_AGREE` | 仅保留 typed projection；production execution/report 继续 unavailable | 队长批准 T05 history store、re-attestation read port 与受控 resolver |
-| T06 | [PR #16](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/16)、[PR #29](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/29)、[Draft PR #36](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/36)、integration | contract/gold merged；Wave B adapter candidate 未合并 | 不读取 process-local queue 或暴露 `source_path` | 按 run/question/version 的持久 detail/source/preview read port 仍缺失 |
+| T06 | [PR #39 confirmation](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/39#issuecomment-5252856232)、[Draft PR #36](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/36) | `ACCEPT`；read port 已在 `116bb3a9` 实现但未合并 | 等 integration 获得 `app.multimodal.read_port` 后在 `app/api/**` 接薄 adapter；当前继续 unavailable | PR #36 合并/可消费后，执行 production identity/source/redaction E2E |
 | 队长 | re-review 要求 Draft/Open | `READY_AUTHORIZED=NO` | 保持 Draft/Open/fail-closed | 批准 owner 小 PR、T08 adapter 边界、composition 规则、冲突裁决人与进入实现 |
 
-T01/T05 的条件同意，以及 T02/T03/T06 的历史合并事实，都不表示对应 production
-read port 已存在，也不解除 Wave B 的 owner E2E 阻断。
+T01/T05 的条件同意与 T02/T03 的历史合并事实都不表示对应 production read port
+已存在；T06 虽已接受并实现，未合入 integration 前同样不能解除 Wave B owner E2E
+阻断。
 
 ### 2.2 历史 PR 与 integration 追溯结论
 
@@ -153,9 +155,18 @@ read 仍未落地且存在共享契约阻断，feedback 路由继续 503。
   当前没有 owner-owned 持久 detail read port 或受控 source/preview resolver。
 - Draft PR #36 是未合并候选，并且 captain review 将真实 PDF/chart、Qwen B016 与
   完整 Evidence E2E 标为 PARTIAL/WAIT；不能作为 integration production read port。
+- T06 owner 于 PR #39 评论
+  [`issuecomment-5252856232`](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/39#issuecomment-5252856232)
+  正式 `ACCEPT`，并在 PR #36 Head
+  `116bb3a9f11f921774a2e21538c933bd7cd88120` 新增
+  `app.multimodal.read_port.list_multimodal_artifacts(*, run_id, question_id,
+  version_id) -> list[MultimodalArtifact]`、持久 JSON store、脱敏 public source 与
+  `preview_artifact_id`。owner 声明 bbox、units、confidence、validation status 和
+  `needs_human_review` 均由 T06 保留/判定。
 
-结论：T06 contract/gold 事实已收集完整；production multimodal detail/source/preview
-读取仍不存在，对应 adapter 继续 unavailable。
+结论：T06 接口语义与 owner 实现已确认，但 PR #36 仍为 Draft/Open 且未进入
+integration。当前 T08 checkout 无法导入该模块，因此 production adapter 继续
+unavailable；PR #36 合并后即可在 T08 owner 路径接线，不再需要重新讨论签名。
 
 ## 3. 所有 owner 共同确认项
 
@@ -554,6 +565,8 @@ T08 对外不能暴露 `relative_path` 或服务器绝对路径。请确认 owne
   envelope、持久 store 或重启恢复。
 - PR #29 只合并 provenance/gold package；Draft PR #36 的 adapter/Evidence bridge
   尚未合并，且 captain 将真实 chart/Qwen/full Evidence E2E 标为 PARTIAL/WAIT。
+- PR #36 Head `116bb3a9` 已新增 `app.multimodal.read_port`、持久 store 和
+  `tests/multimodal/test_read_port.py`；T06 owner 已在 PR #39 明确接受下述端口。
 
 ### 当前可复用
 
@@ -565,7 +578,7 @@ T08 对外不能暴露 `relative_path` 或服务器绝对路径。请确认 owne
 
 ### T06-01 持久读取端口
 
-仍需 T06 落地并冻结：
+T06 已冻结并在未合并 PR #36 实现：
 
 ```python
 list_multimodal_artifacts(
@@ -576,17 +589,20 @@ list_multimodal_artifacts(
 ) -> list[MultimodalArtifact]
 ```
 
-若不允许返回完整 data，请 T06 提供另一个保留 bbox、axes、legend、单位、原始值、
-提取值、confidence、validation status 与人工核验标记的 owner-owned详情 DTO。
+Schema/policy 为 `t06.multimodal_store.v1` / `t06.multimodal_detail.v1`。合法无产物
+返回空列表；invalid contract、identity mismatch 与 unavailable 均由 owner 标记为
+不可重试。完整 data 可返回，另有 `list_multimodal_details` 详情投影。
 
 ### T06-02 来源与预览
 
-`provenance.source_path` 不能原样暴露。请确认：
+T06 已确认：
 
-- 对外 source ID/label；
-- 缩略图或原始来源的受控 artifact ID；
-- page 与 bbox 坐标系；
-- 低置信度阈值是否由 T06 返回状态，而不是 T08 自定。
+- 对外仅使用 `public_source.source_id`、`source_label` 和
+  `preview_artifact_id`；
+- 绝对路径在 owner read 时脱敏；
+- coordinate space 为 `pdf_user_space`、`image_pixel`、`csv_placeholder` 或
+  `unknown`；
+- T06 以 `needs_human_review` 返回低置信状态，当前 owner 阈值为 0.70，T08 不自定。
 
 ### T06 验收
 
@@ -594,6 +610,8 @@ list_multimodal_artifacts(
 - bbox、axes、legend、单位和 validation status 不丢失；
 - `needs_review` 和 failed 明确可见；
 - 重启后可按 identity 读取，不依赖进程内 queue。
+- PR #36 合并后，在 integration tip 运行 owner read-port 测试与 T08 production
+  adapter E2E；合并前保持 unavailable。
 
 ## 9. Canonical report 组合确认
 
@@ -665,8 +683,9 @@ T08 adapter owner 路径是否批准：
 - T02 + T03：在最终合并 tip 重新验证历史 #21/#32 技术配对，确认重复回调不重复
   生成版本，以及长 revision 是由谁创建/恢复持久 job。
 - T06 owner：提供按 `run_id + question_id + version_id` 的持久详情读取、受控 source/
-  preview artifact、page/bbox 坐标系与安全 source ID；不能直接返回 `source_path`，
-  也不能以 Draft PR #36 或内存 queue 代替 production read port。
+  preview artifact、page/bbox 坐标系与安全 source ID。该项已在 PR #36
+  `116bb3a9` 获 owner `ACCEPT` 并实现；剩余动作是合并到 integration、T08 薄 adapter
+  接线及 production E2E，不能直接从未合并分支复制实现。
 - 队长：确认 T01/T05 owner 小 PR 是否批准、T08 是否只在 `app/api/**` 实现薄 adapter、
   mandatory/partial/complete/stale/cache composition 规则、冲突裁决人，以及
   `是否允许进入实现=是/否`。
@@ -748,7 +767,7 @@ KEEP_PR_OPEN=YES
 READY_AUTHORIZED=NO
 ```
 
-当前唯一安全的下一实施条件是：T01/T05 缺失 owner ports、T02/T03/T06 第 10.1 节
-缺口及 T03 共享契约冲突均关闭，且队长明确确认 adapter 边界与 composition 规则。
-此前不生成 production 成功 trace，不把 fixture、HTTP stub、planned 或 expected
-结果作为 B016/B017 证据。
+当前唯一安全的下一实施条件是：T01/T05 缺失 owner ports、T02/T03 第 10.1 节缺口、
+T03 共享契约冲突关闭，T06 PR #36 实现进入 integration，且队长明确确认 adapter
+边界与 composition 规则。此前不生成 production 成功 trace，不把 fixture、HTTP
+stub、planned 或 expected 结果作为 B016/B017 证据。

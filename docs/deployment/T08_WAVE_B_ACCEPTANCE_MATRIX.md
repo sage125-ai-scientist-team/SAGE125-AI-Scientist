@@ -26,7 +26,7 @@ Docker、干净部署和 2 小时稳定性属于 Wave C，不计入本矩阵的 
 | B004 | `OWNER_BLOCKED` | T08 evidence/version/feedback projection 已存在且 fail-closed | T01/T02/T03 production ports |
 | B005 | `OWNER_BLOCKED` | endpoints 与 Evidence panel 已存在 | feedback 不再固定 503 后联调 |
 | B006 | `OWNER_BLOCKED` | quote/locator fixture 与 resulting-version UI 已测 | production feedback→version trace |
-| B007 | `OWNER_BLOCKED + EXTERNAL_REVIEW` | Reviewer/Gate/Execution/Multimodal UI 骨架存在 | owner composition + T07 配对签字 |
+| B007 | `OWNER_BLOCKED + EXTERNAL_REVIEW` | Reviewer/Gate/Execution/Multimodal UI 骨架存在；T06 read port 已确认但未合并 | 其余 owner composition、T06 合并接线、T07 配对签字 |
 | B008 | `PASS_CANDIDATE` | B4 Execution/Multimodal panels 与 Draft PR #39 | 最终浏览器复验 |
 | B009 | `PASS_CANDIDATE` | `NOT ACTUAL`、低置信度和 unavailable 状态 | production 下复验不误标 |
 | B010 | `FINAL_TIP_REVERIFY` | canonical JSON/MD/PDF 单真源及一致性测试 | 最终 tip 导出回归 |
@@ -58,7 +58,8 @@ Docker、干净部署和 2 小时稳定性属于 Wave C，不计入本矩阵的 
 2. T02：持久 version history 与 owner-owned aggregate diff。
 3. T03：Schema 冲突修复、feedback submit/status、持久 Gate read。
 4. T05：execution history、re-attestation 和安全 artifact resolver。
-5. T06：identity-bound multimodal detail/source/preview resolver。
+5. T06：read port 已在 Draft PR #36 `116bb3a9` 获接受并实现；剩余为合并、
+   T08 薄 adapter 和 production E2E。
 6. T02+T03：decision、diff hash、resulting version 的原子闭环。
 7. T07：配对审查。
 8. 队长：composition、实施与 Ready 授权。
