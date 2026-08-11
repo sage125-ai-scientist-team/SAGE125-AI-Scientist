@@ -24,6 +24,7 @@ from app.batch.formal_five_runs import (
     validate_provider_preflight_audit,
 )
 from app.batch.formal_provider_runtime import build_formal_provider_executor
+from app.batch.wave_c_hardening import request_pause
 from app.contracts.validation import GateFinding, GateResult, Severity
 from scripts.batch_125.run_five_real_runs import build_parser
 
@@ -769,3 +770,33 @@ def test_formal_provider_executor_without_evidence_stops_with_zero_calls(
     assert receipt.questions[0].error_codes == (
         "FORMAL_EVIDENCE_CONTEXT_UNAVAILABLE",
     )
+
+
+def test_pause_request_stops_before_next_provider_call(tmp_path: Path) -> None:
+    dry_run = run_formal_five_runs(
+        _request(tmp_path, execute=False),
+        completion_evaluator=_evaluate,
+    )
+    request_pause(
+        Path(dry_run.batch_root),
+        requested_by="captain",
+        reason="Wave C controlled pause",
+    )
+    executor_calls = 0
+
+    def forbidden_executor(_context):
+        nonlocal executor_calls
+        executor_calls += 1
+        raise AssertionError("paused batch must not enter the provider executor")
+
+    receipt = run_formal_five_runs(
+        _request(tmp_path, execute=True, resume=True),
+        executor=forbidden_executor,
+        completion_evaluator=_evaluate,
+    )
+
+    assert receipt.status == "paused"
+    assert receipt.progress == "0/5"
+    assert receipt.provider_calls == 0
+    assert receipt.questions == ()
+    assert executor_calls == 0

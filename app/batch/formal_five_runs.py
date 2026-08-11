@@ -65,6 +65,7 @@ from app.batch.output_validation import (
     build_artifact_manifest,
     validate_required_artifacts,
 )
+from app.batch.wave_c_hardening import is_pause_requested
 from app.contracts.batch import (
     REQUIRED_ARTIFACTS,
     STANDARD_OUTPUT_FIELDS,
@@ -368,7 +369,14 @@ def run_formal_five_runs(
     receipts: list[FormalQuestionReceipt] = []
     delivery_records: list[QuestionDeliveryRecord] = []
     provider_calls = int(manifest.get("provider_calls", 0))
+    paused = False
     for question_id in question_ids:
+        if is_pause_requested(batch_root):
+            manifest["status"] = "paused"
+            manifest["provider_calls"] = provider_calls
+            _write_json(batch_root / "manifest.json", manifest)
+            paused = True
+            break
         frozen = next(item for item in config.questions if item.question_id == question_id)
         run_id = _new_run_id(question_id)
         base_job = _build_job(config, frozen, run_id)
@@ -527,11 +535,14 @@ def run_formal_five_runs(
             break
 
     completed = sum(item.completed for item in receipts)
-    status = (
-        "completed"
-        if receipts and all(item.completed for item in receipts)
-        else receipts[-1].status if receipts else "failed"
-    )
+    if paused:
+        status = "paused"
+    elif receipts and all(item.completed for item in receipts):
+        status = "completed"
+    elif receipts:
+        status = receipts[-1].status
+    else:
+        status = "failed"
     return FormalRunReceipt(
         status=status,
         batch_root=str(batch_root),
