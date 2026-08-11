@@ -402,10 +402,6 @@ class FeedbackDecision(_StrictContract):
                 raise ValueError(
                     "resulting_version_id must be the direct next version"
                 )
-            if self.revision_diff_sha256 is None:
-                raise ValueError(
-                    "resulting_version_id requires revision_diff_sha256"
-                )
         return self
 
     def fingerprint(self) -> str:
