@@ -42,6 +42,12 @@ class OwnerContractInvalid(OwnerReadError):
         self.component = component
 
 
+class OwnerIdentityMismatch(OwnerReadError):
+    def __init__(self, component: str) -> None:
+        super().__init__(component)
+        self.component = component
+
+
 class QuestionOwnerRecord(BaseModel):
     """T07 question projection plus optional owner-supplied status."""
 
@@ -58,6 +64,7 @@ class OwnerVersionDiff(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     run_id: str = Field(min_length=1)
+    question_id: str = Field(min_length=1)
     from_version_id: str = Field(min_length=1)
     to_version_id: str = Field(min_length=1)
     changes: list[dict[str, Any]] = Field(default_factory=list)
@@ -71,13 +78,25 @@ class OwnerContractReadPort(Protocol):
 
     def list_questions(self) -> list[QuestionOwnerRecord]: ...
 
-    def get_evidence_bundle(self, run_id: str) -> EvidenceBundle: ...
+    def get_evidence_bundle(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle: ...
 
-    def list_plan_versions(self, run_id: str) -> list[PlanVersion]: ...
+    def list_plan_versions(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> list[PlanVersion]: ...
 
     def get_version_diff(
         self,
+        *,
         run_id: str,
+        question_id: str,
         from_version_id: str,
         to_version_id: str,
     ) -> OwnerVersionDiff: ...
@@ -116,21 +135,33 @@ class FilesystemQuestionOwnerAdapter:
         except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
             raise OwnerContractInvalid("T07 QuestionItem", str(exc)) from exc
 
-    def get_evidence_bundle(self, run_id: str) -> EvidenceBundle:
-        del run_id
+    def get_evidence_bundle(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle:
+        del run_id, question_id
         raise OwnerContractUnavailable("T01 EvidenceBundle")
 
-    def list_plan_versions(self, run_id: str) -> list[PlanVersion]:
-        del run_id
+    def list_plan_versions(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> list[PlanVersion]:
+        del run_id, question_id
         raise OwnerContractUnavailable("T02 PlanVersion/IssueClosure")
 
     def get_version_diff(
         self,
+        *,
         run_id: str,
+        question_id: str,
         from_version_id: str,
         to_version_id: str,
     ) -> OwnerVersionDiff:
-        del run_id, from_version_id, to_version_id
+        del run_id, question_id, from_version_id, to_version_id
         raise OwnerContractUnavailable("T02 structured version diff")
 
 
@@ -146,20 +177,25 @@ class FixtureOwnerContractAdapter:
         self,
         *,
         questions: Sequence[QuestionOwnerRecord],
-        evidence_by_run: Mapping[str, EvidenceBundle],
-        versions_by_run: Mapping[str, Sequence[PlanVersion]],
-        diffs_by_run: Mapping[tuple[str, str, str], OwnerVersionDiff],
+        evidence_by_identity: Mapping[tuple[str, str], EvidenceBundle],
+        versions_by_identity: Mapping[tuple[str, str], Sequence[PlanVersion]],
+        diffs_by_identity: Mapping[
+            tuple[str, str, str, str],
+            OwnerVersionDiff,
+        ],
     ) -> None:
         self._questions = [item.model_copy(deep=True) for item in questions]
-        self._evidence_by_run = {
-            key: value.model_copy(deep=True) for key, value in evidence_by_run.items()
+        self._evidence_by_identity = {
+            key: value.model_copy(deep=True)
+            for key, value in evidence_by_identity.items()
         }
-        self._versions_by_run = {
+        self._versions_by_identity = {
             key: [item.model_copy(deep=True) for item in value]
-            for key, value in versions_by_run.items()
+            for key, value in versions_by_identity.items()
         }
-        self._diffs_by_run = {
-            key: value.model_copy(deep=True) for key, value in diffs_by_run.items()
+        self._diffs_by_identity = {
+            key: value.model_copy(deep=True)
+            for key, value in diffs_by_identity.items()
         }
 
     @classmethod
@@ -167,51 +203,95 @@ class FixtureOwnerContractAdapter:
         cls,
         *,
         questions: Sequence[Mapping[str, Any]],
-        evidence_by_run: Mapping[str, Mapping[str, Any]],
-        versions_by_run: Mapping[str, Sequence[Mapping[str, Any]]],
-        diffs_by_run: Mapping[tuple[str, str, str], Mapping[str, Any]],
+        evidence_by_identity: Mapping[tuple[str, str], Mapping[str, Any]],
+        versions_by_identity: Mapping[
+            tuple[str, str],
+            Sequence[Mapping[str, Any]],
+        ],
+        diffs_by_identity: Mapping[
+            tuple[str, str, str, str],
+            Mapping[str, Any],
+        ],
     ) -> "FixtureOwnerContractAdapter":
         return cls(
             questions=[_question_record(item) for item in questions],
-            evidence_by_run={
-                run_id: EvidenceBundle.model_validate(payload)
-                for run_id, payload in evidence_by_run.items()
+            evidence_by_identity={
+                identity: EvidenceBundle.model_validate(payload)
+                for identity, payload in evidence_by_identity.items()
             },
-            versions_by_run={
-                run_id: [PlanVersion.model_validate(item) for item in payload]
-                for run_id, payload in versions_by_run.items()
+            versions_by_identity={
+                identity: [PlanVersion.model_validate(item) for item in payload]
+                for identity, payload in versions_by_identity.items()
             },
-            diffs_by_run={
+            diffs_by_identity={
                 key: OwnerVersionDiff.model_validate(payload)
-                for key, payload in diffs_by_run.items()
+                for key, payload in diffs_by_identity.items()
             },
         )
 
     def list_questions(self) -> list[QuestionOwnerRecord]:
         return [item.model_copy(deep=True) for item in self._questions]
 
-    def get_evidence_bundle(self, run_id: str) -> EvidenceBundle:
+    def get_evidence_bundle(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle:
+        identity = (run_id, question_id)
         try:
-            return self._evidence_by_run[run_id].model_copy(deep=True)
+            return self._evidence_by_identity[identity].model_copy(deep=True)
         except KeyError:
-            raise OwnerResourceNotFound("evidence_bundle", run_id) from None
+            if any(
+                stored_run_id == run_id
+                for stored_run_id, _ in self._evidence_by_identity
+            ):
+                raise OwnerIdentityMismatch("T01 EvidenceBundle") from None
+            raise OwnerResourceNotFound(
+                "evidence_bundle", f"{run_id}:{question_id}"
+            ) from None
 
-    def list_plan_versions(self, run_id: str) -> list[PlanVersion]:
+    def list_plan_versions(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> list[PlanVersion]:
+        identity = (run_id, question_id)
         try:
-            versions = self._versions_by_run[run_id]
+            versions = self._versions_by_identity[identity]
         except KeyError:
-            raise OwnerResourceNotFound("plan_versions", run_id) from None
+            if any(
+                stored_run_id == run_id
+                for stored_run_id, _ in self._versions_by_identity
+            ):
+                raise OwnerIdentityMismatch("T02 PlanVersion/IssueClosure") from None
+            raise OwnerResourceNotFound(
+                "plan_versions",
+                f"{run_id}:{question_id}",
+            ) from None
         return [item.model_copy(deep=True) for item in versions]
 
     def get_version_diff(
         self,
+        *,
         run_id: str,
+        question_id: str,
         from_version_id: str,
         to_version_id: str,
     ) -> OwnerVersionDiff:
-        key = (run_id, from_version_id, to_version_id)
+        key = (run_id, question_id, from_version_id, to_version_id)
         try:
-            return self._diffs_by_run[key].model_copy(deep=True)
+            return self._diffs_by_identity[key].model_copy(deep=True)
         except KeyError:
-            identifier = f"{run_id}:{from_version_id}:{to_version_id}"
+            if any(
+                stored_run_id == run_id
+                and stored_from == from_version_id
+                and stored_to == to_version_id
+                for stored_run_id, _, stored_from, stored_to in self._diffs_by_identity
+            ):
+                raise OwnerIdentityMismatch("T02 structured version diff") from None
+            identifier = (
+                f"{run_id}:{question_id}:{from_version_id}:{to_version_id}"
+            )
             raise OwnerResourceNotFound("version_diff", identifier) from None

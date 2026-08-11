@@ -8,7 +8,9 @@
 
 实现证据 SHA：`57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c`
 
-Windows CI：`quality-gates` run `31466958039`，6/6 success
+Captain 已审交付 tip：`04b733081d6c1b7bbebf2b83db1b103bb2fe3a73`
+
+Windows CI：`quality-gates` run `31467308686`，6/6 success
 
 分支：`codex/t08-b-delivery-core`
 
@@ -16,9 +18,10 @@ Windows CI：`quality-gates` run `31466958039`，6/6 success
 
 本报告覆盖 T08 自有的 SQLite JobStore、单进程有界队列、五任务隔离、并发写入、
 停止/重启恢复和同一幂等请求并发重试。当前证据全部通过并绑定实现提交
-`57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c`；该提交的 Windows quality-gates 六项
-全部成功。由于 production owner E2E、Linux runner 与 captain Ready 授权仍未满足，
-本报告仍是 B014 Verified Draft，不能单独用于把 PR 转为 Ready。
+`57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c`，以及包含本报告的 captain 已审交付 tip
+`04b733081d6c1b7bbebf2b83db1b103bb2fe3a73`；该交付 tip 的 Windows
+quality-gates 六项全部成功。由于 production owner E2E、Linux runner 与 captain
+Ready 授权仍未满足，本报告仍是 B014 Verified Draft，不能单独用于把 PR 转为 Ready。
 
 当前结论：
 
@@ -64,6 +67,24 @@ API 回归：
 结果：67 passed in 5.81s
 ```
 
+最佳自主状态 dirty worktree 另增加：
+
+- 相同幂等 key 不可跨 actor 复用；
+- 其他 actor 查询私有 job 返回 403；
+- 持久 deadline 在 progress/runner 返回边界触发
+  `timed_out / JOB_TIMEOUT`；
+- 默认 production composition 与未配置鉴权保持 fail-closed。
+
+```text
+.venv/bin/python -m pytest -q tests/api
+
+结果：77 passed in 6.59s
+```
+
+该结果尚未绑定新 commit/CI，最终 tip 必须重跑。运行时 deadline 是 cooperative
+边界：若 owner runner 永不返回且不报告 progress，T08 线程无法安全强杀 owner 工作；
+owner 仍需提供可中断执行或明确不可恢复语义，T08 不会伪称已取消。
+
 ## 3. 状态恢复语义
 
 | 场景 | 持久状态 | 恢复动作 | 对外真实性 |
@@ -73,6 +94,8 @@ API 回归：
 | 已开始的 real job | SQLite 保留 attempt/event | 失败关闭，不自动重放 | 不推断 actual/completed |
 | recovery 数量大于 queue capacity | SQLite + 内部 backlog | worker 逐步 drain | 状态不丢失 |
 | 同一 capacity retry 并发提交 | 原子 claim/event | 仅一个提交成功 | 其余返回明确 in-progress |
+| 同一幂等 key 跨 actor | SQLite identity 校验 | 409 conflict | 不泄露另一 actor 的 job ID |
+| deadline 已过 | SQLite deadline/timed_out_at | cooperative fail-closed | 不进入 completed |
 
 ## 4. 隔离与安全检查
 
@@ -86,7 +109,8 @@ API 回归：
 ## 5. 尚未满足的 Ready 证据
 
 - 最终 Ready 包仍需在最终交付 tip 重跑以上命令并记录对应 CI run；
-- Windows 新 head CI 已通过；Linux runner 证据仍缺失，当前本轮直接执行环境是 macOS；
+- Windows captain 已审交付 tip CI 已通过；Linux runner 证据仍缺失，当前本轮直接
+  执行环境是 macOS；
 - B016/B017 production owner 全闭环 trace、浏览器证据与视频仍被 owner confirmation
   阻断；fixture/HTTP stub 结果不得替代；
 - 2 小时稳定性、Docker 干净部署和 T09 验收属于后续门禁，不在本报告中冒充通过。

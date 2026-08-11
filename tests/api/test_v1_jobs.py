@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sqlite3
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -84,6 +85,13 @@ def test_sqlite_store_persists_idempotency_and_events(tmp_path):
             request=_request(question_id="Q002"),
             correlation_id="corr-3",
             idempotency_key="same-key",
+        )
+    with pytest.raises(IdempotencyConflict):
+        store.create_job(
+            request=_request(),
+            correlation_id="corr-4",
+            idempotency_key="same-key",
+            requested_by="other-user",
         )
 
     reopened = SQLiteJobStore(db_path)
@@ -369,6 +377,35 @@ def test_queue_maps_failure_to_stable_sanitized_error(tmp_path):
         queue.stop()
 
 
+def test_queue_transitions_elapsed_deadline_to_timed_out(tmp_path):
+    db_path = tmp_path / "jobs.sqlite3"
+    store = SQLiteJobStore(db_path)
+    store.initialize()
+    job, _ = store.create_job(
+        request=_request(),
+        correlation_id="corr-timeout",
+        requested_by=TEST_ACTOR,
+    )
+    with sqlite3.connect(db_path) as connection:
+        connection.execute(
+            "UPDATE jobs SET timeout_seconds = 0 WHERE job_id = ?",
+            (job.job_id,),
+        )
+
+    queue = InProcessJobQueue(store, _SuccessfulRunner())
+    queue.start()
+    try:
+        queue.submit(job.job_id)
+        assert _wait_for_status(store, job.job_id, {"timed_out"}) == "timed_out"
+        record = store.get_job(job.job_id)
+        assert record.error_code == "JOB_TIMEOUT"
+        assert record.error_message == "任务超过执行时限。"
+        assert record.retryable is False
+        assert record.timed_out_at is not None
+    finally:
+        queue.stop()
+
+
 def test_queue_is_bounded_without_losing_job_state(tmp_path):
     store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
     store.initialize()
@@ -541,6 +578,55 @@ def test_v1_job_api_is_non_blocking_idempotent_and_correlated(tmp_path):
         assert listing.status_code == 200
         assert listing.json()["items"][0]["job_id"] == body["job_id"]
 
+        runner.release.set()
+
+
+def test_v1_job_identity_and_idempotency_are_isolated_by_actor(tmp_path):
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    runner = _BlockingRunner()
+    app = _create_app(
+        job_store=store,
+        job_runner=runner,
+        auth_policy=HashedAPIKeyAuth(
+            {
+                "owner-user": "owner-api-token-123",
+                "other-user": "other-api-token-123",
+            }
+        ),
+        rate_limiter=FixedWindowRateLimiter(limit=10_000, window_seconds=60),
+    )
+    owner_headers = {
+        "X-API-Key": "owner-api-token-123",
+        "Idempotency-Key": "actor-isolated-key",
+    }
+    other_headers = {
+        "X-API-Key": "other-api-token-123",
+        "Idempotency-Key": "actor-isolated-key",
+    }
+
+    with FastAPITestClient(app) as client:
+        accepted = client.post(
+            "/api/v1/jobs",
+            headers=owner_headers,
+            json=_request().model_dump(),
+        )
+        assert accepted.status_code == 202
+        job_id = accepted.json()["job_id"]
+
+        forbidden = client.get(
+            f"/api/v1/jobs/{job_id}",
+            headers={"X-API-Key": "other-api-token-123"},
+        )
+        conflicting = client.post(
+            "/api/v1/jobs",
+            headers=other_headers,
+            json=_request().model_dump(),
+        )
+
+        assert forbidden.status_code == 403
+        assert forbidden.json()["code"] == "FORBIDDEN"
+        assert conflicting.status_code == 409
+        assert conflicting.json()["code"] == "IDEMPOTENCY_CONFLICT"
         runner.release.set()
 
 

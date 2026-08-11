@@ -22,6 +22,169 @@ def _client(handler) -> B4APIClient:
     )
 
 
+def _install_full_contract_stub(monkeypatch) -> None:
+    now = datetime.now(timezone.utc).isoformat()
+    monkeypatch.setattr(B4APIClient, "jobs", lambda self, limit=20: {"items": []})
+    monkeypatch.setattr(
+        B4APIClient,
+        "questions",
+        lambda self, **filters: {
+            "items": [
+                {
+                    "question_id": "Q001",
+                    "domain": "materials science",
+                    "question": "How can catalyst stability improve?",
+                }
+            ],
+            "count": 1,
+            "total": 1,
+            "availability": "available",
+        },
+    )
+    monkeypatch.setattr(
+        B4APIClient,
+        "job",
+        lambda self, job_id: {
+            "job_id": job_id,
+            "question_id": "Q001",
+            "status": "waiting_feedback",
+            "stage": "awaiting_feedback",
+            "attempt": 1,
+            "max_attempts": 2,
+            "updated_at": now,
+            "retry": {"retryable": False},
+            "timeout": {"deadline_at": None},
+        },
+    )
+    monkeypatch.setattr(
+        B4APIClient,
+        "evidence",
+        lambda self, job_id: {
+            "job_id": job_id,
+            "bundle_id": "bundle-1",
+            "truncated": False,
+            "items": [
+                {
+                    "evidence_id": "ev-1",
+                    "title": "Catalyst evidence",
+                    "quoted_text": "Catalyst A retained activity.",
+                    "locator": {"page": 7, "section": "Results"},
+                    "authors": ["Owner"],
+                    "year": 2026,
+                    "verification_status": "valid",
+                    "relations": [
+                        {
+                            "relation": "supports",
+                            "confidence": 0.4,
+                        }
+                    ],
+                }
+            ],
+        },
+    )
+    versions = [
+        {
+            "ordinal": 1,
+            "version_id": "run-1:v1",
+            "parent_version_id": None,
+            "validation_status": "needs_revision",
+            "stop_reason": None,
+            "scores": {"falsifiability": 0.4},
+            "reviewer_issues": [
+                {
+                    "issue_id": "issue-1",
+                    "severity": "N/A",
+                    "closure_status": "open",
+                    "summary": "Add a threshold.",
+                }
+            ],
+        },
+        {
+            "ordinal": 2,
+            "version_id": "run-1:v2",
+            "parent_version_id": "run-1:v1",
+            "validation_status": "validated",
+            "stop_reason": "quality_gate_passed",
+            "scores": {"falsifiability": 0.9},
+            "reviewer_issues": [],
+        },
+    ]
+    monkeypatch.setattr(
+        B4APIClient,
+        "versions",
+        lambda self, job_id: {"job_id": job_id, "items": versions},
+    )
+    monkeypatch.setattr(
+        B4APIClient,
+        "version_diff",
+        lambda self, job_id, **kwargs: {
+            "job_id": job_id,
+            "changes": [{"summary": "Added threshold."}],
+            **kwargs,
+        },
+    )
+    monkeypatch.setattr(
+        B4APIClient,
+        "feedback",
+        lambda self, job_id, feedback_id: {
+            "feedback_id": feedback_id,
+            "status": "accepted",
+            "resulting_version_id": "run-1:v2",
+        },
+    )
+    monkeypatch.setattr(
+        B4APIClient,
+        "report",
+        lambda self, job_id: {
+            "job_id": job_id,
+            "truth_status": "planned",
+            "content_sha256": "a" * 64,
+            "gates": [
+                {
+                    "gate_id": "gate-1",
+                    "passed": False,
+                    "findings": [{"code": "OWNER_WAIT"}],
+                }
+            ],
+            "execution": {
+                "availability": "unavailable",
+                "status": "planned",
+                "actual_execution": False,
+                "metrics": [],
+                "warnings": ["owner read port unavailable"],
+            },
+            "multimodal": [
+                {
+                    "artifact_id": "mm-1",
+                    "source": "source-1",
+                    "page": 2,
+                    "bbox": [0.1, 0.2, 0.3, 0.4],
+                    "units": ["K"],
+                    "confidence": 0.5,
+                    "validation_status": "needs_review",
+                }
+            ],
+        },
+    )
+    monkeypatch.setattr(
+        B4APIClient,
+        "artifacts",
+        lambda self, job_id: {
+            "job_id": job_id,
+            "items": [
+                {
+                    "artifact_id": "artifact-1",
+                    "name": "report.json",
+                    "artifact_type": "report",
+                    "truth_status": "planned",
+                    "size_bytes": 128,
+                    "sha256": "b" * 64,
+                }
+            ],
+        },
+    )
+
+
 def test_frontend_client_uses_only_v1_http_contracts_and_propagates_auth():
     calls: list[httpx.Request] = []
 
@@ -152,6 +315,38 @@ def test_frontend_rejects_invalid_timeout_configuration(monkeypatch):
 
     assert not app.exception
     assert any("必须是数字" in item.value for item in app.error)
+
+
+def test_frontend_contract_stub_renders_every_closed_loop_panel(monkeypatch):
+    monkeypatch.setenv("SAGE_UI_API_KEY", "frontend-test-token")
+    _install_full_contract_stub(monkeypatch)
+    app = AppTest.from_file("frontend/streamlit_app.py")
+    app.query_params["job_id"] = "job-1"
+    app.query_params["feedback_id"] = "feedback-1"
+
+    app.run(timeout=10)
+    assert not app.exception
+    assert any("低置信度证据" in item.value for item in app.warning)
+    assert any("Catalyst A retained activity" in item.value for item in app.markdown)
+
+    app.radio[0].set_value("Reviewer · 版本 · Diff").run(timeout=10)
+    assert not app.exception
+    assert any("run-1:v2" in item.value for item in app.markdown)
+    assert any("issue-1" in item.value for item in app.markdown)
+
+    app.radio[0].set_value("反馈 · 决策 · 新版本").run(timeout=10)
+    assert not app.exception
+    assert any("新版本：run-1:v2" in item.value for item in app.success)
+
+    app.radio[0].set_value("Gate · 执行 · 多模态").run(timeout=10)
+    assert not app.exception
+    assert any("gate-1: blocked" in item.value for item in app.error)
+    assert any("NOT ACTUAL" in item.value for item in app.markdown)
+    assert any("mm-1: 低置信度" in item.value for item in app.warning)
+
+    app.radio[0].set_value("导出").run(timeout=10)
+    assert not app.exception
+    assert any("report.json" in str(item.value) for item in app.markdown)
 
 
 def test_frontend_client_has_no_filesystem_or_pipeline_fallback():

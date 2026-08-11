@@ -56,6 +56,7 @@ from app.api.job_store import (
 from app.api.upstream import (
     OwnerContractInvalid,
     OwnerContractUnavailable,
+    OwnerIdentityMismatch,
     OwnerResourceNotFound,
 )
 from app.core.logging import get_logger
@@ -488,6 +489,14 @@ def _owner_call(component: str, operation):
         return operation()
     except OwnerContractUnavailable as exc:
         _upstream_unavailable(exc.component)
+    except OwnerIdentityMismatch as exc:
+        raise APIError(
+            status_code=409,
+            code="UPSTREAM_IDENTITY_MISMATCH",
+            message="上游资源身份与当前任务不一致。",
+            details={"component": exc.component},
+            retryable=False,
+        ) from None
     except OwnerResourceNotFound as exc:
         raise APIError(
             status_code=404,
@@ -831,7 +840,10 @@ def list_evidence(job_id: str, request: Request) -> EvidenceListResponse:
     run_id = _upstream_run_id(record)
     bundle = _owner_call(
         "T01 EvidenceBundle",
-        lambda: _upstream(request).get_evidence_bundle(run_id),
+        lambda: _upstream(request).get_evidence_bundle(
+            run_id=run_id,
+            question_id=record.question_id,
+        ),
     )
     links_by_evidence: dict[str, list[EvidenceRelation]] = {}
     for link in bundle.links:
@@ -1156,18 +1168,20 @@ def version_diff(
     diff = _owner_call(
         "T02 structured version diff",
         lambda: _upstream(request).get_version_diff(
-            run_id,
-            from_version_id,
-            to_version_id,
+            run_id=run_id,
+            question_id=record.question_id,
+            from_version_id=from_version_id,
+            to_version_id=to_version_id,
         ),
     )
     if (
         diff.run_id != run_id
+        or diff.question_id != record.question_id
         or diff.from_version_id != from_version_id
         or diff.to_version_id != to_version_id
     ):
         raise APIError(
-            status_code=503,
+            status_code=409,
             code="UPSTREAM_IDENTITY_MISMATCH",
             message="上游版本差异与任务运行标识不一致。",
             details={"component": "T02 structured version diff"},
@@ -1206,13 +1220,16 @@ def list_versions(job_id: str, request: Request):
     run_id = _upstream_run_id(record)
     versions = _owner_call(
         "T02 PlanVersion/IssueClosure",
-        lambda: _upstream(request).list_plan_versions(run_id),
+        lambda: _upstream(request).list_plan_versions(
+            run_id=run_id,
+            question_id=record.question_id,
+        ),
     )
     items: list[Version] = []
     for owner_version in versions:
         if owner_version.run_id != run_id:
             raise APIError(
-                status_code=503,
+                status_code=409,
                 code="UPSTREAM_IDENTITY_MISMATCH",
                 message="上游版本与任务运行标识不一致。",
                 details={"component": "T02 PlanVersion"},

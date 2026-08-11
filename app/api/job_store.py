@@ -385,7 +385,10 @@ class SQLiteJobStore:
                     (idempotency_hash,),
                 ).fetchone()
                 if existing:
-                    if existing["request_hash"] != request_hash:
+                    if (
+                        existing["request_hash"] != request_hash
+                        or existing["requested_by"] != requested_by
+                    ):
                         raise IdempotencyConflict(
                             "相同 Idempotency-Key 已用于不同请求。"
                         )

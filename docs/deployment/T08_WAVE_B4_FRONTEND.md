@@ -12,6 +12,16 @@ python -m streamlit run frontend/streamlit_app.py \
   --server.port 8501
 ```
 
+Windows 11 PowerShell：
+
+```powershell
+$env:SAGE_UI_API_KEY = "replace-with-configured-api-key"
+$env:SAGE_UI_API_BASE_URL = "http://127.0.0.1:8000"
+python -m streamlit run frontend/streamlit_app.py `
+  --server.address 127.0.0.1 `
+  --server.port 8501
+```
+
 可选的 `SAGE_UI_TIMEOUT_SECONDS` 默认为 10 秒。生产 API 必须使用与 `SAGE_API_KEYS_JSON` 对应的 key。
 
 ## 闭环和恢复
@@ -49,3 +59,15 @@ git diff --check
 ```
 
 浏览器验收至少验证：任务创建后请求立即返回、状态刷新、低置信度警告、Reviewer issue、结构化 diff、反馈决策与新版本、Gate、`NOT ACTUAL`、多模态 bbox/单位、API 导出和受控下载；随后刷新页面确认 job 恢复，并用不存在的 job 验证统一失败态不泄露 traceback 或旧证据。
+
+`tests/api/test_frontend_b4.py` 另有 fixture-only 契约闭环，覆盖五个页面阶段和
+URL query 中的 `job_id` / `feedback_id` 恢复。该测试只证明前端能够忠实消费冻结
+HTTP 形状；其中的 stub 不属于 production owner E2E，不得作为 B016/B017 成功证据。
+
+当前部署入口存在两套页面：
+
+- `frontend/streamlit_app.py`：本文件描述的 T08 Wave B4 API-only 控制台；
+- `app/ui/streamlit_app.py`：`scripts/start_ui.py` 等旧入口仍使用的 legacy 页面。
+
+在队长批准修改共享启动脚本前，T08 不会越权切换 `scripts/**`。验收命令必须明确
+启动的是 `frontend/streamlit_app.py`，避免把 legacy 页面截图误作 B4 证据。

@@ -6,9 +6,16 @@
 
 目标分支：`codex/t08-b-delivery-core`
 
-基线：`upstream/integration/2026-08-10@0371b67`
+实现分支基线：`upstream/integration/2026-08-10@0371b67`
+
+当前 integration 事实基线：`upstream/integration/2026-08-10@2d36df2`
 
 适用 owner：T01、T02、T03、T05、T06、队长
+
+当前回复状态：T01、T05 已在 PR #39 直接 `CONDITIONAL_AGREE`；T02、T03、T06
+已从 owner 历史 PR 与最新 `integration/2026-08-10@2d36df2` 补齐现有冻结事实，
+但所需 production read/orchestration 端口仍不完整；队长最终 composition/实施授权
+仍待回复。
 
 ## 1. 请求目的
 
@@ -44,6 +51,111 @@ API-only 前端的交付骨架，但生产默认 composition 仍对部分 owner 
 - 默认 `CanonicalReportSource`：unavailable；
 - 浏览器 feedback decision / resulting version 测试使用临时 HTTP 契约桩，
   不能作为 owner 集成证据。
+
+### 2.1 PR #39 Owner 回复跟踪
+
+| Owner | PR 回复 | 结论 | T08 当前动作 | 尚需确认/交付 |
+|---|---|---|---|---|
+| T01 | [issuecomment-5250445405](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/39#issuecomment-5250445405) | `CONDITIONAL_AGREE` | `get_evidence_bundle` 边界已按 `run_id + question_id` 收紧；production 继续 unavailable | 队长批准 T01 小 PR、权威持久化位置及 owner read port 落地 |
+| T02 | [PR #10](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/10)、[PR #21](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/21)、[Open PR #37](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/37)、integration | merged contract/audit found；checkpoint candidate 未合并；production read gap | T08 proposed fixture/read boundary 已绑定 run+question；不把 in-process store/checkpoint/AgentTrace 当 production history | 按 question 绑定的持久 version/diff read port 仍缺失 |
+| T03 | [PR #14](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/14)、[Draft PR #32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32)、integration | Wave A merged；Wave B candidate 未合并 | feedback submit/status 继续 503；Gate 不自行计算 | production store/orchestration/read port 未进 integration；共享契约冲突待 T03/队长处理 |
+| T05 | [issuecomment-5250843063](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/39#issuecomment-5250843063) | `CONDITIONAL_AGREE` | 仅保留 typed projection；production execution/report 继续 unavailable | 队长批准 T05 history store、re-attestation read port 与受控 resolver |
+| T06 | [PR #16](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/16)、[PR #29](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/29)、[Draft PR #36](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/36)、integration | contract/gold merged；Wave B adapter candidate 未合并 | 不读取 process-local queue 或暴露 `source_path` | 按 run/question/version 的持久 detail/source/preview read port 仍缺失 |
+| 队长 | re-review 要求 Draft/Open | `READY_AUTHORIZED=NO` | 保持 Draft/Open/fail-closed | 批准 owner 小 PR、T08 adapter 边界、composition 规则、冲突裁决人与进入实现 |
+
+T01/T05 的条件同意，以及 T02/T03/T06 的历史合并事实，都不表示对应 production
+read port 已存在，也不解除 Wave B 的 owner E2E 阻断。
+
+### 2.2 历史 PR 与 integration 追溯结论
+
+本节使用的 integration 真源是远端最新
+`integration/2026-08-10@2d36df2fb391be68b8d24cd30f73e7ed5495044a`。此前本地
+tracking ref 停在 `0371b67`；更新后发现新增提交仅为 T08 PR #40，T02/T03/T06
+owner 路径相对 `0371b67` 无变化。
+
+#### T02
+
+- PR #10 已合并并冻结 `app.contracts.revision`：`ReviewFeedback`、
+  `IssueClosure`、`PlanVersion`、`PlanVersionStore`；队长在最终 Head `bc1c17b` 上
+  `APPROVE`。
+- PR #21 已合并并提供 `app.workflow.explainable_revision`：
+  `ExplainableRevisionAudit`、`StructuredRevisionDiff`、score changes、lineage 与
+  `stop_reason`；队长在最终 Head `7d5e7ec` 上 `APPROVE`。
+- Open PR #37 在 Head `7ba73ce` 上新增候选
+  `RevisionRecoveryCheckpoint` / `RevisionRecoveryCoordinator`。checkpoint 对
+  controller、versions、events 和 issue closures 做自校验与 hash，并支持
+  `serialize()/deserialize()`，但 coordinator 仍由调用方提供 payload 恢复，没有
+  owner-owned 存储后端、持久资源寻址或读取服务。
+- PR #37 的 recovery identity 仍只有 `run_id`；checkpoint 与
+  `RevisionRecoveryCoordinator.create()` 都没有 `question_id`。因此它只能作为恢复
+  schema/算法候选，不能满足 T08 的 `run_id + question_id` production history port。
+- 当前 `PlanVersionStore` 明确是 **in-process** store。它支持
+  `serialize()/deserialize()`，但没有 owner-owned 持久介质、重启寻址或按
+  `run_id + question_id` 的读取端口；`PlanVersion` 本身也没有 `question_id`。
+- `StructuredRevisionDiff` 只有 `changes + substantive_sections`；完整 score、issue、
+  lineage、stop reason 位于 `ExplainableRevisionAudit`。当前没有冻结的服务端口把这些
+  对象按 identity 返回给 T08。因此 T08 不能扫描 AgentTrace 或自行拼接两种对象。
+- `IssueClosure` 没有 severity。integration 已明确 severity 属 T03
+  `RevisionIssueSnapshot`，`critical_issue` 不自动等于 P0。
+
+结论：T02 DTO/规则已收集完整；T08 所需 production version/diff history port 仍不存在，
+对应 adapter 继续 unavailable。
+
+#### T03
+
+- PR #14 已合并并冻结 `app.contracts.validation` schema v1，以及
+  `app.feedback.storage.FeedbackStore`、`app.feedback.service.FeedbackService`、
+  `app.validation.service.ValidationService` 等 Protocol；队长在 Head `1be9530` 上
+  `APPROVE`。
+- `T03_INTERFACE_FREEZE.md` 明确这些只是 Protocol：Wave A **不提供生产持久化**，
+  API 路由、幂等锁、权限、完整 validator、错误码和 E2E 均为延后项。
+- integration 已冻结 T08 映射规则：`job_id` 不能当 `run_id`；
+  `target_version_id` 必须为完整 `<run_id>:vN`；receipt disposition 来自
+  `FeedbackDecision`；`resulting_version_id` 必须是直接下一版。
+- Draft PR #32 提供 SQLite store、默认 service、原子 lineage 和重启/幂等候选实现，
+  但它尚未合并，且 captain review 明确 `production_api_connected=false`、live API
+  E2E 缺失；不能作为当前 integration production port。
+- PR #32 的候选服务已经定义 `FeedbackSubmission` 与
+  `DefaultFeedbackService.submit_request()`，候选 SQLite store 也提供
+  `get_feedback(feedback_id)`、`get_decision(feedback_id)` 和 lineage 读取。这些可以
+  作为 owner 后续冻结 orchestration 的实现依据，但当前未进入 integration，且读取
+  仍主要按 feedback/lineage ID，未形成包含 run/question/actor 权限校验的 T08 状态端口。
+- PR #32 的 `DefaultValidationService.validate(context)` 只即时计算
+  `ValidationReport`；该分支没有持久化 report store 或按
+  `run_id + question_id + version_id` 读取既有 Gate 结论的端口。
+- 当前 integration 的 `FeedbackDecision` 模型存在冻结契约冲突：validator 在
+  `resulting_version_id` 非空时访问 `self.revision_diff_sha256`，但该字段未声明在
+  `FeedbackDecision`。T08 不得绕过、复制或修补共享 schema；需要 T03 owner 与队长
+  指定唯一修复版本。
+- PR #32 对该冲突的候选补丁是删除
+  “`resulting_version_id` 必须伴随 `revision_diff_sha256`”的四行 validator 校验，
+  而不是在 `FeedbackDecision` 增加字段。该选择会改变 lineage 完整性语义，只能由
+  T03 owner/公共 Schema editor 与队长确认，不能由 T08 将其视为已批准修复。
+
+结论：T03 DTO、T08 mapping 和 Protocol 已收集完整；production submit/status/Gate
+read 仍未落地且存在共享契约阻断，feedback 路由继续 503。
+
+#### T06
+
+- PR #16 已合并并冻结 `app.contracts.multimodal`：完整
+  `MultimodalArtifact`、瘦身 `MultimodalSummary` 与 `to_consumer_summary`；队长在
+  Head `2a1d980` 上 `APPROVE`。
+- PR #29 已合并真实来源 provenance/gold package，但其 PR 明确不是完整 Wave B
+  adapter Done。
+- integration 的 `MultimodalQueue` 明确是内存队列；`snapshot()` 没有
+  run/question/version identity，也没有重启恢复。
+- PR #36 Head `d45ef6b` 的 `app/multimodal/**` 模块树中仍只有 `queue.py` 命中
+  queue/store/read/resolver 类存储命名，没有新增持久 store 或受控 resolver。
+  `workflow_hook.build_revision_hook_payload(artifacts)` 只接收 artifact 列表，不携带
+  `run_id`、`question_id` 或 `version_id` identity envelope。
+- `MultimodalSummary` 保留 `source_path`，但缺 bbox、axes、legend 和完整 data；因此
+  既不能原样对外暴露路径，也不足以满足 T08 详情面板。完整 Artifact 虽有这些字段，
+  当前没有 owner-owned 持久 detail read port 或受控 source/preview resolver。
+- Draft PR #36 是未合并候选，并且 captain review 将真实 PDF/chart、Qwen B016 与
+  完整 Evidence E2E 标为 PARTIAL/WAIT；不能作为 integration production read port。
+
+结论：T06 contract/gold 事实已收集完整；production multimodal detail/source/preview
+读取仍不存在，对应 adapter 继续 unavailable。
 
 ## 3. 所有 owner 共同确认项
 
@@ -108,6 +220,28 @@ owner 保留领域判定与数据真源。请队长确认该边界，并指定�
 
 ## 4. T01 确认请求：Evidence
 
+### 已收到的 owner 结论
+
+T01 已在 PR #39 条件同意目标接口：
+
+```python
+get_evidence_bundle(*, run_id: str, question_id: str) -> EvidenceBundle
+```
+
+T08 已将 `app/api/upstream.py` 的 Protocol、默认 unavailable adapter、fixture adapter
+和 v1 evidence route 对齐到这组 identity；同一 `run_id` 绑定其他 `question_id` 时失败
+关闭为 `UPSTREAM_IDENTITY_MISMATCH`。该变更不读取 `evidence_cards.json`，也不代表
+T01 store 已落地。
+
+当前可直接消费的 frozen contract/projection 是：
+
+- `app.contracts.evidence.EvidenceBundle`；
+- `app.evidence.serialization.serialize_evidence_bundle`；
+- `app.evidence.citation_renderer.build_t08_citation_payload`。
+
+仍需队长确认 T01 后续小 PR 及权威持久化位置；在此之前，本节“生产读取端口”验收
+保持未完成，production evidence 继续 unavailable/fail-closed。
+
 ### 当前可复用
 
 - `app.contracts.evidence.EvidenceBundle`；
@@ -141,7 +275,27 @@ get_evidence_bundle(*, run_id: str, question_id: str) -> EvidenceBundle
 - 用 owner 提供的代表性 run 验证 quote、locator、关系、hash 和截断信息；
 - 错误路径不读取旧 exports，不回退 fixture。
 
-## 5. T02 确认请求：Versions、Reviewer 与 Diff
+## 5. T02 已收集事实与接口缺口：Versions、Reviewer 与 Diff
+
+### 已从 owner PR / integration 确认
+
+- 唯一 DTO import path：`app.contracts.revision`；schema version 为 1。
+- `PlanVersionStore.list_versions(run_id)` 返回按版本号连续排序的 defensive copies；
+  `PlanVersion.version_id` 必须为 `<run_id>:vN`，parent 必须指向上一版。
+- `ReviewFeedback.is_effective_pass` 的 owner 规则为：`passed=True` 且
+  `critical_issues=[]` 且 `required_revisions=[]`。
+- `app.workflow.explainable_revision.StructuredRevisionDiff` 是 canonical
+  `changes + substantive_sections`；`ExplainableRevisionAudit` 另含 issue closures、
+  score changes、lineage、remaining blockers、stop reason 与 accepted。
+- severity 不属于 T02 `IssueClosure`；应从 T03 `RevisionIssueSnapshot` 消费。没有
+  T03 severity projection 时，T08 显示 `N/A`，不得从 category 推断 P0/P1。
+
+这些规则已由合并的 PR #10/#21 和 integration 固定；仍缺的是服务端持久 read
+boundary，而不是 DTO 名称。
+
+T08 工作区已把 proposed `list_plan_versions` / `get_version_diff` 边界收紧到
+`run_id + question_id`，并为 fixture adapter 增加跨题 409 测试。该改动只证明消费
+边界已准备，不代表 T02 接受方法名或 production port 已存在。
 
 ### 当前可复用
 
@@ -151,17 +305,19 @@ get_evidence_bundle(*, run_id: str, question_id: str) -> EvidenceBundle
 
 ### T02-01 版本读取端口
 
-请求冻结：
+目标 production 端口仍需由 T02 落地并冻结：
 
 ```python
 list_plan_versions(*, run_id: str, question_id: str) -> list[PlanVersion]
 ```
 
-需要确认：排序、空列表语义、持久化位置、重启恢复和版本不可变性。
+已确认排序和版本不可变性；仍需落地持久化位置、重启恢复、空列表/not-ready
+区分，以及 `question_id` 与只有 `run_id` 的现有 DTO/store 如何建立权威绑定。
 
 ### T02-02 结构化 diff 端口
 
-请求 T02 拥有并冻结结构化 diff DTO 与端口：
+现有两个 owner DTO 不应由 T08 自行拼接；仍需 T02 冻结一个面向 T08 的聚合 read
+端口：
 
 ```python
 get_version_diff(
@@ -182,13 +338,13 @@ get_version_diff(
 - from/to identity；
 - lineage。
 
-需要确认：`IssueClosure` 当前没有 severity，T08 应展示明确 `N/A`，还是由 T02
-新增 owner-owned severity 字段。T08 不会自行从 category 推断 P0/P1。
+severity 规则已由 integration 明确：它属于 T03 sidecar，不应向 T02
+`IssueClosure` 增加第二套字段。T03 数据不可用时显示明确 `N/A`。
 
 ### T02-03 停止与完成资格
 
-请确认读取未关闭 P0/P1、停止原因和 Reviewer pass 的唯一公共字段。T08 只消费
-结论，不从两段文本或分数自行判定 closure/completion。
+Reviewer pass 与 stop reason 的 owner 字段已定位，但未关闭 P0/P1 属 T03 severity
+sidecar。T08 只消费聚合结论，不从两段文本或分数自行判定 closure/completion。
 
 ### T02 验收
 
@@ -197,7 +353,22 @@ get_version_diff(
 - identity mismatch、未知版本和 not-ready 有不同错误；
 - 服务重启后相同 run 返回一致版本快照。
 
-## 6. T03 确认请求：Feedback、Decision 与 Validation Gate
+## 6. T03 已收集事实与接口缺口：Feedback、Decision 与 Validation Gate
+
+### 已从 owner PR / integration 确认
+
+- 唯一 DTO import path：`app.contracts.validation`，冻结 `schema_version=1`。
+- 已冻结 Protocol：`app.feedback.storage.FeedbackStore`、
+  `app.feedback.service.FeedbackService`、`app.validation.service.ValidationService`、
+  `app.quality.service.QualityGate/QualityGateRunner`。
+- `FeedbackRecord` 已绑定 run/question/target version/actor/correlation/fingerprint/
+  idempotency hash；`FeedbackDecision` 拥有 accepted/partial/rejected 与
+  `resulting_version_id`；`ValidationReport`/`GateResult` 拥有 fail-closed 结论。
+- PR #14 与接口冻结文档明确：integration 中这些只是 Protocol，不是生产
+  persistence/orchestration；T08 不得把 Protocol 存在误写成反馈闭环已接通。
+- Draft PR #32 是 durable SQLite/service 候选，但未合并且没有 live T08 API E2E。
+- integration 当前 `FeedbackDecision` validator 引用了未声明的
+  `revision_diff_sha256`。这是共享契约冲突，T08 不得本地兼容两套真相。
 
 ### 当前可复用
 
@@ -208,8 +379,15 @@ get_version_diff(
 
 ### T03-01 外部反馈提交 orchestration
 
-T08 不应创建 T03 决策或自行计算 fingerprint/policy。请求 T03 确认一个面向调用方
-的公开提交入口，输入至少包括：
+T08 不应创建 T03 决策或自行计算 fingerprint/policy。当前 integration 的
+`FeedbackService.submit(record)` 要求调用方先构造完整 owner DTO，不是安全的外部
+orchestration。Draft PR #32 已提供以下候选入口，但它未合并，不能作为当前生产端口：
+
+```python
+submit_request(request: FeedbackSubmission) -> FeedbackRecord
+```
+
+仍需 T03 在最终 integration 上落地并冻结面向调用方的公开提交入口，输入至少包括：
 
 ```text
 run_id
@@ -248,7 +426,9 @@ get_feedback_status(
 
 ### T03-03 新版本触发边界
 
-请 T02/T03 共同确认：
+历史 PR #21/#32 已证明 T02 lineage handoff → T03 原子 SQLite 消费的候选技术配对，
+但 T03 PR #32 未合并，当前 integration 不具备该路径。仍需 T02/T03 在最终合并 tip
+共同确认：
 
 - 谁把 accepted directive 传入 T02 revision；
 - 谁原子记录 decision、revision diff hash 和 resulting version；
@@ -283,6 +463,38 @@ get_validation_report(
 
 ## 7. T05 确认请求：Execution 与 Artifact Manifest
 
+### 已收到的 owner 结论
+
+T05 已条件同意 T08 只消费 owner-authoritative typed result，并建议把原单数三参数
+读取改为显式列表与显式 execution identity：
+
+```python
+list_execution_results(
+    *,
+    run_id: str,
+    question_id: str,
+    version_id: str,
+) -> tuple[ExecutionResult, ...]
+
+get_execution_result(
+    *,
+    run_id: str,
+    question_id: str,
+    version_id: str,
+    execution_id: str,
+) -> ExecutionResult
+```
+
+现有 `ExecutionResult` 不含 `run_id/version_id`，因此未来 owner store 必须以外层
+identity index 绑定 `run_id + question_id + version_id + execution_id`。没有 owner
+明确持久化的 `canonical_execution_id` 时，T08 不得自行选择“最好/成功/actual/latest”
+结果。序列化 JSON 不携带 attestation，T08 也不得从 raw JSON 恢复
+`actual_execution=true`。
+
+当前 T05 尚无 production history read port、re-attestation 或受控 artifact resolver。
+在队长批准 T05 小 PR 且这些端口落地前，本节验收保持未完成，execution/canonical
+report 继续 unavailable/fail-closed。
+
 ### 当前可复用
 
 - `ExecutionResult` 对 `actual_execution` 有 runner-owned fail-closed 门禁；
@@ -291,7 +503,9 @@ get_validation_report(
 
 ### T05-01 执行结果读取端口
 
-请求冻结：
+原请求的单数读取方向经 T05 owner 修改为上面的列表 + 显式 execution 读取。若最终
+仍保留单数三参数端口，则必须由 owner store 额外返回明确的
+`canonical_execution_id`：
 
 ```python
 get_execution_result(
@@ -326,7 +540,20 @@ T08 对外不能暴露 `relative_path` 或服务器绝对路径。请确认 owne
 - checksum 篡改时下载和导出失败关闭；
 - 不泄露 workspace URI、本地路径或环境敏感信息。
 
-## 8. T06 确认请求：Multimodal
+## 8. T06 已收集事实与接口缺口：Multimodal
+
+### 已从 owner PR / integration 确认
+
+- 唯一 DTO import path：`app.contracts.multimodal`；PR #16 冻结
+  `MultimodalArtifact`、`MultimodalSummary`、`to_consumer_summary` 与严格枚举。
+- `MultimodalArtifact` 是唯一保留 bbox、axes、legend、data、units、confidence 和
+  validation status 的完整 DTO。
+- `MultimodalSummary` 是 prompt 用瘦身摘要：保留 `source_path`、page、units、
+  confidence、validation status 和行列数，但丢失 bbox/axes/legend/data。
+- integration 的 `MultimodalQueue` 明确是 process-local 内存队列；没有 identity
+  envelope、持久 store 或重启恢复。
+- PR #29 只合并 provenance/gold package；Draft PR #36 的 adapter/Evidence bridge
+  尚未合并，且 captain 将真实 chart/Qwen/full Evidence E2E 标为 PARTIAL/WAIT。
 
 ### 当前可复用
 
@@ -338,7 +565,7 @@ T08 对外不能暴露 `relative_path` 或服务器绝对路径。请确认 owne
 
 ### T06-01 持久读取端口
 
-请求冻结：
+仍需 T06 落地并冻结：
 
 ```python
 list_multimodal_artifacts(
@@ -422,6 +649,56 @@ T08 adapter owner 路径是否批准：
 是否允许进入实现：是 / 否
 ```
 
+### 10.1 已追溯后仍待 owner/队长处理的最小任务清单
+
+- T02 owner：在现有 in-process `PlanVersionStore` 之外提供按
+  `run_id + question_id` 持久读取的 version history，并冻结聚合
+  `StructuredRevisionDiff + ExplainableRevisionAudit` 的 read DTO/端口；明确
+  not-found/not-ready/identity-mismatch 与重启语义。Open PR #37 的 self-hashed
+  checkpoint 可作为恢复 schema 候选，但必须增加 owner-owned storage/read boundary
+  和 question identity 后才满足该任务。
+- T03 owner + 队长：先解决 integration `FeedbackDecision` 对未声明
+  `revision_diff_sha256` 的共享契约冲突，再决定 Draft PR #32 的 SQLite/service
+  候选如何进入 integration，并提供 identity/权限绑定的 submit/status 及持久
+  `ValidationReport` read orchestration；明确采用“删除 hash 校验”还是“补齐字段及
+  lineage 语义”。
+- T02 + T03：在最终合并 tip 重新验证历史 #21/#32 技术配对，确认重复回调不重复
+  生成版本，以及长 revision 是由谁创建/恢复持久 job。
+- T06 owner：提供按 `run_id + question_id + version_id` 的持久详情读取、受控 source/
+  preview artifact、page/bbox 坐标系与安全 source ID；不能直接返回 `source_path`，
+  也不能以 Draft PR #36 或内存 queue 代替 production read port。
+- 队长：确认 T01/T05 owner 小 PR 是否批准、T08 是否只在 `app/api/**` 实现薄 adapter、
+  mandatory/partial/complete/stale/cache composition 规则、冲突裁决人，以及
+  `是否允许进入实现=是/否`。
+
+上述任一项未回复时，对应 production adapter 保持 unavailable；不得用 fixture、旧
+export、process-local queue、workspace 扫描或 HTTP stub 填补。
+
+### 10.2 可直接发送的最小确认文本
+
+```text
+T02：请确认并落地 run_id + question_id 绑定的持久 version history 与聚合 diff
+read port；PR #37 checkpoint 只能作为恢复 schema，不能代替 store/read service。
+
+T03/Schema editor：请裁决 FeedbackDecision.revision_diff_sha256 冲突，并在最终
+integration 提供 identity/actor 绑定的 submit/status 与持久 ValidationReport read。
+
+T06：请提供 run_id + question_id + version_id 绑定的持久 MultimodalArtifact/detail
+read，以及不暴露 source_path 的 source/preview resolver。
+
+T02+T03：请共同确认 accepted feedback → revision → diff hash → resulting version
+的原子 owner、重复回调幂等和长任务恢复边界。
+
+队长：请确认 T01/T05 owner 小 PR、T08 app/api 薄 adapter、mandatory/partial
+composition、冲突裁决人，以及是否允许开始 production 接线。
+```
+
+T01/T05 的批准不是形式性签字。T01 批准后由 evidence owner 对持久 bundle 的
+provenance、run/question identity 和缺失语义负责；T05 批准后由 execution owner
+重新核验 persisted result 的 attestation，并以受控 resolver 交付 artifact。没有这两项，
+T08 只能看到普通 JSON 或文件路径，无法合法证明 evidence 权威性或
+`actual_execution=true`。
+
 ## 11. 确认后的 T08 实施与门禁
 
 只有收到上述确认后，T08 才会：
@@ -434,7 +711,7 @@ T08 adapter owner 路径是否批准：
    → Gate → execution/multimodal → PDF/MD/JSON；
 6. 复验五并发、重启、幂等、权限、失败、超时和跨题隔离；
 7. 生成与最终 commit 对应的 OpenAPI、截图、trace 和导出一致性证据；
-8. P0/P1 清零后才把 Wave B 标记 Ready 并创建 PR。
+8. 全链路绿、behind=0 且 P0/P1 清零后，才请求队长授权把现有 PR 转 Ready。
 
 ## 12. 当前决策
 
@@ -446,12 +723,32 @@ PR #39 status = Draft / keep open / not Ready
 production fallback = fail_closed
 ```
 
-截至 2026-08-11，PR #39 的 captain review 为 `CHANGES_REQUESTED`，并明确
-`KEEP_PR_OPEN=YES`、`READY_AUTHORIZED=NO`、`MERGE_AUTHORIZED=NO`。该审查不构成
-T01/T02/T03/T05/T06 owner 接口确认；在本文件第 10 节回复齐套且队长明确允许实现
-前，T08 不接生产 adapter，不移除默认 unavailable/fail-closed 行为。
+截至 2026-08-11，PR #39 的 captain re-review 仍要求保持 Draft/Open，并明确
+`KEEP_PR_OPEN=YES`、`READY_AUTHORIZED=NO`、`MERGE_AUTHORIZED=NO`。历史 PR 与
+integration 已足以确认现有 DTO/Protocol 和缺失能力，但不构成对尚不存在的
+production read/orchestration 端口或 T08 composition 的实施授权。在第 10.1 节缺口
+关闭且队长明确允许实现前，T08 不接 production adapter，不移除默认
+unavailable/fail-closed 行为。
 
 实现提交 `57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c` 已修复 captain 指出的 Windows
-导出 P1，并在 GitHub Actions `windows-latest` run `31466958039` 上通过 lint、type、
-unit、integration、security、build 六项检查。该工程证据不改变 owner confirmation
-状态，也不构成 `READY_AUTHORIZED=YES`。
+导出 P1；captain 已审交付 tip `04b733081d6c1b7bbebf2b83db1b103bb2fe3a73`
+在 GitHub Actions `windows-latest` run `31467308686` 上通过 lint、type、unit、
+integration、security、build 六项检查。该工程证据不改变 owner confirmation 状态，
+也不构成 `READY_AUTHORIZED=YES`。
+
+```text
+REVIEWED_HEAD=04b733081d6c1b7bbebf2b83db1b103bb2fe3a73
+ENGINEERING_COMPLIANCE=FAIL
+CONTENT_COMPLIANCE=FAIL
+P0=0
+P1_OPEN=0
+P1_CLOSED=windows_export_filenotfound
+MERGE_AUTHORIZED=NO
+KEEP_PR_OPEN=YES
+READY_AUTHORIZED=NO
+```
+
+当前唯一安全的下一实施条件是：T01/T05 缺失 owner ports、T02/T03/T06 第 10.1 节
+缺口及 T03 共享契约冲突均关闭，且队长明确确认 adapter 边界与 composition 规则。
+此前不生成 production 成功 trace，不把 fixture、HTTP stub、planned 或 expected
+结果作为 B016/B017 证据。
