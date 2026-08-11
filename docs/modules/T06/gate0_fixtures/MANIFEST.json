@@ -1,0 +1,76 @@
+{
+  "schema_version": "t06.gate0_fixture_manifest.v1",
+  "owner": "T06",
+  "public_import_path": "app.multimodal.read_port.list_multimodal_artifacts",
+  "detail_import_path": "app.multimodal.read_port.list_multimodal_details",
+  "put_import_path": "app.multimodal.read_port.put_multimodal_artifact",
+  "contract_import_path": "app.contracts.multimodal.MultimodalArtifact",
+  "read_by": [
+    "run_id",
+    "question_id",
+    "version_id"
+  ],
+  "artifact_id_field": "artifact.artifact_id / public_source.preview_artifact_id",
+  "stable_error_codes": [
+    {
+      "code": "invalid_contract",
+      "retryable": false
+    },
+    {
+      "code": "identity_mismatch",
+      "retryable": false
+    },
+    {
+      "code": "unavailable",
+      "retryable": false
+    },
+    {
+      "code": "empty_list_means_no_artifacts",
+      "retryable": false,
+      "http_hint": "200 empty, not 404"
+    }
+  ],
+  "compatibility_window": "t06.multimodal_store.v1 / t06.multimodal_detail.v1 / t06.gate0_fixture.v1 — additive fields only; identity mismatch remains fail-closed",
+  "evidence_class_policy": {
+    "planned": "not used in these fixtures",
+    "expected": "failure-path descriptors (missing_provenance, invalid)",
+    "mock": "synthetic valid/low-confidence artifacts for UI wiring",
+    "actual": "use docs/modules/T06/wave_c/cases/* and zenodo gold; do not relabel mock as actual"
+  },
+  "fixtures": [
+    {
+      "kind": "validated",
+      "path": "docs/modules/T06/gate0_fixtures/validated.json",
+      "evidence_class": "mock"
+    },
+    {
+      "kind": "low_confidence_manual_review",
+      "path": "docs/modules/T06/gate0_fixtures/low_confidence_manual_review.json",
+      "evidence_class": "mock"
+    },
+    {
+      "kind": "missing_provenance",
+      "path": "docs/modules/T06/gate0_fixtures/missing_provenance.json",
+      "evidence_class": "expected"
+    },
+    {
+      "kind": "invalid",
+      "path": "docs/modules/T06/gate0_fixtures/invalid.json",
+      "evidence_class": "expected"
+    }
+  ],
+  "retained_fields": [
+    "source",
+    "page",
+    "bbox",
+    "axes",
+    "legend",
+    "unit",
+    "raw/extracted",
+    "confidence",
+    "validation",
+    "human verification"
+  ],
+  "implementation_merged_via": "PR #36 merge_commit 161c34c6f0ef06b390f42de324174692120d7e23",
+  "wave_c_pr": "PR #42"
+}

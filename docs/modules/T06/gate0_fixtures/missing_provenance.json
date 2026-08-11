@@ -1,0 +1,51 @@
+{
+  "schema_version": "t06.gate0_fixture.v1",
+  "owner": "T06",
+  "fixture_kind": "missing_provenance",
+  "evidence_class": "expected",
+  "note": "Expected fail-closed: missing/blank provenance.source_path must be rejected by MultimodalArtifact / extractor; T08 must not invent source.",
+  "identity_example": {
+    "run_id": "gate0-run",
+    "question_id": "Q-GATE0",
+    "version_id": "v1",
+    "artifact_id": null
+  },
+  "read_port": "app.multimodal.read_port.list_multimodal_details",
+  "expected_error": {
+    "category": "invalid_contract",
+    "retryable": false,
+    "message_contains": "provenance.source_path"
+  },
+  "invalid_payload_example": {
+    "artifact_id": "gate0-missing-prov",
+    "modality": "table",
+    "provenance": {
+      "source_path": "   ",
+      "source_type": "pdf",
+      "page": 1,
+      "bbox": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 1,
+        "y1": 1
+      }
+    },
+    "units": [],
+    "column_units": [],
+    "axes": null,
+    "legend": [],
+    "data": {
+      "headers": [
+        "a"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    "confidence": 0.9,
+    "validation_status": "passed"
+  },
+  "fields_for_t08": null
+}
