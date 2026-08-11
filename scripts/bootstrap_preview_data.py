@@ -37,9 +37,47 @@ logger = get_logger("scripts.bootstrap_preview_data")
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PDF_PATH = PROJECT_ROOT / "data" / "raw" / "sjtu-booklet.pdf"
+# 兼容旧测试/本地默认；运行时以 resolve_questions_json_path() 为准。
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 JSON_PATH = PROCESSED_DIR / "questions_125.json"
 SEED_MARKER = "preview_seed"
+
+
+def resolve_data_root() -> Path:
+    """
+    解析运行时数据根目录（优先 DATA_DIR，兼容 Render 只写 /tmp）。
+
+    返回：
+        绝对 Path。Render Preview 通常为 `/tmp/sage125/data`。
+    """
+    raw = (os.getenv("DATA_DIR", "") or "data").strip() or "data"
+    root = Path(raw)
+    if not root.is_absolute():
+        root = PROJECT_ROOT / root
+    return root
+
+
+def resolve_questions_json_path() -> Path:
+    """
+    解析 questions_125.json 应写入/读取的主路径。
+
+    返回：
+        `DATA_DIR/processed/questions_125.json`（绝对路径）。
+    """
+    return resolve_data_root() / "processed" / "questions_125.json"
+
+
+def _sync_module_paths() -> Path:
+    """
+    将模块级 PROCESSED_DIR / JSON_PATH 同步到当前 DATA_DIR 解析结果。
+
+    返回：
+        当前主 JSON 路径。
+    """
+    global PROCESSED_DIR, JSON_PATH
+    JSON_PATH = resolve_questions_json_path()
+    PROCESSED_DIR = JSON_PATH.parent
+    return JSON_PATH
 
 # 与 extract_125_questions.EXPECTED_DOMAIN_COUNTS 保持一致，保证领域图可展示。
 EXPECTED_DOMAIN_COUNTS = {
@@ -204,6 +242,25 @@ def _seed_allowed(cli_allow: bool) -> bool:
     return cli_allow or _truthy_env("SAGE125_PREVIEW_SEED") or _preview_runtime()
 
 
+def _candidate_questions_paths() -> list[Path]:
+    """
+    返回按优先级排列的题库候选路径。
+
+    返回：
+        - 若显式设置了 `DATA_DIR`：仅使用该根下的 processed 路径（Render/测试隔离）；
+        - 否则：仓库 `data/processed` 默认路径。
+        写入失败时仍会尝试仓库回退路径（仅当 DATA_DIR 未显式设置，或主路径失败时）。
+    """
+    primary = resolve_questions_json_path()
+    explicit_data_dir = bool((os.getenv("DATA_DIR", "") or "").strip())
+    fallback = PROJECT_ROOT / "data" / "processed" / "questions_125.json"
+    if explicit_data_dir:
+        return [primary]
+    if fallback.resolve() != primary.resolve():
+        return [primary, fallback]
+    return [primary]
+
+
 def _existing_questions_ok(min_count: int = 1) -> bool:
     """
     检查已有 questions_125.json 是否可直接复用。
@@ -212,15 +269,19 @@ def _existing_questions_ok(min_count: int = 1) -> bool:
         min_count: 最少题目数量；Preview 至少 1，正式环境期望 125。
 
     返回：
-        True 表示文件存在且可解析为非空列表。
+        True 表示任一候选路径存在且可解析为足够长的列表。
     """
-    if not JSON_PATH.exists():
-        return False
-    try:
-        items = json.loads(JSON_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return False
-    return isinstance(items, list) and len(items) >= min_count
+    _sync_module_paths()
+    for path in _candidate_questions_paths():
+        if not path.exists():
+            continue
+        try:
+            items = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(items, list) and len(items) >= min_count:
+            return True
+    return False
 
 
 def _try_extract_from_booklet() -> bool:
@@ -348,23 +409,44 @@ def build_preview_seed_questions(total: int = 125) -> list[dict]:
 
 def write_preview_seed(force: bool = False) -> Path:
     """
-    将 Preview 种子题库写入 `data/processed/questions_125.json`。
+    将 Preview 种子题库写入 DATA_DIR（必要时再尽力写入仓库路径）。
 
     参数：
         force: True 时即使已有题库也覆盖为 seed（仅 Preview 排障使用）。
 
     返回：
-        写入后的 JSON 路径。
+        实际写入成功的主 JSON 路径。
+
+    异常：
+        OSError: 所有候选路径均不可写时抛出。
     """
+    primary = _sync_module_paths()
     if _existing_questions_ok(125) and not force:
-        logger.info("已存在题库，跳过 seed 写入：%s", JSON_PATH)
-        return JSON_PATH
-    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+        for path in _candidate_questions_paths():
+            if path.exists():
+                logger.info("已存在题库，跳过 seed 写入：%s", path)
+                return path
+        return primary
+
     items = build_preview_seed_questions(125)
-    payload = json.dumps(items, ensure_ascii=False, indent=2)
-    JSON_PATH.write_text(payload + "\n", encoding="utf-8")
-    logger.info("已写入 preview seed：%s（count=%s）", JSON_PATH, len(items))
-    return JSON_PATH
+    payload = json.dumps(items, ensure_ascii=False, indent=2) + "\n"
+    errors: list[str] = []
+    written: Path | None = None
+    for path in _candidate_questions_paths():
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(payload, encoding="utf-8")
+            logger.info("已写入 preview seed：%s（count=%s）", path, len(items))
+            if written is None:
+                written = path
+        except OSError as exc:
+            errors.append(f"{path}: {exc}")
+            logger.warning("写入 preview seed 失败：%s（%s）", path, exc)
+    if written is None:
+        raise OSError("无法写入 questions_125.json：" + "; ".join(errors))
+    # 让同进程后续 pipeline / 测试夹具优先命中可写路径。
+    os.environ["SAGE_QUESTIONS_PATH"] = str(written)
+    return written
 
 
 def bootstrap(*, allow_seed: bool = False, force_seed: bool = False) -> int:

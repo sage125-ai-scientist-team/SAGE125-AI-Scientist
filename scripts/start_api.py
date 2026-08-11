@@ -59,13 +59,30 @@ def ensure_preview_questions() -> None:
           以便冷启动诊断；业务 `/questions` 会如实返回 missing。
     """
     try:
-        from scripts.bootstrap_preview_data import bootstrap
+        from scripts.bootstrap_preview_data import (
+            bootstrap,
+            resolve_questions_json_path,
+        )
     except Exception as exc:  # noqa: BLE001 — 启动入口必须容错
         print(f"[start_api] bootstrap import failed: {exc}")
         return
+    target = resolve_questions_json_path()
+    print(
+        f"[start_api] questions bootstrap target={target} "
+        f"allow_seed={_preview_seed_allowed()} "
+        f"APP_ENV={os.getenv('APP_ENV', '')!r} "
+        f"DATA_DIR={os.getenv('DATA_DIR', '')!r}"
+    )
     code = bootstrap(allow_seed=_preview_seed_allowed(), force_seed=False)
     if code != 0:
         print(f"[start_api] questions bootstrap exited with code {code}")
+        return
+    if target.exists():
+        os.environ.setdefault("SAGE_QUESTIONS_PATH", str(target))
+        print(f"[start_api] questions ready at {target}")
+    else:
+        # 主路径未出现时，保留 bootstrap 可能写入的回退路径环境变量。
+        print(f"[start_api] primary questions path missing after bootstrap: {target}")
 
 
 def main() -> None:
