@@ -24,6 +24,7 @@ from app.core.config import Settings, assert_qwen_model, get_settings
 from app.core.execution_mode import is_mock_mode
 from app.core.logging import get_logger, mask_text
 from app.core.run_progress import current_progress, emit_progress, friendly_model_name
+from app.clients.outbound_http import build_outbound_httpx_client
 
 # 模块级日志器（继承根日志器的脱敏能力）。
 logger = get_logger("clients.qwen_chat")
@@ -146,10 +147,7 @@ class QwenChatClient:
         }
         # 禁用 Windows/环境隐式代理；只使用 .env 中显式配置的代理。
         # 这与 embedding 客户端保持一致，避免本机 loopback 代理截断百炼 TLS。
-        http_kwargs = {"timeout": timeout, "trust_env": False}
-        if self.settings.outbound_https_proxy:
-            http_kwargs["proxy"] = self.settings.outbound_https_proxy
-        kwargs["http_client"] = httpx.Client(**http_kwargs)
+        kwargs["http_client"] = build_outbound_httpx_client(self.settings, timeout=timeout)
         return OpenAI(**kwargs)
 
     def _ensure_client(self):

@@ -188,7 +188,7 @@ class Settings(BaseSettings):
     llm_max_output_tokens: int = Field(default=8192, ge=256, le=65536, alias="LLM_MAX_OUTPUT_TOKENS")
     # 点击真实模式时的轻量连通性探测超时。
     qwen_probe_timeout_seconds: float = Field(default=20.0, ge=3.0, le=60.0, alias="QWEN_PROBE_TIMEOUT_SECONDS")
-    # 可选企业/VPN HTTPS 代理；为空时沿用系统 HTTP(S)_PROXY。
+    # 可选企业/VPN HTTPS 代理；为空时所有百炼客户端安全直连，忽略系统 HTTP(S)_PROXY。
     outbound_https_proxy: str = Field(default="", alias="OUTBOUND_HTTPS_PROXY")
     # DeepResearch 流式长任务超时（秒）。
     deep_research_timeout_seconds: float = Field(default=900.0, alias="DEEP_RESEARCH_TIMEOUT_SECONDS")

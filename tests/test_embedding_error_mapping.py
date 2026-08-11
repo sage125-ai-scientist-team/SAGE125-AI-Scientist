@@ -105,7 +105,7 @@ def test_embed_texts_maps_sdk_proxy_error_without_echoing_secret():
 
     assert caught.value.code == "EMBEDDING_PROXY"
     assert raw_token not in str(caught.value)
-    assert "HTTP_PROXY" in str(caught.value)
+    assert "OUTBOUND_HTTPS_PROXY" in str(caught.value)
 
 
 def test_embed_texts_rejects_incomplete_response():
