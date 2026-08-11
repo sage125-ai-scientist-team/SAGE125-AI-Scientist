@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "evaluation_kind": "wave_c_final",
+  "ACTUAL_EXTERNAL_CALLS": 0,
+  "tokens": null,
+  "cost": null,
+  "modalities_in_pipeline": [
+    "table",
+    "timeseries"
+  ],
+  "chart_status": "needs_human_review_no_vl",
+  "table": {
+    "cell_accuracy": 1.0,
+    "meets_threshold_0_95": true,
+    "correct": 84,
+    "total": 84
+  },
+  "timeseries": {
+    "validation_status": "passed",
+    "confidence": 0.93,
+    "row_count": 3,
+    "entered_pipeline": true
+  },
+  "chart": {
+    "source_file": "raw/Picture1.png",
+    "modality": "chart",
+    "ok": false,
+    "vision_blocked": true,
+    "needs_human_review": true,
+    "actual_external_call": false,
+    "tokens": null,
+    "cost": null,
+    "error": "raster chart requires successful vision parse; no silent fallback to text-directive parser",
+    "error_type": "ExtractionError"
+  },
+  "dod": {
+    "T06-DOD-001_two_non_text_modalities": true,
+    "T06-METRIC-001": true,
+    "T06-DOD-002_table_ge_95": true,
+    "T06-METRIC-002": true,
+    "T06-METRIC-003_chart_rel_err_le_5": false,
+    "T06-METRIC-003_human_review_marked": true,
+    "T06-DOD-003_no_silent_pass_on_failures": true
+  },
+  "timings_ms": {
+    "table_extract_ms": 1.4989000046625733,
+    "chart_denied_ms": 1.202800078317523,
+    "timeseries_extract_ms": 0.9398000547662377
+  },
+  "reproduction_commands": [
+    "python -X utf8 -m app.multimodal.eval_actual_gold --gold-root docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0 --package-head 7b4a4c366f4ce25e5f05e2e948ec3938f11739ac --in-integration",
+    "python -X utf8 -m pytest tests/multimodal/test_wave_c_fallback.py -q",
+    "python -X utf8 scripts/t06_build_wave_c_artifacts.py"
+  ]
+}
