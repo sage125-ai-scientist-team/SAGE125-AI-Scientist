@@ -206,6 +206,7 @@ def test_render_blueprint_and_entrypoint_contracts(monkeypatch):
     assert "FRONTEND_API_SHORT_TIMEOUT_SECONDS" in blueprint
     assert "FRONTEND_API_WAKE_TIMEOUT_SECONDS" in blueprint
     assert "FRONTEND_INGEST_TIMEOUT_SECONDS" in blueprint
+    assert "SAGE125_PREVIEW_SEED" in blueprint
     assert "DASHSCOPE_API_KEY" not in blueprint
     assert "WORKSPACE_ID" not in blueprint
     assert "domains:" not in blueprint
@@ -220,6 +221,19 @@ def test_hosted_ui_hides_internal_error_details():
 
     assert '"--client.showErrorDetails"' in start_ui
     assert '"false"' in start_ui
+
+
+def test_api_entrypoint_bootstraps_preview_questions():
+    """
+    API 启动入口必须在 uvicorn 前尝试引导 questions_125.json。
+
+    返回：
+        None；源码契约失败即测试失败。
+    """
+    start_api = (ROOT / "scripts" / "start_api.py").read_text(encoding="utf-8")
+    assert "ensure_preview_questions" in start_api
+    assert "bootstrap_preview_data" in start_api
+    assert "SAGE125_PREVIEW_SEED" in start_api
 
 
 def test_ci_covers_integration_and_main_pushes_and_pull_requests():
