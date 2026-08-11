@@ -450,3 +450,8 @@ production fallback = fail_closed
 `KEEP_PR_OPEN=YES`、`READY_AUTHORIZED=NO`、`MERGE_AUTHORIZED=NO`。该审查不构成
 T01/T02/T03/T05/T06 owner 接口确认；在本文件第 10 节回复齐套且队长明确允许实现
 前，T08 不接生产 adapter，不移除默认 unavailable/fail-closed 行为。
+
+实现提交 `57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c` 已修复 captain 指出的 Windows
+导出 P1，并在 GitHub Actions `windows-latest` run `31466958039` 上通过 lint、type、
+unit、integration、security、build 六项检查。该工程证据不改变 owner confirmation
+状态，也不构成 `READY_AUTHORIZED=YES`。

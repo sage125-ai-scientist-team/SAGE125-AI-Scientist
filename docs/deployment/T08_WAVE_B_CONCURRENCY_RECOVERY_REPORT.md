@@ -1,19 +1,24 @@
 # T08 Wave B B014 并发与恢复报告
 
-状态：`DRAFT_EVIDENCE / NOT_READY`
+状态：`VERIFIED_DRAFT / NOT_READY`
 
 日期：2026-08-11
 
 审查基线：`d9ffb67ab5b0cf2e25c4a346bf0bef70a8b65485`
+
+实现证据 SHA：`57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c`
+
+Windows CI：`quality-gates` run `31466958039`，6/6 success
 
 分支：`codex/t08-b-delivery-core`
 
 ## 1. 范围与结论
 
 本报告覆盖 T08 自有的 SQLite JobStore、单进程有界队列、五任务隔离、并发写入、
-停止/重启恢复和同一幂等请求并发重试。当前证据全部通过，但本文件随未提交
-worktree 生成，尚未绑定 PR 最终 tip SHA，因此只能作为 B014 的 Draft 证据，不能
-用于把 PR 转为 Ready。
+停止/重启恢复和同一幂等请求并发重试。当前证据全部通过并绑定实现提交
+`57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c`；该提交的 Windows quality-gates 六项
+全部成功。由于 production owner E2E、Linux runner 与 captain Ready 授权仍未满足，
+本报告仍是 B014 Verified Draft，不能单独用于把 PR 转为 Ready。
 
 当前结论：
 
@@ -80,8 +85,8 @@ API 回归：
 
 ## 5. 尚未满足的 Ready 证据
 
-- 需要在最终提交后重跑以上命令，并把本报告的 evidence SHA 更新为该最终 tip；
-- 需要在 Windows 和 Linux 都执行 export/API 回归，当前本轮直接执行环境是 macOS；
+- 最终 Ready 包仍需在最终交付 tip 重跑以上命令并记录对应 CI run；
+- Windows 新 head CI 已通过；Linux runner 证据仍缺失，当前本轮直接执行环境是 macOS；
 - B016/B017 production owner 全闭环 trace、浏览器证据与视频仍被 owner confirmation
   阻断；fixture/HTTP stub 结果不得替代；
 - 2 小时稳定性、Docker 干净部署和 T09 验收属于后续门禁，不在本报告中冒充通过。

@@ -1,10 +1,14 @@
 # T08 Wave B API 回归报告
 
-状态：`DRAFT_EVIDENCE / NOT_READY`
+状态：`IMPLEMENTATION_VERIFIED / NOT_READY`
 
 日期：2026-08-11
 
 审查基线：`d9ffb67ab5b0cf2e25c4a346bf0bef70a8b65485`
+
+实现证据 SHA：`57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c`
+
+Windows CI：`quality-gates` run `31466958039`，6/6 success
 
 分支：`codex/t08-b-delivery-core`
 
@@ -19,7 +23,10 @@
 - 导出成功、幂等、hash、下载权限、篡改拒绝和三格式 canonical fingerprint 仍通过；
 - OpenAPI 继续暴露现有路由和统一错误 schema。
 
-本报告随未提交 worktree 生成，尚未绑定 PR 最终 tip SHA，不能作为 Ready 授权。
+本报告已绑定实现提交 `57e8fa2a851acdda87ed469dd3fb7b3ffb36f60c`。该提交已
+推送到 PR #39，并在 `windows-latest` / Python 3.12 上通过 lint、type、unit、
+integration、security、build 六项检查。owner E2E 与 captain Ready 授权仍未满足，
+因此本状态不是 Ready。
 
 ## 2. 实际命令与精确结果
 
@@ -108,14 +115,16 @@ JSON/Markdown/PDF 统一导出。`JOB_ID` 必须属于当前 key 对应 actor，
 - 本轮直接执行环境：macOS 15 / Python 3.14.5；
 - 新测试在任意平台模拟 248 字符 legacy Windows 临时路径上限，旧实现稳定红灯、
   新实现转绿；
-- 评审基线的 GitHub CI 使用 `windows-latest` / Python 3.12 且为绿，但本轮新提交尚未
-  push，因此尚无新 head 的 Windows CI 证据；
-- 只有新 head 的 Windows 与 Linux 回归都绿后，才能把跨平台 P1 标为最终关闭。
+- 新 head `57e8fa2` 的 GitHub CI 使用 `windows-latest` / Python 3.12，lint、type、
+  unit、integration、security、build 六项均成功；
+- 当前仓库 workflow 没有 Linux job，本机也未安装 Docker，因此本轮没有新增 Linux
+  runner 证据。根据 reviewer 要求，Linux 回归仍需由 T09/队长指定的现有环境补齐，
+  不能通过修改 `.github/workflows/**` 越权增加。
 
 ## 6. 仍然阻断 Ready 的事项
 
 - T01/T02/T03/T05/T06 owner 确认未齐，生产 feedback 及 canonical read adapters 继续
   失败关闭；
 - B016/B017 production owner 全闭环 E2E trace/浏览器证据/视频未生成；
-- B014 报告仍需最终 tip SHA 绑定；
+- B014 已绑定同一实现 SHA 与 Windows CI run，但最终 Ready 包仍需对应最终交付 tip；
 - PR #39 必须保持 Draft、Open，不得在 captain 授权前转 Ready 或 Merge。
