@@ -1,14 +1,22 @@
 {
   "schema_version": "1.0",
   "evaluation_kind": "wave_c_final",
-  "ACTUAL_EXTERNAL_CALLS": 0,
-  "tokens": null,
+  "ACTUAL_EXTERNAL_CALLS": 1,
+  "provider": "openrouter",
+  "model": "qwen/qwen3-vl-32b-instruct",
+  "tokens": {
+    "in": 376,
+    "out": 72,
+    "source": "service_reported",
+    "response_id": "gen-1786466716-ZSOK1PddnAVrfERr6Yza"
+  },
   "cost": null,
+  "cost_note": "OpenRouter did not return a service_reported_cost field; cost left null (not invented).",
   "modalities_in_pipeline": [
     "table",
     "timeseries"
   ],
-  "chart_status": "needs_human_review_no_vl",
+  "chart_status": "needs_human_review_vl_empty_structure_non_plot_png",
   "table": {
     "cell_accuracy": 1.0,
     "meets_threshold_0_95": true,
@@ -25,13 +33,19 @@
     "source_file": "raw/Picture1.png",
     "modality": "chart",
     "ok": false,
-    "vision_blocked": true,
+    "vision_blocked": false,
     "needs_human_review": true,
-    "actual_external_call": false,
-    "tokens": null,
+    "actual_external_call": true,
+    "vision_audit_status": "failed",
+    "vision_error_type": "invalid_or_empty_response",
+    "tokens_in": 376,
+    "tokens_out": 72,
+    "response_id": "gen-1786466716-ZSOK1PddnAVrfERr6Yza",
     "cost": null,
+    "relative_error_le_5_claimed": false,
     "error": "raster chart requires successful vision parse; no silent fallback to text-directive parser",
-    "error_type": "ExtractionError"
+    "error_type": "ExtractionError",
+    "finding": "Zenodo-deposited Picture1.png is an experimental hardware photo (petri-dish/sensor setup), not multi-panel impedance plots. OpenRouter Qwen VL returned empty legend/axes/series; chart ≤5% is NOT claimed."
   },
   "dod": {
     "T06-DOD-001_two_non_text_modalities": true,
@@ -43,13 +57,15 @@
     "T06-DOD-003_no_silent_pass_on_failures": true
   },
   "timings_ms": {
-    "table_extract_ms": 1.4989000046625733,
-    "chart_denied_ms": 1.202800078317523,
+    "table_extract_ms": 1.137999934144318,
+    "chart_vl_ms": 4129.65269992128,
     "timeseries_extract_ms": 0.9398000547662377
   },
   "reproduction_commands": [
-    "python -X utf8 -m app.multimodal.eval_actual_gold --gold-root docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0 --package-head 7b4a4c366f4ce25e5f05e2e948ec3938f11739ac --in-integration",
-    "python -X utf8 -m pytest tests/multimodal/test_wave_c_fallback.py -q",
-    "python -X utf8 scripts/t06_build_wave_c_artifacts.py"
+    "set DASHSCOPE_BASE_URL=https://openrouter.ai/api/v1",
+    "set QWEN_VL_MODEL=qwen/qwen3-vl-32b-instruct",
+    "set T06_PAID_VISION_AUTHORIZED=1",
+    "python -X utf8 -m app.multimodal.eval_actual_gold --gold-root docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0 --package-head <HEAD> --in-integration --allow-vision-actual --out docs/modules/T06/wave_c/actual_gold_openrouter_metrics.json",
+    "python -X utf8 -m pytest tests/multimodal/test_wave_c_fallback.py -q"
   ]
 }
