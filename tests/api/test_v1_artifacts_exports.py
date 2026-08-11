@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import os
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -255,3 +257,77 @@ def test_registry_rejects_paths_outside_root(tmp_path):
             truth_status="planned",
             path=outside,
         )
+
+
+def test_export_keeps_temporary_path_within_windows_legacy_limit(
+    tmp_path, monkeypatch
+):
+    """A long checkout/temp root must not push the staging file past MAX_PATH."""
+    long_root = tmp_path / ("w" * 40)
+    real_mkstemp = tempfile.mkstemp
+
+    def windows_mkstemp(*args, **kwargs):
+        directory = Path(kwargs["dir"])
+        prefix = kwargs.get("prefix", "tmp")
+        suffix = kwargs.get("suffix", "")
+        representative = directory / f"{prefix}12345678{suffix}"
+        if len(os.fspath(representative)) >= 248:
+            raise FileNotFoundError(2, "simulated Windows MAX_PATH")
+        return real_mkstemp(*args, **kwargs)
+
+    monkeypatch.setattr("app.export.service.tempfile.mkstemp", windows_mkstemp)
+    app, store, _registry = _app(long_root)
+    with TestClient(app) as client:
+        job = _job(store)
+        response = client.post(
+            f"/api/v1/jobs/{job.job_id}/exports",
+            headers={**OWNER_HEADERS, "Idempotency-Key": "windows-path-budget"},
+            json={"formats": ["json", "markdown", "pdf"]},
+        )
+
+    assert response.status_code == 201
+    assert len(response.json()["items"]) == 3
+
+
+def test_export_filesystem_failure_is_fail_closed_and_logs_safe_stack(
+    tmp_path, monkeypatch
+):
+    app, store, _registry = _app(tmp_path)
+    private_path = r"C:\\Users\\reviewer\\private\\missing.tmp"
+    log_messages = []
+
+    with TestClient(app) as client:
+        job = _job(store)
+
+        def fail_render(*_args, **_kwargs):
+            raise FileNotFoundError(2, "No such file", private_path)
+
+        def capture_error(message, *args):
+            log_messages.append(message % args)
+
+        monkeypatch.setattr("app.export.service.render_report_json", fail_render)
+        monkeypatch.setattr("app.api.v1.logger.error", capture_error)
+        response = client.post(
+            f"/api/v1/jobs/{job.job_id}/exports",
+            headers={**OWNER_HEADERS, "Idempotency-Key": "write-failure"},
+            json={"formats": ["json"]},
+        )
+
+    assert response.status_code == 503
+    payload = response.json()
+    assert payload["code"] == "EXPORT_STORAGE_UNAVAILABLE"
+    assert payload["retryable"] is True
+    assert payload["details"] == {"job_id": job.job_id, "format": "json"}
+    assert private_path not in response.text
+    log_text = "\n".join(log_messages)
+    assert "FileNotFoundError" in log_text
+    assert "fail_render" in log_text
+    assert private_path not in log_text
+
+    documented = app.openapi()["paths"]["/api/v1/jobs/{job_id}/exports"]["post"]
+    examples = documented["responses"]["503"]["content"]["application/json"][
+        "examples"
+    ]
+    assert examples["storage_unavailable"]["value"]["code"] == (
+        "EXPORT_STORAGE_UNAVAILABLE"
+    )

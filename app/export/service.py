@@ -29,6 +29,15 @@ class CanonicalReportIdentityError(RuntimeError):
     pass
 
 
+class ExportStorageError(RuntimeError):
+    """Safe wrapper for a filesystem failure during atomic export creation."""
+
+    def __init__(self, format_name: ExportFormat, cause: OSError) -> None:
+        super().__init__(f"failed to persist {format_name} export")
+        self.format_name = format_name
+        self.cause = cause
+
+
 @dataclass(frozen=True)
 class ExportResult:
     items: list[ArtifactRecord]
@@ -83,15 +92,23 @@ class ExportService:
         format_name: ExportFormat,
         destination: Path,
     ) -> None:
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        descriptor, temporary_name = tempfile.mkstemp(
-            prefix=f".{destination.name}.",
-            suffix=".tmp",
-            dir=destination.parent,
-        )
-        os.close(descriptor)
-        temporary = Path(temporary_name)
+        temporary: Path | None = None
+        descriptor: int | None = None
         try:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            # Stage beneath a short, stable directory.  Putting the temporary file
+            # beside ``destination`` repeats the job/content-hash hierarchy and can
+            # exceed legacy Windows MAX_PATH in a long checkout or pytest temp root.
+            staging_directory = self.root / ".tmp"
+            staging_directory.mkdir(parents=True, exist_ok=True)
+            descriptor, temporary_name = tempfile.mkstemp(
+                prefix=f".{format_name}.",
+                suffix=".tmp",
+                dir=staging_directory,
+            )
+            os.close(descriptor)
+            descriptor = None
+            temporary = Path(temporary_name)
             if format_name == "json":
                 temporary.write_bytes(render_report_json(report))
             elif format_name == "markdown":
@@ -99,8 +116,13 @@ class ExportService:
             else:
                 render_report_pdf(report, temporary)
             os.replace(temporary, destination)
+        except OSError as exc:
+            raise ExportStorageError(format_name, exc) from None
         finally:
-            temporary.unlink(missing_ok=True)
+            if descriptor is not None:
+                os.close(descriptor)
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
 
     def get_report(
         self,
@@ -147,7 +169,9 @@ class ExportService:
             job_id=job_id,
             request_hash=request_hash,
         )
-        directory = self.root / job_id / report.content_sha256
+        # ``content_sha256`` already binds job/question/run identity, so a second
+        # job-id directory is redundant and consumes scarce Windows path budget.
+        directory = self.root / report.content_sha256
         records: list[ArtifactRecord] = []
         all_reused = True
         for format_name in formats:

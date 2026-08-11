@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import json
+import traceback
 from datetime import datetime
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
 from fastapi.responses import FileResponse
@@ -55,8 +58,9 @@ from app.api.upstream import (
     OwnerContractUnavailable,
     OwnerResourceNotFound,
 )
+from app.core.logging import get_logger
 from app.export.canonical import CanonicalReport, CanonicalReportUnavailable
-from app.export.service import CanonicalReportIdentityError
+from app.export.service import CanonicalReportIdentityError, ExportStorageError
 
 
 router = APIRouter(
@@ -64,6 +68,20 @@ router = APIRouter(
     tags=["API v1"],
     dependencies=[Depends(authenticate_and_rate_limit)],
 )
+logger = get_logger("api.v1")
+
+
+def _safe_traceback(exc: BaseException) -> str:
+    """Return every traceback frame without host paths or exception payloads."""
+    frames = [
+        {
+            "file": Path(frame.filename).name,
+            "line": frame.lineno,
+            "function": frame.name,
+        }
+        for frame in traceback.extract_tb(exc.__traceback__)
+    ]
+    return json.dumps(frames, ensure_ascii=True, separators=(",", ":"))
 
 
 def _documented_response(description: str, example: dict) -> dict:
@@ -206,6 +224,43 @@ _ERROR_RESPONSES = {
                 "retryable": True,
             },
         ),
+    },
+}
+
+_EXPORT_ERROR_RESPONSES = {
+    **_ERROR_RESPONSES,
+    503: {
+        "model": ErrorResponse,
+        "description": "canonical report 或导出存储暂时不可用",
+        "content": {
+            "application/json": {
+                "examples": {
+                    "canonical_unavailable": {
+                        "summary": "owner canonical projection 尚不可用",
+                        "value": {
+                            "code": "CANONICAL_REPORT_UNAVAILABLE",
+                            "message": "canonical report 上游投影不可用。",
+                            "details": {
+                                "job_id": "job-example",
+                                "run_id": "run-example",
+                            },
+                            "correlation_id": "judge-demo-001",
+                            "retryable": True,
+                        },
+                    },
+                    "storage_unavailable": {
+                        "summary": "导出文件系统暂时不可用",
+                        "value": {
+                            "code": "EXPORT_STORAGE_UNAVAILABLE",
+                            "message": "导出存储暂时不可用，未返回不完整产物。",
+                            "details": {"job_id": "job-example", "format": "pdf"},
+                            "correlation_id": "judge-demo-001",
+                            "retryable": True,
+                        },
+                    },
+                }
+            }
+        },
     },
 }
 
@@ -974,7 +1029,11 @@ def download_artifact(job_id: str, artifact_id: str, request: Request):
     "/jobs/{job_id}/exports",
     response_model=ExportResponse,
     status_code=201,
-    responses={201: _documented_response("导出已生成", {"items": []}), **_ERROR_RESPONSES},
+    responses={
+        200: _documented_response("幂等重放，复用已有导出", {"items": [], "reused": True}),
+        201: _documented_response("导出已生成", {"items": [], "reused": False}),
+        **_EXPORT_ERROR_RESPONSES,
+    },
     summary="从 canonical report 生成一致的 JSON/Markdown/PDF",
 )
 def create_export(
@@ -1036,6 +1095,26 @@ def create_export(
             code="IDEMPOTENCY_CONFLICT",
             message="相同 Idempotency-Key 已用于不同导出请求。",
             retryable=False,
+        ) from None
+    except ExportStorageError as exc:
+        cause = exc.cause
+        logger.error(
+            "export_storage_unavailable correlation_id=%s job_id=%s format=%s "
+            "error_type=%s errno=%s winerror=%s stack=%s",
+            correlation_id(request),
+            job.job_id,
+            exc.format_name,
+            type(cause).__name__,
+            getattr(cause, "errno", None),
+            getattr(cause, "winerror", None),
+            _safe_traceback(cause),
+        )
+        raise APIError(
+            status_code=503,
+            code="EXPORT_STORAGE_UNAVAILABLE",
+            message="导出存储暂时不可用，未返回不完整产物。",
+            details={"job_id": job.job_id, "format": exc.format_name},
+            retryable=True,
         ) from None
     response.status_code = 200 if result.reused else 201
     return ExportResponse(

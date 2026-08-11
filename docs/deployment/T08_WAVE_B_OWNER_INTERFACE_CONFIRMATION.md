@@ -442,6 +442,11 @@ T08 adapter owner 路径是否批准：
 
 ```text
 Wave B status = blocked_on_owner_confirmation
-PR status = not_created
+PR #39 status = Draft / keep open / not Ready
 production fallback = fail_closed
 ```
+
+截至 2026-08-11，PR #39 的 captain review 为 `CHANGES_REQUESTED`，并明确
+`KEEP_PR_OPEN=YES`、`READY_AUTHORIZED=NO`、`MERGE_AUTHORIZED=NO`。该审查不构成
+T01/T02/T03/T05/T06 owner 接口确认；在本文件第 10 节回复齐套且队长明确允许实现
+前，T08 不接生产 adapter，不移除默认 unavailable/fail-closed 行为。
