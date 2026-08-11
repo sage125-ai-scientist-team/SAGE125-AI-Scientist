@@ -12,6 +12,11 @@ from app.multimodal.adapters import (
 )
 from app.multimodal.detect import detect_modality
 from app.multimodal.queue import MultimodalQueue, QueueRejection
+from app.multimodal.read_port import (
+    list_multimodal_artifacts,
+    list_multimodal_details,
+    put_multimodal_artifact,
+)
 from app.multimodal.summary import build_consumer_summary
 
 __all__ = [
@@ -25,4 +30,7 @@ __all__ = [
     "TimeseriesAdapter",
     "QwenVisionAdapter",
     "get_adapter",
+    "list_multimodal_artifacts",
+    "list_multimodal_details",
+    "put_multimodal_artifact",
 ]
