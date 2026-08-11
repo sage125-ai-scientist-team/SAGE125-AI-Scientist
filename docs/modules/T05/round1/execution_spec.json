@@ -1,0 +1,162 @@
+{
+  "argv": [
+    "--dataset",
+    "datasets/wdbc.data",
+    "--seed",
+    "125",
+    "--test-fraction",
+    "0.2",
+    "--learning-rate",
+    "0.05",
+    "--iterations",
+    "2000",
+    "--l2",
+    "0.001",
+    "--decision-threshold",
+    "0.5",
+    "--recall-target",
+    "0.95",
+    "--threshold-step",
+    "0.1",
+    "--expected-sha256",
+    "d606af411f3e5be8a317a5a8b652b425aaf0ff38ca683d5327ffff94c3695f4a",
+    "--expected-size-bytes",
+    "124103"
+  ],
+  "cleanup_policy": "preserve",
+  "datasets": [
+    {
+      "dataset_id": "uci-wdbc-diagnostic-17-1995-10-31",
+      "license": "CC-BY-4.0",
+      "schema_version": "1.0",
+      "sha256": "d606af411f3e5be8a317a5a8b652b425aaf0ff38ca683d5327ffff94c3695f4a",
+      "size_bytes": 124103,
+      "source_uri": "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data",
+      "version": "1995-10-31",
+      "workspace_relative_path": "datasets/wdbc.data"
+    }
+  ],
+  "entrypoint": "wdbc-round1-baseline",
+  "environment": {
+    "dependency_allowlist": [
+      "numpy",
+      "pydantic"
+    ],
+    "variables": {}
+  },
+  "mode": "actual",
+  "parent_execution_id": null,
+  "question_id": "Q028",
+  "required_artifacts": [
+    {
+      "artifact_id": "balanced-accuracy",
+      "expected_sha256": null,
+      "kind": "metrics",
+      "max_bytes": 10000000,
+      "media_type": "application/json",
+      "relative_path": "output/metrics-balanced-accuracy.json",
+      "required": true,
+      "schema_version": "1.0"
+    },
+    {
+      "artifact_id": "confusion-matrix",
+      "expected_sha256": null,
+      "kind": "table",
+      "max_bytes": 10000000,
+      "media_type": "text/csv",
+      "relative_path": "output/confusion-matrix.csv",
+      "required": true,
+      "schema_version": "1.0"
+    },
+    {
+      "artifact_id": "malignant-recall",
+      "expected_sha256": null,
+      "kind": "metrics",
+      "max_bytes": 10000000,
+      "media_type": "application/json",
+      "relative_path": "output/metrics-malignant-recall.json",
+      "required": true,
+      "schema_version": "1.0"
+    },
+    {
+      "artifact_id": "model",
+      "expected_sha256": null,
+      "kind": "model",
+      "max_bytes": 10000000,
+      "media_type": "application/json",
+      "relative_path": "output/model.json",
+      "required": true,
+      "schema_version": "1.0"
+    },
+    {
+      "artifact_id": "predictions",
+      "expected_sha256": null,
+      "kind": "table",
+      "max_bytes": 10000000,
+      "media_type": "text/csv",
+      "relative_path": "output/predictions.csv",
+      "required": true,
+      "schema_version": "1.0"
+    },
+    {
+      "artifact_id": "round2-plan",
+      "expected_sha256": null,
+      "kind": "report",
+      "max_bytes": 10000000,
+      "media_type": "application/json",
+      "relative_path": "output/round2-plan.json",
+      "required": true,
+      "schema_version": "1.0"
+    },
+    {
+      "artifact_id": "run-summary",
+      "expected_sha256": null,
+      "kind": "raw",
+      "max_bytes": 10000000,
+      "media_type": "application/json",
+      "relative_path": "output/run-summary.json",
+      "required": true,
+      "schema_version": "1.0"
+    },
+    {
+      "artifact_id": "summary-plot",
+      "expected_sha256": null,
+      "kind": "plot",
+      "max_bytes": 10000000,
+      "media_type": "image/svg+xml",
+      "relative_path": "output/summary.svg",
+      "required": true,
+      "schema_version": "1.0"
+    }
+  ],
+  "required_metrics": [
+    {
+      "artifact_id": "balanced-accuracy",
+      "name": "balanced_accuracy",
+      "required": true,
+      "schema_version": "1.0",
+      "unit": "ratio"
+    },
+    {
+      "artifact_id": "malignant-recall",
+      "name": "malignant_recall",
+      "required": true,
+      "schema_version": "1.0",
+      "unit": "ratio"
+    }
+  ],
+  "resources": {
+    "cpu_seconds": null,
+    "max_artifact_bytes": 20000000,
+    "max_stderr_bytes": 1048576,
+    "max_stdout_bytes": 1048576,
+    "memory_bytes": null,
+    "network_access": "deny",
+    "schema_version": "1.0",
+    "timeout_seconds": 120.0
+  },
+  "round_index": 1,
+  "schema_version": "1.0",
+  "seed": 125,
+  "spec_id": "wdbc-round1-baseline-v1"
+}
