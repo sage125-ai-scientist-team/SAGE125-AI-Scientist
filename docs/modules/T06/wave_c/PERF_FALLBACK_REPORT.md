@@ -2,7 +2,9 @@
 
 Date: 2026-08-11
 Branch: `t06/c-showcase-handoff`
-`ACTUAL_EXTERNAL_CALLS=0` / tokens=`null` / cost=`null`
+Offline builder probe: `ACTUAL_EXTERNAL_CALLS=0` / tokens=`null` / cost=`null`  
+OpenRouter gold VL evidence (separate): see `actual_gold_openrouter_metrics.json` / `metrics.json` (`ACTUAL_EXTERNAL_CALLS=1`, cost still `null`).
+Demo artifact store root: `%TEMP%/t06wc/store` (short path; avoids Windows MAX_PATH).
 
 ## Scope (C-004～C-006)
 
@@ -26,6 +28,6 @@ Branch: `t06/c-showcase-handoff`
 ## Reproduction
 
 ```bash
-python -X utf8 scripts/t06_build_wave_c_artifacts.py
+python -X utf8 docs/modules/T06/scripts/t06_build_wave_c_artifacts.py
 python -X utf8 -m pytest tests/multimodal/test_wave_c_fallback.py -q
 ```

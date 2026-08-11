@@ -23,11 +23,14 @@ from app.multimodal.read_port import (
     put_multimodal_artifact,
 )
 
-ROOT = Path(__file__).resolve().parents[1]
+# File lives at docs/modules/T06/scripts/ → repo root is parents[4].
+ROOT = Path(__file__).resolve().parents[4]
 WAVE = ROOT / "docs" / "modules" / "T06" / "wave_c"
 CASE_A = WAVE / "cases" / "paper_table_chart_zenodo"
 CASE_B = WAVE / "cases" / "timeseries_csv"
-STORE = WAVE / "store_demo"
+# Keep demo store under a short TEMP path to avoid Windows MAX_PATH failures
+# when nested under long worktree/TEMP extract directories.
+STORE = Path(__import__("tempfile").gettempdir()) / "t06wc" / "store"
 
 
 def main() -> None:
@@ -282,9 +285,64 @@ def main() -> None:
         "reproduction_commands": [
             case_a["reproduction_command"],
             "python -X utf8 -m pytest tests/multimodal/test_wave_c_fallback.py -q",
-            "python -X utf8 scripts/t06_build_wave_c_artifacts.py",
+            "python -X utf8 docs/modules/T06/scripts/t06_build_wave_c_artifacts.py",
         ],
     }
+    # Prefer recorded OpenRouter actual-gold evidence when present (do not clobber).
+    or_path = WAVE / "actual_gold_openrouter_metrics.json"
+    if or_path.is_file():
+        try:
+            or_report = json.loads(or_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            or_report = {}
+        or_chart = or_report.get("chart_case") or {}
+        if or_chart.get("actual_external_call"):
+            metrics["ACTUAL_EXTERNAL_CALLS"] = 1
+            metrics["provider"] = "openrouter"
+            metrics["tokens"] = {
+                "in": or_chart.get("tokens_in"),
+                "out": or_chart.get("tokens_out"),
+                "source": "service_reported",
+                "response_id": or_chart.get("response_id"),
+            }
+            metrics["cost"] = None
+            metrics["cost_note"] = (
+                "OpenRouter cost left null when service_reported_cost absent (not invented)."
+            )
+            metrics["chart_status"] = "needs_human_review_vl_empty_structure_non_plot_png"
+            merged_chart = dict(chart_case)
+            merged_chart.update(
+                {
+                    "vision_blocked": bool(or_chart.get("vision_blocked", False)),
+                    "actual_external_call": True,
+                    "vision_audit_status": or_chart.get("vision_audit_status"),
+                    "vision_error_type": or_chart.get("vision_error_type"),
+                    "tokens_in": or_chart.get("tokens_in"),
+                    "tokens_out": or_chart.get("tokens_out"),
+                    "response_id": or_chart.get("response_id"),
+                    "relative_error_le_5_claimed": False,
+                    "finding": (
+                        "Zenodo Picture1.png is hardware photo, not impedance plots; "
+                        "OpenRouter VL returned empty chart structure; ≤5% not claimed."
+                    ),
+                    "evidence_file": "docs/modules/T06/wave_c/actual_gold_openrouter_metrics.json",
+                }
+            )
+            metrics["chart"] = merged_chart
+            chart_case = merged_chart
+            metrics["reproduction_commands"] = [
+                "python -X utf8 docs/modules/T06/scripts/t06_build_wave_c_artifacts.py",
+                (
+                    "python -X utf8 -m app.multimodal.eval_actual_gold "
+                    "--gold-root docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0 "
+                    "--package-head <HEAD> --in-integration --allow-vision-actual "
+                    "--out docs/modules/T06/wave_c/actual_gold_openrouter_metrics.json"
+                ),
+                "python -X utf8 -m pytest tests/multimodal/test_wave_c_fallback.py -q",
+            ]
+    (CASE_A / "chart_status.json").write_text(
+        json.dumps(chart_case, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     (WAVE / "metrics.json").write_text(
         json.dumps(metrics, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )

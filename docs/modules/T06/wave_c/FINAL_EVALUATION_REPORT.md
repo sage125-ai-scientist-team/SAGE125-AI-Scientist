@@ -35,7 +35,7 @@ export DASHSCOPE_BASE_URL=https://openrouter.ai/api/v1
 export QWEN_VL_MODEL=qwen/qwen3-vl-32b-instruct
 export T06_PAID_VISION_AUTHORIZED=1
 
-python -X utf8 scripts/t06_build_wave_c_artifacts.py
+python -X utf8 docs/modules/T06/scripts/t06_build_wave_c_artifacts.py
 python -X utf8 -m app.multimodal.eval_actual_gold \
   --gold-root docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0 \
   --package-head <HEAD_SHA> --in-integration --allow-vision-actual \
