@@ -25,6 +25,7 @@ class APIError(Exception):
         message: str,
         details: dict[str, Any] | None = None,
         retryable: bool = False,
+        headers: dict[str, str] | None = None,
     ) -> None:
         super().__init__(message)
         self.status_code = status_code
@@ -32,6 +33,7 @@ class APIError(Exception):
         self.message = message
         self.details = details or {}
         self.retryable = retryable
+        self.headers = headers or {}
 
 
 def correlation_id(request: Request) -> str:
@@ -46,10 +48,11 @@ def error_response(request: Request, error: APIError) -> JSONResponse:
         correlation_id=correlation_id(request),
         retryable=error.retryable,
     )
+    headers = {"X-Correlation-ID": payload.correlation_id, **error.headers}
     return JSONResponse(
         status_code=error.status_code,
         content=payload.model_dump(mode="json"),
-        headers={"X-Correlation-ID": payload.correlation_id},
+        headers=headers,
     )
 
 
