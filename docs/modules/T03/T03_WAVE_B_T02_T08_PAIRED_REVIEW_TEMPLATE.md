@@ -1,48 +1,54 @@
-# T03 Wave B × T02/T08 配对审查记录模板
+# T03 Wave B × T02/T08 配对审查记录
 
 用途：记录 T03 Feedback/Revision/Validator 与 T02 版本修订、T08 API 的真实接线证据。
 
-> 此文件同时记录阶段性技术证据，但不是最终三方验收证明。T02 PR #21 当前 HEAD 为
-> `20a5b356364051c86dac3698fc836c790b6c2c79`，T03 已在实现提交
-> `e4248e8ad215b0b77279990eb2bf6553b60b52d1` 完成 lineage 持久化消费接线；
-> T08 仍没有 Wave B PR，feedback POST/GET 仍返回 503
-> `UPSTREAM_CONTRACT_UNAVAILABLE`。在 T02/T08/独立复审签字完成且队长授权前，
-> 结论仍为“待对接/待复审”，PR #32 保持 Draft。
+> 2026-08-12 状态更新：T02/T03 精确技术配对已经闭环。冻结配对为 T02
+> `20a5b356364051c86dac3698fc836c790b6c2c79` 与 T03
+> `b3c1746530fa9c6f228e030ef281c255ab6b4c47`；T02 owner 正式复验为
+> `5 passed / 0 failed`，T02 handoff + T03 validation 为 `108 passed / 0 failed`。
+> T02 PR #21 已获队长批准并合并，T03 PR #32 也已合并。T08 PR #40 虽已合并，
+> 但没有替换 feedback POST/GET 的 503 占位实现，因此剩余阻断仅属于 T08 live API
+> 接线/三方验收，不再要求 T02 或 T03 重做已通过的 lineage consumer。
 
 ## 1. 审查元数据
 
 | 项目 | 填写内容 |
 | --- | --- |
-| 审查日期/时区 | 2026-08-03 首轮；2026-08-06 T02 lineage 接线复验 / Asia/Shanghai；最终签字时间 TBD |
+| 审查日期/时区 | 2026-08-03 首轮；2026-08-06 T02 lineage 接线及 owner 签字；2026-08-12 状态回填 / Asia/Shanghai |
 | T03 负责人 | `ybq-music` |
 | T02 负责人 | `Mk007115`（PR #21 作者） |
 | T08 负责人 | TBD |
 | 独立复审人 | TBD |
-| T03 PR / HEAD SHA | [Draft PR #32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32)；lineage consumer 实现 HEAD `e4248e8ad215b0b77279990eb2bf6553b60b52d1`；最终远端 HEAD 见 PR |
-| T02 PR #21 / 被审 SHA | `20a5b356364051c86dac3698fc836c790b6c2c79`；open/Ready、六项 CI SUCCESS，既有 `CHANGES_REQUESTED` 尚待队长处理 |
-| T08 PR / 被审 SHA | 当前无 Wave B PR；被审 SHA/PR URL TBD；feedback 接口仍为 503 |
+| T03 PR / HEAD SHA | [PR #32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32) 已合并；最终 HEAD `b3c1746530fa9c6f228e030ef281c255ab6b4c47`；merge commit `592c874328a544f874893b6460a4439a8f450a77`；lineage consumer 实现提交 `e4248e8ad215b0b77279990eb2bf6553b60b52d1` |
+| T02 PR #21 / 被审 SHA | 冻结配对 HEAD `20a5b356364051c86dac3698fc836c790b6c2c79`；[PR #21](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/21) 最终 HEAD `7d5e7ec6909b4789f7e3239c255b6f9e8b12880d` 已批准并合并；merge commit `c683ab29dae73705ea49d2d59faa813d8f6660ca` |
+| T08 PR / 被审 SHA | [PR #40](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/40) 已合并，HEAD `0c35397d013d5ce1e1c18bdef7ecb98847bfd2aa`；该 PR 未实现 T03 feedback adapter，POST/GET 仍返回 503 |
 | 发布 Fork | `ybq-music/SAGE125-AI-Scientist-T03`，`isFork=true`，parent 为团队仓库 |
 | 原个人仓库 | `ybq-music/SAGE125-AI-Scientist`，保持独立备份，未改动 |
 | 团队仓库权限 | `sage125-ai-scientist-team/SAGE125-AI-Scientist`，`viewerPermission=READ` |
 | T03 本地 validation 测试 | `105 passed in 4.34s` |
-| integration base SHA | `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c` |
-| T02/T03 merge-base | `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c` |
+| 当前记录更新所基于的 integration SHA | `20592a0eeb9924d021e3ec75ec28d27e2f971e9f` |
+| 冻结 T02/T03 配对 common base | `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c` |
 | 测试环境/DB 类型 | Windows / Python 3.12 / SQLite 临时数据库 |
 | correlation ID / E2E run ID | TBD |
 
 ## 2. 当前基线事实（审查开始前确认）
 
-- [x] 已确认 T02 PR #21 当前 HEAD 为 `20a5b356364051c86dac3698fc836c790b6c2c79`；
-  open/Ready、六项 CI SUCCESS，既有 review decision `CHANGES_REQUESTED` 尚未解除。
-- [x] 已确认 T08 当前没有 Wave B PR，feedback POST/GET 仍为 503 占位。
-- [x] 已通过新建不同名称的真实 Fork 解决发布阻断，并创建 Draft PR #32；原独立仓库未改动。
+- [x] 已确认冻结配对使用 T02 `20a5b356364051c86dac3698fc836c790b6c2c79`；
+  PR #21 最终 HEAD `7d5e7ec6909b4789f7e3239c255b6f9e8b12880d` 已获队长
+  `APPROVED` 并合并，最终六项 CI 均为 SUCCESS。
+- [x] 已确认 T08 PR #40 已合并，但当前 integration 中 feedback POST/GET 仍为
+  503 `UPSTREAM_CONTRACT_UNAVAILABLE` 占位；不能据此宣称 T08 live API 已接通。
+- [x] 已通过新建不同名称的真实 Fork 解决发布阻断；PR #32 最终 HEAD
+  `b3c1746530fa9c6f228e030ef281c255ab6b4c47` 已合并，原独立仓库未改动。
 - [x] 已确认 T03 使用 `schema_version=1`，且没有增删冻结字段/枚举；仅修复了一个引用不存在字段的验证器。
-- [ ] 已确认三方分支均基于同一 integration 祖先；T02/T03 merge-base 已记录为
-  `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c`，T08 仍待 PR/SHA。
+- [x] 冻结 T02/T03 配对 common base 已记录为
+  `9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c`；两个 PR 均已进入 integration。
+- [ ] T08 feedback adapter 仍无可供三方精确配对的实现 SHA 与 live API E2E。
 - [x] 已确认本次 T03 补丁只修改 T03 owner 路径，未修改 T02 workflow、T08 API 或队长专属文件。
 
-基线备注：T03 本地 owner-path 测试通过不等于跨队生产接线通过。当前发布与配对状态均为
-待处理：先解决 fork/权限阻断，再处理 T02 requested changes，并等待 T08 提交 Wave B 接线 PR。
+基线备注：T03 本地 owner-path 测试之后已经由 T02 owner 使用精确 T02/T03 HEAD 独立复验并
+签字，因此 T02/T03 技术配对已通过。当前仅等待 T08 用真实 feedback adapter 替换 503 占位，
+再完成三方 live API E2E；该事项不应回退解释成 T02 输出缺失或 T03 consumer 未接线。
 
 ## 3. T03 -> T02 接口核对
 
@@ -147,21 +153,24 @@ event:a2c31e666da5b460 -> event:d9d644bc57841591`。
 
 | 检查 | 命令/工作流 URL | 结果（passed/failed/skipped） | 证据时间 |
 | --- | --- | --- | --- |
-| 指定最终配对复验 | `.\.venv\Scripts\python.exe -m pytest -q tests\validation\test_t02_t03_final_pairing_recheck.py` | `5 passed in 1.48s` | 2026-08-06 |
+| 指定最终配对复验（T02 owner 签字） | `.\.venv\Scripts\python.exe -m pytest -q tests\validation\test_t02_t03_final_pairing_recheck.py` | `5 passed / 0 failed in 0.73s` | 2026-08-06 |
 | T03 `tests/validation` 套件 | `.\.venv\Scripts\python.exe -m pytest -q tests\validation` | `105 passed in 4.34s` | 2026-08-06 |
 | Feedback SQLite/并发/攻击测试 | 包含于 `tests/validation` | 原子批量、重启、重复、16 线程并发与冲突回滚均通过 | 2026-08-06 |
-| T02 + T03 精确 SHA 组合测试 | 临时普通合并 T02 `20a5b356…` 与 T03 `e4248e8…`，运行 validation + T02 handoff + 实际模型消费测试 | `109 passed in 6.09s`；无合并冲突；T03 技术接线通过，待 T02 签字 | 2026-08-06 |
-| T08 + T03 API/idempotency 集成 | 当前无 T08 Wave B PR | 未执行；接口仍为占位 503 | TBD |
-| 最小 E2E | 仅有 T03 离线 owner-path 证据；生产跨队命令 TBD | 生产 T02/T08 E2E 未完成 | TBD |
+| T02 + T03 精确 SHA 组合测试 | T02 `20a5b356…` + T03 `b3c1746…`；运行 T02 production-path handoff + T03 validation | `108 passed / 0 failed in 3.12s`；actual-output SQLite probe PASS；T02 owner 已签字 | 2026-08-06 |
+| T02/T03 持久化与重放 | 实际 T02 output 经 T03 service/SQLite，关闭重开并并发重放 | diff hash、16-event 父链、8 路提交、16 路 handoff、重复完成均通过；直接子版本=1、有效 lineage=1 | 2026-08-06 |
+| T08 + T03 API/idempotency 集成 | T08 PR #40 已合并，但未接 T03 feedback adapter | 未执行；当前 integration 中接口仍为占位 503 | 2026-08-12 |
+| 最小 E2E | T02/T03 exact-head production-path 已完成；T08 live API 命令待提供 | T02/T03 PASS；三方生产 E2E 未完成 | 2026-08-12 |
 | 全仓 unit | `pytest -q --ignore=tests/integration`（CI UTF-8 环境） | `735 passed, 37 skipped in 63.52s` | 2026-08-06 |
 | integration | `pytest -q tests/integration` | `1 passed in 0.18s` | 2026-08-06 |
 | lint | `wave_a_quality.py lint` | 通过，`failures=[]` | 2026-08-06 |
 | type | `wave_a_quality.py type` | 通过，`failures=[]` | 2026-08-06 |
 | security | `scripts/audit_project.py` | PASS，`critical=0, warnings=2` | 2026-08-06 |
 | build | compileall + benchmark dry-run + validate-result | 通过，`failures=[]` | 2026-08-06 |
+| T02 PR #21 远端 CI | [Actions run 31147228869](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/actions/runs/31147228869)；最终 HEAD `7d5e7ec…` | lint/type/unit/integration/security/build 六项 SUCCESS | 2026-08-07 |
+| T03 PR #32 远端 CI | [Actions run 31494720648](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/actions/runs/31494720648)；最终 HEAD `b3c1746…` | lint/type/unit/integration/security/build 六项 SUCCESS | 2026-08-11 |
 
 skip/xfail 说明：`tests/validation` 无 skip/xfail；全仓 unit 有 `37 skipped`，原因包括缺少
-可选数据文件及 Windows 无符号链接特权。远端 GitHub CI 仍为 TBD。
+可选数据文件及 Windows 无符号链接特权。T02/T03 最终 HEAD 的远端六项 CI 均已成功。
 
 ## 8. 阻断项与处理决定
 
@@ -169,9 +178,9 @@ skip/xfail 说明：`tests/validation` 无 skip/xfail；全仓 unit 有 `37 skip
 
 | Blocker ID | 已确认事实 | 所需处理 | Owner | 状态 |
 | --- | --- | --- | --- | --- |
-| PUBLISH-001 | 已创建真实 fork `ybq-music/SAGE125-AI-Scientist-T03` 并开立 Draft PR #32；原独立仓库不变 | 观察远端 CI；配对完成前保持 Draft | T03 | resolved |
-| PAIR-T02-001 | T02 `20a5b356…` 与 T03 `e4248e8…` 的实际 handoff 已持久化并重启恢复；组合测试 `109 passed` | T02 使用 PR #32 新远端 HEAD 再跑指定 5 项并签字；队长处理既有 review decision | T02 / T03 | T03 technical resolved；external sign-off open |
-| PAIR-T08-001 | 当前无 T08 Wave B PR，feedback POST/GET 仍为 503 | T08 提交真实 adapter 路由改动并完成 API/idempotency E2E | T08 / T03 | open |
+| PUBLISH-001 | 真实 fork 与 PR #32 发布成功；最终 HEAD `b3c1746…` 六项 CI SUCCESS，PR 已合并为 `592c874…` | 无 | T03 | resolved |
+| PAIR-T02-001 | T02 `20a5b356…` 与 T03 `b3c1746…` 正式复验 5/5；T02 handoff + T03 validation 108/108；T02 owner 已签字，PR #21 已批准并合并 | 无；除非新的测试定位出新的 owner 缺陷，否则不要重复修改 T02/T03 | T02 / T03 | resolved |
+| PAIR-T08-001 | T08 PR #40 已合并，但没有替换 feedback POST/GET 503 占位 | T08 提交真实 adapter 路由改动并完成 API/idempotency live E2E | T08 / T03 | open |
 
 以下表格保留给代码/契约 finding；上面的协作状态不自动等同于 P0/P1 技术 finding：
 
@@ -193,14 +202,15 @@ skip/xfail 说明：`tests/validation` 无 skip/xfail；全仓 unit 有 `37 skip
 - [ ] 通过：三方精确 SHA 已验证，T03-B-001..021 均有证据，open P0/P1 为 0。
 - [ ] 有条件通过：仅存在已明确接受的 P2/P3，列于上表。
 - [ ] 不通过：仍有 open P0/P1、T08 仍是占位 503、实际 Prompt 未接入，或 E2E/恢复证据缺失。
-- [x] 待对接/待复审：当前真实状态；发布阻断 PUBLISH-001 已解决，仍存在 PAIR-T02-001、PAIR-T08-001。
+- [x] 待对接/待复审：T02/T03 技术配对和发布已完成；仅 PAIR-T08-001 与三方 live API 验收仍开放。
 
 | 角色 | 姓名/账号 | 结论 | 日期 | 审查链接/签字 |
 | --- | --- | --- | --- | --- |
-| T03 | `ybq-music` | lineage consumer 接线与 owner-path 复验通过；保持 Draft，等待跨队签字 | 2026-08-06 | PR #32 / implementation `e4248e8ad215b0b77279990eb2bf6553b60b52d1` |
-| T02 | TBD | TBD | TBD | TBD |
-| T08 | TBD | TBD | TBD | TBD |
-| 独立复审 | TBD | TBD | TBD | TBD |
+| T03 | `ybq-music` | lineage consumer 接线与 owner-path 复验通过；最终 HEAD 已合并 | 2026-08-11 | PR #32 / `b3c1746530fa9c6f228e030ef281c255ab6b4c47` / merge `592c874328a544f874893b6460a4439a8f450a77` |
+| T02 | `Mk007115` | 精确 T02/T03 技术配对 PASS：5/5；组合回归 108/108；SQLite/重放/唯一 lineage PASS | 2026-08-06 | `docs/modules/T02/T02_WAVE_B_EVIDENCE.md` § 2026-08-06 final sign-off |
+| T08 | TBD | feedback API 配对尚未签字；当前 POST/GET 仍为 503 | TBD | PR #40 未覆盖该 adapter |
+| 队长 | `liuyanbo12` | T02 PR #21 已 APPROVED/合并；T03 PR #32 已合并；不等同于 T08 live API 签字 | 2026-08-11 | PR #21 / PR #32 |
 
-最终备注：T02 lineage 持久化缺口已由 T03 修复；本记录不宣称 T08 live API 已完成，
-也不授权将 PR #32 转 Ready、Approve 或 Merge。
+最终备注：T02 lineage 持久化缺口已由 T03 修复并经 T02 owner 正式复验；T02/T03 两个 PR
+均已合并，因此无需再执行“转 Ready/等待接线”等旧动作。本记录仍不宣称 T08 live API 已完成；
+三方最终通过必须等待 T08 adapter、API/idempotency E2E 和相应签字。
