@@ -1,7 +1,8 @@
 # T01：T04 `retrieve_hits` / Q001 语义签字清单
 
-**Status:** `WAITING_T04_DRAFT_PR` + `Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`  
+**Status:** `GATE_A=PASS` + `Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`（门 B 仍 WAIT）  
 **Date:** 2026-08-12  
+**Gate A reviewed PR:** [#47](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/47) @ `f77959b43f7f520119070181011e0d0713425cdd`  
 **Captain source:** PR [#35](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/35) comment  
 `[CAPTAIN AUTHORIZATION] T04 无损 RetrievalHit 接口与 Q001 真实文献包责任人`  
 **Decision flags（摘录）：**
@@ -17,6 +18,7 @@ FIVE_REAL_RUNS_AUTHORIZED_BY_THIS_DECISION=false
 CAPTAIN_DECISION=AUTHORIZED_WITH_GATES
 Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY
 T07_REAL_RUN_STATUS=HOLD
+T01_T04_RETRIEVE_HITS_SEMANTIC_SIGNOFF=PASS
 ```
 
 ## 1. T01 角色（仅此）
@@ -44,41 +46,62 @@ T07_REAL_RUN_STATUS=HOLD
 7. 五题材料与全部门禁齐备后，T07 才可申请五题真实运行
 ```
 
-当前：**门 A 未触发**（未见 `t04/c-retrieval-hit-interface` 开放 Draft PR）。  
+当前：**门 A = PASS**（PR #47 @ `f77959b43f7f520119070181011e0d0713425cdd`）。  
 当前：**门 B 未触发**（`Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`）。
 
 ## 3. 门 A — T04 `retrieve_hits` 接口语义签字检查表
 
 在 T04 Draft PR 发布且六项 CI 绿、模块测/全仓回归通过后，T01 对**该 PR 准确 HEAD**核对：
 
-| # | 检查项 | PASS 判据 |
-|---|---|---|
-| A1 | 分支/基线 | 自最新 `integration/2026-08-10` 新建；非复用 #23 分支 |
-| A2 | 签名 | `LocalRAGRetriever.retrieve_hits(query, filters=None, source_scope="all") -> tuple[RetrievalHit, ...]` |
-| A3 | 旧路径不变 | `retrieve()` 签名/返回 `EvidenceCard` 列表/排序/异常/fallback 行为回归通过 |
-| A4 | 同核 | `retrieve_hits` 与 `retrieve` 共用同一检索核；单次调用无重复 embedding/rerank |
-| A5 | 返回形态 | 确定序 `tuple`；无结果为空 `tuple`（非假成功 hit） |
-| A6 | 无损字段 | `quoted_text`、原始 `retrieval_score`/`score_kind`、`source_type`/`source_role`、`SourceLocator`、完整 SHA-256 `content_hash`、title、DOI/URL、必要 metadata |
-| A7 | provenance | type/role 来自已持久 provenance/SourcePolicy；不靠文件名推断“论文” |
-| A8 | fail-closed | 缺 quote/locator/完整 hash/document·chunk identity/provenance → 不得补造字段 |
-| A9 | 题册边界 | `sjtu-booklet.pdf` 仅可作题目身份；**不得**进入 T01 scientific `supports`；正式 context 须 `question_booklet_hits=0` |
-| A10 | 路径所有权 | 仅 `app/rag/**`、`tests/rag/**`、`docs/modules/T04/**`（及必要时兼容补丁 `app/contracts/rag.py`）；**未改** `app/evidence/**` |
-| A11 | 指标边界 | **未**宣称正式 retrieval 指标；`FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false` |
+| # | 检查项 | 结果 | 依据 |
+|---|---|---|---|
+| A1 | 分支/基线 | PASS | `t04/c-retrieval-hit-interface`；`behind_by=0` vs `integration/2026-08-10`；仅 1 commit |
+| A2 | 签名 | PASS | `retrieve_hits(query, filters=None, source_scope="all") -> tuple[RetrievalHit, ...]` |
+| A3 | 旧路径不变 | PASS | 同核 + 定向测覆盖 signature/list/fallback；legacy `EvidenceCard` 路径保留 |
+| A4 | 同核 | PASS | 二者均调 `_retrieve_ranked()`；单次无重复 embed/rerank |
+| A5 | 返回形态 | PASS | 确定序 `tuple`；空结果 `()` 且不调 rerank |
+| A6 | 无损字段 | PASS | quote / score+kind / type+role / `SourceLocator` / 64-hex hash / title / doi\|url / metadata 袋 |
+| A7 | provenance | PASS | type/role/locator/hash 来自持久 metadata；缺则 `RetrievalError`；题册不靠文件名升格为 paper |
+| A8 | fail-closed | PASS | 缺 quote/locator/hash/identity/type·role/source_id → 整批失败，无部分成功 |
+| A9 | 题册边界 | PASS | `BOOKLET` + `QUESTION_SOURCE` 可识别且非 `PAPER`；scientific `supports` 仍由 T01 消费侧 `BOOKLET_EXCLUDED` |
+| A10 | 路径所有权 | PASS | 仅 `app/rag/evidence.py`、`app/rag/retriever.py`、`tests/rag/test_retrieve_hits.py`；未改 `app/evidence/**` |
+| A11 | 指标边界 | PASS | PR 声明正式指标/五题运行未授权；`FORMAL_METRICS_CLAIMED=false` |
 
-**签字输出格式（门 A，待填）：**
+**签字输出（门 A，已填）：**
 
 ```text
-T01_T04_RETRIEVE_HITS_SEMANTIC_SIGNOFF=<PASS|FAIL|WAIT>
-PR=#?
-REVIEWED_HEAD_SHA=<40-hex>
+T01_T04_RETRIEVE_HITS_SEMANTIC_SIGNOFF=PASS
+PR=#47
+REVIEWED_HEAD_SHA=f77959b43f7f520119070181011e0d0713425cdd
 BOOKLET_AS_SUPPORTS=FORBIDDEN_CONFIRMED
 FORMAL_METRICS_CLAIMED=false
-BLOCKING_FINDINGS=<NONE|...>
+BLOCKING_FINDINGS=NONE
 SIGNOFF_OWNER=Yqqxz
-SIGNOFF_DATE=YYYY-MM-DD
+SIGNOFF_DATE=2026-08-12
+READY_AUTHORIZED=false
+MERGE_AUTHORIZED=false
 ```
 
-未见到准确 HEAD 前：**不得**给 PASS。
+### 3.1 Gate A 转换契约（T04 `RetrievalHit` → T01 `EvidenceCardContract`）
+
+门 A 确认：**接口足以无损承载** T01 所需身份与 provenance；下列为下游适配义务（非 T04 本 PR blocker）：
+
+| T04 `RetrievalHit` | T01 `EvidenceCardContract` / Bundle | 备注 |
+|---|---|---|
+| `quoted_text` | `quoted_text` | 必须原样；禁改写 |
+| `source_locator` | `locator` dict | 有 `page`/`section` 时可直接用；仅有 `document_id`/`chunk_id` 时适配器须映射为 T01 认可键（`document`/`chunk`），否则 `incomplete_support_provenance_fields` 会判 locator 缺失 |
+| `content_hash`（64-hex） | `content_hash` | 已 fail-closed；勿截断 |
+| `source_type=paper\|web\|dataset` | 同名 Literal | `booklet` → **`question_booklet`**；`unknown` 不得伪装为 scientific support |
+| `source_role` | （保留于 metadata / 审计） | 题册须保持 `question_source` |
+| `metadata["source_id"]` | `source_id` | `retrieve_hits` 已要求非空 |
+| `chunk_id` / hash | `evidence_id` | 由适配器稳定派生；禁 `booklet_excerpt_Q*` |
+| `doi` / `url` | `doi` / `url` | hit 上可选；**supports** 缺一则 T01 `INCOMPLETE_PROVENANCE` BLOCK |
+| `metadata["authors"]` 等 | `authors` | **非** `RetrievalHit` 一等字段；须由 loader 写入 metadata；缺则 supports BLOCK（门 B / loader 责任） |
+| （无） | `ClaimEvidenceLink` | T01/T07 组 Bundle 时绑定；非 T04 返回物 |
+| （组 Bundle 后） | `precheck_bundle_for_validation(...).gate.passed` | 门 B 材料级验收；门 A 不替代 |
+
+**无 T01 semantic blocker** 阻止本接口合并路径上的门 A 签字。  
+`precheck.gate.passed=true` **不得**仅凭门 A 宣称——须门 B（Q001 真实包）后核验。
 
 ## 4. 门 B — Q001 真实 hits / EvidenceBundle 语义签字检查表
 
@@ -119,23 +142,58 @@ SIGNOFF_OWNER=Yqqxz
 SIGNOFF_DATE=YYYY-MM-DD
 ```
 
+### 4.1 门 B 到货操作清单（预写；材料未到前不得执行签字）
+
+**触发条件（全部满足才开始）：**
+
+1. 队长 `@liuyanbo12` 已受控交付 Q001 包（含 manifest / license / bytes hash）  
+2. T04 `@YHY0728` 已完成 loader/chunk/index/provenance，并给出可复现命令与 manifest commit  
+3. 材料**不是**题册 / `tests/rag/fixtures/**` / provisional gold  
+
+**到货后逐步核验（T01 只读消费，不改 `app/rag/**`）：**
+
+| 步 | 动作 | 失败则 |
+|---|---|---|
+| 1 | 核对 manifest 路径、document ID、原始 bytes SHA-256+size、license/access | 停止，报队长 |
+| 2 | 确认包内无 `sjtu-booklet.pdf` 充当 scientific source | FAIL B1/B8 |
+| 3 | 用 T04 提供的命令取出 `retrieve_hits`（或等价 hits 导出） | 记录 HEAD/命令 |
+| 4 | 抽检每条 hit：`quoted_text`、`source_locator`、`content_hash`、`source_type`/`source_role`、`metadata.authors`、`doi`\|`url` | 缺字段 → FAIL B2–B5 |
+| 5 | 投影为 `EvidenceCardContract`（见 §3.1）；`booklet`→`question_booklet`；禁伪造 authors/doi | 适配错误自修，不改 T04 |
+| 6 | 组 `EvidenceBundle` + `ClaimEvidenceLink`；`question_booklet_hits=0` | FAIL B6/B8 |
+| 7 | `ValidationContext = build_validation_context_from_bundle(...)` | 防字段丢失 |
+| 8 | `precheck = precheck_bundle_for_validation(...); assert precheck.gate.passed` | FAIL B7 |
+| 9 | 确认未宣称正式 retrieval 指标 / 未跑五题真实运行 | B9 |
+| 10 | 填写门 B 签字块并回帖相关 PR / 通知队长与 T07 | 仅 PASS 后 |
+
+**门 B 判定速查（supports）：**
+
+```text
+PASS 仅当：quote 可核验 + locator 有效 + authors 非空 + (doi|url) + content_hash
+     + links 无静默冲突 + precheck.gate.passed + booklet 未进 supports
+WAIT 若材料/manifest/T04 loader 任一未齐
+FAIL 若题册/fixture/metadata-only/缺 provenance/precheck 失败
+```
+
 ## 5. 停止条件（T01 必须报停）
 
 出现任一项立即停止并报告队长：跨 owner 改路径、破坏性 Schema、真实密钥、许可/再分发不明、源 bytes/hash 不一致、题册/fixture/provisional gold 充当正式 evidence、**T01 gate 未通过**、材料未验收前跑 provider 或宣称正式指标。
 
-## 6. 自我审查（2026-08-12）
+## 6. 自我审查（2026-08-12，Gate A）
 
 | 项 | 结果 |
 |---|---|
 | 是否已实现/修改 `app/rag/**` | **否**（正确：属 T04） |
-| 是否已对不存在的 T04 HEAD 给 PASS | **否**（正确：WAIT） |
-| 是否已对未交付 Q001 包给 PASS | **否**（正确：WAIT） |
+| 是否对准确 HEAD `f77959b…` 给门 A PASS | **是** |
+| 是否已对未交付 Q001 包给门 B PASS | **否**（正确：WAIT） |
+| 是否把 Ready/Merge 当作门 A 通过 | **否**（仍 `false`） |
 | 是否保持 `FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false` | **是** |
 | 是否保持五题真实运行 HOLD | **是** |
-| 下一步 | 等 T04 Draft PR → 门 A；等队长交付 Q001 → 门 B |
+| 下一步 | 等队长审核合并 #47；等 Q001 受控交付 → 门 B |
 
 ## 7. 相关文档
 
 - 既有 T07 precheck 语义：`docs/modules/T01/t07_evidence_context_acceptance.md`
+- T07 hit→Bundle 适配：`docs/modules/T01/t07_hit_to_bundle_adapter.md`
 - Wave C handoff：`docs/modules/T01/handoff.md`
+- Owner 状态板：`docs/modules/T01/owner_status_board_2026-08-12.md`
 - T08 证据读口（另 PR #43，与本授权正交）

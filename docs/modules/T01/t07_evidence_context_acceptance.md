@@ -121,9 +121,11 @@ T01 **两道语义门**（详见 `docs/modules/T01/q001_t04_semantic_signoff.md`
 当前状态：
 
 ```text
-T04 Draft PR = 未见开放 → 门 A = WAIT
+T04 Draft PR = #47 @ f77959b43f7f520119070181011e0d0713425cdd → 门 A = PASS
 Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY → 门 B = WAIT
 T07_REAL_RUN_STATUS=HOLD
+READY_AUTHORIZED=false
+MERGE_AUTHORIZED=false
 ```
 
 硬边界：`sjtu-booklet.pdf` 不得进入 scientific `supports`；正式 context 必须 `question_booklet_hits=0`。

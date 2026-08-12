@@ -26,7 +26,9 @@
 
 契约说明：`docs/contracts/T01.md`  
 Wave C 函数级接口：`docs/modules/T01/INTERFACE_WAVE_C.md`  
-T07 precheck 语义：`docs/modules/T01/t07_evidence_context_acceptance.md`
+T07 precheck 语义：`docs/modules/T01/t07_evidence_context_acceptance.md`  
+T07 hit→Bundle 适配：`docs/modules/T01/t07_hit_to_bundle_adapter.md`  
+T04/Q001 语义门：`docs/modules/T01/q001_t04_semantic_signoff.md`
 
 ### 3.1 Wave A/B 核心
 
@@ -130,11 +132,12 @@ CI（PR #35）：lint / type / unit / integration / security / build 在 tip `f6
 
 1. Live `pipeline.py` 接线由 **T02** 完成；T01 只提供冻结接口与桥接函数。  
 2. T07 端到端仍依赖 **T04** `retrieve_hits()` + 非题册真实材料；队长已授权 T04 实施接口，但 **T01 不写 `app/rag/**`**，只做语义 signoff（见 `q001_t04_semantic_signoff.md`）。  
-3. Pairing 正式 retrieval 指标 **未授权**（`FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false`）。  
-4. `metrics.json` 的 precision 标注为 fixture accuracy，**不是**独立科学标注员分数。  
-5. Q028 回归是契约层场景，**不是**人工原文签字样本。  
-6. PR #35 在队长授权前保持 Draft。  
-7. Q001 真实文献包状态：`AWAITING_CONTROLLED_DELIVERY`；五题真实运行：`HOLD`。
+3. **门 A（2026-08-12）已 PASS**：PR #47 @ `f77959b43f7f520119070181011e0d0713425cdd`；`BLOCKING_FINDINGS=NONE`。  
+4. Pairing 正式 retrieval 指标 **未授权**（`FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false`）。  
+5. `metrics.json` 的 precision 标注为 fixture accuracy，**不是**独立科学标注员分数。  
+6. Q028 回归是契约层场景，**不是**人工原文签字样本。  
+7. PR #35 在队长授权前保持 Draft（`MERGE_AUTHORIZED=NO`）。  
+8. Q001 真实文献包状态：`AWAITING_CONTROLLED_DELIVERY` → **门 B=WAIT**；五题真实运行：`HOLD`。
 
 ## 9. 回滚
 
@@ -143,7 +146,7 @@ CI（PR #35）：lint / type / unit / integration / security / build 在 tip `f6
 
 ## 10. 后续 Issue（建议，非本 PR 范围）
 
-1. **门 A**：T04 开出 `t04/c-retrieval-hit-interface` Draft PR 后，T01 对准确 HEAD 做 `retrieve_hits` 语义 signoff。  
+1. **门 A**：~~待 T04 Draft PR~~ → **DONE PASS**（#47 @ `f77959b…`）。  
 2. **门 B**：队长受控交付 Q001 包且 T04 完成 loader/provenance 后，T01 对实际 hits / EvidenceBundle 语义签字。  
 3. 独立科学标注精度评估（若队长授权正式指标）。  
 4. T02 完成 pipeline 接入后的集成冒烟。  
