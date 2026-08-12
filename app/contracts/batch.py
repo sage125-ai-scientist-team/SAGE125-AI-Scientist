@@ -12,6 +12,12 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 BATCH_SCHEMA_VERSION: Final[str] = "t07.batch.v1"
 CHECKPOINT_SCHEMA_VERSION: Final[str] = "t07.checkpoint.v1"
+BATCH_SCHEMA_VERSION_V2: Final[str] = "t07.batch.v2"
+CHECKPOINT_SCHEMA_VERSION_V2: Final[str] = "t07.checkpoint.v2"
+TOKEN_ONLY_BUDGET_POLICY_VERSION: Final[str] = "t07.budget.token-only.v2"
+TOKEN_AND_COST_BUDGET_POLICY_VERSION: Final[str] = (
+    "t07.budget.token-and-cost.v1"
+)
 STANDARD_OUTPUT_FIELDS: Final[tuple[str, ...]] = (
     "Problem",
     "Rationale",
@@ -78,6 +84,42 @@ class StaleCheckpointAction(str, Enum):
     REJECT = "reject"
 
 
+class BudgetMode(str, Enum):
+    TOKEN_AND_COST = "token_and_cost"
+    TOKEN_ONLY = "token_only"
+
+
+class BudgetPolicy(BaseModel):
+    """Versioned budget semantics; v2 cannot be enabled by a bare string."""
+
+    version: str
+    mode: BudgetMode
+    cost_accounting_required: bool
+    price_snapshot_required: bool
+    captain_waiver_reference: str | None = None
+
+    _normalize_version = field_validator("version")(_require_non_empty)
+
+    @model_validator(mode="after")
+    def enforce_policy_version(self) -> "BudgetPolicy":
+        if self.mode is BudgetMode.TOKEN_ONLY:
+            if self.version != TOKEN_ONLY_BUDGET_POLICY_VERSION:
+                raise ValueError("token_only requires the approved v2 policy")
+            if self.cost_accounting_required or self.price_snapshot_required:
+                raise ValueError("token_only cannot require cost accounting or prices")
+            if (
+                self.captain_waiver_reference is None
+                or not self.captain_waiver_reference.strip()
+            ):
+                raise ValueError("token_only requires a captain waiver reference")
+        else:
+            if self.version != TOKEN_AND_COST_BUDGET_POLICY_VERSION:
+                raise ValueError("token_and_cost requires its versioned policy")
+            if not self.cost_accounting_required or not self.price_snapshot_required:
+                raise ValueError("token_and_cost requires prices and cost accounting")
+        return self
+
+
 class FailureRecord(BaseModel):
     error_code: str
     message: str
@@ -127,6 +169,35 @@ class BatchBudget(BaseModel):
             raise ValueError("token budget exceeded")
         if self.cost_used_usd > self.cost_limit_usd:
             raise ValueError("cost budget exceeded")
+        return self
+
+
+class BatchBudgetV2(BaseModel):
+    """Token-preserving v2 budget with explicit nullable cost semantics."""
+
+    mode: BudgetMode
+    token_limit: int = Field(ge=0)
+    tokens_used: int = Field(default=0, ge=0)
+    max_output_tokens_per_call: int = Field(ge=0)
+    cost_limit_usd: Decimal | None = None
+    cost_used_usd: Decimal | None = None
+
+    @model_validator(mode="after")
+    def enforce_mode(self) -> "BatchBudgetV2":
+        if self.tokens_used > self.token_limit:
+            raise ValueError("token budget exceeded")
+        for field_name in ("cost_limit_usd", "cost_used_usd"):
+            value = getattr(self, field_name)
+            if value is not None and (not value.is_finite() or value < 0):
+                raise ValueError(f"{field_name} must be finite and non-negative")
+        if self.mode is BudgetMode.TOKEN_ONLY:
+            if self.cost_limit_usd is not None or self.cost_used_usd is not None:
+                raise ValueError("token_only cost fields must be null")
+        else:
+            if self.cost_limit_usd is None or self.cost_used_usd is None:
+                raise ValueError("token_and_cost requires Decimal cost fields")
+            if self.cost_used_usd > self.cost_limit_usd:
+                raise ValueError("cost budget exceeded")
         return self
 
 
@@ -296,6 +367,23 @@ class BatchJob(BaseModel):
         return self
 
 
+class BatchJobV2(BatchJob):
+    """A new-batch-only v2 job; historical v1 jobs remain unchanged."""
+
+    schema_version: Literal["t07.batch.v2"] = BATCH_SCHEMA_VERSION_V2
+    freeze_id: str
+    budget_policy: BudgetPolicy
+    budget: BatchBudgetV2
+
+    _normalize_freeze_id = field_validator("freeze_id")(_require_non_empty)
+
+    @model_validator(mode="after")
+    def bind_v2_budget_policy(self) -> "BatchJobV2":
+        if self.budget.mode is not self.budget_policy.mode:
+            raise ValueError("job budget mode does not match budget policy")
+        return self
+
+
 class CheckpointRecord(BaseModel):
     checkpoint_version: Literal["t07.checkpoint.v1"] = (
         CHECKPOINT_SCHEMA_VERSION
@@ -361,6 +449,96 @@ class CheckpointRecord(BaseModel):
             source_hash=job.source_hash,
             input_hash=job.input_hash,
             schema_version=job.schema_version,
+            route_id=job.model_route.route_id,
+            provider=job.model_route.provider,
+            model=job.model_route.model,
+            model_version=job.model_route.model_version,
+            prompt_version=job.model_route.prompt_version,
+            prompt_hash=job.model_route.prompt_hash,
+            status=job.status,
+            attempt=job.attempt,
+            job=job,
+        )
+
+
+class CheckpointRecordV2(BaseModel):
+    """v2 checkpoint binding policy, freeze, route, prompt, and input identity."""
+
+    checkpoint_version: Literal["t07.checkpoint.v2"] = (
+        CHECKPOINT_SCHEMA_VERSION_V2
+    )
+    batch_id: str
+    question_id: str
+    source_hash: str = Field(pattern=SHA256_PATTERN)
+    input_hash: str = Field(pattern=SHA256_PATTERN)
+    schema_version: Literal["t07.batch.v2"] = BATCH_SCHEMA_VERSION_V2
+    budget_policy_version: Literal["t07.budget.token-only.v2"] = (
+        TOKEN_ONLY_BUDGET_POLICY_VERSION
+    )
+    budget_mode: Literal[BudgetMode.TOKEN_ONLY] = BudgetMode.TOKEN_ONLY
+    captain_waiver_reference: str
+    freeze_id: str
+    route_id: str
+    provider: str
+    model: str
+    model_version: str
+    prompt_version: str
+    prompt_hash: str | None = Field(default=None, pattern=SHA256_PATTERN)
+    status: JobStatus
+    attempt: int = Field(ge=0)
+    job: BatchJobV2
+    updated_at: datetime = Field(default_factory=_utc_now)
+
+    @field_validator("updated_at")
+    @classmethod
+    def require_timezone(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() is None:
+            raise ValueError("updated_at must be timezone-aware")
+        return value
+
+    @model_validator(mode="after")
+    def bind_embedded_job(self) -> "CheckpointRecordV2":
+        expected = {
+            "batch_id": self.job.batch_id,
+            "question_id": self.job.question_id,
+            "source_hash": self.job.source_hash,
+            "input_hash": self.job.input_hash,
+            "schema_version": self.job.schema_version,
+            "budget_policy_version": self.job.budget_policy.version,
+            "budget_mode": self.job.budget_policy.mode,
+            "captain_waiver_reference": (
+                self.job.budget_policy.captain_waiver_reference
+            ),
+            "freeze_id": self.job.freeze_id,
+            "route_id": self.job.model_route.route_id,
+            "provider": self.job.model_route.provider,
+            "model": self.job.model_route.model,
+            "model_version": self.job.model_route.model_version,
+            "prompt_version": self.job.model_route.prompt_version,
+            "prompt_hash": self.job.model_route.prompt_hash,
+            "status": self.job.status,
+            "attempt": self.job.attempt,
+        }
+        mismatches = [
+            name for name, value in expected.items() if getattr(self, name) != value
+        ]
+        if mismatches:
+            raise ValueError(
+                f"checkpoint fields do not match embedded v2 job: {mismatches}"
+            )
+        return self
+
+    @classmethod
+    def from_job(cls, job: BatchJobV2) -> "CheckpointRecordV2":
+        return cls(
+            batch_id=job.batch_id,
+            question_id=job.question_id,
+            source_hash=job.source_hash,
+            input_hash=job.input_hash,
+            budget_policy_version=job.budget_policy.version,
+            budget_mode=job.budget_policy.mode,
+            captain_waiver_reference=job.budget_policy.captain_waiver_reference,
+            freeze_id=job.freeze_id,
             route_id=job.model_route.route_id,
             provider=job.model_route.provider,
             model=job.model_route.model,

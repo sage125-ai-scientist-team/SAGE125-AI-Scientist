@@ -231,6 +231,57 @@ def qwen_not_configured(details: str | Exception | None = None) -> None:
     )
 
 
+def questions_missing(details: str | Exception | None = None) -> None:
+    """
+    渲染「125 问题清单缺失」错误卡，阻止静默空跑。
+
+    参数：
+        details: 可选技术细节（已走统一脱敏路径）。
+
+    返回：
+        None。副作用是在 Streamlit 页面渲染错误卡与修复命令。
+    """
+    render_user_error(
+        title="问题清单未加载",
+        message=(
+            "当前没有可用的 125 问题清单，因此无法选题，也无法启动 Mock / Real 运行。"
+            "请先生成 data/processed/questions_125.json；Preview 环境可启用 bootstrap 种子。"
+        ),
+        fix_commands=[
+            "py -3 scripts/extract_125_questions.py",
+            "py -3 scripts/bootstrap_preview_data.py --allow-seed",
+        ],
+        details=details,
+        key_ns="questions_missing",
+    )
+
+
+def question_not_selected(details: str | Exception | None = None) -> None:
+    """
+    渲染「尚未选择科学问题」错误卡，避免按钮点击无反馈。
+
+    参数：
+        details: 可选技术细节（例如 preset 关键词未命中）。
+
+    返回：
+        None。副作用是在 Streamlit 页面渲染错误卡与修复建议。
+    """
+    render_user_error(
+        title="尚未选择科学问题",
+        message=(
+            "请先在 STEP 01 选择一个问题，或点击侧栏 Demo Presets。"
+            "未选题时系统不会启动流水线，也不会写入运行产物。"
+        ),
+        fix_commands=[
+            "py -3 scripts/extract_125_questions.py",
+            "py -3 scripts/bootstrap_preview_data.py --allow-seed",
+        ],
+        details=details,
+        severity="warning",
+        key_ns="question_not_selected",
+    )
+
+
 def rag_missing(details: str | Exception | None = None) -> None:
     """RAG 索引缺失。"""
     render_user_error(

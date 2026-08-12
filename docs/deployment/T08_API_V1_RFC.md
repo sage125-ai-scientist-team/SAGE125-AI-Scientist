@@ -1,6 +1,6 @@
 # T08 API v1 RFC — Job/Status 与交付 Projection
 
-状态：Wave A 冻结候选
+状态：Wave A 已冻结并合并；Wave B owner 契约适配待实施
 日期：2026-07-29
 前缀：`/api/v1`
 
@@ -10,8 +10,9 @@ API v1 拥有 HTTP DTO、任务调度状态、幂等、correlation 和错误映�
 它不拥有科学结论、Reviewer 判定、质量门、真实执行判定或多模态抽取。
 
 当前实际接通 Job/Status。Artifact、Version、Feedback 的 DTO 代码只作为后续
-owner 联调的候选 projection，不是当前 operation 的成功响应。对应五个 operation
-在公开契约可用前失败关闭：OpenAPI 主状态和运行时均为 HTTP 503
+owner 联调的候选 projection，不是当前 operation 的成功响应。当前仓库已提供
+T02/T03/T05/T06 公开契约，但 Wave A 尚未完成 projection adapter；对应五个
+operation 在 Wave B 接入前继续失败关闭：OpenAPI 主状态和运行时均为 HTTP 503
 `ErrorResponse`，不声明任何 2xx：
 
 ```json
@@ -162,8 +163,8 @@ worker 只有在 adapter 通过冻结 owner 契约明确提供以下全部证明
 
 任一证明缺失时，任务进入
 `waiting_feedback / awaiting_completion_verification`，保留 `upstream_run_id`，
-但不得显示为已完成。当前 T02/T03/T05 公开契约尚未冻结，因此默认 pipeline
-adapter 不自行推断这些证明。
+但不得显示为已完成。当前 T02/T03/T05 公开契约已经进入 `app/contracts/**`，
+但默认 pipeline adapter 在 Wave B 显式适配前仍不得自行推断这些证明。
 
 为兼容 Wave A 早期的 runner 抽象，旧实现若只返回裸 `upstream_run_id`，会被
 集中转换为“无完成证明”的结果并进入待核验；裸字符串绝不等价于 `completed`。
@@ -220,7 +221,26 @@ adapter 不自行推断这些证明。
 version 均来自 T03；T08 只做校验、传播和展示。请求体继续由
 `FeedbackCreateRequest` 校验，但当前有效请求仍返回 503，不返回 202。
 
-## 6. 后续冻结事项
+## 6. Wave B 契约适配事项
 
-Wave B 接入前仍需 T02/T03/T05/T06 owner 提供可导入、可序列化的公开契约。
-在此之前，不允许通过解析内部对象、私有字段或文件命名补齐业务字段。
+当前可导入的 owner 契约包括：
+
+- T02：`app/contracts/revision.py`；
+- T03：`app/contracts/validation.py`；
+- T05：`app/contracts/execution.py`；
+- T06：`app/contracts/multimodal.py`。
+
+Wave B 应通过集中 adapter 把这些契约投影到 T08 外部 DTO，并与 owner 确认字段、
+版本和错误语义。完成适配前，不允许通过内部对象、私有字段或文件命名补齐业务字段，
+也不允许把当前 503 改成没有真实数据来源的成功响应。
+
+## 7. 2026-08-10 Wave A 收尾加固
+
+- SQLite 同一数据库的进程内 writer 通过共享锁串行化，跨进程继续由
+  `BEGIN IMMEDIATE` 与 `busy_timeout` 保护；
+- 启动恢复不再复用面向 HTTP 列表的 100 条上限，而是扫描全部
+  `queued/retrying/running` 记录；
+- 超过内存队列容量的恢复任务进入内部 recovery backlog，worker 每完成一个任务
+  即继续补充，任务仍以 SQLite 状态为唯一真源；
+- shutdown 会先停止领取新任务，尚未开始的任务保持 `queued`，等待下一次启动恢复；
+- 根 `.gitignore` 和上游 pipeline 日志上下文不属于 T08 owner，本轮未修改。

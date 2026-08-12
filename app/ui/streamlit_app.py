@@ -234,9 +234,21 @@ def main() -> None:
         }
         for label, kws in presets.items():
             if st.button(label, width="stretch", key=f"preset_{label}"):
-                pid = _find_qid(questions, kws)
-                if pid:
-                    state.queue_question_selection(pid)
+                if not questions:
+                    errors.questions_missing(
+                        details=f"Demo Preset「{label}」需要先加载问题清单。"
+                    )
+                else:
+                    pid = _find_qid(questions, kws)
+                    if pid:
+                        state.queue_question_selection(pid)
+                    else:
+                        errors.question_not_selected(
+                            details=(
+                                f"Demo Preset「{label}」未命中任何问题"
+                                f"（关键词：{', '.join(kws)}）。"
+                            )
+                        )
         components.render_security_note()
 
     # ---- 1) First Run Wizard ----
@@ -305,38 +317,74 @@ def main() -> None:
     trigger_generate = action == "generate"
     trigger_latest = load_latest or (wiz_action == "latest")
 
-    if (trigger_generate or trigger_mock) and qid:
-        run_mode = "mock" if trigger_mock else mode
-        # 真实模式：preflight 不通过则禁止启动（不 silent fallback mock）。
-        if run_mode == "real":
-            pf = api_client.run_preflight(switches.get("use_local_rag", True), switches.get("use_deep_research", True))
-            if not pf.get("ok"):
-                err_text = "\n".join(pf.get("errors", []))
-                if any("DASHSCOPE" in e or "WORKSPACE" in e for e in pf.get("errors", [])):
-                    errors.qwen_not_configured(details=err_text)
-                elif any("RAG" in e or "chunks" in e for e in pf.get("errors", [])):
-                    errors.rag_missing(details=err_text)
+    if trigger_generate or trigger_mock:
+        if not questions:
+            errors.questions_missing(
+                details="触发了生成/Mock，但 questions_125.json 不可用。"
+            )
+        elif not qid:
+            errors.question_not_selected(
+                details="触发了生成/Mock，但 STEP 01 尚未选中 question_id。"
+            )
+        else:
+            run_mode = "mock" if trigger_mock else mode
+            # 真实模式：preflight 不通过则禁止启动（不 silent fallback mock）。
+            if run_mode == "real":
+                pf = api_client.run_preflight(
+                    switches.get("use_local_rag", True),
+                    switches.get("use_deep_research", True),
+                )
+                if not pf.get("ok"):
+                    err_text = "\n".join(pf.get("errors", []))
+                    if any("DASHSCOPE" in e or "WORKSPACE" in e for e in pf.get("errors", [])):
+                        errors.qwen_not_configured(details=err_text)
+                    elif any("RAG" in e or "chunks" in e for e in pf.get("errors", [])):
+                        errors.rag_missing(details=err_text)
+                    else:
+                        errors.render_user_error(
+                            "无法启动真实模式",
+                            "preflight 未通过：\n- " + "\n- ".join(pf.get("errors", [])),
+                            fix_commands=pf.get("fix_commands"),
+                        )
                 else:
-                    errors.render_user_error(
-                        "无法启动真实模式",
-                        "preflight 未通过：\n- " + "\n- ".join(pf.get("errors", [])),
-                        fix_commands=pf.get("fix_commands"),
-                    )
+                    state.begin_run()
+                    run_result = _execute_run(qid, run_mode, switches)
+                    _handle_run_result(qid, run_mode, run_result)
             else:
                 state.begin_run()
                 run_result = _execute_run(qid, run_mode, switches)
                 _handle_run_result(qid, run_mode, run_result)
-        else:
-            state.begin_run()
-            run_result = _execute_run(qid, run_mode, switches)
-            _handle_run_result(qid, run_mode, run_result)
 
     if trigger_latest:
         latest = (diag.get("latest_run") or {}).get("run_id")
-        if latest:
+        if not latest:
+            errors.render_user_error(
+                title="暂无历史运行",
+                message="当前环境还没有可加载的 latest run。请先成功跑一次 Mock 演示。",
+                fix_commands=[
+                    "py -3 scripts/bootstrap_preview_data.py --allow-seed",
+                    '$env:MOCK_LLM="true"; py -3 scripts/run_demo.py; Remove-Item Env:\\MOCK_LLM',
+                ],
+                severity="warning",
+                key_ns="latest_missing",
+            )
+        else:
             loaded = api_client.get_run(latest)
-            if _activate_loaded_run(loaded, questions):
+            if loaded.get("status") == "missing" or not (loaded.get("plan") or loaded.get("question_id")):
+                errors.missing_artifact("report.json", run_id=latest)
+            elif _activate_loaded_run(loaded, questions):
                 st.rerun()
+            else:
+                errors.render_user_error(
+                    title="无法加载历史运行",
+                    message=(
+                        f"运行 {latest} 已找到，但未能绑定到当前问题清单。"
+                        "请确认 questions_125.json 含对应 QID。"
+                    ),
+                    fix_commands=["py -3 scripts/bootstrap_preview_data.py --allow-seed"],
+                    details=str({k: loaded.get(k) for k in ("run_id", "question_id", "status")}),
+                    key_ns="latest_bind_failed",
+                )
 
     # 读取当前运行结果。
     result = state.get_run_result()

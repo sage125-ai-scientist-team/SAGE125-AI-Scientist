@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "scope": "T05 Wave B failure injection and repeatability gate",
+  "executed_at_utc_date": "2026-08-05",
+  "command": "python -m pytest -q <the nine listed test nodes>",
+  "result": {
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 2.96
+  },
+  "cases": [
+    {
+      "case": "timeout",
+      "test": "tests/execution/test_actual_execution.py::test_T05_A_INTEGRITY_008_timeout_is_not_actual",
+      "expected_classification": "timeout",
+      "actual_execution_must_be_false": true
+    },
+    {
+      "case": "memory_limit_simulation",
+      "test": "tests/execution/test_actual_execution.py::test_T05_A_INTEGRITY_013_unimplemented_resource_limits_are_not_enforced",
+      "expected_classification": "capability reported honestly as not_enforced, unsupported, or future_container_backend",
+      "actual_execution_must_be_false": true
+    },
+    {
+      "case": "invalid_path",
+      "test": "tests/execution/test_security.py::test_t05_a_path_002_rejects_plain_and_encoded_traversal",
+      "expected_classification": "path validation rejection",
+      "actual_execution_must_be_false": true
+    },
+    {
+      "case": "bad_dataset",
+      "test": "tests/execution/test_flagship_baseline.py::test_dataset_pin_and_schema_fail_closed_before_artifacts",
+      "expected_classification": "approved pin or schema rejection",
+      "actual_execution_must_be_false": true
+    },
+    {
+      "case": "missing_dependency",
+      "test": "tests/execution/test_manifests.py::test_T05_A_PROV_004_actual_requires_complete_dependency_versions",
+      "expected_classification": "dependency_missing",
+      "actual_execution_must_be_false": true
+    },
+    {
+      "case": "repeat_run",
+      "test": "tests/execution/test_flagship_baseline.py::test_baseline_is_deterministic_and_writes_complete_artifacts",
+      "expected_classification": "identical declared artifact bytes",
+      "actual_execution_must_be_false": false
+    },
+    {
+      "case": "missing_artifact",
+      "test": "tests/execution/test_actual_execution.py::test_T05_A_INTEGRITY_009_missing_required_artifact_fails",
+      "expected_classification": "artifact_missing",
+      "actual_execution_must_be_false": true
+    },
+    {
+      "case": "checksum_mismatch",
+      "test": "tests/execution/test_actual_execution.py::test_T05_A_INTEGRITY_010_checksum_mismatch_fails_closed",
+      "expected_classification": "checksum_mismatch",
+      "actual_execution_must_be_false": true
+    },
+    {
+      "case": "cleanup_failure",
+      "test": "tests/execution/test_runner.py::test_T05_A_RUN_006_cleanup_failure_cannot_masquerade_as_success",
+      "expected_classification": "cleanup_failed",
+      "actual_execution_must_be_false": true
+    }
+  ],
+  "notes": [
+    "No test was deleted, skipped, or weakened for this report.",
+    "The Windows process backend does not claim enforced memory isolation; OOM-like capability coverage therefore checks honest unsupported/not-enforced reporting.",
+    "The formal online run and offline reproduction each reported actual_execution=true; all eight scientific artifact hashes and sizes matched."
+  ]
+}

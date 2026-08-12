@@ -1,0 +1,70 @@
+T07-WB5 preflight RED tests
+Date: 2026-08-03 Asia/Shanghai
+Tested code SHA: 20354d62c54cb78e50e2f672e292ffd72d548b73
+Integration SHA: 9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c
+Ahead/behind: 4/0
+
+Attempt 1 command:
+& ".\.venv\Scripts\python.exe" -m pytest -q tests/batch/test_five_run_preflight.py tests/batch/test_completion_gate.py tests/batch/test_frozen_five_run_config.py tests/batch/test_actual_call_audit.py
+
+Attempt 1 exit code: 101
+Attempt 1 result:
+Unable to create process using '"C:\Users\mmyyrr\AppData\Local\Programs\Python\Python312\python.exe" -m pytest -q tests/batch/test_five_run_preflight.py tests/batch/test_completion_gate.py tests/batch/test_frozen_five_run_config.py tests/batch/test_actual_call_audit.py'
+
+Environment note:
+.venv/pyvenv.cfg names Python 3.12.10 at the missing executable above. No virtual-environment or dependency file was changed. A read-only test fallback used the bundled Python 3.12.13 executable with .venv/Lib/site-packages on PYTHONPATH.
+
+Attempt 2 Python version:
+3.12.13 (main, Mar  3 2026, 15:01:35) [MSC v.1944 64 bit (AMD64)]
+
+Attempt 2 Python executable:
+C:\Users\mmyyrr\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe
+
+Attempt 2 command:
+$env:PYTHONPATH=(Resolve-Path '.venv\Lib\site-packages').Path
+& 'C:\Users\mmyyrr\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -m pytest -q tests/batch/test_five_run_preflight.py tests/batch/test_completion_gate.py tests/batch/test_frozen_five_run_config.py tests/batch/test_actual_call_audit.py
+
+Attempt 2 exit code: 2
+Collected: 0 (collection interrupted by 4 errors)
+Passed: 0
+Failed: 0
+Errors: 4
+Warnings: 2
+Duration: 0.87s
+First error: ModuleNotFoundError: No module named 'app.batch.five_run_preflight'
+
+=================================== ERRORS ====================================
+___________ ERROR collecting tests/batch/test_five_run_preflight.py ___________
+ImportError while importing test module 'D:\SAGE125-AI-Scientist\tests\batch\test_five_run_preflight.py'.
+tests\batch\test_five_run_preflight.py:8: in <module>
+    from app.batch.five_run_preflight import (
+E   ModuleNotFoundError: No module named 'app.batch.five_run_preflight'
+____________ ERROR collecting tests/batch/test_completion_gate.py _____________
+ImportError while importing test module 'D:\SAGE125-AI-Scientist\tests\batch\test_completion_gate.py'.
+tests\batch\test_completion_gate.py:13: in <module>
+    from app.batch.actual_call_audit import ActualCallAudit
+E   ModuleNotFoundError: No module named 'app.batch.actual_call_audit'
+_________ ERROR collecting tests/batch/test_frozen_five_run_config.py _________
+ImportError while importing test module 'D:\SAGE125-AI-Scientist\tests\batch\test_frozen_five_run_config.py'.
+tests\batch\test_frozen_five_run_config.py:13: in <module>
+    from app.batch.five_run_preflight import (
+E   ModuleNotFoundError: No module named 'app.batch.five_run_preflight'
+___________ ERROR collecting tests/batch/test_actual_call_audit.py ____________
+ImportError while importing test module 'D:\SAGE125-AI-Scientist\tests\batch\test_actual_call_audit.py'.
+tests\batch\test_actual_call_audit.py:10: in <module>
+    from app.batch.actual_call_audit import (
+E   ModuleNotFoundError: No module named 'app.batch.actual_call_audit'
+============================== warnings summary ===============================
+.venv\Lib\site-packages\_pytest\cacheprovider.py:475
+  PytestCacheWarning: could not create cache path D:\SAGE125-AI-Scientist\data\cache\pytest-cache\v\cache\nodeids: [WinError 5] Access denied.
+
+.venv\Lib\site-packages\_pytest\cacheprovider.py:429
+  PytestCacheWarning: could not create cache path D:\SAGE125-AI-Scientist\data\cache\pytest-cache\v\cache\lastfailed: [WinError 5] Access denied.
+
+=========================== short test summary info ===========================
+ERROR tests/batch/test_five_run_preflight.py
+ERROR tests/batch/test_completion_gate.py
+ERROR tests/batch/test_frozen_five_run_config.py
+ERROR tests/batch/test_actual_call_audit.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!
+2 warnings, 4 errors in 0.87s
