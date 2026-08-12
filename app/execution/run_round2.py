@@ -128,6 +128,41 @@ _CANONICAL_CONFIG: dict[str, Any] = {
     ],
     "robustness": {"fold_count": 5, "seed": 125, "thresholds": [0.5, 0.4]},
 }
+_ROUND2_PACKAGE_FILES = {
+    "execution_spec.json",
+    "execution_result.json",
+    "run_metadata.json",
+    "package_manifest.json",
+    "consumer_mapping.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts/metrics-balanced-accuracy.json",
+    "artifacts/metrics-false-negative-rate.json",
+    "artifacts/metrics-malignant-recall.json",
+    "artifacts/confusion-matrix.csv",
+    "artifacts/predictions.csv",
+    "artifacts/model.json",
+    "artifacts/run-summary.json",
+    "artifacts/summary.svg",
+    "comparison/two-round-comparison.json",
+    "comparison/two-round-comparison.csv",
+    "comparison/changed-predictions.csv",
+    "comparison/two-round-comparison.svg",
+    "comparison/control-invariants.json",
+    "robustness/robustness-folds.csv",
+    "robustness/robustness-summary.json",
+    "robustness/robustness-comparison.svg",
+    "reproduction/reproduction_report.json",
+    "reproduction/reproduction_report.md",
+    "reproduction/environment_fingerprint.json",
+    "reproduction/artifact_comparison.json",
+}
+_SCIENTIFIC_ROUND2_FILES = {
+    relative
+    for relative in _ROUND2_PACKAGE_FILES
+    if relative.startswith(("artifacts/", "comparison/", "robustness/"))
+}
+_FIXTURE_LABELS = ["SYNTHETIC_TEST_FIXTURE_ONLY", "NOT_FORMAL_SCIENTIFIC_EVIDENCE"]
 
 
 class Round2ConfigError(ValueError):
@@ -757,6 +792,504 @@ def validate_control_invariants(
     }
 
 
+def _load_robustness_rows(dataset_path: Path) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """Load a WDBC-shaped local file without weakening the formal dataset pin."""
+
+    try:
+        raw = _verified_unpinned_bytes(Path(dataset_path), stage="round2-robustness")
+        if raw.startswith(b"\xef\xbb\xbf") or b"\x00" in raw:
+            raise ValueError("invalid encoding marker")
+        reader = csv.reader(io.StringIO(raw.decode("utf-8", errors="strict"), newline=""))
+        features: list[list[float]] = []
+        labels: list[int] = []
+        text_labels: list[str] = []
+        identifiers: set[str] = set()
+        for row in reader:
+            if len(row) != 32 or not row[0] or row[0] in identifiers or row[1] not in {"B", "M"}:
+                raise ValueError("invalid WDBC row")
+            values = [float(value) for value in row[2:]]
+            if len(values) != 30 or any(not math.isfinite(value) for value in values):
+                raise ValueError("invalid WDBC feature")
+            identifiers.add(row[0])
+            features.append(values)
+            labels.append(1 if row[1] == "M" else 0)
+            text_labels.append(row[1])
+        if len(features) < 10 or set(labels) != {0, 1}:
+            raise ValueError("insufficient stratified rows")
+        return (
+            np.asarray(features, dtype=np.float64),
+            np.asarray(labels, dtype=np.int64),
+            text_labels,
+        )
+    except (OSError, UnicodeError, ValueError, SecurityViolation, csv.Error):
+        raise Round2EvidenceError("robustness dataset is missing or invalid") from None
+
+
+def _deterministic_stratified_folds(
+    labels: np.ndarray, *, fold_count: int, seed: int
+) -> list[np.ndarray]:
+    generator = np.random.default_rng(seed)
+    buckets: list[list[int]] = [[] for _ in range(fold_count)]
+    for label in (0, 1):
+        members = np.flatnonzero(labels == label)
+        if len(members) < fold_count:
+            raise Round2EvidenceError("each robustness label must cover every fold")
+        shuffled = generator.permutation(members)
+        for index, member in enumerate(shuffled):
+            buckets[index % fold_count].append(int(member))
+    return [np.asarray(sorted(bucket), dtype=np.int64) for bucket in buckets]
+
+
+def run_robustness_analysis(
+    dataset_path: Path, config: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Run the predeclared deterministic, internal five-fold robustness analysis."""
+
+    try:
+        parsed = dict(config)
+        _Round2Config.model_validate(parsed)
+        if parsed != _CANONICAL_CONFIG:
+            raise ValueError("unreviewed robustness control")
+    except (TypeError, ValueError, ValidationError):
+        raise Round2ConfigError("Round 2 robustness configuration is invalid") from None
+
+    features, labels, text_labels = _load_robustness_rows(Path(dataset_path))
+    robustness = parsed["robustness"]
+    fold_count = robustness["fold_count"]
+    seed = robustness["seed"]
+    thresholds = list(robustness["thresholds"])
+    test_folds = _deterministic_stratified_folds(labels, fold_count=fold_count, seed=seed)
+    all_indices = np.arange(len(labels), dtype=np.int64)
+    optimizer = parsed["optimizer"]
+    folds: list[dict[str, Any]] = []
+
+    for fold_index, test_indices in enumerate(test_folds, start=1):
+        train_indices = np.setdiff1d(all_indices, test_indices, assume_unique=True)
+        weights, bias, means, scales = _fit_logistic(
+            features[train_indices],
+            labels[train_indices],
+            learning_rate=optimizer["learning_rate"],
+            iterations=optimizer["iterations"],
+            l2=optimizer["l2"],
+        )
+        probabilities = _probabilities(features[test_indices], weights, bias, means, scales)
+        if not np.all(np.isfinite(probabilities)):
+            raise Round2EvidenceError("robustness probabilities are non-finite")
+        evaluations: list[dict[str, Any]] = []
+        for threshold in thresholds:
+            predicted = (probabilities >= threshold).astype(np.int64)
+            evaluated = _evaluate(labels[test_indices], predicted)
+            recall = float(evaluated["malignant_recall"])
+            metrics = {
+                "balanced_accuracy": float(evaluated["balanced_accuracy"]),
+                "malignant_recall": recall,
+                "false_negative_rate": 1.0 - recall,
+            }
+            if any(not math.isfinite(value) for value in metrics.values()):
+                raise Round2EvidenceError("robustness metrics are non-finite")
+            evaluations.append(
+                {
+                    "threshold": threshold,
+                    "metrics": metrics,
+                    "confusion": {
+                        key: int(value) for key, value in evaluated["confusion"].items()
+                    },
+                }
+            )
+        train_ordinals = [int(index) + 1 for index in train_indices]
+        test_ordinals = [int(index) + 1 for index in test_indices]
+        folds.append(
+            {
+                "fold_index": fold_index,
+                "train_count": len(train_ordinals),
+                "test_count": len(test_ordinals),
+                "train_ordinals": train_ordinals,
+                "test_ordinals": test_ordinals,
+                "test_labels": [text_labels[int(index)] for index in test_indices],
+                "fit_scope": "fold_train_only",
+                "fit_ordinals": train_ordinals,
+                "evaluations": evaluations,
+            }
+        )
+
+    aggregate: dict[str, dict[str, dict[str, float | int]]] = {}
+    for threshold_index, threshold in enumerate(thresholds):
+        threshold_summary: dict[str, dict[str, float | int]] = {}
+        for metric in ("balanced_accuracy", "malignant_recall", "false_negative_rate"):
+            values = np.asarray(
+                [fold["evaluations"][threshold_index]["metrics"][metric] for fold in folds],
+                dtype=np.float64,
+            )
+            threshold_summary[metric] = {
+                "mean": float(np.mean(values)),
+                "std": float(np.std(values, ddof=0)),
+                "min": float(np.min(values)),
+                "max": float(np.max(values)),
+                "fold_count": fold_count,
+            }
+        aggregate[str(threshold)] = threshold_summary
+
+    return {
+        "schema_version": "1.0",
+        "evaluation_scope": "deterministic_internal_stratified_5fold_robustness",
+        "fold_count": fold_count,
+        "seed": seed,
+        "thresholds": thresholds,
+        "threshold_selection_performed": False,
+        "excluded_folds": [],
+        "reported_fold_indices": list(range(1, fold_count + 1)),
+        "aggregate_ddof": 0,
+        "aggregate": aggregate,
+        "folds": folds,
+        "fixture_labels": list(_FIXTURE_LABELS),
+    }
+
+
+def _package_dataset_pin(
+    spec: Mapping[str, Any], result: Mapping[str, Any], metadata: Mapping[str, Any]
+) -> dict[str, Any]:
+    try:
+        spec_datasets = spec["datasets"]
+        result_datasets = result["datasets"]
+        dataset = metadata["dataset"]
+        if (
+            not isinstance(spec_datasets, list)
+            or len(spec_datasets) != 1
+            or not isinstance(result_datasets, list)
+            or len(result_datasets) != 1
+            or dataset != spec_datasets[0]
+            or dataset != result_datasets[0]
+        ):
+            raise ValueError("dataset views disagree")
+        pin = {
+            "dataset_id": dataset["dataset_id"],
+            "sha256": dataset["sha256"],
+            "size_bytes": dataset["size_bytes"],
+        }
+        if (
+            not isinstance(pin["dataset_id"], str)
+            or not isinstance(pin["sha256"], str)
+            or len(pin["sha256"]) != 64
+            or type(pin["size_bytes"]) is not int
+            or pin["size_bytes"] < 1
+        ):
+            raise ValueError("dataset pin invalid")
+        return pin
+    except (KeyError, TypeError, ValueError):
+        raise Round2ReproductionError("dataset evidence differs or is invalid") from None
+
+
+def _reproduction_view(package_dir: Path) -> dict[str, Any]:
+    _, payloads = _load_integrity_package(
+        Path(package_dir),
+        expected_files=_ROUND2_PACKAGE_FILES - {"package_manifest.json"},
+        error_type=Round2ReproductionError,
+    )
+    for relative, raw in payloads.items():
+        lowered = raw.lower()
+        if any(
+            marker in lowered
+            for marker in (
+                b"authorization: bearer",
+                b"api_key=",
+                b"cookie:",
+                b"private key",
+                b"raw_wdbc",
+                b"cure_all_cancers",
+                b"patient_diagnosis",
+            )
+        ):
+            raise Round2ReproductionError("package content violates evidence policy")
+        if relative.endswith(".json"):
+            try:
+                _strict_json_bytes(raw)
+            except (UnicodeError, ValueError):
+                raise Round2ReproductionError(
+                    f"JSON reproduction evidence is invalid: {relative}"
+                ) from None
+        elif relative.endswith(".csv"):
+            try:
+                if raw.startswith(b"\xef\xbb\xbf") or b"\r\n" in raw or not raw.endswith(b"\n"):
+                    raise ValueError("CSV serialization")
+                rows = list(csv.reader(io.StringIO(raw.decode("utf-8", errors="strict"), newline="")))
+                if not rows or not rows[0]:
+                    raise ValueError("CSV content")
+            except (UnicodeError, ValueError, csv.Error):
+                raise Round2ReproductionError(
+                    f"CSV reproduction evidence is invalid: {relative}"
+                ) from None
+        elif relative.endswith(".svg"):
+            try:
+                text = raw.decode("utf-8", errors="strict").lower()
+                if not text.startswith("<svg") or "paired" not in text or "not for clinical use" not in text:
+                    raise ValueError("SVG content")
+            except (UnicodeError, ValueError):
+                raise Round2ReproductionError(
+                    f"SVG reproduction evidence is invalid: {relative}"
+                ) from None
+    spec = _json_payload(payloads, "execution_spec.json", error_type=Round2ReproductionError)
+    result = _json_payload(payloads, "execution_result.json", error_type=Round2ReproductionError)
+    metadata = _json_payload(payloads, "run_metadata.json", error_type=Round2ReproductionError)
+    model = _json_payload(payloads, "artifacts/model.json", error_type=Round2ReproductionError)
+    summary = _json_payload(
+        payloads, "artifacts/run-summary.json", error_type=Round2ReproductionError
+    )
+    environment = _json_payload(
+        payloads,
+        "reproduction/environment_fingerprint.json",
+        error_type=Round2ReproductionError,
+    )
+    predictions = _prediction_rows(
+        payloads["artifacts/predictions.csv"], error_type=Round2ReproductionError
+    )
+    comparison = _json_payload(
+        payloads,
+        "comparison/two-round-comparison.json",
+        error_type=Round2ReproductionError,
+    )
+    if not (
+        spec.get("question_id") == result.get("question_id") == "Q028"
+        and spec.get("round_index") == result.get("round_index") == metadata.get("round_index") == 2
+        and spec.get("parent_execution_id")
+        == result.get("parent_execution_id")
+        == metadata.get("parent_execution_id")
+        == ROUND1_EXECUTION_ID
+        and result.get("status") == "succeeded"
+        and result.get("actual_execution") is True
+        and result.get("runner_verified") is True
+        and metadata.get("actual_execution") is True
+        and metadata.get("formal_round2_executed") is True
+        and metadata.get("evaluation_scope") == "paired_post_hoc_holdout_sensitivity"
+        and comparison.get("evaluation_scope") == "paired_post_hoc_holdout_sensitivity"
+    ):
+        raise Round2ReproductionError("formal reproduction metadata is invalid")
+    expected_parameters = {
+        "seed": 125,
+        "test_fraction": 0.2,
+        "learning_rate": 0.05,
+        "iterations": 2000,
+        "l2": 0.001,
+        "decision_threshold": 0.4,
+    }
+    if (
+        spec.get("seed") != 125
+        or metadata.get("seed") != 125
+        or not _same_number(metadata.get("test_fraction"), 0.2)
+        or model.get("algorithm") != "standardized_full_batch_logistic_regression"
+        or model.get("parameters") != expected_parameters
+        or (
+            "controls" in metadata
+            and metadata.get("controls") != _CANONICAL_CONFIG
+        )
+    ):
+        raise Round2ReproductionError("model control evidence is invalid")
+    train = model.get("train_ordinals")
+    holdout = model.get("holdout_ordinals")
+    if (
+        not isinstance(train, list)
+        or not isinstance(holdout, list)
+        or not train
+        or not holdout
+        or any(type(value) is not int or value < 0 for value in train + holdout)
+        or len(set(train)) != len(train)
+        or len(set(holdout)) != len(holdout)
+        or not set(train).isdisjoint(holdout)
+        or [row["record_ordinal"] for row in predictions] != holdout
+    ):
+        raise Round2ReproductionError("split or ordinal evidence is invalid")
+    confusion = summary.get("confusion")
+    metrics = summary.get("metrics")
+    if (
+        not isinstance(confusion, dict)
+        or set(confusion)
+        != {"true_negative", "false_positive", "false_negative", "true_positive"}
+        or any(type(value) is not int or value < 0 for value in confusion.values())
+        or not isinstance(metrics, dict)
+        or set(metrics)
+        != {"balanced_accuracy", "malignant_recall", "false_negative_rate"}
+        or any(
+            type(value) not in {int, float}
+            or not math.isfinite(float(value))
+            or not 0.0 <= float(value) <= 1.0
+            for value in metrics.values()
+        )
+    ):
+        raise Round2ReproductionError("metric evidence is invalid")
+    artifact_index = {
+        item.get("artifact_id"): item
+        for item in result.get("artifacts", [])
+        if isinstance(item, dict)
+    }
+    metric_index = {
+        item.get("name"): item
+        for item in result.get("metrics", [])
+        if isinstance(item, dict)
+    }
+    expected_artifacts = {item[0] for item in _ARTIFACT_DECLARATIONS}
+    expected_metrics = {
+        "balanced_accuracy": "balanced-accuracy",
+        "false_negative_rate": "false-negative-rate",
+        "malignant_recall": "malignant-recall",
+    }
+    if (
+        set(artifact_index) != expected_artifacts
+        or any(item.get("validation_status") != "valid" for item in artifact_index.values())
+        or set(metric_index) != set(expected_metrics)
+        or any(
+            metric_index[name].get("artifact_id") != artifact_id
+            or metric_index[name].get("validation_status") != "valid"
+            or not _same_number(metric_index[name].get("value"), metrics[name])
+            for name, artifact_id in expected_metrics.items()
+        )
+    ):
+        raise Round2ReproductionError("artifact or metric schema is invalid")
+    pin = _package_dataset_pin(spec, result, metadata)
+    if pin != {
+        "dataset_id": WDBC_DATASET_ID,
+        "sha256": DATASET_SHA256,
+        "size_bytes": DATASET_SIZE_BYTES,
+    }:
+        raise Round2ReproductionError("dataset pin is not the reviewed WDBC snapshot")
+    return {
+        "payloads": payloads,
+        "spec": spec,
+        "result": result,
+        "metadata": metadata,
+        "model": model,
+        "summary": summary,
+        "environment": environment,
+        "predictions": predictions,
+        "dataset_pin": pin,
+    }
+
+
+def compare_reproduction_packages(primary_dir: Path, candidate_dir: Path) -> dict[str, Any]:
+    """Fail closed unless two packages have the same scientific evidence."""
+
+    primary = _reproduction_view(Path(primary_dir))
+    candidate = _reproduction_view(Path(candidate_dir))
+    if primary["dataset_pin"] != candidate["dataset_pin"]:
+        raise Round2ReproductionError("dataset pin mismatch")
+
+    primary_model = primary["model"]
+    candidate_model = candidate["model"]
+    split_fields = ("train_ordinals", "holdout_ordinals")
+    if any(primary_model.get(field) != candidate_model.get(field) for field in split_fields):
+        raise Round2ReproductionError("split mismatch")
+
+    primary_rows = primary["predictions"]
+    candidate_rows = candidate["predictions"]
+    if len(primary_rows) != len(candidate_rows):
+        raise Round2ReproductionError("prediction ordinal mismatch")
+    for left, right in zip(primary_rows, candidate_rows, strict=True):
+        if (
+            left["record_ordinal"] != right["record_ordinal"]
+            or left["actual_label"] != right["actual_label"]
+            or left["predicted_label"] != right["predicted_label"]
+        ):
+            raise Round2ReproductionError("prediction ordinal or label mismatch")
+        if left["malignant_probability"] != right["malignant_probability"]:
+            raise Round2ReproductionError("probability mismatch")
+
+    if primary_model.get("parameters") != candidate_model.get("parameters"):
+        raise Round2ReproductionError("model parameters mismatch")
+    for field in ("bias", "feature_means", "feature_scales", "coefficients"):
+        left = primary_model.get(field)
+        right = candidate_model.get(field)
+        matches = _same_number(left, right) if field == "bias" else _same_numeric_sequence(left, right)
+        if not matches:
+            raise Round2ReproductionError("model arrays mismatch")
+
+    primary_summary = primary["summary"]
+    candidate_summary = candidate["summary"]
+    if primary_summary.get("confusion") != candidate_summary.get("confusion"):
+        raise Round2ReproductionError("metric confusion mismatch")
+    left_metrics = primary_summary.get("metrics")
+    right_metrics = candidate_summary.get("metrics")
+    if (
+        not isinstance(left_metrics, dict)
+        or not isinstance(right_metrics, dict)
+        or set(left_metrics) != set(right_metrics)
+        or any(not _same_number(left_metrics[key], right_metrics[key]) for key in left_metrics)
+    ):
+        raise Round2ReproductionError("metric mismatch")
+
+    differing_scientific = sorted(
+        relative
+        for relative in _SCIENTIFIC_ROUND2_FILES
+        if primary["payloads"][relative] != candidate["payloads"][relative]
+    )
+    if differing_scientific:
+        raise Round2ReproductionError(
+            "scientific artifact mismatch: " + ", ".join(differing_scientific)
+        )
+    environment_versions_recorded = all(
+        isinstance(view["environment"].get(key), str) and bool(view["environment"][key])
+        for view in (primary, candidate)
+        for key in ("python", "numpy")
+    )
+    if not environment_versions_recorded:
+        raise Round2ReproductionError("environment versions are missing")
+    environment_differences = sorted(
+        key
+        for key in set(primary["environment"]) | set(candidate["environment"])
+        if primary["environment"].get(key) != candidate["environment"].get(key)
+    )
+    exact_matches = [
+        "question_id",
+        "round_index",
+        "parent_execution_id",
+        "dataset_pin",
+        "split",
+        "record_ordinals",
+        "actual_labels",
+        "predicted_labels",
+        "confusion",
+        "scientific_artifacts",
+    ]
+    numeric_matches = [
+        "malignant_probabilities",
+        "feature_means",
+        "feature_scales",
+        "coefficients",
+        "bias",
+        "metrics",
+    ]
+    permitted_differences = ["execution_id", "timestamp", "workspace_uri"]
+    return {
+        "schema_version": "1.0",
+        "reproduction_valid": True,
+        "exact_matches": exact_matches,
+        "numeric_matches": numeric_matches,
+        "allowed_differences": permitted_differences,
+        "environment_differences": environment_differences,
+        "mismatches": [],
+        "tolerance_policy": dict(_FLOAT_POLICY),
+        "byte_identical_claim_allowed": False,
+        "scientific_content_equivalent": True,
+        "manifest_complete": True,
+        "dataset_pin_match": True,
+        "dataset_pin": primary["dataset_pin"],
+        "split_match": True,
+        "ordinal_match": True,
+        "predictions_match": True,
+        "probability_comparison": {"match": True, **_FLOAT_POLICY},
+        "confusion_match": True,
+        "metrics_match": True,
+        "model_parameters_match": True,
+        "model_arrays_match": True,
+        "scientific_match": True,
+        "scientific_files_compared": sorted(_SCIENTIFIC_ROUND2_FILES),
+        "permitted_metadata_differences": permitted_differences,
+        "environment_versions_recorded": True,
+        "byte_identical_claim": False,
+        "structural_and_numeric_comparison": True,
+        "network_calls": 0,
+        "child_process_residue": False,
+        "workspace_residue": False,
+    }
+
+
 def artifact_requirements() -> list[ArtifactRequirement]:
     return [
         ArtifactRequirement(
@@ -881,7 +1414,10 @@ def run_formal_round2(
     package_dir = Path(package_dir)
     if package_dir.exists() or package_dir.is_symlink():
         raise Round2EvidenceError("formal Round 2 destination already exists or is unsafe")
-    package_dir.parent.mkdir(parents=True, exist_ok=True)
+    package_parent = ensure_secure_root(
+        package_dir.parent, create=True, stage="round2-destination"
+    )
+    package_dir = package_parent / package_dir.name
     staging = package_dir.with_name(f".{package_dir.name}.{uuid.uuid4().hex}.part")
     try:
         reference = load_round1_reference(round1_package_dir)
@@ -949,6 +1485,43 @@ def _atomic_write(path: Path, payload: bytes) -> None:
         os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
+
+
+def _csv_bytes(header: Sequence[object], rows: Sequence[Sequence[object]]) -> bytes:
+    stream = io.StringIO(newline="")
+    writer = csv.writer(stream, lineterminator="\n")
+    writer.writerow(header)
+    writer.writerows(rows)
+    return stream.getvalue().encode("utf-8")
+
+
+def _write_package_manifest(package_dir: Path) -> None:
+    entries = []
+    for path in sorted(package_dir.rglob("*")):
+        if path.is_symlink():
+            raise Round2EvidenceError("formal package contains unsafe indirection")
+        if path.is_file() and path.name != "package_manifest.json":
+            relative = path.relative_to(package_dir).as_posix()
+            digest = file_sha256(
+                path,
+                max_bytes=_MAX_EVIDENCE_FILE_BYTES,
+                stage="round2-package",
+                invalid_code="artifact_invalid",
+            )
+            entries.append(
+                {
+                    "path": relative,
+                    "sha256": digest.sha256,
+                    "size_bytes": digest.size_bytes,
+                }
+            )
+    expected = _ROUND2_PACKAGE_FILES - {"package_manifest.json"}
+    if {entry["path"] for entry in entries} != expected:
+        raise Round2EvidenceError("formal package file coverage is incomplete")
+    _atomic_write(
+        package_dir / "package_manifest.json",
+        _json_bytes({"schema_version": "1.0", "files": entries}),
+    )
 
 
 def _scientific_child(args: argparse.Namespace) -> int:
@@ -1073,7 +1646,8 @@ def _scientific_child(args: argparse.Namespace) -> int:
     )
     svg = (
         '<svg xmlns="http://www.w3.org/2000/svg"><title>WDBC Round 2 paired '
-        "post-hoc holdout sensitivity; not for clinical use</title></svg>\n"
+        "post-hoc holdout sensitivity; not independent validation; "
+        "not for clinical use</title></svg>\n"
     )
     _atomic_write(Path("output/confusion-matrix.csv"), confusion_stream.getvalue().encode("utf-8"))
     _atomic_write(Path("output/model.json"), _json_bytes(model))
@@ -1094,10 +1668,243 @@ def _assemble_formal_package(
     reference: Mapping[str, Any],
     formal_round2_executed: bool,
 ) -> None:
-    """Phase B supplies robustness, comparison, and reproduction packaging."""
+    """Assemble one verified formal execution and its derived internal analyses."""
 
-    raise Round2EvidenceError(
-        "Round 2 supplemental evidence assembly is unavailable before Phase B"
+    if not formal_round2_executed:
+        raise Round2EvidenceError("formal Round 2 execution attestation is required")
+    staging = ensure_secure_root(staging, create=False, stage="round2-package")
+    workspace = ensure_secure_root(workspace, create=False, stage="round2-package")
+    dataset_path = ensure_regular_file(dataset_path, stage="round2-package")
+    spec_payload = spec.model_dump(mode="json")
+    result_payload = result.model_dump(mode="json")
+    dataset = result_payload["datasets"][0]
+    metadata = {
+        "schema_version": "1.0",
+        "question_id": "Q028",
+        "round_index": 2,
+        "parent_execution_id": ROUND1_EXECUTION_ID,
+        "evaluation_scope": "paired_post_hoc_holdout_sensitivity",
+        "formal_round2_executed": True,
+        "actual_execution": result.actual_execution,
+        "runner_verified": result.runner_verified,
+        "dataset": dataset,
+        "seed": result.seed,
+        "test_fraction": _CANONICAL_CONFIG["test_fraction"],
+        "controls": _CANONICAL_CONFIG,
+        "execution_id": result.execution_id,
+        "workspace_uri": result.workspace_uri,
+        "timestamp": result.finished_at,
+    }
+    consumer_mapping = {
+        "schema_version": "1.0",
+        "artifacts": [item.model_dump(mode="json") for item in result.artifacts],
+        "metrics": [item.model_dump(mode="json") for item in result.metrics],
+    }
+    for relative, payload in (
+        ("execution_spec.json", _json_bytes(spec_payload)),
+        ("execution_result.json", _json_bytes(result_payload)),
+        ("run_metadata.json", _json_bytes(metadata)),
+        ("consumer_mapping.json", _json_bytes(consumer_mapping)),
+        ("stdout.log", result.stdout.encode("utf-8")),
+        ("stderr.log", result.stderr.encode("utf-8")),
+    ):
+        _atomic_write(staging / relative, payload)
+
+    for artifact in result.artifacts:
+        source = secure_relative_path(
+            workspace,
+            artifact.relative_path,
+            must_exist=True,
+            require_file=True,
+            stage="round2-package",
+            invalid_code="artifact_invalid",
+        )
+        payload = read_verified_bytes(
+            source,
+            expected_sha256=artifact.sha256,
+            expected_size=artifact.size_bytes,
+            max_bytes=_MAX_EVIDENCE_FILE_BYTES,
+            containment_root=workspace,
+            stage="round2-package",
+            invalid_code="artifact_invalid",
+        )
+        _atomic_write(staging / "artifacts" / Path(artifact.relative_path).name, payload)
+
+    comparison = derive_paired_comparison(reference, threshold=0.4)
+    round1_metrics = reference["run_summary"]["metrics"]
+    comparison_rows = [
+        [
+            1,
+            0.5,
+            round1_metrics["balanced_accuracy"],
+            round1_metrics["malignant_recall"],
+            1.0 - round1_metrics["malignant_recall"],
+        ],
+        [
+            2,
+            0.4,
+            comparison["round2_metrics"]["balanced_accuracy"],
+            comparison["round2_metrics"]["malignant_recall"],
+            comparison["round2_metrics"]["false_negative_rate"],
+        ],
+    ]
+    changed_rows = [
+        [
+            item["record_ordinal"],
+            item["actual_label"],
+            item["round1_predicted_label"],
+            item["round2_predicted_label"],
+            format(float(item["malignant_probability"]), ".12g"),
+        ]
+        for item in comparison["changed_predictions"]
+    ]
+    paired_svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg"><title>WDBC Round 2 paired '
+        "post-hoc holdout sensitivity; not independent validation; "
+        "not for clinical use</title></svg>\n"
+    ).encode("utf-8")
+    _atomic_write(
+        staging / "comparison" / "two-round-comparison.json", _json_bytes(comparison)
+    )
+    _atomic_write(
+        staging / "comparison" / "two-round-comparison.csv",
+        _csv_bytes(
+            [
+                "round",
+                "threshold",
+                "balanced_accuracy",
+                "malignant_recall",
+                "false_negative_rate",
+            ],
+            comparison_rows,
+        ),
+    )
+    _atomic_write(
+        staging / "comparison" / "changed-predictions.csv",
+        _csv_bytes(
+            [
+                "record_ordinal",
+                "actual_label",
+                "round1_predicted_label",
+                "round2_predicted_label",
+                "malignant_probability",
+            ],
+            changed_rows,
+        ),
+    )
+    _atomic_write(staging / "comparison" / "two-round-comparison.svg", paired_svg)
+
+    robustness = run_robustness_analysis(dataset_path, _CANONICAL_CONFIG)
+    robustness["fixture_labels"] = []
+    fold_rows = []
+    for fold in robustness["folds"]:
+        for evaluation in fold["evaluations"]:
+            metrics = evaluation["metrics"]
+            confusion = evaluation["confusion"]
+            fold_rows.append(
+                [
+                    fold["fold_index"],
+                    evaluation["threshold"],
+                    metrics["balanced_accuracy"],
+                    metrics["malignant_recall"],
+                    metrics["false_negative_rate"],
+                    confusion["true_negative"],
+                    confusion["false_positive"],
+                    confusion["false_negative"],
+                    confusion["true_positive"],
+                ]
+            )
+    robustness_svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg"><title>WDBC Round 2 paired '
+        "post-hoc holdout sensitivity robustness; not independent validation; "
+        "not for clinical use</title></svg>\n"
+    ).encode("utf-8")
+    _atomic_write(
+        staging / "robustness" / "robustness-folds.csv",
+        _csv_bytes(
+            [
+                "fold",
+                "threshold",
+                "balanced_accuracy",
+                "malignant_recall",
+                "false_negative_rate",
+                "tn",
+                "fp",
+                "fn",
+                "tp",
+            ],
+            fold_rows,
+        ),
+    )
+    _atomic_write(
+        staging / "robustness" / "robustness-summary.json", _json_bytes(robustness)
+    )
+    _atomic_write(
+        staging / "robustness" / "robustness-comparison.svg", robustness_svg
+    )
+
+    placeholder_controls = {
+        "schema_version": "1.0",
+        "only_permitted_change": "decision_threshold",
+        "all_controls_unchanged": False,
+        "validation_status": "pending",
+    }
+    _atomic_write(
+        staging / "comparison" / "control-invariants.json",
+        _json_bytes(placeholder_controls),
+    )
+    fingerprint = result_payload.get("environment_fingerprint") or {}
+    dependencies = fingerprint.get("dependencies") or {}
+    environment = {
+        "schema_version": "1.0",
+        "python": fingerprint.get("python_version", "unavailable"),
+        "numpy": dependencies.get("numpy", "unavailable"),
+        "fingerprint": fingerprint,
+    }
+    reproduction = {
+        "schema_version": "1.0",
+        "comparison_status": "awaiting_independent_clean_environment_package",
+        "scientific_match": None,
+        "byte_identical_claim": False,
+        "structural_and_numeric_comparison": True,
+        "formal_round2_executed": True,
+    }
+    reproduction_markdown = (
+        "# Round 2 reproduction report\n\n"
+        "This package records a paired internal sensitivity analysis. It is not independent "
+        "external validation and is not for clinical use. A second clean-environment package "
+        "must be compared before scientific reproduction is claimed.\n"
+    ).encode("utf-8")
+    artifact_comparison = {
+        "schema_version": "1.0",
+        "scientific_files": sorted(_SCIENTIFIC_ROUND2_FILES),
+        "scientific_match": None,
+        "comparison_status": "not_performed_single_execution",
+        "float_comparison": _FLOAT_POLICY,
+    }
+    _atomic_write(
+        staging / "reproduction" / "environment_fingerprint.json",
+        _json_bytes(environment),
+    )
+    _atomic_write(
+        staging / "reproduction" / "reproduction_report.json",
+        _json_bytes(reproduction),
+    )
+    _atomic_write(
+        staging / "reproduction" / "reproduction_report.md", reproduction_markdown
+    )
+    _atomic_write(
+        staging / "reproduction" / "artifact_comparison.json",
+        _json_bytes(artifact_comparison),
+    )
+    _write_package_manifest(staging)
+    controls = validate_control_invariants(reference, staging)
+    _atomic_write(
+        staging / "comparison" / "control-invariants.json", _json_bytes(controls)
+    )
+    _write_package_manifest(staging)
+    _load_integrity_package(
+        staging, expected_files=_ROUND2_PACKAGE_FILES - {"package_manifest.json"}
     )
 
 
