@@ -2,8 +2,15 @@
 from __future__ import annotations
 import json
 from pathlib import Path
+import subprocess
+import sys
 from typing import Callable
-from scripts.eval.validate_t09_formal_corpus import REGISTRY, validate
+from scripts.eval.validate_t09_formal_corpus import (
+    REGISTRY,
+    derive_positive_qrels,
+    validate,
+    validate_pairs,
+)
 
 def altered_registry(
     tmp_path: Path, mutate: Callable[[dict[str, object]], None]
@@ -51,3 +58,44 @@ def test_out_of_scope_t01_artifact_rejected(tmp_path: Path) -> None:
         lambda payload: payload.update(package_path="docs/modules/T01"),
     )
     assert "package_path" in validate(registry)
+
+
+def test_unsupported_relation_not_positive_qrel() -> None:
+    """Only supports-plus-allow can become a positive qrel."""
+    assert derive_positive_qrels([{"relation": "contradicts", "expected_decision": "allow"}]) == []
+
+
+def test_unjudged_is_not_negative() -> None:
+    """Unjudged material produces neither a positive nor an inferred negative."""
+    assert derive_positive_qrels([{"relation": "unjudged", "expected_decision": "allow"}]) == []
+
+
+def test_missing_required_pair_field_fails() -> None:
+    """A required pairing field cannot be silently omitted."""
+    assert "pair_fields" in validate_pairs([{"claim_id": "c", "evidence_id": "e"}])
+
+
+def test_duplicate_atomic_pair_id_fails() -> None:
+    """Duplicate claim/evidence atomic keys are rejected."""
+    pair = {"claim_id": "c", "evidence_id": "e"}
+    assert "duplicate_pair" in validate_pairs([pair, pair])
+
+
+def test_validator_is_offline_and_write_free(tmp_path: Path) -> None:
+    """Invalid local input yields JSON failure without repository artifacts."""
+    invalid = tmp_path / "invalid.json"
+    invalid.write_text("{", encoding="utf-8")
+    before = subprocess.run(
+        ["git", "status", "--porcelain"], capture_output=True, text=True, check=True
+    ).stdout
+    result = subprocess.run(
+        [sys.executable, "-B", "scripts/eval/validate_t09_formal_corpus.py", "--registry", str(invalid)],
+        capture_output=True, text=True, check=False,
+    )
+    after = subprocess.run(
+        ["git", "status", "--porcelain"], capture_output=True, text=True, check=True
+    ).stdout
+    assert result.returncode != 0
+    assert json.loads(result.stdout)["valid"] is False
+    assert "Traceback" not in result.stderr
+    assert after == before

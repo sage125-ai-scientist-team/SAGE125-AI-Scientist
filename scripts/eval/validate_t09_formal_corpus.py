@@ -13,6 +13,31 @@ def digest(path: Path) -> str:
     """Return the raw-byte SHA-256 of one admitted file."""
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
+
+def derive_positive_qrels(pairs: list[dict[str, object]]) -> list[dict[str, object]]:
+    """Derive only explicitly approved positive qrels in memory."""
+    return [
+        pair for pair in pairs
+        if pair.get("relation") == "supports" and pair.get("expected_decision") == "allow"
+    ]
+
+
+def validate_pairs(pairs: list[dict[str, object]]) -> list[str]:
+    """Return fail-closed errors for required pair fields and duplicate keys."""
+    errors: list[str] = []
+    keys = set()
+    required = {"claim_id", "evidence_id", "linked_question_id", "source_id", "relation",
+                "expected_decision", "quote", "locator", "content_hash", "source_file_sha256"}
+    for pair in pairs:
+        if required - pair.keys():
+            errors.append("pair_fields")
+        key = (pair.get("claim_id"), pair.get("evidence_id"))
+        if key in keys:
+            errors.append("duplicate_pair")
+        keys.add(key)
+    return errors
+
+
 def validate(registry_path: Path = REGISTRY) -> list[str]:
     """Validate registry scope, byte identities, pairs and qrel eligibility."""
     r = json.loads(registry_path.read_text(encoding="utf-8"))
@@ -34,16 +59,8 @@ def validate(registry_path: Path = REGISTRY) -> list[str]:
         if not p.is_file() or digest(p) != expected:
             errors.append(f"hash:{rel}")
     pairs = json.loads((base / "pairs.json").read_text(encoding="utf-8")).get("pairs", [])
-    keys = set()
+    errors += validate_pairs(pairs)
     for pair in pairs:
-        needed = {"claim_id", "evidence_id", "linked_question_id", "source_id", "relation",
-                  "expected_decision", "quote", "locator", "content_hash", "source_file_sha256"}
-        if needed - pair.keys():
-            errors.append("pair_fields")
-        key = (pair.get("claim_id"), pair.get("evidence_id"))
-        if key in keys:
-            errors.append("duplicate_pair")
-        keys.add(key)
         if pair.get("fixture") or pair.get("synthetic") or pair.get("provisional"):
             errors.append("invalid_material")
     if len(pairs) != 8:
@@ -55,7 +72,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--registry", type=Path, default=REGISTRY)
     args = parser.parse_args()
-    errors = validate(args.registry)
+    try:
+        errors = validate(args.registry)
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        errors = [f"invalid_registry:{type(error).__name__}"]
     print(json.dumps({"valid": not errors, "errors": errors, "provider_calls": 0}))
     return int(bool(errors))
 if __name__ == "__main__":
