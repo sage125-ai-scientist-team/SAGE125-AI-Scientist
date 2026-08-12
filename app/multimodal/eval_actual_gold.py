@@ -208,21 +208,31 @@ def evaluate_actual_gold(
         )
     except Exception as exc:  # noqa: BLE001
         # Expected without paid vision: raster requires successful VL parse.
+        # Prefer audit flags when a call was attempted (do not hardcode false).
+        last_audit = getattr(vision, "last_audit", None)
+        called = bool(getattr(last_audit, "actual_external_call", False))
         chart_case.update(
             {
                 "ok": False,
                 "error_type": type(exc).__name__,
                 "error": str(exc)[:400],
                 "needs_human_review": True,
-                "vision_blocked": True,
-                "vision_audit_status": getattr(
-                    getattr(vision, "last_audit", None), "status", None
-                ),
-                "actual_external_call": False,
+                "vision_blocked": not called,
+                "vision_audit_status": getattr(last_audit, "status", None),
+                "actual_external_call": called,
+                "vision_error_type": getattr(last_audit, "error_type", None),
+                "tokens_in": getattr(last_audit, "tokens_in", None),
+                "tokens_out": getattr(last_audit, "tokens_out", None),
+                "response_id": getattr(last_audit, "response_id", None),
                 "duration_ms": (time.perf_counter() - t0) * 1000.0,
                 "note": (
-                    "Chart PNG requires Qwen VL; without credentials/authorization "
-                    "actual chart digitization remains blocked (not fabricated)."
+                    "Chart PNG requires successful Qwen VL parse; "
+                    "failures are reported honestly (not fabricated)."
+                    if called
+                    else (
+                        "Chart PNG requires Qwen VL; without credentials/authorization "
+                        "actual chart digitization remains blocked (not fabricated)."
+                    )
                 ),
             }
         )

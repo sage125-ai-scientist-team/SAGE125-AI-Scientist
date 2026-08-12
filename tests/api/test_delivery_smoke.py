@@ -13,7 +13,10 @@ from fastapi.testclient import TestClient
 from streamlit.testing.v1 import AppTest
 
 from app.api import routes
-from app.api.main import app
+from app.api.auth import FixedWindowRateLimiter, HashedAPIKeyAuth
+from app.api.contracts import JobCreateRequest, JobStatus
+from app.api.job_store import SQLiteJobStore
+from app.api.main import app, create_app
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -83,3 +86,49 @@ def test_oversized_upload_response_keeps_correlation_id():
 
     assert response.status_code == 413
     assert response.headers["X-Correlation-ID"] == "oversized-audit"
+
+
+def test_v1_fails_closed_when_auth_is_not_configured(monkeypatch):
+    """缺少服务端 key 配置时不得匿名开放 v1。"""
+    monkeypatch.delenv("SAGE_API_KEYS_JSON", raising=False)
+    isolated = create_app()
+
+    with TestClient(isolated) as isolated_client:
+        response = isolated_client.get("/api/v1/questions")
+
+    assert response.status_code == 503
+    assert response.json()["code"] == "AUTH_NOT_CONFIGURED"
+
+
+def test_default_production_composition_keeps_owner_report_unavailable(tmp_path):
+    """默认 composition 不得从旧文件或 fixture 拼装 canonical report。"""
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    isolated = create_app(
+        job_store=store,
+        auth_policy=HashedAPIKeyAuth({"test-user": "test-api-token-123"}),
+        rate_limiter=FixedWindowRateLimiter(limit=100, window_seconds=60),
+    )
+
+    with TestClient(
+        isolated,
+        headers={"X-API-Key": "test-api-token-123"},
+    ) as isolated_client:
+        record, _ = store.create_job(
+            request=JobCreateRequest(question_id="Q001", mode="real"),
+            correlation_id="corr-default-composition",
+            requested_by="test-user",
+        )
+        store.transition(
+            record.job_id,
+            JobStatus.RUNNING,
+            actor="test",
+            source="fixture",
+            upstream_run_id="run-owner-1",
+            increment_attempt=True,
+        )
+        response = isolated_client.get(
+            f"/api/v1/jobs/{record.job_id}/report"
+        )
+
+    assert response.status_code == 503
+    assert response.json()["code"] == "CANONICAL_REPORT_UNAVAILABLE"

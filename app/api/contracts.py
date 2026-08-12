@@ -10,7 +10,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class JobStatus(str, Enum):
@@ -66,8 +66,24 @@ class JobError(BaseModel):
     retryable: bool = False
 
 
+class RetryMetadata(BaseModel):
+    attempt: int = Field(ge=0)
+    max_attempts: int = Field(ge=1)
+    retryable: bool = False
+    last_attempt_at: datetime | None = None
+    next_retry_at: datetime | None = None
+    backoff_seconds: int | None = Field(default=None, ge=0)
+
+
+class TimeoutMetadata(BaseModel):
+    timeout_seconds: int | None = Field(default=None, ge=1)
+    deadline_at: datetime | None = None
+    timed_out_at: datetime | None = None
+
+
 class JobLinks(BaseModel):
     self: str
+    evidence: str
     artifacts: str
     versions: str
     feedback: str
@@ -96,6 +112,8 @@ class JobStatusResponse(BaseModel):
     finished_at: datetime | None = None
     attempt: int = 0
     max_attempts: int = 1
+    retry: RetryMetadata
+    timeout: TimeoutMetadata
     upstream_run_id: str | None = None
     error: JobError | None = None
     links: JobLinks
@@ -104,6 +122,23 @@ class JobStatusResponse(BaseModel):
 class JobListResponse(BaseModel):
     items: list[JobStatusResponse]
     count: int
+
+
+class QuestionSummary(BaseModel):
+    question_id: str
+    domain: str
+    question: str
+    source_page: int | None = None
+    source_excerpt: str | None = None
+    status: str
+    status_reason: str | None = None
+
+
+class QuestionListResponse(BaseModel):
+    items: list[QuestionSummary]
+    count: int
+    total: int
+    availability: Literal["available", "partial", "unavailable"]
 
 
 class ArtifactStatus(str, Enum):
@@ -119,6 +154,7 @@ class TruthStatus(str, Enum):
     EXPECTED = "expected"
     MOCK = "mock"
     ACTUAL = "actual"
+    UNAVAILABLE = "unavailable"
 
 
 class Artifact(BaseModel):
@@ -141,12 +177,73 @@ class ArtifactListResponse(BaseModel):
     availability: Literal["available", "partial", "unavailable"]
 
 
+class ExportCreateRequest(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={"example": {"formats": ["json", "markdown", "pdf"]}}
+    )
+
+    formats: list[Literal["json", "markdown", "pdf"]] = Field(
+        min_length=1,
+        max_length=3,
+    )
+
+    @field_validator("formats")
+    @classmethod
+    def _unique_formats(cls, values: list[str]) -> list[str]:
+        if len(values) != len(set(values)):
+            raise ValueError("formats must not contain duplicates")
+        return values
+
+
+class ExportResponse(BaseModel):
+    job_id: str
+    items: list[Artifact]
+    reused: bool
+
+
+class EvidenceRelation(BaseModel):
+    claim_id: str
+    relation: Literal["supports", "contradicts", "context"]
+    confidence: float = Field(ge=0.0, le=1.0)
+    validation_status: Literal["valid", "invalid", "pending"]
+
+
+class EvidenceProjection(BaseModel):
+    evidence_id: str
+    source_id: str
+    source_type: str
+    title: str
+    quoted_text: str
+    locator: dict[str, Any]
+    authors: list[str] = Field(default_factory=list)
+    year: int | None = None
+    doi: str | None = None
+    url: str | None = None
+    content_hash: str | None = None
+    domain: str | None = None
+    verification_status: str
+    relations: list[EvidenceRelation] = Field(default_factory=list)
+
+
+class EvidenceListResponse(BaseModel):
+    job_id: str
+    bundle_id: str
+    items: list[EvidenceProjection]
+    truncated: bool = False
+    truncation_reason: str | None = None
+    availability: Literal["available", "partial", "unavailable"]
+
+
 class IssueProjection(BaseModel):
     issue_id: str
     severity: str
     summary: str
     closure_status: str
     required_revision: str | None = None
+    category: str | None = None
+    opened_in_version: int | None = None
+    closed_in_version: int | None = None
+    resolution_note: str | None = None
 
 
 class Version(BaseModel):
@@ -154,6 +251,7 @@ class Version(BaseModel):
     ordinal: int
     created_at: datetime | None = None
     parent_version_id: str | None = None
+    revision_iteration: int | None = None
     validation_status: str | None = None
     feedback_ids: list[str] = Field(default_factory=list)
     reviewer_issues: list[IssueProjection] = Field(default_factory=list)
