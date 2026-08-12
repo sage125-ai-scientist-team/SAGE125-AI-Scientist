@@ -24,7 +24,7 @@ T03 不拥有 pipeline、HTTP API、T07 batch adapter 或 T08 部署。
 | --- | --- | --- | --- |
 | A | `t03/a-validation-contract` | [#14](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/14) | integration merge `179d9cc` |
 | B | `t03/b-validation-core` | [#32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32) | integration merge `592c874` |
-| C | `t03/c-validation-hardening` | 【待回填：PR-C 链接/编号】 | HEAD【待回填：40 位 SHA】 |
+| C | `t03/c-validation-hardening` | [#50](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/50) | evidence commit `815b7fee98f45034964f3eb27816358a924340d7` |
 
 最终目标 integration commit：**【待回填：PR-C merge 后 40 位 SHA】**。PR-A/PR-B 的历史
 记录不能替代 PR-C 最终 HEAD 的复验。
@@ -104,7 +104,7 @@ FULL TEST COMMAND: python -m pytest -q tests/validation
 FULL TEST RESULT: 137 passed / 0 failed / 0 skipped
 RAW RESULTS: docs/modules/T03/wave_c/calibration_raw_results.json
 METRICS: docs/modules/T03/wave_c/calibration_metrics.json
-EVIDENCE HEAD: PR-C 当前 HEAD（PR 创建后回填）
+EVIDENCE HEAD: 815b7fee98f45034964f3eb27816358a924340d7
 ```
 
 所有跳过项必须说明原因。未运行的 live/provider/private-data 测试不计入 Wave C 指标。
@@ -188,8 +188,9 @@ Mock 替代复验。数据异常时先保全 DB/WAL，再从验证过的备份�
 ## 12. 最终交接签字
 
 ```text
-PR-C: 【待回填】
-PR-C HEAD: 【待回填：40 位 SHA】
+PR-C: https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/50
+PR-C EVIDENCE COMMIT: 815b7fee98f45034964f3eb27816358a924340d7
+PR-C CURRENT HEAD: 以 GitHub PR 元数据为准（本 handoff 回填提交晚于 evidence commit）
 TARGET INTEGRATION: integration/2026-08-10
 TARGET INTEGRATION SHA: 20592a0eeb9924d021e3ec75ec28d27e2f971e9f（发布前再次核验）
 BEHIND: 0（起始快照；发布前再次核验）

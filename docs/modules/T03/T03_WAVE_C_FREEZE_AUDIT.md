@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | Wave A | [PR #14](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/14) | merge commit `179d9cc` | 已进入当前 base 历史 |
 | Wave B | [PR #32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32) | merge commit `592c874` | 已进入当前 base 历史 |
-| Wave C | 【待回填：PR-C 链接/编号】 | 【待回填：40 位 HEAD/merge SHA】 | 尚未开立/未证明 Ready |
+| Wave C | [PR #50](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/50) | evidence commit `815b7fee98f45034964f3eb27816358a924340d7` | Draft / NOT READY |
 
 本表中的“当前 base 历史”只说明 Git 历史包含相应 merge commit，不代替 PR-C 当前 HEAD 的
 CI、审核或发布签字。
@@ -104,8 +104,9 @@ Code Freeze 以后只允许处理队长、CI 或 Codex 指出的发布阻断：
 最终签字区：
 
 ```text
-PR-C: 【待回填】
-PR-C HEAD: 【待回填：40 位 SHA】
+PR-C: https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/50
+PR-C EVIDENCE COMMIT: 815b7fee98f45034964f3eb27816358a924340d7
+PR-C CURRENT HEAD: 以 GitHub PR 元数据为准（本签字文档回填提交晚于 evidence commit）
 BASE: 20592a0eeb9924d021e3ec75ec28d27e2f971e9f
 BEHIND: 0（起始 base；发布前再次核验）
 TESTS: tests/validation 137 passed；目标配对 30 passed；非 integration 1373 passed/41 skipped；integration 32 passed

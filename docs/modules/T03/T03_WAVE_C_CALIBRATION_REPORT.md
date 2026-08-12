@@ -151,7 +151,7 @@ T02/T03 配对 + T07 completion gate + Q028/T07 边界：30 passed
 manifest：docs/modules/T03/wave_c/calibration_manifest.json
 metrics：docs/modules/T03/wave_c/calibration_metrics.json
 语义摘要：fb628528a79078602047f068a10b17a0a9f77e2e7a406b512da19ed0b1bf6303
-证据 commit：以 PR-C 当前 HEAD 为准（PR 创建后回填）
+证据 commit：815b7fee98f45034964f3eb27816358a924340d7
 ```
 
 任何 `skipped` 必须逐项说明原因；涉及私有数据或 live provider 的跳过不得计入
