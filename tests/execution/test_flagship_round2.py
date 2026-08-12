@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import copy
 import hashlib
 import importlib
 import inspect
@@ -107,6 +108,39 @@ def _write_json(path: Path, value: Mapping[str, Any]) -> None:
         encoding="utf-8",
         newline="\n",
     )
+
+
+def _write_json_with_nonfinite_token(
+    path: Path,
+    payload: dict[str, Any],
+    *,
+    sentinel_path: tuple[str | int, ...],
+    token: str,
+) -> None:
+    if token not in {"NaN", "Infinity", "-Infinity"}:
+        raise AssertionError("unsupported non-finite JSON token")
+
+    copied = copy.deepcopy(payload)
+    current: Any = copied
+    for key in sentinel_path[:-1]:
+        current = current[key]
+
+    sentinel = "__T05_NONFINITE_JSON_TOKEN__"
+    current[sentinel_path[-1]] = sentinel
+    encoded = json.dumps(
+        copied,
+        allow_nan=False,
+        sort_keys=True,
+        ensure_ascii=False,
+    )
+    quoted_sentinel = json.dumps(sentinel)
+    if encoded.count(quoted_sentinel) != 1:
+        raise AssertionError("non-finite JSON sentinel was not unique")
+
+    invalid_json = encoded.replace(quoted_sentinel, token, 1)
+    with path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(invalid_json)
+        handle.write("\n")
 
 
 def _predictions() -> list[dict[str, str]]:
@@ -507,6 +541,7 @@ def test_round2_config_contract(case: str, tmp_path: Path) -> None:
             lambda value: value.__setitem__("seed", True),
             lambda value: value.__setitem__("test_fraction", float("nan")),
             lambda value: value["control_change"].__setitem__("to", float("inf")),
+            lambda value: value["optimizer"].__setitem__("l2", float("-inf")),
             lambda value: value["control_change"].__setitem__("to", 1.0),
             lambda value: value["control_change"].__setitem__("from", 0.0),
         ]
@@ -514,11 +549,21 @@ def test_round2_config_contract(case: str, tmp_path: Path) -> None:
             value = _canonical_config()
             change(value)
             candidate = tmp_path / f"numeric-{index}.json"
-            candidate.write_text(
-                json.dumps(value, allow_nan=True) + "\n",
-                encoding="utf-8",
-                newline="\n",
-            )
+            nonfinite = {
+                1: (("test_fraction",), "NaN"),
+                2: (("control_change", "to"), "Infinity"),
+                3: (("optimizer", "l2"), "-Infinity"),
+            }.get(index)
+            if nonfinite is None:
+                _write_json(candidate, value)
+            else:
+                sentinel_path, token = nonfinite
+                _write_json_with_nonfinite_token(
+                    candidate,
+                    value,
+                    sentinel_path=sentinel_path,
+                    token=token,
+                )
             variants.append(candidate)
     elif case == "identity-drift":
         variants = []
@@ -683,7 +728,15 @@ def _mutate_control(package: Path, case: str) -> None:
             writer.writerows(rows)
     _write_json(metadata_path, metadata)
     _write_json(result_path, result)
-    _write_json(model_path, model)
+    if case == "feature-scaling":
+        _write_json_with_nonfinite_token(
+            model_path,
+            model,
+            sentinel_path=("feature_scales", 0),
+            token="NaN",
+        )
+    else:
+        _write_json(model_path, model)
     _refresh_manifest(package)
 
 
