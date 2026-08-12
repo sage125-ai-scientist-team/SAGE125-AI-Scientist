@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from app.core.config import assert_qwen_model, get_settings
+from app.core.config import assert_qwen_model
 from app.multimodal.audit import VisionCallAudit, paid_vision_authorized
 from app.multimodal.errors import ExtractionError
 from app.multimodal.pdf_io import load_source_bytes, open_pdf, render_page_png_bytes
@@ -61,11 +61,18 @@ def resolve_vision_model() -> str:
 
 def build_vision_prompt_schema() -> dict[str, str]:
     return {
-        "prompt_schema_version": "t06-vision-chart-v2",
+        "prompt_schema_version": "t06-vision-chart-v3",
         "prompt_summary": (
-            "Return ONLY JSON with keys legend, axes[{name,label,unit,min_value,max_value}], "
-            "series[{name,points[{x,y}]}], confidence, bbox{x0,y0,x1,y1}. "
-            "Do not invent values; omit rather than guess."
+            "You are digitizing a scientific chart image. Look at the figure carefully "
+            "(including multi-panel plots). Return ONLY a single JSON object (no markdown) "
+            "with keys: legend (string array of series names), "
+            "axes (array of objects with name,label,unit,min_value,max_value; must include "
+            "name 'x' and 'y'), series (array of {name, points:[{x,y}]} where name is in "
+            "legend and points are numeric values read from the plot/axes), "
+            "confidence (0-1), bbox {x0,y0,x1,y1} in pixel coordinates. "
+            "Extract as many clearly readable points as possible. "
+            "If a specific point is unreadable, omit that point; do not invent numbers. "
+            "Never return an empty object."
         ),
     }
 
@@ -97,7 +104,7 @@ def run_qwen_vision(
     source_path: str,
     *,
     page: int = 1,
-    max_output_tokens: int = 256,
+    max_output_tokens: int = 2048,
     allow_actual: bool = False,
     mock_response_json: str | None = None,
     simulate_error: str | None = None,
@@ -217,10 +224,20 @@ def run_qwen_vision(
         audit.error_type = "credential_missing"
         return _finish("failed", execution_mode="actual_external_call")
 
-    settings = get_settings()
+    # Vision client reads env directly so OpenRouter (or any OpenAI-compatible
+    # endpoint) is not overwritten/cleared by Settings WORKSPACE_ID rewrite.
     from openai import OpenAI
 
-    client = OpenAI(api_key=settings.dashscope_api_key, base_url=settings.dashscope_base_url)
+    api_key = os.environ.get("DASHSCOPE_API_KEY", "").strip()
+    base_url = os.environ.get("DASHSCOPE_BASE_URL", "").strip()
+    client = OpenAI(
+        api_key=api_key,
+        base_url=base_url,
+        default_headers={
+            "HTTP-Referer": "https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist",
+            "X-Title": "SAGE125-T06-multimodal",
+        },
+    )
     b64 = base64.standard_b64encode(image_bytes).decode("ascii")
     try:
         resp = client.chat.completions.create(
@@ -281,6 +298,7 @@ def run_qwen_vision(
             response_id=audit.response_id,
             response_content_sha256=content_sha,
             parse_error=str(exc),
+            raw_response_preview=content[:800],
             tokens_in=audit.tokens_in,
             tokens_out=audit.tokens_out,
             service_reported_cost=None,
