@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "evaluation_kind": "synthetic_fixture_offline",
+  "actual_zenodo_gold": "BLOCKED_PR29_PROVENANCE_DEPENDENCY_NOT_IN_BASE",
+  "actual_gold_evaluation": "NOT_RUN_WAIT_PR29_MERGE",
+  "dataset_manifest": "tests/multimodal/fixtures/wave_b/GOLD_MANIFEST.json",
+  "dataset_kind": "synthetic_fixture",
+  "sample_size": 3,
+  "reproduction_command": "python -X utf8 -m app.multimodal.eval_metrics",
+  "thresholds": {
+    "cell_accuracy_min": 0.95,
+    "chart_relative_error_max": 0.05,
+    "zero_abs_tol": 1e-06,
+    "zero_abs_tol_declared": true
+  },
+  "overall": {
+    "cases_ok": 3,
+    "cases_failed": 0,
+    "meets_threshold": true
+  },
+  "chart_point_details": {
+    "chart-001": {
+      "schema_version": "1.0",
+      "metric": "chart_point_relative_error",
+      "relative_threshold": 0.05,
+      "zero_abs_tol": 1e-06,
+      "zero_abs_tol_declared": true,
+      "point_count": 3,
+      "pass_count": 3,
+      "pass_rate": 1.0,
+      "meets_threshold": true,
+      "needs_human_review": false,
+      "points": [
+        {
+          "series": "run_a",
+          "index": 0,
+          "predicted": 298.1,
+          "gold": 298.1,
+          "relative_error": 0.0,
+          "absolute_error": 0.0,
+          "pass_threshold": true,
+          "needs_human_review": false,
+          "reason": "within_5pct"
+        },
+        {
+          "series": "run_a",
+          "index": 1,
+          "predicted": 305.0,
+          "gold": 305.0,
+          "relative_error": 0.0,
+          "absolute_error": 0.0,
+          "pass_threshold": true,
+          "needs_human_review": false,
+          "reason": "within_5pct"
+        },
+        {
+          "series": "run_a",
+          "index": 2,
+          "predicted": 301.4,
+          "gold": 301.4,
+          "relative_error": 0.0,
+          "absolute_error": 0.0,
+          "pass_threshold": true,
+          "needs_human_review": false,
+          "reason": "within_5pct"
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "case_id": "table-001",
+      "modality": "table",
+      "ok": true,
+      "cell_accuracy": 1.0,
+      "chart_pass_rate": null,
+      "chart_meets_5pct": null,
+      "error_type": null,
+      "duration_ms": 0.9717000066302717,
+      "artifact_id": "wb-table-001",
+      "needs_human_review": false
+    },
+    {
+      "case_id": "chart-001",
+      "modality": "chart",
+      "ok": true,
+      "cell_accuracy": null,
+      "chart_pass_rate": 1.0,
+      "chart_meets_5pct": true,
+      "error_type": null,
+      "duration_ms": 12.286400015000254,
+      "artifact_id": "wb-chart-001",
+      "needs_human_review": false
+    },
+    {
+      "case_id": "timeseries-001",
+      "modality": "timeseries",
+      "ok": true,
+      "cell_accuracy": 1.0,
+      "chart_pass_rate": null,
+      "chart_meets_5pct": null,
+      "error_type": null,
+      "duration_ms": 1.1892999755218625,
+      "artifact_id": "wb-ts-001",
+      "needs_human_review": false
+    }
+  ],
+  "duration_ms_total": 30.95369995571673,
+  "resources_cost": "NOT_APPLICABLE_NO_PAID_CALLS_PHASE1",
+  "known_limits": [
+    "Zenodo real gold blocked until PR #29 merges into integration",
+    "Phase-1 does not execute paid Qwen calls",
+    "Chart metric is relative_error<=5% with declared zero absolute tolerance"
+  ]
+}

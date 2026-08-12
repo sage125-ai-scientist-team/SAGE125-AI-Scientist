@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "case_id": "T03-WAVE-B-OFFLINE-E2E",
+  "mode": "offline_fixture",
+  "production_api_connected": false,
+  "run_id": "run-e2e",
+  "question_id": "Q003",
+  "source_version_id": "run-e2e:v1",
+  "resulting_version_id": "run-e2e:v2",
+  "flow": [
+    "feedback_submitted",
+    "feedback_decided",
+    "revision_requested",
+    "revision_generated",
+    "issue_closed",
+    "gate_evaluated",
+    "validation_completed"
+  ],
+  "assertions": {
+    "feedback_id_in_next_prompt": true,
+    "accepted_instruction_in_next_prompt": true,
+    "rejected_text_excluded": true,
+    "direct_child_version": true,
+    "revision_diff_hash_bound": true,
+    "default_gates_evaluated": 9,
+    "open_p0_p1": 0,
+    "validation_status": "passed",
+    "recommended_plan_status": "ready_for_validation",
+    "store_restart_recovery": true,
+    "audit_replay_idempotent": true
+  },
+  "limitations": [
+    "This is a deterministic offline integration fixture, not a live T08 API result.",
+    "Production T02 and T08 pairing remains separately reviewable."
+  ]
+}

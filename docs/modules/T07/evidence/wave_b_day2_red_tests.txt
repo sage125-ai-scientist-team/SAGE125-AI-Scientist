@@ -1,0 +1,56 @@
+T07 Wave B Day 2 formal RED test evidence
+==========================================
+
+Repository: D:\SAGE125-AI-Scientist
+Branch: t07/b-batch-core
+Tested starting HEAD: 730f4c96cb856b3de1cbb83778445f0b1f9f202b
+Integration SHA: 9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c
+Python version: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+
+Command
+-------
+
+& ".\.venv\Scripts\python.exe" -m pytest -q tests\batch\test_wave_b_output_layout.py tests\batch\test_wave_b_output_validation.py tests\batch\test_wave_b_delivery_index.py
+
+Exact result
+------------
+
+Exit code: 1
+Collected: 62
+Passed: 1
+Failed: 60
+Skipped: 1
+Warnings: 0
+Duration: 0.70s
+First failure: tests/batch/test_wave_b_output_layout.py::test_different_question_ids_have_unique_directories
+First failure reason: ModuleNotFoundError: No module named 'app.batch.output_layout'
+
+Observed progress and summary:
+
+    FFFFFFFFFFFFFsFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.FFFFFFFFFF           [100%]
+    60 failed, 1 passed, 1 skipped in 0.70s
+
+Failure cause by candidate module
+---------------------------------
+
+- Output layout and output validation cases failed because
+  `app.batch.output_layout` did not exist.
+- Delivery-index cases failed because `app.batch.delivery_index` did not
+  exist.
+- The one passing test read only
+  `tests/batch/fixtures/five_question_outputs.synthetic.json` and verified
+  `synthetic=true`, `mock=true`, `formal_run=false`,
+  `actual_execution=false`, `model_provider_called=false`, and
+  `authoritative_source_verified=false`.
+- The one skipped case attempted to create a directory symlink and received
+  Windows error 1314 because the local account lacks symlink privilege. No
+  assertion was skipped or weakened in code.
+
+Interpretation
+--------------
+
+This is the legitimate implementation-missing RED state recorded after the
+Day 2 tests and explicitly synthetic fixture were added, but before any Day 2
+production module existed. It is historical evidence and must not be rewritten
+after implementation.

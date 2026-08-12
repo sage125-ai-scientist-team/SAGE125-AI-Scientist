@@ -1,0 +1,58 @@
+T07-WB5 full repository regression
+Verification date: 2026-08-06 Asia/Shanghai
+Tested code SHA: 7929fed9fccc18160d90fc9cae5949a4a3fd83d4
+Integration SHA: 73ce7c0731a2aeaaa1b254e8b6d4c1382eab052c
+Ahead/behind at tested code SHA: 11/0
+Python version: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+
+Latest complete command:
+& ".\.venv\Scripts\python.exe" -m pytest -q -rs
+
+Exit code: 1
+Collected: 964
+Passed: 959
+Failed: 1
+Skipped: 4
+Warnings: 0
+Duration: 59.95s
+First failure: tests/test_api_run_modes_and_consistency.py::test_post_runs_real_without_key_returns_400; expected HTTP 400, actual HTTP 503.
+
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 22%]
+...............s...........................s............................ [ 29%]
+........................................................................ [ 37%]
+........................................................................ [ 44%]
+........................................................................ [ 52%]
+......................s...................s............................. [ 59%]
+........................................................................ [ 67%]
+....................F................................................... [ 74%]
+........................................................................ [ 82%]
+........................................................................ [ 89%]
+........................................................................ [ 97%]
+............................                                             [100%]
+================================== FAILURES ===================================
+_________________ test_post_runs_real_without_key_returns_400 _________________
+
+The test stubs qwen_configured=False, posts a real-mode run, expects HTTP 400,
+and receives HTTP 503. The failure is outside T07 owner paths.
+
+tests\test_api_run_modes_and_consistency.py:60: AssertionError
+=========================== short test summary info ===========================
+SKIPPED [1] tests\batch\test_wave_b_output_layout.py:125: Windows symlink privilege unavailable.
+SKIPPED [1] tests\batch\test_wave_b_output_validation.py:294: Windows symlink privilege unavailable.
+SKIPPED [1] tests\execution\test_security.py:212: Windows symlink capability unavailable.
+SKIPPED [1] tests\execution\test_security.py:446: Windows symlink capability unavailable.
+1 failed, 959 passed, 4 skipped in 59.95s
+
+Historical transient Streamlit record:
+- The immediately preceding complete run reproduced the known Streamlit
+  AppTest 30-second timeout and the same API failure: 2 failed, 958 passed,
+  4 skipped in 101.74s.
+- The isolated Streamlit rerun passed in 26.23s.
+- The latest complete run above did not reproduce the Streamlit timeout.
+- No tests/api file, timeout, skip, xfail, or assertion was modified, and no
+  code-fix claim is made for the transient timeout.
+- The full-suite test generated timestamps in two T01 documentation files;
+  those test side effects were restored exactly to HEAD and were not committed.

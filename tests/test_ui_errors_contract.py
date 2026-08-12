@@ -20,6 +20,8 @@ def test_errors_module_has_required_functions():
         "run_failed",
         "api_disconnected",
         "qwen_not_configured",
+        "questions_missing",
+        "question_not_selected",
         "rag_missing",
         "report_mismatch",
         "render_report_mismatch",
