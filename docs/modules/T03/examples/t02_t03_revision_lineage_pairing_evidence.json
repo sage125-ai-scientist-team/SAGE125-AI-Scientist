@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "t02_t03_revision_lineage_persistence_pairing",
+  "recorded_at": "2026-08-06T01:21:21+08:00",
+  "mode": "exact_sha_temporary_merge",
+  "production_api_connected": false,
+  "pairing": {
+    "integration_sha": "9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c",
+    "t02_pr": 21,
+    "t02_head": "20a5b356364051c86dac3698fc836c790b6c2c79",
+    "t03_pr": 32,
+    "t03_implementation_head": "e4248e8ad215b0b77279990eb2bf6553b60b52d1",
+    "merge_conflict": false
+  },
+  "persisted_revision": {
+    "feedback_id": "feedback-pair-001",
+    "source_version_id": "t02-t03-pair:v1",
+    "resulting_version_id": "t02-t03-pair:v2",
+    "prompt_fingerprint": "5d7cde2ed7296e3990a19129ffb73eba7336869dad67f704bf405833d3a9193e",
+    "revision_diff_sha256": "4f0f9fda9eef9b57a467fd243101aa4fce43af1789561f5ba92f7902d0070397",
+    "issue_ids": [
+      "critical_issue:cec611f9c1a6",
+      "required_revision:62e770891fbe"
+    ],
+    "revision_metadata": {
+      "schema_version": 1,
+      "feedback_id": "feedback-pair-001",
+      "source_version_id": "t02-t03-pair:v1",
+      "resulting_version_id": "t02-t03-pair:v2",
+      "prompt_fingerprint": "5d7cde2ed7296e3990a19129ffb73eba7336869dad67f704bf405833d3a9193e",
+      "diff_hash": "4f0f9fda9eef9b57a467fd243101aa4fce43af1789561f5ba92f7902d0070397",
+      "applied_instructions": [
+        "Keep the reviewer-requested negative control explicit."
+      ]
+    }
+  },
+  "persisted_event_chain": [
+    {
+      "event_id": "event-decision-fbbc0ed848431917bed8",
+      "event_type": "feedback_decided",
+      "parent_event_id": "event-6b58ab44d49548919976f231f38c7b82",
+      "subject_id": "decision-actual-t02-t03",
+      "payload_sha256": "5fb46460441d6285c7b64cea7bd8ea3bd760da88829ba774b1dd53de7a031140"
+    },
+    {
+      "event_id": "event:55f7ecda13127579",
+      "event_type": "revision_requested",
+      "parent_event_id": "event-decision-fbbc0ed848431917bed8",
+      "subject_id": "feedback-pair-001",
+      "payload_sha256": "5d7cde2ed7296e3990a19129ffb73eba7336869dad67f704bf405833d3a9193e"
+    },
+    {
+      "event_id": "event:73f66880eefc20da",
+      "event_type": "revision_generated",
+      "parent_event_id": "event:55f7ecda13127579",
+      "subject_id": "t02-t03-pair:v2",
+      "payload_sha256": "4f0f9fda9eef9b57a467fd243101aa4fce43af1789561f5ba92f7902d0070397"
+    },
+    {
+      "event_id": "event:a2c31e666da5b460",
+      "event_type": "issue_closed",
+      "parent_event_id": "event:73f66880eefc20da",
+      "subject_id": "critical_issue:cec611f9c1a6",
+      "payload_sha256": "ea369a0934ae3c316531f7595141dc9760655e8a121f867ad097cbda5e2c92bc"
+    },
+    {
+      "event_id": "event:d9d644bc57841591",
+      "event_type": "issue_closed",
+      "parent_event_id": "event:a2c31e666da5b460",
+      "subject_id": "required_revision:62e770891fbe",
+      "payload_sha256": "fe9dafe71bbff22d566ef3e63c9735670eeaaddbf71f5dea1bd395e206692d57"
+    }
+  ],
+  "verification": {
+    "requested_pairing_file": "5 passed in 1.48s",
+    "t03_validation_suite": "105 passed in 4.34s",
+    "exact_sha_combination": "109 passed in 6.09s",
+    "full_unit": "735 passed, 37 skipped in 63.52s",
+    "integration": "1 passed in 0.18s",
+    "lint_failures": 0,
+    "type_failures": 0,
+    "security": "PASS (critical=0, warnings=2)",
+    "build_failures": 0,
+    "sqlite_restart_restored_all_fields": true,
+    "atomic_handoff_batch": true,
+    "duplicate_replay_created_one_revision": true,
+    "concurrent_replay_workers": 16,
+    "validation_chain_event_count": 16
+  },
+  "remaining_external_evidence": [
+    "T02 owner rerun and paired-review signature against the new PR #32 head",
+    "T08 live feedback API and idempotency E2E evidence",
+    "captain authorization before Draft is changed to Ready"
+  ]
+}

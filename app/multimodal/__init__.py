@@ -1,11 +1,22 @@
 """
-app.multimodal —— T06 多模态处理包（Wave A / PR-A 最小骨架）。
-
-PR-A 仅提供模态识别、处理队列与适配器抽象；真实 PDF/CSV 提取留待 PR-B。
+app.multimodal —— T06 多模态处理包（Wave B / PR-B）。
 """
 
+from app.multimodal.adapters import (
+    ChartAdapter,
+    MultimodalAdapter,
+    QwenVisionAdapter,
+    TableAdapter,
+    TimeseriesAdapter,
+    get_adapter,
+)
 from app.multimodal.detect import detect_modality
 from app.multimodal.queue import MultimodalQueue, QueueRejection
+from app.multimodal.read_port import (
+    list_multimodal_artifacts,
+    list_multimodal_details,
+    put_multimodal_artifact,
+)
 from app.multimodal.summary import build_consumer_summary
 
 __all__ = [
@@ -13,4 +24,13 @@ __all__ = [
     "MultimodalQueue",
     "QueueRejection",
     "build_consumer_summary",
+    "MultimodalAdapter",
+    "TableAdapter",
+    "ChartAdapter",
+    "TimeseriesAdapter",
+    "QwenVisionAdapter",
+    "get_adapter",
+    "list_multimodal_artifacts",
+    "list_multimodal_details",
+    "put_multimodal_artifact",
 ]

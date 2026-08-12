@@ -1,0 +1,108 @@
+T07 Wave B Day 1 formal RED test evidence
+==========================================
+
+Repository: D:\SAGE125-AI-Scientist
+Branch: t07/b-batch-core
+Tested starting HEAD: 9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c
+Integration SHA: 9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c
+Wave A merge commit contained: 88e2f43c1bbe56d010691ff708f03567aaff30ef
+Python version: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+
+Command
+-------
+
+& ".\.venv\Scripts\python.exe" -m pytest -q tests\batch\test_wave_b_isolation.py tests\batch\test_wave_b_fingerprint.py tests\batch\test_wave_b_leakage.py
+
+Exact result
+------------
+
+Exit code: 1
+Collected: 44
+Passed: 1
+Failed: 43
+Skipped: 0
+Warnings: 0
+Duration: 0.45s
+First failure: tests/batch/test_wave_b_isolation.py::test_125_questions_have_unique_wave_a_compatible_isolation_ids
+First failure reason: ModuleNotFoundError: No module named 'app.batch.isolation'
+
+Observed progress and summary:
+
+    FFFFFFFFFFFFFFFFFFFFFFFFFFFFF.FFFFFFFFFFFFFF                             [100%]
+    43 failed, 1 passed in 0.45s
+
+Failure cause by candidate module
+---------------------------------
+
+- 13 isolation tests failed because `app.batch.isolation` did not exist.
+- 16 collected fingerprint cases failed because `app.batch.fingerprint` did
+  not exist. The non-string parameterized test contributed four cases.
+- 14 leakage behavior tests failed because `app.batch.leakage` did not exist.
+- The one passing test read only
+  `tests/batch/fixtures/wave_b_leakage.synthetic.json` and verified:
+  `synthetic=true`, `mock=true`, `formal_run=false`, and
+  `actual_execution=false`.
+
+Failing test inventory
+----------------------
+
+Isolation (13):
+
+- test_125_questions_have_unique_wave_a_compatible_isolation_ids
+- test_distinct_questions_do_not_share_context_objects
+- test_distinct_questions_do_not_share_memory
+- test_distinct_questions_do_not_share_cache
+- test_distinct_questions_do_not_share_prompt_namespace
+- test_previous_result_cross_question_reuse_is_rejected
+- test_retry_accepts_same_question_compatible_wave_a_checkpoint
+- test_retry_rejects_checkpoint_from_another_question
+- test_retry_rejects_input_hash_mismatch
+- test_retry_rejects_source_hash_mismatch
+- test_forged_namespace_collision_fails_closed
+- test_shared_mutable_state_alias_fails_closed
+- test_reset_clears_mutable_state_and_preserves_identity
+
+Fingerprint (16 collected cases):
+
+- test_identical_text_has_identical_hash
+- test_case_whitespace_and_newlines_are_normalized
+- test_common_punctuation_differences_are_normalized
+- test_different_text_has_different_hash
+- test_output_fields_have_independent_hashes
+- test_combined_fingerprint_is_deterministic
+- test_combined_fingerprint_changes_when_one_field_changes
+- test_question_id_is_not_part_of_content_hash_api
+- test_empty_fields_are_safe_and_deterministic
+- test_non_string_input_fails_closed[None]
+- test_non_string_input_fails_closed[1]
+- test_non_string_input_fails_closed[value2]
+- test_non_string_input_fails_closed[value3]
+- test_token_and_sequence_similarity_are_bounded
+- test_similarity_preserves_each_field_score_and_combined_result
+- test_same_question_retry_is_not_cross_question_similarity
+
+Leakage (14):
+
+- test_q901_q902_pandemic_plan_reuse_is_detected
+- test_cross_question_evidence_id_reuse_is_detected
+- test_output_question_id_mismatch_is_detected
+- test_cache_namespace_collision_is_detected
+- test_memory_namespace_collision_is_detected
+- test_previous_result_reuse_is_detected
+- test_prompt_context_reuse_is_detected
+- test_question_owned_keyword_leakage_is_detected
+- test_similarity_above_point_nine_enters_nonblocking_review
+- test_same_question_retry_does_not_emit_cross_question_finding
+- test_finding_count_is_derived_from_actual_finding_array
+- test_every_finding_has_the_auditable_required_structure
+- test_completion_gate_separates_blockers_from_similarity_review
+- test_dry_run_cannot_generate_actual_result
+
+Interpretation
+--------------
+
+This is a legitimate implementation-missing RED state captured after the
+formal tests and marked-synthetic fixture were migrated but before the three
+Wave B implementation modules existed. No test was skipped, xfailed, deleted,
+or weakened, and no exception was caught to make a test pass.

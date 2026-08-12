@@ -1,0 +1,71 @@
+T07 Wave B Day 1 contamination and synthetic dry-run evidence
+================================================================
+
+Repository: D:\SAGE125-AI-Scientist
+Branch: t07/b-batch-core
+Tested code SHA: 9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c
+Integration SHA: 9dc00a8e3fbd8305976147b8df6a7a54fb0ba00c
+Ahead/behind: 0/0
+Python version: 3.12.10
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+
+Wave A compatibility audit
+--------------------------
+
+Command:
+
+& ".\.venv\Scripts\python.exe" -m scripts.batch_125.audit_contamination --source tests/batch/fixtures/contamination_cases.synthetic.json
+
+Exit code: 0
+Finding count: 3
+Finding codes: CROSS_QUESTION_CONTENT_REUSE, CROSS_QUESTION_EVIDENCE_ID_REUSE, OUTPUT_QUESTION_ID_MISMATCH
+
+Complete stdout/stderr:
+
+    {"finding_codes": ["CROSS_QUESTION_CONTENT_REUSE", "CROSS_QUESTION_EVIDENCE_ID_REUSE", "OUTPUT_QUESTION_ID_MISMATCH"], "finding_count": 3, "findings": [{"content_fingerprint": "cdbab3aee42b304ad6a3a7f43b6591eefce415b69ad8c6f695348a731d7ad751", "error_code": "CROSS_QUESTION_CONTENT_REUSE", "evidence_id": null, "message": "Identical normalized output content was reused across Q901, Q902: pandemic response optimization with mobility interventions a synthetic pandemic plan combining mobility controls, hospit", "question_ids": ["Q901", "Q902"]}, {"content_fingerprint": null, "error_code": "CROSS_QUESTION_EVIDENCE_ID_REUSE", "evidence_id": "EV-MOCK-0001", "message": "Evidence ID EV-MOCK-0001 was reused across Q901, Q903", "question_ids": ["Q901", "Q903"]}, {"content_fingerprint": null, "error_code": "OUTPUT_QUESTION_ID_MISMATCH", "evidence_id": null, "message": "Output bound to Q903 declares question_id=Q999", "question_ids": ["Q903", "Q999"]}], "mock": true, "record_count": 3, "synthetic": true}
+
+Wave B leakage audit
+--------------------
+
+Command:
+
+& ".\.venv\Scripts\python.exe" -m scripts.batch_125.audit_leakage --source tests/batch/fixtures/wave_b_leakage.synthetic.json
+
+Exit code: 0
+Record count: 3
+Finding count: 9
+Blocking findings: 8
+Review findings: 1
+Wave A finding count: 3
+Pandemic reuse Q901/Q902 detected: true
+Actual results: 0
+Fixture provenance: synthetic=true, mock=true, formal_run=false, actual_execution=false
+
+Complete stdout/stderr:
+
+    {"actual_execution": false, "actual_results": 0, "blocking_findings": 8, "finding_codes": ["CACHE_NAMESPACE_COLLISION", "CROSS_QUESTION_CONTENT_REUSE", "CROSS_QUESTION_EVIDENCE_ID_REUSE", "HIGH_CROSS_QUESTION_SIMILARITY", "KEYWORD_LEAKAGE", "MEMORY_NAMESPACE_COLLISION", "OUTPUT_QUESTION_ID_MISMATCH", "PREVIOUS_RESULT_REUSE", "PROMPT_CONTEXT_REUSE"], "finding_count": 9, "findings": [{"blocks_completion": true, "evidence": {"namespace": "cache:synthetic:shared-q901-q902"}, "field": "cache_namespace", "finding_code": "CACHE_NAMESPACE_COLLISION", "message": "cache_namespace is shared across distinct questions", "observed_value": "cache:synthetic:shared-q901-q902", "question_ids": ["Q901", "Q902"], "severity": "critical", "similarity_score": null, "threshold": null}, {"blocks_completion": true, "evidence": {"content_fingerprint": "cdbab3aee42b304ad6a3a7f43b6591eefce415b69ad8c6f695348a731d7ad751"}, "field": "title+abstract", "finding_code": "CROSS_QUESTION_CONTENT_REUSE", "message": "Identical normalized output content was reused across Q901, Q902: pandemic response optimization with mobility interventions a synthetic pandemic plan combining mobility controls, hospit", "observed_value": "cdbab3aee42b304ad6a3a7f43b6591eefce415b69ad8c6f695348a731d7ad751", "question_ids": ["Q901", "Q902"], "severity": "high", "similarity_score": 1.0, "threshold": 1.0}, {"blocks_completion": true, "evidence": {"evidence_id": "EV-MOCK-0001"}, "field": "evidence_ids", "finding_code": "CROSS_QUESTION_EVIDENCE_ID_REUSE", "message": "Evidence ID EV-MOCK-0001 was reused across Q901, Q903", "observed_value": "EV-MOCK-0001", "question_ids": ["Q901", "Q903"], "severity": "high", "similarity_score": null, "threshold": null}, {"blocks_completion": false, "evidence": {"abstract_score": 1.0, "calculation": "normalized weighted mean: title=.25, abstract=.50, hypothesis=.25; empty fields excluded", "hypothesis_score": 1.0, "title_score": 1.0}, "field": "title+abstract+hypothesis", "finding_code": "HIGH_CROSS_QUESTION_SIMILARITY", "message": "High cross-question similarity requires human review", "observed_value": "1.000000", "question_ids": ["Q901", "Q902"], "severity": "review", "similarity_score": 1.0, "threshold": 0.9}, {"blocks_completion": true, "evidence": {"keyword_consumer": "Q903", "keyword_owner": "Q901"}, "field": "title+abstract+hypothesis", "finding_code": "KEYWORD_LEAKAGE", "message": "Question-owned keyword appeared in another output", "observed_value": "prime lattice marker", "question_ids": ["Q901", "Q903"], "severity": "high", "similarity_score": null, "threshold": null}, {"blocks_completion": true, "evidence": {"namespace": "memory:synthetic:shared-q901-q903"}, "field": "memory_namespace", "finding_code": "MEMORY_NAMESPACE_COLLISION", "message": "memory_namespace is shared across distinct questions", "observed_value": "memory:synthetic:shared-q901-q903", "question_ids": ["Q901", "Q903"], "severity": "critical", "similarity_score": null, "threshold": null}, {"blocks_completion": true, "evidence": {"expected_question_id": "Q903"}, "field": "output.question_id", "finding_code": "OUTPUT_QUESTION_ID_MISMATCH", "message": "Output bound to Q903 declares question_id=Q999", "observed_value": "Q999", "question_ids": ["Q903", "Q999"], "severity": "critical", "similarity_score": null, "threshold": null}, {"blocks_completion": true, "evidence": {"consumer_question_id": "Q902"}, "field": "previous_result.question_id", "finding_code": "PREVIOUS_RESULT_REUSE", "message": "previous_result belongs to another question", "observed_value": "Q901", "question_ids": ["Q901", "Q902"], "severity": "critical", "similarity_score": null, "threshold": null}, {"blocks_completion": true, "evidence": {"prompt_context_sha256": "7d9c32c63914677763cafbb10c0133dcd96fb6ce2ddb15d62301b38afe6d0d5c"}, "field": "prompt_context", "finding_code": "PROMPT_CONTEXT_REUSE", "message": "Exact prompt context was reused across distinct questions", "observed_value": "7d9c32c63914677763cafbb10c0133dcd96fb6ce2ddb15d62301b38afe6d0d5c", "question_ids": ["Q901", "Q902"], "severity": "high", "similarity_score": 1.0, "threshold": 1.0}], "formal_run": false, "mock": true, "pandemic_reuse_detected": true, "record_count": 3, "review_findings": 1, "synthetic": true, "wave_a_finding_count": 3}
+
+Synthetic 125-job dry-run
+-------------------------
+
+Command:
+
+& ".\.venv\Scripts\python.exe" -m scripts.batch_125.dry_run --source tests/batch/fixtures/questions_125.synthetic.json --source-kind synthetic --run-root .pytest_tmp/wave_b_day1 --batch-id wave-b-day1
+
+Exit code: 0
+Jobs: 125
+Unique workspaces: 125
+Unique context IDs: 125
+Unique cache namespaces: 125
+Checkpoints: 125
+Provider calls: 0
+Tokens used: 0
+Actual results: 0
+Research artifacts: 0
+Temporary files: 0
+Source kind: synthetic
+Dry run: true
+
+Complete stdout/stderr:
+
+    {"actual_results": 0, "batch_id": "wave-b-day1", "checkpoints": 125, "dry_run": true, "jobs": 125, "manifest_path": ".pytest_tmp/wave_b_day1/wave-b-day1/manifest.json", "provider_calls": 0, "research_artifacts": 0, "source_kind": "synthetic", "temporary_files": 0, "tokens_used": 0, "unique_cache_namespaces": 125, "unique_context_ids": 125, "unique_workspaces": 125}

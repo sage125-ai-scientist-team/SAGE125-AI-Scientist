@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "evaluation_kind": "actual_zenodo_gold_in_integration",
+  "ACTUAL_GOLD_IN_INTEGRATION": "YES",
+  "gold_package_root": "docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0",
+  "gold_package_head_sha": "7b4a4c366f4ce25e5f05e2e948ec3938f11739ac",
+  "gold_set_id": "zenodo_fish_spoilage_impedance",
+  "doi": "10.5281/zenodo.13378442",
+  "thresholds": {
+    "cell_accuracy_min": 0.95,
+    "chart_relative_error_max": 0.05,
+    "zero_abs_tol": 0.0,
+    "zero_abs_tol_source": "domain_mapping.chart_error_policy"
+  },
+  "reproduction_command": "python -X utf8 -m app.multimodal.eval_actual_gold --gold-root docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0 --package-head 7b4a4c366f4ce25e5f05e2e948ec3938f11739ac --in-integration",
+  "table_cases": [
+    {
+      "source_file": "raw/fishtrial_resistance.csv",
+      "modality": "table",
+      "ok": true,
+      "artifact_id": "csv-table-86b01101eb00",
+      "validation_status": "passed",
+      "confidence": 1.0,
+      "units": [
+        "s",
+        "ohm"
+      ],
+      "sha_in_path": true,
+      "duration_ms": 0.8716000011190772,
+      "cell_accuracy": 1.0,
+      "correct": 84,
+      "total": 84,
+      "meets_threshold": true,
+      "misses": [],
+      "miss_count": 0
+    }
+  ],
+  "chart_case": {
+    "source_file": "raw/Picture1.png",
+    "modality": "chart",
+    "gold_point_count": 16,
+    "ok": false,
+    "error_type": "ExtractionError",
+    "error": "raster chart requires successful vision parse; no silent fallback to text-directive parser",
+    "needs_human_review": true,
+    "vision_blocked": true,
+    "vision_audit_status": "denied_no_paid_auth",
+    "actual_external_call": false,
+    "duration_ms": 1.3879999751225114,
+    "note": "Chart PNG requires Qwen VL; without credentials/authorization actual chart digitization remains blocked (not fabricated)."
+  },
+  "overall": {
+    "table_files_ok": 1,
+    "table_files_total": 1,
+    "table_meets_threshold": true,
+    "chart_meets_threshold": false,
+    "meets_full_wave_b_gold_bar": false
+  },
+  "duration_ms_total": 3.9922999567352235,
+  "known_limits": [
+    "Gold package present via merged PR #29 on integration tip",
+    "Chart PNG evaluation requires authorized Qwen VL credentials",
+    "No tokens/cost invented when vision is not called"
+  ]
+}

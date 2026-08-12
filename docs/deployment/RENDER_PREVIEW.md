@@ -55,7 +55,14 @@ The API starts without either value. `/health` reports Bailian as unavailable, a
 
 `PREVIEW_EPHEMERAL_STORAGE=true`, `DATA_DIR=/tmp/sage125/data`, and `EXPORT_DIR=/tmp/sage125/exports` make the preview's storage mode explicit. Render Free Web Services do not provide a persistent disk. Uploaded files, the zvec index, jobs, feedback, SQLite state, and generated exports can disappear on restart, redeploy, spin-down, or instance replacement.
 
-The integration branch intentionally does not track `data/processed`, `data/index`, PDFs, local databases, or exports. Consequently, the base preview can expose `/health`, `/docs`, `/openapi.json`, and the UI while reporting a missing question dataset until an approved redistributable source is added through a separate reviewed change. Do not claim this preview preserves task history or contains production data.
+The integration branch intentionally does not track `data/processed`, `data/index`, PDFs, local databases, or exports. Do not claim this preview preserves task history or contains production data.
+
+Question catalog bootstrap (API start):
+
+1. Prefer a real booklet extract when `data/raw/sjtu-booklet.pdf` is available.
+2. Otherwise, `scripts.start_api` allows an explicitly marked `preview_seed` catalog when any of these is true: `APP_ENV=preview`, `PREVIEW_EPHEMERAL_STORAGE=true`, or `SAGE125_PREVIEW_SEED=1`. It writes `data/processed/questions_125.json` via `scripts/bootstrap_preview_data.py`.
+3. Preview-seed rows are for Mock UI routing only; they are not booklet gold and must not be treated as T09 formal evaluation input.
+4. The UI must keep calling the API (`FRONTEND_RUN_VIA_API=1`); it does not invent questions client-side.
 
 Free services can spin down after inactivity; the next request can incur a cold start of approximately one minute. The UI waits for that wake-up and reports an unconfirmed result separately from a definite rejection. Do not use an external keep-alive workaround.
 

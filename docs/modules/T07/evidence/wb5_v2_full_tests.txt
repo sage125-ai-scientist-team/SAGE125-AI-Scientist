@@ -1,0 +1,61 @@
+T07 WB5 v2 complete repository validation
+Date: 2026-08-07 Asia/Shanghai
+Tested code SHA: 42b560bf6a2261afc5db1b76aeb2add7194264ca
+Integration SHA: f1e2ecd68b075bb8df82992a58397dee71795a60
+Ahead/behind: 14/0
+Python version: 3.12.13
+Python executable: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe
+Command: & ".\.venv\Scripts\python.exe" -m pytest -q -rs
+Exit code: 1
+Collected: 986
+Passed: 981
+Failed: 1
+Skipped: 4
+Warnings: 0
+Duration: 59.13s
+First failure: tests/test_api_run_modes_and_consistency.py::test_post_runs_real_without_key_returns_400
+Reason: expected HTTP 400; actual HTTP 503
+Owner classification: non-T07; app/api and tests/api were not modified
+
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+.................................s...........................s.......... [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 51%]
+........................................s...................s........... [ 58%]
+........................................................................ [ 65%]
+......................................F................................. [ 73%]
+........................................................................ [ 80%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+..................................................                       [100%]
+================================== FAILURES ===================================
+_________________ test_post_runs_real_without_key_returns_400 _________________
+
+    def test_post_runs_real_without_key_returns_400(client, monkeypatch):
+        """real 模式未配置百炼时应 400，不 fallback mock。"""
+        import app.api.routes as routes
+
+        class _Stub:
+            qwen_configured = False
+
+        monkeypatch.setattr(routes, "get_settings", lambda: _Stub())
+        resp = client.post("/runs", json={"question_id": "Q001", "mode": "real"})
+>       assert resp.status_code == 400
+E       assert 503 == 400
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+
+tests\test_api_run_modes_and_consistency.py:60: AssertionError
+=========================== short test summary info ===========================
+SKIPPED [1] tests\batch\test_wave_b_output_layout.py:125: symlink creation unavailable: [WinError 1314]
+SKIPPED [1] tests\batch\test_wave_b_output_validation.py:294: symlink creation unavailable: [WinError 1314]
+SKIPPED [1] tests\execution\test_security.py:212: T05-A-PATH-004: symlink capability probe failed: OSError: [WinError 1314]
+SKIPPED [1] tests\execution\test_security.py:446: T05-A-SECURITY-001: symlink capability probe failed: OSError: [WinError 1314]
+1 failed, 981 passed, 4 skipped in 59.13s
+
+Historical transient note: the immediately preceding full run also failed one
+Streamlit AppTest after 30 seconds (2 failed, 980 passed, 4 skipped, 108.51s).
+The isolated rerun passed: 1 passed in 26.39s. The latest full run above did not
+reproduce it. No timeout, skip, xfail, assertion, UI code, or API code changed.
