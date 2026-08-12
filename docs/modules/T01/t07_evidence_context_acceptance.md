@@ -92,9 +92,9 @@ RetrievalHit (from T04 retrieve_hits — T04 交付)
 
 ## 4. 明确非 T01 范围
 
-以下由 **T04 / 队长协调**，T01 **不**在本确认中交付：
+以下由 **T04 / 队长协调**，T01 **不**在本确认中交付实现：
 
-- `retrieve_hits()` 无损公共接口
+- `retrieve_hits()` 无损公共接口（队长已授权 T04 实施；见 §6）
 - `user_library` / chunks.jsonl / 非题册研究文献包及许可/SHA/加载命令
 
 T01 仅确认：一旦 T07 持有合格 `EvidenceCardContract` 并组成 Bundle，上述 precheck 语义即为验收标准。
@@ -103,4 +103,27 @@ T01 仅确认：一旦 T07 持有合格 `EvidenceCardContract` 并组成 Bundle�
 
 - `PAIRING_STRUCTURE=STRUCTURE_OK`（contract fixture pairing 另册）
 - `ACTUAL_RELEVANCE_GOLD=NOT_READY`
-- `FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false`
+- `FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false`（队长 2026-08-12 授权仍保持 false）
+
+## 6. 队长授权后的 T01 后续职责（2026-08-12）
+
+PR #35 队长评论 `[CAPTAIN AUTHORIZATION] T04 无损 RetrievalHit 接口与 Q001 真实文献包责任人` 指定：
+
+```text
+Q001_SEMANTIC_SIGNOFF_OWNER=@Yqqxz (T01)
+```
+
+T01 **两道语义门**（详见 `docs/modules/T01/q001_t04_semantic_signoff.md`）：
+
+1. **门 A**：对 T04 Draft PR（`t04/c-retrieval-hit-interface`）准确 HEAD 做 `retrieve_hits` 语义 signoff（不写检索代码）。  
+2. **门 B**：Q001 真实文献包受控交付并由 T04 验收后，对实际 hits / EvidenceBundle 做语义签字（含 `precheck.gate.passed`）。
+
+当前状态：
+
+```text
+T04 Draft PR = 未见开放 → 门 A = WAIT
+Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY → 门 B = WAIT
+T07_REAL_RUN_STATUS=HOLD
+```
+
+硬边界：`sjtu-booklet.pdf` 不得进入 scientific `supports`；正式 context 必须 `question_booklet_hits=0`。
