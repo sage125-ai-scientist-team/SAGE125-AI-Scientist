@@ -42,3 +42,12 @@ def test_excluded_evidence_gold_set_is_required(tmp_path: Path) -> None:
 def test_t06_not_in_retrieval_qrels() -> None:
     """T06 role is explicitly excluded from retrieval relevance denominators."""
     assert json.loads(REGISTRY.read_text(encoding="utf-8"))["t06_role"]["relevance_gold"] is False
+
+
+def test_out_of_scope_t01_artifact_rejected(tmp_path: Path) -> None:
+    """A registry must reject a package path outside approved T01 scope."""
+    registry = altered_registry(
+        tmp_path,
+        lambda payload: payload.update(package_path="docs/modules/T01"),
+    )
+    assert "package_path" in validate(registry)

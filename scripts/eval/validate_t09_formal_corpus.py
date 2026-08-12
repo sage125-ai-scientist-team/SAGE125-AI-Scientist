@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = ROOT / "docs/reproducibility/T09_FORMAL_CORPUS_REGISTRY.json"
+APPROVED_PACKAGE_PATH = "docs/modules/T01/eval_gold/v1"
 
 def digest(path: Path) -> str:
     """Return the raw-byte SHA-256 of one admitted file."""
@@ -23,7 +24,9 @@ def validate(registry_path: Path = REGISTRY) -> list[str]:
         errors.append("status")
     if r.get("pair_count") != 8:
         errors.append("pair_count")
-    base = ROOT / r["package_path"]
+    if r.get("package_path") != APPROVED_PACKAGE_PATH:
+        return errors + ["package_path"]
+    base = ROOT / APPROVED_PACKAGE_PATH
     if "docs/modules/T01/evidence_gold_set.json" not in r["excluded_paths"]:
         errors.append("fixture_not_excluded")
     for rel, expected in r.get("t09_admission_file_inventory", {}).items():
