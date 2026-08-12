@@ -132,12 +132,13 @@ CI（PR #35）：lint / type / unit / integration / security / build 在 tip `f6
 
 1. Live `pipeline.py` 接线由 **T02** 完成；T01 只提供冻结接口与桥接函数。  
 2. T07 端到端仍依赖 **T04** `retrieve_hits()` + 非题册真实材料；队长已授权 T04 实施接口，但 **T01 不写 `app/rag/**`**，只做语义 signoff（见 `q001_t04_semantic_signoff.md`）。  
-3. **门 A（2026-08-12）已 PASS**：PR #47 @ `f77959b43f7f520119070181011e0d0713425cdd`；`BLOCKING_FINDINGS=NONE`。  
-4. Pairing 正式 retrieval 指标 **未授权**（`FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false`）。  
+3. **门 A（2026-08-12）已 PASS**：PR #47 @ `f77959b43f7f520119070181011e0d0713425cdd`；`BLOCKING_FINDINGS=NONE`。队长 Gate A 技术审亦 PASS，并授权 Ready；**`MERGE_AUTHORIZED_NOW=NO`**，合入由队长在 tip 不变时手工 squash；**`WAVE_C_DONE=NO`**。  
+4. Pairing 正式 retrieval 指标 **未授权**（`FORMAL_RETRIEVAL_METRICS=NOT_AUTHORIZED`）。  
 5. `metrics.json` 的 precision 标注为 fixture accuracy，**不是**独立科学标注员分数。  
 6. Q028 回归是契约层场景，**不是**人工原文签字样本。  
 7. PR #35 在队长授权前保持 Draft（`MERGE_AUTHORIZED=NO`）。  
-8. Q001 真实文献包状态：`AWAITING_CONTROLLED_DELIVERY` → **门 B=WAIT**；五题真实运行：`HOLD`。
+8. Q001 真实文献包状态：`AWAITING_CONTROLLED_DELIVERY` → **门 B=WAIT**；五题真实运行：`HOLD`。  
+9. T08 #39 已合入 `integration/2026-08-10`；T01 #43（read port）需与最新 integration 保持同步。
 
 ## 9. 回滚
 

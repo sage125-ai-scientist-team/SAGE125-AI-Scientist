@@ -3,6 +3,7 @@
 **Audience:** `@myr-111`（T07）及下游消费方  
 **Owner:** T01 `@Yqqxz`（只定义消费语义；**不**实现 `app/rag/**`）  
 **Gate A HEAD（接口已签字）:** PR #47 @ `f77959b43f7f520119070181011e0d0713425cdd`  
+**Captain Gate A:** `GATE_A_TECHNICAL_REVIEW=PASS`；`READY_AUTHORIZED=YES`；`MERGE_AFTER_READY=YES`；`WAVE_C_DONE=NO`  
 **Gate B:** 仍 WAIT（Q001 未受控交付）  
 **Date:** 2026-08-12
 

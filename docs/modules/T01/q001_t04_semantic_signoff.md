@@ -1,25 +1,32 @@
 # T01：T04 `retrieve_hits` / Q001 语义签字清单
 
-**Status:** `GATE_A=PASS` + `Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`（门 B 仍 WAIT）  
+**Status:** `GATE_A=PASS` + 队长 Gate A 技术审 `PASS` + `Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`（门 B 仍 WAIT）  
 **Date:** 2026-08-12  
 **Gate A reviewed PR:** [#47](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/47) @ `f77959b43f7f520119070181011e0d0713425cdd`  
-**Captain source:** PR [#35](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/35) comment  
-`[CAPTAIN AUTHORIZATION] T04 无损 RetrievalHit 接口与 Q001 真实文献包责任人`  
-**Decision flags（摘录）：**
+**Captain sources:**
+1. PR [#35](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/35) — `[CAPTAIN AUTHORIZATION] T04 无损 RetrievalHit…`
+2. PR [#47](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/47) review — `Captain review — PR #47 (T04 Wave C · Gate A)`（2026-08-12）
+
+**Decision flags（队长 #47 裁决 + T01 签字，摘录）：**
 
 ```text
 T04_RETRIEVE_HITS_IMPLEMENTATION_AUTHORIZED=true
 AUTHORIZED_BRANCH=t04/c-retrieval-hit-interface
-DRAFT_PR_AUTHORIZED=true
-READY_AUTHORIZED=false
-MERGE_AUTHORIZED=false
-FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false
-FIVE_REAL_RUNS_AUTHORIZED_BY_THIS_DECISION=false
-CAPTAIN_DECISION=AUTHORIZED_WITH_GATES
+GATE_A_TECHNICAL_REVIEW=PASS
+T01_T04_RETRIEVE_HITS_SEMANTIC_SIGNOFF=PASS
+BLOCKING_FINDINGS=NONE
+READY_AUTHORIZED=YES                 # 仅 Gate A 接口增量；不代表 Wave C Done
+MERGE_AUTHORIZED_NOW=NO              # 须 Ready 后由队长手工 squash
+MERGE_AFTER_READY=YES                # tip 仍为 f77959b… 且 checks 绿时可合
+WAVE_C_DONE=NO                       # 本合入不算 T04 Wave C Done
+FORMAL_RETRIEVAL_METRICS=NOT_AUTHORIZED
+T07_FIVE_REAL_RUNS=NOT_AUTHORIZED
 Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY
 T07_REAL_RUN_STATUS=HOLD
-T01_T04_RETRIEVE_HITS_SEMANTIC_SIGNOFF=PASS
+KEEP_PR_OPEN=YES
 ```
+
+**#47 观察（T01 复核，不改 tip）：** 已非 Draft（Ready）；`headRefOid` 仍为 `f77959b43f7f520119070181011e0d0713425cdd`。T01 **不**执行 `gh pr merge`。
 
 ## 1. T01 角色（仅此）
 
@@ -37,17 +44,19 @@ T01_T04_RETRIEVE_HITS_SEMANTIC_SIGNOFF=PASS
 ## 2. 合并顺序中 T01 的两道门
 
 ```text
-1. T04: t04/c-retrieval-hit-interface Draft PR
-2. T01: 对 T04 PR 准确 HEAD 做 semantic signoff     ← 门 A（接口语义）
-3. Captain: 审核并合并 T04 interface → integration
-4. T07: 后续受控运行分支从最新 integration 创建/merge
-5. Q001 真实文献包受控交付 → T04 loader/chunk/index/provenance
-6. T01: 对实际 Q001 hits / EvidenceBundle 做语义签字   ← 门 B（材料语义）
-7. 五题材料与全部门禁齐备后，T07 才可申请五题真实运行
+1. T04: t04/c-retrieval-hit-interface Draft PR          ← 已开 #47
+2. T01: 对 T04 PR 准确 HEAD 做 semantic signoff         ← 门 A DONE PASS
+3. Captain: Gate A 技术审 PASS + 授权 Ready；队员转 Ready ← 已 Ready，tip 未变
+4. Captain: tip=f77959b… 时手工 squash → integration   ← 进行中（T01 不 merge）
+5. T07: 后续受控运行分支从最新 integration 创建/merge
+6. Q001 真实文献包受控交付 → T04 loader/chunk/index/provenance
+7. T01: 对实际 Q001 hits / EvidenceBundle 做语义签字   ← 门 B WAIT
+8. 五题材料与全部门禁齐备后，T07 才可申请五题真实运行
 ```
 
-当前：**门 A = PASS**（PR #47 @ `f77959b43f7f520119070181011e0d0713425cdd`）。  
-当前：**门 B 未触发**（`Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`）。
+当前：**门 A = PASS**（PR #47 @ `f77959b43f7f520119070181011e0d0713425cdd`；已 Ready）。  
+当前：**门 B 未触发**（`Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`）。  
+当前：**Wave C Done = NO**（队长明确：本合入不算）。
 
 ## 3. 门 A — T04 `retrieve_hits` 接口语义签字检查表
 
@@ -78,8 +87,10 @@ FORMAL_METRICS_CLAIMED=false
 BLOCKING_FINDINGS=NONE
 SIGNOFF_OWNER=Yqqxz
 SIGNOFF_DATE=2026-08-12
-READY_AUTHORIZED=false
-MERGE_AUTHORIZED=false
+READY_AUTHORIZED=YES
+MERGE_AUTHORIZED_NOW=NO
+MERGE_AFTER_READY=YES
+WAVE_C_DONE=NO
 ```
 
 ### 3.1 Gate A 转换契约（T04 `RetrievalHit` → T01 `EvidenceCardContract`）
@@ -185,10 +196,10 @@ FAIL 若题册/fixture/metadata-only/缺 provenance/precheck 失败
 | 是否已实现/修改 `app/rag/**` | **否**（正确：属 T04） |
 | 是否对准确 HEAD `f77959b…` 给门 A PASS | **是** |
 | 是否已对未交付 Q001 包给门 B PASS | **否**（正确：WAIT） |
-| 是否把 Ready/Merge 当作门 A 通过 | **否**（仍 `false`） |
-| 是否保持 `FORMAL_RETRIEVAL_METRICS_AUTHORIZED=false` | **是** |
-| 是否保持五题真实运行 HOLD | **是** |
-| 下一步 | 等队长审核合并 #47；等 Q001 受控交付 → 门 B |
+| 是否把 Wave C Done 当作门 A 通过 | **否**（`WAVE_C_DONE=NO`） |
+| 是否由 T01 擅自 merge #47 | **否**（等队长 `MERGE_AFTER_READY` squash） |
+| 是否保持正式指标 / 五题真跑未授权 | **是** |
+| 下一步 | 等队长按固定 SHA squash 合入 #47；等 Q001 → 门 B |
 
 ## 7. 相关文档
 
