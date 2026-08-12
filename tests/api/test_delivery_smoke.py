@@ -27,6 +27,15 @@ def test_health_degrades_when_required_delivery_inputs_are_unavailable(monkeypat
     """问题清单或本地依赖不可用时不得硬编码为健康。"""
     monkeypatch.setattr(routes, "_questions_count", lambda: 0)
     monkeypatch.setattr(routes, "_rag_index_status", lambda: "unavailable")
+    monkeypatch.setattr(
+        routes,
+        "_delivery_dependency_status",
+        lambda _request: {
+            "job_store": "unavailable",
+            "artifact_registry": "unavailable",
+            "artifact_storage": "unavailable",
+        },
+    )
 
     response = client.get("/health")
 
@@ -35,6 +44,7 @@ def test_health_degrades_when_required_delivery_inputs_are_unavailable(monkeypat
     assert body["status"] == "degraded"
     assert body["questions_count"] == 0
     assert body["rag_index_status"] == "unavailable"
+    assert body["dependencies"]["job_store"] == "unavailable"
     assert "sk-" not in json.dumps(body)
 
 
@@ -42,6 +52,15 @@ def test_health_is_ok_when_required_delivery_inputs_are_available(monkeypatch):
     """基础交付依赖就绪时 health 才返回 ok。"""
     monkeypatch.setattr(routes, "_questions_count", lambda: 125)
     monkeypatch.setattr(routes, "_rag_index_status", lambda: "ready")
+    monkeypatch.setattr(
+        routes,
+        "_delivery_dependency_status",
+        lambda _request: {
+            "job_store": "available",
+            "artifact_registry": "available",
+            "artifact_storage": "available",
+        },
+    )
 
     response = client.get("/health")
 

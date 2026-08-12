@@ -17,10 +17,11 @@ app.api.routes —— 业务路由定义（供“科研发现控制台”前端�
 from __future__ import annotations
 
 import json
+import os
 import threading
 from pathlib import Path
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
@@ -78,8 +79,41 @@ def _questions_count() -> int:
         return 0
 
 
+def _delivery_dependency_status(request: Request | None) -> dict[str, str]:
+    """Probe the persistent API stores without exposing their local paths."""
+    statuses = {
+        "job_store": "unavailable",
+        "artifact_registry": "unavailable",
+        "artifact_storage": "unavailable",
+    }
+    state = getattr(getattr(request, "app", None), "state", None)
+    job_store = getattr(state, "job_store", None)
+    try:
+        if job_store is not None:
+            job_store.list_jobs(limit=1)
+            statuses["job_store"] = "available"
+    except Exception:  # noqa: BLE001 - health must report, not leak, dependency failures
+        pass
+
+    registry = getattr(state, "artifact_registry", None)
+    try:
+        if registry is not None:
+            registry.list_for_job("__healthcheck__", actor_id="__healthcheck__")
+            statuses["artifact_registry"] = "available"
+            root = getattr(registry, "root", None)
+            if (
+                isinstance(root, Path)
+                and root.is_dir()
+                and os.access(root, os.W_OK)
+            ):
+                statuses["artifact_storage"] = "available"
+    except Exception:  # noqa: BLE001 - health must report, not leak, dependency failures
+        pass
+    return statuses
+
+
 @router.get("/health")
-def health() -> dict:
+def health(request: Request = None) -> dict:  # type: ignore[assignment]
     """
     健康检查：返回服务状态、配置状态、索引状态与模型名（不含任何 Key）。
 
@@ -89,9 +123,14 @@ def health() -> dict:
     settings = get_settings()
     questions_count = _questions_count()
     rag_index_status = _rag_index_status()
+    dependencies = _delivery_dependency_status(request)
     status = (
         "ok"
-        if questions_count == 125 and rag_index_status != "unavailable"
+        if (
+            questions_count == 125
+            and rag_index_status != "unavailable"
+            and all(value == "available" for value in dependencies.values())
+        )
         else "degraded"
     )
     return {
@@ -105,6 +144,7 @@ def health() -> dict:
             "mode": "ephemeral" if settings.preview_ephemeral_storage else "local",
             "persistent": not settings.preview_ephemeral_storage,
         },
+        "dependencies": dependencies,
         "qwen_config_loaded": settings.qwen_configured,
         "deep_research_config_loaded": settings.deep_research_configured,
         "openalex_config_loaded": settings.openalex_configured,

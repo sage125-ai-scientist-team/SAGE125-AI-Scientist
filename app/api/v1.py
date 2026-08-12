@@ -6,6 +6,7 @@ import json
 import traceback
 from datetime import datetime
 from pathlib import Path
+from typing import NoReturn
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
 from fastapi.responses import FileResponse
@@ -36,6 +37,7 @@ from app.api.contracts import (
     JobListResponse,
     JobStatus,
     JobStatusResponse,
+    MultimodalDetailListResponse,
     QuestionListResponse,
     QuestionSummary,
     RetryMetadata,
@@ -44,6 +46,7 @@ from app.api.contracts import (
     Version,
     VersionDiff,
     VersionListResponse,
+    FeedbackReceipt,
     IssueProjection,
 )
 from app.api.errors import APIError, correlation_id
@@ -53,6 +56,7 @@ from app.api.job_store import (
     JobNotFound,
     JobRecord,
 )
+from app.api.owner_composition import OwnerPortFailure
 from app.api.upstream import (
     OwnerContractInvalid,
     OwnerContractUnavailable,
@@ -379,11 +383,28 @@ def _upstream(request: Request):
     return port
 
 
+def _feedback_submit_port(request: Request):
+    """Return the configured T03 submit adapter or fail closed."""
+    port = getattr(request.app.state, "feedback_submit_port", None)
+    if port is None:
+        _upstream_unavailable("T03 FeedbackService.submit")
+    return port
+
+
+def _multimodal_read_port(request: Request):
+    """Return the configured frozen T06 detail adapter or fail closed."""
+    port = getattr(request.app.state, "multimodal_read_port", None)
+    if port is None:
+        _upstream_unavailable("T06 list_multimodal_details")
+    return port
+
+
 def _links(job_id: str) -> JobLinks:
     base = f"/api/v1/jobs/{job_id}"
     return JobLinks(
         self=base,
         evidence=f"{base}/evidence",
+        multimodal=f"{base}/multimodal",
         artifacts=f"{base}/artifacts",
         versions=f"{base}/versions",
         feedback=f"{base}/feedback",
@@ -513,6 +534,55 @@ def _owner_call(component: str, operation):
             details={"component": exc.component, "availability": "unavailable"},
             retryable=False,
         ) from None
+
+
+def _raise_owner_port_failure(exc: OwnerPortFailure) -> NoReturn:
+    """Map safe T03/T06 adapter categories to stable HTTP errors."""
+    mappings = {
+        "invalid_input": (
+            422,
+            "OWNER_INPUT_INVALID",
+            "请求不符合 owner 冻结契约。",
+        ),
+        "unsafe_input": (
+            422,
+            "FEEDBACK_UNSAFE_INPUT",
+            "反馈内容未通过安全校验。",
+        ),
+        "permission_denied": (
+            403,
+            "FEEDBACK_PERMISSION_DENIED",
+            "当前调用方无权提交该反馈。",
+        ),
+        "conflict": (
+            409,
+            "OWNER_STATE_CONFLICT",
+            "相同幂等键或 owner 状态与本次请求冲突。",
+        ),
+        "identity_mismatch": (
+            409,
+            "UPSTREAM_IDENTITY_MISMATCH",
+            "上游资源身份与当前任务不一致。",
+        ),
+        "unavailable": (
+            503,
+            "UPSTREAM_CONTRACT_UNAVAILABLE",
+            "owner 公开端口当前不可用。",
+        ),
+    }
+    status_code, code, message = mappings[exc.category]
+    raise APIError(
+        status_code=status_code,
+        code=code,
+        message=message,
+        details={
+            "component": exc.component,
+            "availability": (
+                "unavailable" if status_code == 503 else "available"
+            ),
+        },
+        retryable=exc.retryable,
+    ) from None
 
 
 def _upstream_run_id(record: JobRecord) -> str:
@@ -880,6 +950,47 @@ def list_evidence(job_id: str, request: Request) -> EvidenceListResponse:
         items=items,
         truncated=bundle.truncated,
         truncation_reason=bundle.truncation_reason,
+        availability="available",
+    )
+
+
+@router.get(
+    "/jobs/{job_id}/multimodal",
+    response_model=MultimodalDetailListResponse,
+    responses={
+        200: _documented_response(
+            "T06 多模态详情",
+            {
+                "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
+                "version_id": "run-001:v1",
+                "items": [],
+                "availability": "available",
+            },
+        ),
+        **_READ_RESPONSES,
+    },
+    summary="读取 T06 冻结多模态详情",
+)
+def list_multimodal_details(
+    job_id: str,
+    request: Request,
+    version_id: str = Query(min_length=1, max_length=128),
+) -> MultimodalDetailListResponse:
+    """Read identity-bound T06 details without scanning owner storage."""
+    record = _get_job(request, job_id)
+    run_id = _upstream_run_id(record)
+    try:
+        items = _multimodal_read_port(request).list_details(
+            run_id=run_id,
+            question_id=record.question_id,
+            version_id=version_id,
+        )
+    except OwnerPortFailure as exc:
+        _raise_owner_port_failure(exc)
+    return MultimodalDetailListResponse(
+        job_id=job_id,
+        version_id=version_id,
+        items=items,
         availability="available",
     )
 
@@ -1276,26 +1387,74 @@ def list_versions(job_id: str, request: Request):
     return VersionListResponse(job_id=job_id, items=items, availability="partial")
 
 
+def _canonical_feedback_version_id(run_id: str, version_id: str) -> str:
+    """Normalize the documented short vN label to T03's canonical run:vN."""
+    normalized = version_id.strip()
+    if normalized.startswith("v") and normalized[1:].isdigit():
+        return f"{run_id}:{normalized}"
+    return normalized
+
+
 @router.post(
     "/jobs/{job_id}/feedback",
-    response_model=ErrorResponse,
-    status_code=503,
-    responses=_UPSTREAM_UNAVAILABLE_RESPONSES,
-    summary="提交人工反馈（契约冻结）",
+    response_model=FeedbackReceipt,
+    status_code=202,
+    responses={
+        202: _documented_response(
+            "反馈已持久化，等待 T03/T02 决策与版本闭环",
+            {
+                "feedback_id": "feedback-7f4a",
+                "job_id": "job-123",
+                "target_version_id": "run-123:v1",
+                "status": "submitted",
+                "decision_reason": None,
+                "resulting_version_id": None,
+                "correlation_id": "judge-demo-001",
+            },
+        ),
+        **_ERROR_RESPONSES,
+    },
+    summary="通过 T03 冻结服务提交人工反馈",
 )
 def create_feedback(
     job_id: str,
     payload: FeedbackCreateRequest,
     request: Request,
-    idempotency_key: str | None = Header(
-        default=None,
+    idempotency_key: str = Header(
+        ...,
         alias="Idempotency-Key",
+        min_length=1,
         max_length=256,
     ),
-):
-    del payload, idempotency_key
-    _get_job(request, job_id)
-    _upstream_unavailable("T03 FeedbackRecord/FeedbackDecision")
+) -> FeedbackReceipt:
+    """Persist feedback only; decisions and resulting versions remain owner-owned."""
+    record = _get_job(request, job_id)
+    run_id = _upstream_run_id(record)
+    try:
+        submitted = _feedback_submit_port(request).submit(
+            job_id=job_id,
+            run_id=run_id,
+            question_id=record.question_id,
+            target_version_id=_canonical_feedback_version_id(
+                run_id,
+                payload.target_version_id,
+            ),
+            feedback=payload.feedback,
+            actor_id=principal(request).actor_id,
+            correlation_id=correlation_id(request),
+            idempotency_key=idempotency_key,
+        )
+    except OwnerPortFailure as exc:
+        _raise_owner_port_failure(exc)
+    return FeedbackReceipt(
+        feedback_id=submitted.feedback_id,
+        job_id=job_id,
+        target_version_id=submitted.target_version_id,
+        status="submitted",
+        decision_reason=None,
+        resulting_version_id=None,
+        correlation_id=submitted.correlation_id,
+    )
 
 
 @router.get(
