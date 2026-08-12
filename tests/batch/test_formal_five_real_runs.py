@@ -24,7 +24,7 @@ from app.batch.formal_five_runs import (
     validate_provider_preflight_audit,
 )
 from app.batch.formal_provider_runtime import build_formal_provider_executor
-from app.batch.wave_c_hardening import request_pause
+from app.batch.wave_c_hardening import release_pause, request_pause
 from app.contracts.validation import GateFinding, GateResult, Severity
 from scripts.batch_125.run_five_real_runs import build_parser
 
@@ -708,6 +708,46 @@ def test_resume_rejects_delivery_index_hash_mismatch(tmp_path: Path) -> None:
     assert captured.value.error_code == "DELIVERY_CHECKSUM_MISMATCH"
 
 
+@pytest.mark.parametrize(
+    "record_updates",
+    (
+        {"route_id": "stale-route"},
+        {"input_hash": "f" * 64},
+        {
+            "status": "failed",
+            "completed": False,
+            "failure_code": "STALE_RECORD",
+        },
+    ),
+    ids=("identity", "hash", "status"),
+)
+def test_resume_rejects_conflicting_delivery_record(
+    tmp_path: Path,
+    record_updates: dict[str, object],
+) -> None:
+    request = _request(tmp_path)
+    run_formal_five_runs(
+        request,
+        executor=lambda _context: _execution(),
+        completion_evaluator=_evaluate,
+    )
+    index_path = Path(request.run_root) / "T07-WB5-20260807-v2/delivery_index.json"
+    index = formal_runner.DeliveryIndex.from_json(
+        index_path.read_text(encoding="utf-8")
+    )
+    conflicting = replace(index.records[0], **record_updates)
+    rebuilt = formal_runner.build_delivery_index(index.batch_id, (conflicting,))
+    index_path.write_text(
+        json.dumps(rebuilt.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(BatchRunnerError) as captured:
+        run_formal_five_runs(replace(request, resume=True))
+
+    assert captured.value.error_code == "DELIVERY_RECORD_CONFLICT"
+
+
 def test_dry_run_never_calls_executor(tmp_path: Path) -> None:
     called = False
 
@@ -800,3 +840,114 @@ def test_pause_request_stops_before_next_provider_call(tmp_path: Path) -> None:
     assert receipt.provider_calls == 0
     assert receipt.questions == ()
     assert executor_calls == 0
+
+
+def test_resume_after_two_completed_questions_keeps_delivery_index_unique(
+    tmp_path: Path,
+) -> None:
+    request = _request(tmp_path, question_ids=FROZEN_EXECUTION_ORDER)
+    first_calls: list[str] = []
+
+    def execution_for(context) -> FormalQuestionExecution:
+        question_id = context.question_id
+        evidence_id = f"EV-{question_id}-001"
+        request_id = "req_sha256:" + hashlib.sha256(question_id.encode()).hexdigest()
+        execution = _execution()
+        standard_fields = dict(execution.standard_fields)
+        standard_fields["References"] = evidence_id
+        return replace(
+            execution,
+            standard_fields=standard_fields,
+            research_plan={
+                "question_id": question_id,
+                "input_question": context.question["question"],
+                "actual_execution": True,
+                "references": [{"id": evidence_id}],
+            },
+            evidence_cards=(
+                {
+                    "id": evidence_id,
+                    "title": f"{question_id} evidence",
+                    "source": {
+                        "kind": "booklet",
+                        "reference": "sjtu-booklet.pdf",
+                    },
+                },
+            ),
+            call_audits=(_audit(sanitized_request_id=request_id),),
+        )
+
+    def pause_after_second(context):
+        first_calls.append(context.question_id)
+        if context.question_id == "Q028":
+            request_pause(
+                context.batch_root,
+                requested_by="captain",
+                reason="pause before Q050",
+            )
+        return execution_for(context)
+
+    first = run_formal_five_runs(
+        request,
+        executor=pause_after_second,
+        completion_evaluator=_evaluate,
+    )
+
+    assert first.status == "paused"
+    assert first.progress == "2/5"
+    assert first_calls == ["Q001", "Q028"]
+
+    batch_root = Path(first.batch_root)
+    marker = batch_root / "pause_request.json"
+    marker_sha256 = hashlib.sha256(marker.read_bytes()).hexdigest()
+    release_pause(
+        batch_root,
+        released_by="captain",
+        expected_pause_sha256=marker_sha256,
+    )
+
+    resumed_calls: list[str] = []
+
+    def resume_executor(context):
+        resumed_calls.append(context.question_id)
+        return execution_for(context)
+
+    resumed = run_formal_five_runs(
+        replace(request, resume=True),
+        executor=resume_executor,
+        completion_evaluator=_evaluate,
+    )
+
+    assert resumed.status == "completed"
+    assert resumed.progress == "5/5"
+    assert resumed.provider_calls == 5
+    assert resumed_calls == ["Q050", "Q075", "Q107"]
+    assert [item.question_id for item in resumed.questions] == list(
+        FROZEN_EXECUTION_ORDER
+    )
+    assert [item.resumed for item in resumed.questions] == [
+        True,
+        True,
+        False,
+        False,
+        False,
+    ]
+
+    final_manifest = json.loads(
+        (batch_root / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert final_manifest["status"] == "completed"
+    assert final_manifest["provider_calls"] == 5
+    assert [item["question_id"] for item in final_manifest["questions"]] == list(
+        FROZEN_EXECUTION_ORDER
+    )
+
+    delivery = json.loads(
+        (batch_root / "delivery_index.json").read_text(encoding="utf-8")
+    )
+    delivered_question_ids = [
+        record["question_id"] for record in delivery["records"]
+    ]
+    assert delivered_question_ids == list(FROZEN_EXECUTION_ORDER)
+    assert len(delivered_question_ids) == len(set(delivered_question_ids))
+    assert delivery["completed"] == 5
