@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 from fastapi.testclient import TestClient
 
+from app.api import owner_composition
 from app.api.auth import FixedWindowRateLimiter, HashedAPIKeyAuth
 from app.api.contracts import JobCreateRequest, JobStatus
 from app.api.job_store import SQLiteJobStore
@@ -257,18 +260,33 @@ def test_multimodal_route_preserves_t06_detail_contract(tmp_path):
     assert empty.json()["items"] == []
 
 
-def test_multimodal_route_fails_closed_on_owner_path_leak(tmp_path):
+def test_multimodal_route_fails_closed_on_owner_path_leak(
+    tmp_path,
+    monkeypatch,
+):
     """Do not expose a Windows absolute path leaked by an owner projection."""
-    application, jobs, _feedback, multimodal_store = _application(tmp_path)
+    application, jobs, _feedback, _multimodal_store = _application(tmp_path)
     job = _owner_job(jobs)
     version_id = "run-owner-1:v-path-leak"
     private_marker = r"C:\private\sample_table.pdf"
-    put_multimodal_artifact(
-        run_id="run-owner-1",
-        question_id="Q001",
-        version_id=version_id,
-        artifact=_table_artifact(private_marker),
-        store=multimodal_store,
+    artifact = _table_artifact(private_marker)
+    monkeypatch.setattr(
+        owner_composition,
+        "list_multimodal_details",
+        lambda **_kwargs: [
+            SimpleNamespace(
+                artifact=artifact,
+                public_source=SimpleNamespace(
+                    source_id="sha256:unsafe-owner-output",
+                    source_label=private_marker,
+                    preview_artifact_id=artifact.artifact_id,
+                    coordinate_space="pdf_user_space",
+                    page=artifact.provenance.page,
+                    bbox=artifact.provenance.bbox,
+                ),
+                needs_human_review=False,
+            )
+        ],
     )
 
     with TestClient(application) as client:
