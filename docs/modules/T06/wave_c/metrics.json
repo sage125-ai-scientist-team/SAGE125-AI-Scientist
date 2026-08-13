@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "evaluation_kind": "wave_c_final",
+  "ACTUAL_EXTERNAL_CALLS": 1,
+  "tokens": {
+    "in": 376,
+    "out": 72,
+    "source": "service_reported",
+    "response_id": "gen-1786466716-ZSOK1PddnAVrfERr6Yza"
+  },
+  "cost": null,
+  "modalities_in_pipeline": [
+    "table",
+    "timeseries"
+  ],
+  "chart_status": "needs_human_review_vl_empty_structure_non_plot_png",
+  "table": {
+    "cell_accuracy": 1.0,
+    "meets_threshold_0_95": true,
+    "correct": 84,
+    "total": 84
+  },
+  "timeseries": {
+    "validation_status": "passed",
+    "confidence": 0.93,
+    "row_count": 3,
+    "entered_pipeline": true
+  },
+  "chart": {
+    "source_file": "raw/Picture1.png",
+    "modality": "chart",
+    "ok": false,
+    "vision_blocked": false,
+    "needs_human_review": true,
+    "actual_external_call": true,
+    "tokens": null,
+    "cost": null,
+    "error": "raster chart requires successful vision parse; no silent fallback to text-directive parser",
+    "error_type": "ExtractionError",
+    "vision_audit_status": "failed",
+    "vision_error_type": "invalid_or_empty_response",
+    "tokens_in": 376,
+    "tokens_out": 72,
+    "response_id": "gen-1786466716-ZSOK1PddnAVrfERr6Yza",
+    "relative_error_le_5_claimed": false,
+    "finding": "Zenodo Picture1.png is hardware photo, not impedance plots; OpenRouter VL returned empty chart structure; ≤5% not claimed.",
+    "evidence_file": "docs/modules/T06/wave_c/actual_gold_openrouter_metrics.json"
+  },
+  "dod": {
+    "T06-DOD-001_two_non_text_modalities": true,
+    "T06-METRIC-001": true,
+    "T06-DOD-002_table_ge_95": true,
+    "T06-METRIC-002": true,
+    "T06-METRIC-003_chart_rel_err_le_5": false,
+    "T06-METRIC-003_human_review_marked": true,
+    "T06-DOD-003_no_silent_pass_on_failures": true
+  },
+  "timings_ms": {
+    "table_extract_ms": 1.0867000091820955,
+    "chart_denied_ms": 0.9593999711796641,
+    "timeseries_extract_ms": 1.059299916960299
+  },
+  "reproduction_commands": [
+    "python -X utf8 docs/modules/T06/scripts/t06_build_wave_c_artifacts.py",
+    "python -X utf8 -m app.multimodal.eval_actual_gold --gold-root docs/modules/T06/gold/zenodo_fish_spoilage_impedance/v1.0.0 --package-head <HEAD> --in-integration --allow-vision-actual --out docs/modules/T06/wave_c/actual_gold_openrouter_metrics.json",
+    "python -X utf8 -m pytest tests/multimodal/test_wave_c_fallback.py -q"
+  ],
+  "provider": "openrouter",
+  "cost_note": "OpenRouter cost left null when service_reported_cost absent (not invented)."
+}

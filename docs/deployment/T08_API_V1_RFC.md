@@ -200,8 +200,9 @@ worker 只有在 adapter 通过冻结 owner 契约明确提供以下全部证明
 `GET /api/v1/jobs/{job_id}/artifacts`
 
 每项保留 artifact ID、类型、MIME、大小、SHA-256、生成状态、下载 URL，
-以及 `planned/expected/mock/actual`。这是未来候选成功 projection；当前请求
-返回 503。T08 不依据文件存在推断 `actual`。
+以及 `planned/expected/mock/actual`。当前 registry 可用但尚无产物时返回
+`200 items=[]`；这不表示 owner execution/artifact 已完成。T08 不依据文件存在推断
+`actual`，生产 execution artifact 仍需 T05 受控 resolver。
 
 ### Version
 
@@ -210,7 +211,9 @@ worker 只有在 adapter 通过冻结 owner 契约明确提供以下全部证明
 
 响应 projection 包含 lineage、反馈 ID、Reviewer issue、关闭状态、评分、
 差异和停止原因。这是未来候选成功 projection；当前请求返回 503。只有 T02
-可以判定 issue closure。
+可以判定 issue closure。T08 proposed read boundary 始终携带
+`run_id + question_id`；版本 diff 还携带 from/to version。任一 identity 不一致返回
+`409 UPSTREAM_IDENTITY_MISMATCH`，不得仅凭 `run_id` 扫描进程内 store。
 
 ### Feedback
 
@@ -234,7 +237,46 @@ Wave B 应通过集中 adapter 把这些契约投影到 T08 外部 DTO，并与 
 版本和错误语义。完成适配前，不允许通过内部对象、私有字段或文件命名补齐业务字段，
 也不允许把当前 503 改成没有真实数据来源的成功响应。
 
-## 7. 2026-08-10 Wave A 收尾加固
+当前 T01 proposed boundary：
+
+```python
+get_evidence_bundle(
+    *,
+    run_id: str,
+    question_id: str,
+) -> EvidenceBundle
+```
+
+当前 T02 proposed boundary：
+
+```python
+list_plan_versions(
+    *,
+    run_id: str,
+    question_id: str,
+) -> list[PlanVersion]
+
+get_version_diff(
+    *,
+    run_id: str,
+    question_id: str,
+    from_version_id: str,
+    to_version_id: str,
+) -> OwnerVersionDiff
+```
+
+这些签名是 T08 消费边界和 contract fixture，不表示 owner production port 已经落地。
+
+## 7. Wave B 自主加固
+
+- evidence、versions 和 diff 的 fixture adapter 以 run/question identity 为键；
+- 同一 run 被另一 question 请求时返回 409，不回退到其他题数据；
+- Job 幂等 key 不能跨 actor 复用，相同 payload 也返回 conflict；
+- 持久 deadline 在 runner progress 或返回边界触发 `timed_out/JOB_TIMEOUT`；
+- 完整 PowerShell 示例见 `T08_WAVE_B_API_EXAMPLES.md`；
+- B001—B021 状态见 `T08_WAVE_B_ACCEPTANCE_MATRIX.md`。
+
+## 8. 2026-08-10 Wave A 收尾加固
 
 - SQLite 同一数据库的进程内 writer 通过共享锁串行化，跨进程继续由
   `BEGIN IMMEDIATE` 与 `busy_timeout` 保护；
