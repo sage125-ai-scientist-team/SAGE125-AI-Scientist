@@ -26,7 +26,11 @@ T07_REAL_RUN_STATUS=HOLD
 KEEP_PR_OPEN=YES
 ```
 
-**#47 观察（T01 复核，不改 tip）：** 已非 Draft（Ready）；`headRefOid` 仍为 `f77959b43f7f520119070181011e0d0713425cdd`。T01 **不**执行 `gh pr merge`。
+**#47 观察（2026-08-13 队长 merge gate recheck）：**
+- 已 Ready；固定 SHA `f77959b…` tip **未变** → 既有 Gate A PASS **仍有效**。
+- 阻断：`behind=3 / diverged`（`require_up_to_date=true`）→ **现在不能 squash**。
+- **T04** 须普通 merge `upstream/integration/2026-08-10`（勿 force-push）→ CI 绿 → **@Yqqxz 对新 tip 快速确认 Gate A** → @队长按**新 tip** squash。
+- T01 **不**改 `app/rag/**`、**不**代 merge #47。
 
 ## 1. T01 角色（仅此）
 
