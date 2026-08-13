@@ -8,6 +8,7 @@ import threading
 import time
 from collections import deque
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable, Protocol
 
@@ -21,6 +22,10 @@ logger = get_logger("api.jobs")
 
 class QueueCapacityError(RuntimeError):
     pass
+
+
+class JobDeadlineExceeded(TimeoutError):
+    """Raised cooperatively when a persisted job deadline has elapsed."""
 
 
 @dataclass(frozen=True)
@@ -144,6 +149,15 @@ def _classify_error(exc: Exception) -> tuple[str, bool]:
     return "JOB_EXECUTION_FAILED", False
 
 
+def _deadline_exceeded(job: JobRecord) -> bool:
+    if not job.deadline_at:
+        return False
+    deadline = datetime.fromisoformat(job.deadline_at)
+    if deadline.tzinfo is None:
+        deadline = deadline.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) >= deadline.astimezone(timezone.utc)
+
+
 class InProcessJobQueue:
     def __init__(
         self,
@@ -258,11 +272,15 @@ class InProcessJobQueue:
         )
 
         def progress(payload: dict) -> None:
+            if _deadline_exceeded(job):
+                raise JobDeadlineExceeded("job execution deadline exceeded")
             stage = str(payload.get("stage") or "running")
             self.store.update_progress(job_id, stage)
 
         try:
             result = _normalize_run_result(self.runner.run(job, progress))
+            if _deadline_exceeded(job):
+                raise JobDeadlineExceeded("job execution deadline exceeded")
             if result.completion_verified:
                 self.store.transition(
                     job_id,
@@ -296,6 +314,22 @@ class InProcessJobQueue:
                     result.upstream_run_id,
                     ",".join(evidence.missing_requirements),
                 )
+        except JobDeadlineExceeded:
+            self.store.transition(
+                job_id,
+                JobStatus.TIMED_OUT,
+                stage="timed_out",
+                actor="worker",
+                source="deadline",
+                error_code="JOB_TIMEOUT",
+                error_message="任务超过执行时限。",
+                retryable=False,
+            )
+            logger.warning(
+                "job_timed_out job_id=%s correlation_id=%s",
+                job.job_id,
+                job.correlation_id,
+            )
         except Exception as exc:  # noqa: BLE001
             current = self.store.get_job(job_id)
             error_code, retryable = _classify_error(exc)

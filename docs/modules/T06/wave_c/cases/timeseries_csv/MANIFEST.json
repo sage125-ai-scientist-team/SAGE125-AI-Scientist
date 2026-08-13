@@ -1,0 +1,84 @@
+{
+  "case_id": "timeseries_csv_wave_b_fixture",
+  "inputs": [
+    {
+      "path": "docs/modules/T06/wave_c/cases/timeseries_csv/input_sample_clean.csv",
+      "modality": "timeseries"
+    },
+    {
+      "path": "docs/modules/T06/wave_c/cases/timeseries_csv/input_sample_clean.schema.json",
+      "role": "schema"
+    }
+  ],
+  "human_gold": "docs/modules/T06/wave_c/cases/timeseries_csv/human_gold_001.json",
+  "extract": {
+    "artifact": {
+      "artifact_id": "wb-ts-001",
+      "modality": "timeseries",
+      "provenance": {
+        "source_path": "C:\\Users\\lenovo\\AppData\\Local\\Temp\\sage125-t06-pr42-fix\\sage125-ai-scientist-team-SAGE125-AI-Scientist-1afa596\\tests\\multimodal\\fixtures\\wave_b\\timeseries\\sample_clean.csv",
+        "source_type": "csv",
+        "page": 1,
+        "bbox": null
+      },
+      "units": [
+        "V",
+        "s"
+      ],
+      "column_units": [
+        {
+          "column": "signal_mV",
+          "unit": "V"
+        },
+        {
+          "column": "time_s",
+          "unit": "s"
+        }
+      ],
+      "axes": null,
+      "legend": [
+        "signal_mV"
+      ],
+      "data": {
+        "headers": [
+          "time_s",
+          "signal_mV",
+          "anomaly_flags"
+        ],
+        "rows": [
+          [
+            "0.0",
+            "0.0001",
+            ""
+          ],
+          [
+            "1.0",
+            "0.00015",
+            ""
+          ],
+          [
+            "2.0",
+            "0.00012",
+            ""
+          ]
+        ]
+      },
+      "confidence": 0.93,
+      "validation_status": "passed"
+    },
+    "public_source": {
+      "source_id": "sha256:fa2bef592afa2b7efd10429084ffb76f77224958689f28aacf9d340abb53659c",
+      "source_label": "sample_clean.csv#page=1",
+      "preview_artifact_id": "wb-ts-001",
+      "coordinate_space": "csv_placeholder",
+      "page": 1,
+      "bbox": null
+    },
+    "duration_ms": 1.059299916960299
+  },
+  "thumbnail_or_preview": {
+    "preview_artifact_id": "wb-ts-001",
+    "note": "CSV timeseries uses preview_artifact_id; no raster thumbnail"
+  },
+  "reproduction_command": "python -X utf8 -c \"from app.multimodal.adapters import TimeseriesAdapter; a=TimeseriesAdapter().process('docs/modules/T06/wave_c/cases/timeseries_csv/input_sample_clean.csv'); print(a.validation_status, a.confidence)\""
+}
