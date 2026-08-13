@@ -138,7 +138,9 @@ CI（PR #35）：lint / type / unit / integration / security / build 在 tip `f6
 6. Q028 回归是契约层场景，**不是**人工原文签字样本。  
 7. PR #35 在队长授权前保持 Draft（`MERGE_AUTHORIZED=NO`）。  
 8. Q001 真实文献包状态：`AWAITING_CONTROLLED_DELIVERY` → **门 B=WAIT**；五题真实运行：`HOLD`。  
-9. T08 #39 已合入 `integration/2026-08-10`；T01 #43（read port）需与最新 integration 保持同步。
+9. T08 #39 已合入 `integration/2026-08-10`；T01 #45（metrics 副作用）已合入（2026-08-13）。  
+10. T01 #43（read port）在 2026-08-13 再次 sync 后 tip=`097c46b…`、`behind=0`，仍 Draft；等 CI 全绿后由队长授权 Ready。  
+11. T04 #47 因 `behind=3` 暂不可 squash；同一 SHA `f77959b…` 上 Gate A 仍有效，待 T04 sync 后 T01 重确认新 tip。
 
 ## 9. 回滚
 
