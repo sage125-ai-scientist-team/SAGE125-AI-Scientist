@@ -194,7 +194,8 @@ FAIL 若题册/fixture/metadata-only/缺 provenance/precheck 失败
 
 T04 Draft PR [#59](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/59)。  
 请求审查 SHA：`3c7230b725360383cf9bcf56358b00bbaac0a97e`（父提交）。  
-**实际签字 SHA（当前 tip + CI 绿）：** `cf65aa8eeff25900278f52a8017b55dc17099b20`（相对父提交仅加强 production 门禁，不削弱 B1 字段契约）。
+**实际签字 SHA（当前 tip + CI 绿）：** `cf65aa8eeff25900278f52a8017b55dc17099b20`（相对父提交仅加强 production 门禁，不削弱 B1 字段契约）。  
+**2026-08-14 重审：** T04 申报该 SHA 为 T07 四项 P1 修复后的固定 HEAD；tip 未再前进；T01 重审结论仍为 Gate B1 PASS。
 
 | # | 检查项 | 结果 | 依据 |
 |---|---|---|---|
