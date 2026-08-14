@@ -42,8 +42,17 @@
     "max_attempt_cap": 24,
     "max_retries_per_entry": 1,
     "resume_flag": "--resume",
-    "provider_rule": "Provider execution is prohibited unless --execute is supplied and Qwen configuration is valid; --mock never calls a real Provider.",
-    "failure_rule": "Only transient transport failures receive one retry. A terminal failure stops the entire run and is atomically recorded."
+    "provider_rule": "Provider execution is prohibited unless --execute is supplied, the separate actual_execution_authorization is true, and the frozen Bailian runtime identity is valid. Formal execution rejects --mock.",
+    "failure_rule": "Only TimeoutError or ConnectionError receive one retry. A terminal failure stops the entire run and is atomically recorded.",
+    "global_attempt_rule": "The ledger has one immutable global cap of 24 persisted attempts across all domains and every --resume invocation."
+  },
+  "actual_execution_authorization": {
+    "authorized": false,
+    "provider": "bailian",
+    "model": "qwen3.6-flash",
+    "region": "cn-beijing",
+    "endpoint_rule": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+    "authorization_rule": "Only a captain-approved, reviewed protocol change may set authorized=true. This repository state does not authorize Provider execution."
   },
   "manifest_contract": {
     "schema_version": "1.1",
@@ -66,17 +75,17 @@
     "domains_rule": "Exactly one ordered entry for every required normalized domain."
   },
   "artifact_policy": {
-    "ledger": "ledger.json (atomic replace; --resume accepts only the same canonical manifest hash and question_source_binding, which includes canonical source path, file SHA-256, and ordered item-binding digest)",
+    "ledger": "ledger.json (atomic replace; --resume accepts only the same canonical manifest hash and question_source_binding, which includes canonical source path, file SHA-256, and ordered item-binding digest). global_attempt_count is reconciled from all persisted attempts and must never exceed 24.",
     "preflight": "preflight.json",
     "execution_summary": "run_summary.json",
     "pipeline_artifacts": "Use the artifact directory emitted by app.workflow.pipeline.run_pipeline_with_state.",
-    "call_audit": "Summarize state.llm_calls using app.core.call_audit.summarize_calls; do not serialize secrets.",
-    "integrity": "Each completed entry records a deterministic artifact hash and secret-scan outcome. Unknown token and cost values are null, never estimated."
+    "call_audit": "Summarize state.llm_calls using app.core.call_audit.summarize_calls; do not serialize secrets. Completed actual attempts must also prove Bailian/Qwen fixed identity, unique request identities, exact token arithmetic, no fallback, and token-only unpriced cost accounting.",
+    "integrity": "Each completed entry records a deterministic artifact hash and secret-scan outcome. Failed attempts retain null token/cost values; completed actual attempts record audited tokens and a null (unpriced) cost."
   },
   "reproduction": {
     "preflight": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir>",
-    "mock": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --mock",
     "actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute",
-    "resume_mock": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --mock --retry --resume"
+    "resume_actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --retry --resume",
+    "safety_note": "The current authorization is false; the actual and resume_actual commands are formal interfaces only and must not be invoked until a captain-approved authorization change is reviewed."
   }
 }

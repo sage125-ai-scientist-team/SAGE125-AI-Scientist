@@ -267,3 +267,54 @@ def test_preflight_ledger_passes_offline_validator(tmp_path: Path) -> None:
         REPOSITORY_ROOT / "docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json",
         tmp_path / "out" / "ledger.json",
     )["passed"] is True
+
+
+def test_formal_execute_is_blocked_without_protocol_authorization(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An unapproved formal execute request stops before provider or pipeline activity."""
+    manifest = _manifest(tmp_path)
+    calls: list[object] = []
+    monkeypatch.setattr(
+        runner,
+        "run_pipeline_with_state",
+        lambda *_args, **_kwargs: calls.append(object()),
+    )
+    report = run(manifest, tmp_path / "out", execute=True)
+    assert report["passed"] is False
+    assert "actual_execution_not_authorized" in report["errors"]
+    assert report["executed"] is False
+    assert calls == []
+
+
+def test_formal_execute_rejects_mock_before_pipeline(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Mock mode cannot bypass the formal actual-execution identity gate."""
+    manifest = _manifest(tmp_path)
+    calls: list[object] = []
+    monkeypatch.setattr(
+        runner,
+        "run_pipeline_with_state",
+        lambda *_args, **_kwargs: calls.append(object()),
+    )
+    report = run(manifest, tmp_path / "out", execute=True, mock=True)
+    assert report["passed"] is False
+    assert "formal_execution_rejects_mock" in report["errors"]
+    assert calls == []
+
+
+def test_validator_rejects_tampered_global_attempt_count(tmp_path: Path) -> None:
+    """The offline validator recomputes the global attempt ledger on every review."""
+    manifest = _manifest(tmp_path)
+    run(manifest, tmp_path / "out")
+    ledger_path = tmp_path / "out" / "ledger.json"
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["global_attempt_count"] = 1
+    ledger_path.write_text(json.dumps(ledger), encoding="utf-8")
+    report = validate(
+        REPOSITORY_ROOT / "docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json",
+        ledger_path,
+    )
+    assert report["passed"] is False
+    assert "global_attempt_count" in report["errors"]

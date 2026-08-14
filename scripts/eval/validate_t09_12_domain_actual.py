@@ -44,13 +44,24 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
         errors.append("max_attempt_cap")
     if not isinstance(policy, dict) or policy.get("max_retries_per_entry") != 1:
         errors.append("retry_policy")
+    authorization = protocol.get("actual_execution_authorization")
+    if (
+        not isinstance(authorization, dict)
+        or not isinstance(authorization.get("authorized"), bool)
+        or authorization.get("provider") != "bailian"
+        or authorization.get("model") != "qwen3.6-flash"
+        or authorization.get("region") != "cn-beijing"
+        or authorization.get("endpoint_rule")
+        != "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
+    ):
+        errors.append("actual_execution_authorization")
     scoring = protocol.get("scoring", {})
     metric = scoring.get("METRIC-005") if isinstance(scoring, dict) else None
     if not isinstance(metric, dict) or metric.get("minimum") != 12:
         errors.append("metric_005_protocol")
     if ledger_path is not None:
         ledger = _load(ledger_path)
-        if ledger.get("schema_version") != "1.1":
+        if ledger.get("schema_version") != "1.2":
             errors.append("ledger_schema")
         if ledger.get("mode") not in {"preflight-only", "execute"}:
             errors.append("ledger_mode")
@@ -58,6 +69,8 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
             errors.append("preflight_provider_calls")
         if not isinstance(ledger.get("attempt_cap"), int) or ledger["attempt_cap"] < 1:
             errors.append("attempt_cap")
+        if ledger.get("global_attempt_cap") != 24:
+            errors.append("global_attempt_cap")
         if not isinstance(ledger.get("manifest_sha256"), str) or len(ledger["manifest_sha256"]) != 64:
             errors.append("manifest_sha256")
         if ledger.get("manifest_hash_algorithm") != "sha256-canonical-json-v1":
@@ -78,16 +91,16 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
         entries = ledger.get("entries", [])
         if not isinstance(entries, list):
             errors.append("ledger_entries")
-        elif any(len(item.get("attempts", [])) > ledger.get("attempt_cap", 0) for item in entries if isinstance(item, dict)):
+        elif any(len(item.get("attempts", [])) > 2 for item in entries if isinstance(item, dict)):
             errors.append("attempt_cap_exceeded")
-        elif any(
-            attempt.get("token_count") is not None or attempt.get("cost_usd") is not None
+        elif ledger.get("global_attempt_count") != sum(
+            len(item.get("attempts", []))
             for item in entries
-            if isinstance(item, dict)
-            for attempt in item.get("attempts", [])
-            if isinstance(attempt, dict)
+            if isinstance(item, dict) and isinstance(item.get("attempts", []), list)
         ):
-            errors.append("token_cost_must_be_null")
+            errors.append("global_attempt_count")
+        elif isinstance(ledger.get("global_attempt_count"), int) and ledger["global_attempt_count"] > 24:
+            errors.append("global_attempt_cap_exceeded")
         elif any(
             attempt.get("status") == "completed"
             and (
@@ -109,6 +122,33 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
             or coverage.get("passed") is not True
         ):
             errors.append("metric_005_coverage")
+        if ledger.get("mode") == "execute":
+            for item in entries:
+                if not isinstance(item, dict):
+                    errors.append("ledger_entries")
+                    continue
+                for attempt in item.get("attempts", []):
+                    if not isinstance(attempt, dict):
+                        errors.append("ledger_entries")
+                        continue
+                    if attempt.get("status") == "completed":
+                        audit = attempt.get("audit_identity")
+                        if (
+                            not isinstance(audit, dict)
+                            or audit.get("provider") != "bailian_qwen"
+                            or audit.get("model") != "qwen3.6-flash"
+                            or audit.get("cost_usd") is not None
+                            or audit.get("cost_accounting") != "token_only_unpriced"
+                            or not all(
+                                isinstance(audit.get(field), int) and audit[field] >= 0
+                                for field in ("call_count", "input_tokens", "output_tokens", "total_tokens")
+                            )
+                            or audit.get("total_tokens")
+                            != audit.get("input_tokens", 0) + audit.get("output_tokens", 0)
+                            or attempt.get("token_count") != audit.get("total_tokens")
+                            or attempt.get("cost_usd") is not None
+                        ):
+                            errors.append("call_audit_identity_or_usage")
     return {"passed": not errors, "errors": sorted(set(errors)), "provider_calls": 0}
 
 

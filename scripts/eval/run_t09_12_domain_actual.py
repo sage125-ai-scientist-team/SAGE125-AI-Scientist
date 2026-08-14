@@ -26,6 +26,10 @@ PROTOCOL_PATH = PROJECT_ROOT / "docs" / "reproducibility" / "T09_12_DOMAIN_SCORI
 DEFAULT_OUTPUT = PROJECT_ROOT / "exports" / "t09_12_domain_actual"
 MAX_ATTEMPT_CAP = 24
 MAX_RETRIES_PER_ENTRY = 1
+EXPECTED_PROVIDER = "bailian"
+EXPECTED_MODEL = "qwen3.6-flash"
+EXPECTED_REGION = "cn-beijing"
+EXPECTED_ENDPOINT_SUFFIX = ".maas.aliyuncs.com/compatible-mode/v1"
 FORMAL_QUESTION_SOURCE_PATH = "data/processed/questions_125.json"
 FORMAL_QUESTION_SOURCE_SHA256 = "b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb"
 APPROVAL_SOURCE = "T09_BATCH_4B_SCHEMA_CONFORMANCE_AUTHORIZATION"
@@ -67,7 +71,7 @@ APPROVED_DOMAIN_MAPPINGS = {
         "captain-approved engineering representative mapping",
     ),
 }
-_RETRYABLE_ERRORS = (TimeoutError, ConnectionError, OSError)
+_RETRYABLE_ERRORS = (TimeoutError, ConnectionError)
 _SECRET_PATTERNS = (
     re.compile(r"(?i)(?:api[_-]?key|authorization|bearer|password|secret)\s*[:=]\s*['\"]?[A-Za-z0-9_\-/]{8,}"),
     re.compile(r"(?i)sk-[A-Za-z0-9]{12,}"),
@@ -111,6 +115,42 @@ def _safe_environment() -> dict[str, str | bool]:
         "SAGE_TEST_EXPORT_DIR": bool(os.getenv("SAGE_TEST_EXPORT_DIR")),
         "EXPORT_DIR": bool(os.getenv("EXPORT_DIR")),
     }
+
+
+def _runtime_execution_gate() -> tuple[bool, list[str], dict[str, str]]:
+    """Validate the frozen provider route without exposing credentials or workspace IDs."""
+    settings = get_settings()
+    provider = str(getattr(settings, "llm_provider", "")).strip()
+    model = str(getattr(settings, "qwen_fast_model", "")).strip()
+    region = str(getattr(settings, "dashscope_region", "")).strip()
+    endpoint = str(getattr(settings, "dashscope_base_url", "")).strip()
+    workspace_id = str(getattr(settings, "workspace_id", "")).strip()
+    expected_endpoint = (
+        f"https://{workspace_id}.{region}{EXPECTED_ENDPOINT_SUFFIX}"
+        if workspace_id and region
+        else ""
+    )
+    errors: list[str] = []
+    if provider != EXPECTED_PROVIDER:
+        errors.append("provider_identity")
+    if model != EXPECTED_MODEL:
+        errors.append("model_identity")
+    if region != EXPECTED_REGION:
+        errors.append("region_identity")
+    if not workspace_id or endpoint != expected_endpoint:
+        errors.append("endpoint_identity")
+    if getattr(settings, "qwen_configured", False) is not True:
+        errors.append("provider_not_configured")
+    return (
+        not errors,
+        errors,
+        {
+            "provider": provider,
+            "model": model,
+            "region": region,
+            "endpoint_sha256": hashlib.sha256(endpoint.encode("utf-8")).hexdigest(),
+        },
+    )
 
 
 def _source_identity(source: dict[str, Any]) -> tuple[Path, str | None]:
@@ -351,6 +391,65 @@ def _completed_questions(ledger: dict[str, Any]) -> set[str]:
     return completed
 
 
+def _ledger_attempt_count(ledger: dict[str, Any]) -> int:
+    """Count every persisted attempt so the 24-attempt cap applies across resumes."""
+    entries = ledger.get("entries", [])
+    if not isinstance(entries, list):
+        return 0
+    return sum(
+        len(item.get("attempts", []))
+        for item in entries
+        if isinstance(item, dict) and isinstance(item.get("attempts", []), list)
+    )
+
+
+def _validate_call_audits(records: Any) -> tuple[dict[str, Any], list[str]]:
+    """Accept only complete, actual fixed-route audits and aggregate token-only cost."""
+    if not isinstance(records, list) or not records:
+        return {}, ["call_audit_missing"]
+    errors: list[str] = []
+    total_input = total_output = total_tokens = 0
+    request_ids: set[str] = set()
+    for record in records:
+        if not isinstance(record, dict):
+            errors.append("call_audit_invalid")
+            continue
+        if record.get("provider") != "bailian_qwen" or record.get("mock") is not False:
+            errors.append("call_audit_provider_identity")
+        if record.get("model_name_internal") != EXPECTED_MODEL:
+            errors.append("call_audit_model_identity")
+        if record.get("status") != "success" or record.get("fallback_used") is not False:
+            errors.append("call_audit_status")
+        request_id = record.get("request_id")
+        if not isinstance(request_id, str) or not request_id.strip() or request_id in request_ids:
+            errors.append("call_audit_request_identity")
+        else:
+            request_ids.add(request_id)
+        usage = [record.get(name) for name in ("input_tokens", "output_tokens", "total_tokens")]
+        if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in usage):
+            errors.append("call_audit_tokens")
+            continue
+        if usage[2] != usage[0] + usage[1]:
+            errors.append("call_audit_token_total")
+            continue
+        total_input += usage[0]
+        total_output += usage[1]
+        total_tokens += usage[2]
+    return (
+        {
+            "provider": "bailian_qwen",
+            "model": EXPECTED_MODEL,
+            "call_count": len(records),
+            "input_tokens": total_input,
+            "output_tokens": total_output,
+            "total_tokens": total_tokens,
+            "cost_usd": None,
+            "cost_accounting": "token_only_unpriced",
+        },
+        sorted(set(errors)),
+    )
+
+
 def run(
     manifest_path: Path,
     output_dir: Path = DEFAULT_OUTPUT,
@@ -367,11 +466,13 @@ def run(
     report = preflight(manifest_path)
     ledger_path = output_dir / "ledger.json"
     ledger = {
-        "schema_version": "1.1",
+        "schema_version": "1.2",
         "created_at": _utc_now(),
         "mode": "execute" if execute else "preflight-only",
         "mock": mock,
         "attempt_cap": attempt_cap,
+        "global_attempt_cap": MAX_ATTEMPT_CAP,
+        "global_attempt_count": 0,
         "manifest": str(manifest_path),
         "manifest_sha256": report["manifest_sha256"],
         "manifest_hash_algorithm": report["manifest_hash_algorithm"],
@@ -383,9 +484,28 @@ def run(
         "cost_usd": None,
         "stopped": False,
     }
-    if execute and not mock and not get_settings().qwen_configured:
-        report["errors"] = sorted(set([*report["errors"], "provider_not_configured"]))
+    protocol = load_json(PROTOCOL_PATH)
+    authorization = protocol.get("actual_execution_authorization", {})
+    if execute and mock:
+        report["errors"] = sorted(set([*report["errors"], "formal_execution_rejects_mock"]))
         report["passed"] = False
+    if execute:
+        authorized = (
+            isinstance(authorization, dict)
+            and authorization.get("authorized") is True
+            and authorization.get("provider") == EXPECTED_PROVIDER
+            and authorization.get("model") == EXPECTED_MODEL
+            and authorization.get("region") == EXPECTED_REGION
+        )
+        if not authorized:
+            report["errors"] = sorted(set([*report["errors"], "actual_execution_not_authorized"]))
+            report["passed"] = False
+        else:
+            runtime_ok, runtime_errors, runtime_identity = _runtime_execution_gate()
+            report["runtime_identity"] = runtime_identity
+            if not runtime_ok:
+                report["errors"] = sorted(set([*report["errors"], *runtime_errors]))
+                report["passed"] = False
     if not report["passed"] or not execute:
         report.update({"mode": "preflight-only", "ledger_path": str(ledger_path), "executed": False})
         ledger["preflight"] = report
@@ -405,6 +525,9 @@ def run(
         if previous is not None:
             ledger = previous
             ledger["resumed_at"] = _utc_now()
+    ledger["global_attempt_count"] = _ledger_attempt_count(ledger)
+    if ledger["global_attempt_count"] > MAX_ATTEMPT_CAP:
+        raise ValueError("resume_global_attempt_cap_exceeded")
     completed_questions = _completed_questions(ledger)
     for item in manifest["domains"]:
         if item["question_id"] in completed_questions:
@@ -412,6 +535,23 @@ def run(
         entry: dict[str, Any] = {"domain": item["domain"], "question_id": item["question_id"], "attempts": []}
         max_attempts = 1 + (MAX_RETRIES_PER_ENTRY if retry else 0)
         for attempt in range(1, min(attempt_cap, max_attempts) + 1):
+            if ledger["global_attempt_count"] >= MAX_ATTEMPT_CAP:
+                ledger["entries"].append(entry)
+                ledger["stopped"] = True
+                ledger["stop_reason"] = "global_attempt_cap_exhausted"
+                ledger["completed_at"] = _utc_now()
+                _write_json(ledger_path, ledger)
+                report.update(
+                    {
+                        "passed": False,
+                        "mode": "execute",
+                        "executed": True,
+                        "provider_calls": total_provider_calls,
+                        "ledger_path": str(ledger_path),
+                    }
+                )
+                _write_json(output_dir / "run_summary.json", report)
+                return report
             try:
                 _, state = run_pipeline_with_state(
                     item["question_id"],
@@ -421,7 +561,10 @@ def run(
                     use_open_literature=not mock,
                 )
                 summary = summarize_calls(state.llm_calls)
-                total_provider_calls += int(summary["real_qwen_calls"])
+                audit_summary, audit_errors = _validate_call_audits(state.llm_calls)
+                if audit_errors:
+                    raise ValueError(audit_errors[0])
+                total_provider_calls += int(audit_summary["call_count"])
                 artifact_path = artifact_base / state.run_id
                 integrity = _artifact_integrity(artifact_path) if artifact_path.exists() else None
                 if integrity is None or not integrity["secret_scan"]["passed"]:
@@ -433,10 +576,12 @@ def run(
                         "run_id": state.run_id,
                         "artifact": integrity,
                         "call_summary": summary,
-                        "token_count": None,
-                        "cost_usd": None,
+                        "audit_identity": audit_summary,
+                        "token_count": audit_summary["total_tokens"],
+                        "cost_usd": audit_summary["cost_usd"],
                     }
                 )
+                ledger["global_attempt_count"] += 1
                 break
             except Exception as error:
                 retryable = _retryable(error)
@@ -450,6 +595,7 @@ def run(
                         "cost_usd": None,
                     }
                 )
+                ledger["global_attempt_count"] += 1
                 if retryable and retry and attempt < min(attempt_cap, max_attempts):
                     continue
                 ledger["entries"].append(entry)
@@ -477,6 +623,7 @@ def run(
         "required_domain_count": 12,
         "passed": len(_completed_questions(ledger)) == 12,
     }
+    ledger["global_attempt_count"] = _ledger_attempt_count(ledger)
     ledger["completed_at"] = _utc_now()
     _write_json(ledger_path, ledger)
     report.update(
