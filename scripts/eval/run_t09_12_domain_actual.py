@@ -8,6 +8,7 @@ import os
 import re
 import sys
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -30,6 +31,16 @@ EXPECTED_PROVIDER = "bailian"
 EXPECTED_MODEL = "qwen3.6-flash"
 EXPECTED_REGION = "cn-beijing"
 EXPECTED_ENDPOINT_SUFFIX = ".maas.aliyuncs.com/compatible-mode/v1"
+EXPECTED_DEEP_RESEARCH_ENDPOINT_SUFFIX = ".maas.aliyuncs.com/api/v1"
+EXPECTED_RERANK_ENDPOINT_SUFFIX = ".maas.aliyuncs.com/compatible-api/v1/reranks"
+EXPECTED_MODEL_STACK = {
+    "fast": "qwen3.6-flash",
+    "balanced": "qwen3.7-plus",
+    "strong": "qwen3.7-max",
+    "deep_research": "qwen-deep-research",
+    "embedding": "text-embedding-v4",
+    "rerank": "qwen3-rerank",
+}
 FORMAL_QUESTION_SOURCE_PATH = "data/processed/questions_125.json"
 FORMAL_QUESTION_SOURCE_SHA256 = "b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb"
 APPROVAL_SOURCE = "T09_BATCH_4B_SCHEMA_CONFORMANCE_AUTHORIZATION"
@@ -118,27 +129,52 @@ def _safe_environment() -> dict[str, str | bool]:
 
 
 def _runtime_execution_gate() -> tuple[bool, list[str], dict[str, str]]:
-    """Validate the frozen provider route without exposing credentials or workspace IDs."""
+    """Validate every authorized model and endpoint without exposing configuration values."""
     settings = get_settings()
     provider = str(getattr(settings, "llm_provider", "")).strip()
-    model = str(getattr(settings, "qwen_fast_model", "")).strip()
     region = str(getattr(settings, "dashscope_region", "")).strip()
-    endpoint = str(getattr(settings, "dashscope_base_url", "")).strip()
     workspace_id = str(getattr(settings, "workspace_id", "")).strip()
-    expected_endpoint = (
+    chat_endpoint = str(getattr(settings, "dashscope_base_url", "")).strip()
+    deep_research_endpoint = str(
+        getattr(settings, "dashscope_deep_research_base_url", "")
+    ).strip()
+    rerank_endpoint = str(getattr(settings, "rerank_base_url", lambda: "")()).strip()
+    expected_chat_endpoint = (
         f"https://{workspace_id}.{region}{EXPECTED_ENDPOINT_SUFFIX}"
         if workspace_id and region
         else ""
     )
+    expected_deep_research_endpoint = (
+        f"https://{workspace_id}.{region}{EXPECTED_DEEP_RESEARCH_ENDPOINT_SUFFIX}"
+        if workspace_id and region
+        else ""
+    )
+    expected_rerank_endpoint = (
+        f"https://{workspace_id}.{region}{EXPECTED_RERANK_ENDPOINT_SUFFIX}"
+        if workspace_id and region
+        else ""
+    )
+    observed_models = {
+        "fast": str(getattr(settings, "qwen_fast_model", "")).strip(),
+        "balanced": str(getattr(settings, "qwen_balanced_model", "")).strip(),
+        "strong": str(getattr(settings, "qwen_strong_model", "")).strip(),
+        "deep_research": str(getattr(settings, "qwen_deep_research_model", "")).strip(),
+        "embedding": str(getattr(settings, "bailian_embedding_model", "")).strip(),
+        "rerank": str(getattr(settings, "bailian_rerank_model", "")).strip(),
+    }
     errors: list[str] = []
     if provider != EXPECTED_PROVIDER:
         errors.append("provider_identity")
-    if model != EXPECTED_MODEL:
-        errors.append("model_identity")
+    if observed_models != EXPECTED_MODEL_STACK:
+        errors.append("model_stack_identity")
     if region != EXPECTED_REGION:
         errors.append("region_identity")
-    if not workspace_id or endpoint != expected_endpoint:
-        errors.append("endpoint_identity")
+    if not workspace_id or chat_endpoint != expected_chat_endpoint:
+        errors.append("chat_endpoint_identity")
+    if not workspace_id or deep_research_endpoint != expected_deep_research_endpoint:
+        errors.append("deep_research_endpoint_identity")
+    if not workspace_id or rerank_endpoint != expected_rerank_endpoint:
+        errors.append("rerank_endpoint_identity")
     if getattr(settings, "qwen_configured", False) is not True:
         errors.append("provider_not_configured")
     return (
@@ -146,19 +182,29 @@ def _runtime_execution_gate() -> tuple[bool, list[str], dict[str, str]]:
         errors,
         {
             "provider": provider,
-            "model": model,
+            "models": json.dumps(observed_models, sort_keys=True),
             "region": region,
-            "endpoint_sha256": hashlib.sha256(endpoint.encode("utf-8")).hexdigest(),
+            "chat_endpoint_sha256": hashlib.sha256(chat_endpoint.encode("utf-8")).hexdigest(),
+            "deep_research_endpoint_sha256": hashlib.sha256(
+                deep_research_endpoint.encode("utf-8")
+            ).hexdigest(),
+            "rerank_endpoint_sha256": hashlib.sha256(
+                rerank_endpoint.encode("utf-8")
+            ).hexdigest(),
         },
     )
 
 
-def _source_identity(source: dict[str, Any]) -> tuple[Path, str | None]:
-    """Resolve only the approved repository-relative formal question source."""
+def _source_identity(
+    source: dict[str, Any], expected_source_path: Path | None = None
+) -> tuple[Path, str | None]:
+    """Resolve the immutable formal source and reject any alternate CLI source."""
     configured_path = source.get("path")
     if configured_path != FORMAL_QUESTION_SOURCE_PATH:
         return PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH, None
     source_path = (PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH).resolve()
+    if expected_source_path is not None and source_path != expected_source_path.resolve():
+        return source_path, None
     if not source_path.is_file():
         return source_path, None
     return source_path, sha256_file(source_path)
@@ -259,8 +305,12 @@ def _question_bindings(
     return bindings, errors
 
 
-def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[str, Any]:
-    """Validate canonical hashes, source identity, provider-safe schema, and domain coverage."""
+def preflight(
+    manifest_path: Path,
+    protocol_path: Path = PROTOCOL_PATH,
+    question_source_path: Path | None = None,
+) -> dict[str, Any]:
+    """Validate immutable inputs and CLI-selected governance files without provider activity."""
     protocol = load_json(protocol_path)
     manifest = load_json(manifest_path)
     errors: list[str] = []
@@ -282,7 +332,7 @@ def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[
     if not isinstance(source, dict):
         errors.append("question_source")
     else:
-        source_path, observed_sha = _source_identity(source)
+        source_path, observed_sha = _source_identity(source, question_source_path)
         configured_source = os.getenv("SAGE_QUESTIONS_PATH", "").strip()
         effective_source_path = resolve_questions_path().resolve()
         expected_sha = source.get("sha256")
@@ -290,6 +340,10 @@ def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[
             errors.append("question_source_runtime_binding")
         if (
             source.get("path") != FORMAL_QUESTION_SOURCE_PATH
+            or (
+                question_source_path is not None
+                and question_source_path.resolve() != source_path.resolve()
+            )
             or not isinstance(expected_sha, str)
             or expected_sha != FORMAL_QUESTION_SOURCE_SHA256
             or observed_sha != expected_sha
@@ -459,11 +513,19 @@ def run(
     attempt_cap: int = 1,
     retry: bool = False,
     resume: bool = False,
+    max_top_level_attempts: int = 12,
+    rate_limit_seconds: float = 0.0,
+    protocol_path: Path = PROTOCOL_PATH,
+    question_source_path: Path | None = None,
 ) -> dict[str, Any]:
-    """Run preflight by default; execute only when config gates and explicit flags allow it."""
+    """Run only the authorized twelve-item evaluation with bounded attempts and pacing."""
     if not 1 <= attempt_cap <= MAX_ATTEMPT_CAP:
         raise ValueError(f"attempt_cap must be between 1 and {MAX_ATTEMPT_CAP}")
-    report = preflight(manifest_path)
+    if not 1 <= max_top_level_attempts <= 12:
+        raise ValueError("max_top_level_attempts must be between 1 and 12")
+    if rate_limit_seconds < 0:
+        raise ValueError("rate_limit_seconds must be non-negative")
+    report = preflight(manifest_path, protocol_path, question_source_path)
     ledger_path = output_dir / "ledger.json"
     ledger = {
         "schema_version": "1.2",
@@ -471,6 +533,8 @@ def run(
         "mode": "execute" if execute else "preflight-only",
         "mock": mock,
         "attempt_cap": attempt_cap,
+        "max_top_level_attempts": max_top_level_attempts,
+        "rate_limit_seconds": rate_limit_seconds,
         "global_attempt_cap": MAX_ATTEMPT_CAP,
         "global_attempt_count": 0,
         "manifest": str(manifest_path),
@@ -484,10 +548,16 @@ def run(
         "cost_usd": None,
         "stopped": False,
     }
-    protocol = load_json(PROTOCOL_PATH)
+    protocol = load_json(protocol_path)
     authorization = protocol.get("actual_execution_authorization", {})
     if execute and mock:
         report["errors"] = sorted(set([*report["errors"], "formal_execution_rejects_mock"]))
+        report["passed"] = False
+    if execute and report["environment"]["MOCK_LLM"]:
+        report["errors"] = sorted(set([*report["errors"], "formal_execution_rejects_mock_environment"]))
+        report["passed"] = False
+    if execute and rate_limit_seconds < 1:
+        report["errors"] = sorted(set([*report["errors"], "rate_limit_seconds_required"]))
         report["passed"] = False
     if execute:
         authorized = (
@@ -500,8 +570,16 @@ def run(
         if mock:
             report["errors"] = sorted(set([*report["errors"], "formal_execution_rejects_mock"]))
             report["passed"] = False
+        elif report["environment"]["MOCK_LLM"]:
+            report["errors"] = sorted(
+                set([*report["errors"], "formal_execution_rejects_mock_environment"])
+            )
+            report["passed"] = False
         elif not authorized:
             report["errors"] = sorted(set([*report["errors"], "actual_execution_not_authorized"]))
+            report["passed"] = False
+        elif rate_limit_seconds < 1:
+            report["errors"] = sorted(set([*report["errors"], "rate_limit_seconds_required"]))
             report["passed"] = False
         else:
             runtime_ok, runtime_errors, runtime_identity = _runtime_execution_gate()
@@ -532,10 +610,30 @@ def run(
     if ledger["global_attempt_count"] > MAX_ATTEMPT_CAP:
         raise ValueError("resume_global_attempt_cap_exceeded")
     completed_questions = _completed_questions(ledger)
+    top_level_attempts = 0
     for item in manifest["domains"]:
         if item["question_id"] in completed_questions:
             continue
+        if top_level_attempts >= max_top_level_attempts:
+            ledger["stopped"] = True
+            ledger["stop_reason"] = "max_top_level_attempts_exhausted"
+            ledger["completed_at"] = _utc_now()
+            _write_json(ledger_path, ledger)
+            report.update(
+                {
+                    "passed": False,
+                    "mode": "execute",
+                    "executed": True,
+                    "provider_calls": total_provider_calls,
+                    "ledger_path": str(ledger_path),
+                }
+            )
+            _write_json(output_dir / "run_summary.json", report)
+            return report
         entry: dict[str, Any] = {"domain": item["domain"], "question_id": item["question_id"], "attempts": []}
+        if top_level_attempts and rate_limit_seconds:
+            time.sleep(rate_limit_seconds)
+        top_level_attempts += 1
         max_attempts = 1 + (MAX_RETRIES_PER_ENTRY if retry else 0)
         for attempt in range(1, min(attempt_cap, max_attempts) + 1):
             if ledger["global_attempt_count"] >= MAX_ATTEMPT_CAP:
@@ -646,15 +744,29 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", required=True, type=Path)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--execute", action="store_true", help="Allow real Provider execution.")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--execute", action="store_true", help="Allow real Provider execution.")
+    mode.add_argument(
+        "--preflight-only", action="store_true", help="Explicitly prohibit Provider execution."
+    )
     parser.add_argument("--mock", action="store_true", help="Execute the pipeline in mock mode.")
     parser.add_argument("--attempt-cap", type=int, default=1)
+    parser.add_argument("--max-top-level-attempts", type=int, default=12)
+    parser.add_argument("--rate-limit-seconds", type=float, default=1.0)
     parser.add_argument("--retry", action="store_true", help="Retry failed entries within the attempt cap.")
     parser.add_argument("--resume", action="store_true", help="Resume only a ledger with the same canonical manifest hash.")
+    parser.add_argument("--scoring-protocol", type=Path, default=PROTOCOL_PATH)
+    parser.add_argument("--question-source", type=Path)
     args = parser.parse_args()
     report = run(
         args.manifest, args.output_dir, execute=args.execute, mock=args.mock,
-        attempt_cap=args.attempt_cap, retry=args.retry, resume=args.resume,
+        attempt_cap=args.attempt_cap,
+        retry=args.retry,
+        resume=args.resume,
+        max_top_level_attempts=args.max_top_level_attempts,
+        rate_limit_seconds=args.rate_limit_seconds,
+        protocol_path=args.scoring_protocol,
+        question_source_path=args.question_source,
     )
     print(json.dumps(report, ensure_ascii=False, sort_keys=True))
     return int(not report["passed"])

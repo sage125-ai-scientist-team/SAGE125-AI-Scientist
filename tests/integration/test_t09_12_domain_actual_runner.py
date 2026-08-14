@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -28,6 +29,7 @@ def isolated_formal_question_source(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Provide a complete temporary source so runner tests need no external booklet file."""
+    monkeypatch.delenv("MOCK_LLM", raising=False)
     source_path = tmp_path / FORMAL_QUESTION_SOURCE_PATH
     source_path.parent.mkdir(parents=True)
     items = [
@@ -326,3 +328,135 @@ def test_validator_rejects_tampered_global_attempt_count(tmp_path: Path) -> None
     )
     assert report["passed"] is False
     assert "global_attempt_count" in report["errors"]
+
+
+def _authorized_runtime_settings() -> SimpleNamespace:
+    """Return a credential-free settings double matching the corrected frozen stack."""
+    workspace_id = "test-workspace"
+    host = f"https://{workspace_id}.cn-beijing.maas.aliyuncs.com"
+    return SimpleNamespace(
+        llm_provider="bailian",
+        dashscope_region="cn-beijing",
+        workspace_id=workspace_id,
+        dashscope_base_url=f"{host}/compatible-mode/v1",
+        dashscope_deep_research_base_url=f"{host}/api/v1",
+        rerank_base_url=lambda: f"{host}/compatible-api/v1/reranks",
+        qwen_fast_model="qwen3.6-flash",
+        qwen_balanced_model="qwen3.7-plus",
+        qwen_strong_model="qwen3.7-max",
+        qwen_deep_research_model="qwen-deep-research",
+        bailian_embedding_model="text-embedding-v4",
+        bailian_rerank_model="qwen3-rerank",
+        qwen_configured=True,
+        export_dir="unused",
+    )
+
+
+def test_execute_rejects_mock_environment_before_runtime_or_pipeline(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """MOCK_LLM=true blocks an authorized execute request before any Provider path."""
+    manifest = _manifest(tmp_path)
+    calls: list[object] = []
+    monkeypatch.setenv("MOCK_LLM", "true")
+    monkeypatch.setattr(
+        runner, "run_pipeline_with_state", lambda *_args, **_kwargs: calls.append(object())
+    )
+    report = run(manifest, tmp_path / "out", execute=True, rate_limit_seconds=1)
+    assert report["passed"] is False
+    assert "formal_execution_rejects_mock_environment" in report["errors"]
+    assert report["executed"] is False
+    assert calls == []
+
+
+def test_execute_uses_corrected_cli_controls_and_paced_actual_path(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Exercise all twelve mocked runtime entries without invoking a real Provider."""
+    manifest = _manifest(tmp_path)
+    artifact_base = tmp_path / "artifacts"
+    sleeps: list[float] = []
+    run_ids: list[str] = []
+
+    def fake_pipeline(question_id: str, **_kwargs: object) -> tuple[None, SimpleNamespace]:
+        """Return one complete redacted audit and artifact directory per formal item."""
+        run_id = f"run-{question_id}"
+        run_ids.append(run_id)
+        (artifact_base / run_id).mkdir(parents=True)
+        (artifact_base / run_id / "result.json").write_text('{"safe": true}', encoding="utf-8")
+        return None, SimpleNamespace(
+            run_id=run_id,
+            llm_calls=[
+                {
+                    "provider": "bailian_qwen",
+                    "mock": False,
+                    "model_name_internal": "qwen3.6-flash",
+                    "status": "success",
+                    "fallback_used": False,
+                    "request_id": f"request-{question_id}",
+                    "input_tokens": 2,
+                    "output_tokens": 3,
+                    "total_tokens": 5,
+                }
+            ],
+        )
+
+    monkeypatch.setattr(runner, "get_settings", _authorized_runtime_settings)
+    monkeypatch.setattr(runner, "resolve_artifact_base", lambda _value: artifact_base)
+    monkeypatch.setattr(runner, "run_pipeline_with_state", fake_pipeline)
+    monkeypatch.setattr(runner.time, "sleep", sleeps.append)
+    source_path = tmp_path / FORMAL_QUESTION_SOURCE_PATH
+    report = run(
+        manifest,
+        tmp_path / "out",
+        execute=True,
+        rate_limit_seconds=2.5,
+        max_top_level_attempts=12,
+        question_source_path=source_path,
+    )
+    assert report["passed"] is True
+    assert report["executed"] is True
+    assert len(run_ids) == 12
+    assert sleeps == [2.5] * 11
+    ledger = json.loads((tmp_path / "out" / "ledger.json").read_text(encoding="utf-8"))
+    assert ledger["rate_limit_seconds"] == 2.5
+    assert ledger["max_top_level_attempts"] == 12
+    assert validate(
+        REPOSITORY_ROOT / "docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json",
+        tmp_path / "out" / "ledger.json",
+    )["passed"] is True
+
+
+def test_execute_rejects_zero_rate_limit_before_pipeline(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A formal execute request requires a positive top-level pacing interval."""
+    manifest = _manifest(tmp_path)
+    calls: list[object] = []
+    monkeypatch.setattr(
+        runner, "run_pipeline_with_state", lambda *_args, **_kwargs: calls.append(object())
+    )
+    report = run(manifest, tmp_path / "out", execute=True, rate_limit_seconds=0)
+    assert report["passed"] is False
+    assert "rate_limit_seconds_required" in report["errors"]
+    assert report["executed"] is False
+    assert calls == []
+
+
+def test_execute_rejects_wrong_authorized_stack_endpoint(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A malformed rerank endpoint fails closed before any pipeline invocation."""
+    manifest = _manifest(tmp_path)
+    settings = _authorized_runtime_settings()
+    settings.rerank_base_url = lambda: "https://wrong.example/reranks"
+    calls: list[object] = []
+    monkeypatch.setattr(runner, "get_settings", lambda: settings)
+    monkeypatch.setattr(
+        runner, "run_pipeline_with_state", lambda *_args, **_kwargs: calls.append(object())
+    )
+    report = run(manifest, tmp_path / "out", execute=True, rate_limit_seconds=1)
+    assert report["passed"] is False
+    assert "rerank_endpoint_identity" in report["errors"]
+    assert report["executed"] is False
+    assert calls == []

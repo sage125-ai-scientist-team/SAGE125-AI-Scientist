@@ -42,23 +42,37 @@
     "max_attempt_cap": 24,
     "max_retries_per_entry": 1,
     "resume_flag": "--resume",
-    "provider_rule": "Provider execution is prohibited unless --execute is supplied, the separate actual_execution_authorization is true, and the frozen Bailian runtime identity is valid. Formal execution rejects --mock.",
+    "preflight_only_flag": "--preflight-only",
+    "max_top_level_attempts_flag": "--max-top-level-attempts",
+    "max_top_level_attempts": 12,
+    "rate_limit_seconds_flag": "--rate-limit-seconds",
+    "minimum_rate_limit_seconds": 1,
+    "scoring_protocol_flag": "--scoring-protocol",
+    "question_source_flag": "--question-source",
+    "provider_rule": "Provider execution is prohibited unless --execute is supplied, the separate actual_execution_authorization is true, MOCK_LLM is not true, the frozen complete Bailian/Qwen model stack and all chat/deep-research/rerank endpoints are valid. Formal execution rejects --mock and MOCK_LLM=true.",
     "failure_rule": "Only TimeoutError or ConnectionError receive one retry. A terminal failure stops the entire run and is atomically recorded.",
-    "global_attempt_rule": "The ledger has one immutable global cap of 24 persisted attempts across all domains and every --resume invocation."
+    "global_attempt_rule": "The ledger has one immutable global cap of 24 persisted attempts across all domains and every --resume invocation. --max-top-level-attempts bounds distinct domain pipeline invocations in one process; --rate-limit-seconds pauses between them."
   },
   "actual_execution_authorization": {
     "authorized": true,
     "authority_url": "https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/46#issuecomment-5292639795",
+    "correction_authority_url": "https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/46#issuecomment-5293023258",
     "authority_account": "liuyanbo12",
-    "authorization_base_head": "42cf00aaf56c8d328318af2f22a6475e34b0c167",
+    "authorization_base_head": "6a8b27b311fd53bc6e1b0348c072c1401da0a134",
     "provider": "bailian",
     "model": "qwen3.6-flash",
     "model_stack_id": "t07-wb5-bailian-qwen-stack-v1",
     "model_version": "qwen-stack-20260803-v1",
     "models": {"fast": "qwen3.6-flash", "balanced": "qwen3.7-plus", "strong": "qwen3.7-max", "deep_research": "qwen-deep-research", "embedding": "text-embedding-v4", "rerank": "qwen3-rerank"},
     "region": "cn-beijing",
+    "endpoints": {
+      "chat": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+      "deep_research": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/api/v1",
+      "rerank": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-api/v1/reranks"
+    },
     "endpoint_rule": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
-    "authorization_rule": "Authorization applies only after all preflight and clean-room gates pass; actual ablation, PR Ready, approval, and merge remain unauthorized."
+    "actual_ablation_authorized": false,
+    "authorization_rule": "The correction authorizes only actual twelve-domain evaluation after correction CI and clean-room preflight pass. Actual ablation, PR Ready, approval, merge, force-push, rebase, and history rewrite remain unauthorized."
   },
   "manifest_contract": {
     "schema_version": "1.1",
@@ -89,9 +103,9 @@
     "integrity": "Each completed entry records a deterministic artifact hash and secret-scan outcome. Failed attempts retain null token/cost values; completed actual attempts record audited tokens and a null (unpriced) cost."
   },
   "reproduction": {
-    "preflight": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir>",
-    "actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute",
-    "resume_actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --retry --resume",
-    "safety_note": "Execution remains prohibited until all preflight and clean-room gates pass; this protocol update itself performs no Provider call."
+    "preflight": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --preflight-only --scoring-protocol docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json --question-source data/processed/questions_125.json",
+    "actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --max-top-level-attempts 12 --rate-limit-seconds <approved-seconds> --scoring-protocol docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json --question-source data/processed/questions_125.json",
+    "resume_actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --retry --resume --max-top-level-attempts 12 --rate-limit-seconds <approved-seconds> --scoring-protocol docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json --question-source data/processed/questions_125.json",
+    "safety_note": "This correction does not execute a Provider call. Execution remains blocked until this corrective commit has passed CI and clean-room preflight; mock, dry-run, planned, and fixture results are never actual."
   }
 }
