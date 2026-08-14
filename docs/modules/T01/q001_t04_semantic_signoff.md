@@ -58,9 +58,10 @@ KEEP_PR_OPEN=YES
 8. 五题材料与全部门禁齐备后，T07 才可申请五题真实运行
 ```
 
-当前：**门 A = PASS**（PR #47 @ `f77959b43f7f520119070181011e0d0713425cdd`；已 Ready）。  
-当前：**门 B 未触发**（`Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`）。  
-当前：**Wave C Done = NO**（队长明确：本合入不算）。
+当前：**门 A = PASS**（PR #47 已 MERGED，2026-08-14）。  
+当前：**门 B1 = PASS**（PR #59 @ `cf65aa8…`；接口语义）。  
+当前：**门 B final 未触发**（`Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`）。  
+当前：**Wave C Done = NO**。
 
 ## 3. 门 A — T04 `retrieve_hits` 接口语义签字检查表
 
@@ -245,7 +246,8 @@ MERGE_AUTHORIZED=false
 |---|---|
 | 是否已实现/修改 `app/rag/**` | **否**（正确：属 T04） |
 | 是否对准确 HEAD `f77959b…` 给门 A PASS | **是** |
-| 是否已对未交付 Q001 包给门 B PASS | **否**（正确：WAIT） |
+| 是否已对未交付 Q001 包给门 B final PASS | **否**（正确：BLOCKED） |
+| 是否对 #59 Gate B1 接口给 PASS | **是**（tip `cf65aa8…`；非 Ready/Merge） |
 | 是否把 Wave C Done 当作门 A 通过 | **否**（`WAVE_C_DONE=NO`） |
 | 是否由 T01 擅自 merge #47 | **否**（等队长 `MERGE_AFTER_READY` squash） |
 | 是否保持正式指标 / 五题真跑未授权 | **是** |
