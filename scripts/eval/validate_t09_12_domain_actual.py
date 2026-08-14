@@ -180,6 +180,16 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
                             not isinstance(audit, dict)
                             or audit.get("provider") != "bailian_qwen"
                             or audit.get("model") != "qwen3.6-flash"
+                            or audit.get("model_stack")
+                            != {
+                                "fast": "qwen3.6-flash",
+                                "balanced": "qwen3.7-plus",
+                                "strong": "qwen3.7-max",
+                                "deep_research": "qwen-deep-research",
+                                "embedding": "text-embedding-v4",
+                                "rerank": "qwen3-rerank",
+                            }
+                            or not isinstance(audit.get("observed_models"), list)
                             or audit.get("cost_usd") is not None
                             or audit.get("cost_accounting") != "token_only_unpriced"
                             or not all(
@@ -188,10 +198,52 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
                             )
                             or audit.get("total_tokens")
                             != audit.get("input_tokens", 0) + audit.get("output_tokens", 0)
+                            or audit.get("request_id_count") != audit.get("call_count")
                             or attempt.get("token_count") != audit.get("total_tokens")
                             or attempt.get("cost_usd") is not None
                         ):
                             errors.append("call_audit_identity_or_usage")
+                    elif attempt.get("status") == "failed":
+                        accounting = attempt.get("call_accounting")
+                        if (
+                            not isinstance(accounting, dict)
+                            or accounting.get("cost_usd") is not None
+                            or accounting.get("cost_accounting") != "token_only_unpriced"
+                            or not all(
+                                isinstance(accounting.get(field), int) and accounting[field] >= 0
+                                for field in (
+                                    "actual_call_count",
+                                    "failed_call_count",
+                                    "request_id_count",
+                                    "input_tokens",
+                                    "output_tokens",
+                                    "total_tokens",
+                                )
+                            )
+                            or accounting.get("total_tokens")
+                            != accounting.get("input_tokens", 0)
+                            + accounting.get("output_tokens", 0)
+                            or accounting.get("request_id_count", 0)
+                            > accounting.get("actual_call_count", 0)
+                            or accounting.get("failed_call_count", 0)
+                            > accounting.get("actual_call_count", 0)
+                            or attempt.get("token_count") is not None
+                            or attempt.get("cost_usd") is not None
+                        ):
+                            errors.append("failed_call_accounting")
+            coverage = ledger.get("audit_coverage")
+            if (
+                not isinstance(coverage, dict)
+                or coverage.get("completed_attempt_count") != 12
+                or not isinstance(coverage.get("actual_call_count"), int)
+                or coverage["actual_call_count"] < 12
+                or coverage.get("request_id_count") != coverage.get("actual_call_count")
+                or not all(
+                    isinstance(coverage.get(field), int) and coverage[field] >= 0
+                    for field in ("failed_attempt_count", "failed_call_count")
+                )
+            ):
+                errors.append("audit_coverage")
     return {"passed": not errors, "errors": sorted(set(errors)), "provider_calls": 0}
 
 

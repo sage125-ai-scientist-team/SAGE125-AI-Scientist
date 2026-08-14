@@ -390,6 +390,7 @@ def test_execute_uses_corrected_cli_controls_and_paced_actual_path(
                 {
                     "provider": "bailian_qwen",
                     "mock": False,
+                    "model_alias": "fast",
                     "model_name_internal": "qwen3.6-flash",
                     "status": "success",
                     "fallback_used": False,
@@ -421,6 +422,13 @@ def test_execute_uses_corrected_cli_controls_and_paced_actual_path(
     ledger = json.loads((tmp_path / "out" / "ledger.json").read_text(encoding="utf-8"))
     assert ledger["rate_limit_seconds"] == 2.5
     assert ledger["max_top_level_attempts"] == 12
+    assert ledger["audit_coverage"] == {
+        "completed_attempt_count": 12,
+        "actual_call_count": 12,
+        "request_id_count": 12,
+        "failed_attempt_count": 0,
+        "failed_call_count": 0,
+    }
     assert validate(
         REPOSITORY_ROOT / "docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json",
         tmp_path / "out" / "ledger.json",
@@ -441,6 +449,56 @@ def test_execute_rejects_zero_rate_limit_before_pipeline(
     assert "rate_limit_seconds_required" in report["errors"]
     assert report["executed"] is False
     assert calls == []
+
+
+def test_failed_attempt_preserves_actual_call_accounting(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """审计不完整的真实调用仍以失败账本保留已发生调用及 token，而不计入完成指标。"""
+    manifest = _manifest(tmp_path)
+    artifact_base = tmp_path / "artifacts"
+
+    def fake_pipeline(question_id: str, **_kwargs: object) -> tuple[None, SimpleNamespace]:
+        """返回缺失 request_id 的调用，使 runner 在本地审计门禁处失败。"""
+        run_id = f"run-{question_id}"
+        (artifact_base / run_id).mkdir(parents=True)
+        return None, SimpleNamespace(
+            run_id=run_id,
+            llm_calls=[
+                {
+                    "provider": "bailian_qwen",
+                    "mock": False,
+                    "model_alias": "fast",
+                    "model_name_internal": "qwen3.6-flash",
+                    "status": "success",
+                    "fallback_used": False,
+                    "request_id": None,
+                    "input_tokens": 2,
+                    "output_tokens": 3,
+                    "total_tokens": 5,
+                }
+            ],
+        )
+
+    monkeypatch.setattr(runner, "get_settings", _authorized_runtime_settings)
+    monkeypatch.setattr(runner, "resolve_artifact_base", lambda _value: artifact_base)
+    monkeypatch.setattr(runner, "run_pipeline_with_state", fake_pipeline)
+    source_path = tmp_path / FORMAL_QUESTION_SOURCE_PATH
+    report = run(
+        manifest,
+        tmp_path / "out",
+        execute=True,
+        rate_limit_seconds=1,
+        question_source_path=source_path,
+    )
+    assert report["passed"] is False
+    ledger = json.loads((tmp_path / "out" / "ledger.json").read_text(encoding="utf-8"))
+    failed = ledger["entries"][0]["attempts"][0]
+    assert failed["status"] == "failed"
+    assert failed["token_count"] is None
+    assert failed["call_accounting"]["actual_call_count"] == 1
+    assert failed["call_accounting"]["total_tokens"] == 5
+    assert ledger["provider_calls"] == 1
 
 
 def test_execute_rejects_wrong_authorized_stack_endpoint(

@@ -100,6 +100,37 @@ def test_audit_record_has_no_api_key():
     assert rec.key_masked is True
 
 
+def test_deep_research_real_audit_preserves_request_id_and_usage(monkeypatch):
+    """DeepResearch 真实返回的 request_id 与完整 usage 必须写入调用审计。"""
+    from app.agents.deep_research_agent import DeepResearchAgent
+
+    class _FakeDeepResearchClient:
+        """提供无网络的真实响应双桩及与生产客户端一致的最近元数据字段。"""
+
+        last_request_id = "dr-request-123"
+        last_usage = {"input_tokens": 11, "output_tokens": 13, "total_tokens": 24}
+
+        def run_deep_research(self, topic, context=""):
+            """返回已经由服务端确认的最小 DeepResearch 成功负载。"""
+            return {
+                "status": "succeeded",
+                "content": "研究纪要",
+                "references": [],
+                "request_id": self.last_request_id,
+                "usage": self.last_usage,
+            }
+
+    monkeypatch.delenv("MOCK_LLM", raising=False)
+    monkeypatch.setattr(DeepResearchAgent, "is_mock", lambda _self: False)
+    state = _state()
+    agent = DeepResearchAgent(dr_client=_FakeDeepResearchClient())
+    agent.run({"topic": "审计测试"}, state)
+    record = state.llm_calls[-1]
+    assert record["provider"] == "dashscope_deepresearch"
+    assert record["request_id"] == "dr-request-123"
+    assert (record["input_tokens"], record["output_tokens"], record["total_tokens"]) == (11, 13, 24)
+
+
 def test_full_mock_pipeline_audit_written(monkeypatch):
     """mock 全流程：审计文件写入且 qwen_call_count==0。"""
     if not QUESTIONS.exists():

@@ -41,6 +41,12 @@ EXPECTED_MODEL_STACK = {
     "embedding": "text-embedding-v4",
     "rerank": "qwen3-rerank",
 }
+_AUDITED_MODEL_ALIASES = {
+    "fast": EXPECTED_MODEL_STACK["fast"],
+    "balanced": EXPECTED_MODEL_STACK["balanced"],
+    "strong": EXPECTED_MODEL_STACK["strong"],
+    "deepresearch": EXPECTED_MODEL_STACK["deep_research"],
+}
 FORMAL_QUESTION_SOURCE_PATH = "data/processed/questions_125.json"
 FORMAL_QUESTION_SOURCE_SHA256 = "b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb"
 APPROVAL_SOURCE = "T09_BATCH_4B_SCHEMA_CONFORMANCE_AUTHORIZATION"
@@ -458,20 +464,29 @@ def _ledger_attempt_count(ledger: dict[str, Any]) -> int:
 
 
 def _validate_call_audits(records: Any) -> tuple[dict[str, Any], list[str]]:
-    """Accept only complete, actual fixed-route audits and aggregate token-only cost."""
+    """接受完整的真实调用审计，并验证冻结模型栈、request_id 与 token 算术。"""
     if not isinstance(records, list) or not records:
         return {}, ["call_audit_missing"]
     errors: list[str] = []
     total_input = total_output = total_tokens = 0
     request_ids: set[str] = set()
+    observed_models: set[str] = set()
     for record in records:
         if not isinstance(record, dict):
             errors.append("call_audit_invalid")
             continue
-        if record.get("provider") != "bailian_qwen" or record.get("mock") is not False:
+        model_alias = record.get("model_alias")
+        model_name = record.get("model_name_internal")
+        expected_model = _AUDITED_MODEL_ALIASES.get(model_alias)
+        expected_provider = (
+            "dashscope_deepresearch" if model_alias == "deepresearch" else "bailian_qwen"
+        )
+        if record.get("provider") != expected_provider or record.get("mock") is not False:
             errors.append("call_audit_provider_identity")
-        if record.get("model_name_internal") != EXPECTED_MODEL:
+        if expected_model is None or model_name != expected_model:
             errors.append("call_audit_model_identity")
+        elif isinstance(model_name, str):
+            observed_models.add(model_name)
         if record.get("status") != "success" or record.get("fallback_used") is not False:
             errors.append("call_audit_status")
         request_id = record.get("request_id")
@@ -493,7 +508,10 @@ def _validate_call_audits(records: Any) -> tuple[dict[str, Any], list[str]]:
         {
             "provider": "bailian_qwen",
             "model": EXPECTED_MODEL,
+            "model_stack": EXPECTED_MODEL_STACK,
+            "observed_models": sorted(observed_models),
             "call_count": len(records),
+            "request_id_count": len(request_ids),
             "input_tokens": total_input,
             "output_tokens": total_output,
             "total_tokens": total_tokens,
@@ -502,6 +520,62 @@ def _validate_call_audits(records: Any) -> tuple[dict[str, Any], list[str]]:
         },
         sorted(set(errors)),
     )
+
+
+def _failed_call_accounting(records: Any) -> dict[str, Any]:
+    """汇总失败尝试中已经发生的真实调用，不将未知 usage 伪造为已计费 token。"""
+    if not isinstance(records, list):
+        records = []
+    actual = [
+        record
+        for record in records
+        if isinstance(record, dict) and record.get("mock") is False
+    ]
+    usage = summarize_calls(actual).get("usage_summary", {})
+    return {
+        "actual_call_count": len(actual),
+        "failed_call_count": sum(record.get("status") == "failed" for record in actual),
+        "request_id_count": sum(
+            isinstance(record.get("request_id"), str) and bool(record["request_id"].strip())
+            for record in actual
+        ),
+        "input_tokens": int(usage.get("input_tokens") or 0),
+        "output_tokens": int(usage.get("output_tokens") or 0),
+        "total_tokens": int(usage.get("total_tokens") or 0),
+        "cost_usd": None,
+        "cost_accounting": "token_only_unpriced",
+    }
+
+
+def _ledger_audit_coverage(ledger: dict[str, Any]) -> dict[str, int]:
+    """从持久化 attempts 重建 12-domain 审计覆盖与失败调用账本。"""
+    completed_attempts = actual_calls = request_ids = failed_attempts = failed_calls = 0
+    for entry in ledger.get("entries", []):
+        if not isinstance(entry, dict):
+            continue
+        for attempt in entry.get("attempts", []):
+            if not isinstance(attempt, dict):
+                continue
+            if attempt.get("status") == "completed":
+                audit = attempt.get("audit_identity", {})
+                if isinstance(audit, dict):
+                    completed_attempts += 1
+                    actual_calls += int(audit.get("call_count") or 0)
+                    request_ids += int(audit.get("request_id_count") or 0)
+            elif attempt.get("status") == "failed":
+                accounting = attempt.get("call_accounting", {})
+                if isinstance(accounting, dict):
+                    failed_attempts += 1
+                    actual_calls += int(accounting.get("actual_call_count") or 0)
+                    request_ids += int(accounting.get("request_id_count") or 0)
+                    failed_calls += int(accounting.get("failed_call_count") or 0)
+    return {
+        "completed_attempt_count": completed_attempts,
+        "actual_call_count": actual_calls,
+        "request_id_count": request_ids,
+        "failed_attempt_count": failed_attempts,
+        "failed_call_count": failed_calls,
+    }
 
 
 def run(
@@ -618,6 +692,7 @@ def run(
             ledger["stopped"] = True
             ledger["stop_reason"] = "max_top_level_attempts_exhausted"
             ledger["completed_at"] = _utc_now()
+            ledger["audit_coverage"] = _ledger_audit_coverage(ledger)
             _write_json(ledger_path, ledger)
             report.update(
                 {
@@ -641,6 +716,7 @@ def run(
                 ledger["stopped"] = True
                 ledger["stop_reason"] = "global_attempt_cap_exhausted"
                 ledger["completed_at"] = _utc_now()
+                ledger["audit_coverage"] = _ledger_audit_coverage(ledger)
                 _write_json(ledger_path, ledger)
                 report.update(
                     {
@@ -653,6 +729,7 @@ def run(
                 )
                 _write_json(output_dir / "run_summary.json", report)
                 return report
+            state = None
             try:
                 _, state = run_pipeline_with_state(
                     item["question_id"],
@@ -686,6 +763,9 @@ def run(
                 break
             except Exception as error:
                 retryable = _retryable(error)
+                failed_records = getattr(state, "llm_calls", []) if state is not None else []
+                failed_accounting = _failed_call_accounting(failed_records)
+                total_provider_calls += failed_accounting["actual_call_count"]
                 entry["attempts"].append(
                     {
                         "attempt": attempt,
@@ -694,6 +774,8 @@ def run(
                         "retryable": retryable,
                         "token_count": None,
                         "cost_usd": None,
+                        "call_summary": summarize_calls(failed_records),
+                        "call_accounting": failed_accounting,
                     }
                 )
                 ledger["global_attempt_count"] += 1
@@ -703,6 +785,7 @@ def run(
                 ledger["stopped"] = True
                 ledger["stop_reason"] = "retry_exhausted" if retryable else "non_retryable_failure"
                 ledger["provider_calls"] = total_provider_calls
+                ledger["audit_coverage"] = _ledger_audit_coverage(ledger)
                 ledger["completed_at"] = _utc_now()
                 _write_json(ledger_path, ledger)
                 report.update(
@@ -718,6 +801,7 @@ def run(
                 return report
         ledger["entries"].append(entry)
     ledger["provider_calls"] = total_provider_calls
+    ledger["audit_coverage"] = _ledger_audit_coverage(ledger)
     ledger["metric_coverage"] = {
         "requirement_id": "T09-METRIC-005",
         "evaluated_domain_count": len(_completed_questions(ledger)),

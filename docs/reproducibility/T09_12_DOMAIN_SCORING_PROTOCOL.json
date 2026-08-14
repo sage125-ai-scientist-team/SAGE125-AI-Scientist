@@ -99,8 +99,8 @@
     "preflight": "preflight.json",
     "execution_summary": "run_summary.json",
     "pipeline_artifacts": "Use the artifact directory emitted by app.workflow.pipeline.run_pipeline_with_state.",
-    "call_audit": "Summarize state.llm_calls using app.core.call_audit.summarize_calls; do not serialize secrets. Completed actual attempts must also prove Bailian/Qwen fixed identity, unique request identities, exact token arithmetic, no fallback, and token-only unpriced cost accounting.",
-    "integrity": "Each completed entry records a deterministic artifact hash and secret-scan outcome. Failed attempts retain null token/cost values; completed actual attempts record audited tokens and a null (unpriced) cost."
+    "call_audit": "Interface contract: summarize state.llm_calls using app.core.call_audit.summarize_calls; do not serialize secrets. Every completed actual attempt must prove the frozen Bailian/Qwen model stack, provider/model-alias pairing, one unique real request_id per actual call, exact token arithmetic, no fallback, and token-only unpriced cost accounting. ledger.audit_coverage aggregates all twelve completed attempts and their actual call/request_id counts.",
+    "integrity": "Each completed entry records a deterministic artifact hash and secret-scan outcome. Failed attempts retain null token/cost values, while call_accounting preserves any already-observed actual call count, request_id count, and token-only usage without inventing a cost; completed actual attempts record audited tokens and a null (unpriced) cost."
   },
   "reproduction": {
     "preflight": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --preflight-only --scoring-protocol docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json --question-source data/processed/questions_125.json",

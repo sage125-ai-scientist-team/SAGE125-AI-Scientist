@@ -15,7 +15,7 @@ app.clients.qwen_deep_research_client —— Qwen Deep Research 客户端。
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 from app.core.config import Settings, assert_qwen_model, get_settings
 from app.core.logging import get_logger, mask_text
@@ -46,6 +46,48 @@ class QwenDeepResearchClient:
         self.settings = settings or get_settings()
         # 校验深度研究模型必须为千问。
         assert_qwen_model(self.settings.qwen_deep_research_model)
+        # 最近一次真实调用的审计元数据；与 QwenChatClient 保持同一读取契约。
+        self.last_request_id: Optional[str] = None
+        self.last_usage: dict[str, int] = {}
+
+    @staticmethod
+    def _response_value(response: Any, name: str) -> Any:
+        """兼容 SDK 对象和映射响应，提取一个顶层字段。"""
+        if isinstance(response, dict):
+            return response.get(name)
+        return getattr(response, name, None)
+
+    @classmethod
+    def _normalized_usage(cls, raw_usage: Any) -> dict[str, int]:
+        """将 DashScope/OpenAI 风格 usage 统一为严格的三项 token 计数。"""
+        if raw_usage is None:
+            return {}
+        if isinstance(raw_usage, dict):
+            source = raw_usage
+        else:
+            source = {
+                name: getattr(raw_usage, name, None)
+                for name in (
+                    "input_tokens",
+                    "output_tokens",
+                    "total_tokens",
+                    "prompt_tokens",
+                    "completion_tokens",
+                )
+            }
+        input_tokens = source.get("input_tokens", source.get("prompt_tokens"))
+        output_tokens = source.get("output_tokens", source.get("completion_tokens"))
+        total_tokens = source.get("total_tokens")
+        values = (input_tokens, output_tokens, total_tokens)
+        if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in values):
+            return {}
+        if total_tokens != input_tokens + output_tokens:
+            return {}
+        return {
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": total_tokens,
+        }
 
     def run_deep_research(self, topic: str, context: str = "") -> dict:
         """
@@ -91,8 +133,10 @@ class QwenDeepResearchClient:
         collected_content: list[str] = []
         phases: list[str] = []
         references: list[dict] = []
-        usage: dict = {}
+        usage: dict[str, int] = {}
         request_id: str = ""
+        self.last_request_id = None
+        self.last_usage = {}
 
         try:
             # 必须 stream=True：深度研究为长耗时多轮任务，同步会超时。
@@ -111,16 +155,17 @@ class QwenDeepResearchClient:
             # 逐个消费流式响应，解析 phase/status/content 与引用线索。
             for response in responses:
                 # 记录 request_id（若存在）。
-                rid = getattr(response, "request_id", None)
-                if rid:
+                rid = self._response_value(response, "request_id")
+                if isinstance(rid, str) and rid.strip():
                     request_id = rid
+                    self.last_request_id = rid
                 # 记录用量（若存在）。
-                resp_usage = getattr(response, "usage", None)
-                if resp_usage:
-                    # usage 可能是对象或 dict，尽量转为 dict。
-                    usage = dict(resp_usage) if not isinstance(resp_usage, dict) else resp_usage
+                normalized_usage = self._normalized_usage(self._response_value(response, "usage"))
+                if normalized_usage:
+                    usage = normalized_usage
+                    self.last_usage = normalized_usage
                 # 解析 output.message。
-                output = getattr(response, "output", None)
+                output = self._response_value(response, "output")
                 if not output:
                     continue
                 message = output.get("message", {}) if isinstance(output, dict) else {}
@@ -167,4 +212,10 @@ class QwenDeepResearchClient:
                 message="DeepResearch 未完成，主流程将继续使用其他证据来源",
                 model_alias="deepresearch", model_name_internal=self.settings.qwen_deep_research_model,
             )
-            return {"status": "failed", "error": mask_text(str(exc)), "content": ""}
+            return {
+                "status": "failed",
+                "error": mask_text(str(exc)),
+                "content": "",
+                "usage": usage,
+                "request_id": request_id,
+            }
