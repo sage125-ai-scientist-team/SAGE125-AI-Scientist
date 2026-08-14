@@ -263,6 +263,65 @@ Full/unit pytest generated T01 metrics timestamps and `.pytest_tmp` governance
 fixtures. The pre-test worktree was clean, so those exact test artifacts were
 restored/removed before this evidence file. They are absent from the final diff.
 
+## Formal C-007/C-008/C-009 attempt (2026-08-14)
+
+Captain authority is no longer missing. The formal runner read comment
+[`issuecomment-5291084709`](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/37#issuecomment-5291084709)
+directly through GitHub CLI, verified publisher `liuyanbo12`, timestamp
+`2026-08-14T08:13:44Z`, and all seven frozen authorization fields. The evidence
+is bound to runner commit `d09bf87fe25e1a9f29c8bc7a0612652a7f42e3d5`.
+
+The official Science booklet was independently hashed as
+`4bda50e8e3c90f8968f1bfd72ded4d9587ae80cd40ba66656a12c93abcf8e576`,
+rebuilt in memory to contiguous Q001-Q125 with no quality issues, normalized and
+sorted, and reduced to the 124-item population by excluding Q028. Python
+`random.Random(20260814).sample(population, 3)` reproduced exactly
+`[Q095, Q045, Q100]`. The four selected canonical record hashes are stored in
+the dataset manifest; Q028 revalidated as
+`badcae2fec281a0bbaec81b36d8ed4a149696db855d0f399e7cbe382fdc78da8`,
+and the flagship manifest revalidated as Q028.
+
+The real-provider preflight then failed before any model call because
+`DASHSCOPE_API_KEY`/`WORKSPACE_ID` and a substituted compatible-mode
+`DASHSCOPE_BASE_URL` are not configured. The runner did not fall back to mock,
+fixtures, synthetic output, or another question. It emitted exactly four unique
+`CASE_BLOCKED` records in frozen order; Q028 appears only once in raw results
+with both `Q028_REGRESSION` and `FLAGSHIP` labels. The derived matrix contains
+five logical rows, with both Q028 rows marked `shared_run=true`, but there is no
+actual run ID because the provider was never invoked.
+
+| Acceptance item | Result | Evidence-derived value |
+| --- | --- | --- |
+| T02-C-007 | **BLOCKED** | 0/4 unique actual runs; four `CASE_BLOCKED` records |
+| T02-METRIC-004 | **FAIL** | required=3, selected=3, executed=0, passed=0 |
+| T02-C-008 | **BLOCKED** | five logical rows derived from four blocked raw records |
+| T02-C-009 | **BLOCKED** | no V1/V2 provider runs; false-iteration count is `null` |
+| P0/P1 closure | **BLOCKED** | unresolved P0/P1 are `null`, not falsely reported as zero |
+
+Formal evidence package:
+
+- [selection manifest](wave_c_release/selection_manifest.json)
+- [dataset manifest](wave_c_release/dataset_manifest.json)
+- [provider preflight](wave_c_release/provider_preflight.json)
+- [raw results](wave_c_release/raw_results.json)
+- [METRIC-004](wave_c_release/metrics.json)
+- [regression matrix JSON](wave_c_release/regression_matrix.json) and
+  [Markdown](wave_c_release/regression_matrix.md)
+- [prompt-hash audit](wave_c_release/prompt_hash_audit.json)
+- [P0/P1 closure audit](wave_c_release/p0_p1_closure.json)
+- [artifact manifest](wave_c_release/artifact_manifest.json)
+- [checksums](wave_c_release/checksums.json)
+- [reproduction](wave_c_release/reproduction.md)
+
+All generated evidence checksums revalidated with zero mismatches. Formal runner
+tests passed `13/13`; all workflow tests passed `90/90`. Full pytest first
+recorded the existing Windows child-codepage failure in `test_doctor_mock_runs`
+(`1463 passed, 41 skipped, 1 failed`), then passed unchanged under the exact CI
+UTF-8 environment (`1464 passed, 41 skipped`). The formal gates passed: lint,
+type, unit (`1432 passed, 41 skipped`), integration (`32 passed`), coverage
+(`79.93%`, threshold `65%`), security (`critical=0`), and build. These software
+gates do not convert the provider-blocked acceptance items into PASS.
+
 ## Known limitations and next work
 
 - Feedback is available to the next revision only when the existing Reviewer
@@ -272,9 +331,10 @@ restored/removed before this evidence file. They are absent from the final diff.
 - Dropped counts report bounded omission; omitted raw values are intentionally
   unrecoverable from the prompt projection and must be retrieved from their
   source systems by trace ID when authorized.
-- `T02-C-007` through `T02-C-009` are outside this execution scope and have not
-  started.
-- The technical C-004/005/006 gates are satisfied. PR #37 remains Draft until
-  the omitted remainder of the user's C-006 instruction and any required human
-  review/Ready transition are explicitly confirmed; this work does not approve
-  or merge the PR.
+- `T02-C-007` through `T02-C-009` have formally started and are blocked by the
+  real-provider preflight described above. A rerun must retain Q095/Q045/Q100;
+  it may not substitute cases or reuse these zero-call blocked records as actual
+  runs.
+- The technical C-004/005/006 gates are satisfied. PR #37 is open and no longer
+  a draft, but this blocked local evidence is not eligible for push or Captain
+  re-review. This work does not approve or merge the PR.
