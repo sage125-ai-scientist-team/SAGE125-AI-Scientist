@@ -62,6 +62,16 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
             errors.append("manifest_sha256")
         if ledger.get("manifest_hash_algorithm") != "sha256-canonical-json-v1":
             errors.append("manifest_hash_algorithm")
+        source_binding = ledger.get("question_source_binding")
+        if (
+            not isinstance(source_binding, dict)
+            or not isinstance(source_binding.get("canonical_path"), str)
+            or not isinstance(source_binding.get("sha256"), str)
+            or len(source_binding["sha256"]) != 64
+            or not isinstance(source_binding.get("question_bindings_sha256"), str)
+            or len(source_binding["question_bindings_sha256"]) != 64
+        ):
+            errors.append("question_source_binding")
         if not isinstance(ledger.get("environment"), dict):
             errors.append("environment")
         entries = ledger.get("entries", [])

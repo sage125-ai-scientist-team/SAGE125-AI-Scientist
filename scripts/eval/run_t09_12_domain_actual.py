@@ -19,13 +19,14 @@ if str(PROJECT_ROOT) not in sys.path:
 from app.core.call_audit import summarize_calls  # noqa: E402
 from app.core.config import get_settings  # noqa: E402
 from app.workflow.artifacts import resolve_artifact_base  # noqa: E402
-from app.workflow.pipeline import run_pipeline_with_state  # noqa: E402
+from app.workflow.pipeline import resolve_questions_path, run_pipeline_with_state  # noqa: E402
 
 
 PROTOCOL_PATH = PROJECT_ROOT / "docs" / "reproducibility" / "T09_12_DOMAIN_SCORING_PROTOCOL.json"
 DEFAULT_OUTPUT = PROJECT_ROOT / "exports" / "t09_12_domain_actual"
 MAX_ATTEMPT_CAP = 24
 MAX_RETRIES_PER_ENTRY = 1
+APPROVED_QUESTION_DOMAIN_MAP = {"Q089": "materials", "Q088": "engineering"}
 _RETRYABLE_ERRORS = (TimeoutError, ConnectionError, OSError)
 _SECRET_PATTERNS = (
     re.compile(r"(?i)(?:api[_-]?key|authorization|bearer|password|secret)\s*[:=]\s*['\"]?[A-Za-z0-9_\-/]{8,}"),
@@ -84,6 +85,73 @@ def _source_identity(source: dict[str, Any]) -> tuple[Path, str | None, str | No
     return source_path, str(source_path), sha256_file(source_path)
 
 
+def _question_items(source_path: Path) -> dict[str, dict[str, str]]:
+    """Load supported question-source shapes into an ID-indexed canonical representation."""
+    value = load_json(source_path)
+    raw_items = value.get("questions") if isinstance(value.get("questions"), list) else value.get("items")
+    if not isinstance(raw_items, list):
+        raise ValueError("question_source_structure")
+    items: dict[str, dict[str, str]] = {}
+    for raw_item in raw_items:
+        if not isinstance(raw_item, dict):
+            raise ValueError("question_source_structure")
+        question_id = raw_item.get("question_id", raw_item.get("id"))
+        question = raw_item.get("question")
+        domain = raw_item.get("domain")
+        if not all(isinstance(value, str) and value for value in (question_id, question, domain)):
+            raise ValueError("question_source_structure")
+        if "\ufffd" in question:
+            raise ValueError("question_replacement_characters")
+        if question_id in items:
+            raise ValueError("question_source_duplicate_id")
+        items[question_id] = {"question": question, "domain": domain}
+    return items
+
+
+def _binding_digest(bindings: list[dict[str, str]]) -> str:
+    """Return the canonical digest for the ordered, source-derived question bindings."""
+    canonical = json.dumps(bindings, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _question_bindings(
+    entries: list[Any], source_path: Path
+) -> tuple[list[dict[str, str]], list[str]]:
+    """Bind every manifest item to its source question text, domain, and canonical hash."""
+    errors: list[str] = []
+    try:
+        source_questions = _question_items(source_path)
+    except ValueError as error:
+        return [], [str(error)]
+    bindings: list[dict[str, str]] = []
+    for item in entries:
+        if not isinstance(item, dict):
+            continue
+        question_id = item.get("question_id")
+        domain = item.get("domain")
+        source_item = source_questions.get(question_id) if isinstance(question_id, str) else None
+        if source_item is None:
+            errors.append("question_source_question_id")
+            continue
+        if APPROVED_QUESTION_DOMAIN_MAP.get(question_id) not in {None, source_item["domain"]}:
+            errors.append("question_source_approved_mapping")
+        if source_item["domain"] != domain:
+            errors.append("question_source_domain")
+        question_hash = hashlib.sha256(source_item["question"].encode("utf-8")).hexdigest()
+        if item.get("question") != source_item["question"]:
+            errors.append("question_source_question")
+        if item.get("question_sha256") != question_hash:
+            errors.append("question_source_question_sha256")
+        bindings.append(
+            {
+                "domain": source_item["domain"],
+                "question_id": question_id,
+                "question_sha256": question_hash,
+            }
+        )
+    return bindings, errors
+
+
 def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[str, Any]:
     """Validate canonical hashes, source identity, provider-safe schema, and domain coverage."""
     protocol = load_json(protocol_path)
@@ -100,13 +168,18 @@ def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[
         manifest_sha = canonical_json_sha256(manifest_path)
     except ValueError:
         manifest_sha = ""
+    bindings: list[dict[str, str]] = []
     source = manifest.get("question_source")
     if not isinstance(source, dict):
         errors.append("question_source")
     else:
         source_path, canonical_path, observed_sha = _source_identity(source)
+        configured_source = os.getenv("SAGE_QUESTIONS_PATH", "").strip()
+        effective_source_path = resolve_questions_path().resolve()
         expected_sha = source.get("sha256")
         identity = source.get("identity")
+        if configured_source and source_path != effective_source_path:
+            errors.append("question_source_runtime_binding")
         if not isinstance(expected_sha, str) or len(expected_sha) != 64 or observed_sha != expected_sha:
             errors.append("question_source_sha256")
         if not isinstance(identity, dict):
@@ -117,6 +190,10 @@ def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[
             or identity.get("sha256") != expected_sha
         ):
             errors.append("question_source_identity")
+        if observed_sha is not None:
+            resolved_bindings, binding_errors = _question_bindings(entries, source_path)
+            bindings = resolved_bindings
+            errors.extend(binding_errors)
     domains = [item.get("domain") for item in entries if isinstance(item, dict)]
     question_ids = [item.get("question_id") for item in entries if isinstance(item, dict)]
     if domains != required_domains or len(domains) != 12 or len(set(domains)) != 12:
@@ -131,6 +208,11 @@ def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[
         "manifest_sha256": manifest_sha,
         "manifest_hash_algorithm": "sha256-canonical-json-v1",
         "required_domain_count": len(required_domains) if isinstance(required_domains, list) else 0,
+        "question_source_binding": {
+            "canonical_path": canonical_path if isinstance(source, dict) else None,
+            "sha256": observed_sha if isinstance(source, dict) else None,
+            "question_bindings_sha256": _binding_digest(bindings),
+        },
         "environment": _safe_environment(),
         "provider_calls": 0,
     }
@@ -177,13 +259,17 @@ def _artifact_integrity(path: Path) -> dict[str, Any]:
     }
 
 
-def _load_resume_ledger(path: Path, manifest_sha256: str) -> dict[str, Any] | None:
+def _load_resume_ledger(
+    path: Path, manifest_sha256: str, question_source_binding: dict[str, Any]
+) -> dict[str, Any] | None:
     """Load a compatible ledger only when resume was explicitly requested."""
     if not path.is_file():
         return None
     ledger = load_json(path)
     if ledger.get("manifest_sha256") != manifest_sha256:
         raise ValueError("resume_manifest_identity_mismatch")
+    if ledger.get("question_source_binding") != question_source_binding:
+        raise ValueError("resume_question_source_binding_mismatch")
     return ledger
 
 
@@ -223,6 +309,7 @@ def run(
         "manifest": str(manifest_path),
         "manifest_sha256": report["manifest_sha256"],
         "manifest_hash_algorithm": report["manifest_hash_algorithm"],
+        "question_source_binding": report["question_source_binding"],
         "environment": report["environment"],
         "entries": [],
         "provider_calls": 0,
@@ -246,7 +333,9 @@ def run(
         "exports" if mock else get_settings().export_dir
     )
     if resume:
-        previous = _load_resume_ledger(ledger_path, report["manifest_sha256"])
+        previous = _load_resume_ledger(
+            ledger_path, report["manifest_sha256"], report["question_source_binding"]
+        )
         if previous is not None:
             ledger = previous
             ledger["resumed_at"] = _utc_now()

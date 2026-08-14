@@ -65,12 +65,14 @@
         ],
         "rule": "canonical_path must equal the resolved source path and sha256 must equal the current source-question file digest."
       },
+      "runtime_binding": "The manifest source path must equal app.workflow.pipeline.resolve_questions_path(), including SAGE_QUESTIONS_PATH when set.",
+      "item_binding": "Each domains entry must include question and question_sha256. The question_id, domain, exact question text, and SHA-256(question UTF-8) must match its source questions[] item; approved mappings pin Q089 to materials and Q088 to engineering; replacement character U+FFFD (including Q109) is rejected.",
       "rule": "sha256 must equal the current source-question file digest."
     },
-    "domains_rule": "Exactly one ordered entry for every required domain, each with domain and question_id."
+    "domains_rule": "Exactly one ordered entry for every required domain, each with domain, question_id, question, and question_sha256."
   },
   "artifact_policy": {
-    "ledger": "ledger.json (atomic replace; --resume accepts only the same canonical manifest hash)",
+    "ledger": "ledger.json (atomic replace; --resume accepts only the same canonical manifest hash and question_source_binding, which includes canonical source path, file SHA-256, and ordered item-binding digest)",
     "preflight": "preflight.json",
     "execution_summary": "run_summary.json",
     "pipeline_artifacts": "Use the artifact directory emitted by app.workflow.pipeline.run_pipeline_with_state.",
