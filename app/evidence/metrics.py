@@ -238,12 +238,18 @@ def evaluate_gold_pair(pair: dict[str, Any]) -> PairEval:
     )
 
 
-def compute_metrics(path: Path | None = None) -> MetricsReport:
+def compute_metrics(
+    path: Path | None = None,
+    *,
+    generated_at: str | None = None,
+) -> MetricsReport:
     """
     基于黄金集计算 Wave B 指标。
 
     参数：
         path: 黄金集 JSON 路径。
+        generated_at: 可选冻结时间戳（ISO8601）。测试必须传入，避免静默改写审计产物。
+            未传入时才使用当前 UTC 时间（仅供维护者有意刷新）。
 
     返回：
         MetricsReport。
@@ -279,6 +285,11 @@ def compute_metrics(path: Path | None = None) -> MetricsReport:
         "All gold pairs remain provisional=true until Wave C DoD sign-off."
     )
     meets = support_precision >= 0.90
+    stamp = (
+        generated_at
+        if generated_at is not None
+        else datetime.now(timezone.utc).isoformat()
+    )
 
     return MetricsReport(
         gold_set_size=len(pairs),
@@ -289,8 +300,25 @@ def compute_metrics(path: Path | None = None) -> MetricsReport:
         degrade_strategy=degrade_strategy,
         meets_precision_target=meets,
         pair_evals=evals,
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=stamp,
     )
+
+
+def _write_json_deterministic(path: Path, payload: dict[str, Any]) -> Path:
+    """
+    以确定性 UTF-8 + LF 写入 JSON（末尾换行）。
+
+    参数：
+        path: 目标文件。
+        payload: 可 JSON 序列化的字典。
+
+    返回：
+        写入路径。
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+    path.write_bytes(text.encode("utf-8"))
+    return path
 
 
 def write_metrics_json(
@@ -302,18 +330,13 @@ def write_metrics_json(
 
     参数：
         report: MetricsReport。
-        path: 输出路径。
+        path: 输出路径；``None`` 时写入仓库默认审计路径（仅维护者显式刷新用）。
 
     返回：
         实际写入路径。
     """
     target = path or DEFAULT_METRICS_PATH
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(
-        json.dumps(report.to_dict(), ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    return target
+    return _write_json_deterministic(target, report.to_dict())
 
 
 def build_domain_audit_12() -> dict[str, Any]:
@@ -482,33 +505,79 @@ def write_domain_audit_12(path: Path | None = None) -> Path:
     写入 12 题抽查表 JSON。
 
     参数：
-        path: 输出路径。
+        path: 输出路径；``None`` 时写入仓库默认审计路径（仅维护者显式刷新用）。
 
     返回：
         实际路径。
     """
     target = path or DEFAULT_DOMAIN_AUDIT_PATH
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(
-        json.dumps(build_domain_audit_12(), ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    return target
+    return _write_json_deterministic(target, build_domain_audit_12())
 
 
 def generate_wave_b_metrics_artifacts(
     gold_path: Path | None = None,
+    *,
+    output_dir: Path | None = None,
+    metrics_path: Path | None = None,
+    domain_audit_path: Path | None = None,
+    generated_at: str | None = None,
+    allow_tracked_write: bool = False,
 ) -> dict[str, Path]:
     """
     一键生成 metrics.json 与 domain_audit_12.json。
 
+    默认**禁止**写入仓库已跟踪的审计路径，避免 pytest 弄脏工作树。
+    测试应传入 ``output_dir``（如 pytest ``tmp_path``）并冻结 ``generated_at``。
+    维护者若要刷新 tracked 文件，须显式 ``allow_tracked_write=True``。
+
     参数：
         gold_path: 黄金集路径。
+        output_dir: 输出目录；与 metrics_path/domain_audit_path 二选一组合。
+        metrics_path: 可选显式 metrics 输出路径。
+        domain_audit_path: 可选显式 domain audit 输出路径。
+        generated_at: 冻结的 ISO8601 时间戳；测试必须传入。
+        allow_tracked_write: 为 True 时才允许落到 DEFAULT_* tracked 路径。
 
     返回：
         产物路径字典。
+
+    异常：
+        ValueError: 未提供 output_dir/显式路径且未允许 tracked 写入。
     """
-    report = compute_metrics(gold_path or DEFAULT_GOLD_SET_PATH)
-    metrics_path = write_metrics_json(report)
-    domain_path = write_domain_audit_12()
-    return {"metrics": metrics_path, "domain_audit_12": domain_path}
+    if output_dir is not None:
+        out = Path(output_dir)
+        metrics_target = metrics_path or (out / "metrics.json")
+        domain_target = domain_audit_path or (out / "domain_audit_12.json")
+    else:
+        metrics_target = metrics_path
+        domain_target = domain_audit_path
+
+    if metrics_target is None or domain_target is None:
+        if not allow_tracked_write:
+            raise ValueError(
+                "generate_wave_b_metrics_artifacts requires output_dir "
+                "(or metrics_path + domain_audit_path); refusing to rewrite "
+                "tracked docs/modules/T01 audit artifacts unless "
+                "allow_tracked_write=True"
+            )
+        metrics_target = metrics_target or DEFAULT_METRICS_PATH
+        domain_target = domain_target or DEFAULT_DOMAIN_AUDIT_PATH
+
+    if not allow_tracked_write:
+        tracked = {
+            DEFAULT_METRICS_PATH.resolve(),
+            DEFAULT_DOMAIN_AUDIT_PATH.resolve(),
+        }
+        if metrics_target.resolve() in tracked or domain_target.resolve() in tracked:
+            raise ValueError(
+                "refusing to write tracked T01 audit artifacts during generation; "
+                "pass output_dir/tmp_path or allow_tracked_write=True"
+            )
+
+    report = compute_metrics(
+        gold_path or DEFAULT_GOLD_SET_PATH,
+        generated_at=generated_at,
+    )
+    written_metrics = write_metrics_json(report, metrics_target)
+    written_domain = write_domain_audit_12(domain_target)
+    return {"metrics": written_metrics, "domain_audit_12": written_domain}
