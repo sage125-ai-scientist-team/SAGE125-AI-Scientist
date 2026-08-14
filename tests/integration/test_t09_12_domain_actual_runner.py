@@ -31,14 +31,19 @@ def _sha256(path: Path) -> str:
 
 def _manifest(tmp_path: Path) -> Path:
     """Create a complete manifest and source using the production questions[] object shape."""
-    source = tmp_path / "questions.json"
+    source = tmp_path / "questions_125.json"
     question_ids = [f"Q{index:03d}" for index in range(1, 13)]
     question_ids[7] = "Q089"
+    question_ids[9] = "Q109"
     question_ids[11] = "Q088"
     source_items = [
         {
             "question_id": question_ids[index - 1],
-            "question": f"Canonical source question {index:03d}",
+            "question": (
+                "Authoritative Q109 \ufffd input"
+                if question_ids[index - 1] == "Q109"
+                else f"Canonical source question {index:03d}"
+            ),
             "domain": domain,
         }
         for index, domain in enumerate(DOMAINS, 1)
@@ -150,14 +155,14 @@ def test_preflight_binds_each_question_to_source_text_domain_and_hash(tmp_path: 
     binding = report["question_source_binding"]
     assert report["passed"] is True
     assert len(binding["question_bindings_sha256"]) == 64
-    assert binding["canonical_path"] == str((tmp_path / "questions.json").resolve())
+    assert binding["canonical_path"] == str((tmp_path / "questions_125.json").resolve())
 
 
 def test_preflight_accepts_approved_q089_and_q088_domain_mappings(tmp_path: Path) -> None:
     """Approved source mappings retain Q089 as materials and Q088 as engineering."""
     manifest = _manifest(tmp_path)
     bindings, _ = _question_bindings(
-        json.loads(manifest.read_text(encoding="utf-8"))["domains"], tmp_path / "questions.json"
+        json.loads(manifest.read_text(encoding="utf-8"))["domains"], tmp_path / "questions_125.json"
     )
     assert {item["question_id"]: item["domain"] for item in bindings}["Q089"] == "materials"
     assert {item["question_id"]: item["domain"] for item in bindings}["Q088"] == "engineering"
@@ -200,23 +205,51 @@ def test_preflight_binds_sage_questions_path(tmp_path: Path, monkeypatch: pytest
 def test_preflight_rejects_unapproved_q089_domain_mapping(tmp_path: Path) -> None:
     """Q089 cannot change from its approved materials mapping in the source fixture."""
     manifest = _manifest(tmp_path)
-    source = tmp_path / "questions.json"
+    source = tmp_path / "questions_125.json"
     value = json.loads(source.read_text(encoding="utf-8"))
     next(item for item in value["questions"] if item["question_id"] == "Q089")["domain"] = "climate"
     source.write_text(json.dumps(value), encoding="utf-8")
     assert "question_source_approved_mapping" in preflight(manifest)["errors"]
 
 
-def test_preflight_rejects_replacement_character_in_question_source(tmp_path: Path) -> None:
-    """Malformed Q109 question text is rejected before any pipeline call can occur."""
-    source = tmp_path / "questions.json"
+def test_preflight_preserves_authoritative_q109_replacement_character(tmp_path: Path) -> None:
+    """Q109's authoritative U+FFFD source text passes when manifest text and hash match."""
     manifest = _manifest(tmp_path)
-    value = json.loads(source.read_text(encoding="utf-8"))
-    value["questions"][0].update(
-        {"question_id": "Q109", "question": "Corrupted \ufffd question", "domain": "mathematics"}
+    report = preflight(manifest)
+    assert report["passed"] is True
+    assert report["provider_calls"] == 0
+
+
+@pytest.mark.parametrize(
+    "rewritten_question",
+    [
+        "Authoritative Q109  input",
+        "Authoritative Q109 ? input",
+        "Rewritten Q109 \ufffd input",
+    ],
+    ids=["delete", "replace", "rewrite"],
+)
+def test_preflight_rejects_q109_nonidentical_manifest_text_without_pipeline(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, rewritten_question: str
+) -> None:
+    """Q109 deletion, replacement, and rewrites fail preflight without pipeline/provider calls."""
+    manifest = _manifest(tmp_path)
+    value = json.loads(manifest.read_text(encoding="utf-8"))
+    q109 = next(item for item in value["domains"] if item["question_id"] == "Q109")
+    q109["question"] = rewritten_question
+    q109["question_sha256"] = hashlib.sha256(rewritten_question.encode("utf-8")).hexdigest()
+    manifest.write_text(json.dumps(value), encoding="utf-8")
+    calls: list[object] = []
+    monkeypatch.setattr(
+        "scripts.eval.run_t09_12_domain_actual.run_pipeline_with_state",
+        lambda *_args, **_kwargs: calls.append(object()),
     )
-    source.write_text(json.dumps(value), encoding="utf-8")
-    assert "question_replacement_characters" in preflight(manifest)["errors"]
+    report = run(manifest, tmp_path / "out")
+    assert report["passed"] is False
+    assert "question_source_question" in report["errors"]
+    assert "question_source_question_sha256" in report["errors"]
+    assert report["provider_calls"] == 0
+    assert calls == []
 
 
 def test_real_execution_requires_provider_configuration(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

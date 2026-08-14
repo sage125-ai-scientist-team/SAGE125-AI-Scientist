@@ -100,8 +100,6 @@ def _question_items(source_path: Path) -> dict[str, dict[str, str]]:
         domain = raw_item.get("domain")
         if not all(isinstance(value, str) and value for value in (question_id, question, domain)):
             raise ValueError("question_source_structure")
-        if "\ufffd" in question:
-            raise ValueError("question_replacement_characters")
         if question_id in items:
             raise ValueError("question_source_duplicate_id")
         items[question_id] = {"question": question, "domain": domain}
