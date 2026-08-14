@@ -497,7 +497,10 @@ def run(
             and authorization.get("model") == EXPECTED_MODEL
             and authorization.get("region") == EXPECTED_REGION
         )
-        if not authorized:
+        if mock:
+            report["errors"] = sorted(set([*report["errors"], "formal_execution_rejects_mock"]))
+            report["passed"] = False
+        elif not authorized:
             report["errors"] = sorted(set([*report["errors"], "actual_execution_not_authorized"]))
             report["passed"] = False
         else:

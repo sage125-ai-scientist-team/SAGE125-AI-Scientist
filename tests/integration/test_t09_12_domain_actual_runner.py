@@ -280,6 +280,14 @@ def test_formal_execute_is_blocked_without_protocol_authorization(
         "run_pipeline_with_state",
         lambda *_args, **_kwargs: calls.append(object()),
     )
+    monkeypatch.setattr(
+        runner,
+        "load_json",
+        lambda path: {
+            **json.loads(path.read_text(encoding="utf-8")),
+            "actual_execution_authorization": {"authorized": False},
+        } if path == runner.PROTOCOL_PATH else json.loads(path.read_text(encoding="utf-8")),
+    )
     report = run(manifest, tmp_path / "out", execute=True)
     assert report["passed"] is False
     assert "actual_execution_not_authorized" in report["errors"]

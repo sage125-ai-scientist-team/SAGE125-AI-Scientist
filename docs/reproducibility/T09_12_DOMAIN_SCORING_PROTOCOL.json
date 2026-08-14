@@ -47,12 +47,18 @@
     "global_attempt_rule": "The ledger has one immutable global cap of 24 persisted attempts across all domains and every --resume invocation."
   },
   "actual_execution_authorization": {
-    "authorized": false,
+    "authorized": true,
+    "authority_url": "https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/46#issuecomment-5292639795",
+    "authority_account": "liuyanbo12",
+    "authorization_base_head": "42cf00aaf56c8d328318af2f22a6475e34b0c167",
     "provider": "bailian",
     "model": "qwen3.6-flash",
+    "model_stack_id": "t07-wb5-bailian-qwen-stack-v1",
+    "model_version": "qwen-stack-20260803-v1",
+    "models": {"fast": "qwen3.6-flash", "balanced": "qwen3.7-plus", "strong": "qwen3.7-max", "deep_research": "qwen-deep-research", "embedding": "text-embedding-v4", "rerank": "qwen3-rerank"},
     "region": "cn-beijing",
     "endpoint_rule": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
-    "authorization_rule": "Only a captain-approved, reviewed protocol change may set authorized=true. This repository state does not authorize Provider execution."
+    "authorization_rule": "Authorization applies only after all preflight and clean-room gates pass; actual ablation, PR Ready, approval, and merge remain unauthorized."
   },
   "manifest_contract": {
     "schema_version": "1.1",
@@ -86,6 +92,6 @@
     "preflight": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir>",
     "actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute",
     "resume_actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --retry --resume",
-    "safety_note": "The current authorization is false; the actual and resume_actual commands are formal interfaces only and must not be invoked until a captain-approved authorization change is reviewed."
+    "safety_note": "Execution remains prohibited until all preflight and clean-room gates pass; this protocol update itself performs no Provider call."
   }
 }
