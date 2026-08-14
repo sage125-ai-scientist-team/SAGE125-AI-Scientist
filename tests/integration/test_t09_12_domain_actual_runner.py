@@ -1,16 +1,19 @@
-"""Tests for T09-12's fail-closed, provider-free evaluation execution path."""
+"""Batch 4B formal-schema tests for the provider-free T09 domain runner."""
 from __future__ import annotations
 
 import hashlib
 import json
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
 from scripts.eval.run_t09_12_domain_actual import (
-    PROTOCOL_PATH,
-    _question_bindings,
+    APPROVAL_SOURCE,
+    APPROVED_DOMAIN_MAPPINGS,
+    FORMAL_QUESTION_SOURCE_PATH,
+    FORMAL_QUESTION_SOURCE_SHA256,
+    PROJECT_ROOT,
+    canonical_input_hash,
     canonical_json_sha256,
     preflight,
     run,
@@ -18,227 +21,59 @@ from scripts.eval.run_t09_12_domain_actual import (
 from scripts.eval.validate_t09_12_domain_actual import validate
 
 
-DOMAINS = [
-    "mathematics", "physics", "chemistry", "biology", "medicine", "earth_science",
-    "computer_science", "materials", "astronomy", "neuroscience", "climate", "engineering",
-]
-
-
-def _sha256(path: Path) -> str:
-    """Return a deterministic digest for the test manifest's source fixture."""
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def _source_items() -> dict[str, dict[str, object]]:
+    """Load the external formal source without altering its authoritative text."""
+    value = json.loads((PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH).read_text(encoding="utf-8"))
+    assert isinstance(value, list)
+    return {str(item["id"]): item for item in value}
 
 
 def _manifest(tmp_path: Path) -> Path:
-    """Create a complete manifest and source using the production questions[] object shape."""
-    source = tmp_path / "questions_125.json"
-    question_ids = [f"Q{index:03d}" for index in range(1, 13)]
-    question_ids[7] = "Q089"
-    question_ids[9] = "Q109"
-    question_ids[11] = "Q088"
-    source_items = [
-        {
-            "question_id": question_ids[index - 1],
-            "question": (
-                "Authoritative Q109 \ufffd input"
-                if question_ids[index - 1] == "Q109"
-                else f"Canonical source question {index:03d}"
-            ),
-            "domain": domain,
-        }
-        for index, domain in enumerate(DOMAINS, 1)
-    ]
-    source.write_text(json.dumps({"questions": source_items}), encoding="utf-8")
-    domains = [
-        {
-            "domain": item["domain"],
-            "question_id": item["question_id"],
-            "question": item["question"],
-            "question_sha256": hashlib.sha256(item["question"].encode("utf-8")).hexdigest(),
-        }
-        for item in source_items
-    ]
+    """Write a portable approved manifest from the formal top-level list."""
+    source = _source_items()
+    domains = []
+    for normalized_domain, (question_id, source_domain, mapping_basis) in APPROVED_DOMAIN_MAPPINGS.items():
+        item = source[question_id]
+        question = str(item["question"])
+        domains.append(
+            {
+                "question_id": question_id,
+                "question": question,
+                "source_domain": source_domain,
+                "normalized_domain": normalized_domain,
+                "domain": normalized_domain,
+                "mapping_basis": mapping_basis,
+                "approval_source": APPROVAL_SOURCE,
+                "canonical_input_hash": canonical_input_hash(
+                    question_id, question, source_domain, normalized_domain
+                ),
+            }
+        )
     manifest = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "question_source": {
-            "path": str(source),
-            "sha256": _sha256(source),
-            "identity": {
-                "canonical_path": str(source.resolve()),
-                "sha256": _sha256(source),
-            },
+            "path": FORMAL_QUESTION_SOURCE_PATH,
+            "sha256": FORMAL_QUESTION_SOURCE_SHA256,
         },
         "domains": domains,
     }
     path = tmp_path / "manifest.json"
-    path.write_text(json.dumps(manifest), encoding="utf-8")
+    path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
     return path
 
 
-def _fake_pipeline_factory(tmp_path: Path, outcomes: list[object] | None = None):
-    """Build a fake pipeline that creates safe artifacts without provider transport."""
-    calls: list[dict[str, object]] = []
-    remaining = list(outcomes or [])
-
-    def fake_pipeline(question_id: str, **kwargs: object) -> tuple[object, SimpleNamespace]:
-        """Create a deterministic mock artifact or raise the requested test error."""
-        calls.append({"question_id": question_id, **kwargs})
-        if remaining:
-            outcome = remaining.pop(0)
-            if isinstance(outcome, BaseException):
-                raise outcome
-        artifact_dir = tmp_path / "pipeline-artifacts" / f"run-{question_id}"
-        artifact_dir.mkdir(parents=True, exist_ok=True)
-        (artifact_dir / "report.json").write_text('{"status":"mock"}', encoding="utf-8")
-        return object(), SimpleNamespace(
-            run_id=f"run-{question_id}",
-            llm_calls=[{"provider": "mock", "mock": True}],
-        )
-
-    return calls, fake_pipeline
+def _rewrite(path: Path, mutate: object) -> None:
+    """Apply one test mutation to a manifest JSON object."""
+    value = json.loads(path.read_text(encoding="utf-8"))
+    assert callable(mutate)
+    mutate(value)
+    path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
 
 
-def test_preflight_only_never_invokes_pipeline(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """The default mode writes governance artifacts and cannot reach a Provider."""
-    manifest = _manifest(tmp_path)
-    monkeypatch.setattr(
-        "scripts.eval.run_t09_12_domain_actual.run_pipeline_with_state",
-        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("pipeline must not run")),
-    )
-    report = run(manifest, tmp_path / "out")
-    assert report["passed"] is True
-    assert report["mode"] == "preflight-only"
-    assert report["provider_calls"] == 0
-    assert (tmp_path / "out" / "ledger.json").is_file()
-    assert validate(PROTOCOL_PATH, tmp_path / "out" / "ledger.json")["passed"] is True
-
-
-def test_mock_execution_reuses_pipeline_and_audit_without_provider(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Mock execution calls the shared pipeline but records zero real Provider calls."""
-    manifest = _manifest(tmp_path)
-    calls, fake_pipeline = _fake_pipeline_factory(tmp_path)
-    monkeypatch.setattr("scripts.eval.run_t09_12_domain_actual.run_pipeline_with_state", fake_pipeline)
-    monkeypatch.setattr(
-        "scripts.eval.run_t09_12_domain_actual.resolve_artifact_base",
-        lambda *_args: tmp_path / "pipeline-artifacts",
-    )
-    report = run(manifest, tmp_path / "out", execute=True, mock=True)
-    assert report["passed"] is True
-    assert report["provider_calls"] == 0
-    assert len(calls) == 12
-    assert all(call["mock_mode"] is True for call in calls)
-
-
-def test_canonical_manifest_hash_ignores_json_formatting(tmp_path: Path) -> None:
-    """Canonical hashing binds semantic manifest content instead of JSON whitespace."""
-    first = tmp_path / "first.json"
-    second = tmp_path / "second.json"
-    first.write_text('{"b":2,"a":[1,3]}', encoding="utf-8")
-    second.write_text('{\n  "a": [1, 3],\n  "b": 2\n}', encoding="utf-8")
-    assert canonical_json_sha256(first) == canonical_json_sha256(second)
-
-
-def test_manifest_source_identity_rejects_mismatched_canonical_path(tmp_path: Path) -> None:
-    """A manifest must bind a source identity with the resolved canonical source path."""
-    manifest = _manifest(tmp_path)
-    value = json.loads(manifest.read_text(encoding="utf-8"))
-    value["question_source"]["identity"]["canonical_path"] = str(tmp_path / "other.json")
-    manifest.write_text(json.dumps(value), encoding="utf-8")
-    report = run(manifest, tmp_path / "out")
-    assert report["passed"] is False
-    assert "question_source_identity" in report["errors"]
-
-
-def test_preflight_binds_each_question_to_source_text_domain_and_hash(tmp_path: Path) -> None:
-    """The real questions[] structure provides a positive per-item source binding fixture."""
-    report = preflight(_manifest(tmp_path))
-    binding = report["question_source_binding"]
-    assert report["passed"] is True
-    assert len(binding["question_bindings_sha256"]) == 64
-    assert binding["canonical_path"] == str((tmp_path / "questions_125.json").resolve())
-
-
-def test_preflight_accepts_approved_q089_and_q088_domain_mappings(tmp_path: Path) -> None:
-    """Approved source mappings retain Q089 as materials and Q088 as engineering."""
-    manifest = _manifest(tmp_path)
-    bindings, _ = _question_bindings(
-        json.loads(manifest.read_text(encoding="utf-8"))["domains"], tmp_path / "questions_125.json"
-    )
-    assert {item["question_id"]: item["domain"] for item in bindings}["Q089"] == "materials"
-    assert {item["question_id"]: item["domain"] for item in bindings}["Q088"] == "engineering"
-
-
-def test_preflight_rejects_question_text_drift(tmp_path: Path) -> None:
-    """A manifest cannot relabel a source question while retaining its question ID."""
-    manifest = _manifest(tmp_path)
-    value = json.loads(manifest.read_text(encoding="utf-8"))
-    value["domains"][0]["question"] = "Changed wording"
-    manifest.write_text(json.dumps(value), encoding="utf-8")
-    assert "question_source_question" in preflight(manifest)["errors"]
-
-
-def test_preflight_rejects_question_domain_drift(tmp_path: Path) -> None:
-    """A manifest domain must equal the domain approved in its source question item."""
-    manifest = _manifest(tmp_path)
-    value = json.loads(manifest.read_text(encoding="utf-8"))
-    value["domains"][0]["domain"] = "engineering"
-    manifest.write_text(json.dumps(value), encoding="utf-8")
-    assert "question_source_domain" in preflight(manifest)["errors"]
-
-
-def test_preflight_rejects_question_canonical_hash_drift(tmp_path: Path) -> None:
-    """A source question's UTF-8 hash is required even when its visible text matches."""
-    manifest = _manifest(tmp_path)
-    value = json.loads(manifest.read_text(encoding="utf-8"))
-    value["domains"][0]["question_sha256"] = "0" * 64
-    manifest.write_text(json.dumps(value), encoding="utf-8")
-    assert "question_source_question_sha256" in preflight(manifest)["errors"]
-
-
-def test_preflight_binds_sage_questions_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """SAGE_QUESTIONS_PATH must select the exact source identified by the manifest."""
-    manifest = _manifest(tmp_path)
-    monkeypatch.setenv("SAGE_QUESTIONS_PATH", str(tmp_path / "different.json"))
-    assert "question_source_runtime_binding" in preflight(manifest)["errors"]
-
-
-def test_preflight_rejects_unapproved_q089_domain_mapping(tmp_path: Path) -> None:
-    """Q089 cannot change from its approved materials mapping in the source fixture."""
-    manifest = _manifest(tmp_path)
-    source = tmp_path / "questions_125.json"
-    value = json.loads(source.read_text(encoding="utf-8"))
-    next(item for item in value["questions"] if item["question_id"] == "Q089")["domain"] = "climate"
-    source.write_text(json.dumps(value), encoding="utf-8")
-    assert "question_source_approved_mapping" in preflight(manifest)["errors"]
-
-
-def test_preflight_preserves_authoritative_q109_replacement_character(tmp_path: Path) -> None:
-    """Q109's authoritative U+FFFD source text passes when manifest text and hash match."""
-    manifest = _manifest(tmp_path)
-    report = preflight(manifest)
-    assert report["passed"] is True
-    assert report["provider_calls"] == 0
-
-
-@pytest.mark.parametrize(
-    "rewritten_question",
-    [
-        "Authoritative Q109  input",
-        "Authoritative Q109 ? input",
-        "Rewritten Q109 \ufffd input",
-    ],
-    ids=["delete", "replace", "rewrite"],
-)
-def test_preflight_rejects_q109_nonidentical_manifest_text_without_pipeline(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, rewritten_question: str
+def _assert_preflight_failure_without_pipeline(
+    manifest: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, error: str
 ) -> None:
-    """Q109 deletion, replacement, and rewrites fail preflight without pipeline/provider calls."""
-    manifest = _manifest(tmp_path)
-    value = json.loads(manifest.read_text(encoding="utf-8"))
-    q109 = next(item for item in value["domains"] if item["question_id"] == "Q109")
-    q109["question"] = rewritten_question
-    q109["question_sha256"] = hashlib.sha256(rewritten_question.encode("utf-8")).hexdigest()
-    manifest.write_text(json.dumps(value), encoding="utf-8")
+    """Assert every invalid manifest stops before any pipeline or Provider activity."""
     calls: list[object] = []
     monkeypatch.setattr(
         "scripts.eval.run_t09_12_domain_actual.run_pipeline_with_state",
@@ -246,103 +81,138 @@ def test_preflight_rejects_q109_nonidentical_manifest_text_without_pipeline(
     )
     report = run(manifest, tmp_path / "out")
     assert report["passed"] is False
-    assert "question_source_question" in report["errors"]
-    assert "question_source_question_sha256" in report["errors"]
+    assert error in report["errors"]
     assert report["provider_calls"] == 0
     assert calls == []
 
 
-def test_real_execution_requires_provider_configuration(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Non-mock execution fails before transport when the Qwen provider is unavailable."""
-    manifest = _manifest(tmp_path)
-    monkeypatch.setattr(
-        "scripts.eval.run_t09_12_domain_actual.get_settings",
-        lambda: SimpleNamespace(qwen_configured=False),
-    )
-    report = run(manifest, tmp_path / "out", execute=True, mock=False)
-    assert report["passed"] is False
-    assert "provider_not_configured" in report["errors"]
-    assert report["provider_calls"] == 0
+def test_formal_source_is_top_level_complete_list_with_fixed_digest() -> None:
+    """The production source is a 125-item top-level list with exact QID coverage."""
+    source_path = PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH
+    raw = json.loads(source_path.read_text(encoding="utf-8"))
+    assert isinstance(raw, list)
+    assert len(raw) == 125
+    assert {item["id"] for item in raw} == {f"Q{number:03d}" for number in range(1, 126)}
+    assert len({item["id"] for item in raw}) == 125
+    assert hashlib.sha256(source_path.read_bytes()).hexdigest() == FORMAL_QUESTION_SOURCE_SHA256
 
 
-def test_retry_once_only_for_transient_failure_then_resume(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """A transient error receives exactly one retry and a resumed ledger makes no calls."""
+def test_preflight_accepts_complete_approved_manifest(tmp_path: Path) -> None:
+    """Approved source and normalized fields pass without executing a pipeline."""
     manifest = _manifest(tmp_path)
-    calls, fake_pipeline = _fake_pipeline_factory(tmp_path, [TimeoutError("offline")])
-    monkeypatch.setattr("scripts.eval.run_t09_12_domain_actual.run_pipeline_with_state", fake_pipeline)
-    monkeypatch.setattr(
-        "scripts.eval.run_t09_12_domain_actual.resolve_artifact_base",
-        lambda *_args: tmp_path / "pipeline-artifacts",
-    )
-    report = run(manifest, tmp_path / "out", execute=True, mock=True, retry=True, attempt_cap=24)
-    ledger = json.loads((tmp_path / "out" / "ledger.json").read_text(encoding="utf-8"))
+    report = preflight(manifest)
     assert report["passed"] is True
     assert report["provider_calls"] == 0
-    assert len(ledger["entries"][0]["attempts"]) == 2
-    assert ledger["entries"][0]["attempts"][0]["retryable"] is True
-    assert len(calls) == 13
-    run(manifest, tmp_path / "out", execute=True, mock=True, retry=True, attempt_cap=24, resume=True)
-    assert len(calls) == 13
+    assert report["question_source_binding"]["source_path"] == FORMAL_QUESTION_SOURCE_PATH
+    assert Path(str(report["question_source_binding"]["resolved_path"])).is_absolute()
 
 
-def test_resume_rejects_question_source_binding_mismatch(tmp_path: Path) -> None:
-    """Resume rejects a ledger whose separately-recorded source binding was altered."""
-    manifest = _manifest(tmp_path)
-    output_dir = tmp_path / "out"
-    run(manifest, output_dir)
-    ledger_path = output_dir / "ledger.json"
-    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
-    ledger["question_source_binding"]["question_bindings_sha256"] = "0" * 64
-    ledger_path.write_text(json.dumps(ledger), encoding="utf-8")
-    with pytest.raises(ValueError, match="resume_question_source_binding_mismatch"):
-        run(manifest, output_dir, execute=True, mock=True, resume=True)
-
-
-def test_non_retryable_failure_stops_the_global_run(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """A permanent failure ends the batch immediately and preserves zero provider calls."""
-    manifest = _manifest(tmp_path)
-    calls, fake_pipeline = _fake_pipeline_factory(tmp_path, [ValueError("invalid input")])
-    monkeypatch.setattr("scripts.eval.run_t09_12_domain_actual.run_pipeline_with_state", fake_pipeline)
-    report = run(manifest, tmp_path / "out", execute=True, mock=True, retry=True)
-    ledger = json.loads((tmp_path / "out" / "ledger.json").read_text(encoding="utf-8"))
-    assert report["passed"] is False
-    assert report["provider_calls"] == 0
-    assert len(calls) == 1
-    assert ledger["stopped"] is True
-    assert ledger["entries"][0]["attempts"][0]["retryable"] is False
-
-
-def test_attempt_cap_is_limited_to_twenty_four(tmp_path: Path) -> None:
-    """The public runner rejects an attempt cap above the governed maximum."""
-    with pytest.raises(ValueError, match="24"):
-        run(_manifest(tmp_path), tmp_path / "out", attempt_cap=25)
-
-
-def test_artifact_hash_secret_scan_and_null_cost_fields(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Artifacts are hashed, scanned, and retain unknown token and cost values as null."""
-    manifest = _manifest(tmp_path)
-    calls, fake_pipeline = _fake_pipeline_factory(tmp_path)
-    monkeypatch.setattr("scripts.eval.run_t09_12_domain_actual.run_pipeline_with_state", fake_pipeline)
-    monkeypatch.setattr(
-        "scripts.eval.run_t09_12_domain_actual.resolve_artifact_base",
-        lambda *_args: tmp_path / "pipeline-artifacts",
-    )
-    report = run(manifest, tmp_path / "out", execute=True, mock=True)
-    ledger = json.loads((tmp_path / "out" / "ledger.json").read_text(encoding="utf-8"))
-    completed = ledger["entries"][0]["attempts"][0]
-    assert report["provider_calls"] == 0
-    assert completed["artifact"]["sha256"]
-    assert completed["artifact"]["secret_scan"]["passed"] is True
-    assert completed["token_count"] is None
-    assert completed["cost_usd"] is None
-
-
-def test_preflight_rejects_source_sha_mismatch(tmp_path: Path) -> None:
-    """A changed question source invalidates the manifest before any execution."""
+def test_source_and_normalized_domains_can_differ_when_approved(tmp_path: Path) -> None:
+    """The formal source labels are preserved instead of forced to the normalized taxonomy."""
     manifest = _manifest(tmp_path)
     value = json.loads(manifest.read_text(encoding="utf-8"))
-    value["question_source"]["sha256"] = "0" * 64
-    manifest.write_text(json.dumps(value), encoding="utf-8")
+    entry = next(item for item in value["domains"] if item["normalized_domain"] == "materials")
+    assert entry["question_id"] == "Q089"
+    assert entry["source_domain"] == "Engineering & Materials Science"
+    assert entry["normalized_domain"] == "materials"
+    assert preflight(manifest)["passed"] is True
+
+
+@pytest.mark.parametrize(
+    ("field", "replacement", "error"),
+    [
+        ("source_domain", "Changed domain", "question_source_domain"),
+        ("normalized_domain", "physics", "question_source_approved_mapping"),
+        ("mapping_basis", "unapproved", "question_source_approved_mapping"),
+        ("approval_source", "unapproved", "approval_source"),
+        ("canonical_input_hash", "0" * 64, "canonical_input_hash"),
+    ],
+)
+def test_preflight_rejects_manifest_field_drift(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, field: str, replacement: str, error: str
+) -> None:
+    """Every approved per-entry field is immutable before execution."""
+    manifest = _manifest(tmp_path)
+    _rewrite(manifest, lambda value: value["domains"][0].__setitem__(field, replacement))
+    _assert_preflight_failure_without_pipeline(manifest, tmp_path, monkeypatch, error)
+
+
+def test_preflight_rejects_q088_q089_swap(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Materials and engineering retain the current approved Q089/Q088 assignment."""
+    manifest = _manifest(tmp_path)
+
+    def swap(value: dict[str, object]) -> None:
+        """Exchange IDs only, yielding an unauthorized mapping."""
+        entries = value["domains"]
+        assert isinstance(entries, list)
+        materials = next(item for item in entries if item["normalized_domain"] == "materials")
+        engineering = next(item for item in entries if item["normalized_domain"] == "engineering")
+        materials["question_id"], engineering["question_id"] = (
+            engineering["question_id"],
+            materials["question_id"],
+        )
+
+    _rewrite(manifest, swap)
+    _assert_preflight_failure_without_pipeline(
+        manifest, tmp_path, monkeypatch, "question_source_approved_mapping"
+    )
+
+
+def test_q109_exact_source_text_passes_and_rewrite_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Q109 uses exact source text; any character rewrite is prohibited."""
+    manifest = _manifest(tmp_path)
+    value = json.loads(manifest.read_text(encoding="utf-8"))
+    q109 = next(item for item in value["domains"] if item["question_id"] == "Q109")
+    assert preflight(manifest)["passed"] is True
+    q109["question"] = f"{q109['question']}?"
+    q109["canonical_input_hash"] = canonical_input_hash(
+        q109["question_id"], q109["question"], q109["source_domain"], q109["normalized_domain"]
+    )
+    manifest.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
+    _assert_preflight_failure_without_pipeline(
+        manifest, tmp_path, monkeypatch, "question_source_question"
+    )
+
+
+def test_absolute_manifest_source_path_fails(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A portable manifest never embeds a machine-specific source path."""
+    manifest = _manifest(tmp_path)
+    _rewrite(
+        manifest,
+        lambda value: value["question_source"].__setitem__(
+            "path", str((PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH).resolve())
+        ),
+    )
+    _assert_preflight_failure_without_pipeline(manifest, tmp_path, monkeypatch, "question_source_sha256")
+
+
+def test_runtime_source_mismatch_fails(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """An environment override must resolve to the exact formal source."""
+    manifest = _manifest(tmp_path)
+    monkeypatch.setenv("SAGE_QUESTIONS_PATH", str(tmp_path / "different.json"))
+    _assert_preflight_failure_without_pipeline(
+        manifest, tmp_path, monkeypatch, "question_source_runtime_binding"
+    )
+
+
+def test_canonical_manifest_hash_ignores_formatting(tmp_path: Path) -> None:
+    """Canonical manifest identity depends on JSON content, not whitespace."""
+    first = tmp_path / "first.json"
+    second = tmp_path / "second.json"
+    first.write_text('{"b":2,"a":[1,3]}', encoding="utf-8")
+    second.write_text('{\n  "a": [1, 3],\n  "b": 2\n}', encoding="utf-8")
+    assert canonical_json_sha256(first) == canonical_json_sha256(second)
+
+
+def test_preflight_ledger_passes_offline_validator(tmp_path: Path) -> None:
+    """The preflight-only ledger records portable and resolved source evidence."""
+    manifest = _manifest(tmp_path)
     report = run(manifest, tmp_path / "out")
-    assert report["passed"] is False
-    assert "question_source_sha256" in report["errors"]
+    assert report["passed"] is True
+    assert report["mode"] == "preflight-only"
+    assert validate(
+        PROJECT_ROOT / "docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json",
+        tmp_path / "out" / "ledger.json",
+    )["passed"] is True

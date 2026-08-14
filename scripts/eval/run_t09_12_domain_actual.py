@@ -26,7 +26,47 @@ PROTOCOL_PATH = PROJECT_ROOT / "docs" / "reproducibility" / "T09_12_DOMAIN_SCORI
 DEFAULT_OUTPUT = PROJECT_ROOT / "exports" / "t09_12_domain_actual"
 MAX_ATTEMPT_CAP = 24
 MAX_RETRIES_PER_ENTRY = 1
-APPROVED_QUESTION_DOMAIN_MAP = {"Q089": "materials", "Q088": "engineering"}
+FORMAL_QUESTION_SOURCE_PATH = "data/processed/questions_125.json"
+FORMAL_QUESTION_SOURCE_SHA256 = "b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb"
+APPROVAL_SOURCE = "T09_BATCH_4B_SCHEMA_CONFORMANCE_AUTHORIZATION"
+APPROVED_DOMAIN_MAPPINGS = {
+    "mathematics": ("Q001", "Mathematical Sciences", "direct taxonomy match"),
+    "physics": ("Q069", "Physics", "direct taxonomy match"),
+    "chemistry": (
+        "Q003",
+        "Chemistry",
+        "direct taxonomy match; corrected for page-column extraction order",
+    ),
+    "biology": ("Q026", "Biology", "cell differentiation biology case"),
+    "medicine": ("Q013", "Medicine & Health", "direct medicine and public-health case"),
+    "earth_science": (
+        "Q109",
+        "Ecology",
+        "Earth magnetic-field question mapped to earth science",
+    ),
+    "computer_science": (
+        "Q091",
+        "Information Science",
+        "information science and computer architecture mapping; corrected QID",
+    ),
+    "materials": (
+        "Q089",
+        "Engineering & Materials Science",
+        "captain-approved materials representative mapping",
+    ),
+    "astronomy": ("Q046", "Astronomy", "direct taxonomy match"),
+    "neuroscience": (
+        "Q095",
+        "Neuroscience",
+        "direct neuroscience case; corrected to the actual Q095 question",
+    ),
+    "climate": ("Q107", "Ecology", "direct climate semantic match"),
+    "engineering": (
+        "Q088",
+        "Engineering & Materials Science",
+        "captain-approved engineering representative mapping",
+    ),
+}
 _RETRYABLE_ERRORS = (TimeoutError, ConnectionError, OSError)
 _SECRET_PATTERNS = (
     re.compile(r"(?i)(?:api[_-]?key|authorization|bearer|password|secret)\s*[:=]\s*['\"]?[A-Za-z0-9_\-/]{8,}"),
@@ -50,14 +90,12 @@ def canonical_json_sha256(path: Path) -> str:
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
-def load_json(path: Path) -> dict[str, Any]:
-    """Load a JSON object or raise a clear ValueError for invalid input."""
+def load_json(path: Path) -> Any:
+    """Load JSON while callers enforce their required object or list schema."""
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         raise ValueError(f"invalid_json:{path}:{type(error).__name__}") from error
-    if not isinstance(value, dict):
-        raise ValueError(f"invalid_object:{path}")
     return value
 
 
@@ -75,27 +113,27 @@ def _safe_environment() -> dict[str, str | bool]:
     }
 
 
-def _source_identity(source: dict[str, Any]) -> tuple[Path, str | None, str | None]:
-    """Resolve a source path and return its observed canonical path and SHA-256."""
-    source_path = Path(str(source.get("path", "")))
-    source_path = source_path if source_path.is_absolute() else PROJECT_ROOT / source_path
-    source_path = source_path.resolve()
+def _source_identity(source: dict[str, Any]) -> tuple[Path, str | None]:
+    """Resolve only the approved repository-relative formal question source."""
+    configured_path = source.get("path")
+    if configured_path != FORMAL_QUESTION_SOURCE_PATH:
+        return PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH, None
+    source_path = (PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH).resolve()
     if not source_path.is_file():
-        return source_path, None, None
-    return source_path, str(source_path), sha256_file(source_path)
+        return source_path, None
+    return source_path, sha256_file(source_path)
 
 
 def _question_items(source_path: Path) -> dict[str, dict[str, str]]:
-    """Load supported question-source shapes into an ID-indexed canonical representation."""
+    """Load the formal top-level 125-item list into an ID-indexed representation."""
     value = load_json(source_path)
-    raw_items = value.get("questions") if isinstance(value.get("questions"), list) else value.get("items")
-    if not isinstance(raw_items, list):
+    if not isinstance(value, list):
         raise ValueError("question_source_structure")
     items: dict[str, dict[str, str]] = {}
-    for raw_item in raw_items:
+    for raw_item in value:
         if not isinstance(raw_item, dict):
             raise ValueError("question_source_structure")
-        question_id = raw_item.get("question_id", raw_item.get("id"))
+        question_id = raw_item.get("id")
         question = raw_item.get("question")
         domain = raw_item.get("domain")
         if not all(isinstance(value, str) and value for value in (question_id, question, domain)):
@@ -103,7 +141,28 @@ def _question_items(source_path: Path) -> dict[str, dict[str, str]]:
         if question_id in items:
             raise ValueError("question_source_duplicate_id")
         items[question_id] = {"question": question, "domain": domain}
+    expected_ids = {f"Q{number:03d}" for number in range(1, 126)}
+    if set(items) != expected_ids:
+        raise ValueError("question_source_qid_coverage")
     return items
+
+
+def canonical_input_hash(
+    question_id: str, question: str, source_domain: str, normalized_domain: str
+) -> str:
+    """Hash the approved immutable input projection without text normalization."""
+    canonical = json.dumps(
+        {
+            "question_id": question_id,
+            "question": question,
+            "source_domain": source_domain,
+            "normalized_domain": normalized_domain,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def _binding_digest(bindings: list[dict[str, str]]) -> str:
@@ -126,25 +185,35 @@ def _question_bindings(
         if not isinstance(item, dict):
             continue
         question_id = item.get("question_id")
-        domain = item.get("domain")
+        normalized_domain = item.get("normalized_domain")
         source_item = source_questions.get(question_id) if isinstance(question_id, str) else None
         if source_item is None:
             errors.append("question_source_question_id")
             continue
-        if APPROVED_QUESTION_DOMAIN_MAP.get(question_id) not in {None, source_item["domain"]}:
+        if not isinstance(normalized_domain, str):
+            errors.append("normalized_domain")
+            continue
+        approved = APPROVED_DOMAIN_MAPPINGS.get(normalized_domain)
+        if approved != (question_id, source_item["domain"], item.get("mapping_basis")):
             errors.append("question_source_approved_mapping")
-        if source_item["domain"] != domain:
+        if item.get("source_domain") != source_item["domain"]:
             errors.append("question_source_domain")
-        question_hash = hashlib.sha256(source_item["question"].encode("utf-8")).hexdigest()
+        if item.get("domain") != normalized_domain:
+            errors.append("domain_compatibility")
+        if item.get("approval_source") != APPROVAL_SOURCE:
+            errors.append("approval_source")
         if item.get("question") != source_item["question"]:
             errors.append("question_source_question")
-        if item.get("question_sha256") != question_hash:
-            errors.append("question_source_question_sha256")
+        expected_hash = canonical_input_hash(
+            question_id, source_item["question"], source_item["domain"], normalized_domain
+        )
+        if item.get("canonical_input_hash") != expected_hash:
+            errors.append("canonical_input_hash")
         bindings.append(
             {
-                "domain": source_item["domain"],
+                "normalized_domain": normalized_domain,
                 "question_id": question_id,
-                "question_sha256": question_hash,
+                "canonical_input_hash": expected_hash,
             }
         )
     return bindings, errors
@@ -155,11 +224,13 @@ def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[
     protocol = load_json(protocol_path)
     manifest = load_json(manifest_path)
     errors: list[str] = []
+    if not isinstance(protocol, dict) or not isinstance(manifest, dict):
+        return {"passed": False, "errors": ["invalid_object"], "provider_calls": 0}
     required_domains = protocol.get("required_domains")
     entries = manifest.get("domains")
-    if protocol.get("schema_version") != "1.1" or not isinstance(required_domains, list):
+    if protocol.get("schema_version") != "1.2" or not isinstance(required_domains, list):
         errors.append("protocol_shape")
-    if manifest.get("schema_version") != "1.0" or not isinstance(entries, list):
+    if manifest.get("schema_version") != "1.1" or not isinstance(entries, list):
         errors.append("manifest_shape")
         entries = []
     try:
@@ -171,28 +242,24 @@ def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[
     if not isinstance(source, dict):
         errors.append("question_source")
     else:
-        source_path, canonical_path, observed_sha = _source_identity(source)
+        source_path, observed_sha = _source_identity(source)
         configured_source = os.getenv("SAGE_QUESTIONS_PATH", "").strip()
         effective_source_path = resolve_questions_path().resolve()
         expected_sha = source.get("sha256")
-        identity = source.get("identity")
-        if configured_source and source_path != effective_source_path:
+        if configured_source and source_path.resolve() != effective_source_path:
             errors.append("question_source_runtime_binding")
-        if not isinstance(expected_sha, str) or len(expected_sha) != 64 or observed_sha != expected_sha:
-            errors.append("question_source_sha256")
-        if not isinstance(identity, dict):
-            errors.append("question_source_identity")
-        elif (
-            identity.get("canonical_path") != canonical_path
-            or identity.get("sha256") != observed_sha
-            or identity.get("sha256") != expected_sha
+        if (
+            source.get("path") != FORMAL_QUESTION_SOURCE_PATH
+            or not isinstance(expected_sha, str)
+            or expected_sha != FORMAL_QUESTION_SOURCE_SHA256
+            or observed_sha != expected_sha
         ):
-            errors.append("question_source_identity")
+            errors.append("question_source_sha256")
         if observed_sha is not None:
             resolved_bindings, binding_errors = _question_bindings(entries, source_path)
             bindings = resolved_bindings
             errors.extend(binding_errors)
-    domains = [item.get("domain") for item in entries if isinstance(item, dict)]
+    domains = [item.get("normalized_domain") for item in entries if isinstance(item, dict)]
     question_ids = [item.get("question_id") for item in entries if isinstance(item, dict)]
     if domains != required_domains or len(domains) != 12 or len(set(domains)) != 12:
         errors.append("domain_coverage")
@@ -207,7 +274,8 @@ def preflight(manifest_path: Path, protocol_path: Path = PROTOCOL_PATH) -> dict[
         "manifest_hash_algorithm": "sha256-canonical-json-v1",
         "required_domain_count": len(required_domains) if isinstance(required_domains, list) else 0,
         "question_source_binding": {
-            "canonical_path": canonical_path if isinstance(source, dict) else None,
+            "source_path": FORMAL_QUESTION_SOURCE_PATH if isinstance(source, dict) else None,
+            "resolved_path": str(source_path) if isinstance(source, dict) else None,
             "sha256": observed_sha if isinstance(source, dict) else None,
             "question_bindings_sha256": _binding_digest(bindings),
         },
@@ -299,7 +367,7 @@ def run(
     report = preflight(manifest_path)
     ledger_path = output_dir / "ledger.json"
     ledger = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "created_at": _utc_now(),
         "mode": "execute" if execute else "preflight-only",
         "mock": mock,

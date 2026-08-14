@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "task_id": "T09",
   "title": "T09 12-domain actual evaluation scoring protocol",
   "required_domains": [
@@ -46,7 +46,7 @@
     "failure_rule": "Only transient transport failures receive one retry. A terminal failure stops the entire run and is atomically recorded."
   },
   "manifest_contract": {
-    "schema_version": "1.0",
+    "schema_version": "1.1",
     "required_keys": [
       "schema_version",
       "question_source",
@@ -55,21 +55,15 @@
     "question_source": {
       "required_keys": [
         "path",
-        "sha256",
-        "identity"
+        "sha256"
       ],
-      "identity": {
-        "required_keys": [
-          "canonical_path",
-          "sha256"
-        ],
-        "rule": "canonical_path must equal the resolved source path and sha256 must equal the current source-question file digest."
-      },
-      "runtime_binding": "The manifest source path must equal app.workflow.pipeline.resolve_questions_path(), including SAGE_QUESTIONS_PATH when set.",
-      "item_binding": "Each domains entry must include question and question_sha256. The question_id, domain, exact question text, and SHA-256(question UTF-8) must match its source questions[] item; approved mappings pin Q089 to materials and Q088 to engineering. Authoritative source text, including U+FFFD in Q109, is allowed only when the manifest matches it character-for-character and by UTF-8 hash.",
-      "rule": "sha256 must equal the current source-question file digest."
+      "path": "Must be the portable repository-relative path data/processed/questions_125.json; absolute paths are forbidden.",
+      "runtime_binding": "The relative manifest path resolves from the current clone root. SAGE_QUESTIONS_PATH must be unset or resolve to that same formal source.",
+      "formal_source_rule": "The source is a top-level JSON list of exactly 125 objects with unique id values that exactly cover Q001 through Q125. Its SHA-256 must be b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb.",
+      "item_binding": "Each domains entry must include question_id, question, source_domain, normalized_domain, mapping_basis, approval_source, and canonical_input_hash. Optional domain is a compatibility field and must equal normalized_domain. source_domain and question must exactly match the formal source; normalized_domain, mapping_basis, and approval_source must match the complete approved mapping. Q089 maps to materials, Q088 maps to engineering, and Q109 preserves source replacement characters.",
+      "canonical_input_hash": "sha256(UTF-8 canonical JSON of question_id, question, source_domain, normalized_domain with ensure_ascii=false, sort_keys=true, separators=(',', ':')); no text normalization is permitted."
     },
-    "domains_rule": "Exactly one ordered entry for every required domain, each with domain, question_id, question, and question_sha256."
+    "domains_rule": "Exactly one ordered entry for every required normalized domain."
   },
   "artifact_policy": {
     "ledger": "ledger.json (atomic replace; --resume accepts only the same canonical manifest hash and question_source_binding, which includes canonical source path, file SHA-256, and ordered item-binding digest)",

@@ -31,7 +31,7 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
     protocol = _load(protocol_path)
     errors = [f"missing:{key}" for key in sorted(REQUIRED_PROTOCOL_KEYS - protocol.keys())]
     domains = protocol.get("required_domains")
-    if protocol.get("schema_version") != "1.1" or protocol.get("task_id") != "T09":
+    if protocol.get("schema_version") != "1.2" or protocol.get("task_id") != "T09":
         errors.append("protocol_identity")
     if not isinstance(domains, list) or len(domains) != 12 or len(set(domains)) != 12:
         errors.append("required_domains")
@@ -50,7 +50,7 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
         errors.append("metric_005_protocol")
     if ledger_path is not None:
         ledger = _load(ledger_path)
-        if ledger.get("schema_version") != "1.0":
+        if ledger.get("schema_version") != "1.1":
             errors.append("ledger_schema")
         if ledger.get("mode") not in {"preflight-only", "execute"}:
             errors.append("ledger_mode")
@@ -65,7 +65,8 @@ def validate(protocol_path: Path, ledger_path: Path | None = None) -> dict[str, 
         source_binding = ledger.get("question_source_binding")
         if (
             not isinstance(source_binding, dict)
-            or not isinstance(source_binding.get("canonical_path"), str)
+            or source_binding.get("source_path") != "data/processed/questions_125.json"
+            or not isinstance(source_binding.get("resolved_path"), str)
             or not isinstance(source_binding.get("sha256"), str)
             or len(source_binding["sha256"]) != 64
             or not isinstance(source_binding.get("question_bindings_sha256"), str)
