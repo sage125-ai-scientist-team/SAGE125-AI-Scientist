@@ -46,6 +46,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate.add_argument("--batch-root", type=Path, required=True)
     validate.add_argument("--expected-code-sha")
+    validate.add_argument("--trusted-receipts", type=Path)
+    validate.add_argument("--expected-trusted-receipts-sha256")
     validate.add_argument("--write-receipts", action="store_true")
     return parser
 
@@ -84,6 +86,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             validation = validate_wave_c_package(
                 args.batch_root,
                 expected_code_sha=args.expected_code_sha,
+                trusted_receipts_path=args.trusted_receipts,
+                expected_trusted_receipts_sha256=(
+                    args.expected_trusted_receipts_sha256
+                ),
             )
             receipt_paths: tuple[Path, ...] = ()
             if args.write_receipts:
