@@ -8,8 +8,6 @@ from pathlib import Path
 import pytest
 
 from scripts.eval.run_t09_12_domain_actual import (
-    APPROVAL_SOURCE,
-    APPROVED_DOMAIN_MAPPINGS,
     FORMAL_QUESTION_SOURCE_PATH,
     FORMAL_QUESTION_SOURCE_SHA256,
     PROJECT_ROOT,
@@ -19,20 +17,58 @@ from scripts.eval.run_t09_12_domain_actual import (
     run,
 )
 from scripts.eval.validate_t09_12_domain_actual import validate
+import scripts.eval.run_t09_12_domain_actual as runner
+
+
+REPOSITORY_ROOT = PROJECT_ROOT
+
+
+@pytest.fixture(autouse=True)
+def isolated_formal_question_source(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Provide a complete temporary source so runner tests need no external booklet file."""
+    source_path = tmp_path / FORMAL_QUESTION_SOURCE_PATH
+    source_path.parent.mkdir(parents=True)
+    items = [
+        {
+            "id": f"Q{number:03d}",
+            "question": f"Temporary formal question Q{number:03d}",
+            "domain": "Temporary Formal Domain",
+        }
+        for number in range(1, 126)
+    ]
+    items_by_id = {str(item["id"]): item for item in items}
+    for _normalized_domain, (question_id, source_domain, _mapping_basis) in (
+        runner.APPROVED_DOMAIN_MAPPINGS.items()
+    ):
+        items_by_id[question_id]["domain"] = source_domain
+    source_path.write_text(json.dumps(items, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(runner, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(runner, "FORMAL_QUESTION_SOURCE_SHA256", hashlib.sha256(
+        source_path.read_bytes()
+    ).hexdigest())
+    monkeypatch.setenv("SAGE_QUESTIONS_PATH", str(source_path))
 
 
 def _source_items() -> dict[str, dict[str, object]]:
-    """Load the external formal source without altering its authoritative text."""
-    value = json.loads((PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH).read_text(encoding="utf-8"))
+    """Load the isolated formal source without altering its authoritative text."""
+    value = json.loads(
+        (runner.PROJECT_ROOT / runner.FORMAL_QUESTION_SOURCE_PATH).read_text(encoding="utf-8")
+    )
     assert isinstance(value, list)
     return {str(item["id"]): item for item in value}
 
 
 def _manifest(tmp_path: Path) -> Path:
-    """Write a portable approved manifest from the formal top-level list."""
+    """Write a portable approved manifest from the isolated top-level list."""
     source = _source_items()
     domains = []
-    for normalized_domain, (question_id, source_domain, mapping_basis) in APPROVED_DOMAIN_MAPPINGS.items():
+    for normalized_domain, (
+        question_id,
+        source_domain,
+        mapping_basis,
+    ) in runner.APPROVED_DOMAIN_MAPPINGS.items():
         item = source[question_id]
         question = str(item["question"])
         domains.append(
@@ -43,7 +79,7 @@ def _manifest(tmp_path: Path) -> Path:
                 "normalized_domain": normalized_domain,
                 "domain": normalized_domain,
                 "mapping_basis": mapping_basis,
-                "approval_source": APPROVAL_SOURCE,
+                "approval_source": runner.APPROVAL_SOURCE,
                 "canonical_input_hash": canonical_input_hash(
                     question_id, question, source_domain, normalized_domain
                 ),
@@ -52,8 +88,8 @@ def _manifest(tmp_path: Path) -> Path:
     manifest = {
         "schema_version": "1.1",
         "question_source": {
-            "path": FORMAL_QUESTION_SOURCE_PATH,
-            "sha256": FORMAL_QUESTION_SOURCE_SHA256,
+            "path": runner.FORMAL_QUESTION_SOURCE_PATH,
+            "sha256": runner.FORMAL_QUESTION_SOURCE_SHA256,
         },
         "domains": domains,
     }
@@ -87,8 +123,10 @@ def _assert_preflight_failure_without_pipeline(
 
 
 def test_formal_source_is_top_level_complete_list_with_fixed_digest() -> None:
-    """The production source is a 125-item top-level list with exact QID coverage."""
-    source_path = PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH
+    """Verify the optional production source independently when it is available."""
+    source_path = REPOSITORY_ROOT / FORMAL_QUESTION_SOURCE_PATH
+    if not source_path.is_file():
+        pytest.skip("正式 questions_125.json 缺失；CI 使用隔离的临时夹具")
     raw = json.loads(source_path.read_text(encoding="utf-8"))
     assert isinstance(raw, list)
     assert len(raw) == 125
@@ -103,7 +141,7 @@ def test_preflight_accepts_complete_approved_manifest(tmp_path: Path) -> None:
     report = preflight(manifest)
     assert report["passed"] is True
     assert report["provider_calls"] == 0
-    assert report["question_source_binding"]["source_path"] == FORMAL_QUESTION_SOURCE_PATH
+    assert report["question_source_binding"]["source_path"] == runner.FORMAL_QUESTION_SOURCE_PATH
     assert Path(str(report["question_source_binding"]["resolved_path"])).is_absolute()
 
 
@@ -182,7 +220,7 @@ def test_absolute_manifest_source_path_fails(tmp_path: Path, monkeypatch: pytest
     _rewrite(
         manifest,
         lambda value: value["question_source"].__setitem__(
-            "path", str((PROJECT_ROOT / FORMAL_QUESTION_SOURCE_PATH).resolve())
+            "path", str((runner.PROJECT_ROOT / runner.FORMAL_QUESTION_SOURCE_PATH).resolve())
         ),
     )
     _assert_preflight_failure_without_pipeline(manifest, tmp_path, monkeypatch, "question_source_sha256")
@@ -194,6 +232,19 @@ def test_runtime_source_mismatch_fails(tmp_path: Path, monkeypatch: pytest.Monke
     monkeypatch.setenv("SAGE_QUESTIONS_PATH", str(tmp_path / "different.json"))
     _assert_preflight_failure_without_pipeline(
         manifest, tmp_path, monkeypatch, "question_source_runtime_binding"
+    )
+
+
+def test_preflight_fails_closed_when_formal_source_is_missing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A missing canonical source returns a failed preflight without pipeline activity."""
+    manifest = _manifest(tmp_path)
+    missing_source = tmp_path / "missing" / "questions_125.json"
+    monkeypatch.setattr(runner, "PROJECT_ROOT", missing_source.parents[2])
+    monkeypatch.setenv("SAGE_QUESTIONS_PATH", str(missing_source))
+    _assert_preflight_failure_without_pipeline(
+        manifest, tmp_path, monkeypatch, "question_source_sha256"
     )
 
 
@@ -213,6 +264,6 @@ def test_preflight_ledger_passes_offline_validator(tmp_path: Path) -> None:
     assert report["passed"] is True
     assert report["mode"] == "preflight-only"
     assert validate(
-        PROJECT_ROOT / "docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json",
+        REPOSITORY_ROOT / "docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json",
         tmp_path / "out" / "ledger.json",
     )["passed"] is True
