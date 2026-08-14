@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.1",
+  "task_id": "T09",
+  "title": "T09 12-domain actual evaluation scoring protocol",
+  "required_domains": [
+    "mathematics",
+    "physics",
+    "chemistry",
+    "biology",
+    "medicine",
+    "earth_science",
+    "computer_science",
+    "materials",
+    "astronomy",
+    "neuroscience",
+    "climate",
+    "engineering"
+  ],
+  "scoring": {
+    "denominator": "evaluated_domain_count",
+    "required_domain_count": 12,
+    "metrics": [
+      "pass_rate",
+      "stability",
+      "citation_correctness",
+      "iteration_improvement",
+      "METRIC-005"
+    ],
+    "rule": "Only a ledger entry backed by pipeline artifacts and call audit records is scoreable.",
+    "METRIC-005": {
+      "denominator": "evaluated_domain_count",
+      "minimum": 12,
+      "rule": "Pass only when all 12 required domains have one completed, artifact-hashed, secret-scan-passing ledger entry."
+    }
+  },
+  "execution_policy": {
+    "default_mode": "preflight-only",
+    "execute_flag": "--execute",
+    "mock_flag": "--mock",
+    "retry_flag": "--retry",
+    "default_attempt_cap": 1,
+    "max_attempt_cap": 24,
+    "max_retries_per_entry": 1,
+    "resume_flag": "--resume",
+    "provider_rule": "Provider execution is prohibited unless --execute is supplied and Qwen configuration is valid; --mock never calls a real Provider.",
+    "failure_rule": "Only transient transport failures receive one retry. A terminal failure stops the entire run and is atomically recorded."
+  },
+  "manifest_contract": {
+    "schema_version": "1.0",
+    "required_keys": [
+      "schema_version",
+      "question_source",
+      "domains"
+    ],
+    "question_source": {
+      "required_keys": [
+        "path",
+        "sha256",
+        "identity"
+      ],
+      "identity": {
+        "required_keys": [
+          "canonical_path",
+          "sha256"
+        ],
+        "rule": "canonical_path must equal the resolved source path and sha256 must equal the current source-question file digest."
+      },
+      "rule": "sha256 must equal the current source-question file digest."
+    },
+    "domains_rule": "Exactly one ordered entry for every required domain, each with domain and question_id."
+  },
+  "artifact_policy": {
+    "ledger": "ledger.json (atomic replace; --resume accepts only the same canonical manifest hash)",
+    "preflight": "preflight.json",
+    "execution_summary": "run_summary.json",
+    "pipeline_artifacts": "Use the artifact directory emitted by app.workflow.pipeline.run_pipeline_with_state.",
+    "call_audit": "Summarize state.llm_calls using app.core.call_audit.summarize_calls; do not serialize secrets.",
+    "integrity": "Each completed entry records a deterministic artifact hash and secret-scan outcome. Unknown token and cost values are null, never estimated."
+  },
+  "reproduction": {
+    "preflight": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir>",
+    "mock": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --mock",
+    "actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute",
+    "resume_mock": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --mock --retry --resume"
+  }
+}
