@@ -1,6 +1,6 @@
 # T01：T04 `retrieve_hits` / Q001 语义签字清单
 
-**Status:** `GATE_A=PASS` + 队长 Gate A 技术审 `PASS` + `Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`（门 B 仍 WAIT）  
+**Status:** `GATE_A=PASS`（#47 MERGED）+ `GATE_B1=PASS`（#59）+ `GATE_B_FINAL=BLOCKED` + `Q001_MATERIAL_STATUS=AWAITING_CONTROLLED_DELIVERY`  
 **Date:** 2026-08-12  
 **Gate A reviewed PR:** [#47](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/47) @ `f77959b43f7f520119070181011e0d0713425cdd`  
 **Captain sources:**
@@ -187,6 +187,52 @@ PASS 仅当：quote 可核验 + locator 有效 + authors 非空 + (doi|url) + co
      + links 无静默冲突 + precheck.gate.passed + booklet 未进 supports
 WAIT 若材料/manifest/T04 loader 任一未齐
 FAIL 若题册/fixture/metadata-only/缺 provenance/precheck 失败
+```
+
+## 4.2 门 B1 — frozen `chunks.jsonl` 适配器接口语义（非 Gate B final）
+
+T04 Draft PR [#59](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/59)。  
+请求审查 SHA：`3c7230b725360383cf9bcf56358b00bbaac0a97e`（父提交）。  
+**实际签字 SHA（当前 tip + CI 绿）：** `cf65aa8eeff25900278f52a8017b55dc17099b20`（相对父提交仅加强 production 门禁，不削弱 B1 字段契约）。
+
+| # | 检查项 | 结果 | 依据 |
+|---|---|---|---|
+| B1-1 | 路径所有权 | PASS | 仅 `app/rag/frozen_chunk_builder.py` + `tests/rag/test_frozen_chunk_builder.py`；未改 `app/evidence/**` |
+| B1-2 | 身份 | PASS | `chunk_id` / `document_id`/`doc_id` 一致；重复 ID fail-closed |
+| B1-3 | quote | PASS | `text` 与 `metadata.quoted_text` 必等且非空 |
+| B1-4 | locator | PASS | 必为 `SourceLocator`；与 document/chunk 身份一致；冲突 fail-closed |
+| B1-5 | content hash | PASS | 完整 64-hex；别名不一致 fail-closed；文件级 `expected_sha256` 不匹配 fail-closed |
+| B1-6 | type/role | PASS | 仅 `SourceType`/`SourceRole` 枚举；非法值 fail-closed；不靠文件名升格 |
+| B1-7 | provenance 袋 | PASS | `origin` / `custodian` / `license_or_authorization` 必填非空 |
+| B1-8 | fake / production | PASS | fake embedder 不能 `production=true`；tip 另要求队长授权对象 |
+| B1-9 | 题册 | PASS（下游） | booklet 不升格为 paper；**production** 路径强制 `paper`+`external_retrieval`；scientific `supports` 仍由 T01 `BOOKLET_EXCLUDED` |
+| B1-10 | 指标 / Provider | PASS | `real_embedding_calls=0` / `provider_calls=0` / `Gate B2 executed=false` |
+| B1-11 | Gate B final | **WAIT** | 167/5 为**测试合成**记录（`Q001_EVIDENCE_*.pdf`）；非队长受控 Q001 包 |
+
+**非阻塞（Gate B / production 材料责任，不挡 B1）：**
+
+- `load_frozen_chunks` **不**强制 `authors` 或真实 `doi`\|`url`；仅 `production=true`（tip）才拒 placeholder / 缺 authors。
+- 测试夹具使用 `doi/url/provenance=UNKNOWN`。T01 `incomplete_support_provenance_fields` 会把非空 `"UNKNOWN"` 当成已填——**正式包不得带 placeholder**；T07 不得把 B1 测试夹具当 scientific supports。
+- locator 键为 `document_id`/`chunk_id`；T07 投影须映射为 `document`/`chunk`（见 `t07_hit_to_bundle_adapter.md`）。
+
+**签字输出（门 B1，已填）：**
+
+```text
+T01_T04_GATE_B1_SEMANTIC_SIGNOFF=PASS
+PR=#59
+REQUESTED_HEAD_SHA=3c7230b725360383cf9bcf56358b00bbaac0a97e
+REVIEWED_HEAD_SHA=cf65aa8eeff25900278f52a8017b55dc17099b20
+FROZEN_CHUNKS_SHA256=205b7e0c44805fe568cd9d20cd5760862f906b5be4453ecb011deca7d9d14d46
+BOOKLET_AS_SUPPORTS=FORBIDDEN_CONFIRMED
+FORMAL_METRICS_CLAIMED=false
+GATE_B2_EXECUTED=false
+GATE_B_FINAL=BLOCKED
+BLOCKING_FINDINGS=NONE
+NON_BLOCKING=authors/doi_or_url_not_required_until_production; test_UNKNOWN_placeholders
+SIGNOFF_OWNER=Yqqxz
+SIGNOFF_DATE=2026-08-14
+READY_AUTHORIZED=false
+MERGE_AUTHORIZED=false
 ```
 
 ## 5. 停止条件（T01 必须报停）
