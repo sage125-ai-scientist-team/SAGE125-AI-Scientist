@@ -155,7 +155,11 @@ def chunk_to_retrieval_hit(
     source_role: SourceRole | str | None = None,
     score_kind: ScoreKind | str | None = None,
 ) -> RetrievalHit:
-    """Adapt one raw RAG chunk to the lossless T04 retrieval contract."""
+    """Adapt one raw RAG chunk to the lossless T04 retrieval contract.
+
+    Unlike the legacy EvidenceCard adapter, this boundary is fail-closed: all
+    identities and provenance must already have been persisted by ingestion.
+    """
 
     if isinstance(chunk, Chunk):
         text = chunk.text
@@ -166,22 +170,36 @@ def chunk_to_retrieval_hit(
         metadata = dict(chunk.get("metadata") or {})
         chunk_id = str(chunk.get("chunk_id", ""))
 
-    resolved_source_type = source_type or metadata.get("source_type") or SourceType.UNKNOWN
-    resolved_source_role = source_role or metadata.get("source_role") or SourceRole.USER_UPLOAD
+    resolved_source_type = source_type or metadata.get("source_type")
+    resolved_source_role = source_role or metadata.get("source_role")
+    if resolved_source_type is None or resolved_source_role is None:
+        raise ValueError("persisted source_type and source_role are required")
     resolved_score_kind = (
         score_kind or metadata.get("score_kind") or ScoreKind.VECTOR_SIMILARITY
     )
-    source_name = str(metadata.get("source_name") or "unknown")
-    page = metadata.get("page")
+    source_name = str(metadata.get("title") or metadata.get("source_name") or "").strip()
+    if not source_name:
+        raise ValueError("persisted title or source_name is required")
+    persisted_locator = metadata.get("source_locator")
+    if persisted_locator is not None and not isinstance(persisted_locator, dict):
+        raise ValueError("source_locator must be an object")
+    locator_data = dict(persisted_locator or {})
+    document_id = locator_data.get("document_id") or metadata.get("doc_id") or metadata.get("document_id")
+    locator_chunk_id = locator_data.get("chunk_id") or chunk_id
+    if not str(document_id or "").strip():
+        raise ValueError("document identity is required")
+    if not str(chunk_id or "").strip() or not str(locator_chunk_id or "").strip():
+        raise ValueError("chunk identity is required")
+    page = locator_data.get("page", metadata.get("page"))
     title = f"{source_name} (p{page})" if page is not None else source_name
 
     locator = SourceLocator(
-        document_id=str(metadata.get("doc_id") or metadata.get("document_id") or ""),
+        document_id=str(document_id),
         page=page,
-        section=metadata.get("section"),
-        chunk_id=chunk_id,
-        char_start=metadata.get("char_start"),
-        char_end=metadata.get("char_end"),
+        section=locator_data.get("section", metadata.get("section")),
+        chunk_id=str(locator_chunk_id),
+        char_start=locator_data.get("char_start", metadata.get("char_start")),
+        char_end=locator_data.get("char_end", metadata.get("char_end")),
     )
     return RetrievalHit(
         chunk_id=chunk_id,
@@ -191,7 +209,7 @@ def chunk_to_retrieval_hit(
         source_type=resolved_source_type,
         source_role=resolved_source_role,
         source_locator=locator,
-        content_hash=str(metadata.get("content_sha256") or ""),
+        content_hash=str(metadata.get("content_hash") or metadata.get("content_sha256") or ""),
         title=title,
         doi=metadata.get("doi"),
         url=metadata.get("url"),
