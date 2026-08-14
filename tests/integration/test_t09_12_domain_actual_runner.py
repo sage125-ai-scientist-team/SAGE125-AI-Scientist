@@ -71,7 +71,7 @@ def _fake_pipeline_factory(tmp_path: Path, outcomes: list[object] | None = None)
     return calls, fake_pipeline
 
 
-def test_preflight_only_never_invokes_pipeline(tmp_path: Path, monkeypatch) -> None:
+def test_preflight_only_never_invokes_pipeline(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """The default mode writes governance artifacts and cannot reach a Provider."""
     manifest = _manifest(tmp_path)
     monkeypatch.setattr(
@@ -86,7 +86,7 @@ def test_preflight_only_never_invokes_pipeline(tmp_path: Path, monkeypatch) -> N
     assert validate(PROTOCOL_PATH, tmp_path / "out" / "ledger.json")["passed"] is True
 
 
-def test_mock_execution_reuses_pipeline_and_audit_without_provider(tmp_path: Path, monkeypatch) -> None:
+def test_mock_execution_reuses_pipeline_and_audit_without_provider(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Mock execution calls the shared pipeline but records zero real Provider calls."""
     manifest = _manifest(tmp_path)
     calls, fake_pipeline = _fake_pipeline_factory(tmp_path)
@@ -122,7 +122,7 @@ def test_manifest_source_identity_rejects_mismatched_canonical_path(tmp_path: Pa
     assert "question_source_identity" in report["errors"]
 
 
-def test_real_execution_requires_provider_configuration(tmp_path: Path, monkeypatch) -> None:
+def test_real_execution_requires_provider_configuration(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Non-mock execution fails before transport when the Qwen provider is unavailable."""
     manifest = _manifest(tmp_path)
     monkeypatch.setattr(
@@ -135,7 +135,7 @@ def test_real_execution_requires_provider_configuration(tmp_path: Path, monkeypa
     assert report["provider_calls"] == 0
 
 
-def test_retry_once_only_for_transient_failure_then_resume(tmp_path: Path, monkeypatch) -> None:
+def test_retry_once_only_for_transient_failure_then_resume(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """A transient error receives exactly one retry and a resumed ledger makes no calls."""
     manifest = _manifest(tmp_path)
     calls, fake_pipeline = _fake_pipeline_factory(tmp_path, [TimeoutError("offline")])
@@ -155,7 +155,7 @@ def test_retry_once_only_for_transient_failure_then_resume(tmp_path: Path, monke
     assert len(calls) == 13
 
 
-def test_non_retryable_failure_stops_the_global_run(tmp_path: Path, monkeypatch) -> None:
+def test_non_retryable_failure_stops_the_global_run(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """A permanent failure ends the batch immediately and preserves zero provider calls."""
     manifest = _manifest(tmp_path)
     calls, fake_pipeline = _fake_pipeline_factory(tmp_path, [ValueError("invalid input")])
@@ -175,7 +175,7 @@ def test_attempt_cap_is_limited_to_twenty_four(tmp_path: Path) -> None:
         run(_manifest(tmp_path), tmp_path / "out", attempt_cap=25)
 
 
-def test_artifact_hash_secret_scan_and_null_cost_fields(tmp_path: Path, monkeypatch) -> None:
+def test_artifact_hash_secret_scan_and_null_cost_fields(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Artifacts are hashed, scanned, and retain unknown token and cost values as null."""
     manifest = _manifest(tmp_path)
     calls, fake_pipeline = _fake_pipeline_factory(tmp_path)
