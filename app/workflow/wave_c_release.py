@@ -15,6 +15,7 @@ import io
 import json
 import math
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -23,13 +24,24 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal, Protocol
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SkipValidation,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
+from app.contracts.execution import ExecutionResult
+from app.contracts.multimodal import MultimodalArtifact, to_consumer_summary
 from app.contracts.revision import IssueClosure, ReviewFeedback
 from app.workflow.explainable_revision import (
     ExperimentRevisionContext,
     StructuredRevisionDiff,
 )
+from app.workflow.revision_feedback import build_revision_feedback
 from app.workflow.revision_consumer import LineageView
 
 
@@ -52,6 +64,13 @@ CAPTAIN_ORIGINAL_AUTHORITY_URL = (
 )
 CAPTAIN_LOGIN = "liuyanbo12"
 CAPTAIN_COMMENT_ID = 5291084709
+PAIRING_AUTHORITY_COMMENT_ID = 5300864125
+PAIRING_AUTHORITY_URL = (
+    "https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/"
+    "pull/37#issuecomment-5300864125"
+)
+PAIRING_AUTHORITY_BOUND_HEAD = "5380d9a2d0c50db4055faa709499632033e73fa6"
+FROZEN_PAIRING_POLICY = "FROZEN_V1"
 FORMAL_RANDOM_CASE_IDS = ("Q095", "Q045", "Q100")
 FORMAL_RANDOM_SEED = 20260814
 FORMAL_LOGICAL_LABELS = (
@@ -78,6 +97,22 @@ SELECTION_ALGORITHM = "random.Random(seed).sample(population,3)"
 
 RequirementLabel = Literal["Q028", "flagship", "random_1", "random_2", "random_3"]
 PromptHash = str
+AuthorizedModel = Literal["qwen3.6-flash", "qwen3.7-plus", "qwen3.7-max"]
+FrozenModelPolicy = Literal["TIERED_ROUTE_ALLOWED"]
+ActualExecutionRequirement = Literal["T05_EXECUTION_RESULT_REQUIRED"]
+PairingPolicy = Literal["FROZEN_V1"]
+AuthorityCompatibilityPath = Literal["CAPTAIN_EXACT", "LEGACY_ALIAS"]
+
+AUTHORIZED_MODEL_IDENTITIES: tuple[AuthorizedModel, ...] = (
+    "qwen3.6-flash",
+    "qwen3.7-plus",
+    "qwen3.7-max",
+)
+_AUTHORIZED_MODEL_SET = frozenset(AUTHORIZED_MODEL_IDENTITIES)
+_LEGACY_TIERED_MODEL_POLICY = (
+    "TIERED_QWEN3_6_FLASH_QWEN3_7_PLUS_QWEN3_7_MAX"
+)
+_LEGACY_ACTUAL_REQUIREMENT = "T05_T06_MULTIMODAL_REQUIRED"
 
 
 def canonical_sha256(value: Any) -> str:
@@ -91,6 +126,94 @@ def canonical_sha256(value: Any) -> str:
         default=str,
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+_SECRET_FIELD_FRAGMENTS = ("api_key", "apikey", "password", "secret", "token")
+_PATH_FIELD_NAMES = {
+    "entrypoint",
+    "relative_path",
+    "source_path",
+    "workspace_relative_path",
+    "workspace_uri",
+}
+_PATH_ANCHORS = ("app/", "artifacts/", "data/", "datasets/", "docs/", "tests/")
+
+
+def _canonical_path_identity(value: str) -> str:
+    """Remove machine-specific absolute roots while preserving stable source identity."""
+
+    normalized = value.strip().replace("\\", "/")
+    fragment = ""
+    if "#" in normalized:
+        normalized, fragment = normalized.split("#", 1)
+        fragment = f"#{fragment}"
+    lower = normalized.casefold()
+    for anchor in _PATH_ANCHORS:
+        index = lower.find(anchor)
+        if index >= 0:
+            return normalized[index:] + fragment
+    is_absolute = bool(
+        re.match(r"^[a-zA-Z]:/", normalized)
+        or normalized.startswith("/")
+        or lower.startswith("file://")
+    )
+    if is_absolute:
+        filename = normalized.rstrip("/").rsplit("/", 1)[-1]
+        return f"<absolute>/{filename}{fragment}"
+    return normalized + fragment
+
+
+def _canonical_evidence_payload(value: Any, *, field_name: str = "") -> Any:
+    """Build a secret-free, path-stable payload for formal evidence hashing."""
+
+    if isinstance(value, BaseModel):
+        value = value.model_dump(mode="json")
+    if isinstance(value, Mapping):
+        result: dict[str, Any] = {}
+        for key, item in value.items():
+            name = str(key)
+            lowered = name.casefold()
+            if any(fragment in lowered for fragment in _SECRET_FIELD_FRAGMENTS):
+                if item not in (None, "", False, [], {}):
+                    raise ValueError(
+                        f"secret-like field is forbidden in formal hash payload: {name}"
+                    )
+                continue
+            result[name] = _canonical_evidence_payload(item, field_name=name)
+        return result
+    if isinstance(value, (list, tuple)):
+        return [
+            _canonical_evidence_payload(item, field_name=field_name)
+            for item in value
+        ]
+    if isinstance(value, str) and field_name in _PATH_FIELD_NAMES:
+        return _canonical_path_identity(value)
+    return value
+
+
+def canonical_evidence_sha256(value: Any) -> str:
+    """Hash canonical evidence content without secrets or local absolute-root noise."""
+
+    return canonical_sha256(_canonical_evidence_payload(value))
+
+
+def execution_result_hash(result: ExecutionResult) -> str:
+    return canonical_evidence_sha256(result)
+
+
+def execution_summary_hash(result: ExecutionResult) -> str:
+    projection = build_revision_feedback(execution_result=result)
+    if projection is None or projection.execution is None:
+        raise ValueError("execution summary projection is missing")
+    return canonical_evidence_sha256(projection.execution)
+
+
+def multimodal_artifact_hash(artifact: MultimodalArtifact) -> str:
+    return canonical_evidence_sha256(artifact)
+
+
+def multimodal_consumer_summary_hash(artifact: MultimodalArtifact) -> str:
+    return canonical_evidence_sha256(to_consumer_summary(artifact))
 
 
 def _aware(value: datetime, field_name: str) -> datetime:
@@ -582,6 +705,1184 @@ class FormalRunFailure(_ReleaseModel):
     artifact_paths: tuple[str, ...] = ()
 
 
+class FormalAcceptanceAuthority(_ReleaseModel):
+    """Captain-controlled acceptance semantics for a formal C007 run."""
+
+    frozen_model_policy: FrozenModelPolicy | None = None
+    authorized_models: tuple[AuthorizedModel, ...] = ()
+    actual_requirement: ActualExecutionRequirement | None = None
+    multimodal_required: bool | None = None
+    pairing_policy_reference: PairingPolicy | None = None
+    pairing_authority_ready: bool
+    pairing_authority_required: bool
+    compatibility_path: AuthorityCompatibilityPath
+    status: Literal["AUTHORIZED", "BLOCKED_AUTHORITY_REQUIRED"]
+    ready: bool
+    missing_fields: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def _validate_authority(self) -> "FormalAcceptanceAuthority":
+        expected_ready = bool(
+            self.frozen_model_policy
+            and self.authorized_models == AUTHORIZED_MODEL_IDENTITIES
+            and self.actual_requirement
+            and self.multimodal_required is True
+            and self.pairing_policy_reference == FROZEN_PAIRING_POLICY
+            and not self.missing_fields
+        )
+        expected_status = (
+            "AUTHORIZED" if expected_ready else "BLOCKED_AUTHORITY_REQUIRED"
+        )
+        if self.ready != expected_ready or self.status != expected_status:
+            raise ValueError("formal acceptance authority state is inconsistent")
+        expected_pairing_ready = (
+            self.pairing_policy_reference == FROZEN_PAIRING_POLICY
+        )
+        if (
+            self.pairing_authority_ready != expected_pairing_ready
+            or self.pairing_authority_required == expected_pairing_ready
+        ):
+            raise ValueError("pairing authority state is inconsistent")
+        return self
+
+
+def resolve_formal_acceptance_authority(
+    authority: Mapping[str, Any],
+) -> FormalAcceptanceAuthority:
+    """Resolve exact Captain fields, with an explicit legacy compatibility path."""
+
+    raw_model = authority.get("FROZEN_MODEL_POLICY")
+    if raw_model is None:
+        raw_model = authority.get("frozen_model_policy")
+    raw_models = authority.get("AUTHORIZED_MODELS")
+    if raw_models is None:
+        raw_models = authority.get("authorized_models")
+    raw_requirement = authority.get("C007_ACTUAL_REQUIREMENT")
+    if raw_requirement is None:
+        raw_requirement = authority.get("actual_requirement")
+    raw_multimodal = authority.get("T06_MULTIMODAL_EVIDENCE_REQUIRED")
+    if raw_multimodal is None:
+        raw_multimodal = authority.get("multimodal_required")
+    raw_pairing_policy = authority.get("C007_CROSS_OWNER_PAIRING_POLICY")
+
+    compatibility_path: AuthorityCompatibilityPath = "CAPTAIN_EXACT"
+    model_policy: FrozenModelPolicy | None = None
+    authorized_models: tuple[AuthorizedModel, ...] = ()
+    actual_requirement: ActualExecutionRequirement | None = None
+    multimodal_required: bool | None = None
+    pairing_policy: PairingPolicy | None = None
+    missing: list[str] = []
+
+    if raw_model == "TIERED_ROUTE_ALLOWED":
+        model_policy = "TIERED_ROUTE_ALLOWED"
+    elif raw_model == _LEGACY_TIERED_MODEL_POLICY:
+        compatibility_path = "LEGACY_ALIAS"
+        model_policy = "TIERED_ROUTE_ALLOWED"
+    elif raw_model:
+        missing.append("FROZEN_MODEL_POLICY_INVALID")
+    else:
+        missing.append("FROZEN_MODEL_POLICY")
+
+    if isinstance(raw_models, str):
+        parsed_models = tuple(
+            item.strip()
+            for item in raw_models.strip().strip("[]").split(",")
+            if item.strip()
+        )
+    elif isinstance(raw_models, Sequence) and not isinstance(
+        raw_models, (bytes, bytearray)
+    ):
+        parsed_models = tuple(str(item).strip() for item in raw_models)
+    else:
+        parsed_models = ()
+    if parsed_models:
+        if (
+            len(parsed_models) == len(AUTHORIZED_MODEL_IDENTITIES)
+            and frozenset(parsed_models) == _AUTHORIZED_MODEL_SET
+        ):
+            authorized_models = AUTHORIZED_MODEL_IDENTITIES
+        else:
+            missing.append("AUTHORIZED_MODELS_INVALID")
+    elif compatibility_path == "LEGACY_ALIAS":
+        authorized_models = AUTHORIZED_MODEL_IDENTITIES
+    else:
+        missing.append("AUTHORIZED_MODELS")
+
+    if raw_requirement == "T05_EXECUTION_RESULT_REQUIRED":
+        actual_requirement = "T05_EXECUTION_RESULT_REQUIRED"
+    elif raw_requirement:
+        missing.append("C007_ACTUAL_REQUIREMENT_INVALID")
+    else:
+        legacy_requirement = authority.get("C007_ACTUAL_EXECUTION_REQUIREMENT")
+        if legacy_requirement is None:
+            legacy_requirement = authority.get("actual_execution_requirement")
+        if legacy_requirement == _LEGACY_ACTUAL_REQUIREMENT:
+            compatibility_path = "LEGACY_ALIAS"
+            actual_requirement = "T05_EXECUTION_RESULT_REQUIRED"
+            if raw_multimodal is None:
+                raw_multimodal = True
+        else:
+            missing.append("C007_ACTUAL_REQUIREMENT")
+
+    if raw_multimodal is True or (
+        isinstance(raw_multimodal, str)
+        and raw_multimodal.strip().upper() == "YES"
+    ):
+        multimodal_required = True
+    elif raw_multimodal is False or (
+        isinstance(raw_multimodal, str)
+        and raw_multimodal.strip().upper() == "NO"
+    ):
+        multimodal_required = False
+        missing.append("T06_MULTIMODAL_EVIDENCE_REQUIRED_INVALID")
+    else:
+        missing.append("T06_MULTIMODAL_EVIDENCE_REQUIRED")
+
+    if raw_pairing_policy == FROZEN_PAIRING_POLICY:
+        pairing_policy = FROZEN_PAIRING_POLICY
+    elif raw_pairing_policy:
+        missing.append("C007_CROSS_OWNER_PAIRING_POLICY_INVALID")
+    else:
+        missing.append("C007_CROSS_OWNER_PAIRING_POLICY")
+
+    missing = list(dict.fromkeys(missing))
+    ready = not missing
+    return FormalAcceptanceAuthority(
+        frozen_model_policy=model_policy,
+        authorized_models=authorized_models,
+        actual_requirement=actual_requirement,
+        multimodal_required=multimodal_required,
+        pairing_policy_reference=pairing_policy,
+        pairing_authority_ready=pairing_policy == FROZEN_PAIRING_POLICY,
+        pairing_authority_required=pairing_policy != FROZEN_PAIRING_POLICY,
+        compatibility_path=compatibility_path,
+        status="AUTHORIZED" if ready else "BLOCKED_AUTHORITY_REQUIRED",
+        ready=ready,
+        missing_fields=tuple(missing),
+    )
+
+
+class FormalExecutionInput(_ReleaseModel):
+    """T05-owned result plus public-loader and source identity binding."""
+
+    execution_result: SkipValidation[ExecutionResult]
+    source_path: str = Field(min_length=1)
+    source_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    source_run_id: str = Field(min_length=1)
+    input_identity: str = Field(min_length=1)
+    canonical_input_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pairing_id: str | None = None
+    source_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    public_loader_reference: str = Field(min_length=1)
+    publicly_verified: bool
+    checksum_verification: Literal["PASS", "FAIL"]
+
+    @field_validator("execution_result", mode="before")
+    @classmethod
+    def _require_public_typed_result(cls, value: Any) -> Any:
+        if not isinstance(value, ExecutionResult):
+            raise ValueError("T05_PUBLIC_LOADER_REQUIRED")
+        return value
+
+    @model_validator(mode="after")
+    def _validate_source_hash(self) -> "FormalExecutionInput":
+        if execution_result_hash(self.execution_result) != self.source_hash:
+            raise ValueError("T05_SOURCE_HASH_MISMATCH")
+        return self
+
+
+class FormalMultimodalInput(_ReleaseModel):
+    """T06-owned artifact plus case, run, checksum, and provenance binding."""
+
+    artifact: SkipValidation[MultimodalArtifact]
+    question_id: str = Field(pattern=r"^Q[0-9]{3}$")
+    source_path: str = Field(min_length=1)
+    source_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    source_run_id: str = Field(min_length=1)
+    input_identity: str = Field(min_length=1)
+    canonical_input_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pairing_id: str | None = None
+    source_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    artifact_checksum: str = Field(pattern=r"^[0-9a-f]{64}$")
+    checksum_verification: Literal["PASS", "FAIL"]
+    actual: bool
+    mock_mode: bool
+    provenance_complete: bool
+
+    @field_validator("artifact", mode="before")
+    @classmethod
+    def _require_typed_artifact(cls, value: Any) -> Any:
+        if not isinstance(value, MultimodalArtifact):
+            raise ValueError("T06_TYPED_ARTIFACT_REQUIRED")
+        return value
+
+    @model_validator(mode="after")
+    def _validate_source_hash(self) -> "FormalMultimodalInput":
+        if multimodal_artifact_hash(self.artifact) != self.source_hash:
+            raise ValueError("T06_SOURCE_HASH_MISMATCH")
+        return self
+
+
+class FormalReviewerFeedbackBinding(_ReleaseModel):
+    """Portable Reviewer identity and target-version lineage binding."""
+
+    question_id: str = Field(pattern=r"^Q[0-9]{3}$")
+    source_run_id: str = Field(min_length=1)
+    target_version_id: str = Field(min_length=1)
+    lineage: tuple[str, ...] = Field(min_length=1)
+    feedback_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    provenance_complete: bool
+
+    @model_validator(mode="after")
+    def _validate_target_lineage(self) -> "FormalReviewerFeedbackBinding":
+        if self.target_version_id not in self.lineage:
+            raise ValueError("Reviewer target version is outside the case lineage")
+        if len(self.lineage) != len(set(self.lineage)):
+            raise ValueError("Reviewer lineage contains duplicate versions")
+        return self
+
+
+class FormalPairingMetadata(_ReleaseModel):
+    """Frozen case-table inputs used by the exact FROZEN_V1 machine rule."""
+
+    policy_reference: PairingPolicy
+    authority_provenance: str = Field(min_length=1)
+    question_id: str = Field(pattern=r"^Q[0-9]{3}$")
+    input_identity: str = Field(min_length=1)
+    canonical_input_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pairing_id: str = Field(min_length=1)
+    case_run_id: str = Field(min_length=1)
+    allow_cross_run_pairing: bool = False
+    authorized_source_commits: tuple[str, ...] = ()
+    attested_integration_tip: str | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{40}$",
+    )
+    reviewer_feedback: FormalReviewerFeedbackBinding
+
+    @field_validator("authorized_source_commits")
+    @classmethod
+    def _validate_authorized_commits(
+        cls,
+        values: tuple[str, ...],
+    ) -> tuple[str, ...]:
+        if len(values) != len(set(values)):
+            raise ValueError("authorized source commits must be unique")
+        if any(not re.fullmatch(r"[0-9a-f]{40}", value) for value in values):
+            raise ValueError("authorized source commits must be 40-hex Git SHAs")
+        return values
+
+
+class FormalCaseInput(_ReleaseModel):
+    """One typed T05+T06 input bundle for one frozen unique C007 run."""
+
+    question_id: str = Field(pattern=r"^Q[0-9]{3}$")
+    logical_labels: tuple[str, ...] = Field(min_length=1)
+    shared_run: bool
+    execution: FormalExecutionInput | None = None
+    multimodal: tuple[FormalMultimodalInput, ...] = ()
+    input_identity: str = Field(min_length=1)
+    canonical_input_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pairing: FormalPairingMetadata | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _reject_wrong_identity_early(cls, value: Any) -> Any:
+        if not isinstance(value, Mapping):
+            return value
+        labels = tuple(value.get("logical_labels") or ())
+        if len(labels) != len(set(labels)):
+            raise ValueError("formal case logical labels must be unique")
+        question_id = value.get("question_id")
+        expected = next(
+            (item for item in FORMAL_CASE_SPECS if item[1] == question_id),
+            None,
+        )
+        if expected is not None:
+            _, _, expected_labels, expected_shared = expected
+            if labels != expected_labels or value.get("shared_run") != expected_shared:
+                raise ValueError(
+                    "formal case question/logical labels/shared identity mismatch"
+                )
+        elif question_id:
+            raise ValueError("formal case question is not in the frozen case set")
+        return value
+
+    @model_validator(mode="after")
+    def _validate_case_binding(self) -> "FormalCaseInput":
+        if len(self.logical_labels) != len(set(self.logical_labels)):
+            raise ValueError("formal case logical labels must be unique")
+        expected = next(
+            (item for item in FORMAL_CASE_SPECS if item[1] == self.question_id),
+            None,
+        )
+        if expected is None:
+            raise ValueError("formal case question is not in the frozen case set")
+        _, _, labels, shared = expected
+        if self.logical_labels != labels or self.shared_run != shared:
+            raise ValueError(
+                "formal case question/logical labels/shared identity mismatch"
+            )
+        if self.execution is not None:
+            if self.execution.execution_result.question_id != self.question_id:
+                raise ValueError("T05 question identity mismatch")
+            if self.execution.input_identity != self.input_identity:
+                raise ValueError("T05 input identity mismatch")
+            if (
+                self.execution.canonical_input_sha256
+                != self.canonical_input_sha256
+            ):
+                raise ValueError("T05 canonical input SHA-256 mismatch")
+        artifact_ids: list[str] = []
+        for binding in self.multimodal:
+            artifact_ids.append(binding.artifact.artifact_id)
+            if binding.question_id != self.question_id:
+                raise ValueError("T06 question identity mismatch")
+            if binding.input_identity != self.input_identity:
+                raise ValueError("T06 input identity mismatch")
+            if binding.canonical_input_sha256 != self.canonical_input_sha256:
+                raise ValueError("T06 canonical input SHA-256 mismatch")
+        if len(artifact_ids) != len(set(artifact_ids)):
+            raise ValueError("T06 artifact IDs must be unique per formal case")
+        if self.pairing is not None:
+            if self.pairing.question_id != self.question_id:
+                raise ValueError("pairing question identity mismatch")
+            if self.pairing.input_identity != self.input_identity:
+                raise ValueError("pairing input identity mismatch")
+            if (
+                self.pairing.canonical_input_sha256
+                != self.canonical_input_sha256
+            ):
+                raise ValueError("pairing canonical input SHA-256 mismatch")
+        return self
+
+
+class FormalPairingDecision(_ReleaseModel):
+    """Machine-readable FROZEN_V1 record; no heuristic fields are accepted."""
+
+    policy: Literal["C007_CROSS_OWNER_PAIRING_POLICY=FROZEN_V1"]
+    question_id: str = Field(pattern=r"^Q[0-9]{3}$")
+    canonical_input_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pairing_id: str = Field(min_length=1)
+    t05_run_id: str = Field(min_length=1)
+    t06_run_id: str = Field(min_length=1)
+    t05_source_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    t06_source_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    reviewer_run_id: str = Field(min_length=1)
+    reviewer_target_version_id: str = Field(min_length=1)
+    cross_run: Literal["SAME_RUN", "DIFFERENT_RUN"]
+    cross_commit: Literal["SAME_COMMIT", "DIFFERENT_COMMIT"]
+    checksum_verification: Literal["PASS", "FAIL"]
+    pairing_result: Literal["PASS", "FAIL"]
+    fail_reason: str | None = None
+
+    @model_validator(mode="after")
+    def _validate_result(self) -> "FormalPairingDecision":
+        if (self.pairing_result == "PASS") != (self.fail_reason is None):
+            raise ValueError("pairing result and fail reason are inconsistent")
+        if self.pairing_result == "PASS" and self.checksum_verification != "PASS":
+            raise ValueError("passing pairing requires verified checksums")
+        return self
+
+
+class FormalCaseEligibility(_ReleaseModel):
+    """Fail-closed readiness decision evaluated before any Provider preflight."""
+
+    question_id: str = Field(pattern=r"^Q[0-9]{3}$")
+    t05_ready: bool
+    t06_ready: bool
+    pairing_policy: PairingPolicy
+    pairing_authority_ready: bool
+    pairing_ready: bool
+    pairing_authority_required: bool
+    pairing_record: FormalPairingDecision | None = None
+    eligible_for_provider_run: bool
+    blockers: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def _validate_decision(self) -> "FormalCaseEligibility":
+        expected = bool(
+            self.t05_ready
+            and self.t06_ready
+            and self.pairing_ready
+            and not self.blockers
+        )
+        if self.eligible_for_provider_run != expected:
+            raise ValueError("formal case eligibility decision is inconsistent")
+        if self.pairing_policy != FROZEN_PAIRING_POLICY:
+            raise ValueError("formal case pairing policy is not frozen")
+        if (
+            not self.pairing_authority_ready
+            or self.pairing_authority_required
+        ):
+            raise ValueError("pairing authority readiness is inconsistent")
+        if self.pairing_ready != bool(
+            self.pairing_record is not None
+            and self.pairing_record.pairing_result == "PASS"
+        ):
+            raise ValueError("pairing input readiness is inconsistent")
+        return self
+
+
+class PublicExecutionResolution(_ReleaseModel):
+    execution_result: ExecutionResult | None = None
+    eligible_for_c007: bool
+    blocker: str | None = None
+
+
+def resolve_public_execution_result(
+    candidate: object,
+    *,
+    public_loader_reference: str | None = None,
+) -> PublicExecutionResolution:
+    """Accept only a typed result returned by a named public T05 loader."""
+
+    if not isinstance(candidate, ExecutionResult) or not public_loader_reference:
+        return PublicExecutionResolution(
+            eligible_for_c007=False,
+            blocker="T05_PUBLIC_LOADER_REQUIRED",
+        )
+    return PublicExecutionResolution(
+        execution_result=candidate,
+        eligible_for_c007=True,
+    )
+
+
+def _git_commit_is_ancestor(commit: str, tip: str) -> bool:
+    """Return a machine-checkable Git ancestry result; errors fail closed."""
+
+    process = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", commit, tip],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    return process.returncode == 0
+
+
+def _evaluate_formal_pairing(
+    value: FormalCaseInput,
+    *,
+    commit_ancestor_verifier: Callable[[str, str], bool] = _git_commit_is_ancestor,
+) -> tuple[FormalPairingDecision | None, tuple[str, ...]]:
+    """Apply the Captain-owned FROZEN_V1 rule without heuristic inference."""
+
+    execution = value.execution
+    pairing = value.pairing
+    if execution is None or not value.multimodal:
+        return None, ()
+    if pairing is None:
+        return None, ("PAIRING_METADATA_REQUIRED",)
+
+    blockers: list[str] = []
+    result = execution.execution_result
+    bindings = tuple(
+        sorted(value.multimodal, key=lambda item: item.artifact.artifact_id)
+    )
+    reviewer = pairing.reviewer_feedback
+    t06_runs = tuple(dict.fromkeys(item.source_run_id for item in bindings))
+    t06_commits = tuple(dict.fromkeys(item.source_commit for item in bindings))
+    t06_run_id = t06_runs[0]
+    t06_commit = t06_commits[0]
+
+    if pairing.policy_reference != FROZEN_PAIRING_POLICY:
+        blockers.append("PAIRING_POLICY_INVALID")
+    if (
+        result.question_id != value.question_id
+        or any(item.question_id != value.question_id for item in bindings)
+        or reviewer.question_id != value.question_id
+        or pairing.question_id != value.question_id
+    ):
+        blockers.append("PAIRING_QUESTION_MISMATCH")
+    canonical_hashes = {
+        value.canonical_input_sha256,
+        execution.canonical_input_sha256,
+        pairing.canonical_input_sha256,
+        *(item.canonical_input_sha256 for item in bindings),
+    }
+    if len(canonical_hashes) != 1:
+        blockers.append("PAIRING_CANONICAL_INPUT_SHA256_MISMATCH")
+    if result.mode != "actual" or not result.actual_execution:
+        blockers.append("PAIRING_T05_ACTUAL_EXECUTION_REQUIRED")
+    forbidden_source_markers = ("fixture", "synthetic", "planned", "expected")
+    if any(
+        not item.actual
+        or item.mock_mode
+        or any(
+            marker in item.artifact.provenance.source_type.casefold()
+            for marker in forbidden_source_markers
+        )
+        or item.artifact.validation_status != "passed"
+        for item in bindings
+    ):
+        blockers.append("PAIRING_T06_PRODUCTION_ARTIFACT_REQUIRED")
+    if (
+        not result.provenance_complete
+        or any(not item.provenance_complete for item in bindings)
+        or not reviewer.provenance_complete
+    ):
+        blockers.append("PAIRING_PROVENANCE_INCOMPLETE")
+    if (
+        not execution.source_run_id
+        or any(not item.source_run_id for item in bindings)
+        or not reviewer.source_run_id
+    ):
+        blockers.append("PAIRING_RUN_ID_REQUIRED")
+    t05_checksums_pass = bool(
+        execution.checksum_verification == "PASS"
+        and result.artifacts_validated
+        and result.artifacts
+        and all(
+            item.validation_status == "valid" and item.sha256
+            for item in result.artifacts
+        )
+    )
+    t06_checksums_pass = all(
+        item.checksum_verification == "PASS" and item.artifact_checksum
+        for item in bindings
+    )
+    checksum_status: Literal["PASS", "FAIL"] = (
+        "PASS" if t05_checksums_pass and t06_checksums_pass else "FAIL"
+    )
+    if checksum_status != "PASS":
+        blockers.append("PAIRING_CHECKSUM_VERIFICATION_FAILED")
+    if (
+        reviewer.source_run_id != pairing.case_run_id
+        or reviewer.target_version_id not in reviewer.lineage
+    ):
+        blockers.append("PAIRING_REVIEWER_LINEAGE_MISMATCH")
+
+    if len(t06_runs) != 1:
+        blockers.append("PAIRING_T06_RUN_ID_AMBIGUOUS")
+    cross_run: Literal["SAME_RUN", "DIFFERENT_RUN"] = (
+        "SAME_RUN"
+        if execution.source_run_id == t06_run_id and len(t06_runs) == 1
+        else "DIFFERENT_RUN"
+    )
+    if cross_run == "DIFFERENT_RUN":
+        if not pairing.allow_cross_run_pairing:
+            blockers.append("PAIRING_CROSS_RUN_NOT_AUTHORIZED")
+        if (
+            not execution.pairing_id
+            or execution.pairing_id != pairing.pairing_id
+            or any(item.pairing_id != pairing.pairing_id for item in bindings)
+        ):
+            blockers.append("PAIRING_ID_MISMATCH")
+
+    if len(t06_commits) != 1:
+        blockers.append("PAIRING_T06_SOURCE_COMMIT_AMBIGUOUS")
+    cross_commit: Literal["SAME_COMMIT", "DIFFERENT_COMMIT"] = (
+        "SAME_COMMIT"
+        if execution.source_commit == t06_commit and len(t06_commits) == 1
+        else "DIFFERENT_COMMIT"
+    )
+    if cross_commit == "DIFFERENT_COMMIT":
+        authorized = set(pairing.authorized_source_commits)
+        allowlisted = {
+            execution.source_commit,
+            *t06_commits,
+        }.issubset(authorized)
+        ancestry_attested = bool(
+            pairing.attested_integration_tip
+            and commit_ancestor_verifier(
+                execution.source_commit,
+                pairing.attested_integration_tip,
+            )
+            and all(
+                commit_ancestor_verifier(
+                    source_commit,
+                    pairing.attested_integration_tip,
+                )
+                for source_commit in t06_commits
+            )
+        )
+        if not (allowlisted or ancestry_attested):
+            blockers.append("PAIRING_CROSS_COMMIT_NOT_AUTHORIZED")
+
+    blockers = list(dict.fromkeys(blockers))
+    fail_reason = ";".join(blockers) or None
+    decision = FormalPairingDecision(
+        policy="C007_CROSS_OWNER_PAIRING_POLICY=FROZEN_V1",
+        question_id=value.question_id,
+        canonical_input_sha256=value.canonical_input_sha256,
+        pairing_id=pairing.pairing_id,
+        t05_run_id=execution.source_run_id,
+        t06_run_id=t06_run_id,
+        t05_source_commit=execution.source_commit,
+        t06_source_commit=t06_commit,
+        reviewer_run_id=reviewer.source_run_id,
+        reviewer_target_version_id=reviewer.target_version_id,
+        cross_run=cross_run,
+        cross_commit=cross_commit,
+        checksum_verification=checksum_status,
+        pairing_result="FAIL" if blockers else "PASS",
+        fail_reason=fail_reason,
+    )
+    return decision, tuple(blockers)
+
+
+def assess_formal_case_input(
+    value: FormalCaseInput,
+    *,
+    canonical_input: Mapping[str, Any] | None = None,
+    commit_ancestor_verifier: Callable[[str, str], bool] = _git_commit_is_ancestor,
+) -> FormalCaseEligibility:
+    """Evaluate all T05/T06/pairing gates without calling the pipeline or Provider."""
+
+    t05_blockers: list[str] = []
+    t06_blockers: list[str] = []
+    pairing_blockers: list[str] = []
+    execution = value.execution
+    if execution is None:
+        t05_blockers.append("T05_INPUT_REQUIRED")
+    else:
+        result = execution.execution_result
+        if not execution.publicly_verified or not execution.public_loader_reference:
+            t05_blockers.append("T05_PUBLIC_LOADER_REQUIRED")
+        if result.mode != "actual" or not result.actual_execution:
+            t05_blockers.append("T05_ACTUAL_EXECUTION_REQUIRED")
+        if result.question_id != value.question_id:
+            t05_blockers.append("T05_QUESTION_MISMATCH")
+        if result.status != "succeeded" or result.error is not None:
+            t05_blockers.append("T05_SUCCESS_STATUS_REQUIRED")
+        if result.entrypoint_class != "scientific":
+            t05_blockers.append("T05_SCIENTIFIC_ENTRYPOINT_REQUIRED")
+        required_truth = (
+            result.runner_verified,
+            result.provenance_complete,
+            result.datasets_validated,
+            result.artifacts_validated,
+            result.metrics_validated,
+            result.scientific_result_usable,
+        )
+        if not all(required_truth):
+            t05_blockers.append("T05_PROVENANCE_OR_VALIDATION_INCOMPLETE")
+        if (
+            not result.process_started
+            or not result.process_reaped
+            or result.process_alive_after_cleanup
+            or result.exit_code != 0
+            or not result.artifacts
+            or not result.metrics
+        ):
+            t05_blockers.append("T05_EMPTY_SHELL_OR_PROCESS_INVALID")
+        if execution_result_hash(result) != execution.source_hash:
+            t05_blockers.append("T05_SOURCE_HASH_MISMATCH")
+        if execution.checksum_verification != "PASS":
+            t05_blockers.append("T05_CHECKSUM_VERIFICATION_REQUIRED")
+
+    if not value.multimodal:
+        t06_blockers.append("T06_INPUT_REQUIRED")
+    for binding in value.multimodal:
+        artifact = binding.artifact
+        if not binding.actual or binding.mock_mode:
+            t06_blockers.append("T06_ACTUAL_NON_MOCK_REQUIRED")
+        if any(
+            marker in artifact.provenance.source_type.casefold()
+            for marker in ("fixture", "synthetic", "planned", "expected")
+        ):
+            t06_blockers.append("T06_FIXTURE_NOT_ALLOWED")
+        if binding.question_id != value.question_id:
+            t06_blockers.append("T06_QUESTION_MISMATCH")
+        if not binding.provenance_complete:
+            t06_blockers.append("T06_PROVENANCE_REQUIRED")
+        if artifact.validation_status != "passed":
+            t06_blockers.append("T06_VALIDATION_PASSED_REQUIRED")
+        try:
+            summary = to_consumer_summary(artifact)
+        except (TypeError, ValueError, ValidationError):
+            t06_blockers.append("T06_CONSUMER_SUMMARY_INVALID")
+        else:
+            if not summary.artifact_id or summary.header_count < 1:
+                t06_blockers.append("T06_REQUIRED_FIELDS_INCOMPLETE")
+        if multimodal_artifact_hash(artifact) != binding.source_hash:
+            t06_blockers.append("T06_SOURCE_HASH_MISMATCH")
+        if not binding.artifact_checksum:
+            t06_blockers.append("T06_ARTIFACT_CHECKSUM_REQUIRED")
+        if binding.checksum_verification != "PASS":
+            t06_blockers.append("T06_CHECKSUM_VERIFICATION_REQUIRED")
+
+    if (
+        canonical_input is not None
+        and canonical_sha256(dict(canonical_input)) != value.canonical_input_sha256
+    ):
+        pairing_blockers.append("PAIRING_CANONICAL_INPUT_SHA256_MISMATCH")
+
+    pairing_record, machine_pairing_blockers = _evaluate_formal_pairing(
+        value,
+        commit_ancestor_verifier=commit_ancestor_verifier,
+    )
+    pairing_blockers.extend(machine_pairing_blockers)
+    blockers = tuple(dict.fromkeys((*t05_blockers, *t06_blockers, *pairing_blockers)))
+    t05_ready = not t05_blockers
+    t06_ready = not t06_blockers
+    pairing_ready = bool(
+        pairing_record is not None and pairing_record.pairing_result == "PASS"
+    )
+    return FormalCaseEligibility(
+        question_id=value.question_id,
+        t05_ready=t05_ready,
+        t06_ready=t06_ready,
+        pairing_policy=FROZEN_PAIRING_POLICY,
+        pairing_authority_ready=True,
+        pairing_ready=pairing_ready,
+        pairing_authority_required=False,
+        pairing_record=pairing_record,
+        eligible_for_provider_run=bool(
+            t05_ready and t06_ready and pairing_ready and not blockers
+        ),
+        blockers=blockers,
+    )
+
+
+class FormalInputHashes(_ReleaseModel):
+    execution_result_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    execution_summary_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    multimodal_artifact_hashes: dict[str, str]
+    multimodal_consumer_summary_hashes: dict[str, str]
+    multimodal_artifact_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    multimodal_consumer_summary_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class FormalExecutionSourceEvidence(_ReleaseModel):
+    source_path: str = Field(min_length=1)
+    source_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    source_run_id: str = Field(min_length=1)
+    input_identity: str = Field(min_length=1)
+    canonical_input_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pairing_id: str | None = None
+    checksum_verification: Literal["PASS", "FAIL"]
+    public_loader_reference: str = Field(min_length=1)
+
+
+class FormalMultimodalSourceEvidence(_ReleaseModel):
+    artifact_id: str = Field(min_length=1)
+    source_path: str = Field(min_length=1)
+    source_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    source_run_id: str = Field(min_length=1)
+    input_identity: str = Field(min_length=1)
+    canonical_input_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pairing_id: str | None = None
+    artifact_checksum: str = Field(pattern=r"^[0-9a-f]{64}$")
+    checksum_verification: Literal["PASS", "FAIL"]
+
+
+class FormalInputsEvidence(FormalInputHashes):
+    execution_source: FormalExecutionSourceEvidence
+    multimodal_sources: tuple[FormalMultimodalSourceEvidence, ...]
+
+
+class FormalAuthorityEvidence(_ReleaseModel):
+    model_policy: FrozenModelPolicy
+    authorized_models: tuple[AuthorizedModel, ...]
+    actual_requirement: ActualExecutionRequirement
+    multimodal_required: Literal[True] = True
+    pairing_policy_reference: PairingPolicy
+
+
+def compute_formal_input_hashes(value: FormalCaseInput) -> FormalInputHashes:
+    if value.execution is None or not value.multimodal:
+        raise ValueError("complete typed T05/T06 inputs are required for hashing")
+    artifact_hashes = {
+        binding.artifact.artifact_id: multimodal_artifact_hash(binding.artifact)
+        for binding in sorted(value.multimodal, key=lambda item: item.artifact.artifact_id)
+    }
+    summary_hashes = {
+        binding.artifact.artifact_id: multimodal_consumer_summary_hash(
+            binding.artifact
+        )
+        for binding in sorted(value.multimodal, key=lambda item: item.artifact.artifact_id)
+    }
+    return FormalInputHashes(
+        execution_result_hash=execution_result_hash(
+            value.execution.execution_result
+        ),
+        execution_summary_hash=execution_summary_hash(
+            value.execution.execution_result
+        ),
+        multimodal_artifact_hashes=artifact_hashes,
+        multimodal_consumer_summary_hashes=summary_hashes,
+        multimodal_artifact_hash=canonical_sha256(
+            [{"artifact_id": key, "hash": artifact_hashes[key]} for key in artifact_hashes]
+        ),
+        multimodal_consumer_summary_hash=canonical_sha256(
+            [{"artifact_id": key, "hash": summary_hashes[key]} for key in summary_hashes]
+        ),
+    )
+
+
+def build_formal_inputs_evidence(
+    value: FormalCaseInput,
+    hashes: FormalInputHashes,
+) -> FormalInputsEvidence:
+    if value.execution is None:
+        raise ValueError("formal input evidence requires T05 source binding")
+    return FormalInputsEvidence(
+        **hashes.model_dump(mode="python"),
+        execution_source=FormalExecutionSourceEvidence(
+            source_path=_canonical_path_identity(value.execution.source_path),
+            source_commit=value.execution.source_commit,
+            source_run_id=value.execution.source_run_id,
+            input_identity=value.execution.input_identity,
+            canonical_input_sha256=value.execution.canonical_input_sha256,
+            pairing_id=value.execution.pairing_id,
+            checksum_verification=value.execution.checksum_verification,
+            public_loader_reference=value.execution.public_loader_reference,
+        ),
+        multimodal_sources=tuple(
+            FormalMultimodalSourceEvidence(
+                artifact_id=binding.artifact.artifact_id,
+                source_path=_canonical_path_identity(binding.source_path),
+                source_commit=binding.source_commit,
+                source_run_id=binding.source_run_id,
+                input_identity=binding.input_identity,
+                canonical_input_sha256=binding.canonical_input_sha256,
+                pairing_id=binding.pairing_id,
+                artifact_checksum=binding.artifact_checksum,
+                checksum_verification=binding.checksum_verification,
+            )
+            for binding in sorted(
+                value.multimodal,
+                key=lambda item: item.artifact.artifact_id,
+            )
+        ),
+    )
+
+
+class FormalRevisionContextBinding(FormalInputHashes):
+    revision_context_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    revision_feedback_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+def build_revision_context_binding(
+    formal_input: FormalCaseInput,
+    input_hashes: FormalInputHashes,
+    context: ExperimentRevisionContext,
+) -> FormalRevisionContextBinding:
+    feedback = context.wave_c_feedback
+    if feedback is None or feedback.execution is None or not feedback.multimodal:
+        raise ValueError("formal RevisionContext lacks complete T05/T06 projection")
+    if canonical_evidence_sha256(feedback.execution) != input_hashes.execution_summary_hash:
+        raise ValueError("RevisionContext execution summary hash mismatch")
+    context_multimodal = {
+        item.artifact_id: canonical_evidence_sha256(item)
+        for item in feedback.multimodal
+    }
+    if context_multimodal != input_hashes.multimodal_consumer_summary_hashes:
+        raise ValueError("RevisionContext multimodal summary hashes mismatch")
+    if formal_input.execution is None:
+        raise ValueError("formal RevisionContext binding requires T05 input")
+    if feedback.execution.execution_id != formal_input.execution.execution_result.execution_id:
+        raise ValueError("RevisionContext execution identity mismatch")
+    return FormalRevisionContextBinding(
+        **input_hashes.model_dump(mode="python"),
+        revision_context_fingerprint=canonical_evidence_sha256(context),
+        revision_feedback_fingerprint=feedback.fingerprint,
+    )
+
+
+class FormalPromptImpactLink(_ReleaseModel):
+    stage: str = Field(min_length=1)
+    next_prompt_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class FormalSourceImpact(_ReleaseModel):
+    source_kind: Literal["execution", "multimodal"]
+    source_id: str = Field(min_length=1)
+    source_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    summary_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    revision_context_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    prompt_links: tuple[FormalPromptImpactLink, ...]
+    v2_version_id: str = Field(min_length=1)
+    linked_change_ids: tuple[str, ...] = ()
+    linked_sections: tuple[str, ...] = ()
+    impact_status: Literal["PROVEN", "UNPROVEN"]
+
+    @model_validator(mode="after")
+    def _validate_impact_claim(self) -> "FormalSourceImpact":
+        proven = bool(
+            self.prompt_links and self.linked_change_ids and self.linked_sections
+        )
+        if self.impact_status != ("PROVEN" if proven else "UNPROVEN"):
+            raise ValueError("formal source impact claim is inconsistent")
+        return self
+
+
+class FormalImpactTrace(_ReleaseModel):
+    execution_impact: FormalSourceImpact
+    multimodal_impact: tuple[FormalSourceImpact, ...]
+
+    @property
+    def all_proven(self) -> bool:
+        return bool(
+            self.execution_impact.impact_status == "PROVEN"
+            and self.multimodal_impact
+            and all(item.impact_status == "PROVEN" for item in self.multimodal_impact)
+        )
+
+
+def _change_mentions(change: Any, markers: Sequence[str]) -> bool:
+    payload = json.dumps(
+        {
+            "reason": change.reason,
+            "after": change.after,
+            "evidence_refs": change.evidence_refs,
+        },
+        sort_keys=True,
+        ensure_ascii=False,
+        default=str,
+    ).casefold()
+    return any(marker.casefold() in payload for marker in markers if marker)
+
+
+def build_formal_impact_trace(
+    *,
+    formal_input: FormalCaseInput,
+    input_hashes: FormalInputHashes,
+    context_binding: FormalRevisionContextBinding,
+    next_prompt_hashes: Mapping[str, str],
+    v2_version_id: str,
+    structured_diff: StructuredRevisionDiff,
+) -> FormalImpactTrace:
+    """Deterministically link source identities to prompt provenance and V2 changes."""
+
+    if formal_input.execution is None:
+        raise ValueError("execution input is required for impact tracing")
+    prompt_links = tuple(
+        FormalPromptImpactLink(stage=stage, next_prompt_hash=prompt_hash)
+        for stage, prompt_hash in sorted(next_prompt_hashes.items())
+    )
+    execution_result = formal_input.execution.execution_result
+    execution_markers = (
+        execution_result.execution_id,
+        *(item.artifact_id for item in execution_result.artifacts),
+        *(item.name for item in execution_result.metrics),
+    )
+    execution_changes = tuple(
+        change
+        for change in structured_diff.changes
+        if _change_mentions(change, execution_markers)
+    )
+    execution_impact = FormalSourceImpact(
+        source_kind="execution",
+        source_id=execution_result.execution_id,
+        source_hash=input_hashes.execution_result_hash,
+        summary_hash=input_hashes.execution_summary_hash,
+        revision_context_fingerprint=(
+            context_binding.revision_context_fingerprint
+        ),
+        prompt_links=prompt_links,
+        v2_version_id=v2_version_id,
+        linked_change_ids=tuple(change.change_id for change in execution_changes),
+        linked_sections=tuple(
+            dict.fromkeys(change.affected_plan_section for change in execution_changes)
+        ),
+        impact_status=("PROVEN" if prompt_links and execution_changes else "UNPROVEN"),
+    )
+    multimodal_impacts: list[FormalSourceImpact] = []
+    for binding in sorted(
+        formal_input.multimodal,
+        key=lambda item: item.artifact.artifact_id,
+    ):
+        artifact_id = binding.artifact.artifact_id
+        changes = tuple(
+            change
+            for change in structured_diff.changes
+            if _change_mentions(change, (artifact_id,))
+        )
+        multimodal_impacts.append(
+            FormalSourceImpact(
+                source_kind="multimodal",
+                source_id=artifact_id,
+                source_hash=input_hashes.multimodal_artifact_hashes[artifact_id],
+                summary_hash=(
+                    input_hashes.multimodal_consumer_summary_hashes[artifact_id]
+                ),
+                revision_context_fingerprint=(
+                    context_binding.revision_context_fingerprint
+                ),
+                prompt_links=prompt_links,
+                v2_version_id=v2_version_id,
+                linked_change_ids=tuple(change.change_id for change in changes),
+                linked_sections=tuple(
+                    dict.fromkeys(change.affected_plan_section for change in changes)
+                ),
+                impact_status=("PROVEN" if prompt_links and changes else "UNPROVEN"),
+            )
+        )
+    return FormalImpactTrace(
+        execution_impact=execution_impact,
+        multimodal_impact=tuple(multimodal_impacts),
+    )
+
+
+class FormalModelCallLedgerEntry(_ReleaseModel):
+    call_id: str
+    agent_name: str
+    stage: str
+    round: int | None = Field(default=None, ge=1)
+    model: str
+    provider: str
+    status: str
+    started_at: str | None = None
+    ended_at: str | None = None
+
+
+class FormalModelRouteAudit(_ReleaseModel):
+    authorized_models: tuple[str, ...]
+    total_model_calls: int = Field(ge=0)
+    per_model_call_counts: dict[str, int]
+    stage_model_mapping: dict[str, tuple[str, ...]]
+    round_model_mapping: dict[str, tuple[str, ...]]
+    unauthorized_model_calls: int = Field(ge=0)
+    unauthorized_call_ids: tuple[str, ...] = ()
+    ledger_complete: bool
+    call_ledger: tuple[FormalModelCallLedgerEntry, ...]
+    qualified: bool
+
+    @model_validator(mode="after")
+    def _validate_route(self) -> "FormalModelRouteAudit":
+        if sum(self.per_model_call_counts.values()) != self.total_model_calls:
+            raise ValueError("model route counts do not match total calls")
+        expected = bool(
+            self.total_model_calls > 0
+            and self.unauthorized_model_calls == 0
+            and self.ledger_complete
+        )
+        if self.qualified != expected:
+            raise ValueError("model route qualification is inconsistent")
+        return self
+
+
+def build_model_route_audit(
+    calls: Sequence[Mapping[str, Any]],
+    *,
+    authorized_models: Sequence[str],
+) -> FormalModelRouteAudit:
+    """Materialize the full real-call ledger, including mixed and failed calls."""
+
+    authorized = tuple(authorized_models)
+    allowed = frozenset(authorized)
+    counts: dict[str, int] = {}
+    stage_models: dict[str, list[str]] = {}
+    round_models: dict[str, list[str]] = {}
+    occurrences: dict[str, int] = {}
+    unauthorized_ids: list[str] = []
+    ledger: list[FormalModelCallLedgerEntry] = []
+    ledger_complete = True
+    for index, call in enumerate(calls, start=1):
+        if call.get("mock") or call.get("provider") == "mock":
+            continue
+        call_id = str(call.get("call_id") or "").strip()
+        stage = str(call.get("agent_name") or "").strip()
+        model = str(
+            call.get("model") or call.get("model_name_internal") or ""
+        ).strip()
+        provider = str(call.get("provider") or "").strip()
+        status = str(call.get("status") or "").strip()
+        if not all((call_id, stage, model, provider, status)):
+            ledger_complete = False
+        effective_call_id = call_id or f"missing-call-id-{index}"
+        effective_stage = stage or "missing-stage"
+        effective_model = model or "missing-model"
+        effective_provider = provider or "missing-provider"
+        effective_status = status or "missing-status"
+        occurrences[effective_stage] = occurrences.get(effective_stage, 0) + 1
+        round_index = occurrences[effective_stage]
+        counts[effective_model] = counts.get(effective_model, 0) + 1
+        stage_models.setdefault(effective_stage, []).append(effective_model)
+        round_models.setdefault(
+            f"{effective_stage}:round_{round_index}", []
+        ).append(effective_model)
+        if effective_model not in allowed:
+            unauthorized_ids.append(effective_call_id)
+        ledger.append(
+            FormalModelCallLedgerEntry(
+                call_id=effective_call_id,
+                agent_name=effective_stage,
+                stage=effective_stage,
+                round=round_index,
+                model=effective_model,
+                provider=effective_provider,
+                status=effective_status,
+                started_at=(str(call.get("started_at")) if call.get("started_at") else None),
+                ended_at=(str(call.get("ended_at")) if call.get("ended_at") else None),
+            )
+        )
+    normalized_counts = {key: counts[key] for key in sorted(counts)}
+    normalized_stages = {
+        key: tuple(dict.fromkeys(stage_models[key])) for key in sorted(stage_models)
+    }
+    normalized_rounds = {
+        key: tuple(dict.fromkeys(round_models[key])) for key in sorted(round_models)
+    }
+    total = len(ledger)
+    unauthorized_count = len(unauthorized_ids)
+    return FormalModelRouteAudit(
+        authorized_models=authorized,
+        total_model_calls=total,
+        per_model_call_counts=normalized_counts,
+        stage_model_mapping=normalized_stages,
+        round_model_mapping=normalized_rounds,
+        unauthorized_model_calls=unauthorized_count,
+        unauthorized_call_ids=tuple(unauthorized_ids),
+        ledger_complete=ledger_complete,
+        call_ledger=tuple(ledger),
+        qualified=bool(total > 0 and unauthorized_count == 0 and ledger_complete),
+    )
+
+
+def summarize_actual_model_calls(
+    calls: Sequence[Mapping[str, Any]],
+) -> tuple[tuple[str, ...], dict[str, int]]:
+    """Preserve every real model identity and its exact observed call count."""
+
+    counts: dict[str, int] = {}
+    for call in calls:
+        identity = str(call.get("model") or call.get("model_name_internal") or "").strip()
+        if not identity:
+            raise ValueError("real provider call is missing model identity")
+        counts[identity] = counts.get(identity, 0) + 1
+    identities = tuple(sorted(counts))
+    return identities, {identity: counts[identity] for identity in identities}
+
+
+def validation_status_qualified(status: str | None) -> bool:
+    """Only the explicit validated state satisfies formal validation."""
+
+    return status == "validated"
+
+
+def model_policy_qualified(
+    policy: FrozenModelPolicy,
+    model_identities: Sequence[str],
+) -> bool:
+    """Evaluate observed model identities against the Captain-selected policy."""
+
+    observed = frozenset(model_identities)
+    if policy != "TIERED_ROUTE_ALLOWED":
+        return False
+    return bool(observed) and observed.issubset(_AUTHORIZED_MODEL_SET)
+
+
+def actual_execution_requirement_qualified(
+    requirement: ActualExecutionRequirement,
+    *,
+    actual_execution: bool,
+    multimodal_evidence_present: bool,
+    real_provider_call_count: int,
+) -> bool:
+    """Evaluate only the explicitly selected actual-execution requirement."""
+
+    return bool(
+        requirement == "T05_EXECUTION_RESULT_REQUIRED"
+        and actual_execution
+        and multimodal_evidence_present
+        and real_provider_call_count >= 1
+    )
+
+
 class FormalActualRunRecord(_ReleaseModel):
     """One unique actual-run record; Q028/FLAGSHIP occupies one record only."""
 
@@ -603,7 +1904,14 @@ class FormalActualRunRecord(_ReleaseModel):
     job_id: str | None = None
     provider: str | None = None
     model: str | None = None
+    model_identities: tuple[str, ...] = ()
+    model_call_counts: dict[str, int] = Field(default_factory=dict)
+    frozen_model_policy: FrozenModelPolicy | None = None
+    model_policy_qualified: bool | None = None
+    actual_execution_requirement: ActualExecutionRequirement | None = None
     actual_execution: bool | None = None
+    actual_execution_qualified: bool | None = None
+    multimodal_evidence_present: bool | None = None
     started_at: datetime
     ended_at: datetime
     llm_call_count: int = Field(default=0, ge=0)
@@ -630,6 +1938,12 @@ class FormalActualRunRecord(_ReleaseModel):
     execution_status: str
     artifact_paths: tuple[str, ...] = ()
     artifact_checksums: dict[str, str] = Field(default_factory=dict)
+    authority: FormalAuthorityEvidence | None = None
+    inputs: FormalInputsEvidence | None = None
+    context_binding: FormalRevisionContextBinding | None = None
+    model_route: FormalModelRouteAudit | None = None
+    impact: FormalImpactTrace | None = None
+    eligibility: FormalCaseEligibility | None = None
     failure: FormalRunFailure | None = None
     result: Literal["PASS", "FAIL"]
 
@@ -654,6 +1968,18 @@ class FormalActualRunRecord(_ReleaseModel):
             or self.shared_run != shared
         ):
             raise ValueError("formal run identity does not match frozen case set")
+        if tuple(sorted(self.model_call_counts)) != self.model_identities:
+            raise ValueError("formal run model identities do not match call counts")
+        if sum(self.model_call_counts.values()) != self.llm_call_count:
+            raise ValueError("formal run model call counts do not match call total")
+        if self.model_identities:
+            expected_model = (
+                self.model_identities[0]
+                if len(self.model_identities) == 1
+                else "mixed"
+            )
+            if self.model != expected_model or not self.provider:
+                raise ValueError("formal run provider/model identity is incomplete")
         if self.status != "SUCCEEDED":
             if self.failure is None or self.result != "FAIL":
                 raise ValueError("blocked/failed formal run requires failure evidence")
@@ -662,6 +1988,50 @@ class FormalActualRunRecord(_ReleaseModel):
             raise ValueError("successful formal run requires real run/provider/model identity")
         if self.llm_call_count < 1 or not self.artifact_checksums:
             raise ValueError("successful formal run requires real calls and artifacts")
+        if (
+            self.frozen_model_policy is None
+            or self.actual_execution_requirement is None
+            or self.actual_execution is None
+            or self.multimodal_evidence_present is None
+        ):
+            raise ValueError("successful formal run requires explicit acceptance authority")
+        if (
+            self.authority is None
+            or self.inputs is None
+            or self.context_binding is None
+            or self.model_route is None
+            or self.impact is None
+            or self.eligibility is None
+            or not self.eligibility.eligible_for_provider_run
+        ):
+            raise ValueError("successful formal run requires complete readiness evidence")
+        if self.authority.model_policy != self.frozen_model_policy:
+            raise ValueError("formal authority model policy binding mismatch")
+        if self.authority.actual_requirement != self.actual_execution_requirement:
+            raise ValueError("formal authority actual requirement binding mismatch")
+        if self.model_route.total_model_calls != self.llm_call_count:
+            raise ValueError("formal model route total does not match call count")
+        if self.model_route.per_model_call_counts != self.model_call_counts:
+            raise ValueError("formal model route counts do not match legacy summary")
+        if self.context_binding.revision_context_fingerprint != (
+            self.revision_context_fingerprint
+        ):
+            raise ValueError("formal context binding fingerprint mismatch")
+        expected_model_qualified = model_policy_qualified(
+            self.frozen_model_policy,
+            self.model_identities,
+        )
+        expected_execution_qualified = actual_execution_requirement_qualified(
+            self.actual_execution_requirement,
+            actual_execution=self.actual_execution,
+            multimodal_evidence_present=self.multimodal_evidence_present,
+            real_provider_call_count=self.llm_call_count,
+        )
+        if (
+            self.model_policy_qualified != expected_model_qualified
+            or self.actual_execution_qualified != expected_execution_qualified
+        ):
+            raise ValueError("formal run acceptance qualification is inconsistent")
         complete_revision = all(
             (
                 self.v1_version_id,
@@ -682,7 +2052,11 @@ class FormalActualRunRecord(_ReleaseModel):
             and self.v1_prompt_hash != self.v2_prompt_hash
             and self.unresolved_p0 == 0
             and self.unresolved_p1 == 0
-            and self.validation_status
+            and validation_status_qualified(self.validation_status)
+            and self.model_policy_qualified is True
+            and self.actual_execution_qualified is True
+            and self.model_route.qualified
+            and self.impact.all_proven
             and self.execution_status == "succeeded"
         )
         if self.result != ("PASS" if expected_pass else "FAIL"):
@@ -703,7 +2077,7 @@ class FormalRawResults(_ReleaseModel):
     records: tuple[FormalActualRunRecord, ...] = Field(min_length=4, max_length=4)
     actual_run_count: int = Field(ge=0, le=4)
     passed_run_count: int = Field(ge=0, le=4)
-    status: Literal["PASS", "FAIL", "BLOCKED"]
+    status: Literal["PASS", "FAIL", "BLOCKED", "BLOCKED_AUTHORITY_REQUIRED"]
 
     @model_validator(mode="after")
     def _validate_raw_results(self) -> "FormalRawResults":
@@ -724,6 +2098,12 @@ class FormalRawResults(_ReleaseModel):
         expected_status = (
             "PASS"
             if passed_count == 4
+            else "BLOCKED_AUTHORITY_REQUIRED"
+            if any(
+                record.failure is not None
+                and record.failure.error_type == "AuthorityRequired"
+                for record in self.records
+            )
             else "BLOCKED"
             if any(record.status == "CASE_BLOCKED" for record in self.records)
             else "FAIL"
@@ -771,7 +2151,7 @@ def _current_git_sha() -> str:
 
 
 def verify_captain_authority() -> dict[str, Any]:
-    """Read and validate the Captain confirmation directly from GitHub."""
+    """Read and validate the Captain confirmations directly from GitHub."""
 
     process = subprocess.run(
         [
@@ -805,13 +2185,103 @@ def verify_captain_authority() -> dict[str, Any]:
         raise ValueError(f"Captain confirmation is missing frozen fields: {missing}")
     if payload.get("html_url") != CAPTAIN_AUTHORITY_URL:
         raise ValueError("Captain confirmation URL does not match frozen authority URL")
+
+    pairing_process = subprocess.run(
+        [
+            "gh",
+            "api",
+            (
+                "repos/sage125-ai-scientist-team/SAGE125-AI-Scientist/"
+                f"issues/comments/{PAIRING_AUTHORITY_COMMENT_ID}"
+            ),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    pairing_payload = json.loads(pairing_process.stdout)
+    pairing_body = str(pairing_payload.get("body") or "")
+    pairing_required = (
+        "AUTHORIZED_BY_CAPTAIN=YES",
+        f"CAPTAIN_ACCOUNT={CAPTAIN_LOGIN}",
+        "PR=#37",
+        f"BOUND_HEAD={PAIRING_AUTHORITY_BOUND_HEAD}",
+        "C007_ACTUAL_REQUIREMENT=T05_EXECUTION_RESULT_REQUIRED",
+        "T06_MULTIMODAL_EVIDENCE_REQUIRED=YES",
+        "C007_CROSS_OWNER_PAIRING_POLICY=FROZEN_V1",
+    )
+    if pairing_payload.get("user", {}).get("login") != CAPTAIN_LOGIN:
+        raise ValueError("pairing authority publisher does not match liuyanbo12")
+    pairing_missing = [
+        token for token in pairing_required if token not in pairing_body
+    ]
+    if pairing_missing:
+        raise ValueError(
+            "pairing authority is missing frozen fields: "
+            f"{pairing_missing}"
+        )
+    if pairing_payload.get("html_url") != PAIRING_AUTHORITY_URL:
+        raise ValueError("pairing authority URL does not match frozen authority URL")
+
+    def scalar_field(text: str, name: str) -> str | None:
+        match = re.search(
+            rf"(?m)^\s*{re.escape(name)}\s*=\s*([^\r\n]+)\s*$",
+            text,
+        )
+        return match.group(1).strip() if match else None
+
+    models_match = re.search(
+        r"(?ms)^\s*AUTHORIZED_MODELS\s*=\s*\[(.*?)\]",
+        body,
+    )
+    authorized_models = (
+        [
+            item.strip()
+            for item in models_match.group(1).split(",")
+            if item.strip()
+        ]
+        if models_match
+        else None
+    )
+    exact_fields = {
+        "FROZEN_MODEL_POLICY": scalar_field(body, "FROZEN_MODEL_POLICY"),
+        "AUTHORIZED_MODELS": authorized_models,
+        "C007_ACTUAL_REQUIREMENT": scalar_field(
+            pairing_body,
+            "C007_ACTUAL_REQUIREMENT",
+        ),
+        "T06_MULTIMODAL_EVIDENCE_REQUIRED": scalar_field(
+            pairing_body,
+            "T06_MULTIMODAL_EVIDENCE_REQUIRED"
+        ),
+        "C007_CROSS_OWNER_PAIRING_POLICY": scalar_field(
+            pairing_body,
+            "C007_CROSS_OWNER_PAIRING_POLICY",
+        ),
+    }
+    acceptance = resolve_formal_acceptance_authority(exact_fields)
+    if not acceptance.ready:
+        raise ValueError(
+            "Captain confirmation is missing/invalid exact acceptance fields: "
+            f"{list(acceptance.missing_fields)}"
+        )
     return {
         "url": CAPTAIN_AUTHORITY_URL,
         "original_authority_url": CAPTAIN_ORIGINAL_AUTHORITY_URL,
+        "pairing_authority_url": PAIRING_AUTHORITY_URL,
         "login": CAPTAIN_LOGIN,
         "timestamp": payload["created_at"],
         "verified": True,
-        "verified_fields": list(required),
+        "verified_fields": [*required, *pairing_required],
+        **exact_fields,
+        "frozen_model_policy": acceptance.frozen_model_policy,
+        "authorized_models": list(acceptance.authorized_models),
+        "actual_requirement": acceptance.actual_requirement,
+        "multimodal_required": acceptance.multimodal_required,
+        "pairing_authority_ready": acceptance.pairing_authority_ready,
+        "pairing_authority_required": acceptance.pairing_authority_required,
+        "pairing_policy": acceptance.pairing_policy_reference,
     }
 
 
@@ -1005,16 +2475,94 @@ def execute_formal_case(
     questions_path: Path,
     git_sha: str,
     config: dict[str, Any],
+    frozen_model_policy: FrozenModelPolicy,
+    actual_execution_requirement: ActualExecutionRequirement,
+    formal_input: FormalCaseInput,
 ) -> FormalActualRunRecord:
     """Execute one real pipeline case and derive all evidence from its trace."""
+
+    case_key, question_id, labels, shared = case_spec
+    eligibility = assess_formal_case_input(
+        formal_input,
+        canonical_input=canonical_input,
+    )
+    if formal_input.question_id != question_id:
+        eligibility = FormalCaseEligibility(
+            question_id=question_id,
+            t05_ready=False,
+            t06_ready=False,
+            pairing_policy=FROZEN_PAIRING_POLICY,
+            pairing_authority_ready=True,
+            pairing_ready=False,
+            pairing_authority_required=False,
+            eligible_for_provider_run=False,
+            blockers=("FORMAL_CASE_INPUT_QUESTION_MISMATCH",),
+        )
+    if not eligibility.eligible_for_provider_run:
+        timestamp = datetime.now(timezone.utc)
+        return FormalActualRunRecord(
+            case_key=case_key,
+            requirement_labels=labels,
+            question_id=question_id,
+            canonical_input=canonical_input,
+            input_hash=canonical_sha256(canonical_input),
+            shared_run=shared,
+            git_sha=git_sha,
+            config=config,
+            config_hash=canonical_sha256(config),
+            status="CASE_BLOCKED",
+            frozen_model_policy=frozen_model_policy,
+            actual_execution_requirement=actual_execution_requirement,
+            actual_execution=False,
+            actual_execution_qualified=False,
+            multimodal_evidence_present=bool(formal_input.multimodal),
+            started_at=timestamp,
+            ended_at=timestamp,
+            execution_status="blocked",
+            eligibility=eligibility,
+            failure=FormalRunFailure(
+                stage="formal_input_eligibility",
+                error_type="FormalCaseInputBlocked",
+                message="formal T05/T06/pairing eligibility failed before Provider",
+                state={
+                    "question_id": question_id,
+                    "blockers": list(eligibility.blockers),
+                    "provider_calls": 0,
+                    "pipeline_real_calls": 0,
+                },
+            ),
+            result="FAIL",
+        )
 
     from app.core.config import get_settings
     from app.workflow.artifacts import resolve_artifact_base
     from app.workflow.pipeline import run_pipeline_with_state
 
-    case_key, question_id, labels, shared = case_spec
     started = datetime.now(timezone.utc)
     run_id: str | None = None
+    provider: str | None = None
+    model: str | None = None
+    model_identities: tuple[str, ...] = ()
+    model_call_counts: dict[str, int] = {}
+    real_calls: list[dict[str, Any]] = []
+    assert formal_input.execution is not None
+    assert formal_input.pairing is not None
+    input_hashes = compute_formal_input_hashes(formal_input)
+    inputs_evidence = build_formal_inputs_evidence(formal_input, input_hashes)
+    authority_evidence = FormalAuthorityEvidence(
+        model_policy=frozen_model_policy,
+        authorized_models=AUTHORIZED_MODEL_IDENTITIES,
+        actual_requirement=actual_execution_requirement,
+        multimodal_required=True,
+        pairing_policy_reference=formal_input.pairing.policy_reference,
+    )
+    model_route: FormalModelRouteAudit | None = None
+    context_binding: FormalRevisionContextBinding | None = None
+    impact_trace: FormalImpactTrace | None = None
+    actual_execution = formal_input.execution.execution_result.actual_execution
+    model_qualified = False
+    actual_execution_qualified = False
+    multimodal_evidence_present = bool(formal_input.multimodal)
     captured_stdout = io.StringIO()
     captured_stderr = io.StringIO()
     try:
@@ -1030,11 +2578,13 @@ def execute_formal_case(
                 use_open_literature=True,
                 reviewer_auto_revision=True,
                 mock_mode=False,
+                execution_result=formal_input.execution.execution_result,
+                multimodal_artifacts=tuple(
+                    binding.artifact for binding in formal_input.multimodal
+                ),
             )
         ended = datetime.now(timezone.utc)
         run_id = state.run_id
-        run_dir = resolve_artifact_base(get_settings().export_dir) / run_id
-        artifact_paths, artifact_checksums = _artifact_inventory(run_dir)
         calls = [_call_dict(item) for item in state.llm_calls]
         real_calls = [
             item
@@ -1043,6 +2593,33 @@ def execute_formal_case(
         ]
         if state.mock_mode or state.run_mode != "real" or not real_calls:
             raise ValueError("formal actual run lacks non-mock provider call evidence")
+        provider_identities = tuple(
+            sorted({str(item.get("provider") or "").strip() for item in real_calls})
+        )
+        if not provider_identities or not all(provider_identities):
+            raise ValueError("real provider call is missing provider identity")
+        provider = (
+            provider_identities[0] if len(provider_identities) == 1 else "mixed"
+        )
+        model_route = build_model_route_audit(
+            real_calls,
+            authorized_models=AUTHORIZED_MODEL_IDENTITIES,
+        )
+        model_call_counts = dict(model_route.per_model_call_counts)
+        model_identities = tuple(sorted(model_call_counts))
+        model = model_identities[0] if len(model_identities) == 1 else "mixed"
+        model_qualified = bool(
+            model_route.qualified
+            and model_policy_qualified(frozen_model_policy, model_identities)
+        )
+        actual_execution_qualified = actual_execution_requirement_qualified(
+            actual_execution_requirement,
+            actual_execution=actual_execution,
+            multimodal_evidence_present=multimodal_evidence_present,
+            real_provider_call_count=len(real_calls),
+        )
+        run_dir = resolve_artifact_base(get_settings().export_dir) / run_id
+        artifact_paths, artifact_checksums = _artifact_inventory(run_dir)
         revision_trace = next(
             (item for item in state.agent_trace if item.get("revision_audit")),
             None,
@@ -1050,6 +2627,16 @@ def execute_formal_case(
         if revision_trace is None:
             raise ValueError("formal C007 run did not enter a Reviewer-driven V2")
         store, record, context = _consumer_from_trace(run_id, revision_trace)
+        multimodal_evidence_present = bool(
+            context.wave_c_feedback is not None
+            and context.wave_c_feedback.multimodal
+        )
+        actual_execution_qualified = actual_execution_requirement_qualified(
+            actual_execution_requirement,
+            actual_execution=actual_execution,
+            multimodal_evidence_present=multimodal_evidence_present,
+            real_provider_call_count=len(real_calls),
+        )
         versions = store.list_plan_versions(run_id=run_id)
         first, second = versions
         diff = store.get_version_diff(second.version_id)
@@ -1062,6 +2649,20 @@ def execute_formal_case(
         lineage = store.get_lineage(run_id=run_id)
         v1_hash = first.prompt_fingerprints["experiment_designer"]
         v2_hash = second.prompt_fingerprints["experiment_designer"]
+        next_prompt_hashes = dict(second.prompt_fingerprints)
+        context_binding = build_revision_context_binding(
+            formal_input,
+            input_hashes,
+            context,
+        )
+        impact_trace = build_formal_impact_trace(
+            formal_input=formal_input,
+            input_hashes=input_hashes,
+            context_binding=context_binding,
+            next_prompt_hashes=next_prompt_hashes,
+            v2_version_id=second.version_id,
+            structured_diff=diff.diff,
+        )
         audit = record.revision_audit
         assert audit is not None
         validation_ok = bool(
@@ -1070,13 +2671,10 @@ def execute_formal_case(
             and p0 == 0
             and p1 == 0
             and artifact_checksums
-        )
-        first_call = real_calls[0]
-        provider = str(first_call.get("provider") or config["provider"])
-        model = str(
-            first_call.get("model")
-            or first_call.get("model_name_internal")
-            or config["models"]["fast"]
+            and validation_status_qualified(str(plan.validation_status))
+            and model_qualified
+            and actual_execution_qualified
+            and impact_trace.all_proven
         )
         failure = None
         if not validation_ok:
@@ -1091,6 +2689,17 @@ def execute_formal_case(
                     "prompt_hash_changed": v1_hash != v2_hash,
                     "unresolved_p0": p0,
                     "unresolved_p1": p1,
+                    "validation_status_qualified": validation_status_qualified(
+                        str(plan.validation_status)
+                    ),
+                    "model_policy_qualified": model_qualified,
+                    "actual_execution_qualified": actual_execution_qualified,
+                    "execution_impact_status": (
+                        impact_trace.execution_impact.impact_status
+                    ),
+                    "multimodal_impact_statuses": [
+                        item.impact_status for item in impact_trace.multimodal_impact
+                    ],
                 },
                 artifact_paths=artifact_paths,
             )
@@ -1109,7 +2718,14 @@ def execute_formal_case(
             job_id=record.job_id,
             provider=provider,
             model=model,
-            actual_execution=bool(plan.actual_execution),
+            model_identities=model_identities,
+            model_call_counts=model_call_counts,
+            frozen_model_policy=frozen_model_policy,
+            model_policy_qualified=model_qualified,
+            actual_execution_requirement=actual_execution_requirement,
+            actual_execution=actual_execution,
+            actual_execution_qualified=actual_execution_qualified,
+            multimodal_evidence_present=multimodal_evidence_present,
             started_at=started,
             ended_at=ended,
             llm_call_count=len(real_calls),
@@ -1121,8 +2737,8 @@ def execute_formal_case(
             feedback_fingerprint=canonical_sha256(
                 first.review_feedback.model_dump(mode="json")
             ),
-            revision_context_fingerprint=canonical_sha256(
-                context.model_dump(mode="json")
+            revision_context_fingerprint=(
+                context_binding.revision_context_fingerprint
             ),
             revision_context=context.model_dump(mode="json"),
             structured_diff=diff.diff.model_dump(mode="json"),
@@ -1140,6 +2756,12 @@ def execute_formal_case(
             execution_status="succeeded",
             artifact_paths=artifact_paths,
             artifact_checksums=artifact_checksums,
+            authority=authority_evidence,
+            inputs=inputs_evidence,
+            context_binding=context_binding,
+            model_route=model_route,
+            impact=impact_trace,
+            eligibility=eligibility,
             failure=failure,
             result="PASS" if validation_ok else "FAIL",
         )
@@ -1164,11 +2786,28 @@ def execute_formal_case(
             config_hash=canonical_sha256(config),
             status="RUN_FAILED",
             actual_run_id=run_id,
+            provider=provider,
+            model=model,
+            model_identities=model_identities,
+            model_call_counts=model_call_counts,
+            frozen_model_policy=frozen_model_policy,
+            model_policy_qualified=model_qualified,
+            actual_execution_requirement=actual_execution_requirement,
+            actual_execution=actual_execution,
+            actual_execution_qualified=actual_execution_qualified,
+            multimodal_evidence_present=multimodal_evidence_present,
             started_at=started,
             ended_at=ended,
+            llm_call_count=len(real_calls),
             execution_status="failed",
             artifact_paths=artifact_paths,
             artifact_checksums=artifact_checksums,
+            authority=authority_evidence,
+            inputs=inputs_evidence,
+            context_binding=context_binding,
+            model_route=model_route,
+            impact=impact_trace,
+            eligibility=eligibility,
             failure=FormalRunFailure(
                 stage="pipeline_execution",
                 error_type=type(exc).__name__,
@@ -1190,7 +2829,92 @@ def _blocked_record(
     config: dict[str, Any],
     preflight: Mapping[str, Any],
     preflight_path: Path,
+    authority: FormalAcceptanceAuthority,
+    formal_input: FormalCaseInput,
 ) -> FormalActualRunRecord:
+    case_key, question_id, labels, shared = case_spec
+    now = datetime.now(timezone.utc)
+    eligibility = assess_formal_case_input(
+        formal_input,
+        canonical_input=canonical_input,
+    )
+    input_hashes = compute_formal_input_hashes(formal_input)
+    inputs_evidence = build_formal_inputs_evidence(formal_input, input_hashes)
+    assert authority.frozen_model_policy is not None
+    assert authority.actual_requirement is not None
+    assert formal_input.execution is not None
+    assert formal_input.pairing is not None
+    return FormalActualRunRecord(
+        case_key=case_key,
+        requirement_labels=labels,
+        question_id=question_id,
+        canonical_input=canonical_input,
+        input_hash=canonical_sha256(canonical_input),
+        shared_run=shared,
+        git_sha=git_sha,
+        config=config,
+        config_hash=canonical_sha256(config),
+        status="CASE_BLOCKED",
+        frozen_model_policy=authority.frozen_model_policy,
+        actual_execution_requirement=authority.actual_requirement,
+        actual_execution=formal_input.execution.execution_result.actual_execution,
+        actual_execution_qualified=False,
+        multimodal_evidence_present=bool(formal_input.multimodal),
+        started_at=now,
+        ended_at=now,
+        execution_status="blocked_before_provider_call",
+        artifact_paths=(preflight_path.as_posix(),),
+        artifact_checksums={preflight_path.as_posix(): _sha256_path(preflight_path)},
+        failure=FormalRunFailure(
+            stage="provider_preflight",
+            error_type="RealProviderPreflightBlocked",
+            message="; ".join(str(item) for item in preflight.get("errors", ())),
+            state=dict(preflight),
+            artifact_paths=(preflight_path.as_posix(),),
+        ),
+        authority=FormalAuthorityEvidence(
+            model_policy=authority.frozen_model_policy,
+            authorized_models=authority.authorized_models,
+            actual_requirement=authority.actual_requirement,
+            multimodal_required=True,
+            pairing_policy_reference=formal_input.pairing.policy_reference,
+        ),
+        inputs=inputs_evidence,
+        eligibility=eligibility,
+        result="FAIL",
+    )
+
+
+def _missing_formal_case_eligibility(question_id: str) -> FormalCaseEligibility:
+    return FormalCaseEligibility(
+        question_id=question_id,
+        t05_ready=False,
+        t06_ready=False,
+        pairing_policy=FROZEN_PAIRING_POLICY,
+        pairing_authority_ready=True,
+        pairing_ready=False,
+        pairing_authority_required=False,
+        eligible_for_provider_run=False,
+        blockers=(
+            "FORMAL_CASE_INPUT_REQUIRED",
+            "T05_INPUT_REQUIRED",
+            "T06_INPUT_REQUIRED",
+        ),
+    )
+
+
+def _formal_input_blocked_record(
+    *,
+    case_spec: tuple[str, str, tuple[str, ...], bool],
+    canonical_input: dict[str, Any],
+    git_sha: str,
+    config: dict[str, Any],
+    authority: FormalAcceptanceAuthority,
+    eligibility: FormalCaseEligibility,
+    preflight_path: Path,
+) -> FormalActualRunRecord:
+    """Materialize a per-case fail-closed decision without importing the pipeline."""
+
     case_key, question_id, labels, shared = case_spec
     now = datetime.now(timezone.utc)
     return FormalActualRunRecord(
@@ -1204,16 +2928,70 @@ def _blocked_record(
         config=config,
         config_hash=canonical_sha256(config),
         status="CASE_BLOCKED",
+        frozen_model_policy=authority.frozen_model_policy,
+        actual_execution_requirement=authority.actual_requirement,
+        actual_execution=False,
+        actual_execution_qualified=False,
+        multimodal_evidence_present=False,
         started_at=now,
         ended_at=now,
-        execution_status="blocked_before_provider_call",
+        execution_status="blocked_before_provider_preflight",
+        artifact_paths=(preflight_path.as_posix(),),
+        artifact_checksums={preflight_path.as_posix(): _sha256_path(preflight_path)},
+        eligibility=eligibility,
+        failure=FormalRunFailure(
+            stage="formal_input_eligibility",
+            error_type="FormalCaseInputBlocked",
+            message="; ".join(eligibility.blockers),
+            state={
+                "question_id": question_id,
+                "blockers": list(eligibility.blockers),
+                "provider_calls": 0,
+                "pipeline_real_calls": 0,
+            },
+            artifact_paths=(preflight_path.as_posix(),),
+        ),
+        result="FAIL",
+    )
+
+
+def _authority_blocked_record(
+    *,
+    case_spec: tuple[str, str, tuple[str, ...], bool],
+    canonical_input: dict[str, Any],
+    git_sha: str,
+    config: dict[str, Any],
+    authority: FormalAcceptanceAuthority,
+    preflight_path: Path,
+) -> FormalActualRunRecord:
+    """Emit explicit fail-closed evidence before any provider preflight or call."""
+
+    case_key, question_id, labels, shared = case_spec
+    now = datetime.now(timezone.utc)
+    missing = ", ".join(authority.missing_fields)
+    return FormalActualRunRecord(
+        case_key=case_key,
+        requirement_labels=labels,
+        question_id=question_id,
+        canonical_input=canonical_input,
+        input_hash=canonical_sha256(canonical_input),
+        shared_run=shared,
+        git_sha=git_sha,
+        config=config,
+        config_hash=canonical_sha256(config),
+        status="CASE_BLOCKED",
+        frozen_model_policy=authority.frozen_model_policy,
+        actual_execution_requirement=authority.actual_requirement,
+        started_at=now,
+        ended_at=now,
+        execution_status="blocked_before_provider_preflight",
         artifact_paths=(preflight_path.as_posix(),),
         artifact_checksums={preflight_path.as_posix(): _sha256_path(preflight_path)},
         failure=FormalRunFailure(
-            stage="provider_preflight",
-            error_type="RealProviderPreflightBlocked",
-            message="; ".join(str(item) for item in preflight.get("errors", ())),
-            state=dict(preflight),
+            stage="formal_acceptance_authority",
+            error_type="AuthorityRequired",
+            message=f"Captain authority is required for: {missing}",
+            state=authority.model_dump(mode="json"),
             artifact_paths=(preflight_path.as_posix(),),
         ),
         result="FAIL",
@@ -1359,12 +3137,123 @@ def _write_reproduction(path: Path, preflight: Mapping[str, Any]) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
-def run_formal_release(source_pdf: Path, output_dir: Path) -> dict[str, Any]:
+def _assess_formal_input_set(
+    values: Sequence[FormalCaseInput],
+    *,
+    canonical_inputs: Mapping[str, Mapping[str, Any]] | None = None,
+) -> tuple[
+    dict[str, FormalCaseInput],
+    dict[str, FormalCaseEligibility],
+    bool,
+]:
+    """Require one eligible typed bundle for every frozen unique case."""
+
+    inputs: dict[str, FormalCaseInput] = {}
+    duplicate_ids: set[str] = set()
+    for value in values:
+        if value.question_id in inputs:
+            duplicate_ids.add(value.question_id)
+        else:
+            inputs[value.question_id] = value
+
+    expected_ids = tuple(spec[1] for spec in FORMAL_CASE_SPECS)
+    missing_ids = {question_id for question_id in expected_ids if question_id not in inputs}
+    unexpected_ids = set(inputs).difference(expected_ids)
+    base = {
+        question_id: (
+            assess_formal_case_input(
+                inputs[question_id],
+                canonical_input=(
+                    canonical_inputs.get(question_id)
+                    if canonical_inputs is not None
+                    else None
+                ),
+            )
+            if question_id in inputs
+            else _missing_formal_case_eligibility(question_id)
+        )
+        for question_id in expected_ids
+    }
+    set_incomplete = bool(missing_ids or duplicate_ids or unexpected_ids)
+    any_case_blocked = any(
+        not item.eligible_for_provider_run for item in base.values()
+    )
+    eligibility: dict[str, FormalCaseEligibility] = {}
+    for question_id, item in base.items():
+        extra: list[str] = []
+        if question_id in duplicate_ids:
+            extra.append("FORMAL_CASE_INPUT_DUPLICATE")
+        if set_incomplete or any_case_blocked:
+            extra.append("FORMAL_INPUT_SET_INCOMPLETE")
+        blockers = tuple(dict.fromkeys((*item.blockers, *extra)))
+        eligibility[question_id] = FormalCaseEligibility(
+            question_id=question_id,
+            t05_ready=item.t05_ready,
+            t06_ready=item.t06_ready,
+            pairing_policy=item.pairing_policy,
+            pairing_authority_ready=item.pairing_authority_ready,
+            pairing_ready=item.pairing_ready,
+            pairing_authority_required=item.pairing_authority_required,
+            pairing_record=item.pairing_record,
+            eligible_for_provider_run=bool(
+                item.t05_ready
+                and item.t06_ready
+                and item.pairing_ready
+                and not blockers
+            ),
+            blockers=blockers,
+        )
+    ready = bool(
+        len(values) == len(expected_ids)
+        and not unexpected_ids
+        and not duplicate_ids
+        and all(item.eligible_for_provider_run for item in eligibility.values())
+    )
+    return inputs, eligibility, ready
+
+
+def build_formal_readiness_status(
+    authority: FormalAcceptanceAuthority,
+    eligibility: Mapping[str, FormalCaseEligibility],
+) -> dict[str, str]:
+    """Expose authority readiness separately from per-case input readiness."""
+
+    values = tuple(eligibility.values())
+    all_t05_ready = bool(values) and all(item.t05_ready for item in values)
+    all_t06_ready = bool(values) and all(item.t06_ready for item in values)
+    all_pairings_ready = bool(values) and all(
+        item.pairing_ready for item in values
+    )
+    all_cases_ready = bool(values) and all(
+        item.eligible_for_provider_run for item in values
+    )
+    return {
+        "PAIRING_AUTHORITY_READY": (
+            "YES" if authority.pairing_authority_ready else "NO"
+        ),
+        "PAIRING_AUTHORITY_REQUIRED": (
+            "YES" if authority.pairing_authority_required else "NO"
+        ),
+        "PAIRING_POLICY": authority.pairing_policy_reference or "UNRESOLVED",
+        "ALL_T05_READY": "YES" if all_t05_ready else "NO",
+        "ALL_T06_READY": "YES" if all_t06_ready else "NO",
+        "ALL_PAIRINGS_READY": "YES" if all_pairings_ready else "NO",
+        "ALL_CASES_READY_FOR_RERUN": "YES" if all_cases_ready else "NO",
+    }
+
+
+def run_formal_release(
+    source_pdf: Path,
+    output_dir: Path,
+    *,
+    formal_case_inputs: Sequence[FormalCaseInput] = (),
+) -> dict[str, Any]:
     """Run selection, preflight, four unique real runs, and evidence aggregation."""
 
     from app.workflow.preflight import run_real_preflight
 
     authority = verify_captain_authority()
+    acceptance_authority = resolve_formal_acceptance_authority(authority)
     git_sha = _current_git_sha()
     items, source = load_canonical_catalog(source_pdf)
     selected = reproduce_random_selection(items)
@@ -1381,6 +3270,7 @@ def run_formal_release(source_pdf: Path, output_dir: Path) -> dict[str, Any]:
         "acceptance_status": "FORMAL",
         "captain_authorized": True,
         "captain_authority": authority,
+        "formal_acceptance_authority": acceptance_authority.model_dump(mode="json"),
         "authority_source": AUTHORITY_SOURCE,
         "authority_commit": AUTHORITY_COMMIT,
         "git_sha": git_sha,
@@ -1433,17 +3323,103 @@ def run_formal_release(source_pdf: Path, output_dir: Path) -> dict[str, Any]:
     _write_json(output_dir / "dataset_manifest.json", dataset)
 
     config = _release_config()
-    preflight = _masked(
-        run_real_preflight(
-            use_local_rag=False,
-            use_deep_research=False,
-            check_connectivity=True,
+    input_by_question, input_eligibility, formal_inputs_ready = (
+        _assess_formal_input_set(
+            formal_case_inputs,
+            canonical_inputs=by_id,
         )
     )
+    readiness_status = build_formal_readiness_status(
+        acceptance_authority,
+        input_eligibility,
+    )
     preflight_path = output_dir / "provider_preflight.json"
+    if acceptance_authority.ready and formal_inputs_ready:
+        preflight = dict(
+            _masked(
+                run_real_preflight(
+                    use_local_rag=False,
+                    use_deep_research=False,
+                    check_connectivity=True,
+                )
+            )
+        )
+        preflight.update(readiness_status)
+    elif not acceptance_authority.ready:
+        preflight = {
+            **readiness_status,
+            "ok": False,
+            "status": "BLOCKED_AUTHORITY_REQUIRED",
+            "authority_blocked": True,
+            "errors": [
+                "Captain authority is required for: "
+                + ", ".join(acceptance_authority.missing_fields)
+            ],
+            "warnings": [],
+            "fix_commands": [],
+            "can_run_real": False,
+            "can_run_mock": False,
+            "connectivity": {"checked": False, "ok": None},
+            "formal_acceptance_authority": acceptance_authority.model_dump(
+                mode="json"
+            ),
+        }
+    else:
+        blocker_rows = [
+            f"{question_id}: {', '.join(item.blockers)}"
+            for question_id, item in input_eligibility.items()
+            if not item.eligible_for_provider_run
+        ]
+        preflight = {
+            **readiness_status,
+            "ok": False,
+            "status": "BLOCKED_FORMAL_INPUTS",
+            "authority_blocked": False,
+            "formal_inputs_blocked": True,
+            "errors": blocker_rows,
+            "warnings": [],
+            "fix_commands": [],
+            "can_run_real": False,
+            "can_run_mock": False,
+            "connectivity": {"checked": False, "ok": None},
+            "provider_calls": 0,
+            "pipeline_real_calls": 0,
+            "formal_input_eligibility": {
+                question_id: item.model_dump(mode="json")
+                for question_id, item in input_eligibility.items()
+            },
+            "formal_acceptance_authority": acceptance_authority.model_dump(
+                mode="json"
+            ),
+        }
     _write_json(preflight_path, preflight)
     records: list[FormalActualRunRecord] = []
-    if not preflight["ok"]:
+    if not acceptance_authority.ready:
+        records = [
+            _authority_blocked_record(
+                case_spec=spec,
+                canonical_input=by_id[spec[1]],
+                git_sha=git_sha,
+                config=config,
+                authority=acceptance_authority,
+                preflight_path=preflight_path,
+            )
+            for spec in FORMAL_CASE_SPECS
+        ]
+    elif not formal_inputs_ready:
+        records = [
+            _formal_input_blocked_record(
+                case_spec=spec,
+                canonical_input=by_id[spec[1]],
+                git_sha=git_sha,
+                config=config,
+                authority=acceptance_authority,
+                eligibility=input_eligibility[spec[1]],
+                preflight_path=preflight_path,
+            )
+            for spec in FORMAL_CASE_SPECS
+        ]
+    elif not preflight["ok"]:
         records = [
             _blocked_record(
                 case_spec=spec,
@@ -1452,10 +3428,14 @@ def run_formal_release(source_pdf: Path, output_dir: Path) -> dict[str, Any]:
                 config=config,
                 preflight=preflight,
                 preflight_path=preflight_path,
+                authority=acceptance_authority,
+                formal_input=input_by_question[spec[1]],
             )
             for spec in FORMAL_CASE_SPECS
         ]
     else:
+        assert acceptance_authority.frozen_model_policy is not None
+        assert acceptance_authority.actual_requirement is not None
         with tempfile.TemporaryDirectory(prefix="t02-wave-c-") as temp_dir:
             questions_path = Path(temp_dir) / "questions_125.json"
             _write_json(questions_path, items)
@@ -1466,6 +3446,11 @@ def run_formal_release(source_pdf: Path, output_dir: Path) -> dict[str, Any]:
                     questions_path=questions_path,
                     git_sha=git_sha,
                     config=config,
+                    frozen_model_policy=acceptance_authority.frozen_model_policy,
+                    actual_execution_requirement=(
+                        acceptance_authority.actual_requirement
+                    ),
+                    formal_input=input_by_question[spec[1]],
                 )
                 for spec in FORMAL_CASE_SPECS
             ]
@@ -1478,6 +3463,8 @@ def run_formal_release(source_pdf: Path, output_dir: Path) -> dict[str, Any]:
         status=(
             "PASS"
             if all(record.result == "PASS" for record in records)
+            else "BLOCKED_AUTHORITY_REQUIRED"
+            if not acceptance_authority.ready
             else "BLOCKED"
             if any(record.status == "CASE_BLOCKED" for record in records)
             else "FAIL"
@@ -1520,6 +3507,8 @@ def run_formal_release(source_pdf: Path, output_dir: Path) -> dict[str, Any]:
         "result": (
             "PASS"
             if all(row["result"] == "PASS" for row in matrix_rows)
+            else "BLOCKED_AUTHORITY_REQUIRED"
+            if not acceptance_authority.ready
             else "BLOCKED"
             if any(record.status == "CASE_BLOCKED" for record in records)
             else "FAIL"
@@ -1670,6 +3659,7 @@ def run_formal_release(source_pdf: Path, output_dir: Path) -> dict[str, Any]:
     return {
         "git_sha": git_sha,
         "authority": authority,
+        "formal_acceptance_authority": acceptance_authority.model_dump(mode="json"),
         "random_selection_reproducible": True,
         "raw_status": raw.status,
         "actual_run_count": raw.actual_run_count,
@@ -1786,8 +3776,22 @@ if __name__ == "__main__":  # pragma: no cover - exercised through the module CL
 
 __all__ = [
     "CaptainCaseAuthorization",
+    "FormalAcceptanceAuthority",
     "FormalActualRunRecord",
+    "FormalAuthorityEvidence",
+    "FormalCaseEligibility",
+    "FormalCaseInput",
+    "FormalExecutionInput",
+    "FormalImpactTrace",
+    "FormalInputHashes",
+    "FormalInputsEvidence",
+    "FormalModelRouteAudit",
+    "FormalMultimodalInput",
+    "FormalPairingDecision",
+    "FormalPairingMetadata",
+    "FormalReviewerFeedbackBinding",
     "FormalRawResults",
+    "FormalRevisionContextBinding",
     "FormalRunFailure",
     "Metric004Evidence",
     "RegressionMatrixRow",
@@ -1798,13 +3802,27 @@ __all__ = [
     "ReleaseRegressionMatrix",
     "ReleaseSelectionManifest",
     "T02WaveCReleaseHarness",
+    "assess_formal_case_input",
+    "build_formal_readiness_status",
+    "build_formal_impact_trace",
+    "build_model_route_audit",
+    "build_revision_context_binding",
     "build_metric004_evidence",
     "build_regression_matrix",
+    "canonical_evidence_sha256",
     "canonical_sha256",
+    "compute_formal_input_hashes",
+    "execute_formal_case",
+    "execution_result_hash",
+    "execution_summary_hash",
     "load_selection_manifest",
     "load_canonical_catalog",
+    "multimodal_artifact_hash",
+    "multimodal_consumer_summary_hash",
     "reproduce_random_selection",
     "release_schema_bundle",
+    "resolve_formal_acceptance_authority",
+    "resolve_public_execution_result",
     "run_formal_release",
     "verify_captain_authority",
 ]

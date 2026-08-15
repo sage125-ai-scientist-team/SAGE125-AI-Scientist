@@ -809,37 +809,41 @@ def _run_pipeline_with_state_impl(
                 for item in _evidence_catalog(state.retrieved_evidence)
                 if item.get("id")
             ],
+            mutable_revision_targets=(
+                "HypothesisGenerationResult",
+                "ExperimentDesignResult",
+            ),
         )
-        second_version: PlanVersion | None = None
-        if revision_audit.substantive_sections:
-            second_version = PlanVersion.create(
-                run_id=state.run_id,
-                version_number=2,
-                parent_version_id=first_version.version_id,
-                revision_iteration=2,
-                hypothesis_generation=state.hypothesis_generation,
-                experiment_design=state.experiment_design,
-                review_feedback=review,
-                issue_closures=revision_audit.issue_closures,
-                prompt_fingerprints={
-                    "hypothesis_generator": RevisionPromptBuilder.fingerprint(
-                        second_hypothesis_input
-                    ),
-                    "experiment_designer": RevisionPromptBuilder.fingerprint(
-                        second_experiment_input
-                    ),
-                    "scientific_reviewer": RevisionPromptBuilder.fingerprint(
-                        second_reviewer_input
-                    ),
-                },
-            )
-            revision_recovery.apply_version_event(
-                event_id=f"{state.run_id}:revision:v2",
-                event_type="revision_event",
-                version=second_version,
-            )
-        if second_version is not None:
-            revision_recovery.set_issue_closures(revision_audit.issue_closures)
+        # A successfully generated and reviewed second-round canonical plan is V2
+        # lineage evidence even when its changes do not satisfy acceptance.  Diff
+        # assessment may fail closed, but it must never erase an existing version.
+        second_version = PlanVersion.create(
+            run_id=state.run_id,
+            version_number=2,
+            parent_version_id=first_version.version_id,
+            revision_iteration=2,
+            hypothesis_generation=state.hypothesis_generation,
+            experiment_design=state.experiment_design,
+            review_feedback=review,
+            issue_closures=revision_audit.issue_closures,
+            prompt_fingerprints={
+                "hypothesis_generator": RevisionPromptBuilder.fingerprint(
+                    second_hypothesis_input
+                ),
+                "experiment_designer": RevisionPromptBuilder.fingerprint(
+                    second_experiment_input
+                ),
+                "scientific_reviewer": RevisionPromptBuilder.fingerprint(
+                    second_reviewer_input
+                ),
+            },
+        )
+        revision_recovery.apply_version_event(
+            event_id=f"{state.run_id}:revision:v2",
+            event_type="revision_event",
+            version=second_version,
+        )
+        revision_recovery.set_issue_closures(revision_audit.issue_closures)
         if revision_audit.accepted:
             revision_controller.complete()
         else:
@@ -1176,7 +1180,8 @@ def revise_with_feedback(
     state.experiment_design = exp_result
     review = ScientificReviewerAgent(settings).run(_reviewer_input(state, qdict), state, step)
     state.review_result = review
-    draft = ReportWriterAgent(settings).run({"question_item": qdict}, state, step); step += 1
+    draft = ReportWriterAgent(settings).run({"question_item": qdict}, state, step)
+    step += 1
     draft["experiments"] = exp_result.get("experiments", {})
     draft["datasets"] = exp_result.get("datasets", {})
     draft["results"] = exp_result.get("results", "")

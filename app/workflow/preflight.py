@@ -7,7 +7,6 @@ app.workflow.preflight —— 真实模式运行前置检查（preflight）。
 
 from __future__ import annotations
 
-from pathlib import Path
 from urllib.parse import urlparse
 
 from app.core.config import PROJECT_ROOT, Settings, assert_qwen_model, get_settings
