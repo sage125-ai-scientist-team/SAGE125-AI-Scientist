@@ -680,6 +680,9 @@ def run(
         if previous is not None:
             ledger = previous
             ledger["resumed_at"] = _utc_now()
+            # 上次失败会留下 stopped=true；续跑必须清掉，否则 12 域完成后仍显示中止。
+            ledger["stopped"] = False
+            ledger.pop("stop_reason", None)
     ledger["global_attempt_count"] = _ledger_attempt_count(ledger)
     if ledger["global_attempt_count"] > MAX_ATTEMPT_CAP:
         raise ValueError("resume_global_attempt_cap_exceeded")
