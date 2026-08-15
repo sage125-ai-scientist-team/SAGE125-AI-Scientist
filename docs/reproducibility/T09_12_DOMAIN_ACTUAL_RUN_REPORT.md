@@ -1,6 +1,28 @@
 # T09 12 域正式实跑报告
 
-本报告记录 `d211a0c` clean-room 上的正式 12 域 actual evaluation。产物保留在仓库外临时目录，不把原始 pipeline 工件或未脱敏 request_id 写入 Git。
+本报告记录已接受的 `d211a0c` clean-room 正式 12 域 actual evaluation。产物保留在仓库外临时目录，不把原始 pipeline 工件或未脱敏 request_id 写入 Git。
+
+```text
+BATCH_4B_ACTUAL_EXECUTION=COMPLETE
+CLEAN_ROOM_EXECUTION=PASS
+METRIC_005_EXECUTION=PASS
+METRIC_005_VALIDATOR=PASS
+EVALUATED_DOMAIN_COUNT=12
+UNIQUE_DOMAIN_COUNT=12
+ACCEPTED_PROVIDER_CALLS=144
+ACCEPTED_REQUEST_ID_COUNT=144
+ACCEPTED_GLOBAL_ATTEMPT_COUNT=12
+ACCEPTED_FAILED_ATTEMPTS=0
+MOCK_CALL_COUNT=0
+ACTUAL_ABLATION_RUNS=0
+ACTUAL_ABLATION_AUTHORIZED=false
+COST_USD=null
+COST_STATUS=unknown_or_provider_not_priced
+WAVE_C_DONE=false
+PR_IS_DRAFT=true
+```
+
+此前失败或被替代、且未进入本 accepted ledger 的 Q001 运行：`unknown/not_consolidated`。不得把它们计入上述 144 calls。
 
 ## 执行身份
 

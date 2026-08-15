@@ -34,3 +34,5 @@ Artifacts are produced by the preceding real commands. They exclude `.env`, keys
 A future release manifest must include commit provenance, interpreter versions, dependency locks, license/SBOM/checksum state, planned/actual/mock status, test evidence, and rollback information. It must reject secrets, private inputs, stale mock output, failed exports, caches, indexes, and local PDFs.
 
 Release status remains **blocked** until the required release materials are present and independently verified. The Wave A GitHub Actions results must be recorded from the actual run, not predicted from local validation.
+
+Wave C Batch 4B accepted 12-domain actual evidence is recorded in `T09_12_DOMAIN_ACTUAL_RUN_SUMMARY.json`. That evidence does not change this PR-A DoD file, does not make `WAVE_C_DONE=true`, and does not authorize Ready, Approve, Merge, or actual ablation. METRIC-003, METRIC-004, and RC final remain BLOCKED.
