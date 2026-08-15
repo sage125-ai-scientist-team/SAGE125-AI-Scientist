@@ -26,5 +26,9 @@ Machine-readable source: `domain_audit_12.json`.
 ## Reproduce
 
 ```powershell
-python -c "from app.evidence.metrics import generate_wave_b_metrics_artifacts; print(generate_wave_b_metrics_artifacts())"
+# 测试/临时产物：写入目录（不碰 tracked 文件）
+python -c "from pathlib import Path; from app.evidence.metrics import generate_wave_b_metrics_artifacts; print(generate_wave_b_metrics_artifacts(output_dir=Path('_tmp_t01_metrics'), generated_at='2026-08-02T06:41:57.966684+00:00'))"
+
+# 维护者刷新 tracked JSON（显式 opt-in；Issue #44）
+python -c "from app.evidence.metrics import generate_wave_b_metrics_artifacts; print(generate_wave_b_metrics_artifacts(allow_tracked_write=True, generated_at='2026-08-02T06:41:57.966684+00:00'))"
 ```

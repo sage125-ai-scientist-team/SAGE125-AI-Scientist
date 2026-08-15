@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Optional
 
 from app.clients.embedding_client import EmbeddingClient
 from app.clients.rerank_client import FALLBACK_MARKER, RerankClient
-from app.contracts.rag import SourceRole, SourceType
+from app.contracts.rag import RetrievalHit, ScoreKind, SourceRole, SourceType
 from app.core.logging import get_logger
-from app.rag.evidence import chunk_to_evidence_card
+from app.rag.evidence import chunk_to_evidence_card, chunk_to_retrieval_hit
 from app.rag.zvec_store import SearchResult, VectorStoreProtocol
 
 logger = get_logger("rag.retriever")
@@ -16,6 +17,15 @@ logger = get_logger("rag.retriever")
 
 class RetrievalError(Exception):
     """Raised when retrieval cannot safely continue."""
+
+
+@dataclass(frozen=True)
+class _RankedHit:
+    """One ranked raw hit produced by the shared retrieval core."""
+
+    hit: SearchResult
+    rerank_score: float | None
+    used_fallback: bool
 
 
 def _source_provenance(metadata: dict) -> tuple[SourceType, SourceRole]:
@@ -106,6 +116,81 @@ class LocalRAGRetriever:
         filters: Optional[dict] = None,
         source_scope: str = "all",
     ) -> list:
+        ranked_hits = self._retrieve_ranked(query, filters, source_scope)
+        if not ranked_hits:
+            return []
+
+        normalized_query = " ".join((query or "").split())
+        evidence_cards = []
+        for ranked_hit in ranked_hits:
+            hit = ranked_hit.hit
+            source_type, source_role = _source_provenance(hit.metadata)
+            note_parts = [
+                _provenance_note(hit.metadata, source_type, source_role)
+            ]
+            if ranked_hit.used_fallback:
+                note_parts.append(FALLBACK_MARKER)
+            card = chunk_to_evidence_card(
+                {
+                    "text": hit.text,
+                    "metadata": hit.metadata,
+                    "chunk_id": hit.chunk_id,
+                },
+                score=hit.score,
+                source_type=_evidence_source_type(source_type),
+                query=normalized_query,
+                rerank_score=ranked_hit.rerank_score,
+                reliability_note_extra="; ".join(note_parts),
+            )
+            evidence_cards.append(card)
+        return evidence_cards
+
+    def retrieve_hits(
+        self,
+        query: str,
+        filters: Optional[dict] = None,
+        source_scope: str = "all",
+    ) -> tuple[RetrievalHit, ...]:
+        """Return lossless, provenance-validated retrieval hits."""
+
+        ranked_hits = self._retrieve_ranked(query, filters, source_scope)
+        validated: list[RetrievalHit] = []
+        try:
+            for ranked_hit in ranked_hits:
+                hit = ranked_hit.hit
+                if not str(hit.metadata.get("source_id") or "").strip():
+                    raise ValueError("persisted source_id is required")
+                if ranked_hit.rerank_score is None:
+                    score = hit.score
+                    score_kind = hit.metadata.get(
+                        "score_kind", ScoreKind.VECTOR_SIMILARITY
+                    )
+                else:
+                    score = ranked_hit.rerank_score
+                    score_kind = ScoreKind.RERANK_SCORE
+                validated.append(
+                    chunk_to_retrieval_hit(
+                        {
+                            "text": hit.text,
+                            "metadata": hit.metadata,
+                            "chunk_id": hit.chunk_id,
+                        },
+                        score=score,
+                        score_kind=score_kind,
+                    )
+                )
+        except (TypeError, ValueError) as exc:
+            raise RetrievalError(f"invalid persisted retrieval provenance: {exc}") from None
+        return tuple(validated)
+
+    def _retrieve_ranked(
+        self,
+        query: str,
+        filters: Optional[dict],
+        source_scope: str,
+    ) -> tuple[_RankedHit, ...]:
+        """Run normalization, embedding, search, rerank, fallback, and top-k once."""
+
         query = " ".join((query or "").split())
         if not query:
             raise ValueError("query must not be empty")
@@ -128,7 +213,7 @@ class LocalRAGRetriever:
                 query[:60],
                 source_scope,
             )
-            return []
+            return ()
 
         documents = [hit.text for hit in hits]
         ranked = self.rerank_client.rerank(
@@ -136,29 +221,11 @@ class LocalRAGRetriever:
         )
         used_fallback = self.rerank_client.last_used_fallback
 
-        evidence_cards = []
+        ranked_hits = []
         for original_idx, rerank_result_score in ranked:
             hit = hits[original_idx]
             rerank_score = None if used_fallback else rerank_result_score
-            source_type, source_role = _source_provenance(hit.metadata)
-            note_parts = [
-                _provenance_note(hit.metadata, source_type, source_role)
-            ]
-            if used_fallback:
-                note_parts.append(FALLBACK_MARKER)
-            card = chunk_to_evidence_card(
-                {
-                    "text": hit.text,
-                    "metadata": hit.metadata,
-                    "chunk_id": hit.chunk_id,
-                },
-                score=hit.score,
-                source_type=_evidence_source_type(source_type),
-                query=query,
-                rerank_score=rerank_score,
-                reliability_note_extra="; ".join(note_parts),
-            )
-            evidence_cards.append(card)
+            ranked_hits.append(_RankedHit(hit, rerank_score, used_fallback))
 
         logger.info(
             "retrieval complete: query=%s, top_k_vector=%d, "
@@ -166,7 +233,7 @@ class LocalRAGRetriever:
             query[:60],
             self.top_k_vector,
             self.top_k_final,
-            len(evidence_cards),
+            len(ranked_hits),
             used_fallback,
         )
-        return evidence_cards
+        return tuple(ranked_hits)

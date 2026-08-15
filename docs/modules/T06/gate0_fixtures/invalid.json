@@ -1,0 +1,51 @@
+{
+  "schema_version": "t06.gate0_fixture.v1",
+  "owner": "T06",
+  "fixture_kind": "invalid",
+  "evidence_class": "expected",
+  "note": "Expected fail-closed: row width mismatch (and chart missing-legend fixture reference). T08 must not invent values.",
+  "read_port": "app.multimodal.read_port.list_multimodal_details",
+  "expected_error": {
+    "category": "invalid_contract",
+    "retryable": false,
+    "message_contains": "width mismatch"
+  },
+  "invalid_payload_example": {
+    "artifact_id": "gate0-invalid-row",
+    "modality": "table",
+    "provenance": {
+      "source_path": "fixtures/gate0/bad.pdf",
+      "source_type": "pdf",
+      "page": 1,
+      "bbox": {
+        "x0": 10,
+        "y0": 10,
+        "x1": 110,
+        "y1": 210
+      }
+    },
+    "units": [
+      "ohm"
+    ],
+    "column_units": [],
+    "axes": null,
+    "legend": [
+      "R"
+    ],
+    "data": {
+      "headers": [
+        "R",
+        "t"
+      ],
+      "rows": [
+        [
+          "1"
+        ]
+      ]
+    },
+    "confidence": 0.9,
+    "validation_status": "passed"
+  },
+  "chart_invalid_reference": "tests/multimodal/fixtures/wave_b/invalid/chart_missing_legend.json",
+  "fields_for_t08": null
+}
