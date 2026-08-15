@@ -40,6 +40,15 @@ from app.evidence.metrics import (
     generate_wave_b_metrics_artifacts,
 )
 from app.evidence.q028_regression import Q028RegressionReport, run_q028_regression
+from app.evidence.read_port import (
+    EvidenceBundleStore,
+    EvidencePortError,
+    SqliteEvidenceBundleStore,
+    get_evidence_bundle,
+    mark_evidence_failed,
+    mark_evidence_pending,
+    save_evidence_bundle,
+)
 from app.evidence.support_checker import (
     ClaimText,
     SupportCheckResult,
@@ -56,9 +65,12 @@ __all__ = [
     "CitationItem",
     "ClaimSpec",
     "ClaimText",
+    "EvidenceBundleStore",
     "EvidenceIntegrationPrecheck",
+    "EvidencePortError",
     "MetricsReport",
     "Q028RegressionReport",
+    "SqliteEvidenceBundleStore",
     "SupportCheckResult",
     "SupportDecision",
     "SupportErrorCode",
@@ -79,11 +91,15 @@ __all__ = [
     "evidence_card_to_validation_wire",
     "find_conflict_claim_ids",
     "generate_wave_b_metrics_artifacts",
+    "get_evidence_bundle",
     "gold_set_count",
     "load_evidence_gold_set",
+    "mark_evidence_failed",
+    "mark_evidence_pending",
     "precheck_bundle_for_validation",
     "render_citation_markdown",
     "round_trip_revision_state",
     "run_q028_regression",
     "runtime_card_to_contract",
+    "save_evidence_bundle",
 ]
