@@ -97,3 +97,49 @@ identity 校验：run_id+question_id；非法 → invalid_contract
 owner 实施人：Yqqxz
 预计合入 PR：t01/evidence-bundle-store（Draft）
 ```
+
+## 7. T08 生产读取确认（2026-08-15）
+
+T08 清单对照：公开读口已落地；**合入前 T08 继续 unavailable / fail-closed**。
+
+```text
+IMPORT=app.evidence.read_port.get_evidence_bundle
+SIGNATURE=get_evidence_bundle(*, run_id: str, question_id: str) -> EvidenceBundle
+SCHEMA=app.contracts.evidence.EvidenceBundle
+PR=https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/43
+STATE=OPEN+DRAFT
+READY_AUTHORIZED=false
+MERGE_AUTHORIZED=false
+```
+
+- 仅关键字参数；跨题无记录 → `EvidencePortError.category=not_found`（不串读）。
+- `relation`：`supports` | `contradicts` | `context`。待核验 = `verification_status` / `validation_status` 的 `pending`。
+- 缺失原因在异常 category，不返回半包或 Mock。
+
+非敏感形状示例（公开文献句，非密钥）：
+
+```json
+{
+  "bundle_id": "B-1",
+  "truncated": false,
+  "truncation_reason": null,
+  "evidences": [{
+    "evidence_id": "EV-1",
+    "source_type": "paper",
+    "quoted_text": "Soils constitute a primordial compartment of terrestrial ecosystems.",
+    "locator": {"section": "Introduction", "page": 1},
+    "authors": ["Ada"],
+    "year": 2007,
+    "doi": "10.1371/journal.pone.0001248",
+    "content_hash": "sha256:abc",
+    "verification_status": "valid"
+  }],
+  "links": [{
+    "claim_id": "C-1",
+    "evidence_id": "EV-1",
+    "relation": "supports",
+    "confidence": 0.9,
+    "validation_status": "pending"
+  }]
+}
+```
