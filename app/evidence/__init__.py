@@ -1,5 +1,5 @@
 """
-T01 Evidence 运行时模块（Wave B）。
+T01 Evidence 运行时模块（Wave B + Wave C）。
 
 本包在契约层 ``app.contracts.evidence`` 之上提供可调用的构建与校验能力。
 工作流接入（``pipeline.py``）由 T02 完成；本包不得越权修改 pipeline。
@@ -21,6 +21,14 @@ from app.evidence.citation_renderer import (
     build_t08_citation_payload,
     render_citation_markdown,
 )
+from app.evidence.content_hash_cache import (
+    ContentHashCache,
+    assert_same_input_stable_evidence_set,
+    deterministic_bundle_digest,
+    get_global_content_hash_cache,
+    stable_evidence_set_fingerprint,
+    stable_sort_evidence_ids,
+)
 from app.evidence.gold_set import gold_set_count, load_evidence_gold_set
 from app.evidence.integration_bridge import (
     BUNDLE_FINGERPRINT_KEY,
@@ -40,6 +48,15 @@ from app.evidence.metrics import (
     generate_wave_b_metrics_artifacts,
 )
 from app.evidence.q028_regression import Q028RegressionReport, run_q028_regression
+from app.evidence.quality_gate import (
+    ConflictDisposition,
+    ConflictRecord,
+    EvidenceSourceStatus,
+    QualityGateReport,
+    SourceLifecycleStatus,
+    detect_conflicts_preserving_both_sides,
+    run_quality_gate,
+)
 from app.evidence.read_port import (
     EvidenceBundleStore,
     EvidencePortError,
@@ -48,6 +65,13 @@ from app.evidence.read_port import (
     mark_evidence_failed,
     mark_evidence_pending,
     save_evidence_bundle,
+)
+from app.evidence.serialization import (
+    build_api_example_payload,
+    build_output_envelope_v125,
+    dumps_output_envelope,
+    serialize_evidence_bundle,
+    serialize_quality_gate_report,
 )
 from app.evidence.support_checker import (
     ClaimText,
@@ -58,6 +82,13 @@ from app.evidence.support_checker import (
     check_bundle_support,
     check_claim_evidence_support,
 )
+from app.evidence.wave_c_signoff import (
+    SeparatedSignoffPackage,
+    build_separated_signoff_package,
+    render_contract_regression_markdown,
+    render_human_signoff_markdown,
+    write_separated_signoff_artifacts,
+)
 
 __all__ = [
     "BUNDLE_FINGERPRINT_KEY",
@@ -65,20 +96,31 @@ __all__ = [
     "CitationItem",
     "ClaimSpec",
     "ClaimText",
+    "ConflictDisposition",
+    "ConflictRecord",
+    "ContentHashCache",
     "EvidenceBundleStore",
     "EvidenceIntegrationPrecheck",
     "EvidencePortError",
+    "EvidenceSourceStatus",
     "MetricsReport",
     "Q028RegressionReport",
+    "QualityGateReport",
+    "SeparatedSignoffPackage",
+    "SourceLifecycleStatus",
     "SqliteEvidenceBundleStore",
     "SupportCheckResult",
     "SupportDecision",
     "SupportErrorCode",
     "SupportFinding",
     "T08CitationPayload",
+    "assert_same_input_stable_evidence_set",
     "attach_bundle_to_plan_version",
+    "build_api_example_payload",
     "build_citation_item",
     "build_evidence_bundle",
+    "build_output_envelope_v125",
+    "build_separated_signoff_package",
     "build_t08_citation_payload",
     "build_v1_v2_revision_with_bundle",
     "build_validation_context_from_bundle",
@@ -87,19 +129,31 @@ __all__ = [
     "check_bundle_support",
     "check_claim_evidence_support",
     "compute_metrics",
+    "detect_conflicts_preserving_both_sides",
+    "deterministic_bundle_digest",
+    "dumps_output_envelope",
     "estimate_token_count",
     "evidence_card_to_validation_wire",
     "find_conflict_claim_ids",
     "generate_wave_b_metrics_artifacts",
     "get_evidence_bundle",
+    "get_global_content_hash_cache",
     "gold_set_count",
     "load_evidence_gold_set",
     "mark_evidence_failed",
     "mark_evidence_pending",
     "precheck_bundle_for_validation",
     "render_citation_markdown",
+    "render_contract_regression_markdown",
+    "render_human_signoff_markdown",
     "round_trip_revision_state",
     "run_q028_regression",
+    "run_quality_gate",
     "runtime_card_to_contract",
     "save_evidence_bundle",
+    "serialize_evidence_bundle",
+    "serialize_quality_gate_report",
+    "stable_evidence_set_fingerprint",
+    "stable_sort_evidence_ids",
+    "write_separated_signoff_artifacts",
 ]
