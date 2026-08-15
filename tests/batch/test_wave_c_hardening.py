@@ -7,6 +7,8 @@ import json
 from dataclasses import replace
 from pathlib import Path, PurePosixPath
 
+import pytest
+
 from app.batch.delivery_index import (
     DeliveryIndex,
     QuestionDeliveryRecord,
@@ -582,6 +584,58 @@ def test_failed_t01_receipt_fails_closed_even_when_hash_bound(tmp_path: Path) ->
 
     assert not validation.passed
     assert "WAVE_C_QUALITY_GATE_RECEIPT_INVALID" in {
+        issue.error_code for issue in validation.issues
+    }
+
+
+@pytest.mark.parametrize(
+    "budget_updates",
+    (
+        {
+            "budget_policy_version": None,
+            "budget_mode": None,
+            "cost_accounting_required": None,
+            "price_snapshot_required": None,
+            "captain_waiver_reference": None,
+        },
+        {
+            "budget_mode": "token_and_cost",
+            "cost_accounting_required": True,
+            "price_snapshot_required": True,
+        },
+    ),
+    ids=("missing", "token_and_cost"),
+)
+def test_invalid_budget_mode_cannot_widen_to_price_snapshot(
+    tmp_path: Path,
+    budget_updates: dict[str, object],
+) -> None:
+    root = _build_package(tmp_path / "batch")
+    audit_path = root / "Q001" / "llm_call_audit.json"
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    audit.update(
+        {
+            "cost_accounting_mode": "price_snapshot",
+            "estimated_cost_usd": "0.001",
+            "price_snapshot_version": "test-prices-v1",
+        }
+    )
+    _rewrite_indexed_json_artifact(root, "Q001", "llm_call_audit.json", audit)
+
+    index_path = root / "delivery_index.json"
+    index = DeliveryIndex.from_json(index_path.read_text(encoding="utf-8"))
+    records = tuple(
+        replace(record, **budget_updates)
+        if record.question_id == "Q001"
+        else record
+        for record in index.records
+    )
+    _write(index_path, build_delivery_index(index.batch_id, records).to_json())
+
+    validation = _validate_with_trust(root, tmp_path / "trusted")
+
+    assert not validation.passed
+    assert "WAVE_C_BUDGET_MODE_INVALID" in {
         issue.error_code for issue in validation.issues
     }
 

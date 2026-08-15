@@ -809,12 +809,17 @@ def _validate_call_audit(
     issues: list[WaveCValidationIssue],
 ) -> None:
     try:
+        if record.budget_mode != "token_only":
+            raise BatchRunnerError(
+                "WAVE_C_BUDGET_MODE_INVALID",
+                "delivery record must declare the frozen token_only budget mode",
+            )
         pure = PurePosixPath(relative_path.replace("\\", "/"))
         target = root.joinpath(*pure.parts)
         audit = ActualCallAudit.from_json(target.read_text(encoding="utf-8"))
         validate_actual_call_audit(
             audit,
-            budget_mode=record.budget_mode or "token_and_cost",
+            budget_mode="token_only",
         )
         if audit.provider != record.provider or audit.model != record.model:
             raise BatchRunnerError(
