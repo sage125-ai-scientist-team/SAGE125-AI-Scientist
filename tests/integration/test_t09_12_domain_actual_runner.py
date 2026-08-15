@@ -518,3 +518,62 @@ def test_execute_rejects_wrong_authorized_stack_endpoint(
     assert "rerank_endpoint_identity" in report["errors"]
     assert report["executed"] is False
     assert calls == []
+
+
+def test_deep_research_omitted_usage_is_null_and_excluded_from_totals() -> None:
+    """Provider 省略 Deep Research usage 时保持 null，合计只含有用量的调用。"""
+    summary, errors = runner._validate_call_audits(
+        [
+            {
+                "provider": "bailian_qwen",
+                "mock": False,
+                "model_alias": "fast",
+                "model_name_internal": "qwen3.6-flash",
+                "status": "success",
+                "fallback_used": False,
+                "request_id": "chat-1",
+                "input_tokens": 2,
+                "output_tokens": 3,
+                "total_tokens": 5,
+            },
+            {
+                "provider": "dashscope_deepresearch",
+                "mock": False,
+                "model_alias": "deepresearch",
+                "model_name_internal": "qwen-deep-research",
+                "status": "success",
+                "fallback_used": False,
+                "request_id": "dr-1",
+                "input_tokens": None,
+                "output_tokens": None,
+                "total_tokens": None,
+            },
+        ]
+    )
+    assert errors == []
+    assert summary["call_count"] == 2
+    assert summary["request_id_count"] == 2
+    assert summary["input_tokens"] == 2
+    assert summary["output_tokens"] == 3
+    assert summary["total_tokens"] == 5
+
+
+def test_chat_omitted_usage_still_fails_closed() -> None:
+    """聊天调用缺少 token 仍必须失败；不得把 Deep Research 例外扩到其他模型。"""
+    _summary, errors = runner._validate_call_audits(
+        [
+            {
+                "provider": "bailian_qwen",
+                "mock": False,
+                "model_alias": "fast",
+                "model_name_internal": "qwen3.6-flash",
+                "status": "success",
+                "fallback_used": False,
+                "request_id": "chat-missing-usage",
+                "input_tokens": None,
+                "output_tokens": None,
+                "total_tokens": None,
+            }
+        ]
+    )
+    assert "call_audit_tokens" in errors

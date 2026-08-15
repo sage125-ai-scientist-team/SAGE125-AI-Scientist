@@ -495,6 +495,14 @@ def _validate_call_audits(records: Any) -> tuple[dict[str, Any], list[str]]:
         else:
             request_ids.add(request_id)
         usage = [record.get(name) for name in ("input_tokens", "output_tokens", "total_tokens")]
+        provider_omitted_deep_research_usage = (
+            model_alias == "deepresearch"
+            and all(value is None for value in usage)
+        )
+        # 百炼 Deep Research 流式 finished 分片经常完全省略 usage。
+        # 有真实 request_id 时允许三项保持 null；禁止把缺失用量写成 0。
+        if provider_omitted_deep_research_usage:
+            continue
         if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in usage):
             errors.append("call_audit_tokens")
             continue

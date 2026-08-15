@@ -99,7 +99,7 @@
     "preflight": "preflight.json",
     "execution_summary": "run_summary.json",
     "pipeline_artifacts": "Use the artifact directory emitted by app.workflow.pipeline.run_pipeline_with_state.",
-    "call_audit": "Interface contract: summarize state.llm_calls using app.core.call_audit.summarize_calls; do not serialize secrets. Every completed actual attempt must prove the frozen Bailian/Qwen model stack, provider/model-alias pairing, one unique real request_id per actual call, exact token arithmetic, no fallback, and token-only unpriced cost accounting. ledger.audit_coverage aggregates all twelve completed attempts and their actual call/request_id counts.",
+    "call_audit": "Interface contract: summarize state.llm_calls using app.core.call_audit.summarize_calls; do not serialize secrets. Every completed actual attempt must prove the frozen Bailian/Qwen model stack, provider/model-alias pairing, one unique real request_id per actual call, exact token arithmetic for every call that returned usage, no fallback, and token-only unpriced cost accounting. Deep Research may omit usage; those three token fields stay null and are excluded from the sum, never coerced to 0. ledger.audit_coverage aggregates all twelve completed attempts and their actual call/request_id counts.",
     "integrity": "Each completed entry records a deterministic artifact hash and secret-scan outcome. Failed attempts retain null token/cost values, while call_accounting preserves any already-observed actual call count, request_id count, and token-only usage without inventing a cost; completed actual attempts record audited tokens and a null (unpriced) cost."
   },
   "reproduction": {

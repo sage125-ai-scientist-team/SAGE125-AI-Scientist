@@ -6,10 +6,10 @@
 
 百炼 `qwen-deep-research` 只在流式 `status=finished` 分片保证返回用量。官方示例中的 usage 通常只有 `input_tokens` 与 `output_tokens`，不一定带 `total_tokens`；`request_id` 也可能出现在顶层、`output` 或响应头。T09 runner 对每一次真实调用要求：
 
-- 非空且唯一的真实 `request_id`；
-- 非负整数 `input_tokens` / `output_tokens` / `total_tokens`；
-- `total_tokens == input_tokens + output_tokens`；
-- 不得把缺失用量写成 `0`，也不得编造 request_id。
+- 非空且唯一的真实 `request_id`（可来自顶层、`output` 或 `x-request-id` 响应头）；
+- 若 Provider 返回了 usage：非负整数 `input_tokens` / `output_tokens` / `total_tokens`，且 `total_tokens == input_tokens + output_tokens`；
+- 若 Provider 完全省略 usage：三项保持 `null`，不计入 ledger 合计，禁止写成 `0`；
+- 不得编造 request_id。
 
 ## 接口
 
