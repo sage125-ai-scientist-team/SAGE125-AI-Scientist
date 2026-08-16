@@ -57,6 +57,7 @@ from app.api.upstream import (
     OwnerContractInvalid,
     OwnerContractUnavailable,
     OwnerIdentityMismatch,
+    OwnerReadFailure,
     OwnerResourceNotFound,
 )
 from app.core.logging import get_logger
@@ -512,6 +513,30 @@ def _owner_call(component: str, operation):
             message=f"{component} 返回的数据不符合冻结契约。",
             details={"component": exc.component, "availability": "unavailable"},
             retryable=False,
+        ) from None
+    except OwnerReadFailure as exc:
+        if exc.category == "not_ready":
+            status_code = 409
+            code = "UPSTREAM_RESOURCE_NOT_READY"
+            message = "上游资源尚未就绪。"
+        elif exc.category == "conflict":
+            status_code = 409
+            code = "UPSTREAM_RESOURCE_CONFLICT"
+            message = "上游资源存在冲突。"
+        else:
+            status_code = 503
+            code = "UPSTREAM_READ_FAILED"
+            message = "上游资源读取失败。"
+        raise APIError(
+            status_code=status_code,
+            code=code,
+            message=message,
+            details={
+                "component": exc.component,
+                "category": exc.category,
+                "availability": "unavailable",
+            },
+            retryable=exc.retryable,
         ) from None
 
 

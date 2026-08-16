@@ -17,6 +17,10 @@ from app.contracts.batch import JobStatus as BatchJobStatus
 from app.contracts.evidence import EvidenceBundle
 from app.contracts.revision import PlanVersion
 from app.core.schemas import QuestionItem
+from app.evidence.read_port import (
+    EvidencePortError,
+    get_evidence_bundle as get_t01_evidence_bundle,
+)
 
 
 class OwnerReadError(RuntimeError):
@@ -46,6 +50,22 @@ class OwnerIdentityMismatch(OwnerReadError):
     def __init__(self, component: str) -> None:
         super().__init__(component)
         self.component = component
+
+
+class OwnerReadFailure(OwnerReadError):
+    """Sanitized owner failure with a stable category and retry policy."""
+
+    def __init__(
+        self,
+        component: str,
+        category: str,
+        *,
+        retryable: bool,
+    ) -> None:
+        super().__init__(f"{component}: {category}")
+        self.component = component
+        self.category = category
+        self.retryable = retryable
 
 
 class QuestionOwnerRecord(BaseModel):
@@ -100,6 +120,17 @@ class OwnerContractReadPort(Protocol):
         from_version_id: str,
         to_version_id: str,
     ) -> OwnerVersionDiff: ...
+
+
+class EvidenceBundleReader(Protocol):
+    """Frozen callable shape exported by the T01 production read port."""
+
+    def __call__(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle: ...
 
 
 def _question_record(payload: Mapping[str, Any]) -> QuestionOwnerRecord:
@@ -163,6 +194,76 @@ class FilesystemQuestionOwnerAdapter:
     ) -> OwnerVersionDiff:
         del run_id, question_id, from_version_id, to_version_id
         raise OwnerContractUnavailable("T02 structured version diff")
+
+
+class ProductionOwnerContractAdapter(FilesystemQuestionOwnerAdapter):
+    """Compose the T07 question source with the frozen T01 production port.
+
+    T02 remains fail-closed in the inherited methods until its public read port
+    is merged.  The adapter deliberately consumes only T01's public callable;
+    it never reads the owner SQLite schema or temporary artifact files.
+    """
+
+    _COMPONENT = "T01 EvidenceBundle"
+    _PASSTHROUGH_FAILURES = {
+        "not_ready",
+        "conflict",
+        "retryable_upstream_failure",
+        "non_retryable_upstream_failure",
+        "unavailable",
+    }
+
+    def __init__(
+        self,
+        questions_path: str | Path,
+        *,
+        evidence_reader: EvidenceBundleReader | None = None,
+    ) -> None:
+        super().__init__(questions_path)
+        self._evidence_reader = evidence_reader or get_t01_evidence_bundle
+
+    def get_evidence_bundle(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle:
+        try:
+            payload = self._evidence_reader(
+                run_id=run_id,
+                question_id=question_id,
+            )
+        except EvidencePortError as exc:
+            if exc.category == "not_found":
+                raise OwnerResourceNotFound(
+                    "evidence_bundle",
+                    f"{run_id}:{question_id}",
+                ) from None
+            if exc.category == "identity_mismatch":
+                raise OwnerIdentityMismatch(self._COMPONENT) from None
+            if exc.category == "invalid_contract":
+                raise OwnerContractInvalid(
+                    self._COMPONENT,
+                    "T01 returned an invalid EvidenceBundle",
+                ) from None
+            if exc.category in self._PASSTHROUGH_FAILURES:
+                raise OwnerReadFailure(
+                    self._COMPONENT,
+                    exc.category,
+                    retryable=exc.retryable,
+                ) from None
+            raise OwnerContractInvalid(
+                self._COMPONENT,
+                "T01 returned an unknown error category",
+            ) from None
+
+        try:
+            return EvidenceBundle.model_validate(payload)
+        except (TypeError, ValueError) as exc:
+            raise OwnerContractInvalid(
+                self._COMPONENT,
+                "T01 returned an invalid EvidenceBundle",
+            ) from exc
 
 
 class FixtureOwnerContractAdapter:

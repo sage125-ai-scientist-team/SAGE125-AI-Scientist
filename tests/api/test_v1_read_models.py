@@ -4,16 +4,28 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from functools import partial
 from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient as FastAPITestClient
 
+from app.api import upstream as upstream_module
 from app.api.auth import FixedWindowRateLimiter, HashedAPIKeyAuth
 from app.api.contracts import JobCreateRequest, JobStatus
 from app.api.job_store import SQLiteJobStore
 from app.api.main import create_app
-from app.api.upstream import FixtureOwnerContractAdapter, OwnerIdentityMismatch
+from app.api.upstream import (
+    FixtureOwnerContractAdapter,
+    OwnerIdentityMismatch,
+    ProductionOwnerContractAdapter,
+)
+from app.evidence.read_port import (
+    EvidencePortError,
+    SqliteEvidenceBundleStore,
+    get_evidence_bundle,
+    save_evidence_bundle,
+)
 
 
 FIXTURES = Path(__file__).with_name("fixtures")
@@ -124,6 +136,149 @@ def test_evidence_adapter_rejects_cross_question_identity():
 
     with pytest.raises(OwnerIdentityMismatch, match="T01 EvidenceBundle"):
         adapter.get_evidence_bundle(run_id="run-owner-1", question_id="Q002")
+
+
+def test_production_evidence_adapter_calls_only_the_t01_public_read_contract():
+    calls = []
+
+    def reader(*, run_id: str, question_id: str):
+        calls.append((run_id, question_id))
+        return _load("evidence_bundle.json")
+
+    adapter = ProductionOwnerContractAdapter(
+        FIXTURES / "question_items.json",
+        evidence_reader=reader,
+    )
+
+    bundle = adapter.get_evidence_bundle(
+        run_id="run-owner-1",
+        question_id="Q001",
+    )
+
+    assert calls == [("run-owner-1", "Q001")]
+    assert bundle.bundle_id == "bundle-run-owner-1"
+
+
+def test_production_evidence_adapter_reads_t01_persisted_bundle_after_restart(
+    tmp_path,
+):
+    database = tmp_path / "t01-evidence.sqlite3"
+    writer = SqliteEvidenceBundleStore(database)
+    expected = save_evidence_bundle(
+        run_id="run-owner-1",
+        question_id="Q001",
+        bundle=_adapter().get_evidence_bundle(
+            run_id="run-owner-1",
+            question_id="Q001",
+        ),
+        store=writer,
+    )
+    restarted_reader = SqliteEvidenceBundleStore(database)
+    adapter = ProductionOwnerContractAdapter(
+        FIXTURES / "question_items.json",
+        evidence_reader=partial(get_evidence_bundle, store=restarted_reader),
+    )
+
+    actual = adapter.get_evidence_bundle(
+        run_id="run-owner-1",
+        question_id="Q001",
+    )
+
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    ("category", "owner_retryable", "status_code", "code", "retryable"),
+    [
+        ("not_found", False, 404, "UPSTREAM_RESOURCE_NOT_FOUND", False),
+        ("not_ready", False, 409, "UPSTREAM_RESOURCE_NOT_READY", False),
+        ("invalid_contract", False, 503, "UPSTREAM_CONTRACT_INVALID", False),
+        ("identity_mismatch", False, 409, "UPSTREAM_IDENTITY_MISMATCH", False),
+        ("conflict", False, 409, "UPSTREAM_RESOURCE_CONFLICT", False),
+        ("retryable_upstream_failure", True, 503, "UPSTREAM_READ_FAILED", True),
+        (
+            "non_retryable_upstream_failure",
+            False,
+            503,
+            "UPSTREAM_READ_FAILED",
+            False,
+        ),
+        ("unavailable", False, 503, "UPSTREAM_READ_FAILED", False),
+    ],
+)
+def test_production_evidence_errors_are_stably_mapped_without_owner_details(
+    tmp_path,
+    category,
+    owner_retryable,
+    status_code,
+    code,
+    retryable,
+):
+    def reader(*, run_id: str, question_id: str):
+        del run_id, question_id
+        raise EvidencePortError(
+            category,
+            r"owner detail C:\secret\evidence.sqlite3 must not escape",
+            retryable=owner_retryable,
+        )
+
+    adapter = ProductionOwnerContractAdapter(
+        FIXTURES / "question_items.json",
+        evidence_reader=reader,
+    )
+    client, store = _client(tmp_path, adapter=adapter)
+    with client:
+        job = _job(store)
+        response = client.get(f"/api/v1/jobs/{job.job_id}/evidence")
+
+    assert response.status_code == status_code
+    body = response.json()
+    assert body["code"] == code
+    assert body["retryable"] is retryable
+    if code in {
+        "UPSTREAM_RESOURCE_NOT_READY",
+        "UPSTREAM_RESOURCE_CONFLICT",
+        "UPSTREAM_READ_FAILED",
+    }:
+        assert body["details"]["category"] == category
+    assert "secret" not in response.text
+    assert "evidence.sqlite3" not in response.text
+
+
+def test_default_composition_calls_t01_production_evidence_port(
+    tmp_path,
+    monkeypatch,
+):
+    calls = []
+
+    def reader(*, run_id: str, question_id: str):
+        calls.append((run_id, question_id))
+        return _adapter().get_evidence_bundle(
+            run_id=run_id,
+            question_id=question_id,
+        )
+
+    monkeypatch.setattr(upstream_module, "get_t01_evidence_bundle", reader)
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    app = create_app(
+        job_store=store,
+        job_runner=_NoopRunner(),
+        auth_policy=HashedAPIKeyAuth({TEST_ACTOR: TEST_TOKEN}),
+        rate_limiter=FixedWindowRateLimiter(limit=10_000, window_seconds=60),
+        artifact_root=tmp_path / "artifacts",
+    )
+
+    with FastAPITestClient(app, headers={"X-API-Key": TEST_TOKEN}) as client:
+        assert isinstance(
+            app.state.upstream_read_port,
+            ProductionOwnerContractAdapter,
+        )
+        job = _job(store)
+        response = client.get(f"/api/v1/jobs/{job.job_id}/evidence")
+
+    assert response.status_code == 200
+    assert response.json()["bundle_id"] == "bundle-run-owner-1"
+    assert calls == [("run-owner-1", "Q001")]
 
 
 def test_t02_adapter_rejects_cross_question_identity():
