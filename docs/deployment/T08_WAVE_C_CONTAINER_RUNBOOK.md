@@ -110,7 +110,7 @@ UI 容器请求 Streamlit 自有 `/_stcore/health`，仅 HTTP 200 才视为健�
 
 | Named volume | 容器路径 | 持久内容 |
 |---|---|---|
-| `sage125-data` | `/opt/sage125/data` | questions、上传资料、RAG 数据；与现有 bootstrap 项目根路径一致 |
+| `sage125-data` | `/opt/sage125/data` | questions、上传资料、RAG 数据；题库为 `DATA_DIR/processed/questions_125.json`，不是仓库 `data/processed` |
 | `sage125-exports` | `/var/lib/sage125/exports` | exports、JobStore SQLite、Feedback SQLite、ArtifactRegistry SQLite、artifact bytes |
 | `sage125-multimodal` | `/var/lib/sage125/multimodal` | T06 三键持久 read store |
 

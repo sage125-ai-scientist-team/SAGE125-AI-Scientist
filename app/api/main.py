@@ -29,6 +29,7 @@ from app.api.errors import (
 )
 from app.api.job_queue import InProcessJobQueue, JobRunner, PipelineJobRunner
 from app.api.job_store import JobStore, SQLiteJobStore
+from app.api.preview_catalog import ensure_preview_catalog
 from app.api.owner_composition import (
     ComposedOwnerContractAdapter,
     FeedbackSubmitPort,
@@ -103,6 +104,7 @@ def create_app(
             capacity=queue_capacity,
             worker_count=worker_count,
         )
+        ensure_preview_catalog()
         application.state.job_store = store
         application.state.job_queue = job_queue
         application.state.upstream_read_port = (

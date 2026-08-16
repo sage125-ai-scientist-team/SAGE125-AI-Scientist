@@ -49,13 +49,10 @@ def _exports_dir() -> Path:
 
 
 def _questions_path() -> Path:
-    """Resolve the configured persistent data root, with a repository fallback."""
-    configured_root = Path(getattr(get_settings(), "data_dir", "data"))
-    if not configured_root.is_absolute():
-        configured_root = PROJECT_ROOT / configured_root
-    configured = configured_root / "processed" / "questions_125.json"
-    repository = PROJECT_ROOT / "data" / "processed" / "questions_125.json"
-    return configured if configured.exists() or not repository.exists() else repository
+    """Resolve the runtime catalog, preferring writable DATA_DIR over the repo tree."""
+    from app.api.preview_catalog import resolve_runtime_questions_path
+
+    return resolve_runtime_questions_path()
 
 
 def _rag_index_status() -> str:
