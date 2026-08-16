@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "question_id": "Q028",
+  "round_index": 2,
+  "based_on_round": 1,
+  "evaluation_scope": "paired_post_hoc_holdout_sensitivity",
+  "control_change": {
+    "field": "decision_threshold",
+    "from": 0.5,
+    "to": 0.4
+  },
+  "seed": 125,
+  "test_fraction": 0.2,
+  "optimizer": {
+    "name": "full_batch_logistic_regression",
+    "learning_rate": 0.05,
+    "iterations": 2000,
+    "l2": 0.001
+  },
+  "required_metrics": [
+    "balanced_accuracy",
+    "malignant_recall",
+    "false_negative_rate"
+  ],
+  "robustness": {
+    "fold_count": 5,
+    "seed": 125,
+    "thresholds": [
+      0.5,
+      0.4
+    ]
+  }
+}
