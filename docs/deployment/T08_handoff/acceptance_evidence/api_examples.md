@@ -1,6 +1,6 @@
 # Final API Examples
 
-状态：`CONTRACT_VERIFIED / PRODUCTION_OWNER_PORTS_WAIT`
+状态：`CONTRACT_VERIFIED / T01_T03SUBMIT_T06_CONNECTED / T02_T03GET_T05_WAIT`
 
 PowerShell setup:
 
@@ -44,16 +44,21 @@ Read status:
 Invoke-RestMethod "$base/api/v1/jobs/$($job.job_id)" -Headers $headers
 ```
 
-Evidence, versions, diff, and multimodal:
+Evidence（T01 生产读口已接通）和 multimodal（T06 已接通）：
 
 ```powershell
 Invoke-RestMethod "$base/api/v1/jobs/$($job.job_id)/evidence" -Headers $headers
+Invoke-RestMethod `
+  "$base/api/v1/jobs/$($job.job_id)/multimodal?version_id=run-id:v2" `
+  -Headers $headers
+```
+
+versions / diff 在 T02 Issue #53 关闭前预期 503，不要把 503 改成成功：
+
+```powershell
 Invoke-RestMethod "$base/api/v1/jobs/$($job.job_id)/versions" -Headers $headers
 Invoke-RestMethod `
   "$base/api/v1/jobs/$($job.job_id)/versions/diff?from_version_id=run-id:v1&to_version_id=run-id:v2" `
-  -Headers $headers
-Invoke-RestMethod `
-  "$base/api/v1/jobs/$($job.job_id)/multimodal?version_id=run-id:v2" `
   -Headers $headers
 ```
 

@@ -1,6 +1,10 @@
 # T08 Wave C 稳定性与恢复报告
 
-状态：`SHORT_HOST_PASS / FORMAL_120_MIN_WAIT_DOCKER`
+状态：`SHORT_HOST_HISTORICAL / FORMAL_120_MIN_WAIT_DOCKER`
+
+2026-08-16 收口：本机仍无 `docker`；`ffmpeg` 可用但无生产闭环可录。
+T01 证据读口已在 composition 接通，不改变正式 7200 秒仍 WAIT 的结论。
+历史 90 秒短测绑定旧 SHA `5471fbd`，不能当作当前 tip 的定量 PASS。
 
 ## 1. 证据有效性
 

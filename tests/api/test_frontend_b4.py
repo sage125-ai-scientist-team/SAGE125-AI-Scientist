@@ -10,7 +10,12 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from frontend.api_client import APIClientError, B4APIClient
-from frontend.view_models import ViewState, classify_job_view, confidence_state
+from frontend.view_models import (
+    ViewState,
+    classify_job_view,
+    confidence_state,
+    empty_question_catalog_message,
+)
 
 
 def _client(handler) -> B4APIClient:
@@ -354,3 +359,15 @@ def test_frontend_client_has_no_filesystem_or_pipeline_fallback():
     assert "pathlib" not in source
     assert "app.workflow" not in source
     assert "read_text(" not in source
+
+
+def test_empty_question_catalog_message_points_to_data_dir():
+    """
+    空题库文案必须指向可写 DATA_DIR，而不是只读仓库树。
+
+    该测试只检查操作员文案契约，不启动 Streamlit，也不读取本地题库文件。
+    """
+    message = empty_question_catalog_message()
+    assert "DATA_DIR/processed/questions_125.json" in message
+    assert "data/processed" in message
+    assert "无法创建任务" in message

@@ -1,38 +1,46 @@
 # Test Output Summary
 
-Current branch: `t08/c-delivery-hardening`
+当前分支：`t08/c-delivery-hardening`
 
-Latest recorded commands:
+记录时间：2026-08-16
+
+工作区：`/Users/amanotooko/Projects/DC2026-2-t08-c`
+
+解释器：`/Users/amanotooko/Projects/DC2026-2/.venv/bin/python`
+
+## 本轮实际命令
 
 ```text
 python -m pytest -q tests/api
-result: 85 passed, 5 warnings
-
-python -m pytest -q tests/api/test_wave_c_container.py tests/api/test_owner_composition.py
-result: 9 passed, 5 warnings
-
-python -m compileall -q app/api tests/api
-result: exit 0
-
-python scripts/eval/wave_a_quality.py lint
-result: failures=[]
-
-python scripts/eval/wave_a_quality.py type
-result: failures=[]
 ```
 
-Full-suite attempt:
+精确结果：
 
 ```text
-1417 passed, 36 skipped, 5 failed
+102 passed, 5 warnings in 9.30s
 ```
 
-Failures were in untouched owner/environment areas:
+5 条 warning 来自既有 Swig/pytest 引导，不是本轮新增失败。
 
-- T09 local environment lacked `ruff` and `coverage` modules: 3 failures;
-- T05 test assumed non-empty `USERNAME`: 1 failure;
-- T06 Windows-path redaction failed on POSIX: 1 failure.
+沙箱内同命令曾出现 `sqlite3.OperationalError: unable to open database file`
+（47 failed）。那是沙箱写限制，不是产品回归。正式记录以无沙箱复跑为准。
 
-T08 API adds a fail-closed check for the T06 path leak without modifying T06 owner code.
+```text
+python -m compileall -q app/api frontend tests/api
+result: exit 0
+```
 
-This file is not final-SHA evidence while the worktree remains uncommitted.
+## 未跑 / 不能当作通过
+
+```text
+docker version                  WAIT  command not found
+docker compose config           WAIT  command not found
+120-minute formal stability     WAIT_NO_DOCKER
+production browser E2E          WAIT_OWNER
+T07 paired review               WAIT
+T09 deployment acceptance       WAIT
+```
+
+全仓 `pytest -q` 本轮未重跑。历史失败在 T09/T05/T06 owner 路径，T08 不改那些测试来“变绿”。
+
+本文件在 closeout commit 之后才会对应最终 SHA。

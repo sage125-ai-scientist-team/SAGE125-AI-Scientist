@@ -88,3 +88,28 @@ def confidence_state(
     if float(confidence) < threshold:
         return ViewState.LOW_CONFIDENCE
     return ViewState.SUCCESS
+
+
+def empty_question_catalog_message() -> str:
+    """
+    构造问题列表为空时的操作员可见文案。
+
+    函数职责：
+        前端不得把空列表解释成“系统正常但没有题目”，也不得提示去改
+        只读仓库 ``data/processed``。Render preview 的可写根是 ``DATA_DIR``，
+        T08 API 启动时应把 preview seed 写到
+        ``DATA_DIR/processed/questions_125.json``。
+
+    返回值：
+        一段可直接交给 Streamlit ``st.warning`` 的中文说明。该字符串不包含
+        本地绝对路径、密钥或内部表名。
+
+    不做什么：
+        不探测文件系统，不补种题库，不把 ``preview_seed`` 标成 booklet gold。
+        题库真源仍是 API ``GET /questions`` / ``GET /api/v1/questions``。
+    """
+    return (
+        "问题列表为空或不可用，无法创建任务。"
+        "Preview 必须把题库写到 DATA_DIR/processed/questions_125.json，"
+        "不能只写只读仓库 data/processed。"
+    )

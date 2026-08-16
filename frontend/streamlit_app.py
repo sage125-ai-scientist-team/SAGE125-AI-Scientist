@@ -19,7 +19,12 @@ if str(PROJECT_ROOT) not in sys.path:
 import streamlit as st
 
 from frontend.api_client import APIClientError, B4APIClient
-from frontend.view_models import ViewState, classify_job_view, confidence_state
+from frontend.view_models import (
+    ViewState,
+    classify_job_view,
+    confidence_state,
+    empty_question_catalog_message,
+)
 
 
 st.set_page_config(
@@ -429,7 +434,7 @@ def main() -> None:
     items = (questions or {}).get("items") or []
     st.subheader("启动任务")
     if not items:
-        st.info("问题列表为空或不可用，无法创建任务。")
+        st.warning(empty_question_catalog_message())
     else:
         labels = {
             f"{item.get('question_id')} · {item.get('domain')} · {item.get('question')}": item
