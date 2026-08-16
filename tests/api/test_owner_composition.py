@@ -1,9 +1,13 @@
-"""T08 thin-composition tests for frozen T03 and T06 owner ports."""
+"""T08 thin-composition tests for frozen T01, T03 and T06 owner ports."""
 
 from __future__ import annotations
 
+import json
+from functools import partial
+from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.api import owner_composition
@@ -12,15 +16,29 @@ from app.api.contracts import JobCreateRequest, JobStatus
 from app.api.job_store import SQLiteJobStore
 from app.api.main import create_app
 from app.api.owner_composition import (
+    ComposedOwnerContractAdapter,
+    T01EvidenceReadAdapter,
     T03FeedbackSubmitAdapter,
     T06MultimodalReadAdapter,
 )
+from app.api.upstream import FilesystemQuestionOwnerAdapter
+from app.contracts.evidence import EvidenceBundle
+from app.evidence.read_port import (
+    EvidencePortError,
+    SqliteEvidenceBundleStore,
+    get_evidence_bundle,
+    save_evidence_bundle,
+)
+from app.evidence.store import reset_default_store_for_tests
 from app.contracts.multimodal import MultimodalArtifact
 from app.feedback import SQLiteFeedbackStore
 from app.multimodal.read_port import (
     MultimodalArtifactStore,
     put_multimodal_artifact,
 )
+
+
+FIXTURES = Path(__file__).with_name("fixtures")
 
 
 OWNER_TOKEN = "owner-test-token"
@@ -34,8 +52,8 @@ class _NoopRunner:
         raise AssertionError("owner composition tests do not run the pipeline")
 
 
-def _application(tmp_path):
-    """Create isolated T08/T03/T06 stores and an authenticated test app."""
+def _application(tmp_path, *, upstream_read_port=None):
+    """Create isolated T08/T01/T03/T06 stores and an authenticated test app."""
     job_store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
     job_store.initialize()
     feedback_store = SQLiteFeedbackStore(tmp_path / "feedback.sqlite3")
@@ -43,6 +61,7 @@ def _application(tmp_path):
     application = create_app(
         job_store=job_store,
         job_runner=_NoopRunner(),
+        upstream_read_port=upstream_read_port,
         auth_policy=HashedAPIKeyAuth({"owner-user": OWNER_TOKEN}),
         rate_limiter=FixedWindowRateLimiter(
             limit=10_000,
@@ -329,3 +348,137 @@ def test_multimodal_route_maps_invalid_owner_identity_and_documents_success(
     assert feedback_responses["202"]["content"]["application/json"]["example"][
         "status"
     ] == "submitted"
+
+
+def _evidence_bundle():
+    """Load the frozen T01 fixture without treating it as a production store."""
+    return json.loads((FIXTURES / "evidence_bundle.json").read_text(encoding="utf-8"))
+
+
+def test_default_composition_uses_t01_evidence_port_not_filesystem_stub():
+    """Production default must compose T01 instead of the Wave B unavailable stub."""
+    adapter = ComposedOwnerContractAdapter(FIXTURES / "question_items.json")
+
+    assert isinstance(adapter, FilesystemQuestionOwnerAdapter)
+    assert isinstance(adapter._evidence_port, T01EvidenceReadAdapter)
+
+
+def test_t01_evidence_adapter_reads_persisted_bundle_after_restart(tmp_path):
+    """Restarted T01 SQLite store remains the only evidence source."""
+    database = tmp_path / "t01-evidence.sqlite3"
+    writer = SqliteEvidenceBundleStore(database)
+    expected = save_evidence_bundle(
+        run_id="run-owner-1",
+        question_id="Q001",
+        bundle=EvidenceBundle.model_validate(_evidence_bundle()),
+        store=writer,
+    )
+    restarted = SqliteEvidenceBundleStore(database)
+    application, jobs, _feedback, _multimodal = _application(
+        tmp_path,
+        upstream_read_port=ComposedOwnerContractAdapter(
+            FIXTURES / "question_items.json",
+            evidence_port=T01EvidenceReadAdapter(
+                reader=partial(get_evidence_bundle, store=restarted),
+            ),
+        ),
+    )
+    job = _owner_job(jobs)
+
+    with TestClient(application) as client:
+        response = client.get(
+            f"/api/v1/jobs/{job.job_id}/evidence",
+            headers=OWNER_HEADERS,
+        )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["bundle_id"] == expected.bundle_id
+    assert body["items"][0]["quoted_text"].startswith("Catalyst A")
+    assert body["items"][0]["locator"] == {"page": 7, "section": "Results"}
+    assert body["items"][0]["content_hash"] == "sha256:owner-evidence-001"
+
+
+def test_t01_empty_store_is_not_found_without_path_leak(tmp_path, monkeypatch):
+    """Empty T01 store is 404, never a fake empty 200 or local path leak."""
+    monkeypatch.setenv(
+        "T01_EVIDENCE_STORE_PATH",
+        str(tmp_path / "empty-evidence.sqlite3"),
+    )
+    reset_default_store_for_tests()
+    try:
+        application, jobs, _feedback, _multimodal = _application(tmp_path)
+        job = _owner_job(jobs)
+        with TestClient(application) as client:
+            response = client.get(
+                f"/api/v1/jobs/{job.job_id}/evidence",
+                headers=OWNER_HEADERS,
+            )
+    finally:
+        reset_default_store_for_tests()
+
+    assert response.status_code == 404
+    assert response.json()["code"] == "UPSTREAM_RESOURCE_NOT_FOUND"
+    assert response.json()["retryable"] is False
+    assert "empty-evidence.sqlite3" not in response.text
+    assert str(tmp_path) not in response.text
+
+
+@pytest.mark.parametrize(
+    ("category", "owner_retryable", "status_code", "code", "retryable"),
+    [
+        ("not_found", False, 404, "UPSTREAM_RESOURCE_NOT_FOUND", False),
+        ("not_ready", False, 409, "UPSTREAM_RESOURCE_NOT_READY", False),
+        ("invalid_contract", False, 503, "UPSTREAM_CONTRACT_INVALID", False),
+        ("identity_mismatch", False, 409, "UPSTREAM_IDENTITY_MISMATCH", False),
+        ("conflict", False, 409, "UPSTREAM_RESOURCE_CONFLICT", False),
+        ("retryable_upstream_failure", True, 503, "UPSTREAM_READ_FAILED", True),
+        (
+            "non_retryable_upstream_failure",
+            False,
+            503,
+            "UPSTREAM_READ_FAILED",
+            False,
+        ),
+        ("unavailable", False, 503, "UPSTREAM_CONTRACT_UNAVAILABLE", False),
+    ],
+)
+def test_t01_evidence_errors_are_mapped_without_owner_details(
+    tmp_path,
+    category,
+    owner_retryable,
+    status_code,
+    code,
+    retryable,
+):
+    """Map T01 categories through owner_composition, never owner exception text."""
+
+    def reader(*, run_id: str, question_id: str):
+        del run_id, question_id
+        raise EvidencePortError(
+            category,
+            r"owner detail C:\secret\evidence.sqlite3 must not escape",
+            retryable=owner_retryable,
+        )
+
+    application, jobs, _feedback, _multimodal = _application(
+        tmp_path,
+        upstream_read_port=ComposedOwnerContractAdapter(
+            FIXTURES / "question_items.json",
+            evidence_port=T01EvidenceReadAdapter(reader=reader),
+        ),
+    )
+    job = _owner_job(jobs)
+
+    with TestClient(application) as client:
+        response = client.get(
+            f"/api/v1/jobs/{job.job_id}/evidence",
+            headers=OWNER_HEADERS,
+        )
+
+    assert response.status_code == status_code
+    body = response.json()
+    assert body["code"] == code
+    assert body["retryable"] is retryable
+    assert "secret" not in response.text
+    assert "evidence.sqlite3" not in response.text

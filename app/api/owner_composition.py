@@ -1,4 +1,4 @@
-"""T08 thin adapters for frozen T03 and T06 owner ports.
+"""T08 thin adapters for frozen T01, T03 and T06 owner ports.
 
 The adapters in this module translate transport-neutral owner contracts into
 API-owned projections.  They deliberately do not read owner-private tables,
@@ -10,11 +10,18 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Literal, Protocol, runtime_checkable
 
 from pydantic import ValidationError
 
 from app.api.contracts import MultimodalDetailProjection
+from app.api.upstream import FilesystemQuestionOwnerAdapter
+from app.contracts.evidence import EvidenceBundle
+from app.evidence.read_port import (
+    EvidencePortError,
+    get_evidence_bundle as get_t01_evidence_bundle,
+)
 from app.feedback import (
     DefaultFeedbackService,
     FeedbackConflict,
@@ -39,6 +46,11 @@ OwnerFailureCategory = Literal[
     "conflict",
     "identity_mismatch",
     "unavailable",
+    "not_found",
+    "not_ready",
+    "invalid_contract",
+    "resource_conflict",
+    "read_failed",
 ]
 _WINDOWS_ABSOLUTE_PATH = re.compile(r"^[A-Za-z]:[\\/]")
 
@@ -108,6 +120,148 @@ class _RequestBoundSubmitAuthorizer:
             and actor_id == self.actor_id
             and run_id == self.run_id
             and question_id == self.question_id
+        )
+
+
+@runtime_checkable
+class EvidenceBundleReader(Protocol):
+    """Frozen callable shape exported by the T01 production read port."""
+
+    def __call__(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle: ...
+
+
+@runtime_checkable
+class EvidenceReadPort(Protocol):
+    """API-facing subset of the frozen T01 evidence read port."""
+
+    def get_evidence_bundle(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle: ...
+
+
+class T01EvidenceReadAdapter:
+    """Read EvidenceBundle only through T01's public callable.
+
+    本适配器不得打开 T01 SQLite schema、扫描 ``evidence_cards.json``，
+    也不得把 fixture 或旧 exports 包装成生产成功。
+    """
+
+    _COMPONENT = "T01 EvidenceBundle"
+    _CATEGORY_MAP: dict[str, OwnerFailureCategory] = {
+        "not_found": "not_found",
+        "not_ready": "not_ready",
+        "invalid_contract": "invalid_contract",
+        "identity_mismatch": "identity_mismatch",
+        "conflict": "resource_conflict",
+        "retryable_upstream_failure": "read_failed",
+        "non_retryable_upstream_failure": "read_failed",
+        "unavailable": "unavailable",
+    }
+
+    def __init__(
+        self,
+        reader: EvidenceBundleReader | None = None,
+    ) -> None:
+        """
+        绑定 T01 公开读函数。
+
+        参数：
+            reader: 可选测试注入。缺省为
+                ``app.evidence.read_port.get_evidence_bundle``。
+        """
+        self._reader = reader or get_t01_evidence_bundle
+
+    def get_evidence_bundle(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle:
+        """
+        按 ``run_id + question_id`` 读取权威 EvidenceBundle。
+
+        参数：
+            run_id: 已绑定的上游运行 ID。
+            question_id: 当前任务题目 ID。
+
+        返回：
+            再次 Schema 校验后的 ``EvidenceBundle``。
+
+        异常：
+            OwnerPortFailure: 按 T01 category 映射，不透传路径或异常原文。
+        """
+        try:
+            payload = self._reader(
+                run_id=run_id,
+                question_id=question_id,
+            )
+        except EvidencePortError as exc:
+            category = self._CATEGORY_MAP.get(exc.category, "invalid_contract")
+            raise OwnerPortFailure(
+                component=self._COMPONENT,
+                category=category,
+                retryable=bool(exc.retryable),
+            ) from None
+        try:
+            return EvidenceBundle.model_validate(payload)
+        except (TypeError, ValueError, ValidationError) as exc:
+            raise OwnerPortFailure(
+                component=self._COMPONENT,
+                category="invalid_contract",
+                retryable=False,
+            ) from exc
+
+
+class ComposedOwnerContractAdapter(FilesystemQuestionOwnerAdapter):
+    """Compose T07 questions with the T01 evidence port.
+
+    T02 versions/diff stay fail-closed on the inherited filesystem adapter
+    until a frozen production read port exists.
+    """
+
+    def __init__(
+        self,
+        questions_path: str | Path,
+        *,
+        evidence_port: EvidenceReadPort | None = None,
+    ) -> None:
+        """
+        组装默认生产读端口。
+
+        参数：
+            questions_path: T07 ``QuestionItem`` JSON 路径。
+            evidence_port: 可选 T01 适配器；缺省 ``T01EvidenceReadAdapter``。
+        """
+        super().__init__(questions_path)
+        self._evidence_port = evidence_port or T01EvidenceReadAdapter()
+
+    def get_evidence_bundle(
+        self,
+        *,
+        run_id: str,
+        question_id: str,
+    ) -> EvidenceBundle:
+        """
+        委托 T01 组合端口，不读取文件系统证据夹具。
+
+        参数：
+            run_id: 已绑定的上游运行 ID。
+            question_id: 当前任务题目 ID。
+
+        返回：
+            T01 权威 ``EvidenceBundle``。
+        """
+        return self._evidence_port.get_evidence_bundle(
+            run_id=run_id,
+            question_id=question_id,
         )
 
 
@@ -301,10 +455,14 @@ class T06MultimodalReadAdapter:
 
 
 __all__ = [
+    "ComposedOwnerContractAdapter",
+    "EvidenceBundleReader",
+    "EvidenceReadPort",
     "FeedbackSubmissionResult",
     "FeedbackSubmitPort",
     "MultimodalReadPort",
     "OwnerPortFailure",
+    "T01EvidenceReadAdapter",
     "T03FeedbackSubmitAdapter",
     "T06MultimodalReadAdapter",
 ]

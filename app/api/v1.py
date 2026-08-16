@@ -508,6 +508,8 @@ def _upstream_unavailable(component: str) -> None:
 def _owner_call(component: str, operation):
     try:
         return operation()
+    except OwnerPortFailure as exc:
+        _raise_owner_port_failure(exc)
     except OwnerContractUnavailable as exc:
         _upstream_unavailable(exc.component)
     except OwnerIdentityMismatch as exc:
@@ -537,7 +539,7 @@ def _owner_call(component: str, operation):
 
 
 def _raise_owner_port_failure(exc: OwnerPortFailure) -> NoReturn:
-    """Map safe T03/T06 adapter categories to stable HTTP errors."""
+    """Map safe T01/T03/T06 adapter categories to stable HTTP errors."""
     mappings = {
         "invalid_input": (
             422,
@@ -569,16 +571,51 @@ def _raise_owner_port_failure(exc: OwnerPortFailure) -> NoReturn:
             "UPSTREAM_CONTRACT_UNAVAILABLE",
             "owner 公开端口当前不可用。",
         ),
+        "not_found": (
+            404,
+            "UPSTREAM_RESOURCE_NOT_FOUND",
+            "上游资源不存在。",
+        ),
+        "not_ready": (
+            409,
+            "UPSTREAM_RESOURCE_NOT_READY",
+            "上游资源尚未就绪。",
+        ),
+        "invalid_contract": (
+            503,
+            "UPSTREAM_CONTRACT_INVALID",
+            "上游返回的数据不符合冻结契约。",
+        ),
+        "resource_conflict": (
+            409,
+            "UPSTREAM_RESOURCE_CONFLICT",
+            "上游资源存在冲突。",
+        ),
+        "read_failed": (
+            503,
+            "UPSTREAM_READ_FAILED",
+            "上游资源读取失败。",
+        ),
     }
     status_code, code, message = mappings[exc.category]
+    t01_missing = {
+        "not_found",
+        "not_ready",
+        "invalid_contract",
+        "resource_conflict",
+        "read_failed",
+    }
     raise APIError(
         status_code=status_code,
         code=code,
         message=message,
         details={
             "component": exc.component,
+            "category": exc.category,
             "availability": (
-                "unavailable" if status_code == 503 else "available"
+                "unavailable"
+                if status_code == 503 or exc.category in t01_missing
+                else "available"
             ),
         },
         retryable=exc.retryable,

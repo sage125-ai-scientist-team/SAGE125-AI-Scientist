@@ -30,13 +30,14 @@ from app.api.errors import (
 from app.api.job_queue import InProcessJobQueue, JobRunner, PipelineJobRunner
 from app.api.job_store import JobStore, SQLiteJobStore
 from app.api.owner_composition import (
+    ComposedOwnerContractAdapter,
     FeedbackSubmitPort,
     MultimodalReadPort,
     T03FeedbackSubmitAdapter,
     T06MultimodalReadAdapter,
 )
 from app.api.routes import _questions_path, router
-from app.api.upstream import FilesystemQuestionOwnerAdapter, OwnerContractReadPort
+from app.api.upstream import OwnerContractReadPort
 from app.api.v1 import router as v1_router
 from app.export.canonical import (
     CanonicalReportSource,
@@ -105,7 +106,7 @@ def create_app(
         application.state.job_store = store
         application.state.job_queue = job_queue
         application.state.upstream_read_port = (
-            upstream_read_port or FilesystemQuestionOwnerAdapter(_questions_path())
+            upstream_read_port or ComposedOwnerContractAdapter(_questions_path())
         )
         application.state.auth_policy = (
             auth_policy or HashedAPIKeyAuth.from_environment()
