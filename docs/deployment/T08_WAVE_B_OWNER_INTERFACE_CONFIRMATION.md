@@ -38,7 +38,7 @@ API-only 前端的交付骨架，但生产默认 composition 仍对部分 owner 
 
 | Owner | 已存在公开契约 | 当前生产接线 | Wave B 阻断 |
 |---|---|---|---|
-| T01 | `EvidenceCardContract`、`ClaimEvidenceLink`、`EvidenceBundle` | 默认 adapter 仅能读取问题清单；evidence 固定 unavailable | 无法展示真实 evidence quote、locator、关系与 provenance |
+| T01 | `EvidenceCardContract`、`ClaimEvidenceLink`、`EvidenceBundle`；PR #43 `app.evidence.read_port.get_evidence_bundle` | 默认 `ProductionOwnerContractAdapter` 只调用该公开端口 | 已接线；空 store 为 404，不得用 fixture 冒充 |
 | T02 | `ReviewFeedback`、`IssueClosure`、`PlanVersion`、`PlanVersionStore` | fixture 可读；没有确认的持久化 read/diff 端口 | versions/diff 生产返回 unavailable，停止原因和评分差异无权威来源 |
 | T03 | `FeedbackRecord`、`FeedbackDecision`、`GateResult`、`ValidationReport`；`FeedbackService`、`FeedbackStore`、`ValidationService` | T08 feedback 路由固定返回 503；canonical report 未接 Gate source | 人工反馈不能进入闭环，不能读取权威 decision、resulting version 或 Gate |
 | T05 | `ExecutionResult`、`ArtifactManifest` | 有 runner，但未发现按 run 读取已持久结果的公开端口 | 导出和 UI 无法读取权威执行结果；生产 canonical source 默认 unavailable |
@@ -57,7 +57,7 @@ API-only 前端的交付骨架，但生产默认 composition 仍对部分 owner 
 
 | Owner | PR 回复 | 结论 | T08 当前动作 | 尚需确认/交付 |
 |---|---|---|---|---|
-| T01 | [issuecomment-5250445405](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/39#issuecomment-5250445405) | `CONDITIONAL_AGREE` | `get_evidence_bundle` 边界已按 `run_id + question_id` 收紧；production 继续 unavailable | 队长批准 T01 小 PR、权威持久化位置及 owner read port 落地 |
+| T01 | [issuecomment-5250445405](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/39#issuecomment-5250445405)、[PR #43](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/43) | `CONDITIONAL_AGREE`；read port 已合并 | 默认 composition 调用 `get_evidence_bundle`；错误按 category 映射 | T02/T03/T05/T06 生产端口与 Wave C composition 对齐仍待做 |
 | T02 | [PR #10](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/10)、[PR #21](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/21)、[Open PR #37](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/37)、integration | merged contract/audit found；checkpoint candidate 未合并；production read gap | T08 proposed fixture/read boundary 已绑定 run+question；不把 in-process store/checkpoint/AgentTrace 当 production history | 按 question 绑定的持久 version/diff read port 仍缺失 |
 | T03 | [PR #14](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/14)、[Draft PR #32](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/32)、integration | Wave A merged；Wave B candidate 未合并 | feedback submit/status 继续 503；Gate 不自行计算 | production store/orchestration/read port 未进 integration；共享契约冲突待 T03/队长处理 |
 | T05 | [issuecomment-5250843063](https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/39#issuecomment-5250843063) | `CONDITIONAL_AGREE` | 仅保留 typed projection；production execution/report 继续 unavailable | 队长批准 T05 history store、re-attestation read port 与受控 resolver |

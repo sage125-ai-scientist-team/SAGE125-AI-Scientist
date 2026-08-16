@@ -191,6 +191,11 @@ worker 只有在 adapter 通过冻结 owner 契约明确提供以下全部证明
 
 ## 5. Artifact、Version、Feedback 候选契约与当前 503
 
+2026-08-16 更新：`GET /api/v1/jobs/{job_id}/evidence` 已接通 T01
+`get_evidence_bundle` 生产读端口。映射、空 store 语义与禁止事项见
+`docs/deployment/T08_T01_PRODUCTION_EVIDENCE_PORT.md`。versions / feedback
+仍失败关闭。
+
 以下 DTO 保留在 `app/api/contracts.py` 作为未来候选契约。当前五个 operation
 只声明实际可达的 400、404、422、500、503，其中 503 schema 指向
 `ErrorResponse`；不存在 200/202 unavailable 成功体。

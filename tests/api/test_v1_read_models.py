@@ -26,6 +26,7 @@ from app.evidence.read_port import (
     get_evidence_bundle,
     save_evidence_bundle,
 )
+from app.evidence.store import reset_default_store_for_tests
 
 
 FIXTURES = Path(__file__).with_name("fixtures")
@@ -243,6 +244,39 @@ def test_production_evidence_errors_are_stably_mapped_without_owner_details(
         assert body["details"]["category"] == category
     assert "secret" not in response.text
     assert "evidence.sqlite3" not in response.text
+
+
+def test_default_production_evidence_empty_store_is_not_found(
+    tmp_path,
+    monkeypatch,
+):
+    """空 T01 store 必须 404，且不得泄露本地路径。"""
+    monkeypatch.setenv(
+        "T01_EVIDENCE_STORE_PATH",
+        str(tmp_path / "empty-evidence.sqlite3"),
+    )
+    reset_default_store_for_tests()
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    app = create_app(
+        job_store=store,
+        job_runner=_NoopRunner(),
+        auth_policy=HashedAPIKeyAuth({TEST_ACTOR: TEST_TOKEN}),
+        rate_limiter=FixedWindowRateLimiter(limit=10_000, window_seconds=60),
+        artifact_root=tmp_path / "artifacts",
+    )
+
+    try:
+        with FastAPITestClient(app, headers={"X-API-Key": TEST_TOKEN}) as client:
+            job = _job(store)
+            response = client.get(f"/api/v1/jobs/{job.job_id}/evidence")
+    finally:
+        reset_default_store_for_tests()
+
+    assert response.status_code == 404
+    assert response.json()["code"] == "UPSTREAM_RESOURCE_NOT_FOUND"
+    assert response.json()["retryable"] is False
+    assert "empty-evidence.sqlite3" not in response.text
+    assert str(tmp_path) not in response.text
 
 
 def test_default_composition_calls_t01_production_evidence_port(

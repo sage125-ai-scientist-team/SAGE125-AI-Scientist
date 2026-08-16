@@ -83,7 +83,9 @@ Invoke-RestMethod -Headers $headers `
 当前默认 production composition 的预期结果：
 
 - 尚无 `upstream_run_id`：`409 UPSTREAM_RESULT_NOT_READY`；
-- owner port 未注入：`503 UPSTREAM_CONTRACT_UNAVAILABLE`；
+- T01 尚未写入该 identity：`404 UPSTREAM_RESOURCE_NOT_FOUND`；
+- T01 `not_ready` / `conflict`：`409`，见 `docs/deployment/T08_T01_PRODUCTION_EVIDENCE_PORT.md`；
+- T02 versions/diff 仍未注入：`503 UPSTREAM_CONTRACT_UNAVAILABLE`；
 - canonical source 未注入：`503 CANONICAL_REPORT_UNAVAILABLE`；
 - run/question identity 不一致：`409 UPSTREAM_IDENTITY_MISMATCH`。
 

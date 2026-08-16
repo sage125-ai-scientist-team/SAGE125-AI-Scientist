@@ -53,7 +53,12 @@ class OwnerIdentityMismatch(OwnerReadError):
 
 
 class OwnerReadFailure(OwnerReadError):
-    """Sanitized owner failure with a stable category and retry policy."""
+    """Sanitized owner failure with a stable category and retry policy.
+
+    The HTTP layer may expose ``component``, ``category`` and ``retryable``.
+    It must not serialize the original owner exception text, file path or
+    store internals.
+    """
 
     def __init__(
         self,
@@ -62,6 +67,14 @@ class OwnerReadFailure(OwnerReadError):
         *,
         retryable: bool,
     ) -> None:
+        """
+        记录可映射的 owner 失败类别。
+
+        参数：
+            component: 上游组件名，例如 ``T01 EvidenceBundle``。
+            category: T01 ``EvidencePortError.category``。
+            retryable: 是否允许调用方重试；必须与 owner 声明一致。
+        """
         super().__init__(f"{component}: {category}")
         self.component = component
         self.category = category
@@ -219,6 +232,14 @@ class ProductionOwnerContractAdapter(FilesystemQuestionOwnerAdapter):
         *,
         evidence_reader: EvidenceBundleReader | None = None,
     ) -> None:
+        """
+        绑定 T07 问题源与 T01 公开读函数。
+
+        参数：
+            questions_path: T07 ``QuestionItem`` JSON 路径。
+            evidence_reader: 可选测试注入；缺省为
+                ``app.evidence.read_port.get_evidence_bundle``。
+        """
         super().__init__(questions_path)
         self._evidence_reader = evidence_reader or get_t01_evidence_bundle
 
@@ -228,6 +249,22 @@ class ProductionOwnerContractAdapter(FilesystemQuestionOwnerAdapter):
         run_id: str,
         question_id: str,
     ) -> EvidenceBundle:
+        """
+        按 identity 读取 T01 权威 EvidenceBundle。
+
+        参数：
+            run_id: 已绑定的上游运行 ID。
+            question_id: 当前任务题目 ID。
+
+        返回：
+            再次 Schema 校验后的 ``EvidenceBundle``。
+
+        异常：
+            OwnerResourceNotFound: T01 ``not_found``。
+            OwnerIdentityMismatch: T01 ``identity_mismatch``。
+            OwnerContractInvalid: 非法契约或未知 category。
+            OwnerReadFailure: not_ready / conflict / 上下游故障。
+        """
         try:
             payload = self._evidence_reader(
                 run_id=run_id,
