@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "suite_id": "T03-WAVE-C-SECURITY-STABILITY-001",
+  "owner": "T03",
+  "minimum_required_cases": 12,
+  "scope": [
+    "app/feedback/**",
+    "app/validation/**",
+    "app/quality/**",
+    "app/contracts/validation.py"
+  ],
+  "execution_mode": "offline_deterministic_regression",
+  "cases": [
+    {
+      "case_id": "T03-C-SEC-001",
+      "category": "malicious_feedback",
+      "variant": "english_prompt_injection",
+      "expected_boundary": "feedback_safety_policy",
+      "expected_outcome": "auto_rejected_no_revision",
+      "covered_by": "test_prompt_injection_is_auto_rejected_and_audit_survives_restart"
+    },
+    {
+      "case_id": "T03-C-SEC-002",
+      "category": "malicious_feedback",
+      "variant": "chinese_prompt_injection",
+      "expected_boundary": "feedback_safety_policy",
+      "expected_outcome": "auto_rejected_no_revision",
+      "covered_by": "test_prompt_injection_is_auto_rejected_and_audit_survives_restart"
+    },
+    {
+      "case_id": "T03-C-SEC-003",
+      "category": "input_limits",
+      "variant": "feedback_10001_characters",
+      "expected_boundary": "feedback_input_validation",
+      "expected_outcome": "rejected_before_storage",
+      "covered_by": "test_oversized_or_control_feedback_fails_before_storage"
+    },
+    {
+      "case_id": "T03-C-SEC-004",
+      "category": "input_controls",
+      "variant": "nul_control_character",
+      "expected_boundary": "feedback_input_validation",
+      "expected_outcome": "rejected_before_storage",
+      "covered_by": "test_oversized_or_control_feedback_fails_before_storage"
+    },
+    {
+      "case_id": "T03-C-SEC-005",
+      "category": "input_controls",
+      "variant": "bidi_override_character",
+      "expected_boundary": "feedback_input_validation",
+      "expected_outcome": "rejected_before_storage",
+      "covered_by": "test_oversized_or_control_feedback_fails_before_storage"
+    },
+    {
+      "case_id": "T03-C-SEC-006",
+      "category": "missing_artifact",
+      "variant": "research_plan_absent",
+      "expected_boundary": "validation_contract",
+      "expected_outcome": "schema_rejected",
+      "covered_by": "test_each_required_artifact_is_fail_closed_at_contract_boundary"
+    },
+    {
+      "case_id": "T03-C-SEC-007",
+      "category": "missing_artifact",
+      "variant": "evidence_cards_absent",
+      "expected_boundary": "validation_contract",
+      "expected_outcome": "schema_rejected",
+      "covered_by": "test_each_required_artifact_is_fail_closed_at_contract_boundary"
+    },
+    {
+      "case_id": "T03-C-SEC-008",
+      "category": "missing_artifact",
+      "variant": "agent_trace_absent",
+      "expected_boundary": "validation_contract",
+      "expected_outcome": "schema_rejected",
+      "covered_by": "test_each_required_artifact_is_fail_closed_at_contract_boundary"
+    },
+    {
+      "case_id": "T03-C-SEC-009",
+      "category": "missing_artifact",
+      "variant": "execution_metadata_absent",
+      "expected_boundary": "validation_contract",
+      "expected_outcome": "schema_rejected",
+      "covered_by": "test_each_required_artifact_is_fail_closed_at_contract_boundary"
+    },
+    {
+      "case_id": "T03-C-SEC-010",
+      "category": "missing_artifact",
+      "variant": "question_item_absent",
+      "expected_boundary": "validation_contract",
+      "expected_outcome": "schema_rejected",
+      "covered_by": "test_each_required_artifact_is_fail_closed_at_contract_boundary"
+    },
+    {
+      "case_id": "T03-C-SEC-011",
+      "category": "evidence_integrity",
+      "variant": "fabricated_reference_id",
+      "expected_boundary": "quality_gates",
+      "expected_outcome": "p0_blocked",
+      "covered_by": "test_fabricated_reference_is_a_p0_blocker"
+    },
+    {
+      "case_id": "T03-C-SEC-012",
+      "category": "execution_truth",
+      "variant": "actual_execution_without_runner_proof",
+      "expected_boundary": "quality_gates",
+      "expected_outcome": "p0_blocked",
+      "covered_by": "test_false_actual_execution_claim_is_blocked"
+    },
+    {
+      "case_id": "T03-C-SEC-013",
+      "category": "identity_isolation",
+      "variant": "cross_run_trace",
+      "expected_boundary": "validation_contract",
+      "expected_outcome": "schema_rejected",
+      "covered_by": "test_cross_run_question_or_version_artifacts_fail_closed"
+    },
+    {
+      "case_id": "T03-C-SEC-014",
+      "category": "identity_isolation",
+      "variant": "cross_question_plan",
+      "expected_boundary": "validation_contract",
+      "expected_outcome": "schema_rejected",
+      "covered_by": "test_cross_run_question_or_version_artifacts_fail_closed"
+    },
+    {
+      "case_id": "T03-C-SEC-015",
+      "category": "identity_isolation",
+      "variant": "cross_version_execution_metadata",
+      "expected_boundary": "validation_contract",
+      "expected_outcome": "schema_rejected",
+      "covered_by": "test_cross_run_question_or_version_artifacts_fail_closed"
+    },
+    {
+      "case_id": "T03-C-SEC-016",
+      "category": "replay_safety",
+      "variant": "duplicate_same_request",
+      "expected_boundary": "sqlite_idempotency",
+      "expected_outcome": "one_record_one_lineage",
+      "covered_by": "test_duplicate_submission_is_single_write_and_single_lineage"
+    },
+    {
+      "case_id": "T03-C-SEC-017",
+      "category": "replay_safety",
+      "variant": "same_key_changed_payload",
+      "expected_boundary": "sqlite_idempotency",
+      "expected_outcome": "conflict_original_unchanged",
+      "covered_by": "test_idempotency_key_cannot_be_reused_for_changed_payload"
+    },
+    {
+      "case_id": "T03-C-SEC-018",
+      "category": "concurrency",
+      "variant": "twelve_simultaneous_duplicate_submissions",
+      "expected_boundary": "sqlite_transaction",
+      "expected_outcome": "one_record_no_lineage_fork",
+      "covered_by": "test_concurrent_duplicate_submission_never_forks_audit"
+    },
+    {
+      "case_id": "T03-C-SEC-019",
+      "category": "restart_recovery",
+      "variant": "blocked_report_retry_then_restart",
+      "expected_boundary": "validation_audit_writer",
+      "expected_outcome": "one_complete_hash_bound_parent_chain",
+      "covered_by": "test_blocked_validation_audit_chain_survives_retry_and_restart"
+    },
+    {
+      "case_id": "T03-C-SEC-020",
+      "category": "tamper_detection",
+      "variant": "sqlite_lineage_payload_replaced",
+      "expected_boundary": "sqlite_snapshot_validation",
+      "expected_outcome": "corrupt_snapshot_error_no_silent_repair",
+      "covered_by": "test_tampered_sqlite_snapshot_is_not_silently_loaded_or_repaired"
+    }
+  ]
+}

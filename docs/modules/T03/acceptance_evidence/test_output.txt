@@ -1,0 +1,59 @@
+T03 Wave C local acceptance evidence
+Recorded: 2026-08-12 Asia/Shanghai
+Base: integration/2026-08-10@20592a0eeb9924d021e3ec75ec28d27e2f971e9f
+Evidence commit: 815b7fee98f45034964f3eb27816358a924340d7
+Mode: offline/local; no production API, live batch, provider, or T08
+
+1. Calibration reproduction
+   python docs/modules/T03/wave_c/run_calibration.py --verify-only
+   exit 0
+   12 synthetic contract fixtures / 24 cases
+   positive 12/12 passed; negative 12/12 blocked
+   false_block=0; false_pass=0; expectation_mismatch=0
+   semantic_digest=fb628528a79078602047f068a10b17a0a9f77e2e7a406b512da19ed0b1bf6303
+
+2. T03 validation suite
+   python -m pytest -q tests/validation
+   137 passed / 0 failed / 0 skipped
+
+3. Security and stability
+   python -m pytest -q tests/validation/test_wave_c_security_stability.py
+   21 passed (20 cases + 1 evidence consistency check)
+
+4. Q028 receipt and T07 frozen boundary
+   python -m pytest -q tests/validation/test_wave_c_flagship_t07_pairing.py
+   4 passed
+   Q028 receipt sha256=c780df9f1504f60855faac4226f55dd972ba30631bbb47306727720c5e83cde4
+   Actual receipt without native T03 AgentTrace: blocked/draft (fail closed)
+   Direct T03 GateResult -> T07 aggregate boundary: pass fixture remains passed;
+   missing-evidence fixture remains blocked. Default T07 adapter not exercised.
+
+5. Target pairing regression
+   python -m pytest -q tests/validation/test_wave_c_flagship_t07_pairing.py tests/validation/test_t02_t03_final_pairing_recheck.py tests/batch/test_completion_gate.py
+   30 passed
+
+6. Static repository checks
+   python scripts/eval/wave_a_quality.py lint
+   failures=[]
+   python scripts/eval/wave_a_quality.py type
+   failures=[]
+
+7. Broader local unit suite (final clean rerun)
+   python -m pytest -q --ignore=tests/integration
+   1373 passed / 41 skipped / 0 failed
+   The 41 skips are declared repository environment/optional-data skips:
+   Windows symlink privilege, questions_125.json, data/raw/sjtu-booklet.pdf,
+   and related optional-data paths. None is counted toward Wave C metrics.
+
+8. Local integration suite limitation
+   python -m pytest -q tests/integration
+   32 passed / 0 failed / 0 skipped
+   The first run exposed missing local Ruff/Coverage tools. After installing the
+   exact versions already locked in requirements.txt (ruff 0.16.0, coverage 7.15.2),
+   the complete integration suite passed. No dependency file was changed.
+
+9. Ruff on every Wave C Python file
+   python -m ruff check docs/modules/T03/wave_c/run_calibration.py tests/validation/test_wave_c_calibration.py tests/validation/test_wave_c_flagship_t07_pairing.py tests/validation/test_wave_c_security_stability.py
+   All checks passed.
+
+PR-C must stay Draft until remote checks and external T07/actual-data gaps are reviewed.
