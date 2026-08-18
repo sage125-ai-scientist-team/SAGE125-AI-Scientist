@@ -518,16 +518,17 @@ feedback_decided
 -> validation_completed
 ```
 
-验证结果：指定配对文件 `5 passed`；T03 validation `105 passed`；T02
-`20a5b356…` + T03 `e4248e8…` 临时普通合并无冲突，validation、T02 handoff 与实际
-模型消费合计 `109 passed`；全仓 unit `735 passed, 37 skipped`。这些结果关闭本次
-T03-owned SQLite consumer 技术缺口，但不替代 T02 签字、T08 live API E2E 或队长 Ready
-授权。
+验证结果：指定配对文件 `5 passed`；T03 validation `105 passed`；T03 本地实际模型消费
+组合为 `109 passed`；全仓 unit `735 passed, 37 skipped`。随后 T02 owner 使用冻结的
+T02 `20a5b356…` + T03 `b3c1746…` 独立复验：正式配对 `5/5`，T02 handoff + T03
+validation `108/108`，actual-output SQLite probe、重启恢复、并发重放和唯一 lineage
+均通过。T02 PR #21 后续获队长批准并合并，T03 PR #32 也已合并。这些证据关闭
+T03-owned SQLite consumer 与 T02/T03 双边签字缺口；T08 live API E2E 仍是独立未完成项。
 
 ## 10. 验收矩阵（T03-B-001..021）
 
 本地 `tests/validation` 已有 `105 passed in 4.34s` 的套件级证据。T02 lineage consumer
-相关项已回填精确测试与 SHA；T08 配对和生产 API E2E 仍未完成。
+相关项已有精确 SHA、T02 owner 复验和签字；T08 配对和生产 API E2E 仍未完成。
 
 | ID | 验收项 | 最低证据 | 状态 |
 | --- | --- | --- | --- |
@@ -541,7 +542,7 @@ T03-owned SQLite consumer 技术缺口，但不替代 T02 签字、T08 live API 
 | T03-B-008 | accepted 决策有理由、accepted items 和审计 hash，并可生成 directive | service + lineage 测试 | TBD |
 | T03-B-009 | partially accepted 只把 accepted items 送入 directive，拒绝片段不进入 Prompt | Prompt payload 精确断言 | TBD |
 | T03-B-010 | rejected 决策不生成 directive、revision 或 resulting version | 负向状态机与 lineage 测试 | TBD |
-| T03-B-011 | directive 保留 feedback ID、目标版本和原文 SHA，且能证明下一轮实际输入发生变化 | T02 `test_t02_t03_revision_handoff.py` + 精确 SHA 实际模型消费 | PASS（T03/T02 technical；待双边签字） |
+| T03-B-011 | directive 保留 feedback ID、目标版本和原文 SHA，且能证明下一轮实际输入发生变化 | T02 `test_t02_t03_revision_handoff.py` + 精确 SHA 实际模型消费 | PASS（T02/T03 双边技术复验与 T02 owner 签字完成） |
 | T03-B-012 | resulting version 是目标版本直接子版本；diff hash 与 revision_generated 事件一致 | `test_t02_t03_final_pairing_recheck.py` + evidence JSON | PASS |
 | T03-B-013 | 审计链可在重启后由 feedback ID 回查，事件单链、时序、subject 与 hash 一致 | 原子批量、重启、篡改、重复与 16 线程并发测试 | PASS |
 | T03-B-014 | ValidationContext 同时接收五类完整产物并绑定 run/question/version | 完整上下文正向测试 | TBD |
@@ -551,19 +552,20 @@ T03-owned SQLite consumer 技术缺口，但不替代 T02 签字、T08 live API 
 | T03-B-018 | 跨问题、跨 run、未来版本和不匹配 question text 均被拒绝 | identity/contamination 测试 | TBD |
 | T03-B-019 | open P0/P1、无 gates、重复 gate ID、gate/runner 异常均不能 false pass | Validator fail-closed 测试 | TBD |
 | T03-B-020 | 至少 10 个无效输入、恶意反馈、缺失产物和并发失败案例；指标按 question/version 幂等聚合 | 攻击测试清单 + metrics 测试输出 | TBD |
-| T03-B-021 | 最小 E2E 闭环通过，T02/T08 配对审查签字，T08 不再返回占位 503，迁移/回滚证据齐全 | E2E 输出、PR/SHA/CI、配对记录、恢复演练 | PARTIAL：T02 technical PASS；T02 签字与 T08 live API 尚缺 |
+| T03-B-021 | 最小 E2E 闭环通过，T02/T08 配对审查签字，T08 不再返回占位 503，迁移/回滚证据齐全 | E2E 输出、PR/SHA/CI、配对记录、恢复演练 | PARTIAL：T02/T03 配对及 T02 签字 PASS；仅 T08 live API/三方验收仍缺 |
 
 ## 11. 最终交接时必须回填
 
-- PR #32 的最终远端 HEAD、GitHub Checks 结论及是否由 Draft 转为 Ready；
-- 已记录 `tests/validation = 105 passed` 与本地全仓 CI 等价检查；仍需回填新 HEAD 的远端 GitHub Checks，
-  并保留 unit 的 `37 skipped` 说明；
-- lint/type/security/build 的本地结果已记录，远端结果仍待 PR CI；
+- PR #32 最终远端 HEAD 为 `b3c1746530fa9c6f228e030ef281c255ab6b4c47`，六项
+  GitHub Checks 均 SUCCESS，已合并为 `592c874328a544f874893b6460a4439a8f450a77`；
+- 已记录 `tests/validation = 105 passed`、本地全仓 CI 等价检查以及 unit 的
+  `37 skipped` 说明；远端 lint/type/unit/integration/security/build 均成功；
 - 默认 gate 列表与稳定 finding code 的交付 SHA 复核结果；
 - `DefaultFeedbackService`、`RevisionFeedbackContextBuilder`、`RevisionPromptAdapter` 等公开
   符号的最终签名复核结果；
-- T02 PR #21 完整 SHA `20a5b356364051c86dac3698fc836c790b6c2c79` 已用于技术组合；
-  仍需回填 T02 owner 复跑/签字、`CHANGES_REQUESTED` 后续处理及双方最终审查结论；
-- T08 Wave B PR/SHA（当前无），以及 503 替换后的 API E2E；
+- T02 冻结配对 SHA `20a5b356364051c86dac3698fc836c790b6c2c79` 已用于技术组合；
+  T02 owner 复跑/签字已完成，正式配对 5/5、组合回归 108/108；PR #21 最终 HEAD
+  `7d5e7ec6909b4789f7e3239c255b6f9e8b12880d` 已获队长批准并合并；
+- T08 PR #40 已合并但未替换 feedback POST/GET 503；仍需真实 adapter SHA、API E2E 与签字；
 - SQLite 备份/恢复演练记录、迁移负责人、实际 DB 配置；
 - 每一项 T03-B-001..021 的证据链接与状态。
