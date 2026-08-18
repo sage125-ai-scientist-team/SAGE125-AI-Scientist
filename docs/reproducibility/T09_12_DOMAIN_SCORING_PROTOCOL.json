@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.2",
+  "task_id": "T09",
+  "title": "T09 12-domain actual evaluation scoring protocol",
+  "required_domains": [
+    "mathematics",
+    "physics",
+    "chemistry",
+    "biology",
+    "medicine",
+    "earth_science",
+    "computer_science",
+    "materials",
+    "astronomy",
+    "neuroscience",
+    "climate",
+    "engineering"
+  ],
+  "scoring": {
+    "denominator": "evaluated_domain_count",
+    "required_domain_count": 12,
+    "metrics": [
+      "pass_rate",
+      "stability",
+      "citation_correctness",
+      "iteration_improvement",
+      "METRIC-005"
+    ],
+    "rule": "Only a ledger entry backed by pipeline artifacts and call audit records is scoreable.",
+    "METRIC-005": {
+      "denominator": "evaluated_domain_count",
+      "minimum": 12,
+      "rule": "Pass only when all 12 required domains have one completed, artifact-hashed, secret-scan-passing ledger entry."
+    }
+  },
+  "execution_policy": {
+    "default_mode": "preflight-only",
+    "execute_flag": "--execute",
+    "mock_flag": "--mock",
+    "retry_flag": "--retry",
+    "default_attempt_cap": 1,
+    "max_attempt_cap": 24,
+    "max_retries_per_entry": 1,
+    "resume_flag": "--resume",
+    "preflight_only_flag": "--preflight-only",
+    "max_top_level_attempts_flag": "--max-top-level-attempts",
+    "max_top_level_attempts": 12,
+    "rate_limit_seconds_flag": "--rate-limit-seconds",
+    "minimum_rate_limit_seconds": 1,
+    "scoring_protocol_flag": "--scoring-protocol",
+    "question_source_flag": "--question-source",
+    "provider_rule": "Provider execution is prohibited unless --execute is supplied, the separate actual_execution_authorization is true, MOCK_LLM is not true, the frozen complete Bailian/Qwen model stack and all chat/deep-research/rerank endpoints are valid. Formal execution rejects --mock and MOCK_LLM=true.",
+    "failure_rule": "Only TimeoutError or ConnectionError receive one retry. A terminal failure stops the entire run and is atomically recorded.",
+    "global_attempt_rule": "The ledger has one immutable global cap of 24 persisted attempts across all domains and every --resume invocation. --max-top-level-attempts bounds distinct domain pipeline invocations in one process; --rate-limit-seconds pauses between them."
+  },
+  "actual_execution_authorization": {
+    "authorized": true,
+    "authority_url": "https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/46#issuecomment-5292639795",
+    "correction_authority_url": "https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist/pull/46#issuecomment-5293023258",
+    "authority_account": "liuyanbo12",
+    "authorization_base_head": "6a8b27b311fd53bc6e1b0348c072c1401da0a134",
+    "provider": "bailian",
+    "model": "qwen3.6-flash",
+    "model_stack_id": "t07-wb5-bailian-qwen-stack-v1",
+    "model_version": "qwen-stack-20260803-v1",
+    "models": {"fast": "qwen3.6-flash", "balanced": "qwen3.7-plus", "strong": "qwen3.7-max", "deep_research": "qwen-deep-research", "embedding": "text-embedding-v4", "rerank": "qwen3-rerank"},
+    "region": "cn-beijing",
+    "endpoints": {
+      "chat": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+      "deep_research": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/api/v1",
+      "rerank": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-api/v1/reranks"
+    },
+    "endpoint_rule": "https://{workspace_id}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+    "actual_ablation_authorized": false,
+    "authorization_rule": "The correction authorizes only actual twelve-domain evaluation after correction CI and clean-room preflight pass. Actual ablation, PR Ready, approval, merge, force-push, rebase, and history rewrite remain unauthorized."
+  },
+  "manifest_contract": {
+    "schema_version": "1.1",
+    "required_keys": [
+      "schema_version",
+      "question_source",
+      "domains"
+    ],
+    "question_source": {
+      "required_keys": [
+        "path",
+        "sha256"
+      ],
+      "path": "Must be the portable repository-relative path data/processed/questions_125.json; absolute paths are forbidden.",
+      "runtime_binding": "The relative manifest path resolves from the current clone root. SAGE_QUESTIONS_PATH must be unset or resolve to that same formal source.",
+      "formal_source_rule": "The source is a top-level JSON list of exactly 125 objects with unique id values that exactly cover Q001 through Q125. Its SHA-256 must be b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb.",
+      "item_binding": "Each domains entry must include question_id, question, source_domain, normalized_domain, mapping_basis, approval_source, and canonical_input_hash. Optional domain is a compatibility field and must equal normalized_domain. source_domain and question must exactly match the formal source; normalized_domain, mapping_basis, and approval_source must match the complete approved mapping. Q089 maps to materials, Q088 maps to engineering, and Q109 preserves source replacement characters.",
+      "canonical_input_hash": "sha256(UTF-8 canonical JSON of question_id, question, source_domain, normalized_domain with ensure_ascii=false, sort_keys=true, separators=(',', ':')); no text normalization is permitted."
+    },
+    "domains_rule": "Exactly one ordered entry for every required normalized domain."
+  },
+  "artifact_policy": {
+    "ledger": "ledger.json (atomic replace; --resume accepts only the same canonical manifest hash and question_source_binding, which includes canonical source path, file SHA-256, and ordered item-binding digest). global_attempt_count is reconciled from all persisted attempts and must never exceed 24.",
+    "preflight": "preflight.json",
+    "execution_summary": "run_summary.json",
+    "pipeline_artifacts": "Use the artifact directory emitted by app.workflow.pipeline.run_pipeline_with_state.",
+    "call_audit": "Interface contract: summarize state.llm_calls using app.core.call_audit.summarize_calls; do not serialize secrets. Every completed actual attempt must prove the frozen Bailian/Qwen model stack, provider/model-alias pairing, one unique real request_id per actual call, exact token arithmetic for every call that returned usage, no fallback, and token-only unpriced cost accounting. Deep Research may omit usage; those three token fields stay null and are excluded from the sum, never coerced to 0. ledger.audit_coverage aggregates all twelve completed attempts and their actual call/request_id counts.",
+    "integrity": "Each completed entry records a deterministic artifact hash and secret-scan outcome. Failed attempts retain null token/cost values, while call_accounting preserves any already-observed actual call count, request_id count, and token-only usage without inventing a cost; completed actual attempts record audited tokens and a null (unpriced) cost."
+  },
+  "reproduction": {
+    "preflight": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --preflight-only --scoring-protocol docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json --question-source data/processed/questions_125.json",
+    "actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --max-top-level-attempts 12 --rate-limit-seconds <approved-seconds> --scoring-protocol docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json --question-source data/processed/questions_125.json",
+    "resume_actual": "python scripts/eval/run_t09_12_domain_actual.py --manifest <manifest.json> --output-dir <output-dir> --execute --retry --resume --max-top-level-attempts 12 --rate-limit-seconds <approved-seconds> --scoring-protocol docs/reproducibility/T09_12_DOMAIN_SCORING_PROTOCOL.json --question-source data/processed/questions_125.json",
+    "safety_note": "This correction does not execute a Provider call. Execution remains blocked until this corrective commit has passed CI and clean-room preflight; mock, dry-run, planned, and fixture results are never actual."
+  }
+}

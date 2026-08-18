@@ -100,6 +100,128 @@ def test_audit_record_has_no_api_key():
     assert rec.key_masked is True
 
 
+def test_deep_research_real_audit_preserves_request_id_and_usage(monkeypatch):
+    """DeepResearch 真实返回的 request_id 与完整 usage 必须写入调用审计。"""
+    from app.agents.deep_research_agent import DeepResearchAgent
+
+    class _FakeDeepResearchClient:
+        """提供无网络的真实响应双桩及与生产客户端一致的最近元数据字段。"""
+
+        last_request_id = "dr-request-123"
+        last_usage = {"input_tokens": 11, "output_tokens": 13, "total_tokens": 24}
+
+        def run_deep_research(self, topic, context=""):
+            """返回已经由服务端确认的最小 DeepResearch 成功负载。"""
+            return {
+                "status": "succeeded",
+                "content": "研究纪要",
+                "references": [],
+                "request_id": self.last_request_id,
+                "usage": self.last_usage,
+            }
+
+    monkeypatch.delenv("MOCK_LLM", raising=False)
+    monkeypatch.setattr(DeepResearchAgent, "is_mock", lambda _self: False)
+    state = _state()
+    agent = DeepResearchAgent(dr_client=_FakeDeepResearchClient())
+    agent.run({"topic": "审计测试"}, state)
+    record = state.llm_calls[-1]
+    assert record["provider"] == "dashscope_deepresearch"
+    assert record["request_id"] == "dr-request-123"
+    assert (record["input_tokens"], record["output_tokens"], record["total_tokens"]) == (11, 13, 24)
+
+
+def test_deep_research_usage_accepts_official_finished_pair():
+    """官方 finished 分片只有 input/output 时，必须补齐 total 且不得丢弃用量。"""
+    from app.clients.qwen_deep_research_client import QwenDeepResearchClient
+
+    usage = QwenDeepResearchClient._normalized_usage(
+        {"input_tokens": 21, "output_tokens": 7}
+    )
+    assert usage == {"input_tokens": 21, "output_tokens": 7, "total_tokens": 28}
+
+
+def test_deep_research_usage_rejects_mismatched_total():
+    """total 与 input+output 对不上时必须 fail-closed，不能改写服务端数字。"""
+    from app.clients.qwen_deep_research_client import QwenDeepResearchClient
+
+    assert QwenDeepResearchClient._normalized_usage(
+        {"input_tokens": 3, "output_tokens": 4, "total_tokens": 9}
+    ) == {}
+
+
+def test_deep_research_request_id_from_output_and_headers():
+    """request_id 可出现在 output 或响应头；提取逻辑不得编造标识。"""
+    from app.clients.qwen_deep_research_client import QwenDeepResearchClient
+
+    nested = QwenDeepResearchClient._extract_request_id(
+        {"output": {"request_id": "dr-from-output"}}
+    )
+    headered = QwenDeepResearchClient._extract_request_id(
+        {"headers": {"X-DashScope-Request-Id": "dr-from-header"}}
+    )
+    missing = QwenDeepResearchClient._extract_request_id({"output": {"message": {}}})
+    assert nested == "dr-from-output"
+    assert headered == "dr-from-header"
+    assert missing == ""
+
+
+def test_deep_research_stream_finished_chunk_preserves_audit(monkeypatch):
+    """模拟官方 finished 分片：无 total_tokens 时仍写出 request_id 与完整 usage。"""
+    import sys
+    import types
+
+    from app.clients.qwen_deep_research_client import QwenDeepResearchClient
+
+    class _StubSettings:
+        """最小可运行配置，避免读取宿主 .env 或发起真实网络。"""
+
+        deep_research_configured = True
+        qwen_deep_research_model = "qwen-deep-research"
+        dashscope_api_key = "test-key"
+        dashscope_deep_research_base_url = "https://example.invalid/api/v1"
+        deep_research_timeout_seconds = 5
+
+    class _FakeGeneration:
+        """按官方文档顺序产出 answer 分片和 finished 用量分片。"""
+
+        @staticmethod
+        def call(**_kwargs):
+            """返回无网络的两段流：正文 + finished usage。"""
+            return iter(
+                (
+                    {
+                        "request_id": "",
+                        "output": {
+                            "message": {
+                                "phase": "answer",
+                                "content": "调研纪要",
+                                "extra": {"deep_research": {"references": []}},
+                            }
+                        },
+                    },
+                    {
+                        "request_id": "dr-finished-456",
+                        "output": {"message": {"phase": "answer", "status": "finished"}},
+                        "usage": {"input_tokens": 15, "output_tokens": 9},
+                    },
+                )
+            )
+
+    fake_module = types.ModuleType("dashscope")
+    fake_module.base_http_api_url = ""
+    fake_module.Generation = _FakeGeneration
+    monkeypatch.setitem(sys.modules, "dashscope", fake_module)
+
+    client = QwenDeepResearchClient(settings=_StubSettings())  # type: ignore[arg-type]
+    result = client.run_deep_research("审计测试")
+    assert result["status"] == "succeeded"
+    assert result["request_id"] == "dr-finished-456"
+    assert result["usage"] == {"input_tokens": 15, "output_tokens": 9, "total_tokens": 24}
+    assert client.last_request_id == "dr-finished-456"
+    assert client.last_usage["total_tokens"] == 24
+
+
 def test_full_mock_pipeline_audit_written(monkeypatch):
     """mock 全流程：审计文件写入且 qwen_call_count==0。"""
     if not QUESTIONS.exists():

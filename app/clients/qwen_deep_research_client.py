@@ -15,7 +15,7 @@ app.clients.qwen_deep_research_client —— Qwen Deep Research 客户端。
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 from app.core.config import Settings, assert_qwen_model, get_settings
 from app.core.logging import get_logger, mask_text
@@ -46,6 +46,128 @@ class QwenDeepResearchClient:
         self.settings = settings or get_settings()
         # 校验深度研究模型必须为千问。
         assert_qwen_model(self.settings.qwen_deep_research_model)
+        # 最近一次真实调用的审计元数据；与 QwenChatClient 保持同一读取契约。
+        self.last_request_id: Optional[str] = None
+        self.last_usage: dict[str, int] = {}
+
+    @staticmethod
+    def _response_value(response: Any, name: str) -> Any:
+        """兼容 SDK 对象和映射响应，提取一个顶层字段。
+
+        DashScope `GenerationResponse` 同时是 dict 子类，因此优先走映射读取，
+        再回退到属性访问，避免漏掉只挂在其中一侧的字段。
+        """
+        if isinstance(response, dict) and name in response:
+            return response.get(name)
+        return getattr(response, name, None)
+
+    @staticmethod
+    def _coerce_token(value: Any) -> int | None:
+        """把服务端 token 字段收成非负整数；布尔值和残缺值一律拒绝。
+
+        官方 finished 分片经常只给 `input_tokens`/`output_tokens`，有时是
+        JSON 数字或可精确转成 int 的 float。这里只接受能无损变成非负整数
+        的值，绝不把缺失用量编造成 0。
+        """
+        if isinstance(value, bool) or value is None:
+            return None
+        if isinstance(value, int):
+            return value if value >= 0 else None
+        if isinstance(value, float) and value.is_integer() and value >= 0:
+            return int(value)
+        if isinstance(value, str) and value.strip().isdigit():
+            return int(value.strip())
+        return None
+
+    @classmethod
+    def _extract_request_id(cls, response: Any) -> str:
+        """从流式分片的官方位置提取真实 request_id，不编造标识。
+
+        查找顺序与官方 Deep Research 示例及 SDK 响应对象一致：
+        1. 顶层 `request_id`；
+        2. `output.request_id`（部分 HTTP 解析路径把 id 放进 output）；
+        3. 响应头中的 DashScope/Request 标识。
+        找不到时返回空串，由调用方保持 fail-closed。
+        """
+        rid = cls._response_value(response, "request_id")
+        if isinstance(rid, str) and rid.strip():
+            return rid.strip()
+        output = cls._response_value(response, "output")
+        if isinstance(output, dict):
+            nested = output.get("request_id")
+            if isinstance(nested, str) and nested.strip():
+                return nested.strip()
+        headers = cls._response_value(response, "headers")
+        if isinstance(headers, dict):
+            for key in (
+                "x-dashscope-request-id",
+                "x-request-id",
+                "request-id",
+                "request_id",
+            ):
+                for actual, value in headers.items():
+                    if str(actual).lower() == key and isinstance(value, str) and value.strip():
+                        return value.strip()
+        return ""
+
+    @classmethod
+    def _extract_usage(cls, response: Any) -> dict[str, int]:
+        """从顶层或 output.usage 提取并规范化 token 用量。
+
+        官方文档约定：仅在 `status=finished` 的分片上保证带 usage。
+        该 usage 通常只有 input/output，不一定带 total。
+        """
+        raw_usage = cls._response_value(response, "usage")
+        normalized = cls._normalized_usage(raw_usage)
+        if normalized:
+            return normalized
+        output = cls._response_value(response, "output")
+        if isinstance(output, dict):
+            return cls._normalized_usage(output.get("usage"))
+        return {}
+
+    @classmethod
+    def _normalized_usage(cls, raw_usage: Any) -> dict[str, int]:
+        """将 DashScope/OpenAI 风格 usage 统一为严格的三项 token 计数。
+
+        官方 Deep Research finished 分片只保证 `input_tokens` 与
+        `output_tokens`。缺失的 `total_tokens` 仅在 input/output 都合法时
+        由二者相加得到；任一字段非法或总和对不上则返回空映射，避免把
+        未知用量写成 0。
+        """
+        if raw_usage is None:
+            return {}
+        if isinstance(raw_usage, dict):
+            source = raw_usage
+        else:
+            source = {
+                name: getattr(raw_usage, name, None)
+                for name in (
+                    "input_tokens",
+                    "output_tokens",
+                    "total_tokens",
+                    "prompt_tokens",
+                    "completion_tokens",
+                )
+            }
+        input_tokens = cls._coerce_token(
+            source.get("input_tokens", source.get("prompt_tokens"))
+        )
+        output_tokens = cls._coerce_token(
+            source.get("output_tokens", source.get("completion_tokens"))
+        )
+        total_tokens = cls._coerce_token(source.get("total_tokens"))
+        if input_tokens is None or output_tokens is None:
+            return {}
+        if total_tokens is None:
+            total_tokens = input_tokens + output_tokens
+        if total_tokens != input_tokens + output_tokens:
+            return {}
+        return {
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": total_tokens,
+        }
 
     def run_deep_research(self, topic: str, context: str = "") -> dict:
         """
@@ -91,8 +213,10 @@ class QwenDeepResearchClient:
         collected_content: list[str] = []
         phases: list[str] = []
         references: list[dict] = []
-        usage: dict = {}
+        usage: dict[str, int] = {}
         request_id: str = ""
+        self.last_request_id = None
+        self.last_usage = {}
 
         try:
             # 必须 stream=True：深度研究为长耗时多轮任务，同步会超时。
@@ -110,17 +234,18 @@ class QwenDeepResearchClient:
             )
             # 逐个消费流式响应，解析 phase/status/content 与引用线索。
             for response in responses:
-                # 记录 request_id（若存在）。
-                rid = getattr(response, "request_id", None)
+                # 只接受服务端给出的真实 request_id；空值保持未设置。
+                rid = self._extract_request_id(response)
                 if rid:
                     request_id = rid
-                # 记录用量（若存在）。
-                resp_usage = getattr(response, "usage", None)
-                if resp_usage:
-                    # usage 可能是对象或 dict，尽量转为 dict。
-                    usage = dict(resp_usage) if not isinstance(resp_usage, dict) else resp_usage
+                    self.last_request_id = rid
+                # 官方 finished 分片才保证带 usage；缺失 total 时由规范化补齐。
+                normalized_usage = self._extract_usage(response)
+                if normalized_usage:
+                    usage = normalized_usage
+                    self.last_usage = normalized_usage
                 # 解析 output.message。
-                output = getattr(response, "output", None)
+                output = self._response_value(response, "output")
                 if not output:
                     continue
                 message = output.get("message", {}) if isinstance(output, dict) else {}
@@ -167,4 +292,10 @@ class QwenDeepResearchClient:
                 message="DeepResearch 未完成，主流程将继续使用其他证据来源",
                 model_alias="deepresearch", model_name_internal=self.settings.qwen_deep_research_model,
             )
-            return {"status": "failed", "error": mask_text(str(exc)), "content": ""}
+            return {
+                "status": "failed",
+                "error": mask_text(str(exc)),
+                "content": "",
+                "usage": usage,
+                "request_id": request_id,
+            }

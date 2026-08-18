@@ -67,6 +67,8 @@ class DeepResearchAgent(BaseAgent):
         errors: list[str] = []
         status_label = "completed"
         result = {"status": "failed", "content": "", "evidence_cards": [], "warnings": [], "errors": []}
+        audit_request_id: str | None = None
+        audit_usage: dict[str, int] = {}
 
         try:
             # 测试用：强制失败路径。
@@ -86,6 +88,13 @@ class DeepResearchAgent(BaseAgent):
                 # 真实调用：dashscope stream=True。
                 client = self._dr_client or QwenDeepResearchClient(self.settings)
                 dr = client.run_deep_research(topic, context)
+                # 客户端以响应字段为准；保留失败前已经收到的真实用量和 request_id。
+                candidate_request_id = dr.get("request_id") or getattr(client, "last_request_id", None)
+                if isinstance(candidate_request_id, str) and candidate_request_id.strip():
+                    audit_request_id = candidate_request_id
+                candidate_usage = dr.get("usage") or getattr(client, "last_usage", {})
+                if isinstance(candidate_usage, dict):
+                    audit_usage = candidate_usage
                 if dr.get("status") == "succeeded":
                     # 将纪要与引用转为 EvidenceCard（标记需核验）。
                     cards = deep_research_to_evidence_cards(dr)
@@ -124,6 +133,10 @@ class DeepResearchAgent(BaseAgent):
                 model_name_internal=self.model_name,
                 mock=is_mock,
                 started_at=started,
+                request_id=audit_request_id,
+                input_tokens=audit_usage.get("input_tokens"),
+                output_tokens=audit_usage.get("output_tokens"),
+                total_tokens=audit_usage.get("total_tokens"),
                 status="success" if result.get("status") == "succeeded" else "failed",
                 error_type=None if result.get("status") == "succeeded" else "deep_research_failed",
             ).finalize()
