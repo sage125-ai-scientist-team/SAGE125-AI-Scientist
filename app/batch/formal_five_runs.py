@@ -65,6 +65,7 @@ from app.batch.output_validation import (
     build_artifact_manifest,
     validate_required_artifacts,
 )
+from app.batch.wave_c_hardening import is_pause_requested
 from app.contracts.batch import (
     REQUIRED_ARTIFACTS,
     STANDARD_OUTPUT_FIELDS,
@@ -194,6 +195,8 @@ class FormalRunReceipt:
     questions: tuple[FormalQuestionReceipt, ...]
     provider_calls: int
     progress: str
+    error_codes: tuple[str, ...] = field(default_factory=tuple)
+    recovery: Mapping[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -203,6 +206,8 @@ class FormalRunReceipt:
             "questions": [question.to_dict() for question in self.questions],
             "provider_calls": self.provider_calls,
             "five_real_runs_progress": self.progress,
+            "error_codes": list(self.error_codes),
+            "recovery": None if self.recovery is None else dict(self.recovery),
         }
 
 
@@ -366,9 +371,36 @@ def run_formal_five_runs(
 
     ledger = _build_ledger(config)
     receipts: list[FormalQuestionReceipt] = []
-    delivery_records: list[QuestionDeliveryRecord] = []
+    existing_delivery = (
+        _load_resume_delivery_index(batch_root) if request.resume else None
+    )
+    if request.resume:
+        _validate_manifest_delivery_consistency(manifest, existing_delivery)
+    delivery_records = _delivery_record_map(
+        () if existing_delivery is None else existing_delivery.records
+    )
     provider_calls = int(manifest.get("provider_calls", 0))
+    paused = False
     for question_id in question_ids:
+        try:
+            pause_requested = is_pause_requested(batch_root)
+        except BatchRunnerError as exc:
+            return _blocked_pause_receipt(
+                manifest,
+                batch_root=batch_root,
+                code_sha=code_sha,
+                provider_calls=provider_calls,
+                receipts=receipts,
+                error_code=exc.error_code,
+            )
+        manifest.pop("error_codes", None)
+        manifest.pop("recovery", None)
+        if pause_requested:
+            manifest["status"] = "paused"
+            manifest["provider_calls"] = provider_calls
+            _write_json(batch_root / "manifest.json", manifest)
+            paused = True
+            break
         frozen = next(item for item in config.questions if item.question_id == question_id)
         run_id = _new_run_id(question_id)
         base_job = _build_job(config, frozen, run_id)
@@ -377,14 +409,17 @@ def run_formal_five_runs(
                 batch_root,
                 base_job,
                 question_id,
+                existing_delivery,
+                delivery_records,
             )
             if resumed is not None:
                 receipts.append(resumed)
-                delivery = DeliveryIndex.from_json(
-                    (batch_root / "delivery_index.json").read_text(encoding="utf-8")
-                )
-                delivery_records.extend(delivery.records)
                 continue
+            _validate_failed_resume_record(
+                base_job,
+                question_id,
+                delivery_records,
+            )
         paths = build_question_output_paths(batch_root, question_id)
         create_question_output_directory(paths)
         context = FormalExecutionContext(
@@ -441,7 +476,11 @@ def run_formal_five_runs(
             )
             provisional_index = build_delivery_index(
                 config.freeze_id,
-                (*delivery_records, delivery_record),
+                _records_with_candidate(
+                    delivery_records,
+                    delivery_record,
+                    allow_failed_retry=request.resume,
+                ),
             )
             completion_input = _completion_input(
                 config,
@@ -483,8 +522,15 @@ def run_formal_five_runs(
                     estimated_cost_usd=None,
                     settled_cost_usd=None,
                 )
-            delivery_records.append(delivery_record)
-            index = build_delivery_index(config.freeze_id, delivery_records)
+            _store_delivery_record(
+                delivery_records,
+                delivery_record,
+                allow_failed_retry=request.resume,
+            )
+            index = build_delivery_index(
+                config.freeze_id,
+                tuple(delivery_records.values()),
+            )
             _write_json(batch_root / "delivery_index.json", index.to_dict())
             receipt = FormalQuestionReceipt(
                 question_id=question_id,
@@ -515,8 +561,15 @@ def run_formal_five_runs(
                 exc,
                 ledger,
             )
-            delivery_records.append(failed_record)
-            index = build_delivery_index(config.freeze_id, delivery_records)
+            _store_delivery_record(
+                delivery_records,
+                failed_record,
+                allow_failed_retry=request.resume,
+            )
+            index = build_delivery_index(
+                config.freeze_id,
+                tuple(delivery_records.values()),
+            )
             _write_json(batch_root / "delivery_index.json", index.to_dict())
         receipts.append(receipt)
         manifest["questions"] = [item.to_dict() for item in receipts]
@@ -527,11 +580,14 @@ def run_formal_five_runs(
             break
 
     completed = sum(item.completed for item in receipts)
-    status = (
-        "completed"
-        if receipts and all(item.completed for item in receipts)
-        else receipts[-1].status if receipts else "failed"
-    )
+    if paused:
+        status = "paused"
+    elif receipts and all(item.completed for item in receipts):
+        status = "completed"
+    elif receipts:
+        status = receipts[-1].status
+    else:
+        status = "failed"
     return FormalRunReceipt(
         status=status,
         batch_root=str(batch_root),
@@ -968,10 +1024,267 @@ def _provider_failure_diagnostic(exc: Exception) -> dict[str, Any] | None:
     return diagnostic
 
 
+def _load_resume_delivery_index(batch_root: Path) -> DeliveryIndex | None:
+    path = batch_root / "delivery_index.json"
+    if not path.exists():
+        return None
+    if path.is_symlink() or not path.is_file():
+        raise BatchRunnerError(
+            "DELIVERY_INDEX_JSON_INVALID",
+            "delivery index is not a regular file",
+        )
+    try:
+        delivery = DeliveryIndex.from_json(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError) as exc:
+        raise BatchRunnerError(
+            "DELIVERY_INDEX_JSON_INVALID",
+            "delivery index is unavailable or invalid UTF-8",
+        ) from exc
+    validate_delivery_index(delivery, artifact_root=batch_root)
+    return delivery
+
+
+def _delivery_record_map(
+    records: Sequence[QuestionDeliveryRecord],
+) -> dict[str, QuestionDeliveryRecord]:
+    result: dict[str, QuestionDeliveryRecord] = {}
+    for record in records:
+        _add_delivery_record(result, record)
+    return result
+
+
+def _blocked_pause_receipt(
+    manifest: dict[str, Any],
+    *,
+    batch_root: Path,
+    code_sha: str,
+    provider_calls: int,
+    receipts: Sequence[FormalQuestionReceipt],
+    error_code: str,
+) -> FormalRunReceipt:
+    recovery = {
+        "action": "repair_or_remove_pause_request_then_resume",
+        "marker_path": "pause_request.json",
+        "recoverable": True,
+        "resume_required": True,
+    }
+    if receipts:
+        manifest["questions"] = [item.to_dict() for item in receipts]
+    manifest["status"] = "blocked"
+    manifest["error_codes"] = [error_code]
+    manifest["recovery"] = recovery
+    manifest["provider_calls"] = provider_calls
+    _write_json(batch_root / "manifest.json", manifest)
+    manifest_questions = manifest.get("questions")
+    completed = (
+        sum(
+            item.get("completed") is True
+            for item in manifest_questions
+            if isinstance(item, Mapping)
+        )
+        if isinstance(manifest_questions, list)
+        else 0
+    )
+    return FormalRunReceipt(
+        status="blocked",
+        batch_root=str(batch_root),
+        code_sha=code_sha,
+        questions=tuple(receipts),
+        provider_calls=provider_calls,
+        progress=f"{completed}/5",
+        error_codes=(error_code,),
+        recovery=recovery,
+    )
+
+
+def _validate_manifest_delivery_consistency(
+    manifest: Mapping[str, Any],
+    delivery_index: DeliveryIndex | None,
+) -> None:
+    raw_questions = manifest.get("questions")
+    if not isinstance(raw_questions, list):
+        raise BatchRunnerError(
+            "DELIVERY_RECORD_CONFLICT",
+            "resume manifest questions are invalid",
+        )
+    manifest_questions: dict[str, Mapping[str, Any]] = {}
+    for item in raw_questions:
+        if not isinstance(item, Mapping):
+            raise BatchRunnerError(
+                "DELIVERY_RECORD_CONFLICT",
+                "resume manifest question receipt is invalid",
+            )
+        question_id = item.get("question_id")
+        if not isinstance(question_id, str) or question_id in manifest_questions:
+            raise BatchRunnerError(
+                "DELIVERY_RECORD_CONFLICT",
+                "resume manifest question identity is invalid",
+            )
+        manifest_questions[question_id] = item
+    records = () if delivery_index is None else delivery_index.records
+    if set(manifest_questions) != {record.question_id for record in records}:
+        raise BatchRunnerError(
+            "DELIVERY_RECORD_CONFLICT",
+            "resume manifest and delivery index question sets differ",
+        )
+    for record in records:
+        receipt = manifest_questions[record.question_id]
+        if (
+            receipt.get("status") != record.status
+            or receipt.get("completed") is not record.completed
+        ):
+            raise BatchRunnerError(
+                "DELIVERY_RECORD_CONFLICT",
+                f"resume manifest conflicts for question_id: {record.question_id}",
+            )
+
+
+def _record_identity(record: QuestionDeliveryRecord) -> tuple[Any, ...]:
+    return (
+        record.batch_id,
+        record.question_id,
+        record.source_hash,
+        record.input_hash,
+        record.output_contract_version,
+        record.route_id,
+        record.provider,
+        record.model,
+        record.model_version,
+        record.prompt_version,
+        record.prompt_hash,
+        record.schema_version,
+        record.result_kind,
+        record.actual,
+        record.mock,
+        record.synthetic,
+        record.budget_policy_version,
+        record.budget_mode,
+        record.cost_accounting_required,
+        record.price_snapshot_required,
+        record.captain_waiver_reference,
+    )
+
+
+def _is_failed_delivery_record(record: QuestionDeliveryRecord) -> bool:
+    return (
+        record.status == JobStatus.FAILED.value
+        and not record.completed
+        and record.failure_code is not None
+        and record.validation_status == "failed"
+    )
+
+
+def _validate_failed_resume_record(
+    expected_job: BatchJobV2,
+    question_id: str,
+    records: Mapping[str, QuestionDeliveryRecord],
+) -> None:
+    existing = records.get(question_id)
+    if existing is None:
+        return
+    route = expected_job.model_route
+    policy = expected_job.budget_policy
+    if (
+        not _is_failed_delivery_record(existing)
+        or existing.batch_id != expected_job.batch_id
+        or existing.question_id != question_id
+        or existing.source_hash != expected_job.source_hash
+        or existing.input_hash != expected_job.input_hash
+        or existing.output_contract_version != FORMAL_OUTPUT_CONTRACT_VERSION
+        or existing.route_id != route.route_id
+        or existing.provider != route.provider
+        or existing.model != route.model
+        or existing.model_version != route.model_version
+        or existing.prompt_version != route.prompt_version
+        or existing.prompt_hash != route.prompt_hash
+        or existing.schema_version != expected_job.schema_version
+        or existing.result_kind != ResultKind.ACTUAL.value
+        or existing.actual is not True
+        or existing.mock is not False
+        or existing.synthetic is not False
+        or existing.budget_policy_version != policy.version
+        or existing.budget_mode != policy.mode.value
+        or existing.cost_accounting_required != policy.cost_accounting_required
+        or existing.price_snapshot_required != policy.price_snapshot_required
+        or existing.captain_waiver_reference != policy.captain_waiver_reference
+    ):
+        raise BatchRunnerError(
+            "DELIVERY_RECORD_CONFLICT",
+            f"Failed delivery identity conflicts for question_id: {question_id}",
+        )
+
+
+def _records_with_candidate(
+    records: Mapping[str, QuestionDeliveryRecord],
+    candidate: QuestionDeliveryRecord,
+    *,
+    allow_failed_retry: bool,
+) -> tuple[QuestionDeliveryRecord, ...]:
+    existing = records.get(candidate.question_id)
+    if existing is None:
+        return (*records.values(), candidate)
+    if not (
+        allow_failed_retry
+        and _is_failed_delivery_record(existing)
+        and _record_identity(existing) == _record_identity(candidate)
+    ):
+        raise BatchRunnerError(
+            "DELIVERY_RECORD_CONFLICT",
+            f"Conflicting delivery record for question_id: {candidate.question_id}",
+        )
+    return tuple(
+        candidate if record.question_id == candidate.question_id else record
+        for record in records.values()
+    )
+
+
+def _store_delivery_record(
+    records: dict[str, QuestionDeliveryRecord],
+    record: QuestionDeliveryRecord,
+    *,
+    allow_failed_retry: bool,
+) -> None:
+    existing = records.get(record.question_id)
+    if existing is None:
+        records[record.question_id] = record
+        return
+    if allow_failed_retry and _is_failed_delivery_record(existing):
+        if _record_identity(existing) != _record_identity(record):
+            raise BatchRunnerError(
+                "DELIVERY_RECORD_CONFLICT",
+                f"Conflicting delivery record for question_id: {record.question_id}",
+            )
+        if record.completed:
+            records[record.question_id] = record
+        return
+    _add_delivery_record(records, record)
+
+
+def _add_delivery_record(
+    records: dict[str, QuestionDeliveryRecord],
+    record: QuestionDeliveryRecord,
+) -> None:
+    existing = records.get(record.question_id)
+    if existing is None:
+        records[record.question_id] = record
+        return
+    if existing != record:
+        raise BatchRunnerError(
+            "DELIVERY_RECORD_CONFLICT",
+            f"Conflicting delivery record for question_id: {record.question_id}",
+        )
+    raise BatchRunnerError(
+        "DELIVERY_DUPLICATE_QUESTION_ID",
+        f"Duplicate question_id: {record.question_id}",
+    )
+
+
 def _resume_completed_question(
     batch_root: Path,
     expected_job: BatchJobV2,
     question_id: str,
+    delivery_index: DeliveryIndex | None,
+    delivery_records: Mapping[str, QuestionDeliveryRecord],
 ) -> FormalQuestionReceipt | None:
     root = batch_root / question_id
     checkpoint_path = root / "checkpoint.json"
@@ -988,21 +1301,41 @@ def _resume_completed_question(
             "completed checkpoint has no artifact manifest",
         )
     artifact_manifest = _artifact_manifest_from_json(manifest_path)
-    index_path = batch_root / "delivery_index.json"
-    if not index_path.is_file():
+    if delivery_index is None:
         raise BatchRunnerError(
             "DELIVERY_INDEX_MISSING",
             "completed checkpoint has no delivery index",
         )
-    delivery = DeliveryIndex.from_json(index_path.read_text(encoding="utf-8"))
-    validate_delivery_index(delivery, artifact_root=batch_root)
-    records = [item for item in delivery.records if item.question_id == question_id]
-    if len(records) != 1:
+    record = delivery_records.get(question_id)
+    if record is None:
         raise BatchRunnerError(
             "DELIVERY_RECORD_MISSING",
             "completed checkpoint is not uniquely indexed",
         )
-    indexed = {item.name: item.sha256 for item in records[0].artifacts}
+    route = expected_job.model_route
+    if (
+        artifact_manifest.batch_id != expected_job.batch_id
+        or artifact_manifest.question_id != question_id
+        or record.batch_id != expected_job.batch_id
+        or record.question_id != question_id
+        or record.status != JobStatus.COMPLETED.value
+        or not record.completed
+        or record.failure_code is not None
+        or record.source_hash != expected_job.source_hash
+        or record.input_hash != expected_job.input_hash
+        or record.output_contract_version != FORMAL_OUTPUT_CONTRACT_VERSION
+        or record.route_id != route.route_id
+        or record.provider != route.provider
+        or record.model != route.model
+        or record.model_version != route.model_version
+        or record.prompt_version != route.prompt_version
+        or record.prompt_hash != route.prompt_hash
+    ):
+        raise BatchRunnerError(
+            "DELIVERY_RECORD_CONFLICT",
+            f"Completed delivery identity conflicts for question_id: {question_id}",
+        )
+    indexed = {item.name: item.sha256 for item in record.artifacts}
     manifested = {item.name: item.sha256 for item in artifact_manifest.artifacts}
     if indexed != manifested:
         raise BatchRunnerError(

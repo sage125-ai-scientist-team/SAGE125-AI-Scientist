@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,6 +25,7 @@ from app.batch.formal_five_runs import (
     validate_provider_preflight_audit,
 )
 from app.batch.formal_provider_runtime import build_formal_provider_executor
+from app.batch.wave_c_hardening import release_pause, request_pause
 from app.contracts.validation import GateFinding, GateResult, Severity
 from scripts.batch_125.run_five_real_runs import build_parser
 
@@ -168,6 +170,36 @@ def _execution(*, actual_execution: bool = True, audits=None, report_pdf=True):
         claims=(),
         call_audits=calls,
         duration_seconds=0.1,
+    )
+
+
+def _execution_for_context(context) -> FormalQuestionExecution:
+    question_id = context.question_id
+    evidence_id = f"EV-{question_id}-001"
+    request_id = "req_sha256:" + hashlib.sha256(question_id.encode()).hexdigest()
+    execution = _execution()
+    standard_fields = dict(execution.standard_fields)
+    standard_fields["References"] = evidence_id
+    return replace(
+        execution,
+        standard_fields=standard_fields,
+        research_plan={
+            "question_id": question_id,
+            "input_question": context.question["question"],
+            "actual_execution": True,
+            "references": [{"id": evidence_id}],
+        },
+        evidence_cards=(
+            {
+                "id": evidence_id,
+                "title": f"{question_id} evidence",
+                "source": {
+                    "kind": "booklet",
+                    "reference": "sjtu-booklet.pdf",
+                },
+            },
+        ),
+        call_audits=(_audit(sanitized_request_id=request_id),),
     )
 
 
@@ -707,6 +739,46 @@ def test_resume_rejects_delivery_index_hash_mismatch(tmp_path: Path) -> None:
     assert captured.value.error_code == "DELIVERY_CHECKSUM_MISMATCH"
 
 
+@pytest.mark.parametrize(
+    "record_updates",
+    (
+        {"route_id": "stale-route"},
+        {"input_hash": "f" * 64},
+        {
+            "status": "failed",
+            "completed": False,
+            "failure_code": "STALE_RECORD",
+        },
+    ),
+    ids=("identity", "hash", "status"),
+)
+def test_resume_rejects_conflicting_delivery_record(
+    tmp_path: Path,
+    record_updates: dict[str, object],
+) -> None:
+    request = _request(tmp_path)
+    run_formal_five_runs(
+        request,
+        executor=lambda _context: _execution(),
+        completion_evaluator=_evaluate,
+    )
+    index_path = Path(request.run_root) / "T07-WB5-20260807-v2/delivery_index.json"
+    index = formal_runner.DeliveryIndex.from_json(
+        index_path.read_text(encoding="utf-8")
+    )
+    conflicting = replace(index.records[0], **record_updates)
+    rebuilt = formal_runner.build_delivery_index(index.batch_id, (conflicting,))
+    index_path.write_text(
+        json.dumps(rebuilt.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(BatchRunnerError) as captured:
+        run_formal_five_runs(replace(request, resume=True))
+
+    assert captured.value.error_code == "DELIVERY_RECORD_CONFLICT"
+
+
 def test_dry_run_never_calls_executor(tmp_path: Path) -> None:
     called = False
 
@@ -769,3 +841,323 @@ def test_formal_provider_executor_without_evidence_stops_with_zero_calls(
     assert receipt.questions[0].error_codes == (
         "FORMAL_EVIDENCE_CONTEXT_UNAVAILABLE",
     )
+
+
+def test_pause_request_stops_before_next_provider_call(tmp_path: Path) -> None:
+    dry_run = run_formal_five_runs(
+        _request(tmp_path, execute=False),
+        completion_evaluator=_evaluate,
+    )
+    request_pause(
+        Path(dry_run.batch_root),
+        requested_by="captain",
+        reason="Wave C controlled pause",
+    )
+    executor_calls = 0
+
+    def forbidden_executor(_context):
+        nonlocal executor_calls
+        executor_calls += 1
+        raise AssertionError("paused batch must not enter the provider executor")
+
+    receipt = run_formal_five_runs(
+        _request(tmp_path, execute=True, resume=True),
+        executor=forbidden_executor,
+        completion_evaluator=_evaluate,
+    )
+
+    assert receipt.status == "paused"
+    assert receipt.progress == "0/5"
+    assert receipt.provider_calls == 0
+    assert receipt.questions == ()
+    assert executor_calls == 0
+
+
+def test_invalid_pause_marker_returns_blocked_recoverable_receipt(
+    tmp_path: Path,
+) -> None:
+    dry_run = run_formal_five_runs(
+        _request(tmp_path, execute=False),
+        completion_evaluator=_evaluate,
+    )
+    batch_root = Path(dry_run.batch_root)
+    (batch_root / "pause_request.json").write_text("{", encoding="utf-8")
+    executor_calls = 0
+
+    def forbidden_executor(_context):
+        nonlocal executor_calls
+        executor_calls += 1
+        raise AssertionError("invalid pause marker must block before executor")
+
+    receipt = run_formal_five_runs(
+        _request(tmp_path, execute=True, resume=True),
+        executor=forbidden_executor,
+        completion_evaluator=_evaluate,
+    )
+
+    assert receipt.status == "blocked"
+    assert receipt.error_codes == ("PAUSE_REQUEST_INVALID",)
+    assert receipt.provider_calls == 0
+    assert receipt.progress == "0/5"
+    assert receipt.recovery == {
+        "action": "repair_or_remove_pause_request_then_resume",
+        "marker_path": "pause_request.json",
+        "recoverable": True,
+        "resume_required": True,
+    }
+    assert executor_calls == 0
+
+    manifest = json.loads((batch_root / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["status"] == "blocked"
+    assert manifest["error_codes"] == ["PAUSE_REQUEST_INVALID"]
+    assert manifest["recovery"] == receipt.recovery
+    assert manifest["provider_calls"] == 0
+    assert (batch_root / "pause_request.json").read_text(encoding="utf-8") == "{"
+    assert receipt.to_dict()["error_codes"] == ["PAUSE_REQUEST_INVALID"]
+    assert receipt.to_dict()["recovery"] == receipt.recovery
+
+    (batch_root / "pause_request.json").unlink()
+    recovered = run_formal_five_runs(
+        _request(tmp_path, execute=True, resume=True),
+        executor=_execution_for_context,
+        completion_evaluator=_evaluate,
+    )
+    assert recovered.status == "completed"
+    assert recovered.progress == "1/5"
+    recovered_manifest = json.loads(
+        (batch_root / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert "error_codes" not in recovered_manifest
+    assert "recovery" not in recovered_manifest
+
+
+def test_failed_question_can_resume_to_success_without_repeating_completed(
+    tmp_path: Path,
+) -> None:
+    request = _request(tmp_path, question_ids=("Q001", "Q028"))
+    first_calls: list[str] = []
+
+    def first_executor(context):
+        first_calls.append(context.question_id)
+        if context.question_id == "Q028":
+            raise BatchRunnerError("TEST_Q028_FAILED", "offline failure")
+        return _execution_for_context(context)
+
+    first = run_formal_five_runs(
+        request,
+        executor=first_executor,
+        completion_evaluator=_evaluate,
+    )
+    assert first.status == "failed"
+    assert first.progress == "1/5"
+    assert first_calls == ["Q001", "Q028"]
+
+    resumed_calls: list[str] = []
+
+    def resumed_executor(context):
+        resumed_calls.append(context.question_id)
+        return _execution_for_context(context)
+
+    resumed = run_formal_five_runs(
+        replace(request, resume=True),
+        executor=resumed_executor,
+        completion_evaluator=_evaluate,
+    )
+
+    assert resumed.status == "completed"
+    assert resumed.progress == "2/5"
+    assert resumed_calls == ["Q028"]
+    assert [item.question_id for item in resumed.questions] == ["Q001", "Q028"]
+    assert [item.resumed for item in resumed.questions] == [True, False]
+
+    batch_root = Path(resumed.batch_root)
+    index = formal_runner.DeliveryIndex.from_json(
+        (batch_root / "delivery_index.json").read_text(encoding="utf-8")
+    )
+    assert [record.question_id for record in index.records] == ["Q001", "Q028"]
+    assert index.completed == 2
+    assert all(record.completed for record in index.records)
+
+
+@pytest.mark.parametrize(
+    "record_updates",
+    (
+        {"input_hash": "f" * 64},
+        {"schema_version": "t07.conflicting-schema.v1"},
+    ),
+    ids=("input-hash", "schema-identity"),
+)
+def test_failed_resume_identity_conflict_stops_before_executor(
+    tmp_path: Path,
+    record_updates: dict[str, object],
+) -> None:
+    request = _request(tmp_path)
+    first = run_formal_five_runs(
+        request,
+        executor=lambda _context: (_ for _ in ()).throw(
+            BatchRunnerError("TEST_Q001_FAILED", "offline failure")
+        ),
+        completion_evaluator=_evaluate,
+    )
+    assert first.status == "failed"
+    batch_root = Path(first.batch_root)
+    index_path = batch_root / "delivery_index.json"
+    index = formal_runner.DeliveryIndex.from_json(
+        index_path.read_text(encoding="utf-8")
+    )
+    conflicting = replace(index.records[0], **record_updates)
+    index_path.write_text(
+        formal_runner.build_delivery_index(index.batch_id, (conflicting,)).to_json(),
+        encoding="utf-8",
+    )
+    executor_calls = 0
+
+    def forbidden_executor(_context):
+        nonlocal executor_calls
+        executor_calls += 1
+        raise AssertionError("conflicting failed record must not be retried")
+
+    with pytest.raises(BatchRunnerError) as captured:
+        run_formal_five_runs(
+            replace(request, resume=True),
+            executor=forbidden_executor,
+            completion_evaluator=_evaluate,
+        )
+
+    assert captured.value.error_code == "DELIVERY_RECORD_CONFLICT"
+    assert executor_calls == 0
+
+
+def test_forged_failed_to_completed_index_cannot_skip_executor(tmp_path: Path) -> None:
+    request = _request(tmp_path)
+    failed = run_formal_five_runs(
+        request,
+        executor=lambda _context: (_ for _ in ()).throw(
+            BatchRunnerError("TEST_Q001_FAILED", "offline failure")
+        ),
+        completion_evaluator=_evaluate,
+    )
+    assert failed.status == "failed"
+
+    donor_request = _request(tmp_path / "donor")
+    donor = run_formal_five_runs(
+        donor_request,
+        executor=_execution_for_context,
+        completion_evaluator=_evaluate,
+    )
+    assert donor.status == "completed"
+    donor_root = Path(donor.batch_root)
+    failed_root = Path(failed.batch_root)
+    shutil.copytree(
+        donor_root / "Q001",
+        failed_root / "Q001",
+        dirs_exist_ok=True,
+    )
+    donor_index = formal_runner.DeliveryIndex.from_json(
+        (donor_root / "delivery_index.json").read_text(encoding="utf-8")
+    )
+    (failed_root / "delivery_index.json").write_text(
+        formal_runner.build_delivery_index(
+            donor_index.batch_id,
+            donor_index.records,
+        ).to_json(),
+        encoding="utf-8",
+    )
+    executor_calls = 0
+
+    def forbidden_executor(_context):
+        nonlocal executor_calls
+        executor_calls += 1
+        raise AssertionError("forged completed state must not skip the executor")
+
+    with pytest.raises(BatchRunnerError) as captured:
+        run_formal_five_runs(
+            replace(request, resume=True),
+            executor=forbidden_executor,
+            completion_evaluator=_evaluate,
+        )
+
+    assert captured.value.error_code == "DELIVERY_RECORD_CONFLICT"
+    assert executor_calls == 0
+
+
+def test_resume_after_two_completed_questions_keeps_delivery_index_unique(
+    tmp_path: Path,
+) -> None:
+    request = _request(tmp_path, question_ids=FROZEN_EXECUTION_ORDER)
+    first_calls: list[str] = []
+
+    def pause_after_second(context):
+        first_calls.append(context.question_id)
+        if context.question_id == "Q028":
+            request_pause(
+                context.batch_root,
+                requested_by="captain",
+                reason="pause before Q050",
+            )
+        return _execution_for_context(context)
+
+    first = run_formal_five_runs(
+        request,
+        executor=pause_after_second,
+        completion_evaluator=_evaluate,
+    )
+
+    assert first.status == "paused"
+    assert first.progress == "2/5"
+    assert first_calls == ["Q001", "Q028"]
+
+    batch_root = Path(first.batch_root)
+    marker = batch_root / "pause_request.json"
+    marker_sha256 = hashlib.sha256(marker.read_bytes()).hexdigest()
+    release_pause(
+        batch_root,
+        released_by="captain",
+        expected_pause_sha256=marker_sha256,
+    )
+
+    resumed_calls: list[str] = []
+
+    def resume_executor(context):
+        resumed_calls.append(context.question_id)
+        return _execution_for_context(context)
+
+    resumed = run_formal_five_runs(
+        replace(request, resume=True),
+        executor=resume_executor,
+        completion_evaluator=_evaluate,
+    )
+
+    assert resumed.status == "completed"
+    assert resumed.progress == "5/5"
+    assert resumed.provider_calls == 5
+    assert resumed_calls == ["Q050", "Q075", "Q107"]
+    assert [item.question_id for item in resumed.questions] == list(
+        FROZEN_EXECUTION_ORDER
+    )
+    assert [item.resumed for item in resumed.questions] == [
+        True,
+        True,
+        False,
+        False,
+        False,
+    ]
+
+    final_manifest = json.loads(
+        (batch_root / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert final_manifest["status"] == "completed"
+    assert final_manifest["provider_calls"] == 5
+    assert [item["question_id"] for item in final_manifest["questions"]] == list(
+        FROZEN_EXECUTION_ORDER
+    )
+
+    delivery = json.loads(
+        (batch_root / "delivery_index.json").read_text(encoding="utf-8")
+    )
+    delivered_question_ids = [
+        record["question_id"] for record in delivery["records"]
+    ]
+    assert delivered_question_ids == list(FROZEN_EXECUTION_ORDER)
+    assert len(delivered_question_ids) == len(set(delivered_question_ids))
+    assert delivery["completed"] == 5

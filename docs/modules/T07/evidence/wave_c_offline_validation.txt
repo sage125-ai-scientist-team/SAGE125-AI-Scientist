@@ -1,0 +1,34 @@
+T07 Wave C offline hardening validation
+Date: 2026-08-12
+Branch: t07/c-batch-hardening
+Tested pre-commit code SHA: 20592a0eeb9924d021e3ec75ec28d27e2f971e9f
+Integration SHA: 20592a0eeb9924d021e3ec75ec28d27e2f971e9f
+PR #31 merge commit ancestry: cff5be5ef6a7e6956d38600a18f7cff8b4473fce is ancestor of HEAD
+
+Targeted command:
+D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe -m pytest -q tests\batch\test_wave_c_hardening.py tests\batch\test_formal_five_real_runs.py -rs -p no:cacheprovider
+Exit code: 0
+Result: 43 passed, 0 failed, 0 skipped, 1 warning in 34.36s
+
+Batch command:
+D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe -m pytest -q tests\batch -rs -p no:cacheprovider
+Exit code: 0
+Result: 326 passed, 0 failed, 2 skipped, 1 warning in 35.81s
+Skipped: two Windows symlink-capability tests (WinError 1314)
+
+Full command:
+D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe -m pytest -q -rs -p no:cacheprovider
+Exit code: 1
+Result: 1380 passed, 3 failed, 41 skipped, 1 warning in 150.28s
+First failure: tests/integration/test_t09_b001_quality_gates.py::test_t09_b001_ruff_gate_accepts_clean_code_and_rejects_unused_import
+Cause: D:\SAGE125-AI-Scientist\.venv\Scripts\python.exe: No module named ruff
+Other failures: two T09 coverage-gate tests; No module named coverage
+T07 code was not changed to conceal or bypass these failures.
+
+Native lint: exit 0; failures=[]
+Native type contract: exit 0; failures=[]
+
+Provider calls performed by Wave C validation: 0
+Formal 125-question run performed: false
+Actual 125/125 package validated: false
+Human 24-question review completed: false
