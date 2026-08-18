@@ -210,6 +210,180 @@ def test_issue_closure_requires_change_evidence_and_final_reviewer_clearance() -
     assert still_open.stop_reason == "max_revision_iterations_exhausted"
 
 
+def _feedback_with_issue(
+    issue: str | None,
+    *,
+    category: str = "critical_issue",
+) -> ReviewFeedback:
+    return ReviewFeedback(
+        passed=issue is None,
+        critical_issues=[issue] if issue and category == "critical_issue" else [],
+        required_revisions=(
+            [issue] if issue and category == "required_revision" else []
+        ),
+        risk_level="high" if issue else "low",
+        evidence_grounding_score=0.5 if issue else 0.9,
+        falsifiability_score=0.8,
+        reproducibility_score=0.8,
+        reference_reliability_score=0.5 if issue else 0.9,
+    )
+
+
+def test_rephrased_validation_issue_remains_a_semantic_continuation() -> None:
+    """A rephrased issue cannot be closed by an unrelated control-group diff."""
+    api = _wave_b()
+    previous = {
+        "experiments": {
+            "baselines": ["positive-control"],
+            "evidence_refs": ["EV-1"],
+        }
+    }
+    version = PlanVersion.create(
+        run_id="semantic-continuation",
+        version_number=1,
+        revision_iteration=1,
+        experiment_design=previous,
+        review_feedback=_feedback_with_issue("missing external validation"),
+    )
+    revised = copy.deepcopy(previous)
+    revised["experiments"]["baselines"].append("unrelated-sham-control")
+
+    audit = api.assess_experiment_revision(
+        previous_version=version,
+        revised_hypothesis={},
+        revised_experiment=revised,
+        final_feedback=_feedback_with_issue("no independent validation cohort"),
+        available_evidence_refs=["EV-1"],
+    )
+
+    initial, continuation = audit.issue_closures
+    assert initial.status == "open"
+    assert continuation.status == "open"
+    assert continuation.resolution_note == (
+        f"semantic_continuation_of:{initial.issue_id}"
+    )
+    assert not audit.accepted
+
+
+def test_evidence_grounding_issue_cannot_close_from_metrics_only_change() -> None:
+    """An evaluation metric is not issue-specific evidence-grounding remediation."""
+    api = _wave_b()
+    previous = {
+        "experiments": {
+            "metrics": ["accuracy"],
+            "evidence_refs": ["EV-1"],
+        }
+    }
+    version = PlanVersion.create(
+        run_id="grounding-correlation",
+        version_number=1,
+        revision_iteration=1,
+        experiment_design=previous,
+        review_feedback=_feedback_with_issue(
+            "Claims are missing evidence grounding.",
+            category="required_revision",
+        ),
+    )
+    revised = copy.deepcopy(previous)
+    revised["experiments"]["metrics"].append("AUROC")
+
+    audit = api.assess_experiment_revision(
+        previous_version=version,
+        revised_hypothesis={},
+        revised_experiment=revised,
+        final_feedback=_feedback_with_issue(None),
+        available_evidence_refs=["EV-1"],
+    )
+
+    assert audit.issue_closures[0].status == "open"
+    assert audit.changes == []
+    assert any(
+        reason.startswith("required_revision_without_change:")
+        for reason in audit.blocking_reasons
+    )
+
+
+def test_issue_specific_semantic_change_can_close_with_correlation_evidence() -> None:
+    """A deterministic issue-to-section correlation permits a real closure."""
+    api = _wave_b()
+    previous = {
+        "experiments": {
+            "baselines": ["positive-control"],
+            "evidence_refs": ["EV-1"],
+        }
+    }
+    version = PlanVersion.create(
+        run_id="targeted-correlation",
+        version_number=1,
+        revision_iteration=1,
+        experiment_design=previous,
+        review_feedback=_feedback_with_issue(
+            "Add a negative control.",
+            category="required_revision",
+        ),
+    )
+    revised = copy.deepcopy(previous)
+    revised["experiments"]["baselines"].append("negative-control")
+
+    audit = api.assess_experiment_revision(
+        previous_version=version,
+        revised_hypothesis={},
+        revised_experiment=revised,
+        final_feedback=_feedback_with_issue(None),
+        available_evidence_refs=["EV-1"],
+    )
+
+    assert audit.issue_closures[0].status == "resolved"
+    assert [change.affected_plan_section for change in audit.changes] == [
+        "control_groups"
+    ]
+    assert audit.changes[0].closure_status == "resolved"
+
+
+def test_immutable_evidence_extraction_target_fails_closed() -> None:
+    """T02 cannot close a Reviewer request aimed at an upstream owner stage."""
+    api = _wave_b()
+    previous = {
+        "experiments": {
+            "baselines": ["positive-control"],
+            "evidence_refs": ["EV-1"],
+        }
+    }
+    version = PlanVersion.create(
+        run_id="immutable-upstream-target",
+        version_number=1,
+        revision_iteration=1,
+        experiment_design=previous,
+        review_feedback=_feedback_with_issue(
+            "Move unsupported claims out of "
+            "EvidenceExtractionResult.established_facts.",
+            category="required_revision",
+        ),
+    )
+    revised = copy.deepcopy(previous)
+    revised["experiments"]["baselines"].append("negative-control")
+
+    audit = api.assess_experiment_revision(
+        previous_version=version,
+        revised_hypothesis={},
+        revised_experiment=revised,
+        final_feedback=_feedback_with_issue(None),
+        available_evidence_refs=["EV-1"],
+    )
+
+    issue = audit.issue_closures[0]
+    assert issue.status == "open"
+    assert issue.resolution_note == (
+        "upstream_target_blocked:EvidenceExtractionResult"
+    )
+    assert audit.changes == []
+    assert (
+        f"upstream_target_blocked:{issue.issue_id}:EvidenceExtractionResult"
+        in audit.blocking_reasons
+    )
+    assert audit.stop_reason == "revision_acceptance_blocked"
+
+
 def test_non_substantive_rewrites_and_bookkeeping_are_rejected() -> None:
     """T02-B-006: prose, iteration, and history changes are not experiment changes."""
     api = _wave_b()
@@ -271,6 +445,76 @@ def test_substantive_detector_accepts_structural_experiment_changes(
         {"experiments": after},
     )
     assert [change.section for change in changes] == [section]
+
+
+@pytest.mark.parametrize(
+    ("expected_section", "previous", "revised"),
+    [
+        (
+            "dataset_sources",
+            {"datasets": {"source": [{"name": "development cohort"}]}},
+            {
+                "datasets": {
+                    "source": [
+                        {"name": "development cohort"},
+                        {"name": "independent validation cohort"},
+                    ]
+                }
+            },
+        ),
+        (
+            "validation_protocol",
+            {"experiments": {"validation_protocol": "single holdout"}},
+            {
+                "experiments": {
+                    "validation_protocol": (
+                        "Use 30 independent replicates and a two-sample t-test."
+                    )
+                }
+            },
+        ),
+        (
+            "methods",
+            {"methods": "Fit the registered model."},
+            {
+                "methods": (
+                    "Fit the registered model, then run 30 independent bootstrap "
+                    "replicates with a fixed seed and report confidence intervals."
+                )
+            },
+        ),
+        (
+            "technical_details",
+            {"technical_details": "Run the simulation."},
+            {
+                "technical_details": (
+                    "Run the simulation and explicitly test the active-transport "
+                    "scope limitation against a passive-diffusion comparator."
+                )
+            },
+        ),
+        (
+            "reproducibility_checklist",
+            {"reproducibility_checklist": ["record environment"]},
+            {
+                "reproducibility_checklist": [
+                    "record environment",
+                    "record exact random seed and power-analysis inputs",
+                ]
+            },
+        ),
+    ],
+)
+def test_substantive_detector_covers_canonical_revision_fields(
+    expected_section: str,
+    previous: dict,
+    revised: dict,
+) -> None:
+    api = _wave_b()
+
+    changes = api.substantive_experiment_diff(previous, revised)
+
+    assert [change.section for change in changes] == [expected_section]
 
 
 def test_revision_change_rejects_false_resolution_claims() -> None:
@@ -379,6 +623,7 @@ def test_pipeline_experiment_prompt_and_trace_preserve_revision_audit(
     audit = audit_events[0]["revision_audit"]
     assert [version["version_id"] for version in audit_events[0]["plan_versions"]] == [
         f"{state.run_id}:v1",
+        f"{state.run_id}:v2",
     ]
     assert audit["parent_version_id"] == f"{state.run_id}:v1"
     assert audit["lineage"] == [f"{state.run_id}:v1", f"{state.run_id}:v2"]
@@ -389,7 +634,8 @@ def test_pipeline_experiment_prompt_and_trace_preserve_revision_audit(
     assert "no_substantive_experiment_change" in audit["blocking_reasons"]
     assert audit["stop_reason"] == "no_improvement"
     assert audit_events[0]["revision_control"]["version_ids"] == [
-        f"{state.run_id}:v1"
+        f"{state.run_id}:v1",
+        f"{state.run_id}:v2",
     ]
     assert not audit_events[0]["two_round_case_report"]["passed"]
     assert plan.validation_status not in {"ready_for_validation", "validated"}
@@ -450,6 +696,74 @@ def test_pipeline_maps_a_substantive_second_round_change_and_closes_issues(
     assert trace["revision_control"]["status"] == "completed"
     assert trace["two_round_case_report"]["passed"]
     assert trace["two_round_case_report"]["responded_issue_count"] >= 1
+
+
+def test_pipeline_persists_v2_for_canonical_revision_fields(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    """A generated canonical V2 is lineage evidence even when acceptance fails."""
+    question_id = _configure_pipeline(monkeypatch, tmp_path)
+    original_experiment_run = ExperimentDesignerAgent.run
+    experiment_calls = 0
+    review_calls = 0
+
+    def revised_second_round(self, input_data, state, step_index=0):
+        nonlocal experiment_calls
+        experiment_calls += 1
+        result = original_experiment_run(self, input_data, state, step_index)
+        if experiment_calls == 2:
+            result = copy.deepcopy(result)
+            datasets = result.setdefault("datasets", {})
+            existing_source = datasets.get("source")
+            sources = (
+                list(existing_source)
+                if isinstance(existing_source, list)
+                else [{"name": str(existing_source or "development-cohort")}]
+            )
+            datasets["source"] = [
+                *sources,
+                {"name": "independent-validation-cohort", "type": "validation"},
+            ]
+            result.setdefault("experiments", {})["validation_protocol"] = (
+                "Run 30 independent replicates with a two-sample t-test."
+            )
+            result["methods"] = (
+                str(result.get("methods") or "")
+                + " Run a preregistered power analysis before evaluation."
+            )
+            result["technical_details"] = (
+                str(result.get("technical_details") or "")
+                + " Validate the scope limitation against an independent comparator."
+            )
+            result.setdefault("reproducibility_checklist", []).append(
+                "Record the exact seed and power-analysis inputs."
+            )
+        return result
+
+    def controlled_reviewer(self, input_data, state, step_index=0):
+        nonlocal review_calls
+        review_calls += 1
+        feedback = _blocking_feedback() if review_calls == 1 else _clear_feedback()
+        return feedback.model_dump(mode="json")
+
+    monkeypatch.setattr(ExperimentDesignerAgent, "run", revised_second_round)
+    monkeypatch.setattr(ScientificReviewerAgent, "run", controlled_reviewer)
+    try:
+        _plan, state = run_pipeline_with_state(question_id, mock_mode=True)
+    finally:
+        get_settings.cache_clear()
+
+    trace = next(event for event in state.agent_trace if event.get("revision_audit"))
+    assert trace["revision_audit"]["substantive_sections"]
+    assert [version["version_id"] for version in trace["plan_versions"]] == [
+        f"{state.run_id}:v1",
+        f"{state.run_id}:v2",
+    ]
+    assert trace["revision_recovery_checkpoint"]["controller"]["version_ids"] == [
+        f"{state.run_id}:v1",
+        f"{state.run_id}:v2",
+    ]
 
 
 def test_pipeline_keeps_budget_exhaustion_as_an_explicit_blocker(

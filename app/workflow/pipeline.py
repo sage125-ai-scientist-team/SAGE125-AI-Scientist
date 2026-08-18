@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Sequence
 from contextvars import ContextVar
 from pathlib import Path
 from typing import Optional
@@ -35,9 +36,10 @@ from app.agents import (
 )
 from app.agents.base import AgentOutputError
 from app.contracts.evidence import EvidenceBundle
+from app.contracts.execution import ExecutionResult
+from app.contracts.multimodal import MultimodalArtifact
 from app.contracts.revision import (
     PlanVersion,
-    PlanVersionStore,
     ReviewFeedback,
     RevisionContext,
     RevisionPromptBuilder,
@@ -55,7 +57,6 @@ from app.workflow.explainable_revision import (
     RevisionAwareExperimentDesignerAgent,
     RevisionAwareHypothesisGeneratorAgent,
     RevisionAwareScientificReviewerAgent,
-    RevisionExecutionController,
     TwoRoundCaseReport,
     assess_experiment_revision,
     attach_revision_metadata,
@@ -69,6 +70,8 @@ from app.workflow.explainable_revision import (
 )
 from app.workflow.mock_outputs import PENDING_RESULTS, build_mock_evidence_cards
 from app.workflow.quality_gates import run_all_quality_gates
+from app.workflow.revision_feedback import build_revision_feedback
+from app.workflow.revision_recovery import RevisionRecoveryCoordinator
 
 # 模块级日志器。
 logger = get_logger("workflow.pipeline")
@@ -502,6 +505,8 @@ def _run_pipeline_with_state_impl(
     mock_mode: Optional[bool] = None,
     evidence_bundle: EvidenceBundle | None = None,
     human_feedback_directive: HumanFeedbackDirective | None = None,
+    execution_result: ExecutionResult | None = None,
+    multimodal_artifacts: Sequence[MultimodalArtifact] | None = None,
 ) -> tuple[ResearchPlan, PipelineState]:
     """
     运行完整多智能体流水线，返回 (ResearchPlan, PipelineState)。
@@ -513,6 +518,10 @@ def _run_pipeline_with_state_impl(
     """
     settings = get_settings()
     mock = _is_mock(mock_mode)
+    wave_c_feedback = build_revision_feedback(
+        execution_result=execution_result,
+        multimodal_artifacts=multimodal_artifacts,
+    )
     export_base = resolve_artifact_base(settings.export_dir)
     emit_progress("initializing", status="running", message="正在初始化 AI Scientist 运行环境")
 
@@ -688,13 +697,13 @@ def _run_pipeline_with_state_impl(
             first_feedback,
             unresolved_issues,
         )
-        version_store = PlanVersionStore()
-        revision_controller = RevisionExecutionController.create(
+        revision_recovery = RevisionRecoveryCoordinator.create(
             run_id=state.run_id,
+            issue_closures=unresolved_issues,
             max_iterations=2,
             max_retries=1,
         )
-        revision_controller.claim_event(f"{state.run_id}:review:v1")
+        revision_controller = revision_recovery.controller
         first_version = PlanVersion.create(
             run_id=state.run_id,
             version_number=1,
@@ -715,14 +724,20 @@ def _run_pipeline_with_state_impl(
                 ),
             },
         )
-        version_store.save(first_version)
-        revision_controller.record_version(first_version.version_id)
+        revision_recovery.apply_version_event(
+            event_id=f"{state.run_id}:review:v1",
+            event_type="reviewer_callback",
+            version=first_version,
+        )
+        if execution_result is not None:
+            revision_recovery.record_execution_result(execution_result)
         experiment_revision_context = build_experiment_revision_context(
             previous_version=first_version,
             unresolved_issues=unresolved_issues,
             failure_reasons=failure_reasons,
             evidence_bundle=evidence_bundle,
             human_feedback=human_feedback_directive,
+            wave_c_feedback=wave_c_feedback,
         )
         state.revision_history.append("auto_revision_1: 依据评审意见重做假设与实验设计。")
         revision_controller.advance_iteration()
@@ -794,32 +809,41 @@ def _run_pipeline_with_state_impl(
                 for item in _evidence_catalog(state.retrieved_evidence)
                 if item.get("id")
             ],
+            mutable_revision_targets=(
+                "HypothesisGenerationResult",
+                "ExperimentDesignResult",
+            ),
         )
-        second_version: PlanVersion | None = None
-        if revision_audit.substantive_sections:
-            second_version = PlanVersion.create(
-                run_id=state.run_id,
-                version_number=2,
-                parent_version_id=first_version.version_id,
-                revision_iteration=2,
-                hypothesis_generation=state.hypothesis_generation,
-                experiment_design=state.experiment_design,
-                review_feedback=review,
-                issue_closures=revision_audit.issue_closures,
-                prompt_fingerprints={
-                    "hypothesis_generator": RevisionPromptBuilder.fingerprint(
-                        second_hypothesis_input
-                    ),
-                    "experiment_designer": RevisionPromptBuilder.fingerprint(
-                        second_experiment_input
-                    ),
-                    "scientific_reviewer": RevisionPromptBuilder.fingerprint(
-                        second_reviewer_input
-                    ),
-                },
-            )
-            version_store.save(second_version)
-            revision_controller.record_version(second_version.version_id)
+        # A successfully generated and reviewed second-round canonical plan is V2
+        # lineage evidence even when its changes do not satisfy acceptance.  Diff
+        # assessment may fail closed, but it must never erase an existing version.
+        second_version = PlanVersion.create(
+            run_id=state.run_id,
+            version_number=2,
+            parent_version_id=first_version.version_id,
+            revision_iteration=2,
+            hypothesis_generation=state.hypothesis_generation,
+            experiment_design=state.experiment_design,
+            review_feedback=review,
+            issue_closures=revision_audit.issue_closures,
+            prompt_fingerprints={
+                "hypothesis_generator": RevisionPromptBuilder.fingerprint(
+                    second_hypothesis_input
+                ),
+                "experiment_designer": RevisionPromptBuilder.fingerprint(
+                    second_experiment_input
+                ),
+                "scientific_reviewer": RevisionPromptBuilder.fingerprint(
+                    second_reviewer_input
+                ),
+            },
+        )
+        revision_recovery.apply_version_event(
+            event_id=f"{state.run_id}:revision:v2",
+            event_type="revision_event",
+            version=second_version,
+        )
+        revision_recovery.set_issue_closures(revision_audit.issue_closures)
         if revision_audit.accepted:
             revision_controller.complete()
         else:
@@ -838,9 +862,19 @@ def _run_pipeline_with_state_impl(
                 ),
             },
         )
-        trace_fields = revision_trace_fields(
-            revision_audit,
-            plan_versions=version_store.list_versions(state.run_id),
+        plan_versions = revision_recovery.list_versions()
+        trace_fields = (
+            revision_trace_fields(
+                revision_audit,
+                plan_versions=plan_versions,
+                revision_control=revision_controller.state,
+                integrity=experiment_revision_context.integrity,
+            )
+            if experiment_revision_context.integrity is not None
+            else revision_trace_fields(
+                revision_audit,
+                plan_versions=plan_versions,
+            )
         )
         if human_feedback_directive is not None and second_version is not None:
             revision_metadata, lineage_handoff = build_revision_pairing_outputs(
@@ -868,6 +902,9 @@ def _run_pipeline_with_state_impl(
             {
                 "revision_control": revision_controller.state.model_dump(
                     mode="json"
+                ),
+                "revision_recovery_checkpoint": (
+                    revision_recovery.checkpoint().model_dump(mode="json")
                 ),
                 "two_round_case_report": case_report.model_dump(mode="json"),
             }
@@ -971,6 +1008,8 @@ def run_pipeline_with_state(
     progress_callback: ProgressCallback | None = None,
     evidence_bundle: EvidenceBundle | None = None,
     human_feedback_directive: HumanFeedbackDirective | None = None,
+    execution_result: ExecutionResult | None = None,
+    multimodal_artifacts: Sequence[MultimodalArtifact] | None = None,
 ) -> tuple[ResearchPlan, PipelineState]:
     """Run the pipeline in an isolated mode/progress context and persist failures."""
     resolved_mock = _is_mock(mock_mode)
@@ -989,6 +1028,8 @@ def run_pipeline_with_state(
                     mock_mode=resolved_mock,
                     evidence_bundle=evidence_bundle,
                     human_feedback_directive=human_feedback_directive,
+                    execution_result=execution_result,
+                    multimodal_artifacts=multimodal_artifacts,
                 )
             except Exception as exc:
                 state = _ACTIVE_STATE.get()
@@ -1024,6 +1065,8 @@ def run_pipeline(
     mock_mode: Optional[bool] = None,
     evidence_bundle: EvidenceBundle | None = None,
     human_feedback_directive: HumanFeedbackDirective | None = None,
+    execution_result: ExecutionResult | None = None,
+    multimodal_artifacts: Sequence[MultimodalArtifact] | None = None,
 ) -> ResearchPlan:
     """
     运行完整多智能体流水线并返回最终 ResearchPlan。
@@ -1052,6 +1095,8 @@ def run_pipeline(
         mock_mode=mock_mode,
         evidence_bundle=evidence_bundle,
         human_feedback_directive=human_feedback_directive,
+        execution_result=execution_result,
+        multimodal_artifacts=multimodal_artifacts,
     )
     return plan
 
@@ -1135,7 +1180,8 @@ def revise_with_feedback(
     state.experiment_design = exp_result
     review = ScientificReviewerAgent(settings).run(_reviewer_input(state, qdict), state, step)
     state.review_result = review
-    draft = ReportWriterAgent(settings).run({"question_item": qdict}, state, step); step += 1
+    draft = ReportWriterAgent(settings).run({"question_item": qdict}, state, step)
+    step += 1
     draft["experiments"] = exp_result.get("experiments", {})
     draft["datasets"] = exp_result.get("datasets", {})
     draft["results"] = exp_result.get("results", "")

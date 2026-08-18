@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
+import unicodedata
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any, Literal
 
@@ -26,6 +28,11 @@ from app.contracts.revision import (
     issues_from_review_feedback,
 )
 from app.contracts.validation import HumanFeedbackDirective
+from app.workflow.revision_feedback import RevisionFeedbackProjection
+from app.workflow.revision_integrity import (
+    RevisionContextIntegrity,
+    build_revision_context_integrity,
+)
 
 
 ClosureStatus = Literal["open", "resolved"]
@@ -36,6 +43,11 @@ SubstantiveSection = Literal[
     "evaluation_metrics",
     "safety_constraints",
     "stopping_conditions",
+    "dataset_sources",
+    "validation_protocol",
+    "methods",
+    "technical_details",
+    "reproducibility_checklist",
     "evidence_references",
 ]
 
@@ -119,6 +131,8 @@ class ExperimentRevisionContext(BaseModel):
     reviewer_feedback: ReviewFeedback
     evidence_bundle: EvidenceBundle | None = None
     human_feedback: HumanFeedbackDirective | None = None
+    wave_c_feedback: RevisionFeedbackProjection | None = None
+    integrity: RevisionContextIntegrity | None = None
     required_change_fields: tuple[str, ...] = (
         "change_id",
         "issue_id",
@@ -129,6 +143,25 @@ class ExperimentRevisionContext(BaseModel):
         "affected_plan_section",
         "closure_status",
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _reject_incomplete_lineage_provenance(cls, value: Any) -> Any:
+        if not isinstance(value, Mapping):
+            return value
+        integrity = value.get("integrity")
+        if isinstance(integrity, Mapping):
+            lineage = integrity.get("lineage_provenance")
+            required = {
+                "source_version_id",
+                "parent_plan_version_id",
+                "generated_version_id",
+                "generated_at",
+                "context_hash",
+            }
+            if not isinstance(lineage, Mapping) or not required.issubset(lineage):
+                raise ValueError("lineage provenance is incomplete")
+        return value
 
     @model_validator(mode="after")
     def _validate_lineage(self) -> "ExperimentRevisionContext":
@@ -144,6 +177,36 @@ class ExperimentRevisionContext(BaseModel):
             and self.human_feedback.target_version_id != self.parent_version_id
         ):
             raise ValueError("human feedback must target the parent plan version")
+        if self.wave_c_feedback is None:
+            if self.integrity is not None:
+                raise ValueError(
+                    "context integrity cannot exist without Wave C feedback"
+                )
+            return self
+        if self.integrity is None:
+            raise ValueError("Wave C revision context requires context integrity")
+        if (
+            self.wave_c_feedback.execution is None
+            or not self.wave_c_feedback.multimodal
+        ):
+            raise ValueError(
+                "Wave C context requires complete execution and multimodal summaries"
+            )
+        previous = PlanVersion.model_validate(self.previous_plan_version)
+        expected = build_revision_context_integrity(
+            previous_version=previous,
+            issues=self.unresolved_issues,
+            wave_c_feedback=self.wave_c_feedback,
+            generated_at=self.integrity.lineage_provenance.generated_at,
+        )
+        if self.integrity != expected:
+            raise ValueError(
+                "context integrity does not match reviewer, issue, or lineage content"
+            )
+        if self.parent_version_id != expected.lineage_provenance.parent_plan_version_id:
+            raise ValueError("parent plan version does not match lineage provenance")
+        if self.lineage[-1] != expected.lineage_provenance.generated_version_id:
+            raise ValueError("generated version does not match revision lineage")
         return self
 
 
@@ -155,6 +218,20 @@ class RevisionRoundInput(BaseModel):
     review_result: ReviewFeedback
     revision_context: ExperimentRevisionContext
     human_feedback: HumanFeedbackReceipt | None = None
+    revision_feedback_fingerprint: str | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{64}$",
+    )
+
+    @model_validator(mode="after")
+    def _match_feedback_fingerprint(self) -> "RevisionRoundInput":
+        feedback = self.revision_context.wave_c_feedback
+        expected = feedback.fingerprint if feedback is not None else None
+        if self.revision_feedback_fingerprint != expected:
+            raise ValueError(
+                "revision feedback fingerprint must match the bounded projection"
+            )
+        return self
 
 
 class ReviewScoreChange(BaseModel):
@@ -573,6 +650,8 @@ def build_experiment_revision_context(
     failure_reasons: Sequence[FailureReason],
     evidence_bundle: EvidenceBundle | None = None,
     human_feedback: HumanFeedbackDirective | None = None,
+    wave_c_feedback: RevisionFeedbackProjection | None = None,
+    generated_at: str | None = None,
 ) -> ExperimentRevisionContext:
     """Build the exact structured payload supplied to revision-round agents."""
     if previous_version.version_number != 1:
@@ -580,6 +659,16 @@ def build_experiment_revision_context(
     if previous_version.review_feedback is None:
         raise ValueError("previous plan version requires Reviewer feedback")
     child_id = f"{previous_version.run_id}:v2"
+    integrity = (
+        build_revision_context_integrity(
+            previous_version=previous_version,
+            issues=unresolved_issues,
+            wave_c_feedback=wave_c_feedback,
+            generated_at=generated_at,
+        )
+        if wave_c_feedback is not None
+        else None
+    )
     return ExperimentRevisionContext(
         previous_plan={
             "hypothesis_generation": previous_version.hypothesis_generation,
@@ -601,6 +690,12 @@ def build_experiment_revision_context(
             if human_feedback is not None
             else None
         ),
+        wave_c_feedback=(
+            wave_c_feedback.model_copy(deep=True)
+            if wave_c_feedback is not None
+            else None
+        ),
+        integrity=integrity,
     )
 
 
@@ -620,11 +715,27 @@ def inject_revision_context(
             if context.human_feedback is not None
             else None
         ),
+        revision_feedback_fingerprint=(
+            context.wave_c_feedback.fingerprint
+            if context.wave_c_feedback is not None
+            else None
+        ),
     )
     envelope_payload = envelope.model_dump(mode="json")
     if envelope.human_feedback is None:
         envelope_payload.pop("human_feedback")
+    if envelope.revision_feedback_fingerprint is None:
+        envelope_payload.pop("revision_feedback_fingerprint")
+        envelope_payload["revision_context"].pop("wave_c_feedback")
+        envelope_payload["revision_context"].pop("integrity")
     result.update(envelope_payload)
+    if envelope.revision_feedback_fingerprint is not None:
+        result = {
+            "revision_feedback_fingerprint": (
+                envelope.revision_feedback_fingerprint
+            ),
+            **result,
+        }
     return result
 
 
@@ -640,12 +751,18 @@ class _RevisionMessageMixin:
                 "review_result": input_data.get("review_result"),
                 "revision_context": input_data.get("revision_context"),
                 "human_feedback": input_data.get("human_feedback"),
+                "revision_feedback_fingerprint": input_data.get(
+                    "revision_feedback_fingerprint"
+                ),
             }
         )
         user_payload = json.loads(messages[1]["content"])
         envelope_payload = envelope.model_dump(mode="json")
         if envelope.human_feedback is None:
             envelope_payload.pop("human_feedback")
+        if envelope.revision_feedback_fingerprint is None:
+            envelope_payload.pop("revision_feedback_fingerprint")
+            envelope_payload["revision_context"].pop("wave_c_feedback")
         user_payload.update(envelope_payload)
         return [
             dict(messages[0]),
@@ -713,6 +830,289 @@ _SECTION_ALIASES: tuple[tuple[SubstantiveSection, tuple[str, ...]], ...] = (
     ),
 )
 
+_SEMANTIC_EQUIVALENCE_GROUPS: tuple[frozenset[str], ...] = (
+    frozenset({"absent", "lack", "lacking", "missing", "none", "no"}),
+    frozenset({"external", "independent", "outofsample"}),
+    frozenset({"validate", "validated", "validation", "verification", "verify"}),
+    frozenset({"cohort", "dataset", "population", "sample", "set"}),
+    frozenset({"control", "comparator", "baseline"}),
+    frozenset({"evidence", "grounding", "provenance", "reference", "source"}),
+    frozenset({"metric", "measure", "outcome", "score"}),
+    frozenset({"falsifiable", "falsifiability", "falsification"}),
+    frozenset({"observation", "observed", "observation"}),
+)
+_SEMANTIC_CANONICAL_TOKEN = {
+    token: sorted(group)[0]
+    for group in _SEMANTIC_EQUIVALENCE_GROUPS
+    for token in group
+}
+_SEMANTIC_STOPWORDS = frozenset(
+    {
+        "a",
+        "an",
+        "and",
+        "are",
+        "as",
+        "be",
+        "by",
+        "for",
+        "from",
+        "has",
+        "have",
+        "in",
+        "is",
+        "it",
+        "of",
+        "on",
+        "or",
+        "that",
+        "the",
+        "this",
+        "to",
+        "with",
+        "add",
+        "after",
+        "apply",
+        "before",
+        "design",
+        "ensure",
+        "include",
+        "one",
+        "provide",
+        "then",
+        "use",
+    }
+)
+_SECTION_CORRELATION_TOKENS: dict[SubstantiveSection, frozenset[str]] = {
+    "experimental_variables": frozenset({"variable", "independent", "dependent"}),
+    "control_groups": frozenset({"baseline", "control", "group", "negative"}),
+    "experiment_steps": frozenset({"experiment", "procedure", "step"}),
+    "evaluation_metrics": frozenset(
+        {
+            "criterion",
+            "evaluation",
+            "falsifiability",
+            "measure",
+            "observation",
+            "outcome",
+            "threshold",
+        }
+    ),
+    "safety_constraints": frozenset({"constraint", "guardrail", "safety"}),
+    "stopping_conditions": frozenset(
+        {
+            "condition",
+            "criterion",
+            "falsifiability",
+            "stop",
+            "termination",
+            "threshold",
+        }
+    ),
+    "dataset_sources": frozenset(
+        {"cohort", "dataset", "external", "source", "validation"}
+    ),
+    "validation_protocol": frozenset(
+        {"protocol", "replicate", "test", "validation"}
+    ),
+    "methods": frozenset({"analysis", "method", "procedure"}),
+    "technical_details": frozenset({"detail", "implementation", "technical"}),
+    "reproducibility_checklist": frozenset(
+        {"checklist", "reproducibility", "seed"}
+    ),
+    "evidence_references": frozenset({"evidence", "reference", "source"}),
+}
+_SEMANTIC_FRAGMENT_TOKENS: tuple[tuple[str, str], ...] = (
+    ("缺少", "absent"),
+    ("证伪", "falsifiability"),
+    ("判据", "criterion"),
+    ("阈值", "threshold"),
+    ("观测", "observation"),
+    ("外推", "external"),
+    ("显著性", "significance"),
+)
+_REVISION_TARGET_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    (
+        "EvidenceExtractionResult",
+        re.compile(
+            r"(?:evidence\s*extraction\s*result|evidenceextractionresult|"
+            r"established_facts|disputed_points|knowledge_gaps)",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "HypothesisGenerationResult",
+        re.compile(r"(?:hypothesis\s*generation\s*result|hypothesisgenerationresult)", re.IGNORECASE),
+    ),
+    (
+        "ExperimentDesignResult",
+        re.compile(r"(?:experiment\s*design\s*result|experimentdesignresult)", re.IGNORECASE),
+    ),
+)
+_DEFAULT_MUTABLE_REVISION_TARGETS = frozenset(
+    {"HypothesisGenerationResult", "ExperimentDesignResult"}
+)
+
+
+def _semantic_tokens(value: Any) -> frozenset[str]:
+    """Normalize issue/change language for conservative deterministic matching."""
+    text = unicodedata.normalize("NFKC", str(value))
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text).casefold()
+    raw_tokens = re.findall(r"[a-z0-9]+(?:\.[a-z0-9]+)*", text)
+    normalized: set[str] = set()
+    for fragment, token in _SEMANTIC_FRAGMENT_TOKENS:
+        if fragment in text:
+            normalized.add(_SEMANTIC_CANONICAL_TOKEN.get(token, token))
+    for raw in raw_tokens:
+        token = _SEMANTIC_CANONICAL_TOKEN.get(raw, raw)
+        if token == raw and token.endswith("ing") and len(token) > 5:
+            token = token[:-3]
+            if len(token) > 2 and token[-1] == token[-2]:
+                token = token[:-1]
+        elif token == raw and token.endswith("ed") and len(token) > 4:
+            token = token[:-2]
+        elif token == raw and token.endswith("ies") and len(token) > 4:
+            token = token[:-3] + "y"
+        elif (
+            token == raw
+            and token.endswith("s")
+            and len(token) > 4
+            and not token.endswith("ss")
+        ):
+            token = token[:-1]
+        token = _SEMANTIC_CANONICAL_TOKEN.get(token, token)
+        if token not in _SEMANTIC_STOPWORDS and len(token) > 1:
+            normalized.add(token)
+    return frozenset(normalized)
+
+
+def _issue_revision_target(issue: IssueClosure) -> str | None:
+    """Extract only explicit frozen-contract targets from Reviewer language."""
+    for target, pattern in _REVISION_TARGET_PATTERNS:
+        if pattern.search(issue.description):
+            return target
+    return None
+
+
+def _semantic_issue_score(left: IssueClosure, right: IssueClosure) -> float:
+    """Return a strict category-bound lexical-semantic continuation score."""
+    if left.category != right.category:
+        return 0.0
+    if left.issue_id == right.issue_id:
+        return 1.0
+    left_tokens = _semantic_tokens(left.description)
+    right_tokens = _semantic_tokens(right.description)
+    if not left_tokens or not right_tokens:
+        return 0.0
+    overlap = left_tokens & right_tokens
+    containment = len(overlap) / min(len(left_tokens), len(right_tokens))
+    union = left_tokens | right_tokens
+    jaccard = len(overlap) / len(union)
+    return (0.65 * containment) + (0.35 * jaccard)
+
+
+def _semantic_continuations(
+    initial_issues: Sequence[IssueClosure],
+    final_issues: Sequence[IssueClosure],
+) -> dict[str, IssueClosure]:
+    """Conservatively link rephrased Reviewer issues; ambiguity stays unresolved."""
+    candidates: list[tuple[float, str, str, IssueClosure, IssueClosure]] = []
+    for initial in initial_issues:
+        for final in final_issues:
+            score = _semantic_issue_score(initial, final)
+            if score >= 0.72:
+                candidates.append(
+                    (-score, initial.issue_id, final.issue_id, initial, final)
+                )
+    matched_initial: set[str] = set()
+    matched_final: set[str] = set()
+    result: dict[str, IssueClosure] = {}
+    for _negative_score, _initial_id, _final_id, initial, final in sorted(candidates):
+        if initial.issue_id in matched_initial or final.issue_id in matched_final:
+            continue
+        matched_initial.add(initial.issue_id)
+        matched_final.add(final.issue_id)
+        result[initial.issue_id] = final
+    return result
+
+
+def _issue_specific_diffs(
+    issue: IssueClosure,
+    diffs: Sequence[ExperimentSectionDiff],
+) -> list[tuple[ExperimentSectionDiff, tuple[str, ...], float]]:
+    """Correlate an issue to changed canonical sections without round-robin mapping."""
+    issue_tokens = _semantic_tokens(issue.description)
+    if not issue_tokens:
+        return []
+    correlated: list[tuple[ExperimentSectionDiff, tuple[str, ...], float]] = []
+    for diff in diffs:
+        change_tokens = (
+            _semantic_tokens(diff.after)
+            | _SECTION_CORRELATION_TOKENS.get(diff.section, frozenset())
+        )
+        overlap = tuple(sorted(issue_tokens & change_tokens))
+        coverage = len(overlap) / len(issue_tokens)
+        if len(overlap) >= 2 and coverage >= 0.4:
+            correlated.append((diff, overlap, coverage))
+    combined = {
+        token
+        for _diff, overlap, _coverage in correlated
+        for token in overlap
+    }
+    if len(combined) / len(issue_tokens) < 0.5:
+        return []
+    return correlated
+
+
+def _correlate_issue_diffs(
+    issues: Sequence[IssueClosure],
+    diffs: Sequence[ExperimentSectionDiff],
+) -> dict[str, list[tuple[ExperimentSectionDiff, tuple[str, ...], float]]]:
+    """Assign each physical diff to its strongest issue without duplicate claims."""
+
+    candidates: dict[
+        str,
+        list[
+            tuple[
+                float,
+                int,
+                str,
+                ExperimentSectionDiff,
+                tuple[str, ...],
+            ]
+        ],
+    ] = {}
+    by_issue: dict[
+        str,
+        list[tuple[ExperimentSectionDiff, tuple[str, ...], float]],
+    ] = {}
+    for issue in issues:
+        issue_candidates = _issue_specific_diffs(issue, diffs)
+        by_issue[issue.issue_id] = issue_candidates
+        for diff, overlap, coverage in issue_candidates:
+            diff_key = _canonical_json(
+                {"section": diff.section, "before": diff.before, "after": diff.after}
+            )
+            candidates.setdefault(diff_key, []).append(
+                (coverage, len(overlap), issue.issue_id, diff, overlap)
+            )
+    correlated = {issue.issue_id: [] for issue in issues}
+    for values in candidates.values():
+        coverage, _overlap_count, issue_id, diff, overlap = sorted(
+            values,
+            key=lambda item: (-item[0], -item[1], item[2]),
+        )[0]
+        correlated[issue_id].append((diff, overlap, coverage))
+    for issue in issues:
+        if correlated[issue.issue_id] or not by_issue[issue.issue_id]:
+            continue
+        diff, overlap, coverage = sorted(
+            by_issue[issue.issue_id],
+            key=lambda item: (-item[2], -len(item[1]), item[0].section),
+        )[0]
+        correlated[issue.issue_id].append((diff, overlap, coverage))
+    return correlated
+
 
 def _experiments(plan: Mapping[str, Any]) -> Mapping[str, Any]:
     value = plan.get("experiments")
@@ -729,6 +1129,49 @@ def _section_value(plan: Mapping[str, Any], aliases: Sequence[str]) -> Any:
     if len(found) == 1:
         return next(iter(found.values()))
     return found or None
+
+
+_CANONICAL_REVISION_PATHS: tuple[
+    tuple[SubstantiveSection, tuple[str, ...]], ...
+] = (
+    ("dataset_sources", ("datasets", "source")),
+    ("validation_protocol", ("experiments", "validation_protocol")),
+    ("methods", ("methods",)),
+    ("technical_details", ("technical_details",)),
+    ("reproducibility_checklist", ("reproducibility_checklist",)),
+)
+
+
+def _path_value(plan: Mapping[str, Any], path: Sequence[str]) -> Any:
+    value: Any = plan
+    for part in path:
+        if not isinstance(value, Mapping) or part not in value:
+            return None
+        value = value[part]
+    return None if value in (None, "", [], {}) else value
+
+
+def _material_canonical_change(
+    section: SubstantiveSection,
+    before: Any,
+    after: Any,
+) -> bool:
+    """Reject prose-only rewrites while retaining material canonical field changes."""
+    if isinstance(before, str) and isinstance(after, str):
+        before_tokens = _semantic_tokens(before)
+        after_tokens = _semantic_tokens(after)
+        if before_tokens == after_tokens:
+            return False
+        union = before_tokens | after_tokens
+        if not union:
+            return False
+        added = after_tokens - before_tokens
+        removed = before_tokens - after_tokens
+        if any(any(character.isdigit() for character in token) for token in added):
+            return True
+        change_ratio = len(added | removed) / len(union)
+        return change_ratio >= 0.25 and (len(added) >= 2 or len(removed) >= 2)
+    return _normalized_section(section, before) != _normalized_section(section, after)
 
 
 def _collect_evidence_refs(value: Any) -> list[str]:
@@ -784,6 +1227,13 @@ def substantive_experiment_diff(
         before = _section_value(previous, aliases)
         after = _section_value(revised, aliases)
         if _normalized_section(section, before) != _normalized_section(section, after):
+            changes.append(
+                ExperimentSectionDiff(section=section, before=before, after=after)
+            )
+    for section, path in _CANONICAL_REVISION_PATHS:
+        before = _path_value(previous, path)
+        after = _path_value(revised, path)
+        if _material_canonical_change(section, before, after):
             changes.append(
                 ExperimentSectionDiff(section=section, before=before, after=after)
             )
@@ -877,6 +1327,9 @@ def assess_experiment_revision(
     revised_experiment: Mapping[str, Any],
     final_feedback: ReviewFeedback | Mapping[str, Any],
     available_evidence_refs: Sequence[str],
+    mutable_revision_targets: Sequence[str] = tuple(
+        sorted(_DEFAULT_MUTABLE_REVISION_TARGETS)
+    ),
 ) -> ExplainableRevisionAudit:
     """Assess V2 and produce issue-change-evidence-closure audit evidence."""
     if previous_version.review_feedback is None:
@@ -894,18 +1347,42 @@ def assess_experiment_revision(
         available_evidence_refs,
     )
     final_issues = issues_for_revision(final_snapshot, opened_in_version=2)
-    final_issue_ids = {issue.issue_id for issue in final_issues}
+    continuations = _semantic_continuations(initial_issues, final_issues)
+    mutable_targets = frozenset(str(target) for target in mutable_revision_targets)
+    upstream_blocked_targets = {
+        issue.issue_id: target
+        for issue in initial_issues
+        if (target := _issue_revision_target(issue)) is not None
+        and target not in mutable_targets
+    }
+    eligible_issues = [
+        issue
+        for issue in initial_issues
+        if issue.issue_id not in upstream_blocked_targets
+    ]
+    correlated_diffs = _correlate_issue_diffs(eligible_issues, diffs)
+    correlated_diffs.update(
+        {issue_id: [] for issue_id in upstream_blocked_targets}
+    )
 
     issue_status: dict[str, ClosureStatus] = {}
     unresolved_reason: dict[str, str | None] = {}
     for issue in initial_issues:
-        if issue.issue_id in final_issue_ids:
+        continuation = continuations.get(issue.issue_id)
+        if issue.issue_id in upstream_blocked_targets:
+            target = upstream_blocked_targets[issue.issue_id]
             issue_status[issue.issue_id] = "open"
-            unresolved_reason[issue.issue_id] = "V2 Reviewer still reports this issue."
-        elif not diffs:
+            unresolved_reason[issue.issue_id] = f"upstream_target_blocked:{target}"
+        elif continuation is not None:
             issue_status[issue.issue_id] = "open"
             unresolved_reason[issue.issue_id] = (
-                "No substantive structured experiment change maps to this issue."
+                "V2 Reviewer reports semantic_continuation:"
+                f"{continuation.issue_id}."
+            )
+        elif not correlated_diffs[issue.issue_id]:
+            issue_status[issue.issue_id] = "open"
+            unresolved_reason[issue.issue_id] = (
+                "No issue-specific correlated structured change maps to this issue."
             )
         elif not evidence_refs:
             issue_status[issue.issue_id] = "open"
@@ -917,11 +1394,8 @@ def assess_experiment_revision(
             unresolved_reason[issue.issue_id] = None
 
     changes: list[RevisionChange] = []
-    if diffs and initial_issues:
-        mapping_count = max(len(diffs), len(initial_issues))
-        for index in range(mapping_count):
-            diff = diffs[index % len(diffs)]
-            issue = initial_issues[index % len(initial_issues)]
+    for issue in initial_issues:
+        for diff, overlap, coverage in correlated_diffs[issue.issue_id]:
             status = issue_status[issue.issue_id]
             change_id = _stable_id(
                 "change",
@@ -932,8 +1406,8 @@ def assess_experiment_revision(
             )
             reason = (
                 f"Reviewer item {issue.issue_id} requested '{issue.description}'. "
-                f"V2 changes {diff.section} from the recorded before value to the "
-                "recorded after value."
+                f"V2 changes {diff.section}; deterministic correlation evidence "
+                f"tokens={list(overlap)}, coverage={coverage:.3f}."
             )
             changes.append(
                 RevisionChange(
@@ -984,8 +1458,23 @@ def assess_experiment_revision(
             )
 
     initial_ids = {issue.issue_id for issue in initial_issues}
+    continuation_source_by_final_id = {
+        final.issue_id: initial_id
+        for initial_id, final in continuations.items()
+        if final.issue_id != initial_id
+    }
     closures.extend(
-        issue.model_copy(deep=True)
+        issue.model_copy(
+            update={
+                "resolution_note": (
+                    f"semantic_continuation_of:"
+                    f"{continuation_source_by_final_id[issue.issue_id]}"
+                )
+            }
+            if issue.issue_id in continuation_source_by_final_id
+            else {},
+            deep=True,
+        )
         for issue in final_issues
         if issue.issue_id not in initial_ids
     )
@@ -997,6 +1486,11 @@ def assess_experiment_revision(
         blocking.append("substantive_change_missing_validated_evidence")
     mapped_issue_ids = {change.issue_id for change in changes}
     for issue in initial_issues:
+        if issue.issue_id in upstream_blocked_targets:
+            blocking.append(
+                "upstream_target_blocked:"
+                f"{issue.issue_id}:{upstream_blocked_targets[issue.issue_id]}"
+            )
         if issue.issue_id not in mapped_issue_ids:
             blocking.append(f"required_revision_without_change:{issue.issue_id}")
     for issue in closures:
@@ -1091,6 +1585,231 @@ class RevisionExecutionState(BaseModel):
         if self.status != "stopped" and self.stop_reason is not None:
             raise ValueError("stop_reason is only valid while stopped")
         return self
+
+
+class RevisionConsumerVersion(BaseModel):
+    """Flat version provenance intended for T08 and UI consumers."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    source_version_id: str = Field(min_length=1)
+    parent_plan_version_id: str = Field(min_length=1)
+    generated_version_id: str = Field(min_length=1)
+    generated_at: str = Field(min_length=1)
+    context_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class RevisionConsumerIssue(BaseModel):
+    """Flat issue transition without the internal IssueClosure object."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    issue_id: str = Field(min_length=1)
+    previous_status: Literal["not_present", "open", "resolved"]
+    current_status: ClosureStatus
+    closure_reason: str | None = None
+
+    @model_validator(mode="after")
+    def _validate_closure_reason(self) -> "RevisionConsumerIssue":
+        if self.current_status == "resolved" and not (
+            self.closure_reason or ""
+        ).strip():
+            raise ValueError("resolved consumer issue requires closure reason")
+        return self
+
+
+class RevisionConsumerDiff(BaseModel):
+    """Minimal issue-to-section diff suitable for an external consumer."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    change_id: str = Field(min_length=1)
+    issue_id: str = Field(min_length=1)
+    section: SubstantiveSection
+    evidence_refs: tuple[str, ...] = ()
+    closure_status: ClosureStatus
+
+
+class RevisionStatusEvent(BaseModel):
+    """Ordered revision lifecycle status without internal controller state."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    event_id: str = Field(min_length=1)
+    sequence: int = Field(ge=1)
+    event_type: Literal[
+        "version_created",
+        "revision_retry",
+        "revision_active",
+        "revision_paused",
+        "revision_completed",
+        "revision_stopped",
+    ]
+    subject_id: str = Field(min_length=1)
+    detail: str | None = None
+
+
+class RevisionConsumerSummary(BaseModel):
+    """Stable T08/UI contract that avoids parsing workflow internals."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: Literal[1] = 1
+    version: RevisionConsumerVersion
+    issues: tuple[RevisionConsumerIssue, ...]
+    diff: tuple[RevisionConsumerDiff, ...]
+    status: Literal["active", "paused", "completed", "stopped"]
+    retry_count: int = Field(ge=0)
+    failure_reasons: tuple[str, ...]
+    stop_reason: str | None = None
+    status_events: tuple[RevisionStatusEvent, ...] = Field(min_length=1)
+    summary_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def _validate_summary_hash(self) -> "RevisionConsumerSummary":
+        payload = self.model_dump(mode="json", exclude={"summary_hash"})
+        if self.summary_hash != _json_sha256(payload):
+            raise ValueError("revision consumer summary hash does not match")
+        return self
+
+
+def build_revision_consumer_summary(
+    *,
+    audit: ExplainableRevisionAudit,
+    plan_versions: Sequence[PlanVersion],
+    revision_control: RevisionExecutionState,
+    integrity: RevisionContextIntegrity,
+) -> RevisionConsumerSummary:
+    """Project a complete, cross-checked external revision status view."""
+    versions = tuple(plan_versions)
+    if not versions or versions[0].version_id != (
+        integrity.lineage_provenance.source_version_id
+    ):
+        raise ValueError("consumer summary requires the source plan version")
+    if tuple(item.version_id for item in versions) != revision_control.version_ids:
+        raise ValueError("consumer summary versions must match revision control")
+    generated_id = integrity.lineage_provenance.generated_version_id
+    if revision_control.status == "completed" and generated_id not in {
+        item.version_id for item in versions
+    }:
+        raise ValueError("completed revision requires the generated version")
+
+    prior_by_id = {
+        item.issue_id: item for item in integrity.issue_closure_state
+    }
+    audit_ids = {item.issue_id for item in audit.issue_closures}
+    if not set(prior_by_id).issubset(audit_ids):
+        raise ValueError("consumer issue set cannot drop context issues")
+    generated_exists = generated_id in {item.version_id for item in versions}
+    consumer_issue_closures = (
+        audit.issue_closures
+        if generated_exists
+        else [
+            issue
+            for issue in audit.issue_closures
+            if issue.issue_id in prior_by_id
+        ]
+    )
+    issues = tuple(
+        RevisionConsumerIssue(
+            issue_id=issue.issue_id,
+            previous_status=(
+                prior_by_id[issue.issue_id].current_status
+                if issue.issue_id in prior_by_id
+                else "not_present"
+            ),
+            current_status=issue.status,
+            closure_reason=issue.resolution_note,
+        )
+        for issue in consumer_issue_closures
+    )
+    diff = tuple(
+        RevisionConsumerDiff(
+            change_id=change.change_id,
+            issue_id=change.issue_id,
+            section=change.affected_plan_section,
+            evidence_refs=tuple(change.evidence_refs),
+            closure_status=change.closure_status,
+        )
+        for change in audit.changes
+    )
+
+    events: list[RevisionStatusEvent] = []
+    for version in versions:
+        events.append(
+            RevisionStatusEvent(
+                event_id=_stable_id(
+                    "revision-status",
+                    version.version_id,
+                    "version_created",
+                ),
+                sequence=len(events) + 1,
+                event_type="version_created",
+                subject_id=version.version_id,
+            )
+        )
+    for reason in revision_control.failure_reasons:
+        events.append(
+            RevisionStatusEvent(
+                event_id=_stable_id(
+                    "revision-status",
+                    revision_control.run_id,
+                    "revision_retry",
+                    len(events) + 1,
+                    reason,
+                ),
+                sequence=len(events) + 1,
+                event_type="revision_retry",
+                subject_id=revision_control.run_id,
+                detail=reason,
+            )
+        )
+    terminal_type = {
+        "active": "revision_active",
+        "paused": "revision_paused",
+        "completed": "revision_completed",
+        "stopped": "revision_stopped",
+    }[revision_control.status]
+    terminal_detail = (
+        revision_control.pause_reason
+        if revision_control.status == "paused"
+        else revision_control.stop_reason
+    )
+    events.append(
+        RevisionStatusEvent(
+            event_id=_stable_id(
+                "revision-status",
+                revision_control.run_id,
+                terminal_type,
+                terminal_detail,
+            ),
+            sequence=len(events) + 1,
+            event_type=terminal_type,
+            subject_id=revision_control.run_id,
+            detail=terminal_detail,
+        )
+    )
+    lineage = integrity.lineage_provenance
+    payload = {
+        "schema_version": 1,
+        "version": {
+            "source_version_id": lineage.source_version_id,
+            "parent_plan_version_id": lineage.parent_plan_version_id,
+            "generated_version_id": lineage.generated_version_id,
+            "generated_at": lineage.generated_at,
+            "context_hash": lineage.context_hash,
+        },
+        "issues": [item.model_dump(mode="json") for item in issues],
+        "diff": [item.model_dump(mode="json") for item in diff],
+        "status": revision_control.status,
+        "retry_count": revision_control.retry_count,
+        "failure_reasons": list(revision_control.failure_reasons),
+        "stop_reason": revision_control.stop_reason,
+        "status_events": [item.model_dump(mode="json") for item in events],
+    }
+    return RevisionConsumerSummary.model_validate(
+        {**payload, "summary_hash": _json_sha256(payload)}
+    )
 
 
 class RevisionExecutionController:
@@ -1384,12 +2103,28 @@ def revision_trace_fields(
     audit: ExplainableRevisionAudit,
     *,
     plan_versions: Sequence[PlanVersion],
+    revision_control: RevisionExecutionState | None = None,
+    integrity: RevisionContextIntegrity | None = None,
 ) -> dict[str, Any]:
     """Build full sidecar fields to attach to the existing V2 AgentTrace event."""
     payload = audit.model_dump(mode="json")
-    return {
+    fields = {
         "revision_iteration": 2,
         "revision_audit_hash": _stable_id("revision-audit", payload),
         "revision_audit": payload,
         "plan_versions": [version.model_dump(mode="json") for version in plan_versions],
     }
+    if (revision_control is None) != (integrity is None):
+        raise ValueError(
+            "revision control and context integrity must be supplied together"
+        )
+    if revision_control is not None and integrity is not None:
+        fields["revision_consumer_summary"] = (
+            build_revision_consumer_summary(
+                audit=audit,
+                plan_versions=plan_versions,
+                revision_control=revision_control,
+                integrity=integrity,
+            ).model_dump(mode="json")
+        )
+    return fields

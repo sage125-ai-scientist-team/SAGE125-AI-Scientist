@@ -1,0 +1,63 @@
+T02 FINAL FREEZE TEST OUTPUT
+============================
+
+Audit date: 2026-08-09 (Asia/Shanghai)
+Repository: sage125-ai-scientist-team/SAGE125-AI-Scientist
+Branch: t02/c-revision-hardening
+Audited implementation commit: 20195d47c07e483049960cf053663b1a64a36372
+
+1. Wave C focused suite
+
+Command:
+  .\.venv\Scripts\python.exe -X utf8 -m pytest -q \
+    tests/workflow/test_t02_wave_c_execution_multimodal_feedback.py \
+    tests/workflow/test_t02_wave_c_revision_integrity_recovery.py
+
+Result:
+  25 passed in 0.99s
+  failed: 0
+  skipped: 0
+  exit: 0
+
+2. Workflow suite
+
+Command:
+  .\.venv\Scripts\python.exe -X utf8 -m pytest tests/workflow -q
+
+Result:
+  67 passed in 2.48s
+  failed: 0
+  skipped: 0
+  exit: 0
+
+3. Full suite
+
+Command:
+  .\.venv\Scripts\python.exe -X utf8 -m pytest -q
+
+Result:
+  797 passed, 37 skipped in 62.43s
+  failed: 0
+  exit: 0
+
+4. Integration split confirmation
+
+Command:
+  .\.venv\Scripts\python.exe -X utf8 -m pytest tests/integration -q
+
+Result:
+  1 passed in 0.22s
+  failed: 0
+  skipped: 0
+  exit: 0
+
+The full suite contains this one integration test, so the non-integration unit
+split is 796 passed, 0 failed, 37 skipped. This matches the exact prior CI-style
+unit run on the same implementation commit.
+
+Skip classification:
+  - 2 Windows symlink tests skipped because the process lacks symlink privilege.
+  - Remaining skips require optional questions_125.json, booklet PDF, or related
+    local fixtures that are intentionally absent.
+
+No test was deleted, weakened, skipped, or xfail-marked for this freeze.

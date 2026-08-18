@@ -1,0 +1,268 @@
+{
+  "schema_version": 1,
+  "run_id": "gate0-v1-v2",
+  "job_id": "job-gate0-v1-v2",
+  "plan_versions": [
+    {
+      "schema_version": 1,
+      "run_id": "gate0-v1-v2",
+      "version_number": 1,
+      "version_id": "gate0-v1-v2:v1",
+      "parent_version_id": null,
+      "revision_iteration": 1,
+      "hypothesis_generation": {"hypotheses": [{"hypothesis": "Control improves reproducibility."}]},
+      "experiment_design": {"experiments": {"baselines": ["positive-control"], "metrics": ["accuracy"]}},
+      "review_feedback": {
+        "passed": false,
+        "reviewer_comments": ["Add an explicit negative control."],
+        "critical_issues": ["No negative control is defined."],
+        "required_revisions": ["Add a negative control and stopping rule."],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.5,
+        "falsifiability_score": 0.4,
+        "reproducibility_score": 0.5,
+        "reference_reliability_score": 0.6
+      },
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:gate0-negative-control",
+          "category": "critical_issue",
+          "description": "No negative control is defined.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:gate0-stopping",
+          "category": "required_revision",
+          "description": "Add a negative control and stopping rule.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "prompt_fingerprints": {"scientific_reviewer": "v1-review"}
+    },
+    {
+      "schema_version": 1,
+      "run_id": "gate0-v1-v2",
+      "version_number": 2,
+      "version_id": "gate0-v1-v2:v2",
+      "parent_version_id": "gate0-v1-v2:v1",
+      "revision_iteration": 2,
+      "hypothesis_generation": {"hypotheses": [{"hypothesis": "Control improves reproducibility."}]},
+      "experiment_design": {
+        "experiments": {
+          "baselines": ["negative-control", "positive-control"],
+          "metrics": ["accuracy"],
+          "stopping_conditions": ["Stop below 0.5."],
+          "evidence_refs": ["EV-GATE0"]
+        }
+      },
+      "review_feedback": {
+        "passed": true,
+        "reviewer_comments": ["The control and stopping rule are explicit."],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.8,
+        "falsifiability_score": 0.8,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 0.8
+      },
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:gate0-negative-control",
+          "category": "critical_issue",
+          "description": "No negative control is defined.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "change-control; evidence=EV-GATE0"
+        },
+        {
+          "issue_id": "required_revision:gate0-stopping",
+          "category": "required_revision",
+          "description": "Add a negative control and stopping rule.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "change-stopping; evidence=EV-GATE0"
+        }
+      ],
+      "prompt_fingerprints": {"scientific_reviewer": "v2-review"}
+    }
+  ],
+  "revision_context": {
+    "schema_version": 1,
+    "previous_plan": {
+      "hypothesis_generation": {"hypotheses": [{"hypothesis": "Control improves reproducibility."}]},
+      "experiment_design": {"experiments": {"baselines": ["positive-control"], "metrics": ["accuracy"]}}
+    },
+    "previous_plan_version": {
+      "schema_version": 1,
+      "run_id": "gate0-v1-v2",
+      "version_number": 1,
+      "version_id": "gate0-v1-v2:v1",
+      "parent_version_id": null,
+      "revision_iteration": 1,
+      "hypothesis_generation": {"hypotheses": [{"hypothesis": "Control improves reproducibility."}]},
+      "experiment_design": {"experiments": {"baselines": ["positive-control"], "metrics": ["accuracy"]}},
+      "review_feedback": {
+        "passed": false,
+        "reviewer_comments": ["Add an explicit negative control."],
+        "critical_issues": ["No negative control is defined."],
+        "required_revisions": ["Add a negative control and stopping rule."],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.5,
+        "falsifiability_score": 0.4,
+        "reproducibility_score": 0.5,
+        "reference_reliability_score": 0.6
+      },
+      "issue_closures": [
+        {"issue_id": "critical_issue:gate0-negative-control", "category": "critical_issue", "description": "No negative control is defined.", "status": "open", "opened_in_version": 1, "closed_in_version": null, "resolution_note": null},
+        {"issue_id": "required_revision:gate0-stopping", "category": "required_revision", "description": "Add a negative control and stopping rule.", "status": "open", "opened_in_version": 1, "closed_in_version": null, "resolution_note": null}
+      ],
+      "prompt_fingerprints": {"scientific_reviewer": "v1-review"}
+    },
+    "parent_version_id": "gate0-v1-v2:v1",
+    "lineage": ["gate0-v1-v2:v1", "gate0-v1-v2:v2"],
+    "unresolved_issues": [
+      {"issue_id": "critical_issue:gate0-negative-control", "category": "critical_issue", "description": "No negative control is defined.", "status": "open", "opened_in_version": 1, "closed_in_version": null, "resolution_note": null},
+      {"issue_id": "required_revision:gate0-stopping", "category": "required_revision", "description": "Add a negative control and stopping rule.", "status": "open", "opened_in_version": 1, "closed_in_version": null, "resolution_note": null}
+    ],
+    "failure_reasons": [
+      {"failure_id": "failure:negative-control", "source": "scientific_reviewer", "reviewer_field": "critical_issues", "reason": "No negative control is defined.", "issue_id": "critical_issue:gate0-negative-control"},
+      {"failure_id": "failure:stopping", "source": "scientific_reviewer", "reviewer_field": "required_revisions", "reason": "Add a negative control and stopping rule.", "issue_id": "required_revision:gate0-stopping"}
+    ],
+    "reviewer_feedback": {
+      "passed": false,
+      "reviewer_comments": ["Add an explicit negative control."],
+      "critical_issues": ["No negative control is defined."],
+      "required_revisions": ["Add a negative control and stopping rule."],
+      "risk_level": "high",
+      "evidence_grounding_score": 0.5,
+      "falsifiability_score": 0.4,
+      "reproducibility_score": 0.5,
+      "reference_reliability_score": 0.6
+    },
+    "evidence_bundle": null,
+    "human_feedback": null,
+    "wave_c_feedback": null,
+    "integrity": null
+  },
+  "revision_audit": {
+    "schema_version": 1,
+    "previous_plan": {
+      "hypothesis_generation": {"hypotheses": [{"hypothesis": "Control improves reproducibility."}]},
+      "experiment_design": {"experiments": {"baselines": ["positive-control"], "metrics": ["accuracy"]}}
+    },
+    "previous_plan_version": {
+      "schema_version": 1,
+      "run_id": "gate0-v1-v2",
+      "version_number": 1,
+      "version_id": "gate0-v1-v2:v1",
+      "parent_version_id": null,
+      "revision_iteration": 1,
+      "hypothesis_generation": {"hypotheses": [{"hypothesis": "Control improves reproducibility."}]},
+      "experiment_design": {"experiments": {"baselines": ["positive-control"], "metrics": ["accuracy"]}},
+      "review_feedback": {
+        "passed": false,
+        "reviewer_comments": ["Add an explicit negative control."],
+        "critical_issues": ["No negative control is defined."],
+        "required_revisions": ["Add a negative control and stopping rule."],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.5,
+        "falsifiability_score": 0.4,
+        "reproducibility_score": 0.5,
+        "reference_reliability_score": 0.6
+      },
+      "issue_closures": [
+        {"issue_id": "critical_issue:gate0-negative-control", "category": "critical_issue", "description": "No negative control is defined.", "status": "open", "opened_in_version": 1, "closed_in_version": null, "resolution_note": null},
+        {"issue_id": "required_revision:gate0-stopping", "category": "required_revision", "description": "Add a negative control and stopping rule.", "status": "open", "opened_in_version": 1, "closed_in_version": null, "resolution_note": null}
+      ],
+      "prompt_fingerprints": {"scientific_reviewer": "v1-review"}
+    },
+    "parent_version_id": "gate0-v1-v2:v1",
+    "lineage": ["gate0-v1-v2:v1", "gate0-v1-v2:v2"],
+    "reviewer_feedback": {
+      "passed": false,
+      "reviewer_comments": ["Add an explicit negative control."],
+      "critical_issues": ["No negative control is defined."],
+      "required_revisions": ["Add a negative control and stopping rule."],
+      "risk_level": "high",
+      "evidence_grounding_score": 0.5,
+      "falsifiability_score": 0.4,
+      "reproducibility_score": 0.5,
+      "reference_reliability_score": 0.6
+    },
+    "final_reviewer_feedback": {
+      "passed": true,
+      "reviewer_comments": ["The control and stopping rule are explicit."],
+      "critical_issues": [],
+      "required_revisions": [],
+      "risk_level": "low",
+      "evidence_grounding_score": 0.8,
+      "falsifiability_score": 0.8,
+      "reproducibility_score": 0.9,
+      "reference_reliability_score": 0.8
+    },
+    "failure_reasons": [
+      {"failure_id": "failure:negative-control", "source": "scientific_reviewer", "reviewer_field": "critical_issues", "reason": "No negative control is defined.", "issue_id": "critical_issue:gate0-negative-control"},
+      {"failure_id": "failure:stopping", "source": "scientific_reviewer", "reviewer_field": "required_revisions", "reason": "Add a negative control and stopping rule.", "issue_id": "required_revision:gate0-stopping"}
+    ],
+    "changes": [
+      {"change_id": "change-control", "issue_id": "critical_issue:gate0-negative-control", "reason": "Add a negative control.", "before": ["positive-control"], "after": ["negative-control", "positive-control"], "evidence_refs": ["EV-GATE0"], "affected_plan_section": "control_groups", "closure_status": "resolved", "unresolved_reason": null},
+      {"change_id": "change-stopping", "issue_id": "required_revision:gate0-stopping", "reason": "Add a stopping rule.", "before": [], "after": ["Stop below 0.5."], "evidence_refs": ["EV-GATE0"], "affected_plan_section": "stopping_conditions", "closure_status": "resolved", "unresolved_reason": null}
+    ],
+    "issue_closures": [
+      {"issue_id": "critical_issue:gate0-negative-control", "category": "critical_issue", "description": "No negative control is defined.", "status": "resolved", "opened_in_version": 1, "closed_in_version": 2, "resolution_note": "change-control; evidence=EV-GATE0"},
+      {"issue_id": "required_revision:gate0-stopping", "category": "required_revision", "description": "Add a negative control and stopping rule.", "status": "resolved", "opened_in_version": 1, "closed_in_version": 2, "resolution_note": "change-stopping; evidence=EV-GATE0"}
+    ],
+    "substantive_sections": ["control_groups", "stopping_conditions"],
+    "score_changes": {
+      "evidence_grounding_score": {"before": 0.5, "after": 0.8, "delta": 0.3},
+      "falsifiability_score": {"before": 0.4, "after": 0.8, "delta": 0.4},
+      "reproducibility_score": {"before": 0.5, "after": 0.9, "delta": 0.4},
+      "reference_reliability_score": {"before": 0.6, "after": 0.8, "delta": 0.2}
+    },
+    "candidate_hypothesis_ranking": [],
+    "responded_issue_count": 2,
+    "blocking_reasons": [],
+    "remaining_blockers": [],
+    "stop_reason": null,
+    "accepted": true
+  },
+  "revision_control": {
+    "schema_version": 1,
+    "run_id": "gate0-v1-v2",
+    "max_iterations": 2,
+    "max_retries": 1,
+    "current_iteration": 2,
+    "retry_count": 0,
+    "status": "completed",
+    "processed_event_ids": ["reviewer-callback-v1", "revision-generated-v2"],
+    "version_ids": ["gate0-v1-v2:v1", "gate0-v1-v2:v2"],
+    "failure_reasons": [],
+    "pause_reason": null,
+    "stop_reason": null
+  },
+  "version_diffs": [
+    {
+      "schema_version": 1,
+      "source_version_id": "gate0-v1-v2:v1",
+      "target_version_id": "gate0-v1-v2:v2",
+      "diff": {
+        "changes": [
+          {"change_id": "change-control", "issue_id": "critical_issue:gate0-negative-control", "reason": "Add a negative control.", "before": ["positive-control"], "after": ["negative-control", "positive-control"], "evidence_refs": ["EV-GATE0"], "affected_plan_section": "control_groups", "closure_status": "resolved", "unresolved_reason": null},
+          {"change_id": "change-stopping", "issue_id": "required_revision:gate0-stopping", "reason": "Add a stopping rule.", "before": [], "after": ["Stop below 0.5."], "evidence_refs": ["EV-GATE0"], "affected_plan_section": "stopping_conditions", "closure_status": "resolved", "unresolved_reason": null}
+        ],
+        "substantive_sections": ["control_groups", "stopping_conditions"]
+      },
+      "diff_hash": "fbcd8dfa8a017592450517d5f58e6da7039782f57fcf4f97dafd9cf0f8922708"
+    }
+  ],
+  "lineage_hash": "841d20c5ddd6b114b978ba625a8cf7aa5275055e8293b00ece77c7c5b4c89ea3"
+}
