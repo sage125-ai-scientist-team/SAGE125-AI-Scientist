@@ -84,6 +84,7 @@ class TimeoutMetadata(BaseModel):
 class JobLinks(BaseModel):
     self: str
     evidence: str
+    multimodal: str
     artifacts: str
     versions: str
     feedback: str
@@ -292,6 +293,20 @@ class FeedbackCreateRequest(BaseModel):
 
 
 class FeedbackReceipt(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "feedback_id": "feedback-7f4a",
+                "job_id": "job-123",
+                "target_version_id": "run-123:v1",
+                "status": "submitted",
+                "decision_reason": None,
+                "resulting_version_id": None,
+                "correlation_id": "judge-demo-001",
+            }
+        }
+    )
+
     feedback_id: str
     job_id: str
     target_version_id: str
@@ -307,3 +322,44 @@ class FeedbackReceipt(BaseModel):
     decision_reason: str | None = None
     resulting_version_id: str | None = None
     correlation_id: str
+
+
+class MultimodalDetailProjection(BaseModel):
+    """Public T06 detail projection preserving provenance and review semantics."""
+
+    artifact_id: str
+    modality: str
+    source_id: str
+    source_label: str
+    preview_artifact_id: str
+    coordinate_space: str
+    page: int
+    bbox: dict[str, float] | None = None
+    extracted_values: dict[str, Any]
+    units: list[str] = Field(default_factory=list)
+    column_units: list[dict[str, Any]] = Field(default_factory=list)
+    axes: list[dict[str, Any]] = Field(default_factory=list)
+    legend: list[str] = Field(default_factory=list)
+    confidence: float = Field(ge=0.0, le=1.0)
+    validation_status: str
+    needs_human_review: bool
+
+
+class MultimodalDetailListResponse(BaseModel):
+    """Identity-bound T06 detail collection for one plan version."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "job_id": "job-123",
+                "version_id": "run-123:v1",
+                "items": [],
+                "availability": "available",
+            }
+        }
+    )
+
+    job_id: str
+    version_id: str
+    items: list[MultimodalDetailProjection] = Field(default_factory=list)
+    availability: Literal["available", "unavailable"]

@@ -986,17 +986,6 @@ def test_v1_errors_use_stable_envelope_and_openapi_exposes_contracts(tmp_path):
 @pytest.mark.parametrize(
     ("method", "path_suffix", "request_kwargs"),
     [
-        (
-            "post",
-            "/feedback",
-            {
-                "json": {
-                    "target_version_id": "v1",
-                    "feedback": "请补充证据。",
-                },
-                "headers": {"Idempotency-Key": "feedback-key"},
-            },
-        ),
         ("get", "/feedback/feedback-1", {}),
     ],
 )
@@ -1052,7 +1041,6 @@ def test_unimplemented_owner_openapi_declares_only_error_responses(tmp_path):
     store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
     app = create_app(job_store=store, job_runner=_SuccessfulRunner())
     operations = [
-        ("post", "/api/v1/jobs/{job_id}/feedback"),
         ("get", "/api/v1/jobs/{job_id}/feedback/{feedback_id}"),
     ]
 
