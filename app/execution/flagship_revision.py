@@ -31,6 +31,7 @@ from app.contracts.revision import (
     RevisionContext,
     issues_from_review_feedback,
 )
+from app.execution import flagship_reviewer as freviewer
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -387,6 +388,237 @@ def build_flagship_revision_bundle(
     }
 
 
+def _structured_issue_to_text(issue: "freviewer.StructuredIssue") -> str:
+    return (
+        f"[{issue.issue_id}|{issue.severity}] {issue.required_action} "
+        f"(metric={issue.affected_metric} observed={issue.observed_value:.6f} "
+        f"target={issue.target_value}; evidence={issue.evidence_reference})"
+    )
+
+
+def review_feedback_from_reviewer_output(
+    output: "freviewer.ScientificReviewerOutput",
+) -> ReviewFeedback:
+    """Project the real, structured Scientific Reviewer output onto the
+    project's ``ReviewFeedback`` contract (which stores issues as free-text
+    strings). Every structured field is preserved verbatim inside the text so
+    no information is lost; the original structured object is also kept
+    alongside in the on-disk bundle (``structured_round1_review``)."""
+    critical = [_structured_issue_to_text(i) for i in output.critical_issues]
+    required = [_structured_issue_to_text(i) for i in output.required_revisions]
+    if output.critical_issues:
+        risk: str = "high"
+    elif output.required_revisions:
+        risk = "medium"
+    else:
+        risk = "low"
+    return ReviewFeedback(
+        passed=output.passed,
+        reviewer_comments=list(output.comments),
+        critical_issues=critical,
+        required_revisions=required,
+        risk_level=risk,  # type: ignore[arg-type]
+        evidence_grounding_score=1.0,
+        falsifiability_score=1.0,
+        reproducibility_score=1.0,
+        reference_reliability_score=1.0,
+    )
+
+
+def prepare_real_reviewer_round2_config(
+    *,
+    round1_result: dict[str, Any],
+    round1_config: dict[str, Any],
+    destination_dir: Path,
+) -> dict[str, Any]:
+    """Run the two real, audited Bailian/Qwen calls (Scientific Reviewer, then
+    V2 revision-plan generation) and derive the policy-filtered Round 2
+    config that will actually be executed.
+
+    Must be called *before* Round 2 executes -- its output (``round2_config``)
+    is exactly the config Round 2 must run with. Raises
+    ``app.execution.flagship_reviewer.FlagshipReviewerError`` (fail closed)
+    if credentials are unavailable, mock mode is enabled, or either call
+    fails schema/audit validation.
+    """
+    reviewer_output, reviewer_audit, v1_hashes = freviewer.call_scientific_reviewer(
+        round1_result=round1_result, round1_config=round1_config, destination_dir=destination_dir,
+    )
+    v2_output, v2_audit, v2_hashes = freviewer.call_v2_revision_plan(
+        reviewer_output=reviewer_output,
+        round1_result=round1_result,
+        round1_config=round1_config,
+        provider_audit_reference=reviewer_audit.call_id,
+        destination_dir=destination_dir,
+    )
+    policy_result = freviewer.validate_v2_plan_against_policy(v2_output)
+    round2_config = freviewer.apply_policy_filtered_round2_config(round1_config, policy_result)
+    review_feedback = review_feedback_from_reviewer_output(reviewer_output)
+    return {
+        "reviewer_output": reviewer_output,
+        "v2_output": v2_output,
+        "policy_result": policy_result,
+        "round2_config": round2_config,
+        "reviewer_audit": reviewer_audit,
+        "v2_audit": v2_audit,
+        "v1_hashes": v1_hashes,
+        "v2_hashes": v2_hashes,
+        "review_feedback": review_feedback,
+    }
+
+
+def build_real_reviewer_driven_bundle(
+    *,
+    preparation: dict[str, Any],
+    round1_config: dict[str, Any],
+    round2_metrics: dict[str, float],
+    control_invariants: dict[str, Any],
+    round1_version_id: str,
+    round1_execution_result_reference: dict[str, Any],
+) -> dict[str, Any]:
+    """Build the full reviewer/revision/diff/closure/stop-reason bundle from a
+    REAL, audited reviewer + V2 revision-plan pair (closes GAP-02).
+
+    Must be called *after* Round 2 has actually executed (real
+    ``round2_metrics`` are required to determine issue closure and the stop
+    decision -- this function never fabricates them).
+    """
+    round1_feedback: ReviewFeedback = preparation["review_feedback"]
+    reviewer_output: freviewer.ScientificReviewerOutput = preparation["reviewer_output"]
+    v2_output: freviewer.V2RevisionPlanOutput = preparation["v2_output"]
+    policy_result: freviewer.PolicyValidationResult = preparation["policy_result"]
+    round2_config: dict[str, Any] = preparation["round2_config"]
+    reviewer_audit: freviewer.ProviderAuditRecord = preparation["reviewer_audit"]
+    v2_audit: freviewer.ProviderAuditRecord = preparation["v2_audit"]
+    v1_hashes: dict[str, Any] = preparation["v1_hashes"]
+    v2_hashes: dict[str, Any] = preparation["v2_hashes"]
+
+    if not round1_version_id or not isinstance(round1_execution_result_reference, dict) or not round1_execution_result_reference.get("execution_id"):
+        raise FlagshipRevisionError(
+            "round1_version_id / round1_execution_result_reference (with a real "
+            "execution_id) must be provided -- the Round 1 ExecutionResult must "
+            "be genuinely injected into RevisionContext, not fabricated or omitted"
+        )
+    if reviewer_audit.role != "scientific_reviewer" or v2_audit.role != "v2_revision_plan":
+        raise FlagshipRevisionError(
+            "provider audit records are inconsistent with their declared roles; "
+            "refusing to attribute this revision to real reviewer calls"
+        )
+
+    round2_feedback = build_round2_review_feedback(round1_config, round2_metrics)
+    issue_closures = build_issue_closure(round1_feedback, round2_feedback)
+
+    v1_fingerprint = config_fingerprint(round1_config)
+    v2_fingerprint = config_fingerprint(round2_config)
+    if v1_fingerprint == v2_fingerprint:
+        raise FlagshipRevisionError(
+            "round1/round2 config fingerprints are identical; this would not be "
+            "a true iteration and must not be published"
+        )
+    if v1_hashes["prompt_hash"] == v2_hashes["prompt_hash"] or v1_hashes["input_hash"] == v2_hashes["input_hash"]:
+        raise FlagshipRevisionError(
+            "V1/V2 reviewer prompt or input hash did not change; this would not "
+            "be a genuine reviewer-driven iteration and must not be published"
+        )
+
+    v1 = PlanVersion.create(
+        run_id=RUN_ID,
+        version_number=1,
+        revision_iteration=1,
+        experiment_design=round1_config,
+        prompt_fingerprints={
+            "experiment_design_config": v1_fingerprint,
+            "reviewer_prompt_hash": v1_hashes["prompt_hash"],
+            "reviewer_input_hash": v1_hashes["input_hash"],
+        },
+    )
+    v2 = PlanVersion.create(
+        run_id=RUN_ID,
+        version_number=2,
+        revision_iteration=2,
+        parent_version_id=v1.version_id,
+        experiment_design=round2_config,
+        review_feedback=round1_feedback,
+        issue_closures=issue_closures,
+        prompt_fingerprints={
+            "experiment_design_config": v2_fingerprint,
+            "v2_plan_prompt_hash": v2_hashes["prompt_hash"],
+            "v2_plan_input_hash": v2_hashes["input_hash"],
+        },
+    )
+    plan_versions = [v1, v2]
+
+    revision_context = RevisionContext(
+        run_id=RUN_ID,
+        revision_iteration=2,
+        review_feedback=round1_feedback,
+        issue_closures=issue_closures,
+    )
+
+    structured_diff = build_structured_diff(round1_config, round2_config, control_invariants)
+    structured_diff["policy_authorized_changes"] = policy_result.authorized_changes
+    structured_diff["policy_rejected_changes"] = policy_result.unauthorized_changes
+    structured_diff["policy_version"] = policy_result.policy_version
+
+    stop_reason = build_stop_reason(round1_config, round2_metrics, issue_closures)
+
+    provider_audit = {
+        "schema_version": "1.0",
+        "run_id": RUN_ID,
+        "calls": [reviewer_audit.model_dump(mode="json"), v2_audit.model_dump(mode="json")],
+    }
+
+    return {
+        "reviewer_feedback": {
+            "schema_version": "1.0",
+            "run_id": RUN_ID,
+            "round1_review": round1_feedback.model_dump(mode="json"),
+            "round2_review": round2_feedback.model_dump(mode="json"),
+            "structured_round1_review": reviewer_output.model_dump(mode="json"),
+            "structured_v2_plan": v2_output.model_dump(mode="json"),
+            "reviewer_driven": True,
+            "provider_audit_reference": [reviewer_audit.call_id, v2_audit.call_id],
+        },
+        "revision_context": {
+            "schema_version": "1.0",
+            **revision_context.model_dump(mode="json"),
+            "round1_version_id": round1_version_id,
+            "round1_execution_result_reference": round1_execution_result_reference,
+            "scientific_scope": freviewer.SCIENTIFIC_SCOPE,
+            "allowed_revision_policy": freviewer.ALLOWED_REVISION_POLICY,
+            "provider_audit_references": [reviewer_audit.call_id, v2_audit.call_id],
+            "reviewer_issues_injected": True,
+            "execution_result_injected": True,
+        },
+        "plan_versions": {
+            "schema_version": "1.0",
+            "run_id": RUN_ID,
+            "versions": [version.model_dump(mode="json") for version in plan_versions],
+        },
+        "issue_closure": {
+            "schema_version": "1.0",
+            "run_id": RUN_ID,
+            "issues": [issue.model_dump(mode="json") for issue in issue_closures],
+            "unresolved_p0": sum(
+                1 for issue in issue_closures if issue.category == "critical_issue" and issue.status != "resolved"
+            ),
+            "unresolved_p1": sum(
+                1 for issue in issue_closures if issue.category == "required_revision" and issue.status != "resolved"
+            ),
+        },
+        "structured_diff": structured_diff,
+        "stop_reason": stop_reason,
+        "provider_audit": provider_audit,
+        "policy_validation": {
+            "schema_version": "1.0",
+            "ok": policy_result.ok,
+            "authorized_changes": policy_result.authorized_changes,
+            "unauthorized_changes": policy_result.unauthorized_changes,
+            "policy_version": policy_result.policy_version,
+        },
+    }
+
+
 def _write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -409,7 +641,11 @@ def write_flagship_revision_bundle(
         "issue_closure",
         "structured_diff",
         "stop_reason",
+        "provider_audit",
+        "policy_validation",
     ):
+        if name not in bundle:
+            continue
         path = destination_dir / f"{name}.json"
         _write_json(path, bundle[name])
         written[name] = path

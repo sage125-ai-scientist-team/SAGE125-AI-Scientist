@@ -150,15 +150,15 @@ def build_reproduction_notes(regression_matrix: dict[str, Any]) -> str:
     lines.append("")
     lines.append("## Round 2 execution reproduction report")
     lines.append("")
-    lines.append(round2_notes or "(round2 reproduction report unavailable)")
+    lines.append(round2_notes.rstrip("\n") or "(round2 reproduction report unavailable)")
     return "\n".join(lines) + "\n"
 
 
-def _precommit_validator(staging: Path) -> ap.PrecommitValidationResult:
+def _precommit_validator(staging: Path, *, source_git_sha: str | None = None) -> ap.PrecommitValidationResult:
     from datetime import datetime, timezone
 
     checked_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    semantic_report = validate_flagship_canonical_package()
+    semantic_report = validate_flagship_canonical_package(expected_git_sha=source_git_sha)
     if semantic_report["status"] != "PASS":
         return ap.PrecommitValidationResult(
             ok=False,
@@ -327,7 +327,7 @@ def publish_flagship_canonical_package(
 
     def _assemble_then_validate(staging: Path) -> ap.PrecommitValidationResult:
         _assemble_staging(staging, source_git_sha=source_git_sha)
-        return _precommit_validator(staging)
+        return _precommit_validator(staging, source_git_sha=source_git_sha)
 
     attempt, precommit = ap.precommit_validate(attempt, _assemble_then_validate)
     if not precommit.ok:
@@ -340,7 +340,7 @@ def publish_flagship_canonical_package(
             "failure_message": precommit.failure_message,
         }
 
-    attempt = ap.publish_atomic(attempt)
+    attempt = ap.publish_atomic_no_clobber(attempt)
     attempt, verification = ap.post_publish_verify(attempt, _post_publish_verifier)
     receipt = ap.write_receipt(attempt, receipts_dir)
 

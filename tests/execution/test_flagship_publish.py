@@ -27,9 +27,18 @@ pytestmark = pytest.mark.skipif(
 )
 
 
+def _real_round2_git_sha() -> str:
+    round2_result = json.loads(
+        (fc.ROUND2_PACKAGE / "execution_result.json").read_text(encoding="utf-8")
+    )
+    return round2_result["environment_fingerprint"]["git_sha"]
+
+
 def test_publish_succeeds_against_real_committed_evidence(tmp_path: Path) -> None:
+    # ``source_git_sha`` must match the *actual* Round 2 git_sha (CANON-H-003):
+    # an arbitrary/mismatched value must fail closed, not silently pass.
     result = fp.publish_flagship_canonical_package(
-        source_git_sha="deadbeefcafebabe0000000000000000000000",
+        source_git_sha=_real_round2_git_sha(),
         canonical_root=tmp_path,
     )
     assert result["published"] is True
@@ -55,6 +64,18 @@ def test_publish_succeeds_against_real_committed_evidence(tmp_path: Path) -> Non
     pointer = ap.read_canonical_pointer(pointer_path)
     assert pointer.attempt_id == result["attempt_id"]
     assert Path(pointer.final_path) == final_path
+
+
+def test_publish_refuses_when_source_git_sha_mismatches_round2(tmp_path: Path) -> None:
+    """CANON-H-003 fail-closed: a source_git_sha that does not equal Round 2's
+    actual recorded git_sha must never be allowed to publish."""
+    result = fp.publish_flagship_canonical_package(
+        source_git_sha="deadbeefcafebabe0000000000000000000000",
+        canonical_root=tmp_path,
+    )
+    assert result["published"] is False
+    assert result["failure_code"] == "SEMANTIC_VALIDATION_FAILED"
+    assert not (tmp_path / "canonical_pointer.json").exists()
 
 
 def test_get_canonical_status_reports_published_after_publish(tmp_path: Path) -> None:
@@ -98,7 +119,9 @@ def test_publish_refuses_when_semantic_validation_fails(
         "check_count": 1,
         "failed_count": 1,
     }
-    monkeypatch.setattr(fp, "validate_flagship_canonical_package", lambda: failing_report)
+    monkeypatch.setattr(
+        fp, "validate_flagship_canonical_package", lambda **_kwargs: failing_report
+    )
 
     result = fp.publish_flagship_canonical_package(canonical_root=tmp_path)
     assert result["published"] is False

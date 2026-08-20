@@ -90,6 +90,7 @@ def validate_flagship_canonical_package(
     round2_config: Path = ROUND2_CONFIG,
     round1_package: Path = ROUND1_PACKAGE,
     round2_package: Path = ROUND2_PACKAGE,
+    expected_git_sha: str | None = None,
 ) -> dict[str, Any]:
     """Assemble and validate the Q028/WDBC canonical package. Always returns a
     report (never raises); the report's ``status`` is ``PASS`` only if every
@@ -265,6 +266,37 @@ def validate_flagship_canonical_package(
             round1_result.get("question_id") == round2_result.get("question_id") == CASE_ID,
             "round1/round2 question_id does not agree on Q028",
         )
+
+    # H. Git provenance. Round 1 is treated as permanently pinned, immutable
+    # historical evidence (app.execution.run_round2 hardcodes the exact
+    # execution_id/git_sha/model/prediction hashes it trusts) -- it is never
+    # re-executed per session, so its git_sha legitimately stays fixed at
+    # whatever commit first produced it. What *must* track the current
+    # producer commit is Round 2 (and everything built on top of it: the
+    # reviewer/V2/policy/canonical-package code), since that is what a new
+    # session actually re-executes. Each round's own git_dirty=False is
+    # still independently required -- that proves *that specific execution*
+    # was captured with a clean tree, regardless of which commit it was.
+    round1_env = (round1_result or {}).get("environment_fingerprint") or {}
+    _check(
+        report, "identity", "CANON-H-001",
+        round1_env.get("git_dirty") is False,
+        "round1 environment_fingerprint.git_dirty is not False",
+    )
+    if round2_exists:
+        round2_env = (round2_result or {}).get("environment_fingerprint") or {}
+        round2_git_sha = round2_env.get("git_sha")
+        _check(
+            report, "identity", "CANON-H-002",
+            round2_env.get("git_dirty") is False,
+            "round2 environment_fingerprint.git_dirty is not False",
+        )
+        if expected_git_sha is not None:
+            _check(
+                report, "identity", "CANON-H-003",
+                round2_git_sha == expected_git_sha,
+                f"round2 git_sha ({round2_git_sha}) does not equal expected producer commit {expected_git_sha}",
+            )
 
     all_pass = bool(report["checks"]) and all(item["status"] == "PASS" for item in report["checks"])
     report["status"] = "PASS" if all_pass else "FAIL"

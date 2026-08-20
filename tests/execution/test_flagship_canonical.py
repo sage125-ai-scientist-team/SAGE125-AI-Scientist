@@ -70,6 +70,7 @@ def _minimal_valid_workspace(tmp_path: Path) -> dict[str, Path]:
             "runner_verified": True,
             "status": "succeeded",
             "datasets": [{"sha256": dataset_sha}],
+            "environment_fingerprint": {"git_sha": "f" * 40, "git_dirty": False},
         },
     )
     (round1_package / "artifacts" / "model.json").write_text("{}", encoding="utf-8")
@@ -86,6 +87,7 @@ def _minimal_valid_workspace(tmp_path: Path) -> dict[str, Path]:
             "status": "succeeded",
             "parent_execution_id": "execution-round1",
             "datasets": [{"sha256": dataset_sha}],
+            "environment_fingerprint": {"git_sha": "f" * 40, "git_dirty": False},
         },
     )
     (round2_package / "artifacts" / "model.json").write_text("{}", encoding="utf-8")
@@ -269,3 +271,55 @@ def test_reviewer_feedback_not_a_genuine_revision_fails_closed(tmp_path: Path) -
     report = _validate(paths)
     assert report["status"] == "FAIL"
     assert any("CANON-D-007" in reason for reason in report["fail_closed_reasons"])
+
+
+def _round1_result(paths: dict[str, Path]) -> dict:
+    return json.loads((paths["round1_package"] / "execution_result.json").read_text(encoding="utf-8"))
+
+
+def _round2_result(paths: dict[str, Path]) -> dict:
+    return json.loads((paths["round2_package"] / "execution_result.json").read_text(encoding="utf-8"))
+
+
+def test_round1_git_dirty_true_fails_closed(tmp_path: Path) -> None:
+    """GAP-01 / truthfulness item #13: a dirty source tree at execution time
+    must never pass canonical validation, regardless of scientific content."""
+    paths = _minimal_valid_workspace(tmp_path)
+    result = _round1_result(paths)
+    result["environment_fingerprint"]["git_dirty"] = True
+    _write_json(paths["round1_package"] / "execution_result.json", result)
+    _refresh_manifest(paths["round1_package"])
+    report = _validate(paths)
+    assert report["status"] == "FAIL"
+    assert any("CANON-H-001" in reason for reason in report["fail_closed_reasons"])
+
+
+def test_round1_pinned_historical_git_sha_does_not_need_to_match_round2(tmp_path: Path) -> None:
+    """Round 1 is permanently pinned, immutable historical evidence (it is
+    never re-executed per session); only Round 2 (and the reviewer/V2/policy
+    code built on top of it) needs to track the current producer commit. A
+    Round 1 git_sha from an older commit than Round 2's must not fail
+    closed by itself."""
+    paths = _minimal_valid_workspace(tmp_path)
+    result = _round1_result(paths)
+    result["environment_fingerprint"]["git_sha"] = "0" * 40  # older, pinned commit
+    _write_json(paths["round1_package"] / "execution_result.json", result)
+    _refresh_manifest(paths["round1_package"])
+    report = _validate(paths)
+    assert report["status"] == "PASS"
+
+
+def test_round2_git_sha_not_equal_to_expected_producer_commit_fails_closed(tmp_path: Path) -> None:
+    """When a specific PRODUCER_CODE_COMMIT_SHA is expected (the commit that
+    is supposed to have produced Round 2 and everything built on top of it),
+    Round 2 must match it exactly."""
+    paths = _minimal_valid_workspace(tmp_path)
+    report = fc.validate_flagship_canonical_package(expected_git_sha="0" * 40, **paths)
+    assert report["status"] == "FAIL"
+    assert any("CANON-H-003" in reason for reason in report["fail_closed_reasons"])
+
+
+def test_round2_git_sha_equal_to_expected_producer_commit_passes(tmp_path: Path) -> None:
+    paths = _minimal_valid_workspace(tmp_path)
+    report = fc.validate_flagship_canonical_package(expected_git_sha="f" * 40, **paths)
+    assert report["status"] == "PASS"
