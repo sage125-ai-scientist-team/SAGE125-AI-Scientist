@@ -1091,6 +1091,81 @@ _CANON_CATEGORY_LABELS = {
 }
 
 
+def _render_flagship_provenance(prov: dict) -> None:
+    """
+    渲染 GAP-01..04 加固后的 provenance 细节：代码 Commit 绑定、真实 Reviewer
+    调用审计、V1/V2 prompt hash 变化、issue closure、no-clobber 发布、以及
+    被取代的旧 attempt。全部字段直接来自磁盘证据，找不到就诚实显示"未知"，
+    绝不编造。不展示任何 API Key / Authorization / workspace ID / 原始 prompt 正文。
+    """
+    if not prov:
+        return
+    with st.expander("Provenance 详情（Git Commit / Reviewer 审计 / Hash 变化）", expanded=False):
+        def _v(x: object) -> str:
+            return "未知" if x is None or x == "" else str(x)
+
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>Producer Git SHA（canonical source_git_sha）：</b><code>{esc(_v(prov.get('producer_git_sha')))}</code></div>
+                <div><b>Artifact snapshot Commit SHA（当前 HEAD）：</b><code>{esc(_v(prov.get('artifact_snapshot_commit_sha')))}</code></div>
+                <div><b>Round 1 git_sha / git_dirty：</b><code>{esc(_v(prov.get('round1_git_sha')))}</code> / {esc(_v(prov.get('round1_git_dirty')))}</div>
+                <div><b>Round 2 git_sha / git_dirty：</b><code>{esc(_v(prov.get('round2_git_sha')))}</code> / {esc(_v(prov.get('round2_git_dirty')))}</div>
+                <div><b>Round 1 execution_id：</b><code>{esc(_v(prov.get('round1_execution_id')))}</code></div>
+                <div><b>Round 2 execution_id：</b><code>{esc(_v(prov.get('round2_execution_id')))}</code></div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>Reviewer（Scientific Review）：</b>{esc(_v(prov.get('reviewer_provider')))} / {esc(_v(prov.get('reviewer_model')))}，request_id=<code>{esc(_v(prov.get('reviewer_request_id')))}</code></div>
+                <div><b>V2 revision-plan 调用：</b>{esc(_v(prov.get('v2_provider')))} / {esc(_v(prov.get('v2_model')))}，request_id=<code>{esc(_v(prov.get('v2_request_id')))}</code></div>
+                <div><b>Reviewer 是否真实驱动（reviewer_driven）：</b>{esc(_v(prov.get('reviewer_driven')))}</div>
+                <div><b>Round 1 是否通过 Reviewer（reviewer_passed）：</b>{esc(_v(prov.get('reviewer_passed')))}</div>
+                <div><b>Reviewer issue 是否注入 RevisionContext：</b>{esc(_v(prov.get('reviewer_issues_injected')))}</div>
+                <div><b>Round 1 ExecutionResult 是否注入 RevisionContext：</b>{esc(_v(prov.get('execution_result_injected')))}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        issues = prov.get("critical_issues") or []
+        if issues:
+            st.markdown("**Reviewer 提出的 critical issue：**")
+            for issue in issues:
+                st.markdown(f"<div class='field-block'>• {esc(issue)}</div>", unsafe_allow_html=True)
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>V1 prompt hash：</b><code>{esc(_v(prov.get('v1_prompt_hash')))}</code></div>
+                <div><b>V2 prompt hash：</b><code>{esc(_v(prov.get('v2_prompt_hash')))}</code></div>
+                <div><b>prompt hash 是否真实变化：</b>{esc(_v(prov.get('prompt_hash_changed')))}</div>
+                <div><b>V1 input hash：</b><code>{esc(_v(prov.get('v1_input_hash')))}</code></div>
+                <div><b>V2 input hash：</b><code>{esc(_v(prov.get('v2_input_hash')))}</code></div>
+                <div><b>input hash 是否真实变化：</b>{esc(_v(prov.get('input_hash_changed')))}</div>
+                <div><b>Policy validation（唯一实验变化是否合规）：</b>{esc(_v(prov.get('policy_validation_ok')))}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>unresolved P0 / P1：</b>{esc(_v(prov.get('unresolved_p0')))} / {esc(_v(prov.get('unresolved_p1')))}</div>
+                <div><b>stop_reason：</b>{esc(_v(prov.get('stop_reason')))}</div>
+                <div><b>目标指标：</b>{esc(_v(prov.get('target_metric')))} ≥ {esc(_v(prov.get('target_value')))}，实测 {esc(_v(prov.get('observed_value')))}</div>
+                <div><b>no-clobber 原子发布：</b>{esc(_v(prov.get('no_clobber_publication')))}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        superseded = prov.get("superseded_attempts") or []
+        if superseded:
+            st.markdown("**已被取代的旧 canonical attempt（PROVENANCE_SUPERSEDED，未删除未修改）：**")
+            for event in superseded:
+                st.markdown(
+                    f"<div class='field-block'>• {esc(event.get('old_attempt_id'))} → {esc(event.get('new_attempt_id'))}"
+                    f"（{esc(event.get('reason'))}，{esc(event.get('timestamp'))}）</div>",
+                    unsafe_allow_html=True,
+                )
+        limitation = prov.get("scientific_limitation")
+        if limitation:
+            st.caption(f"科学边界：{limitation}")
+
+
 def _render_flagship_canonical_status(qid: str) -> None:
     """
     只读展示旗舰案例 canonical package / 原子发布状态。
@@ -1148,6 +1223,8 @@ def _render_flagship_canonical_status(qid: str) -> None:
         )
     else:
         st.caption("尚未发布为 PUBLISHED_VERIFIED canonical package（或已发布但校验状态非 PASS，consumer 会拒绝读取）。")
+
+    _render_flagship_provenance(status.get("provenance") or {})
 
     checks = status.get("checks") or []
     if checks:

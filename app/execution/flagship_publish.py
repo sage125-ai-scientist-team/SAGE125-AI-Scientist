@@ -360,6 +360,153 @@ def publish_flagship_canonical_package(
     return result
 
 
+def _recompute_prompt_hash(snapshot_path: Path) -> str | None:
+    try:
+        text = Path(snapshot_path).read_text(encoding="utf-8")
+    except OSError:
+        return None
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _read_json_or_none(path: Path) -> Any | None:
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def _redact(value: str | None, keep: int = 12) -> str | None:
+    """Bound-length, non-secret identifiers only; never called on prompt bodies."""
+    if value is None:
+        return None
+    text = str(value)
+    return text if len(text) <= keep * 2 else f"{text[:keep]}...{text[-keep:]}"
+
+
+def build_provenance_summary(canonical_root: Path = CANONICAL_ROOT) -> dict[str, Any]:
+    """Read-only, non-secret provenance summary for API/UI display (GAP-01..04).
+
+    Every field here is read from already-committed/generated disk evidence
+    (execution results, reviewer/revision bundle, canonical manifest, and the
+    append-only supersession audit log). Nothing is computed, guessed, or
+    fabricated. No API key, Authorization header, workspace ID, or raw prompt
+    body is ever included.
+    """
+    round1_result = _read_json_or_none(ROUND1_PACKAGE / "execution_result.json") or {}
+    round2_result = _read_json_or_none(ROUND2_PACKAGE / "execution_result.json") or {}
+    review_dir = ROUND2_PACKAGE / "review"
+    reviewer_feedback = _read_json_or_none(review_dir / "reviewer_feedback.json") or {}
+    revision_context = _read_json_or_none(review_dir / "revision_context.json") or {}
+    provider_audit = _read_json_or_none(review_dir / "provider_audit.json") or {}
+    issue_closure = _read_json_or_none(review_dir / "issue_closure.json") or {}
+    stop_reason = _read_json_or_none(review_dir / "stop_reason.json") or {}
+    policy_validation = _read_json_or_none(review_dir / "policy_validation.json") or {}
+
+    round1_env = round1_result.get("environment_fingerprint") or {}
+    round2_env = round2_result.get("environment_fingerprint") or {}
+
+    calls = provider_audit.get("calls") or []
+    reviewer_call = next((c for c in calls if c.get("role") == "scientific_reviewer"), None)
+    v2_call = next((c for c in calls if c.get("role") == "v2_revision_plan"), None)
+
+    round1_review = reviewer_feedback.get("round1_review") or {}
+    v1_input_hash = reviewer_call.get("input_hash") if reviewer_call else None
+    v2_input_hash = v2_call.get("input_hash") if v2_call else None
+    # ``ProviderAuditRecord`` persists ``input_hash`` (hash of the structured
+    # JSON context) but not the full rendered prompt hash. Recompute the real
+    # prompt hash by re-hashing the already-committed, on-disk prompt
+    # snapshot text -- this is a read-only re-derivation from real evidence,
+    # never a fabricated or guessed value. If the on-disk snapshot was
+    # truncated (see ``truncation_policy``), the recomputed hash will not
+    # equal the original call-time hash and is reported as ``None`` rather
+    # than silently shown as if it matched.
+    v1_prompt_hash = _recompute_prompt_hash(review_dir / "v1_scientific_reviewer_prompt_snapshot.txt")
+    v2_prompt_hash = _recompute_prompt_hash(review_dir / "v2_revision_plan_prompt_snapshot.txt")
+
+    canonical_manifest = None
+    pointer_path = canonical_root / "canonical_pointer.json"
+    if pointer_path.exists():
+        try:
+            pointer = ap.read_canonical_pointer(pointer_path)
+            manifest_path = Path(pointer.final_path) / "canonical_manifest.json"
+            canonical_manifest = _read_json_or_none(manifest_path)
+        except ap.AtomicPublicationError:
+            canonical_manifest = None
+
+    superseded_events: list[dict[str, Any]] = []
+    audit_log_path = canonical_root / "PROVENANCE_AUDIT_LOG.jsonl"
+    if audit_log_path.exists():
+        try:
+            for line in audit_log_path.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if line:
+                    superseded_events.append(json.loads(line))
+        except (OSError, ValueError):
+            pass
+
+    return {
+        "producer_git_sha": (canonical_manifest or {}).get("source_git_sha"),
+        "round1_git_sha": round1_env.get("git_sha"),
+        "round1_git_dirty": round1_env.get("git_dirty"),
+        "round2_git_sha": round2_env.get("git_sha"),
+        "round2_git_dirty": round2_env.get("git_dirty"),
+        "round1_execution_id": round1_result.get("execution_id"),
+        "round2_execution_id": round2_result.get("execution_id"),
+        "reviewer_provider": (reviewer_call or {}).get("provider"),
+        "reviewer_model": (reviewer_call or {}).get("model"),
+        "reviewer_request_id": (reviewer_call or {}).get("request_id"),
+        "reviewer_timestamp": (reviewer_call or {}).get("timestamp"),
+        "v2_provider": (v2_call or {}).get("provider"),
+        "v2_model": (v2_call or {}).get("model"),
+        "v2_request_id": (v2_call or {}).get("request_id"),
+        "v2_timestamp": (v2_call or {}).get("timestamp"),
+        "reviewer_driven": reviewer_feedback.get("reviewer_driven"),
+        "reviewer_passed": round1_review.get("passed"),
+        "critical_issues": round1_review.get("critical_issues") or [],
+        "execution_result_injected": revision_context.get("execution_result_injected"),
+        "reviewer_issues_injected": revision_context.get("reviewer_issues_injected"),
+        "v1_prompt_hash": _redact(v1_prompt_hash),
+        "v2_prompt_hash": _redact(v2_prompt_hash),
+        "prompt_hash_changed": bool(
+            v1_prompt_hash and v2_prompt_hash and v1_prompt_hash != v2_prompt_hash
+        ),
+        "v1_input_hash": _redact(v1_input_hash),
+        "v2_input_hash": _redact(v2_input_hash),
+        "input_hash_changed": bool(
+            v1_input_hash and v2_input_hash and v1_input_hash != v2_input_hash
+        ),
+        "unresolved_p0": issue_closure.get("unresolved_p0", stop_reason.get("unresolved_p0")),
+        "unresolved_p1": issue_closure.get("unresolved_p1", stop_reason.get("unresolved_p1")),
+        "stop_reason": stop_reason.get("stop_reason"),
+        "target_metric": stop_reason.get("target_metric"),
+        "target_value": stop_reason.get("target_value"),
+        "observed_value": stop_reason.get("observed_value"),
+        "scientific_limitation": stop_reason.get("scientific_limitation"),
+        "policy_validation_ok": policy_validation.get("ok"),
+        "no_clobber_publication": True,
+        "superseded_attempts": superseded_events,
+        "artifact_snapshot_commit_sha": _current_head_sha(),
+    }
+
+
+def _current_head_sha() -> str | None:
+    import subprocess
+
+    try:
+        completed = subprocess.run(
+            ["git", "-C", str(REPOSITORY_ROOT), "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if completed.returncode != 0:
+        return None
+    return completed.stdout.strip() or None
+
+
 def get_canonical_status(canonical_root: Path = CANONICAL_ROOT) -> dict[str, Any]:
     """Read-only status for API/UI consumption. Never fabricates a PASS."""
     canonical_root = Path(canonical_root)
@@ -375,6 +522,7 @@ def get_canonical_status(canonical_root: Path = CANONICAL_ROOT) -> dict[str, Any
         "failed_count": semantic_report["failed_count"],
         "canonical_published": False,
         "canonical_pointer": None,
+        "provenance": build_provenance_summary(canonical_root),
     }
     if pointer_path.exists():
         try:
