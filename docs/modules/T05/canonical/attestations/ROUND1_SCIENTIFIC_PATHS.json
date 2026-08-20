@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "generated_by": "tmp/build_scientific_paths.py",
+  "round1_git_sha": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+  "producer_code_commit_sha": "f29fbf4a40ac3f0b17df4d8a8cd03de8672f1c87",
+  "scientific_control_equivalence": true,
+  "scientific_control_diffs": [],
+  "non_scientific_diffs": [
+    "experiments/flagship/dataset_manifest.json"
+  ],
+  "unknown_diffs": [],
+  "authorized_change": "decision_threshold:0.5->0.4 (Round 2 only, via reviewer-authorized policy; does not apply to Round 1 code paths)",
+  "discovery_method": "Reverse-engineered from Round 1 ExecutionSpec.entrypoint ('wdbc-round1-baseline' -> app/execution/wdbc_baseline.py via EntrypointRegistry.register_python in run_round1.py), the real 'import'/'from' statements of wdbc_baseline.py and run_round1.py, and the CONFIG_PATH/DATASET_MANIFEST_PATH constants read by run_round1.py. UI, API, Reviewer, and publication files are explicitly excluded from this list.",
+  "path_count": 10,
+  "identical_blob_count": 9,
+  "changed_blob_count": 1,
+  "missing_path_count": 0,
+  "paths": [
+    {
+      "path": "app/execution/wdbc_baseline.py",
+      "role": "core_numeric_algorithm: dataset parsing/validation, stratified split, seeded logistic-regression fit, threshold decision, confusion matrix, balanced_accuracy/malignant_recall computation, predictions.csv writer",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "72a8c7e1ded42623d4592d140a8462d3d135ebe6",
+      "producer_commit_blob_sha": "72a8c7e1ded42623d4592d140a8462d3d135ebe6",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": true,
+      "justification": "This is the entrypoint (wdbc-round1-baseline) actually invoked by the controlled runner; every reported Round 1 metric is computed here."
+    },
+    {
+      "path": "experiments/flagship/round1_config.json",
+      "role": "hyperparameter_source: seed, test_fraction, learning_rate, iterations, l2, decision_threshold, recall_target, threshold_step",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "f0652f68aed6417147415ace42e50d4a3a2db1be",
+      "producer_commit_blob_sha": "f0652f68aed6417147415ace42e50d4a3a2db1be",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": true,
+      "justification": "run_round1.build_execution_spec() reads this file and feeds its values verbatim into wdbc_baseline.py's argv; any change here changes the control parameters of the experiment."
+    },
+    {
+      "path": "experiments/flagship/dataset_manifest.json",
+      "role": "dataset_pin_source: reviewed sha256/size_bytes pin for the WDBC dataset",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "8b8490106eb95e020e9fbd7ac5dd8452bfb3a6e7",
+      "producer_commit_blob_sha": "44f14b0b8c174ce806c9a9ce6193fd2e0f242e39",
+      "identical": false,
+      "change_class": "PROVENANCE_ONLY",
+      "affects_scientific_output": true,
+      "justification": "run_formal_round1() refuses to execute unless the resolved dataset matches this reviewed pin; a change here could silently swap the dataset used to compute metrics."
+    },
+    {
+      "path": "app/execution/datasets.py",
+      "role": "dataset_acquisition_and_validation: offline-first fetch, cache, sha256/size pin verification, DatasetManifest construction",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "e99212cd119aea29b12cec7edce39633368bd10d",
+      "producer_commit_blob_sha": "e99212cd119aea29b12cec7edce39633368bd10d",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": true,
+      "justification": "Governs which raw bytes are handed to wdbc_baseline.py; a change to validation logic could allow an unpinned/corrupted dataset through."
+    },
+    {
+      "path": "app/execution/run_round1.py",
+      "role": "execution_spec_builder_and_formal_gate: builds ExecutionSpec argv from round1_config.json, validates dataset pin, enforces validate_formal_result() trust gate, packages formal evidence",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "d71bdbc6ec44ff3bb9fa5169292c8696539fbe61",
+      "producer_commit_blob_sha": "d71bdbc6ec44ff3bb9fa5169292c8696539fbe61",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": true,
+      "justification": "Directly constructs the argv (hyperparameters) passed to the numeric entrypoint and is the fail-closed gate that decides whether a Round 1 result is trusted; a change here can alter which parameters are used or weaken the trust gate."
+    },
+    {
+      "path": "app/execution/registry.py",
+      "role": "entrypoint_registration: maps entrypoint_id -> script path, class",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "a27c28d63f4287a872760da6cf0cf53549a5770e",
+      "producer_commit_blob_sha": "a27c28d63f4287a872760da6cf0cf53549a5770e",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": false,
+      "justification": "Selects WHICH file is executed as the entrypoint but contains no numeric/statistical logic itself; classified as execution infrastructure, not scientific control."
+    },
+    {
+      "path": "app/execution/runner.py",
+      "role": "controlled_subprocess_runner: LocalProcessRunner invokes the entrypoint as a subprocess, enforces resource/network limits, captures environment fingerprint",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "d947c202cc8845390112577dcdc9d0a595b13a96",
+      "producer_commit_blob_sha": "d947c202cc8845390112577dcdc9d0a595b13a96",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": false,
+      "justification": "Orchestrates process execution and provenance capture; does not compute or alter dataset values, model parameters, or metrics."
+    },
+    {
+      "path": "app/execution/security.py",
+      "role": "path_and_environment_safety_guards used by registry.py/runner.py",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "f6b6f4e91532c6f977e32149bb5ac9f32c341d73",
+      "producer_commit_blob_sha": "f6b6f4e91532c6f977e32149bb5ac9f32c341d73",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": false,
+      "justification": "Provides defensive checks (e.g. reserved environment names, path containment); no numeric/statistical logic."
+    },
+    {
+      "path": "app/execution/provenance.py",
+      "role": "environment_fingerprint_capture: git_sha, git_dirty, python_version, dependency_versions recording",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "93b03cfd2c2ee93dab935b845d1a94bdd8d3c1f0",
+      "producer_commit_blob_sha": "93b03cfd2c2ee93dab935b845d1a94bdd8d3c1f0",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": false,
+      "justification": "Records metadata ABOUT the run (git provenance, interpreter/deps) for audit purposes; does not participate in computing the metrics themselves. This is the file responsible for items 19/20 (python version / dependency versions) in the task's checklist, but a change to it only changes how provenance is *recorded*, not the science."
+    },
+    {
+      "path": "app/contracts/execution.py",
+      "role": "pydantic_schema_definitions: ExecutionSpec/ExecutionResult/ArtifactManifest/MetricRecord/DatasetManifest field definitions and validators",
+      "source_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "source_blob_sha": "4183eb0d22466c53029f98cdd155e603032d06db",
+      "producer_commit_blob_sha": "4183eb0d22466c53029f98cdd155e603032d06db",
+      "identical": true,
+      "change_class": "NO_CHANGE",
+      "affects_scientific_output": false,
+      "justification": "Defines and validates the *shape* of execution data (schema/typing), not the numeric algorithm; a change here could reject/accept differently-shaped data but does not itself compute metrics."
+    }
+  ]
+}

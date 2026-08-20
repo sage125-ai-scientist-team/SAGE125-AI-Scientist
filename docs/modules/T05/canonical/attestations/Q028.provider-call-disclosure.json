@@ -1,0 +1,80 @@
+{
+  "abandoned_calls": [
+    {
+      "call_sequence": 1,
+      "entered_canonical_package": false,
+      "entered_metric_computation": false,
+      "model": "qwen3.6-flash",
+      "output_used_for_issue_closure": false,
+      "provider": "bailian",
+      "reason_for_abandonment": "This call was part of the FIRST round of reviewer orchestration (tmp/orchestrate_reviewer.py run at ~17:50 UTC+8). Its audit record was written to round2/review/provider_audit.json on disk but was never committed to git. During a subsequent 'git commit --amend' to include additional canonical validation code, the generated round2/review/ directory was treated as part of the working tree changes and the provider_audit.json was overwritten when the orchestration script was re-run to regenerate the artifacts. The original request_id is therefore not recoverable from any committed artifact or durable log.",
+      "request_id": null,
+      "request_id_status": "not_recovered",
+      "role": "scientific_reviewer",
+      "token_usage": "unknown — provider did not return reliable token count in recovered logs"
+    },
+    {
+      "call_sequence": 2,
+      "entered_canonical_package": false,
+      "entered_metric_computation": false,
+      "model": "qwen3.6-flash",
+      "output_used_for_issue_closure": false,
+      "provider": "bailian",
+      "reason_for_abandonment": "Same session as abandoned_call #1 above. This was the paired v2_revision_plan call from the first orchestration run. Its audit record was also lost when the round2/review/ artifacts were regenerated. Neither call produced output that entered any canonical package, metric, or issue closure record.",
+      "request_id": null,
+      "request_id_status": "not_recovered",
+      "role": "v2_revision_plan",
+      "token_usage": "unknown"
+    }
+  ],
+  "canonical_calls": [
+    {
+      "call_id": "call-fe766298f46f4fcea932c62f3a92b33a",
+      "entered_canonical_package": true,
+      "entered_metric_computation": false,
+      "model": "qwen3.6-flash",
+      "note": "This call's structured output was validated against the Q028 reviewer/revision-plan schema and entered the canonical package via revision_context.json and reviewer_feedback.json.",
+      "provider": "bailian",
+      "request_id": "chatcmpl-47dd7762-b00c-91af-9c1f-32c7053a294d",
+      "role": "scientific_reviewer",
+      "timestamp": "2026-08-20T09:50:51Z",
+      "usage": {
+        "input_tokens": 833,
+        "output_tokens": 472,
+        "total_tokens": 1305
+      }
+    },
+    {
+      "call_id": "call-21db43ee3738418b9ff0466004efd64a",
+      "entered_canonical_package": true,
+      "entered_metric_computation": false,
+      "model": "qwen3.6-flash",
+      "note": "This call's structured output was validated against the Q028 reviewer/revision-plan schema and entered the canonical package via revision_context.json and reviewer_feedback.json.",
+      "provider": "bailian",
+      "request_id": "chatcmpl-8a2201a2-8695-9ffb-a206-e763f551ca2e",
+      "role": "v2_revision_plan",
+      "timestamp": "2026-08-20T09:50:53Z",
+      "usage": {
+        "input_tokens": 1202,
+        "output_tokens": 225,
+        "total_tokens": 1427
+      }
+    }
+  ],
+  "canonical_used_calls": 2,
+  "case_id": "Q028",
+  "created_at": "2026-08-20T12:40:11Z",
+  "disclosure_policy": "complete — all provider calls made in this session are reported, including abandoned ones",
+  "explicit_confirmations": [
+    "abandoned outputs did not enter any canonical package",
+    "abandoned outputs did not contribute to any reported metric",
+    "abandoned outputs did not contribute to any reviewer issue closure",
+    "canonical provider_audit.json records only the 2 calls that entered the canonical package",
+    "total_calls=4 is accurate; writing total_calls=2 would be false",
+    "abandoned request_ids are genuinely not recoverable; they have not been fabricated or guessed"
+  ],
+  "generated_by": "captain-local / CAPTAIN-LOCAL-VERSIONED-PROVENANCE-03",
+  "publication_attempt_id": "pub-a7d6c7e7dd6c42a488c7f39079d6a434",
+  "schema_version": "1.0",
+  "total_calls": 4
+}

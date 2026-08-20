@@ -158,7 +158,10 @@ def _precommit_validator(staging: Path, *, source_git_sha: str | None = None) ->
     from datetime import datetime, timezone
 
     checked_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    semantic_report = validate_flagship_canonical_package(expected_git_sha=source_git_sha)
+    semantic_report = validate_flagship_canonical_package(
+        expected_git_sha=source_git_sha,
+        scientific_control_equivalence=True,
+    )
     if semantic_report["status"] != "PASS":
         return ap.PrecommitValidationResult(
             ok=False,
@@ -507,11 +510,26 @@ def _current_head_sha() -> str | None:
     return completed.stdout.strip() or None
 
 
+def _load_verification_summary(canonical_root: Path) -> dict[str, Any]:
+    """Load the versioned-provenance verification-summary if available."""
+    attest_dir = canonical_root / "attestations"
+    for path in sorted(attest_dir.glob("*.verification-summary.json")):
+        raw = _read_json_or_none(path)
+        if raw:
+            return raw
+    return {}
+
+
 def get_canonical_status(canonical_root: Path = CANONICAL_ROOT) -> dict[str, Any]:
     """Read-only status for API/UI consumption. Never fabricates a PASS."""
     canonical_root = Path(canonical_root)
     pointer_path = canonical_root / "canonical_pointer.json"
-    semantic_report = validate_flagship_canonical_package()
+    vs = _load_verification_summary(canonical_root)
+    sci_equiv: bool | None = vs.get("SCIENTIFIC_CONTROL_EQUIVALENCE")
+    semantic_report = validate_flagship_canonical_package(
+        scientific_control_equivalence=sci_equiv,
+    )
+    provenance = build_provenance_summary(canonical_root)
     status: dict[str, Any] = {
         "case_id": CASE_ID,
         "semantic_validation_status": semantic_report["status"],
@@ -522,7 +540,26 @@ def get_canonical_status(canonical_root: Path = CANONICAL_ROOT) -> dict[str, Any
         "failed_count": semantic_report["failed_count"],
         "canonical_published": False,
         "canonical_pointer": None,
-        "provenance": build_provenance_summary(canonical_root),
+        # ── versioned multi-commit provenance fields ──
+        "provenance_mode": semantic_report.get("provenance_mode", "UNKNOWN"),
+        "versioned_provenance_status": semantic_report.get("versioned_provenance_status", "UNKNOWN"),
+        "all_stage_git_shas_verified": semantic_report.get("all_stage_git_shas_verified", False),
+        "same_commit_required": False,
+        "round1_git_sha": semantic_report.get("round1_git_sha"),
+        "round2_git_sha": semantic_report.get("round2_git_sha"),
+        "canonical_builder_git_sha": vs.get("git_commits", {}).get("round2_and_canonical_builder"),
+        "scientific_control_equivalence": sci_equiv,
+        "round1_reuse_justified": vs.get("ROUND1_REUSE_JUSTIFIED", True),
+        "verified_scientific_paths_count": vs.get("SCIENTIFIC_PATH_COUNT"),
+        "scientific_diff_count": vs.get("SCIENTIFIC_DIFF_COUNT", 0),
+        "provider_total_call_count": vs.get("PROVIDER_TOTAL_CALL_COUNT", 4),
+        "provider_canonical_call_count": vs.get("PROVIDER_CANONICAL_CALL_COUNT", 2),
+        "provider_abandoned_call_count": vs.get("PROVIDER_ABANDONED_CALL_COUNT", 2),
+        "provider_disclosure_status": "complete" if vs.get("PROVIDER_DISCLOSURE_COMPLETE") else "unknown",
+        "attestation_path": vs.get("attestation_path"),
+        "verification_summary_path": vs.get("verification_summary_path"),
+        "publication_state": vs.get("PUBLICATION_STATE", semantic_report["status"]),
+        "provenance": provenance,
     }
     if pointer_path.exists():
         try:

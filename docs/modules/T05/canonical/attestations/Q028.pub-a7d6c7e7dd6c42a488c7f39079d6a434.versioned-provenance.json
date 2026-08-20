@@ -1,0 +1,113 @@
+{
+  "attestation_type": "versioned_multi_commit_scientific_lineage",
+  "created_at": "2026-08-20T12:40:11Z",
+  "created_by": "captain-local",
+  "note": "This attestation is SLSA-inspired in structure but does NOT claim formal SLSA Build Level compliance. It documents the versioned-multi-commit lineage of the Q028/WDBC flagship canonical package under the SAGE125 project.",
+  "policy_version": "versioned-provenance-v1",
+  "resolved_dependencies": [
+    {
+      "commit_reachable": true,
+      "git_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "id": "execution-5577816b92ac434c99b9c0ffcda21660",
+      "type": "round1_execution"
+    },
+    {
+      "commit_reachable": true,
+      "git_commit": "f29fbf4a40ac3f0b17df4d8a8cd03de8672f1c87",
+      "type": "round2_producer"
+    },
+    {
+      "commit_reachable": true,
+      "git_commit": "1ae89e0d886e5fd770a64489785f605b7e67fcfd",
+      "type": "artifact_snapshot"
+    },
+    {
+      "commit_reachable": true,
+      "git_commit": "79b1a42c161cd8f2e40847d97d9bc71c367d5a8c",
+      "type": "display_update"
+    }
+  ],
+  "schema_version": "1.0",
+  "scientific_control_equivalence": {
+    "all_stage_git_shas_verified": true,
+    "authorized_change": "decision_threshold:0.5->0.4 (Round 2 only, policy-approved by reviewer; does not apply to Round 1 code paths)",
+    "changed_blob_count": 1,
+    "diff_summary": "1 file changed between ROUND1_GIT_SHA and PRODUCER_CODE_COMMIT_SHA: experiments/flagship/dataset_manifest.json gained provenance-bookkeeping fields (formal_round1_executed=true, formal_round1_source_git_sha, formal_round1_result, formal_round1_offline_reproduction_match). The enforced pin block (sha256/size_bytes/status=verified) is byte-for-byte identical. All 5 scientifically-critical paths (wdbc_baseline.py, round1_config.json pin, datasets.py, run_round1.py, dataset_manifest pin) produce identical blobs at both commits.",
+    "identical_blob_count": 9,
+    "missing_path_count": 0,
+    "non_scientific_diffs": [
+      "experiments/flagship/dataset_manifest.json"
+    ],
+    "scientific_control_diff_count": 0,
+    "status": true,
+    "unknown_diff_count": 0,
+    "verified_paths_count": 10,
+    "verified_paths_digest": "a78478cbe1128357d25a451d2c8f19966e8bc05decd1fd80a0c36eeef0f76fde"
+  },
+  "stages": {
+    "canonical_builder": {
+      "artifact_snapshot_commit": "1ae89e0d886e5fd770a64489785f605b7e67fcfd",
+      "display_commit": "79b1a42c161cd8f2e40847d97d9bc71c367d5a8c",
+      "git_commit": "f29fbf4a40ac3f0b17df4d8a8cd03de8672f1c87",
+      "source_git_sha_in_package": "f29fbf4a40ac3f0b17df4d8a8cd03de8672f1c87"
+    },
+    "reviewer": {
+      "canonical_request_count": 2,
+      "canonical_request_ids": [
+        "chatcmpl-47dd7762-b00c-91af-9c1f-32c7053a294d",
+        "chatcmpl-8a2201a2-8695-9ffb-a206-e763f551ca2e"
+      ],
+      "critical_issues_count": 1,
+      "execution_result_injected": true,
+      "model": "qwen3.6-flash",
+      "provider": "bailian",
+      "reviewer_feedback_digest": "53a314158f07a8333014ce5bdfe179b686b1877492bb9fa27347a712c4751fa9",
+      "reviewer_issues_injected": true,
+      "reviewer_passed": false,
+      "revision_context_digest": "218a02aa3a40b342f406c03cb21d6a9d98f55162520f0f5eb7c45834501dcf52"
+    },
+    "round1": {
+      "artifact_manifest_digest": "08999994ebc4da1842d8e5949513ef61aaa70037e897bd40106b238b0b5fb16c",
+      "commit_reachable": true,
+      "config_digest": "fe3bfd73f8762e0b7e05596abeaf635dfe85aa5bb74bb3f8f55faf57b76f96c1",
+      "dataset_digest": "d606af411f3e5be8a317a5a8b652b425aaf0ff38ca683d5327ffff94c3695f4a",
+      "execution_id": "execution-5577816b92ac434c99b9c0ffcda21660",
+      "git_commit": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+      "git_dirty": false,
+      "metrics_digest": "95a26531abffbe3015936e01701b3a3ca3c2f9864dd64e05475a641dcdefd507",
+      "note": "Round 1 is treated as immutable historical evidence. Its git_sha predates the reviewer-loop hardening commit. The dataset pin (sha256/size_bytes) and all control hyperparameters are unchanged between ROUND1_GIT_SHA and PRODUCER_CODE_COMMIT_SHA (verified via path-limited diff — only provenance bookkeeping fields changed in dataset_manifest.json).",
+      "offline_recomputation_ok": true,
+      "raw_results_digest": "05008c6176640bbb1134e3f113d985543aa4819ba455a8e610d7e908a8e9275b"
+    },
+    "round2": {
+      "artifact_manifest_digest": "4cac7bd9672f24e981e50fb8ec078c1a2f79254e58065dee5fdbcd6223b3d98a",
+      "commit_reachable": true,
+      "config_digest": "0f13137a23a00a0e5ef1b0287d34538fe4fc9cd8137f8d9f61d8ee13798cc75a",
+      "execution_id": "execution-ff238cb3d84e4add8b3b231776548192",
+      "git_commit": "f29fbf4a40ac3f0b17df4d8a8cd03de8672f1c87",
+      "git_dirty": false,
+      "metrics_digest": "c9e9da7f6de78a8454858a363c4c7d70ad932f40083813d8c59851f144e8cbc1",
+      "offline_recomputation_ok": true,
+      "parent_execution_id": "execution-5577816b92ac434c99b9c0ffcda21660",
+      "raw_results_digest": "56743d03826c11da9ea3ba6fcd318b45e3bea7cd0fef4219215dc74b10f3c557"
+    }
+  },
+  "subject": {
+    "canonical_package_digest": "591b2134e94eb52ca4198ae431e00be59f8c71cb3150bdcc6397522513571716",
+    "case_id": "Q028",
+    "package_manifest_digest": "bd070f336d4ccd6c9c03e28bdedbc57f9b643f222912da5110970c521e120a54",
+    "publication_attempt_id": "pub-a7d6c7e7dd6c42a488c7f39079d6a434"
+  },
+  "verification": {
+    "all_stage_artifact_hashes_valid": true,
+    "all_stage_commits_reachable": true,
+    "round1_config_match": true,
+    "round1_dataset_match": true,
+    "round1_git_provenance_ok": true,
+    "round1_metrics_recomputed": true,
+    "round2_git_provenance_ok": true,
+    "round2_metrics_recomputed": true,
+    "unresolved_p0": 0,
+    "unresolved_p1": 0
+  }
+}

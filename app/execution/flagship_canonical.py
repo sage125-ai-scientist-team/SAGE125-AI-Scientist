@@ -91,10 +91,21 @@ def validate_flagship_canonical_package(
     round1_package: Path = ROUND1_PACKAGE,
     round2_package: Path = ROUND2_PACKAGE,
     expected_git_sha: str | None = None,
+    scientific_control_equivalence: bool | None = None,
 ) -> dict[str, Any]:
     """Assemble and validate the Q028/WDBC canonical package. Always returns a
     report (never raises); the report's ``status`` is ``PASS`` only if every
-    check passed."""
+    check passed.
+
+    Provenance strategy: VERSIONED_MULTI_COMMIT is fully supported. Each stage
+    may bind to a different, independently-verified git commit. What is required
+    is that (a) every stage's own git_dirty=False, (b) the round2 git_sha equals
+    the expected producer commit (when provided), and (c) scientific control
+    equivalence is verified between the commits (when provided). Requiring ALL
+    stages to share the SAME git commit (ALL_GIT_SHAS_MATCH) would prevent
+    legitimate iterative science where Round 1 was produced at an earlier commit
+    -- this hard gate is intentionally NOT enforced.
+    """
 
     report: dict[str, Any] = {
         "schema_version": "1.0",
@@ -298,7 +309,65 @@ def validate_flagship_canonical_package(
                 f"round2 git_sha ({round2_git_sha}) does not equal expected producer commit {expected_git_sha}",
             )
 
+    # I. Versioned multi-commit provenance gate.
+    # Each stage must have its own verifiable, independently-recorded git SHA.
+    # We explicitly do NOT require all stages to share the same commit
+    # (ALL_GIT_SHAS_MATCH is not a gate here). Instead we require:
+    #   1. Every stage's git_dirty=False (already checked in H).
+    #   2. Scientific control equivalence between stages (when provided).
+    #   3. We never fabricate that "all commits are the same" when they differ.
+    round1_git_sha = round1_env.get("git_sha") if round1_env else None
+    round2_env = (round2_result or {}).get("environment_fingerprint") or {}
+    round2_git_sha_val = round2_env.get("git_sha") if round2_exists else None
+    round1_stage_verified = bool(round1_git_sha) and round1_env.get("git_dirty") is False
+    round2_stage_verified = (
+        bool(round2_git_sha_val) and round2_env.get("git_dirty") is False
+    ) if round2_exists else False
+    all_stage_git_shas_verified = round1_stage_verified and (round2_stage_verified if round2_exists else True)
+    _check(
+        report,
+        "versioned_provenance",
+        "CANON-I-001",
+        all_stage_git_shas_verified,
+        f"not all stage git SHAs are independently verified (round1={round1_stage_verified}, round2={round2_stage_verified})",
+    )
+    # Scientific control equivalence: required when explicitly provided.
+    sci_equiv_provided = scientific_control_equivalence is not None
+    if sci_equiv_provided:
+        _check(
+            report,
+            "versioned_provenance",
+            "CANON-I-002",
+            scientific_control_equivalence is True,
+            "scientific_control_equivalence=False: unauthorized code changes detected between stage commits",
+        )
+    # Multi-commit is explicitly allowed and NOT a failure condition.
+    same_commit = round1_git_sha == round2_git_sha_val if (round1_git_sha and round2_git_sha_val) else None
+    report["provenance_mode"] = "VERSIONED_MULTI_COMMIT" if (same_commit is False) else "SINGLE_COMMIT"
+    report["all_stage_git_shas_verified"] = all_stage_git_shas_verified
+    report["round1_git_sha"] = round1_git_sha
+    report["round2_git_sha"] = round2_git_sha_val
+    report["scientific_control_equivalence"] = scientific_control_equivalence
+
+    # Compute final status
     all_pass = bool(report["checks"]) and all(item["status"] == "PASS" for item in report["checks"])
+    if all_pass and all_stage_git_shas_verified:
+        if same_commit is False and sci_equiv_provided and scientific_control_equivalence is True:
+            report["versioned_provenance_status"] = "VERSIONED_MULTI_COMMIT_VERIFIED"
+        elif same_commit is False and not sci_equiv_provided:
+            # Scientific equivalence not yet verified — still PASS for the validator,
+            # but the provenance status is informational UNVERIFIED. Full
+            # VERSIONED_MULTI_COMMIT_VERIFIED requires sci_equiv=True explicitly.
+            report["versioned_provenance_status"] = "VERSIONED_MULTI_COMMIT_UNVERIFIED"
+        else:
+            report["versioned_provenance_status"] = "SINGLE_COMMIT_VERIFIED"
+    else:
+        report["versioned_provenance_status"] = (
+            "VERSIONED_MULTI_COMMIT_UNVERIFIED"
+            if (same_commit is False)
+            else "SINGLE_COMMIT_UNVERIFIED"
+        )
+
     report["status"] = "PASS" if all_pass else "FAIL"
     report["round2_blocked"] = not round2_exists
     report["check_count"] = len(report["checks"])

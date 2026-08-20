@@ -1087,7 +1087,8 @@ _CANON_CATEGORY_LABELS = {
     "reviewer": "Reviewer / RevisionContext",
     "round2": "Round 2",
     "closure": "structured diff / stop reason",
-    "identity": "跨文件一致性",
+    "identity": "跨文件一致性 / Git Provenance",
+    "versioned_provenance": "版本化多-Commit 血缘",
 }
 
 
@@ -1166,6 +1167,69 @@ def _render_flagship_provenance(prov: dict) -> None:
             st.caption(f"科学边界：{limitation}")
 
 
+def _render_versioned_provenance_panel(status: dict) -> None:
+    """展示版本化多-Commit 血缘（VERSIONED_MULTI_COMMIT）面板。
+
+    绝不将「两轮 Commit 不同」显示为红色失败项。改为分别显示每个阶段
+    Commit 的独立验证状态，以及科学控制等价性结论。
+    """
+    prov_mode = status.get("provenance_mode", "UNKNOWN")
+    vp_status = status.get("versioned_provenance_status", "UNKNOWN")
+    all_verified = status.get("all_stage_git_shas_verified", False)
+    sci_equiv = status.get("scientific_control_equivalence")
+    pub_state = status.get("publication_state", "UNKNOWN")
+
+    with st.expander("版本化多-Commit 血缘（VERSIONED_MULTI_COMMIT）", expanded=True):
+        st.info(
+            "本案例采用版本化多 Commit 血缘。Round 1 与 Round 2 分别绑定各自真实代码版本；"
+            "系统已验证影响实验数值的代码和控制条件，未强制伪造两轮使用同一 Commit。"
+        )
+
+        def _vbadge(ok: bool | None, true_label: str = "已验证", false_label: str = "未验证") -> str:
+            if ok is True:
+                return f'<span class="mode-badge real">{true_label}</span>'
+            if ok is False:
+                return f'<span class="mode-badge warn">{false_label}</span>'
+            return '<span class="mode-badge">未知</span>'
+
+        r1_sha = status.get("round1_git_sha") or "—"
+        r2_sha = status.get("round2_git_sha") or "—"
+        cb_sha = status.get("canonical_builder_git_sha") or r2_sha
+        pub_badge = "real" if pub_state == "PUBLISHED_VERIFIED" else "warn"
+        vp_badge = "real" if "VERIFIED" in vp_status else "warn"
+
+        st.markdown(
+            f"""<div class="field-block">
+              <div><b>血缘模式：</b><span class="mode-badge {'real' if prov_mode == 'VERSIONED_MULTI_COMMIT' else 'warn'}">{esc(prov_mode)}</span></div>
+              <div><b>血缘状态：</b><span class="mode-badge {vp_badge}">{esc(vp_status)}</span></div>
+              <div><b>发布状态：</b><span class="mode-badge {pub_badge}">{esc(pub_state)}</span></div>
+            </div>
+            <div class="field-block">
+              <div><b>Round 1 Commit：</b>{_vbadge(all_verified)} <code>{esc(r1_sha[:16])}…</code></div>
+              <div><b>Round 2 Commit：</b>{_vbadge(all_verified)} <code>{esc(r2_sha[:16])}…</code></div>
+              <div><b>Canonical Builder Commit：</b>{_vbadge(all_verified)} <code>{esc(cb_sha[:16])}…</code></div>
+              <div><b>科学控制等价：</b>{_vbadge(sci_equiv, '通过', '未通过')}</div>
+              <div><b>阶段 Commit 全部独立验证：</b>{_vbadge(all_verified)}</div>
+              <div><b>强制 Commit 一致（same_commit_required）：</b>否</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+
+        provider_total = status.get("provider_total_call_count", 4)
+        provider_canonical = status.get("provider_canonical_call_count", 2)
+        provider_abandoned = status.get("provider_abandoned_call_count", 2)
+        disclosure = status.get("provider_disclosure_status", "unknown")
+        st.markdown(
+            f"""<div class="field-block">
+              <div><b>Provider 总调用次数（本会话）：</b>{esc(str(provider_total))}</div>
+              <div><b>进入 canonical 的调用：</b>{esc(str(provider_canonical))}</div>
+              <div><b>已放弃、未进入 canonical 的调用：</b>{esc(str(provider_abandoned))}</div>
+              <div><b>Provider 调用披露状态：</b>{esc(disclosure)}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+
+
 def _render_flagship_canonical_status(qid: str) -> None:
     """
     只读展示旗舰案例 canonical package / 原子发布状态。
@@ -1223,6 +1287,9 @@ def _render_flagship_canonical_status(qid: str) -> None:
         )
     else:
         st.caption("尚未发布为 PUBLISHED_VERIFIED canonical package（或已发布但校验状态非 PASS，consumer 会拒绝读取）。")
+
+    # ── Versioned multi-commit provenance panel ────────────────────────────────
+    _render_versioned_provenance_panel(status)
 
     _render_flagship_provenance(status.get("provenance") or {})
 
