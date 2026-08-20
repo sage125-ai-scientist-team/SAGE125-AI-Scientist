@@ -1,0 +1,108 @@
+{
+  "allowed_revision_policy": {
+    "allowed_changes": [
+      {
+        "field": "decision_threshold",
+        "from": 0.5,
+        "rationale": "the only control the frozen round1_config.json round2_trigger authorizes",
+        "to": 0.4
+      }
+    ],
+    "forbidden_actions": [
+      "change_dataset",
+      "change_model_type",
+      "change_seed",
+      "change_data_split",
+      "multi_threshold_cherry_pick",
+      "relabel_samples",
+      "drop_samples",
+      "change_success_metric",
+      "clinical_extrapolation"
+    ],
+    "frozen_fields": [
+      "dataset",
+      "dataset_sha256",
+      "train_test_split",
+      "seed",
+      "feature_set",
+      "normalization",
+      "model_type",
+      "learning_rate",
+      "iterations",
+      "l2",
+      "metric_definitions",
+      "test_fraction"
+    ],
+    "policy_version": "Q028-WDBC-allowed-revision-v1"
+  },
+  "execution_result_injected": true,
+  "issue_closures": [
+    {
+      "category": "critical_issue",
+      "closed_in_version": 2,
+      "description": "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)",
+      "issue_id": "critical_issue:f53b80b09879",
+      "opened_in_version": 1,
+      "resolution_note": "Round 2 changed decision_threshold to the value frozen in experiments/flagship/round2_config.json; the observed metric recomputed from real Round 2 raw predictions now meets the predeclared target.",
+      "status": "resolved"
+    },
+    {
+      "category": "required_revision",
+      "closed_in_version": 2,
+      "description": "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)",
+      "issue_id": "required_revision:4fdbc5c245a2",
+      "opened_in_version": 1,
+      "resolution_note": "Round 2 changed decision_threshold to the value frozen in experiments/flagship/round2_config.json; the observed metric recomputed from real Round 2 raw predictions now meets the predeclared target.",
+      "status": "resolved"
+    }
+  ],
+  "provider_audit_references": [
+    "call-fe766298f46f4fcea932c62f3a92b33a",
+    "call-21db43ee3738418b9ff0466004efd64a"
+  ],
+  "review_feedback": {
+    "critical_issues": [
+      "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)"
+    ],
+    "evidence_grounding_score": 1.0,
+    "falsifiability_score": 1.0,
+    "passed": false,
+    "reference_reliability_score": 1.0,
+    "reproducibility_score": 1.0,
+    "required_revisions": [
+      "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)"
+    ],
+    "reviewer_comments": [
+      "The experiment failed to meet the target malignant_recall of 0.95 with the current decision threshold of 0.5 (observed: 0.9286).",
+      "Per the allowed_revision_policy for case Q028, the only permitted revision is adjusting the decision_threshold to 0.4.",
+      "No other changes to dataset, model, or metrics are allowed.",
+      "This result is strictly limited to the fixed UCI WDBC dataset and does not imply clinical efficacy or generalizability."
+    ],
+    "risk_level": "high"
+  },
+  "reviewer_issues_injected": true,
+  "revision_iteration": 2,
+  "round1_execution_result_reference": {
+    "execution_id": "execution-5577816b92ac434c99b9c0ffcda21660",
+    "package_path": "docs/modules/T05/round1/execution_result.json"
+  },
+  "round1_version_id": "version-execution-5577816b92ac434c99b9c0ffcda21660",
+  "run_id": "Q028-wdbc-flagship",
+  "schema_version": 1,
+  "scientific_scope": {
+    "case_id": "Q028",
+    "forbidden_extrapolations": [
+      "must not be interpreted as curing cancer",
+      "must not be extrapolated to all cancer types",
+      "must not be extrapolated to unvalidated populations",
+      "must not replace clinical diagnosis"
+    ],
+    "narrowed_problem_statement": "Given a fixed set of 30 cell-nucleus measurement features from the UCI WDBC dataset (569 fixed records), predict the breast mass diagnosis category and evaluate with balanced accuracy and malignant recall.",
+    "non_goals": [
+      "does not predict treatment efficacy",
+      "does not propose a cancer therapy",
+      "must not be used for clinical decision-making",
+      "must not provide diagnostic advice to patients"
+    ]
+  }
+}
