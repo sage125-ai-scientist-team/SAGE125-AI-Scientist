@@ -168,6 +168,38 @@ def _to_evidence_objs(cards: list) -> list[EvidenceCard]:
     return out
 
 
+def _frozen_bundle_cards(question_id: str) -> list[EvidenceCard]:
+    root = os.environ.get("SAGE_EVIDENCE_BUNDLE_DIR", "").strip()
+    if not root or not question_id:
+        return []
+    path = Path(root) / question_id / "evidence_bundle.json"
+    if not path.is_file():
+        return []
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    return _to_evidence_objs(payload.get("eligible_cards") or [])
+
+
+def _fact_eligible_cards(cards: list[EvidenceCard]) -> list[EvidenceCard]:
+    from app.evidence.remediation import is_fact_eligible_card
+
+    eligible: list[EvidenceCard] = []
+    for card in cards:
+        data = card.model_dump() if hasattr(card, "model_dump") else dict(card)
+        if is_fact_eligible_card(data):
+            eligible.append(card)
+    return eligible
+
+
+def _allowed_evidence_ids(cards: list[EvidenceCard]) -> list[str]:
+    return [card.id for card in cards if card.id]
+
+
+def _attach_allowed_ids(payload: dict, cards: list[EvidenceCard]) -> dict:
+    attached = dict(payload)
+    attached["allowed_evidence_ids"] = _allowed_evidence_ids(cards)
+    return attached
+
+
 def _gather_real_evidence(state, qplan: dict, exec_plan: dict, settings) -> list[EvidenceCard]:
     """
     真实模式下从 LocalRAG / OpenLiterature 收集证据（失败仅告警，不终止）。
@@ -181,6 +213,13 @@ def _gather_real_evidence(state, qplan: dict, exec_plan: dict, settings) -> list
     返回：
         EvidenceCard 列表。
     """
+    question_id = ""
+    if getattr(state, "selected_question", None) is not None:
+        question_id = getattr(state.selected_question, "id", "") or ""
+    frozen = _frozen_bundle_cards(question_id)
+    if frozen:
+        return _fact_eligible_cards(frozen)
+
     evidence: list[EvidenceCard] = []
     queries = qplan.get("queries", [])
 
@@ -227,7 +266,7 @@ def _gather_real_evidence(state, qplan: dict, exec_plan: dict, settings) -> list
             state.warnings.append("open_literature_failed")
             logger.warning("OpenLiterature 失败（继续）：%s", exc)
 
-    return evidence
+    return _fact_eligible_cards(evidence)
 
 
 def _evidence_catalog(evidence_pool: list[EvidenceCard], limit: int = 30) -> list[dict]:
@@ -242,7 +281,7 @@ def _evidence_catalog(evidence_pool: list[EvidenceCard], limit: int = 30) -> lis
         含 id/title/source_type/doi/url 等字段的 dict 列表。
     """
     catalog: list[dict] = []
-    for card in evidence_pool[:limit]:
+    for card in _fact_eligible_cards(list(evidence_pool))[:limit]:
         catalog.append(
             {
                 "id": card.id,
@@ -252,6 +291,8 @@ def _evidence_catalog(evidence_pool: list[EvidenceCard], limit: int = 30) -> lis
                 "url": card.url,
                 "year": card.year,
                 "relevance_score": card.relevance_score,
+                "locator": (card.reliability_note or ""),
+                "quoted_text": (card.quoted_text or "")[:400],
             }
         )
     return catalog
@@ -318,6 +359,7 @@ def _hypothesis_generator_input(
         evidence_catalog=_evidence_catalog(state.retrieved_evidence),
         evidence_extraction=state.evidence_extraction,
     )
+    payload = _attach_allowed_ids(payload, state.retrieved_evidence)
     if experiment_revision_context is not None:
         payload = inject_revision_context(payload, experiment_revision_context)
     return payload
@@ -360,7 +402,7 @@ def _experiment_designer_input(
     )
     if experiment_revision_context is not None:
         payload = inject_revision_context(payload, experiment_revision_context)
-    return payload
+    return _attach_allowed_ids(payload, state.retrieved_evidence)
 
 
 def _reviewer_input(
@@ -399,7 +441,7 @@ def _reviewer_input(
     )
     if experiment_revision_context is not None:
         payload = inject_revision_context(payload, experiment_revision_context)
-    return payload
+    return _attach_allowed_ids(payload, state.retrieved_evidence)
 
 
 def _resolve_references(ref_ids: list[str], evidence_pool: list[EvidenceCard]) -> list[EvidenceCard]:
@@ -582,7 +624,8 @@ def _run_pipeline_with_state_impl(
         evidence = _gather_real_evidence(state, qplan, exec_plan, settings)
 
     # 5) DeepResearchAgent（永不中断；失败记 warning）。
-    if exec_plan.get("use_deep_research"):
+    skip_deep_research = bool(_frozen_bundle_cards(qdict.get("id") or ""))
+    if exec_plan.get("use_deep_research") and not skip_deep_research:
         emit_progress(
             "deep_research", status="connecting", message="正在连接千问 DeepResearch",
             model_alias="deepresearch", model_name_internal=settings.qwen_deep_research_model,
@@ -602,6 +645,8 @@ def _run_pipeline_with_state_impl(
         evidence = evidence_deduplicate(evidence)
     except Exception:
         pass
+    if not mock:
+        evidence = _fact_eligible_cards(evidence)
     state.retrieved_evidence = evidence
     if not evidence:
         state.evidence_insufficient = True
@@ -611,7 +656,10 @@ def _run_pipeline_with_state_impl(
     # 8) EvidenceExtractor。
     try:
         extraction = EvidenceExtractorAgent(settings).run(
-            {"question_item": qdict, "evidence_catalog": _evidence_catalog(evidence)},
+            _attach_allowed_ids(
+                {"question_item": qdict, "evidence_catalog": _evidence_catalog(evidence)},
+                evidence,
+            ),
             state,
             step,
         )
@@ -913,15 +961,18 @@ def _run_pipeline_with_state_impl(
 
     # 12) ReportWriter：生成草稿（含 reference_ids）。
     draft = ReportWriterAgent(settings).run(
-        {
-            "question_item": qdict,
-            "parsed_question": state.parsed_question,
-            "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
-            "evidence_extraction": state.evidence_extraction,
-            "hypothesis_generation": state.hypothesis_generation,
-            "experiment_design": state.experiment_design,
-            "review_result": state.review_result,
-        },
+        _attach_allowed_ids(
+            {
+                "question_item": qdict,
+                "parsed_question": state.parsed_question,
+                "evidence_catalog": _evidence_catalog(state.retrieved_evidence),
+                "evidence_extraction": state.evidence_extraction,
+                "hypothesis_generation": state.hypothesis_generation,
+                "experiment_design": state.experiment_design,
+                "review_result": state.review_result,
+            },
+            state.retrieved_evidence,
+        ),
         state,
         step,
     )

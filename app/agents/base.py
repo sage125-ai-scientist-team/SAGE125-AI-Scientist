@@ -33,7 +33,12 @@ from app.core.run_progress import emit_progress, friendly_model_name, friendly_s
 from app.core.schemas import PipelineState
 
 # 会被递归扫描以收集证据 ID 的字段名。
-_EVIDENCE_ID_KEYS = ("evidence_ids", "reference_ids", "supporting_evidence_ids")
+_EVIDENCE_ID_KEYS = (
+    "evidence_ids",
+    "reference_ids",
+    "supporting_evidence_ids",
+    "contradicted_by_evidence_ids",
+)
 
 
 class AgentOutputError(Exception):
@@ -521,7 +526,17 @@ class BaseAgent(ABC):
                 result = model.model_dump()
             else:
                 result = data
-            evidence_ids = _collect_evidence_ids(result)
+            allowed_ids = input_data.get("allowed_evidence_ids") if isinstance(input_data, dict) else None
+            if allowed_ids:
+                from app.evidence.id_guard import UnknownEvidenceIDError, assert_known_evidence_ids
+
+                try:
+                    evidence_ids = assert_known_evidence_ids(result, allowed_ids, raw_output=result)
+                except UnknownEvidenceIDError as exc:
+                    errors.append(str(exc))
+                    raise AgentOutputError(str(exc)) from exc
+            else:
+                evidence_ids = _collect_evidence_ids(result)
             output_summary = self.safe_summarize_input(result)
             status = "completed"
             emit_progress(

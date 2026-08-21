@@ -1,0 +1,169 @@
+{
+  "generated_at": "2026-08-21T16:55:36.884275+00:00",
+  "affected_questions": [
+    "Q001",
+    "Q028",
+    "Q050",
+    "Q075",
+    "Q107"
+  ],
+  "root_causes": [
+    {
+      "root_cause_id": "RC-OA-TITLE-AS-QUOTE",
+      "file": "app/clients/literature_clients.py",
+      "line_function": "OpenAlexClient.search ~186-200",
+      "current_behavior": "OpenAlex works set quoted_text=title and still emit EvidenceCard.",
+      "expected_behavior": "OpenAlex/Crossref records are METADATA_ONLY discovery, never fact evidence.",
+      "affected_questions": [
+        "Q001",
+        "Q028",
+        "Q050",
+        "Q075",
+        "Q107"
+      ],
+      "severity": "P0",
+      "minimum_fix": "Mark metadata-only and exclude from agent catalog / fact support.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_title_quote_is_metadata_only"
+    },
+    {
+      "root_cause_id": "RC-CROSSREF-TITLE-AS-QUOTE",
+      "file": "app/clients/literature_clients.py",
+      "line_function": "CrossrefClient.search ~271-284",
+      "current_behavior": "Crossref DOI hits use title as quoted_text.",
+      "expected_behavior": "Crossref records remain METADATA_ONLY until OA fulltext is fetched.",
+      "affected_questions": [
+        "Q001",
+        "Q028",
+        "Q050",
+        "Q075",
+        "Q107"
+      ],
+      "severity": "P0",
+      "minimum_fix": "Do not convert Crossref metadata into eligible EvidenceCard.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_title_quote_is_metadata_only"
+    },
+    {
+      "root_cause_id": "RC-LIT-FALLBACK-TITLE",
+      "file": "app/rag/evidence.py",
+      "line_function": "literature_to_evidence_card quoted = abstract or summary or title",
+      "current_behavior": "Missing abstract falls back to title as quote.",
+      "expected_behavior": "Title fallback yields METADATA_ONLY, not a fact card.",
+      "affected_questions": [
+        "Q001",
+        "Q028",
+        "Q050",
+        "Q075",
+        "Q107"
+      ],
+      "severity": "P0",
+      "minimum_fix": "Classify quote==title as METADATA_ONLY.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_literature_title_fallback_not_eligible"
+    },
+    {
+      "root_cause_id": "RC-NO-FULLTEXT-FETCH",
+      "file": "app/rag/open_literature_retriever.py",
+      "line_function": "module docstring and search(); ArxivClient.search does not download PDF",
+      "current_behavior": "Open literature explicitly does not download PDFs; DOI landing pages stay metadata.",
+      "expected_behavior": "OA PDF/XML/HTML is fetched, validated, parsed, and quoted with locator.",
+      "affected_questions": [
+        "Q001",
+        "Q028",
+        "Q050",
+        "Q075",
+        "Q107"
+      ],
+      "severity": "P0",
+      "minimum_fix": "Add OA fulltext chain and only FULLTEXT/ABSTRACT verified cards enter the bundle.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_pdf_magic_rejected_without_header"
+    },
+    {
+      "root_cause_id": "RC-EMPTY-LOCATOR-STILL-ELIGIBLE",
+      "file": "app/core/schemas.py",
+      "line_function": "EvidenceCard has no locator field; empty locator still eligible",
+      "current_behavior": "Cards without page/section/paragraph still enter the catalog.",
+      "expected_behavior": "Fact-eligible cards require a stable locator and content hash.",
+      "affected_questions": [
+        "Q001",
+        "Q028",
+        "Q050",
+        "Q075",
+        "Q107"
+      ],
+      "severity": "P0",
+      "minimum_fix": "Require locator+content_sha256 for FULLTEXT_VERIFIED.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_locator_required_for_fulltext"
+    },
+    {
+      "root_cause_id": "RC-CATALOG-SENDS-METADATA-IDS",
+      "file": "app/workflow/pipeline.py",
+      "line_function": "_evidence_catalog / _gather_real_evidence",
+      "current_behavior": "Metadata OpenAlex/Crossref IDs are sent to HypothesisGenerator as citable IDs.",
+      "expected_behavior": "Prompt sees only allowed_evidence_ids from the eligible bundle.",
+      "affected_questions": [
+        "Q001",
+        "Q028",
+        "Q050",
+        "Q075",
+        "Q107"
+      ],
+      "severity": "P0",
+      "minimum_fix": "Filter catalog to fact-eligible cards.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_catalog_excludes_metadata"
+    },
+    {
+      "root_cause_id": "RC-UNKNOWN-ID-LATE",
+      "file": "app/agents/base.py",
+      "line_function": "BaseAgent.run collects IDs but does not reject unknown IDs before later gates",
+      "current_behavior": "Unknown IDs such as Q028_booklet survive until quality_gates.check_evidence_grounding.",
+      "expected_behavior": "Parser/ID guard fails closed immediately; no fuzzy rewrite.",
+      "affected_questions": [
+        "Q028"
+      ],
+      "severity": "P0",
+      "minimum_fix": "assert_known_evidence_ids after JSON parse.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_q028_booklet_rejected"
+    },
+    {
+      "root_cause_id": "RC-Q028-BOOKLET-MODEL-INVENTED",
+      "file": "app/agents/prompts.py",
+      "line_function": "HYPOTHESIS_GENERATOR_PROMPT does not list allowed IDs or forbid Q028_booklet",
+      "current_behavior": "Q028_booklet is not a fixture; the model freely invented it. Not an ID repairer.",
+      "expected_behavior": "Prompt lists allowed IDs and forbids question-source IDs; parser rejects the rest.",
+      "affected_questions": [
+        "Q028"
+      ],
+      "severity": "P0",
+      "minimum_fix": "Prompt + parse-time guard. Do not mint Q028_booklet.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_q028_booklet_rejected"
+    },
+    {
+      "root_cause_id": "RC-BUNDLE-MAPS-OPENALEX-AS-PAPER",
+      "file": "app/evidence/bundle_builder.py",
+      "line_function": "_SOURCE_TYPE_MAP openalex/crossref -> paper",
+      "current_behavior": "Metadata sources are typed as paper inside EvidenceBundle.",
+      "expected_behavior": "Discovery metadata stays ineligible; only verified quotes become paper cards.",
+      "affected_questions": [
+        "Q001",
+        "Q028",
+        "Q050",
+        "Q075",
+        "Q107"
+      ],
+      "severity": "P1",
+      "minimum_fix": "Do not map metadata-only API hits to paper eligibility.",
+      "regression_test": "tests/evidence/test_remediation_guards.py::test_title_quote_is_metadata_only"
+    }
+  ],
+  "answers": {
+    "openalex_to_card": "OpenAlexClient.search quoted_text=title, then OpenLiteratureRetriever.search via literature_to_evidence_card",
+    "crossref_to_card": "CrossrefClient.search quoted_text=title",
+    "quote_equals_title": true,
+    "quoted_text_abstract_or_title_fallback": true,
+    "locator_empty_still_eligible": true,
+    "doi_landing_treated_as_fulltext": false,
+    "question_source_mixed_into_catalog": false,
+    "q028_booklet_origin": "model_free_generation",
+    "unknown_id_found_at_export_only": true,
+    "why_not_rejected_at_parse": "BaseAgent.run collected IDs for tracing but did not compare them to allowed_evidence_ids"
+  }
+}

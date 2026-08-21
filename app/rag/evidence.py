@@ -240,16 +240,21 @@ def literature_to_evidence_card(
             item.reliability_note = (item.reliability_note + f"; api_source={source_type}").strip("; ")
         return item
 
-    # dict 输入：逐字段安全提取，缺失则留空/None。
+    quoted = (item.get("abstract") or item.get("summary") or "").strip()
     title = (item.get("title") or "").strip()
     if not title:
         return None
-    quoted = (item.get("abstract") or item.get("summary") or title).strip()
     doi = item.get("doi") or None
     url = item.get("url") or None
     authors = item.get("authors") or []
     year = item.get("year")
     ev_id = f"LIT-{_quoted_hash(title)[:12]}"
+    metadata_only = (not quoted) or (" ".join(quoted.split()).casefold() == " ".join(title.split()).casefold())
+    if metadata_only:
+        quoted = title
+        note = f"api_source={source_type}; eligibility_status=METADATA_ONLY"
+    else:
+        note = f"api_source={source_type}; eligibility_status=ABSTRACT_VERIFIED; locator=abstract"
     return EvidenceCard(
         id=ev_id,
         source_type=source_type,  # type: ignore[arg-type]
@@ -261,7 +266,7 @@ def literature_to_evidence_card(
         quoted_text=quoted[:800],
         summary=quoted[:180],
         relevance_score=0.5,
-        reliability_note=f"api_source={source_type}",
+        reliability_note=note,
     )
 
 

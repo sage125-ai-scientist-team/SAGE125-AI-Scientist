@@ -218,6 +218,9 @@ def install_captain_runtime_env(
     os.environ["LLM_MAX_RETRIES"] = str(max_retries)
     os.environ["EXPORT_DIR"] = str(export_dir)
     os.environ["SAGE_QUESTIONS_PATH"] = str(questions_path)
+    bundle_root = os.environ.get("SAGE_EVIDENCE_BUNDLE_DIR", "").strip()
+    if bundle_root:
+        os.environ["SAGE_EVIDENCE_BUNDLE_DIR"] = bundle_root
     os.environ.pop("MOCK_LLM", None)
     os.environ.pop("SAGE_TEST_EXPORT_DIR", None)
     field_map = {

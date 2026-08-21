@@ -42,10 +42,13 @@ def _card_dump(card: Any) -> dict:
 def _is_metadata_only(card: dict) -> bool:
     """OpenAlex/Crossref title-only records are metadata, not quoted evidence."""
 
+    note = str(card.get("reliability_note") or "").lower()
+    if "eligibility_status=metadata_only" in note:
+        return True
     source = str(card.get("source_type") or "").lower()
     title = " ".join(str(card.get("title") or "").split()).casefold()
     quoted = " ".join(str(card.get("quoted_text") or "").split()).casefold()
-    return source in {"openalex", "crossref"} and bool(title) and quoted == title
+    return (source in {"openalex", "crossref"} or quoted == title) and bool(title)
 
 
 def _is_question_source(card: dict) -> bool:

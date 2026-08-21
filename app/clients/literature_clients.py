@@ -117,7 +117,7 @@ class ArxivClient:
                     quoted_text=getattr(entry, "summary", "").strip()[:500],
                     summary=getattr(entry, "summary", "").strip()[:500],
                     relevance_score=_DEFAULT_RELEVANCE,
-                    reliability_note="arxiv_preprint_not_peer_reviewed",
+                    reliability_note="arxiv_preprint_not_peer_reviewed; eligibility_status=ABSTRACT_VERIFIED; locator=abstract",
                 )
             )
         return cards
@@ -182,7 +182,7 @@ class OpenAlexClient:
                 a.get("author", {}).get("display_name", "")
                 for a in work.get("authorships", [])
             ]
-            # 摘要为倒排索引结构，此处不重建全文，仅用标题作为可核验片段。
+            # 摘要为倒排索引结构，此处不重建全文，仅保留书目发现记录。
             title = work.get("title") or ""
             cards.append(
                 EvidenceCard(
@@ -196,7 +196,7 @@ class OpenAlexClient:
                     quoted_text=title,
                     summary=title,
                     relevance_score=_DEFAULT_RELEVANCE,
-                    reliability_note="openalex_metadata",
+                    reliability_note="openalex_metadata; eligibility_status=METADATA_ONLY",
                 )
             )
         return cards
@@ -280,7 +280,7 @@ class CrossrefClient:
                     quoted_text=title,
                     summary=f"{title}（{journal}）" if journal else title,
                     relevance_score=_DEFAULT_RELEVANCE,
-                    reliability_note="crossref_metadata",
+                    reliability_note="crossref_metadata; eligibility_status=METADATA_ONLY",
                 )
             )
         return cards
