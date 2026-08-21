@@ -1,0 +1,232 @@
+{
+  "ablated_component": "Scientific Reviewer",
+  "ablation_arm": "NO_REVIEWER",
+  "ablation_base_sha": "a7bdd52b82e6135687df54b8d214a64805cb211a",
+  "allowed_revision_policy": {
+    "allowed_changes": [
+      {
+        "field": "decision_threshold",
+        "from": 0.5,
+        "rationale": "the only control the frozen round1_config.json round2_trigger authorizes",
+        "to": 0.4
+      }
+    ],
+    "forbidden_actions": [
+      "change_dataset",
+      "change_model_type",
+      "change_seed",
+      "change_data_split",
+      "multi_threshold_cherry_pick",
+      "relabel_samples",
+      "drop_samples",
+      "change_success_metric",
+      "clinical_extrapolation"
+    ],
+    "frozen_fields": [
+      "dataset",
+      "dataset_sha256",
+      "train_test_split",
+      "seed",
+      "feature_set",
+      "normalization",
+      "model_type",
+      "learning_rate",
+      "iterations",
+      "l2",
+      "metric_definitions",
+      "test_fraction"
+    ],
+    "policy_version": "Q028-WDBC-allowed-revision-v1"
+  },
+  "arm_difference": {
+    "FULL_SYSTEM": {
+      "review_feedback_enters_revision_context": true,
+      "reviewer_enabled": true,
+      "scientific_reviewer_calls": 1
+    },
+    "NO_REVIEWER": {
+      "review_feedback": null,
+      "reviewer_enabled": false,
+      "reviewer_issue_comment_required_revision_must_not_enter_revision_context": true,
+      "round1_execution_result_enters_v2_planner": true,
+      "scientific_reviewer_calls": 0
+    }
+  },
+  "case_id": "Q028",
+  "conclusion_rules": {
+    "INCONCLUSIVE": {
+      "any_of": [
+        "provider call failed",
+        "protocol violated",
+        "inputs inconsistent",
+        "artifacts unverifiable",
+        "fair comparison cannot be completed"
+      ]
+    },
+    "NO_MEASURABLE_GAIN": {
+      "all_of": [
+        "both arms have no substantial difference on preregistered quality and audit metrics"
+      ]
+    },
+    "NO_REVIEWER_BETTER": {
+      "all_of": [
+        "NO_REVIEWER strictly better on preregistered objective quality metrics",
+        "no policy, scientific-scope, or truthfulness regression"
+      ]
+    },
+    "QUALITY_AND_TRACEABILITY_GAIN": {
+      "all_of": [
+        "FULL_SYSTEM target_achieved=true",
+        "NO_REVIEWER target_achieved=false OR NO_REVIEWER cannot form a legal effective revision",
+        "FULL_SYSTEM traceability_complete=true",
+        "no scientific-scope regression"
+      ]
+    },
+    "TRACEABILITY_ONLY_GAIN": {
+      "all_of": [
+        "both arms target_achieved=true",
+        "objective experimental metrics close or identical",
+        "only FULL_SYSTEM has structured reviewer issue, RevisionContext, IssueClosure and complete trace",
+        "FULL_SYSTEM paid one extra Reviewer call"
+      ]
+    }
+  },
+  "control_arm": "FULL_SYSTEM",
+  "cost_rule": "record unknown when the provider does not return a reliable price; never guess; never write unknown as 0",
+  "created_at_note": "This protocol MUST be committed before any new provider call. Primary metrics and conclusion rules are frozen at that commit and must not be edited after seeing results.",
+  "created_by": "captain-local",
+  "dataset_id": "uci-wdbc-diagnostic-17-1995-10-31",
+  "dataset_sha256": "d606af411f3e5be8a317a5a8b652b425aaf0ff38ca683d5327ffff94c3695f4a",
+  "dataset_size_bytes": 124103,
+  "experiment_type": "component_ablation",
+  "frozen_conditions": [
+    "case_id=Q028",
+    "WDBC dataset pin sha256=d606af411f3e5be8a317a5a8b652b425aaf0ff38ca683d5327ffff94c3695f4a",
+    "Round 1 ExecutionResult execution-5577816b92ac434c99b9c0ffcda21660",
+    "Round 1 raw predictions sha256=05008c6176640bbb1134e3f113d985543aa4819ba455a8e610d7e908a8e9275b",
+    "Round 1 metrics malignant_recall=0.9285714285714286 balanced_accuracy=0.9642857142857143",
+    "V1 research/experiment plan = experiments/flagship/round1_config.json",
+    "scientific scope from flagship_reviewer.SCIENTIFIC_SCOPE",
+    "target malignant_recall=0.95",
+    "allowed revision policy Q028-WDBC-allowed-revision-v1",
+    "data split test_fraction=0.2 stratified",
+    "seed=125",
+    "feature set=30 WDBC nucleus measurements",
+    "normalization=train-set mean/scale standardization",
+    "model type=full_batch_logistic_regression",
+    "learning_rate=0.05",
+    "iteration count=2000",
+    "L2=0.001",
+    "metric definitions=TP/TN/FP/FN from holdout predictions.csv",
+    "V2 planner provider=bailian",
+    "V2 planner model=qwen3.6-flash",
+    "V2 planner temperature=0.1",
+    "V2 planner max_tokens=8192",
+    "V2 planner response_format=json_object",
+    "output Schema=V2RevisionPlanOutput",
+    "policy validator=validate_v2_plan_against_policy",
+    "Round 2 scientific kernel=app.execution.wdbc_baseline.run_baseline"
+  ],
+  "frozen_file_digests": {
+    "docs/modules/T05/canonical/Q028.pub-a7d6c7e7dd6c42a488c7f39079d6a434/package_manifest.json": "bd070f336d4ccd6c9c03e28bdedbc57f9b643f222912da5110970c521e120a54",
+    "docs/modules/T05/round1/artifacts/predictions.csv": "05008c6176640bbb1134e3f113d985543aa4819ba455a8e610d7e908a8e9275b",
+    "docs/modules/T05/round1/artifacts/run-summary.json": "95a26531abffbe3015936e01701b3a3ca3c2f9864dd64e05475a641dcdefd507",
+    "docs/modules/T05/round1/execution_result.json": "c780df9f1504f60855faac4226f55dd972ba30631bbb47306727720c5e83cde4",
+    "experiments/flagship/dataset_manifest.json": "6e3aff2e1901974e1440fa324320f098fccdcb1278e61e11c40c47a50c7c1282",
+    "experiments/flagship/round1_config.json": "fe3bfd73f8762e0b7e05596abeaf635dfe85aa5bb74bb3f8f55faf57b76f96c1",
+    "experiments/flagship/selection_manifest.json": "2b6411d4518ebb10ed61d813369ae42d86d8556d21f349abe6ed91d9596ff0d8"
+  },
+  "full_system_leak_needles": {
+    "FULL_SYSTEM_ISSUE_ID": "ISSUE-001",
+    "FULL_SYSTEM_REQUIRED_REVISION_TEXT": "Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy.",
+    "FULL_SYSTEM_REVIEWER_CALL_ID": "call-fe766298f46f4fcea932c62f3a92b33a",
+    "FULL_SYSTEM_REVIEWER_COMMENT": "The experiment failed to meet the target malignant_recall of 0.95 with the current decision threshold of 0.5 (observed: 0.9286).",
+    "FULL_SYSTEM_REVIEWER_REQUEST_ID": "chatcmpl-47dd7762-b00c-91af-9c1f-32c7053a294d",
+    "FULL_SYSTEM_REVIEW_ID": "Q028-REV-001",
+    "FULL_SYSTEM_V2_OUTPUT_HASH": "b703cde44644ff6cb79159c500db6b240104cad45ebd1b1488f55e15b7930aaf",
+    "FULL_SYSTEM_V2_PLAN_ID": "Q028-V2-REV-PLAN"
+  },
+  "full_system_producer_git_sha": "f29fbf4a40ac3f0b17df4d8a8cd03de8672f1c87",
+  "full_system_reference_attempt": "pub-a7d6c7e7dd6c42a488c7f39079d6a434",
+  "full_system_round2_execution_id": "execution-ff238cb3d84e4add8b3b231776548192",
+  "max_new_provider_calls": 1,
+  "negative_results_must_be_reported": true,
+  "no_manual_threshold_override": true,
+  "no_mock_fallback": true,
+  "no_openrouter": true,
+  "no_reviewer_canonical_eligible": false,
+  "no_reviewer_must_not_call_scientific_reviewer": true,
+  "no_reviewer_status_fields": {
+    "ISSUE_CLOSURE_STATUS": "NOT_APPLICABLE_NO_REVIEWER",
+    "NO_REVIEWER_CANONICAL_ELIGIBLE": false,
+    "QUALITY_GATE_STATUS": "NOT_FULLY_EVALUABLE",
+    "REVIEW_STATUS": "NOT_PRESENT_BY_ABLATION",
+    "do_not_report_unresolved_p0_p1_as_zero": true
+  },
+  "objective_metric_closeness": {
+    "balanced_accuracy_abs_tol": 1e-12,
+    "false_negative_rate_abs_tol": 1e-12,
+    "malignant_recall_abs_tol": 1e-12
+  },
+  "output_schema": {
+    "expected_effect": "string",
+    "plan_id": "string",
+    "proposed_changes": "list[{field, from, to, justification}] — empty list means no_revision",
+    "responds_to_issue_ids": "list[string] — must be empty in NO_REVIEWER; do not invent reviewer issue ids"
+  },
+  "planner_max_tokens": 8192,
+  "planner_model": "qwen3.6-flash",
+  "planner_provider": "bailian",
+  "planner_response_format": {
+    "type": "json_object"
+  },
+  "planner_retries": 0,
+  "planner_temperature": 0.1,
+  "preregistered": true,
+  "primary_metrics": [
+    "revision_plan_schema_valid",
+    "authorized_revision_proposed",
+    "revision_effective",
+    "round2_executed",
+    "target_achieved",
+    "malignant_recall",
+    "balanced_accuracy",
+    "false_negative_rate",
+    "scientific_scope_pass",
+    "structured_issue_available",
+    "issue_closure_auditable",
+    "traceability_complete"
+  ],
+  "protocol_id": "Q028-ACTUAL-ABLATION-01",
+  "provider_disclosure_baseline": {
+    "full_system_canonical_calls": 2,
+    "historical_abandoned_calls": 2,
+    "note": "historical abandoned calls are not part of this ablation arm budget",
+    "project_provider_calls_before": 4
+  },
+  "round1_git_sha": "18c86f1e1963b13cbed09356201d92f38a2a2880",
+  "round1_source_execution_id": "execution-5577816b92ac434c99b9c0ffcda21660",
+  "round2_skip_reasons": [
+    "NO_REVISION",
+    "INVALID_SCHEMA",
+    "POLICY_REJECTED",
+    "PROVIDER_FAILED"
+  ],
+  "schema_version": "1.0",
+  "secondary_metrics": [
+    "provider_call_count",
+    "input_tokens",
+    "output_tokens",
+    "latency",
+    "cost",
+    "prompt_hash",
+    "input_hash",
+    "artifact_completeness"
+  ],
+  "success_threshold": {
+    "malignant_recall": 0.95,
+    "metric": "malignant_recall"
+  },
+  "t09_actual_ablation_authorized_remains": false,
+  "this_is_not_t09_wave_c_authorization": true
+}
