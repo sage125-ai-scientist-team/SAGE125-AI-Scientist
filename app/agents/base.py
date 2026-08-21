@@ -485,6 +485,7 @@ class BaseAgent(ABC):
         result: dict = {}
 
         mock = self.is_mock()
+        unknown_id_retried = False
         try:
             # mock 或真实调用。
             if mock:
@@ -534,7 +535,30 @@ class BaseAgent(ABC):
                     evidence_ids = assert_known_evidence_ids(result, allowed_ids, raw_output=result)
                 except UnknownEvidenceIDError as exc:
                     errors.append(str(exc))
-                    raise AgentOutputError(str(exc)) from exc
+                    if mock or unknown_id_retried:
+                        raise AgentOutputError(str(exc)) from exc
+                    unknown_id_retried = True
+                    allowed_list = ", ".join(str(item) for item in allowed_ids)
+                    retry_messages = list(self.build_messages(input_data))
+                    retry_messages.append(
+                        {
+                            "role": "user",
+                            "content": (
+                                "UNKNOWN_EVIDENCE_ID. Do not invent or repair IDs. "
+                                "Cite only these allowed_evidence_ids: "
+                                f"{allowed_list}. If none apply, write insufficient_evidence."
+                            ),
+                        }
+                    )
+                    raw = self.call_llm(retry_messages, json_mode=self.json_output)
+                    self._record_llm_call(state, mock=False, status="success", started_at=_now_iso())
+                    data = self.parse_json_response(raw)
+                    if self.output_schema is not None:
+                        model = self.validate_output(data, self.output_schema)
+                        result = model.model_dump()
+                    else:
+                        result = data
+                    evidence_ids = assert_known_evidence_ids(result, allowed_ids, raw_output=result)
             else:
                 evidence_ids = _collect_evidence_ids(result)
             output_summary = self.safe_summarize_input(result)
