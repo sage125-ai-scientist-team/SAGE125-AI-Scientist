@@ -945,6 +945,7 @@ def overlay_verified_status(base: dict[str, Any]) -> dict[str, Any]:
             payload["verified_evidence_freeze_id"] = pointer.get("evidence_freeze_id")
             payload["artifact_path"] = pointer.get("path")
             payload["ablation_conclusion"] = conclusion
+            payload["comparison_matrix"] = _load_json(package_dir / "comparison_matrix.json")
             payload["reproduction_execution_result"] = {
                 "execution_id": result.get("execution_id"),
                 "git_dirty": result.get("git_dirty"),
