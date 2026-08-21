@@ -109,7 +109,11 @@ def assert_worktree_clean(repository_root: Path = REPOSITORY_ROOT) -> None:
         )
 
 
-def current_commit_sha(repository_root: Path = REPOSITORY_ROOT) -> str:
+def git_paths_clean(*paths: Path, repository_root: Path = REPOSITORY_ROOT) -> bool:
+    args = ["git", "-C", str(repository_root), "status", "--porcelain", "--"]
+    args.extend(str(path) for path in paths)
+    result = subprocess.run(args, check=True, capture_output=True, text=True, encoding="utf-8")
+    return not result.stdout.strip()
     result = subprocess.run(
         ["git", "-C", str(repository_root), "rev-parse", "HEAD"],
         check=True,
@@ -928,8 +932,8 @@ def overlay_verified_status(base: dict[str, Any]) -> dict[str, Any]:
         if package_dir.is_dir():
             report = verify_checksums(package_dir)
             checksum_ok = bool(report["ok"])
-            git = collect_git_provenance(repository_root=REPOSITORY_ROOT)
-            if checksum_ok and git.get("dirty") is False:
+            package_clean = git_paths_clean(package_dir, ACTUAL_ABLATION_POINTER_PATH, repository_root=REPOSITORY_ROOT)
+            if checksum_ok and package_clean:
                 checksum_status = "VERIFIED_AFTER_FRESH_CHECKOUT"
             elif checksum_ok:
                 checksum_status = "VERIFIED_IN_PRODUCER_TREE"
