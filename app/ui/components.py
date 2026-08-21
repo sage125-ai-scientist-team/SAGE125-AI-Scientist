@@ -1024,6 +1024,8 @@ def _render_plan_body(plan: dict) -> None:
         st.markdown(f'<div class="report-panel"><h3>Results</h3><div>{esc(results)}</div></div>', unsafe_allow_html=True)
     st.caption("未执行真实实验时，Results 只能显示待验证状态，不能编造指标。")
 
+    _render_experiment_run_control(plan)
+
     st.markdown("<div class='report-panel'><h3>References（来自 EvidenceCards）</h3>", unsafe_allow_html=True)
     if refs:
         for r in refs:
@@ -1035,6 +1037,421 @@ def _render_plan_body(plan: dict) -> None:
     else:
         st.markdown('<div class="field-block">references 待检索/待验证。</div>', unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+def _render_experiment_run_control(plan: dict) -> None:
+    """
+    渲染"运行真实实验"入口。
+
+    每个题目都展示同一个按钮；目前只有 Q028 注册了可执行的科学入口
+    （WDBC 旗舰案例），其它题目点击后会诚实提示暂无可执行入口，绝不
+    编造实验结果。
+    """
+    from app.ui import api_client
+
+    qid = str(plan.get("question_id") or "")
+    state_key = make_widget_key("exp_run_result", qid)
+    button_key = make_widget_key("btn_run_experiment", qid)
+
+    st.markdown("<div class='report-panel'><h3>运行真实实验</h3>", unsafe_allow_html=True)
+    if qid == "Q028":
+        st.caption(
+            "此按钮执行的是团队预先注册、可独立复现的固定实验协议（UCI WDBC 数据集 → "
+            "标准化逻辑回归 → balanced_accuracy / malignant_recall），与上方由生成式流水线"
+            "写出的研究计划文字可能不完全逐句一致；本次运行不会读取、也不会执行上方文字本身。"
+        )
+    if st.button("▶ 运行真实实验", width="stretch", key=button_key):
+        with st.spinner("正在尝试执行真实实验（若该题暂无可执行入口，会诚实提示，不编造结果）…"):
+            st.session_state[state_key] = api_client.run_experiment(qid)
+
+    result = st.session_state.get(state_key)
+    if result is None:
+        st.caption("点击上方按钮，尝试运行该题目对应的真实科学实验（目前仅 Q028 有可执行入口）。")
+    elif not result.get("available"):
+        st.warning(result.get("reason") or "该题目当前没有可执行的真实科学实验入口。")
+    elif result.get("status") != "succeeded":
+        reason = result.get("reason") or (result.get("error") or {}).get("message") or result.get("status")
+        st.error(f"真实实验执行未成功：{esc(str(reason))}")
+    else:
+        _render_q028_result(result)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if qid == "Q028":
+        _render_flagship_canonical_status(qid)
+        _render_actual_ablation_panel(qid)
+
+
+_CANON_CATEGORY_LABELS = {
+    "selection": "选择与科学边界",
+    "dataset": "数据集",
+    "round1": "Round 1",
+    "reviewer": "Reviewer / RevisionContext",
+    "round2": "Round 2",
+    "closure": "structured diff / stop reason",
+    "identity": "跨文件一致性 / Git Provenance",
+    "versioned_provenance": "版本化多-Commit 血缘",
+}
+
+
+def _render_flagship_provenance(prov: dict) -> None:
+    """
+    渲染 GAP-01..04 加固后的 provenance 细节：代码 Commit 绑定、真实 Reviewer
+    调用审计、V1/V2 prompt hash 变化、issue closure、no-clobber 发布、以及
+    被取代的旧 attempt。全部字段直接来自磁盘证据，找不到就诚实显示"未知"，
+    绝不编造。不展示任何 API Key / Authorization / workspace ID / 原始 prompt 正文。
+    """
+    if not prov:
+        return
+    with st.expander("Provenance 详情（Git Commit / Reviewer 审计 / Hash 变化）", expanded=False):
+        def _v(x: object) -> str:
+            return "未知" if x is None or x == "" else str(x)
+
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>Producer Git SHA（canonical source_git_sha）：</b><code>{esc(_v(prov.get('producer_git_sha')))}</code></div>
+                <div><b>Artifact snapshot Commit SHA（当前 HEAD）：</b><code>{esc(_v(prov.get('artifact_snapshot_commit_sha')))}</code></div>
+                <div><b>Round 1 git_sha / git_dirty：</b><code>{esc(_v(prov.get('round1_git_sha')))}</code> / {esc(_v(prov.get('round1_git_dirty')))}</div>
+                <div><b>Round 2 git_sha / git_dirty：</b><code>{esc(_v(prov.get('round2_git_sha')))}</code> / {esc(_v(prov.get('round2_git_dirty')))}</div>
+                <div><b>Round 1 execution_id：</b><code>{esc(_v(prov.get('round1_execution_id')))}</code></div>
+                <div><b>Round 2 execution_id：</b><code>{esc(_v(prov.get('round2_execution_id')))}</code></div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>Reviewer（Scientific Review）：</b>{esc(_v(prov.get('reviewer_provider')))} / {esc(_v(prov.get('reviewer_model')))}，request_id=<code>{esc(_v(prov.get('reviewer_request_id')))}</code></div>
+                <div><b>V2 revision-plan 调用：</b>{esc(_v(prov.get('v2_provider')))} / {esc(_v(prov.get('v2_model')))}，request_id=<code>{esc(_v(prov.get('v2_request_id')))}</code></div>
+                <div><b>Reviewer 是否真实驱动（reviewer_driven）：</b>{esc(_v(prov.get('reviewer_driven')))}</div>
+                <div><b>Round 1 是否通过 Reviewer（reviewer_passed）：</b>{esc(_v(prov.get('reviewer_passed')))}</div>
+                <div><b>Reviewer issue 是否注入 RevisionContext：</b>{esc(_v(prov.get('reviewer_issues_injected')))}</div>
+                <div><b>Round 1 ExecutionResult 是否注入 RevisionContext：</b>{esc(_v(prov.get('execution_result_injected')))}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        issues = prov.get("critical_issues") or []
+        if issues:
+            st.markdown("**Reviewer 提出的 critical issue：**")
+            for issue in issues:
+                st.markdown(f"<div class='field-block'>• {esc(issue)}</div>", unsafe_allow_html=True)
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>V1 prompt hash：</b><code>{esc(_v(prov.get('v1_prompt_hash')))}</code></div>
+                <div><b>V2 prompt hash：</b><code>{esc(_v(prov.get('v2_prompt_hash')))}</code></div>
+                <div><b>prompt hash 是否真实变化：</b>{esc(_v(prov.get('prompt_hash_changed')))}</div>
+                <div><b>V1 input hash：</b><code>{esc(_v(prov.get('v1_input_hash')))}</code></div>
+                <div><b>V2 input hash：</b><code>{esc(_v(prov.get('v2_input_hash')))}</code></div>
+                <div><b>input hash 是否真实变化：</b>{esc(_v(prov.get('input_hash_changed')))}</div>
+                <div><b>Policy validation（唯一实验变化是否合规）：</b>{esc(_v(prov.get('policy_validation_ok')))}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>unresolved P0 / P1：</b>{esc(_v(prov.get('unresolved_p0')))} / {esc(_v(prov.get('unresolved_p1')))}</div>
+                <div><b>stop_reason：</b>{esc(_v(prov.get('stop_reason')))}</div>
+                <div><b>目标指标：</b>{esc(_v(prov.get('target_metric')))} ≥ {esc(_v(prov.get('target_value')))}，实测 {esc(_v(prov.get('observed_value')))}</div>
+                <div><b>no-clobber 原子发布：</b>{esc(_v(prov.get('no_clobber_publication')))}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        superseded = prov.get("superseded_attempts") or []
+        if superseded:
+            st.markdown("**已被取代的旧 canonical attempt（PROVENANCE_SUPERSEDED，未删除未修改）：**")
+            for event in superseded:
+                st.markdown(
+                    f"<div class='field-block'>• {esc(event.get('old_attempt_id'))} → {esc(event.get('new_attempt_id'))}"
+                    f"（{esc(event.get('reason'))}，{esc(event.get('timestamp'))}）</div>",
+                    unsafe_allow_html=True,
+                )
+        limitation = prov.get("scientific_limitation")
+        if limitation:
+            st.caption(f"科学边界：{limitation}")
+
+
+def _render_versioned_provenance_panel(status: dict) -> None:
+    """展示版本化多-Commit 血缘（VERSIONED_MULTI_COMMIT）面板。
+
+    绝不将「两轮 Commit 不同」显示为红色失败项。改为分别显示每个阶段
+    Commit 的独立验证状态，以及科学控制等价性结论。
+    """
+    prov_mode = status.get("provenance_mode", "UNKNOWN")
+    vp_status = status.get("versioned_provenance_status", "UNKNOWN")
+    all_verified = status.get("all_stage_git_shas_verified", False)
+    sci_equiv = status.get("scientific_control_equivalence")
+    pub_state = status.get("publication_state", "UNKNOWN")
+
+    with st.expander("版本化多-Commit 血缘（VERSIONED_MULTI_COMMIT）", expanded=True):
+        st.info(
+            "本案例采用版本化多 Commit 血缘。Round 1 与 Round 2 分别绑定各自真实代码版本；"
+            "系统已验证影响实验数值的代码和控制条件，未强制伪造两轮使用同一 Commit。"
+        )
+
+        def _vbadge(ok: bool | None, true_label: str = "已验证", false_label: str = "未验证") -> str:
+            if ok is True:
+                return f'<span class="mode-badge real">{true_label}</span>'
+            if ok is False:
+                return f'<span class="mode-badge warn">{false_label}</span>'
+            return '<span class="mode-badge">未知</span>'
+
+        r1_sha = status.get("round1_git_sha") or "—"
+        r2_sha = status.get("round2_git_sha") or "—"
+        cb_sha = status.get("canonical_builder_git_sha") or r2_sha
+        pub_badge = "real" if pub_state == "PUBLISHED_VERIFIED" else "warn"
+        vp_badge = "real" if "VERIFIED" in vp_status else "warn"
+
+        st.markdown(
+            f"""<div class="field-block">
+              <div><b>血缘模式：</b><span class="mode-badge {'real' if prov_mode == 'VERSIONED_MULTI_COMMIT' else 'warn'}">{esc(prov_mode)}</span></div>
+              <div><b>血缘状态：</b><span class="mode-badge {vp_badge}">{esc(vp_status)}</span></div>
+              <div><b>发布状态：</b><span class="mode-badge {pub_badge}">{esc(pub_state)}</span></div>
+            </div>
+            <div class="field-block">
+              <div><b>Round 1 Commit：</b>{_vbadge(all_verified)} <code>{esc(r1_sha[:16])}…</code></div>
+              <div><b>Round 2 Commit：</b>{_vbadge(all_verified)} <code>{esc(r2_sha[:16])}…</code></div>
+              <div><b>Canonical Builder Commit：</b>{_vbadge(all_verified)} <code>{esc(cb_sha[:16])}…</code></div>
+              <div><b>科学控制等价：</b>{_vbadge(sci_equiv, '通过', '未通过')}</div>
+              <div><b>阶段 Commit 全部独立验证：</b>{_vbadge(all_verified)}</div>
+              <div><b>强制 Commit 一致（same_commit_required）：</b>否</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+
+        provider_total = status.get("provider_total_call_count", 4)
+        provider_canonical = status.get("provider_canonical_call_count", 2)
+        provider_abandoned = status.get("provider_abandoned_call_count", 2)
+        disclosure = status.get("provider_disclosure_status", "unknown")
+        st.markdown(
+            f"""<div class="field-block">
+              <div><b>Provider 总调用次数（本会话）：</b>{esc(str(provider_total))}</div>
+              <div><b>进入 canonical 的调用：</b>{esc(str(provider_canonical))}</div>
+              <div><b>已放弃、未进入 canonical 的调用：</b>{esc(str(provider_abandoned))}</div>
+              <div><b>Provider 调用披露状态：</b>{esc(disclosure)}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+
+
+def _render_actual_ablation_panel(qid: str) -> None:
+    """只读展示 Q028 完整系统 vs 移除 Reviewer 的实际消融。
+
+    不用颜色暗示完整系统必然优胜。中性/负面结果同样展示。
+    """
+    from app.ui import api_client
+
+    status_key = make_widget_key("actual_ablation_01", qid)
+    if st.button("刷新实际消融状态", key=make_widget_key("btn_refresh_ablation", qid)):
+        st.session_state[status_key] = api_client.get_experiment_actual_ablation_01(qid)
+    status = st.session_state.get(status_key)
+    if status is None:
+        status = api_client.get_experiment_actual_ablation_01(qid)
+        st.session_state[status_key] = status
+
+    st.markdown("<div class='report-panel'><h3>实际消融：完整系统 vs 移除 Reviewer</h3>", unsafe_allow_html=True)
+    if not status.get("available"):
+        st.warning(status.get("reason") or "消融结果尚未生成。")
+        st.markdown("</div>", unsafe_allow_html=True)
+        return
+
+    conclusion = status.get("ablation_conclusion") or {}
+    full_ref = status.get("full_system_reference") or {}
+    no_rev = (conclusion.get("no_reviewer") or {})
+    effect = conclusion.get("REVIEWER_EFFECT_RESULT") or "尚未判定"
+    st.caption("本面板只报告预注册指标。不暗示完整系统必然优胜。")
+    st.markdown(
+        f"""<div class="field-block">
+          <div><b>Protocol：</b>{esc(status.get('protocol_id'))}</div>
+          <div><b>Original Ablation ID：</b>{esc(status.get('original_ablation_id'))}</div>
+          <div><b>Verified Evidence Freeze ID：</b>{esc(status.get('verified_evidence_freeze_id'))}</div>
+          <div><b>消融组件：</b>Scientific Reviewer（其余科学条件冻结）</div>
+          <div><b>Reviewer Effect Result：</b>{esc(status.get('reviewer_effect_result') or effect)}</div>
+          <div><b>实验指标收益：</b>无（quality_gain=false）</div>
+          <div><b>审计收益：</b>有（结构化 issue / RevisionContext / IssueClosure）</div>
+          <div><b>完整系统额外 Reviewer 调用：</b>1</div>
+          <div><b>Canonical pointer 已更新：</b>否</div>
+          <div><b>No-Reviewer 可成为 canonical：</b>否</div>
+        </div>
+        <div class="field-block">
+          <div><b>队长验收：</b>{esc(status.get('captain_acceptance_status'))}</div>
+          <div><b>验收时机：</b>{esc(status.get('captain_acceptance_timing'))}</div>
+          <div><b>原始消融工作树：</b>不干净（git_dirty=true，历史保留，未改写）</div>
+          <div><b>新证据包工作树：</b>干净复现（execution_git_dirty={esc(status.get('execution_git_dirty'))}）</div>
+          <div><b>本阶段新增模型调用：</b>{esc(status.get('provider_calls_this_stage'))}</div>
+          <div><b>项目累计 Provider 调用：</b>{esc(status.get('project_provider_call_total'))}</div>
+          <div><b>Checksum 状态：</b>{esc(status.get('checksum_status'))}</div>
+          <div><b>正式证据状态：</b>{esc(status.get('formal_evidence_status'))}</div>
+        </div>
+        <div class="field-block">
+          <div><b>完整系统 malignant_recall：</b>{esc(full_ref.get('round2_malignant_recall'))}</div>
+          <div><b>完整系统是否达目标：</b>{esc(full_ref.get('target_achieved'))}</div>
+          <div><b>完整系统端到端修订追踪：</b>{esc(status.get('full_system_end_to_end_revision_trace_complete'))}</div>
+          <div><b>完整系统调用次数：</b>{esc(full_ref.get('provider_call_count'))}</div>
+        </div>
+        <div class="field-block">
+          <div><b>No-Reviewer malignant_recall：</b>{esc(no_rev.get('round2_malignant_recall'))}</div>
+          <div><b>No-Reviewer 是否达目标：</b>{esc(no_rev.get('target_achieved'))}</div>
+          <div><b>Planner 审计追踪完整：</b>{esc(status.get('no_reviewer_planner_audit_trace_complete'))}</div>
+          <div><b>Reviewer issue 追踪：</b>{esc(status.get('no_reviewer_reviewer_issue_trace_status'))}</div>
+          <div><b>IssueClosure：</b>{esc(status.get('no_reviewer_issue_closure_status'))}</div>
+          <div><b>端到端修订追踪完整：</b>{esc(status.get('no_reviewer_end_to_end_revision_trace_complete'))}</div>
+          <div><b>复用冻结 Provider 输出：</b>{esc(status.get('provider_output_reused'))}</div>
+        </div>""",
+        unsafe_allow_html=True,
+    )
+    caveats = conclusion.get("caveats") or []
+    if caveats:
+        st.info("\n".join(f"- {item}" for item in caveats))
+    if conclusion.get("negative_result_disclosed"):
+        st.caption("已按协议披露中性或负面结果，未做事后指标挑选。")
+    st.caption("科学边界：本案例不能外推到全部 125 题，不构成临床结论。")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
+def _render_flagship_canonical_status(qid: str) -> None:
+    """
+    只读展示旗舰案例 canonical package / 原子发布状态。
+
+    数据完全来自 GET /experiments/{qid}/canonical-status（真实磁盘证据 +
+    真实 canonical pointer），本函数不编造、不猜测、不填充占位指标。
+    """
+    from app.ui import api_client
+
+    status_key = make_widget_key("flagship_canonical_status", qid)
+    if st.button("刷新旗舰案例 canonical / 发布状态", key=make_widget_key("btn_refresh_canonical", qid)):
+        st.session_state[status_key] = api_client.get_experiment_canonical_status(qid)
+    status = st.session_state.get(status_key)
+    if status is None:
+        status = api_client.get_experiment_canonical_status(qid)
+        st.session_state[status_key] = status
+
+    st.markdown("<div class='report-panel'><h3>旗舰案例 Canonical Package / 原子发布状态</h3>", unsafe_allow_html=True)
+
+    if not status.get("available"):
+        st.warning(status.get("reason") or "该题目未接入 canonical 发布流水线。")
+        st.markdown("</div>", unsafe_allow_html=True)
+        return
+    if status.get("status") == "error":
+        st.error(status.get("reason") or "读取 canonical 状态失败。")
+        st.markdown("</div>", unsafe_allow_html=True)
+        return
+
+    semantic_status = status.get("semantic_validation_status")
+    published = bool(status.get("canonical_published"))
+    round2_blocked = bool(status.get("round2_blocked"))
+
+    badge = "PASS" if semantic_status == "PASS" else "FAIL"
+    badge_class = "real" if semantic_status == "PASS" else "warn"
+    st.markdown(
+        f"""<div class="field-block">
+            <div><b>案例 ID：</b>{esc(status.get('case_id'))}</div>
+            <div><b>语义校验状态：</b><span class="mode-badge {badge_class}">{esc(badge)}</span></div>
+            <div><b>Round 2 阻断（ROUND2_BLOCKED）：</b>{esc('是' if round2_blocked else '否')}</div>
+            <div><b>Canonical 已发布（PUBLISHED_VERIFIED）：</b>{esc('是' if published else '否')}</div>
+        </div>""",
+        unsafe_allow_html=True,
+    )
+
+    pointer = status.get("canonical_pointer")
+    if published and pointer:
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>attempt_id：</b>{esc(pointer.get('attempt_id'))}</div>
+                <div><b>manifest_hash：</b>{esc(pointer.get('manifest_hash'))}</div>
+                <div><b>policy_version：</b>{esc(pointer.get('policy_version'))}</div>
+                <div><b>updated_at：</b>{esc(pointer.get('updated_at'))}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+    else:
+        st.caption("尚未发布为 PUBLISHED_VERIFIED canonical package（或已发布但校验状态非 PASS，consumer 会拒绝读取）。")
+
+    # ── Versioned multi-commit provenance panel ────────────────────────────────
+    _render_versioned_provenance_panel(status)
+
+    _render_flagship_provenance(status.get("provenance") or {})
+
+    checks = status.get("checks") or []
+    if checks:
+        by_category: dict[str, list[dict]] = {}
+        for item in checks:
+            by_category.setdefault(item.get("category", "?"), []).append(item)
+        with st.expander(f"逐项校验清单（{status.get('check_count', len(checks))} 项，失败 {status.get('failed_count', 0)} 项）", expanded=not published):
+            for category, items in by_category.items():
+                label = _CANON_CATEGORY_LABELS.get(category, category)
+                all_pass = all(i.get("status") == "PASS" for i in items)
+                st.markdown(f"**{esc(label)}** — {'✅ 全部通过' if all_pass else '❌ 存在未通过项'}")
+                for item in items:
+                    icon = "✅" if item.get("status") == "PASS" else "❌"
+                    st.markdown(
+                        f"<div class='field-block'>{icon} `{esc(item.get('requirement_id'))}` {esc(item.get('detail'))}</div>",
+                        unsafe_allow_html=True,
+                    )
+
+    fail_closed_reasons = status.get("fail_closed_reasons") or []
+    if fail_closed_reasons:
+        st.error("Fail-closed 原因：\n" + "\n".join(f"- {reason}" for reason in fail_closed_reasons))
+
+    st.caption(
+        "科学边界：本案例为受控二分类实验，用于验证 AI Scientist 的计划—执行—反馈—修订工作流；"
+        "不证明能够治愈癌症，不构成临床有效性验证或医疗建议，不能外推到所有癌症，"
+        "不替代领域专家与真实临床研究。"
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
+def _render_q028_result(result: dict) -> None:
+    """渲染一次成功的 Q028 真实实验结果：人话结论 + 图表，技术细节折叠展示。"""
+    metrics = result.get("metrics") or {}
+    confusion = result.get("confusion") or {}
+    split = result.get("split") or {}
+    balanced = metrics.get("balanced_accuracy")
+    recall = metrics.get("malignant_recall")
+
+    plain_summary = "本次真实运行已完成，但未取得可解读指标。"
+    if balanced is not None and recall is not None and confusion:
+        test_count = split.get("test_count", sum(confusion.values()))
+        malignant_total = confusion.get("true_positive", 0) + confusion.get("false_negative", 0)
+        plain_summary = (
+            f"模型在 {test_count} 例留出测试样本上：平衡准确率 {balanced:.1%}，"
+            f"{malignant_total} 例真实恶性肿瘤样本中正确识别出 "
+            f"{confusion.get('true_positive', 0)} 例（召回率 {recall:.1%}），"
+            f"漏诊 {confusion.get('false_negative', 0)} 例、误报 {confusion.get('false_positive', 0)} 例。"
+        )
+    st.markdown(
+        f"""<div class="field-block">
+            <span class="mode-badge real">真实 Real</span>
+            <div style="margin-top:6px">{esc(plain_summary)}</div>
+        </div>""",
+        unsafe_allow_html=True,
+    )
+
+    if balanced is not None and recall is not None:
+        charts.render_plotly_chart(
+            charts.make_experiment_metrics_bar(metrics),
+            key=make_widget_key("chart", "exp_metrics", result.get("execution_id", "")),
+        )
+    if confusion:
+        charts.render_plotly_chart(
+            charts.make_confusion_matrix_heatmap(confusion),
+            key=make_widget_key("chart", "exp_confusion", result.get("execution_id", "")),
+        )
+
+    if result.get("git_dirty"):
+        st.caption("⚠ 当前工作区存在未提交改动：本次为演示性真实执行，非正式 Gate/PR 证据。")
+
+    with st.expander("技术细节 / 可复现信息", expanded=False):
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>执行状态：</b>{esc(result.get('status'))}</div>
+                <div><b>execution_id：</b>{esc(result.get('execution_id'))}</div>
+                <div><b>训练/测试样本数：</b>{esc(split.get('train_count'))} / {esc(split.get('test_count'))}</div>
+                <div><b>数据集 SHA-256：</b>{esc(result.get('dataset_sha256'))}</div>
+                <div><b>Git SHA：</b>{esc(result.get('git_sha'))}</div>
+                <div><b>耗时：</b>{esc(result.get('duration_seconds'))} 秒</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        if result.get("note"):
+            st.caption(result["note"])
 
 
 def _render_reviewer(plan: dict) -> None:

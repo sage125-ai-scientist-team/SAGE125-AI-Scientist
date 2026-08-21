@@ -1,0 +1,89 @@
+{
+  "provider_audit_reference": [
+    "call-fe766298f46f4fcea932c62f3a92b33a",
+    "call-21db43ee3738418b9ff0466004efd64a"
+  ],
+  "reviewer_driven": true,
+  "round1_review": {
+    "critical_issues": [
+      "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)"
+    ],
+    "evidence_grounding_score": 1.0,
+    "falsifiability_score": 1.0,
+    "passed": false,
+    "reference_reliability_score": 1.0,
+    "reproducibility_score": 1.0,
+    "required_revisions": [
+      "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)"
+    ],
+    "reviewer_comments": [
+      "The experiment failed to meet the target malignant_recall of 0.95 with the current decision threshold of 0.5 (observed: 0.9286).",
+      "Per the allowed_revision_policy for case Q028, the only permitted revision is adjusting the decision_threshold to 0.4.",
+      "No other changes to dataset, model, or metrics are allowed.",
+      "This result is strictly limited to the fixed UCI WDBC dataset and does not imply clinical efficacy or generalizability."
+    ],
+    "risk_level": "high"
+  },
+  "round2_review": {
+    "critical_issues": [],
+    "evidence_grounding_score": 1.0,
+    "falsifiability_score": 1.0,
+    "passed": true,
+    "reference_reliability_score": 1.0,
+    "reproducibility_score": 1.0,
+    "required_revisions": [],
+    "reviewer_comments": [
+      "Round 2 malignant_recall=0.952381 meets or exceeds target 0.95 after the reviewed decision_threshold change."
+    ],
+    "risk_level": "low"
+  },
+  "run_id": "Q028-wdbc-flagship",
+  "schema_version": "1.0",
+  "structured_round1_review": {
+    "comments": [
+      "The experiment failed to meet the target malignant_recall of 0.95 with the current decision threshold of 0.5 (observed: 0.9286).",
+      "Per the allowed_revision_policy for case Q028, the only permitted revision is adjusting the decision_threshold to 0.4.",
+      "No other changes to dataset, model, or metrics are allowed.",
+      "This result is strictly limited to the fixed UCI WDBC dataset and does not imply clinical efficacy or generalizability."
+    ],
+    "critical_issues": [
+      {
+        "affected_metric": "malignant_recall",
+        "evidence_reference": "Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95",
+        "issue_id": "ISSUE-001",
+        "observed_value": 0.9285714285714286,
+        "required_action": "Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy.",
+        "severity": "P0",
+        "target_value": 0.95
+      }
+    ],
+    "passed": false,
+    "required_revisions": [
+      {
+        "affected_metric": "malignant_recall",
+        "evidence_reference": "Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95",
+        "issue_id": "ISSUE-001",
+        "observed_value": 0.9285714285714286,
+        "required_action": "Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy.",
+        "severity": "P0",
+        "target_value": 0.95
+      }
+    ],
+    "review_id": "Q028-REV-001"
+  },
+  "structured_v2_plan": {
+    "expected_effect": "Lowering the decision threshold to 0.4 should increase the number of samples classified as malignant, thereby increasing the malignant_recall metric towards or above the target of 0.95, while keeping all other model parameters and data fixed.",
+    "plan_id": "Q028-V2-REV-PLAN",
+    "proposed_changes": [
+      {
+        "field": "decision_threshold",
+        "from": 0.5,
+        "justification": "The Round 1 malignant_recall was 0.9286, failing to meet the target of 0.95. Per the allowed_revision_policy for case Q028, adjusting the decision_threshold from 0.5 to 0.4 is the only authorized change to attempt to improve recall by lowering the classification barrier for the malignant class.",
+        "to": 0.4
+      }
+    ],
+    "responds_to_issue_ids": [
+      "ISSUE-001"
+    ]
+  }
+}

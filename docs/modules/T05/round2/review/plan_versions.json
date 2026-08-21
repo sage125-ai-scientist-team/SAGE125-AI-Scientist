@@ -1,0 +1,122 @@
+{
+  "run_id": "Q028-wdbc-flagship",
+  "schema_version": "1.0",
+  "versions": [
+    {
+      "experiment_design": {
+        "decision_threshold": 0.5,
+        "optimizer": {
+          "iterations": 2000,
+          "l2": 0.001,
+          "learning_rate": 0.05,
+          "name": "full_batch_logistic_regression"
+        },
+        "question_id": "Q028",
+        "required_metrics": [
+          "balanced_accuracy",
+          "malignant_recall"
+        ],
+        "round2_trigger": {
+          "metric": "malignant_recall",
+          "target": 0.95,
+          "threshold_step": 0.1
+        },
+        "round_index": 1,
+        "schema_version": "1.0",
+        "seed": 125,
+        "test_fraction": 0.2
+      },
+      "hypothesis_generation": {},
+      "issue_closures": [],
+      "parent_version_id": null,
+      "prompt_fingerprints": {
+        "experiment_design_config": "e70614231e9fe840b0c4fe06f8bbc656348736acd33386873031aaf0514fc3eb",
+        "reviewer_input_hash": "eea9f5bf05f18de82e583d0718de752eff12ffe9dc9097e053ff52282ccd05f8",
+        "reviewer_prompt_hash": "21fbfc4869cdc94f58d495bbb33cd75de00b980ce6c9ad0f70ff499b87a5549f"
+      },
+      "review_feedback": null,
+      "revision_iteration": 1,
+      "run_id": "Q028-wdbc-flagship",
+      "schema_version": 1,
+      "version_id": "Q028-wdbc-flagship:v1",
+      "version_number": 1
+    },
+    {
+      "experiment_design": {
+        "decision_threshold": 0.4,
+        "optimizer": {
+          "iterations": 2000,
+          "l2": 0.001,
+          "learning_rate": 0.05,
+          "name": "full_batch_logistic_regression"
+        },
+        "question_id": "Q028",
+        "required_metrics": [
+          "balanced_accuracy",
+          "malignant_recall"
+        ],
+        "round2_trigger": {
+          "metric": "malignant_recall",
+          "target": 0.95,
+          "threshold_step": 0.1
+        },
+        "round_index": 1,
+        "schema_version": "1.0",
+        "seed": 125,
+        "test_fraction": 0.2
+      },
+      "hypothesis_generation": {},
+      "issue_closures": [
+        {
+          "category": "critical_issue",
+          "closed_in_version": 2,
+          "description": "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)",
+          "issue_id": "critical_issue:f53b80b09879",
+          "opened_in_version": 1,
+          "resolution_note": "Round 2 changed decision_threshold to the value frozen in experiments/flagship/round2_config.json; the observed metric recomputed from real Round 2 raw predictions now meets the predeclared target.",
+          "status": "resolved"
+        },
+        {
+          "category": "required_revision",
+          "closed_in_version": 2,
+          "description": "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)",
+          "issue_id": "required_revision:4fdbc5c245a2",
+          "opened_in_version": 1,
+          "resolution_note": "Round 2 changed decision_threshold to the value frozen in experiments/flagship/round2_config.json; the observed metric recomputed from real Round 2 raw predictions now meets the predeclared target.",
+          "status": "resolved"
+        }
+      ],
+      "parent_version_id": "Q028-wdbc-flagship:v1",
+      "prompt_fingerprints": {
+        "experiment_design_config": "3e834bfbaee25c4d84f2accaf0034239180a07410d32f5bdafe33303fc5f7a8e",
+        "v2_plan_input_hash": "920a6eeb1e796b0ed3bc42c45636cce9ac2598162b5b2b4e65c148009dfa902f",
+        "v2_plan_prompt_hash": "cc99d0848bfcbbba141e02a41f389e9ca384d799e72debeb6034ea8dd89b4c8a"
+      },
+      "review_feedback": {
+        "critical_issues": [
+          "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)"
+        ],
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 1.0,
+        "passed": false,
+        "reference_reliability_score": 1.0,
+        "reproducibility_score": 1.0,
+        "required_revisions": [
+          "[ISSUE-001|P0] Adjust decision_threshold from 0.5 to 0.4 as authorized by allowed_revision_policy. (metric=malignant_recall observed=0.928571 target=0.95; evidence=Round 1 metrics: malignant_recall=0.9285714285714286; Target: 0.95)"
+        ],
+        "reviewer_comments": [
+          "The experiment failed to meet the target malignant_recall of 0.95 with the current decision threshold of 0.5 (observed: 0.9286).",
+          "Per the allowed_revision_policy for case Q028, the only permitted revision is adjusting the decision_threshold to 0.4.",
+          "No other changes to dataset, model, or metrics are allowed.",
+          "This result is strictly limited to the fixed UCI WDBC dataset and does not imply clinical efficacy or generalizability."
+        ],
+        "risk_level": "high"
+      },
+      "revision_iteration": 2,
+      "run_id": "Q028-wdbc-flagship",
+      "schema_version": 1,
+      "version_id": "Q028-wdbc-flagship:v2",
+      "version_number": 2
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "REVIEWER_EFFECT_RESULT": "TRACEABILITY_ONLY_GAIN",
+  "ablation_id": "Q028-ACTUAL-ABLATION-01-20260821-030619",
+  "additional_call_cost": {
+    "note": "FULL_SYSTEM's extra Reviewer call is the real cost of the ablated component. Arms are not force-aligned on call count.",
+    "reviewer_calls": 1
+  },
+  "caveats": [
+    "One Q028 sub-case does not represent all 125 questions.",
+    "NO_REVIEWER has no structured Reviewer issue chain; absence of issues is not UNRESOLVED_P0=0.",
+    "This arm is evaluation-only and is not canonical-eligible.",
+    "Negative or neutral results must be reported without post-hoc metric selection."
+  ],
+  "full_system": {
+    "malignant_recall": 0.9523809523809523,
+    "target_achieved": true
+  },
+  "negative_result_disclosed": true,
+  "no_improvement_findings": "Objective holdout metrics are identical to FULL_SYSTEM when the same authorized threshold is applied by the deterministic kernel.",
+  "no_reviewer": {
+    "ISSUE_CLOSURE_STATUS": "NOT_APPLICABLE_NO_REVIEWER",
+    "NO_REVIEWER_CANONICAL_ELIGIBLE": false,
+    "QUALITY_GATE_STATUS": "NOT_FULLY_EVALUABLE",
+    "REVIEW_STATUS": "NOT_PRESENT_BY_ABLATION",
+    "arm": "NO_REVIEWER",
+    "authorized_revision_proposed": true,
+    "cost": "unknown",
+    "input_hash": "ce6da50611232c038ead0a593411e0aafc932ecbccece940006304ec1cd13f42",
+    "issue_closure_auditable": false,
+    "latency_seconds": 3.968598,
+    "planner_calls": 1,
+    "policy_ok": true,
+    "prompt_hash": "88c7404efec17ef55da576709cc1a126f7e795d99c1db2d7f50e83e713689696",
+    "proposed_change": {
+      "field": "decision_threshold",
+      "from": 0.5,
+      "justification": "Round 1 malignant_recall is 0.9286, which is below the target of 0.95. Lowering the decision threshold from 0.5 to 0.4 increases sensitivity for the positive class (malignant), aiming to push malignant_recall above the 0.95 target while remaining within the allowed_revision_policy.",
+      "to": 0.4
+    },
+    "provider_call_count": 1,
+    "provider_failed": false,
+    "review_feedback": null,
+    "reviewer_content_leak_count": 0,
+    "reviewer_enabled": false,
+    "revision_effective": true,
+    "revision_plan_schema_valid": true,
+    "round2_balanced_accuracy": 0.9761904761904762,
+    "round2_executed": true,
+    "round2_false_negative_rate": 0.047619047619047616,
+    "round2_malignant_recall": 0.9523809523809523,
+    "round2_skip_reason": null,
+    "scientific_scope_pass": true,
+    "structured_issue_available": false,
+    "target_achieved": true,
+    "total_tokens": 1314,
+    "traceability_complete": true,
+    "unauthorized_change_count": 0,
+    "unresolved_p0": null,
+    "unresolved_p0_p1_reported": false,
+    "unresolved_p1": null
+  },
+  "protocol_commit_sha": "c3d0dfd55486e05db346c36185a33f74a26bc936",
+  "protocol_id": "Q028-ACTUAL-ABLATION-01",
+  "quality_gain": false,
+  "scientific_scope_status": "pass",
+  "traceability_gain": true
+}

@@ -889,6 +889,88 @@ def start_run(
         return {"status": "failed", "errors": [err], "mock": mode == "mock", "error_type": "connection_error"}
 
 
+def run_experiment(question_id: str) -> dict:
+    """
+    触发一次真实实验执行（HTTP 优先，回退进程内）。
+
+    目前仅 Q028 有可执行的科学入口；其它题目服务端会诚实返回
+    ``available=False``，前端不编造结果。
+    """
+    qid = str(question_id or "").strip()
+    try:
+        r = requests.post(
+            f"{api_base()}/experiments/{quote(qid, safe='')}/run",
+            timeout=max(_short_timeout_seconds(), 60),
+        )
+        if r.status_code == 200:
+            return r.json()
+    except requests.RequestException:
+        pass
+    if _api_only():
+        return {
+            "question_id": qid,
+            "available": False,
+            "status": "not_available",
+            "reason": "sage125-api 暂不可用，无法运行真实实验。",
+        }
+    from app.api.routes import run_experiment as _run_experiment
+
+    return _run_experiment(qid)
+
+
+def get_experiment_canonical_status(question_id: str) -> dict:
+    """
+    只读地获取旗舰案例 canonical package / 原子发布状态（HTTP 优先，回退进程内）。
+
+    绝不在此调用中触发实验执行或发布动作；仅读取现有磁盘证据与已发布的
+    canonical pointer（如有）。
+    """
+    qid = str(question_id or "").strip()
+    try:
+        r = requests.get(
+            f"{api_base()}/experiments/{quote(qid, safe='')}/canonical-status",
+            timeout=_short_timeout_seconds(),
+        )
+        if r.status_code == 200:
+            return r.json()
+    except requests.RequestException:
+        pass
+    if _api_only():
+        return {
+            "question_id": qid,
+            "available": False,
+            "status": "not_available",
+            "reason": "sage125-api 暂不可用，无法读取 canonical 状态。",
+        }
+    from app.api.routes import get_experiment_canonical_status as _get_status
+
+    return _get_status(qid)
+
+
+def get_experiment_actual_ablation_01(question_id: str) -> dict:
+    """只读获取 Q028 ACTUAL-ABLATION-01 状态（HTTP 优先，回退进程内）。"""
+    qid = str(question_id or "").strip()
+    try:
+        r = requests.get(
+            f"{api_base()}/experiments/{quote(qid, safe='')}/ablations/actual-ablation-01",
+            timeout=_short_timeout_seconds(),
+        )
+        if r.status_code == 200:
+            return r.json()
+    except requests.RequestException:
+        pass
+    if _api_only():
+        return {
+            "question_id": qid,
+            "available": False,
+            "status": "not_available",
+            "reason": "sage125-api 暂不可用，无法读取消融状态。",
+        }
+    from app.api.routes import get_experiment_actual_ablation_01 as _get_status
+
+    return _get_status(qid)
+
+
 def get_llm_calls(run_id: str) -> dict:
     """获取某次运行的脱敏 LLM 调用审计（HTTP 优先，回退读取本地文件）。"""
     if api_available():
