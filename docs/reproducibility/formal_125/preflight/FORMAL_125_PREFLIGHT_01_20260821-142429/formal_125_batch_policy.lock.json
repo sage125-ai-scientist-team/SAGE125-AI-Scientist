@@ -1,0 +1,45 @@
+{
+  "lock_version": "formal125.batch.v1",
+  "engine": "app.batch.runner.BatchRunner + app.formal125.dry_run",
+  "job_count": 125,
+  "states": [
+    "planned",
+    "queued",
+    "running",
+    "succeeded",
+    "partial",
+    "failed",
+    "blocked",
+    "cancelled",
+    "dry_run_complete"
+  ],
+  "dry_run_complete_not_formal_completed": true,
+  "isolation": {
+    "independent_jobs": true,
+    "independent_workspace": true,
+    "independent_context_id": true,
+    "independent_cache_namespace": true,
+    "independent_output_path": true,
+    "independent_checkpoint": true,
+    "question_id_bound_to_input_hash": true
+  },
+  "checkpoint": {
+    "checksum_or_schema_validated": true,
+    "corrupt_rejected": true,
+    "atomic_write": true,
+    "dry_run_cannot_promote_to_actual": true,
+    "synthetic_cannot_produce_actual": true,
+    "prompt_model_schema_mismatch_rejects_resume": true
+  },
+  "retry": {
+    "failed_retryable_until_limit": true,
+    "non_retryable_not_retried": true,
+    "max_attempts": 3
+  },
+  "resume": {
+    "idempotent": true,
+    "completed_dry_run_not_rerun": true,
+    "process_restart_restores_from_checkpoint": true
+  },
+  "batch_policy_sha256": "aa1e7cc2d1799956eb014018a03e7cd58424eef67017da0d434d708b3a0fbac1"
+}

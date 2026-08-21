@@ -1,0 +1,64 @@
+{
+  "lock_version": "formal125.model.v1",
+  "provider": "bailian",
+  "openrouter_fallback_allowed": false,
+  "mock_fallback_allowed": false,
+  "silent_model_switch_allowed": false,
+  "model_roles": {
+    "chat_fast": "qwen3.6-flash",
+    "chat_balanced": "qwen3.7-plus",
+    "chat_strong": "qwen3.7-max",
+    "reviewer": "qwen3.7-max",
+    "deep_research": "qwen-deep-research",
+    "embedding": "text-embedding-v4",
+    "rerank": "qwen3-rerank"
+  },
+  "exact_model_ids": [
+    "qwen3.6-flash",
+    "qwen3.7-plus",
+    "qwen3.7-max",
+    "qwen-deep-research",
+    "text-embedding-v4",
+    "qwen3-rerank"
+  ],
+  "model_config": {
+    "temperature": 0.1,
+    "timeout_seconds": 180.0,
+    "connect_timeout_seconds": 20.0,
+    "max_retries": 1,
+    "max_output_tokens": 8192,
+    "max_input_tokens": 32768,
+    "thinking": "disabled_unless_model_default",
+    "search": "deep_research_only"
+  },
+  "retry": {
+    "max_retries": 1,
+    "retryable_http": [
+      429,
+      500,
+      502,
+      503
+    ]
+  },
+  "timeout": {
+    "read_seconds": 180.0,
+    "connect_seconds": 20.0
+  },
+  "token_caps": {
+    "max_input_tokens": 32768,
+    "max_output_tokens": 8192
+  },
+  "region": "cn-beijing",
+  "base_url_pattern": "https://dashscope.{region}.aliyuncs.com/compatible-mode/v1",
+  "variable_names": {
+    "api_key": "DASHSCOPE_API_KEY",
+    "workspace_id": "WORKSPACE_ID",
+    "provider": "LLM_PROVIDER",
+    "region": "DASHSCOPE_REGION",
+    "base_url": "DASHSCOPE_BASE_URL"
+  },
+  "api_key_present": false,
+  "workspace_present": false,
+  "bailian_configured": false,
+  "model_lock_sha256": "84d00c01aeb6aef7b9202ee0de19e6192bb3f8e7a417eb156022ff6c4aac26d5"
+}

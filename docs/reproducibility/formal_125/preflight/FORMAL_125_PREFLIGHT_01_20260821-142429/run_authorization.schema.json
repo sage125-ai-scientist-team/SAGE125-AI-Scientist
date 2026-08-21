@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "formal125.run-authorization.v1",
+  "title": "Formal 125 captain actual-run authorization",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "authorization_id",
+    "authorized_by_role",
+    "authorized_case_ids",
+    "provider",
+    "model_lock_hash",
+    "prompt_lock_hash",
+    "schema_lock_hash",
+    "catalog_hash",
+    "max_total_provider_calls",
+    "max_retries",
+    "max_total_input_tokens",
+    "max_total_output_tokens",
+    "max_concurrency",
+    "output_root",
+    "expires_at",
+    "authorization_hash"
+  ],
+  "properties": {
+    "authorization_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "authorized_by_role": {
+      "const": "captain"
+    },
+    "authorized_case_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^Q[0-9]{3}$"
+      }
+    },
+    "provider": {
+      "const": "bailian"
+    },
+    "model_lock_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "prompt_lock_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "schema_lock_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "catalog_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "max_total_provider_calls": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_retries": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_total_input_tokens": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_total_output_tokens": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_concurrency": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "output_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expires_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "authorization_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

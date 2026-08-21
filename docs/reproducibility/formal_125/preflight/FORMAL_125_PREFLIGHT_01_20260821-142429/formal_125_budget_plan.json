@@ -1,0 +1,168 @@
+{
+  "lock_version": "formal125.budget.v1",
+  "derived_from": "app/workflow/pipeline.py + QueryPlanner schema constraints",
+  "per_question": {
+    "derived_from": "app/workflow/pipeline.py + QueryPlanner schema constraints",
+    "provider": "bailian",
+    "max_retries_per_step": 1,
+    "attempts_per_step": 2,
+    "max_concurrency": 1,
+    "max_input_tokens_per_chat_call": 32768,
+    "max_output_tokens_per_chat_call": 8192,
+    "min_provider_calls": 15,
+    "max_provider_calls": 54,
+    "max_input_tokens": 1769472,
+    "max_output_tokens": 180224,
+    "steps": [
+      {
+        "step_id": "question_parser",
+        "model_role": "fast",
+        "prompt_id": "QUESTION_PARSER_PROMPT",
+        "model_id": "qwen3.6-flash",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "query_planner",
+        "model_role": "balanced",
+        "prompt_id": "QUERY_PLANNER_PROMPT",
+        "model_id": "qwen3.7-plus",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "evidence_extractor",
+        "model_role": "balanced",
+        "prompt_id": "EVIDENCE_EXTRACTOR_PROMPT",
+        "model_id": "qwen3.7-plus",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "hypothesis_generator",
+        "model_role": "strong",
+        "prompt_id": "HYPOTHESIS_GENERATOR_PROMPT",
+        "model_id": "qwen3.7-max",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "experiment_designer",
+        "model_role": "strong",
+        "prompt_id": "EXPERIMENT_DESIGNER_PROMPT",
+        "model_id": "qwen3.7-max",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "scientific_reviewer",
+        "model_role": "strong",
+        "prompt_id": "SCIENTIFIC_REVIEWER_PROMPT",
+        "model_id": "qwen3.7-max",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "report_writer",
+        "model_role": "balanced",
+        "prompt_id": "REPORT_WRITER_PROMPT",
+        "model_id": "qwen3.7-plus",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "schema_validator",
+        "model_role": "fast",
+        "prompt_id": "SCHEMA_VALIDATOR_PROMPT",
+        "model_id": "qwen3.6-flash",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "deep_research",
+        "model_role": "deep_research",
+        "prompt_id": "DEEP_RESEARCH_RUNTIME",
+        "model_id": "qwen-deep-research",
+        "required": true,
+        "min_calls": 1,
+        "max_calls": 2
+      },
+      {
+        "step_id": "revision_experiment_or_hypothesis",
+        "model_role": "strong",
+        "prompt_id": "EXPERIMENT_DESIGNER_PROMPT",
+        "model_id": "qwen3.7-max",
+        "required": false,
+        "min_calls": 0,
+        "max_calls": 2
+      },
+      {
+        "step_id": "revision_reviewer",
+        "model_role": "strong",
+        "prompt_id": "SCIENTIFIC_REVIEWER_PROMPT",
+        "model_id": "qwen3.7-max",
+        "required": false,
+        "min_calls": 0,
+        "max_calls": 2
+      },
+      {
+        "step_id": "local_rag_embedding",
+        "model_role": "embedding",
+        "model_id": "text-embedding-v4",
+        "prompt_id": null,
+        "required": true,
+        "min_calls": 3,
+        "max_calls": 16
+      },
+      {
+        "step_id": "local_rag_rerank",
+        "model_role": "rerank",
+        "model_id": "qwen3-rerank",
+        "prompt_id": null,
+        "required": true,
+        "min_calls": 3,
+        "max_calls": 16
+      }
+    ],
+    "openrouter_allowed": false,
+    "mock_fallback_allowed": false,
+    "silent_model_switch_allowed": false,
+    "estimated_cost_status": "UNKNOWN"
+  },
+  "FORMAL_5_MAX_PROVIDER_CALLS": 270,
+  "FORMAL_12_MAX_PROVIDER_CALLS": 648,
+  "FORMAL_125_MAX_PROVIDER_CALLS": 6750,
+  "FORMAL_5_MAX_INPUT_TOKENS": 8847360,
+  "FORMAL_5_MAX_OUTPUT_TOKENS": 901120,
+  "FORMAL_125_MAX_INPUT_TOKENS": 221184000,
+  "FORMAL_125_MAX_OUTPUT_TOKENS": 22528000,
+  "MAX_CONCURRENCY": 1,
+  "MAX_RETRIES_PER_STEP": 1,
+  "ESTIMATED_COST_STATUS": "UNKNOWN",
+  "model_lock_sha256": "84d00c01aeb6aef7b9202ee0de19e6192bb3f8e7a417eb156022ff6c4aac26d5",
+  "duration_estimate": {
+    "unit": "minutes",
+    "formal_5_range": [
+      20,
+      120
+    ],
+    "formal_12_range": [
+      60,
+      360
+    ],
+    "formal_125_range": [
+      600,
+      3600
+    ],
+    "basis": "serial max_concurrency=1 plus retry worst case; not a price estimate"
+  },
+  "budget_plan_sha256": "93d545d0afb104968de124e0c6fdc33d1d4d49353d84bb19467225f701bfa159"
+}
