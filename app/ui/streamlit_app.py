@@ -466,6 +466,24 @@ def main() -> None:
     llm_calls = api_client.get_llm_calls(run_id) if run_id else {}
     components.render_developer_diagnostics(health, result, llm_calls)
 
+    try:
+        from app.formal125.readonly_display import latest_formal_run, latest_questions
+
+        snapshot = latest_formal_run()
+        if snapshot.get("exists"):
+            components.section_title("FORMAL 12", "Twelve-domain read-only snapshot", "仓库外正式 12 题结果，不含 Secret。")
+            st.json(
+                {
+                    "output_root": snapshot.get("output_root"),
+                    "stage_a_status": snapshot.get("stage_a_status"),
+                    "FORMAL_125_REAL_RUN_READY": snapshot.get("FORMAL_125_REAL_RUN_READY"),
+                    "producer_sha": snapshot.get("producer_sha"),
+                    "questions": latest_questions().get("questions"),
+                }
+            )
+    except Exception:
+        pass
+
     components.render_footer()
 
 

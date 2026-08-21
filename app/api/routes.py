@@ -764,3 +764,31 @@ def get_experiment_actual_ablation_01(question_id: str) -> dict:
                 "reason": "status payload failed secret redaction gate",
             }
     return {"question_id": question_id, **status}
+
+
+@router.get("/formal-runs/latest")
+def formal_runs_latest() -> dict:
+    from app.formal125.readonly_display import latest_formal_run
+
+    return latest_formal_run()
+
+
+@router.get("/formal-runs/latest/domains")
+def formal_runs_latest_domains() -> dict:
+    from app.formal125.readonly_display import latest_domains
+
+    return latest_domains()
+
+
+@router.get("/formal-runs/latest/questions")
+def formal_runs_latest_questions() -> dict:
+    from app.formal125.readonly_display import latest_questions
+
+    return latest_questions()
+
+
+@router.get("/formal-runs/latest/questions/{question_id}")
+def formal_runs_latest_question(question_id: str) -> dict:
+    from app.formal125.readonly_display import latest_question
+
+    return latest_question(question_id)

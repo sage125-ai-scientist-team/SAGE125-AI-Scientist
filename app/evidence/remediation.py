@@ -20,6 +20,18 @@ from app.evidence.oa_fulltext import (
 )
 
 FORMAL_5 = ("Q001", "Q028", "Q050", "Q075", "Q107")
+FORMAL_12_NEW = (
+    "Q069",
+    "Q003",
+    "Q026",
+    "Q013",
+    "Q109",
+    "Q091",
+    "Q089",
+    "Q046",
+    "Q095",
+    "Q088",
+)
 ATTEMPT1_ROOT = Path(r"D:\SAGE125_Local_Runs\formal_5_real_20260821-153708")
 QUESTION_KEYWORDS = {
     "Q001": ["prime", "primes", "cryptography", "factor", "zeta", "number theorem"],
@@ -27,6 +39,38 @@ QUESTION_KEYWORDS = {
     "Q050": ["universe", "expand", "cosmolog", "dark energy", "bao", "redshift"],
     "Q075": ["quark", "lepton", "compositeness", "standard model", "particle"],
     "Q107": ["climate", "carbon", "warming", "greenhouse", "mitigation", "emission"],
+    "Q069": ["diffraction", "limit", "optics", "resolution", "Abbe"],
+    "Q003": ["pigment", "color", "chromophore", "dye", "organic"],
+    "Q026": ["cell", "differentiation", "reprogramming", "pluripotent", "stem"],
+    "Q013": ["pandemic", "predict", "epidemic", "forecast", "influenza"],
+    "Q109": ["magnetic", "geodynamo", "geomagnetic", "earth", "core"],
+    "Q091": ["processing", "speed", "computation", "limit", "Landauer"],
+    "Q089": ["efficiency", "energy", "conversion", "photovoltaic", "Shockley"],
+    "Q046": ["dimension", "spacetime", "compactification", "Kaluza", "extra"],
+    "Q095": ["consciousness", "neural", "correlates", "awareness", "brain"],
+    "Q088": ["Mars", "manufacturing", "ISRU", "in-situ", "regolith"],
+}
+QUERY_SEEDS = {
+    "Q069": ("diffraction limit optics resolution", "Abbe diffraction optical resolution"),
+    "Q003": (
+        "organic pigment",
+        "chromophore dye",
+        "structural color pigment",
+        "azo pigment chemistry",
+    ),
+    "Q026": ("cell reprogramming pluripotent differentiation", "stem cell lineage restriction"),
+    "Q013": ("pandemic prediction epidemic forecast influenza", "infectious disease outbreak forecasting"),
+    "Q109": (
+        "geodynamo",
+        "geomagnetic dynamo",
+        "Earth magnetic field core",
+        "outer core dynamo geomagnetism",
+    ),
+    "Q091": ("computer processing speed limit Landauer", "fundamental limits of computation"),
+    "Q089": ("energy conversion efficiency Shockley Queisser", "photovoltaic thermoelectric efficiency limit"),
+    "Q046": ("extra dimensions spacetime compactification", "Kaluza Klein how many dimensions"),
+    "Q095": ("neural correlates of consciousness", "where does consciousness lie neuroscience"),
+    "Q088": ("Mars manufacturing in-situ resource utilization", "ISRU additive manufacturing Mars"),
 }
 
 
@@ -115,18 +159,18 @@ def _load_attempt1_claims(question_id: str) -> list[dict[str, Any]]:
 
 
 def _arxiv_search(query: str, max_results: int, audit: FulltextFetchAudit) -> list[str]:
-    import urllib.parse
-    import urllib.request
+    import requests
 
     audit.discovery_requests += 1
-    params = urllib.parse.urlencode(
-        {"search_query": f"all:{query}", "start": 0, "max_results": max_results}
-    )
-    url = f"https://export.arxiv.org/api/query?{params}"
-    request = urllib.request.Request(url, headers={"User-Agent": "SAGE125-evidence-remediation/1.0"})
+    url = "https://export.arxiv.org/api/query"
     try:
-        with urllib.request.urlopen(request, timeout=40) as response:
-            body = response.read().decode("utf-8", errors="replace")
+        response = requests.get(
+            url,
+            params={"search_query": f"all:{query}", "start": 0, "max_results": max_results},
+            timeout=40,
+            headers={"User-Agent": "SAGE125-evidence-remediation/1.0"},
+        )
+        body = response.text if response.status_code == 200 else ""
     except Exception:
         return []
     ids = []
@@ -148,60 +192,66 @@ def _quote_supports_claim(quote: str, claim: str) -> bool:
     return len(quote_tokens & claim_tokens) >= 2
 
 
-def build_question_bundle(
+def scan_local_arxiv_cache(roots: list[Path], keywords: list[str]) -> list[str]:
+    """Deterministic local fulltext reuse. Does not call embedding or rerank."""
+    lowered = [item.casefold() for item in keywords if len(item) >= 4]
+    found: list[str] = []
+    for root in roots:
+        if not root.exists():
+            continue
+        for manifest_path in root.rglob("source_manifest.json"):
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            source_id = str(manifest.get("source_id") or "")
+            if not source_id.startswith("arxiv:"):
+                continue
+            arxiv_id = source_id.split(":", 1)[1]
+            parsed_path = manifest_path.parent / "parsed_text.json"
+            if not parsed_path.is_file():
+                continue
+            try:
+                text = parsed_path.read_text(encoding="utf-8", errors="replace").casefold()
+            except OSError:
+                continue
+            hits = sum(1 for key in lowered if key in text)
+            if hits >= 2 and arxiv_id not in found:
+                found.append(arxiv_id)
+    return found
+
+
+def _cards_from_arxiv_ids(
     *,
     question_id: str,
+    arxiv_ids: list[str],
     cache_root: Path,
-    output_root: Path,
     audit: FulltextFetchAudit,
-) -> dict[str, Any]:
-    discovery = _load_attempt1_cards(question_id)
-    claims = _load_attempt1_claims(question_id)
-    rejected = []
-    ineligible = []
-    arxiv_ids: list[str] = []
-    for card in discovery:
-        source = str(card.get("source_type") or "")
-        quote = str(card.get("quoted_text") or "")
-        title = str(card.get("title") or "")
-        if source in {"openalex", "crossref"} or " ".join(quote.split()).casefold() == " ".join(title.split()).casefold():
-            ineligible.append(
-                {
-                    "id": card.get("id"),
-                    "eligibility": SourceEligibility.METADATA_ONLY.value,
-                    "reason": "title_or_doi_metadata_cannot_support_facts",
-                }
-            )
-            continue
-        arxiv_id = arxiv_id_from_url(str(card.get("url") or card.get("id") or ""))
-        if arxiv_id and arxiv_id not in arxiv_ids:
-            arxiv_ids.append(arxiv_id)
-        elif source == "arxiv":
-            ineligible.append(
-                {
-                    "id": card.get("id"),
-                    "eligibility": SourceEligibility.ABSTRACT_VERIFIED.value,
-                    "reason": "attempt1_abstract_not_reused_as_fulltext_card",
-                }
-            )
-    if len(arxiv_ids) < 3:
-        extra_query = " ".join(QUESTION_KEYWORDS[question_id][:3])
-        for extra_id in _arxiv_search(extra_query, 5, audit):
-            if extra_id not in arxiv_ids:
-                arxiv_ids.append(extra_id)
-            if len(arxiv_ids) >= 6:
-                break
-
+    keywords: list[str],
+) -> tuple[list[dict[str, Any]], list[str], list[dict[str, Any]]]:
     eligible_cards: list[dict[str, Any]] = []
     fulltext_sources: list[str] = []
+    rejected: list[dict[str, Any]] = []
     for arxiv_id in arxiv_ids:
         fetched = fetch_arxiv_pdf(arxiv_id=arxiv_id, cache_root=cache_root, audit=audit)
         if fetched.get("eligibility") != SourceEligibility.FULLTEXT_VERIFIED.value:
-            rejected.append({"arxiv_id": arxiv_id, "eligibility": fetched.get("eligibility"), "reason": fetched.get("reason")})
+            rejected.append(
+                {
+                    "arxiv_id": arxiv_id,
+                    "eligibility": fetched.get("eligibility"),
+                    "reason": fetched.get("reason"),
+                }
+            )
             continue
-        quote_info = select_quote(fetched.get("pages") or [], QUESTION_KEYWORDS[question_id])
+        quote_info = select_quote(fetched.get("pages") or [], keywords)
         if not quote_info:
-            rejected.append({"arxiv_id": arxiv_id, "eligibility": SourceEligibility.FETCH_FAILED.value, "reason": "no_locator_quote"})
+            rejected.append(
+                {
+                    "arxiv_id": arxiv_id,
+                    "eligibility": SourceEligibility.FETCH_FAILED.value,
+                    "reason": "no_locator_quote",
+                }
+            )
             continue
         locator = f"page:{quote_info['page']}|section:{quote_info['section']}|paragraph:{quote_info['paragraph']}"
         evidence_id = deterministic_evidence_id(
@@ -248,27 +298,28 @@ def build_question_bundle(
             fulltext_sources.append(arxiv_id)
         if len(fulltext_sources) >= 2 and len(eligible_cards) >= 2:
             break
+    return eligible_cards, fulltext_sources, rejected
 
+
+def _finalize_bundle(
+    *,
+    question_id: str,
+    eligible_cards: list[dict[str, Any]],
+    fulltext_sources: list[str],
+    ineligible: list[dict[str, Any]],
+    rejected: list[dict[str, Any]],
+    claims: list[dict[str, Any]],
+    output_root: Path,
+    attempt_number: int,
+) -> dict[str, Any]:
     allowed_ids = [card["evidence_id"] for card in eligible_cards]
     coverage = []
-    uncovered = 0
     for claim in claims:
         supporting = [
             card["evidence_id"]
             for card in eligible_cards
             if _quote_supports_claim(card["quote"], claim["claim_text"])
         ]
-        if supporting:
-            action = "KEEP"
-            status = "SUPPORTED"
-        elif claim["claim_type"] == "hypothesis":
-            action = "NARROW"
-            status = "INSUFFICIENT_EVIDENCE"
-            uncovered += 1
-        else:
-            action = "NARROW"
-            status = "INSUFFICIENT_EVIDENCE"
-            uncovered += 1
         coverage.append(
             {
                 "claim_id": claim["claim_id"],
@@ -277,9 +328,9 @@ def build_question_bundle(
                 "required_evidence_level": claim["required_evidence_level"],
                 "supporting_evidence_ids": supporting,
                 "opposing_evidence_ids": [],
-                "evidence_status": status,
+                "evidence_status": "SUPPORTED" if supporting else "INSUFFICIENT_EVIDENCE",
                 "uncovered_reason": None if supporting else "no_fulltext_span_overlap",
-                "action": action,
+                "action": "KEEP" if supporting else "NARROW",
             }
         )
 
@@ -293,18 +344,31 @@ def build_question_bundle(
             pass
 
     booklet_count = sum(1 for card in eligible_cards if "booklet" in card["evidence_id"].lower())
+    cross_question = [
+        card["evidence_id"]
+        for card in eligible_cards
+        if not str(card["evidence_id"]).startswith(f"EV-{question_id}-")
+    ]
     metadata_fact = 0
+    question_source_as_evidence = sum(
+        1
+        for card in eligible_cards
+        if "question_source" in str(card.get("reliability_note") or "").lower()
+        or str(card.get("source_type") or "").lower() == "booklet"
+    )
     ready = (
         len(fulltext_sources) >= 2
         and len(eligible_cards) >= 2
         and unknown_count == 0
         and booklet_count == 0
         and metadata_fact == 0
+        and not cross_question
+        and question_source_as_evidence == 0
         and all(item["action"] != "KEEP" or item["supporting_evidence_ids"] for item in coverage)
     )
     bundle = {
         "question_id": question_id,
-        "attempt_number": 2,
+        "attempt_number": attempt_number,
         "allowed_evidence_ids": allowed_ids,
         "eligible_cards": eligible_cards,
         "ineligible_discovery_records": ineligible,
@@ -313,12 +377,34 @@ def build_question_bundle(
         "token_budget": 6000,
         "truncation_log": [],
         "fulltext_verified_source_count": len(fulltext_sources),
+        "abstract_verified_count": 0,
         "eligible_evidence_count": len(eligible_cards),
-        "uncovered_claim_count": sum(1 for item in coverage if item["action"] == "KEEP" and not item["supporting_evidence_ids"]),
+        "metadata_only_count": sum(
+            1
+            for item in ineligible
+            if item.get("eligibility") == SourceEligibility.METADATA_ONLY.value
+        ),
+        "fetch_failed_count": sum(
+            1
+            for item in rejected
+            if item.get("eligibility") == SourceEligibility.FETCH_FAILED.value
+        ),
+        "license_restricted_count": sum(
+            1
+            for item in rejected
+            if item.get("eligibility") == SourceEligibility.LICENSE_RESTRICTED.value
+        ),
+        "uncovered_claim_count": sum(
+            1 for item in coverage if item["action"] == "KEEP" and not item["supporting_evidence_ids"]
+        ),
         "unknown_id_count": unknown_count,
+        "unknown_evidence_id_count": unknown_count,
         "metadata_only_used_as_fact_count": metadata_fact,
         "booklet_evidence_count": booklet_count,
+        "cross_question_evidence_id_count": len(cross_question),
+        "question_source_as_evidence_count": question_source_as_evidence,
         "evidence_bundle_ready": ready,
+        "evidence_seed_ready": ready,
         "built_at": utc_now(),
     }
     encoded = json.dumps(
@@ -331,8 +417,135 @@ def build_question_bundle(
     question_dir = output_root / question_id
     write_json(question_dir / "evidence_bundle.json", bundle)
     write_json(question_dir / "claim_coverage_matrix.json", {"question_id": question_id, "claims": coverage})
-    write_json(question_dir / "source_access_audit.json", {"question_id": question_id, "rejected": rejected, "ineligible": ineligible})
+    write_json(
+        question_dir / "source_access_audit.json",
+        {"question_id": question_id, "rejected": rejected, "ineligible": ineligible},
+    )
+    write_json(
+        question_dir / "unknown_evidence_id_report.json",
+        {
+            "question_id": question_id,
+            "unknown_evidence_id_count": unknown_count,
+            "booklet_evidence_count": booklet_count,
+            "cross_question_evidence_id_count": len(cross_question),
+            "allowed_evidence_ids": allowed_ids,
+        },
+    )
     return bundle
+
+
+def build_question_bundle(
+    *,
+    question_id: str,
+    cache_root: Path,
+    output_root: Path,
+    audit: FulltextFetchAudit,
+) -> dict[str, Any]:
+    discovery = _load_attempt1_cards(question_id)
+    claims = _load_attempt1_claims(question_id)
+    ineligible = []
+    arxiv_ids: list[str] = []
+    for card in discovery:
+        source = str(card.get("source_type") or "")
+        quote = str(card.get("quoted_text") or "")
+        title = str(card.get("title") or "")
+        if source in {"openalex", "crossref"} or " ".join(quote.split()).casefold() == " ".join(title.split()).casefold():
+            ineligible.append(
+                {
+                    "id": card.get("id"),
+                    "eligibility": SourceEligibility.METADATA_ONLY.value,
+                    "reason": "title_or_doi_metadata_cannot_support_facts",
+                }
+            )
+            continue
+        arxiv_id = arxiv_id_from_url(str(card.get("url") or card.get("id") or ""))
+        if arxiv_id and arxiv_id not in arxiv_ids:
+            arxiv_ids.append(arxiv_id)
+        elif source == "arxiv":
+            ineligible.append(
+                {
+                    "id": card.get("id"),
+                    "eligibility": SourceEligibility.ABSTRACT_VERIFIED.value,
+                    "reason": "attempt1_abstract_not_reused_as_fulltext_card",
+                }
+            )
+    if len(arxiv_ids) < 3:
+        extra_query = " ".join(QUESTION_KEYWORDS[question_id][:3])
+        for extra_id in _arxiv_search(extra_query, 5, audit):
+            if extra_id not in arxiv_ids:
+                arxiv_ids.append(extra_id)
+            if len(arxiv_ids) >= 6:
+                break
+
+    eligible_cards, fulltext_sources, rejected = _cards_from_arxiv_ids(
+        question_id=question_id,
+        arxiv_ids=arxiv_ids,
+        cache_root=cache_root,
+        audit=audit,
+        keywords=QUESTION_KEYWORDS[question_id],
+    )
+    return _finalize_bundle(
+        question_id=question_id,
+        eligible_cards=eligible_cards,
+        fulltext_sources=fulltext_sources,
+        ineligible=ineligible,
+        rejected=rejected,
+        claims=claims,
+        output_root=output_root,
+        attempt_number=2,
+    )
+
+
+def build_seed_bundle(
+    *,
+    question_id: str,
+    question_title: str,
+    cache_root: Path,
+    output_root: Path,
+    audit: FulltextFetchAudit,
+    local_cache_roots: list[Path] | None = None,
+) -> dict[str, Any]:
+    """Phase A evidence seed for a new Formal 12 question. No model Provider calls."""
+    keywords = QUESTION_KEYWORDS[question_id]
+    ineligible: list[dict[str, Any]] = []
+    arxiv_ids: list[str] = []
+    for local_id in scan_local_arxiv_cache(local_cache_roots or [], keywords):
+        if local_id not in arxiv_ids:
+            arxiv_ids.append(local_id)
+    for query in QUERY_SEEDS.get(question_id, (" ".join(keywords[:3]),)):
+        if len(arxiv_ids) >= 8:
+            break
+        for extra_id in _arxiv_search(query, 8, audit):
+            if extra_id not in arxiv_ids:
+                arxiv_ids.append(extra_id)
+            if len(arxiv_ids) >= 8:
+                break
+    claims = [
+        {
+            "claim_id": f"{question_id}-core-1",
+            "claim_text": question_title,
+            "claim_type": "background",
+            "required_evidence_level": "FULLTEXT_VERIFIED",
+            "old_evidence_ids": [],
+        }
+    ]
+    eligible_cards, fulltext_sources, rejected = _cards_from_arxiv_ids(
+        question_id=question_id,
+        arxiv_ids=arxiv_ids,
+        cache_root=cache_root,
+        audit=audit,
+        keywords=keywords,
+    )
+    return _finalize_bundle(
+        question_id=question_id,
+        eligible_cards=eligible_cards,
+        fulltext_sources=fulltext_sources,
+        ineligible=ineligible,
+        rejected=rejected,
+        claims=claims,
+        output_root=output_root,
+        attempt_number=0,
+    )
 
 
 def write_root_cause_report(path: Path) -> None:
