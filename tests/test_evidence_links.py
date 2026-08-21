@@ -20,6 +20,19 @@ def test_canonical_doi_arxiv_and_openalex_links():
     })
     assert arxiv and arxiv.url == "https://arxiv.org/abs/2404.18731v3"
 
+    arxiv_pdf = canonical_evidence_link({
+        "source_type": "arxiv",
+        "url": "https://arxiv.org/pdf/1510.03465.pdf",
+    })
+    assert arxiv_pdf and arxiv_pdf.url == "https://arxiv.org/abs/1510.03465"
+
+    arxiv_old = canonical_evidence_link({
+        "source_type": "arxiv",
+        "url": "https://arxiv.org/pdf/hep-ph/9705325.pdf",
+    })
+    assert arxiv_old and arxiv_old.url == "https://arxiv.org/abs/hep-ph/9705325"
+
+
     openalex = canonical_evidence_link({
         "source_type": "openalex",
         "id": "https://openalex.org/W4280513190",

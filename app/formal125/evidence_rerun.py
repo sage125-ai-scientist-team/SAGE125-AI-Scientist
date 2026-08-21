@@ -304,6 +304,94 @@ def finalize_question_attempt2(question_dir: Path, question_id: str) -> dict[str
     return {"question_id": question_id, "status": status, "gates": report}
 
 
+def revalidate_attempt2_packages(output_root: Path = OUTPUT_ROOT) -> list[dict[str, Any]]:
+    """Recompute gates after identifier parser fix. Does not call a provider."""
+
+    from app.formal125 import REQUIRED_RESULT_FILES
+    from app.formal125.actual_run import classify_question_status, sha256_file
+    from app.workflow.quality_gates import run_all_quality_gates
+
+    reports = []
+    for question_id in FORMAL_5_CASE_IDS:
+        question_dir = output_root / question_id
+        plan = _load_json(question_dir / "result.json")
+        cards = _load_json(question_dir / "evidence_cards.json")
+        trace = _load_json(question_dir / "agent_trace.json")
+        audit = _load_json(question_dir / "provider_audit.json")
+        gates = run_all_quality_gates(plan, cards, trace)
+        mock_calls = int((audit.get("summary") or {}).get("mock_call_count") or 0)
+        booklet = 0
+        for card in cards:
+            if _is_question_source(_card_dict(card)):
+                booklet += 1
+        actual_execution = bool(plan.get("actual_execution"))
+        blocking_p0 = 0 if gates.get("passed") else 1
+        if mock_calls:
+            blocking_p0 += 1
+        if booklet:
+            blocking_p0 += 1
+        if actual_execution:
+            blocking_p0 += 1
+        extra = evaluate_attempt2_gates(question_id, question_dir)
+        if extra.get("blocking"):
+            blocking_p0 += 1
+        hashed_names = [name for name in REQUIRED_RESULT_FILES if name != "checksums.sha256"]
+        required_present = all(
+            (question_dir / name).is_file() and (question_dir / name).stat().st_size > 0
+            for name in REQUIRED_RESULT_FILES
+        )
+        status = classify_question_status(
+            pipeline_ok=True,
+            required_present=required_present,
+            blocking_p0=blocking_p0,
+            blocking_p1=0,
+            mock_calls=mock_calls,
+            booklet_contamination=booklet,
+            auth_failed=False,
+            budget_exceeded=False,
+            actual_execution=actual_execution,
+            leak_count=0,
+        )
+        if extra.get("blocking") and status == "succeeded":
+            status = "partial"
+        validation = _load_json(question_dir / "validation.json")
+        validation["pipeline_quality_gates"] = gates
+        validation["p0_count"] = blocking_p0
+        validation["p1_count"] = 0
+        validation["revalidated_without_provider"] = True
+        validation["unknown_evidence_id_count"] = extra["unknown_evidence_id_count"]
+        validation["metadata_only_used_as_fact_count"] = extra["metadata_only_used_as_fact_count"]
+        validation["booklet_evidence_count"] = extra["booklet_evidence_count"]
+        atomic_write_json(question_dir / "validation.json", validation)
+        atomic_write_json(question_dir / "unknown_evidence_id_report.json", extra)
+        lineage = _load_json(question_dir / "attempt_lineage.json")
+        lineage["status"] = status
+        atomic_write_json(question_dir / "attempt_lineage.json", lineage)
+        manifest = _load_json(question_dir / "package_manifest.json")
+        manifest["status"] = status
+        files = []
+        for name in REQUIRED_RESULT_FILES:
+            path = question_dir / name
+            files.append(
+                {
+                    "name": name,
+                    "present": path.is_file() and path.stat().st_size > 0,
+                    "size_bytes": path.stat().st_size if path.exists() else 0,
+                    "sha256": sha256_file(path) if path.exists() else None,
+                }
+            )
+        manifest["files"] = files
+        atomic_write_json(question_dir / "package_manifest.json", manifest)
+        checksum_lines = [
+            f"{sha256_file(question_dir / name)}  {name}"
+            for name in hashed_names
+            if (question_dir / name).exists()
+        ]
+        atomic_write_text(question_dir / "checksums.sha256", "\n".join(checksum_lines) + "\n")
+        reports.append({"question_id": question_id, "status": status, "p0": blocking_p0, "gates_passed": gates.get("passed")})
+    return reports
+
+
 def _pipeline_with_frozen_bundle(question_id: str, **kwargs: Any) -> tuple[Any, Any]:
     from app.workflow.pipeline import run_pipeline_with_state
 
@@ -423,7 +511,15 @@ def write_batch_reports(output_root: Path, summary: Mapping[str, Any], gate_repo
 def run_attempt2(*, repo_root: Path, execute: bool) -> dict[str, Any]:
     os.environ["SAGE_EVIDENCE_BUNDLE_DIR"] = str(OUTPUT_ROOT)
     os.environ["SAGE_FORMAL5_ATTEMPT"] = "2"
-    auth_info = write_evidence_rerun_authorization(repo_root=repo_root, output_root=OUTPUT_ROOT)
+    auth_path = OUTPUT_ROOT / "authorization" / "authorization.json"
+    if auth_path.is_file():
+        auth = require_actual_authorization(auth_path)
+        auth_info = {
+            "authorization_path": str(auth_path),
+            "authorization_hash": auth.authorization_hash,
+        }
+    else:
+        auth_info = write_evidence_rerun_authorization(repo_root=repo_root, output_root=OUTPUT_ROOT)
     summary = run_formal_five_actual(
         repo_root=repo_root,
         output_root=OUTPUT_ROOT,

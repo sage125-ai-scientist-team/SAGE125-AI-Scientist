@@ -64,7 +64,11 @@ def _arxiv_id(card: Mapping[str, Any]) -> str | None:
             "export.arxiv.org",
         }:
             continue
-        match = re.fullmatch(r"/abs/([^/?#]+)", parsed.path)
+        match = re.fullmatch(
+            r"/(?:abs|pdf)/((?:[a-z-]+(?:\.[A-Za-z]{2})?/\d{7}|\d{4}\.\d{4,5})(?:v\d+)?)(?:\.pdf)?",
+            parsed.path,
+            flags=re.IGNORECASE,
+        )
         if match and _ARXIV_ID_RE.fullmatch(match.group(1)):
             return match.group(1)
     return None
