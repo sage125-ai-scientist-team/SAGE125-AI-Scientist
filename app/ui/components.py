@@ -1260,26 +1260,40 @@ def _render_actual_ablation_panel(qid: str) -> None:
     st.markdown(
         f"""<div class="field-block">
           <div><b>Protocol：</b>{esc(status.get('protocol_id'))}</div>
-          <div><b>Ablation ID：</b>{esc(status.get('ablation_id'))}</div>
+          <div><b>Original Ablation ID：</b>{esc(status.get('original_ablation_id'))}</div>
+          <div><b>Verified Evidence Freeze ID：</b>{esc(status.get('verified_evidence_freeze_id'))}</div>
           <div><b>消融组件：</b>Scientific Reviewer（其余科学条件冻结）</div>
-          <div><b>Reviewer Effect Result：</b>{esc(effect)}</div>
+          <div><b>Reviewer Effect Result：</b>{esc(status.get('reviewer_effect_result') or effect)}</div>
+          <div><b>实验指标收益：</b>无（quality_gain=false）</div>
+          <div><b>审计收益：</b>有（结构化 issue / RevisionContext / IssueClosure）</div>
+          <div><b>完整系统额外 Reviewer 调用：</b>1</div>
           <div><b>Canonical pointer 已更新：</b>否</div>
           <div><b>No-Reviewer 可成为 canonical：</b>否</div>
         </div>
         <div class="field-block">
+          <div><b>队长验收：</b>{esc(status.get('captain_acceptance_status'))}</div>
+          <div><b>验收时机：</b>{esc(status.get('captain_acceptance_timing'))}</div>
+          <div><b>原始消融工作树：</b>不干净（git_dirty=true，历史保留，未改写）</div>
+          <div><b>新证据包工作树：</b>干净复现（execution_git_dirty={esc(status.get('execution_git_dirty'))}）</div>
+          <div><b>本阶段新增模型调用：</b>{esc(status.get('provider_calls_this_stage'))}</div>
+          <div><b>项目累计 Provider 调用：</b>{esc(status.get('project_provider_call_total'))}</div>
+          <div><b>Checksum 状态：</b>{esc(status.get('checksum_status'))}</div>
+          <div><b>正式证据状态：</b>{esc(status.get('formal_evidence_status'))}</div>
+        </div>
+        <div class="field-block">
           <div><b>完整系统 malignant_recall：</b>{esc(full_ref.get('round2_malignant_recall'))}</div>
           <div><b>完整系统是否达目标：</b>{esc(full_ref.get('target_achieved'))}</div>
-          <div><b>完整系统可审计 IssueClosure：</b>{esc(full_ref.get('issue_closure_auditable'))}</div>
+          <div><b>完整系统端到端修订追踪：</b>{esc(status.get('full_system_end_to_end_revision_trace_complete'))}</div>
           <div><b>完整系统调用次数：</b>{esc(full_ref.get('provider_call_count'))}</div>
         </div>
         <div class="field-block">
           <div><b>No-Reviewer malignant_recall：</b>{esc(no_rev.get('round2_malignant_recall'))}</div>
           <div><b>No-Reviewer 是否达目标：</b>{esc(no_rev.get('target_achieved'))}</div>
-          <div><b>是否提出合法修订：</b>{esc(no_rev.get('authorized_revision_proposed'))}</div>
-          <div><b>Round 2 是否执行：</b>{esc(no_rev.get('round2_executed'))}</div>
-          <div><b>结构化 Issue 可用：</b>False</div>
-          <div><b>IssueClosure 可审计：</b>False</div>
-          <div><b>Reviewer 调用成本：</b>完整系统 +1 次 Scientific Reviewer</div>
+          <div><b>Planner 审计追踪完整：</b>{esc(status.get('no_reviewer_planner_audit_trace_complete'))}</div>
+          <div><b>Reviewer issue 追踪：</b>{esc(status.get('no_reviewer_reviewer_issue_trace_status'))}</div>
+          <div><b>IssueClosure：</b>{esc(status.get('no_reviewer_issue_closure_status'))}</div>
+          <div><b>端到端修订追踪完整：</b>{esc(status.get('no_reviewer_end_to_end_revision_trace_complete'))}</div>
+          <div><b>复用冻结 Provider 输出：</b>{esc(status.get('provider_output_reused'))}</div>
         </div>""",
         unsafe_allow_html=True,
     )

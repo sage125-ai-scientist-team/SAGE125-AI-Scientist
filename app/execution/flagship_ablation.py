@@ -953,7 +953,9 @@ def get_actual_ablation_status() -> dict[str, Any]:
         "max_new_provider_calls": protocol["max_new_provider_calls"],
         "planner_model": protocol["planner_model"],
     }
-    return payload
+    from app.execution.flagship_ablation_freeze import overlay_verified_status
+
+    return overlay_verified_status(payload)
 
 
 if __name__ == "__main__":
