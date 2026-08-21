@@ -725,3 +725,42 @@ def get_experiment_canonical_status(question_id: str) -> dict:
             "reason": f"读取 canonical 状态异常：{exc}",
         }
     return {"question_id": question_id, "available": True, **status}
+
+
+@router.get("/experiments/{question_id}/ablations/actual-ablation-01")
+def get_experiment_actual_ablation_01(question_id: str) -> dict:
+    """只读返回 Q028 FULL_SYSTEM vs NO_REVIEWER 实际消融状态。
+
+    绝不在此端点触发 Provider 调用、Round 2 或 canonical 发布。
+    不返回 API Key、Workspace ID、Authorization 或完整敏感 Prompt。
+    """
+    qid = (question_id or "").strip().upper()
+    if qid != "Q028":
+        return {
+            "question_id": question_id,
+            "available": False,
+            "status": "not_available",
+            "reason": "当前仅 Q028 接入 ACTUAL-ABLATION-01。",
+        }
+    try:
+        from app.execution.flagship_ablation import get_actual_ablation_status
+
+        status = get_actual_ablation_status()
+    except Exception as exc:  # noqa: BLE001 - 只读端点如实回传
+        logger.warning("flagship_ablation_status_failed: %s", exc)
+        return {
+            "question_id": question_id,
+            "available": True,
+            "status": "error",
+            "reason": f"读取消融状态异常：{exc}",
+        }
+    text = json.dumps(status, ensure_ascii=False)
+    for banned in ("Authorization", "Bearer ", "DASHSCOPE_API_KEY", "sk-"):
+        if banned in text:
+            return {
+                "question_id": question_id,
+                "available": True,
+                "status": "error",
+                "reason": "status payload failed secret redaction gate",
+            }
+    return {"question_id": question_id, **status}

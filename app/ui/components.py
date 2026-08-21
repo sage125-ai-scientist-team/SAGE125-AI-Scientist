@@ -1078,6 +1078,7 @@ def _render_experiment_run_control(plan: dict) -> None:
 
     if qid == "Q028":
         _render_flagship_canonical_status(qid)
+        _render_actual_ablation_panel(qid)
 
 
 _CANON_CATEGORY_LABELS = {
@@ -1228,6 +1229,67 @@ def _render_versioned_provenance_panel(status: dict) -> None:
             </div>""",
             unsafe_allow_html=True,
         )
+
+
+def _render_actual_ablation_panel(qid: str) -> None:
+    """只读展示 Q028 完整系统 vs 移除 Reviewer 的实际消融。
+
+    不用颜色暗示完整系统必然优胜。中性/负面结果同样展示。
+    """
+    from app.ui import api_client
+
+    status_key = make_widget_key("actual_ablation_01", qid)
+    if st.button("刷新实际消融状态", key=make_widget_key("btn_refresh_ablation", qid)):
+        st.session_state[status_key] = api_client.get_experiment_actual_ablation_01(qid)
+    status = st.session_state.get(status_key)
+    if status is None:
+        status = api_client.get_experiment_actual_ablation_01(qid)
+        st.session_state[status_key] = status
+
+    st.markdown("<div class='report-panel'><h3>实际消融：完整系统 vs 移除 Reviewer</h3>", unsafe_allow_html=True)
+    if not status.get("available"):
+        st.warning(status.get("reason") or "消融结果尚未生成。")
+        st.markdown("</div>", unsafe_allow_html=True)
+        return
+
+    conclusion = status.get("ablation_conclusion") or {}
+    full_ref = status.get("full_system_reference") or {}
+    no_rev = (conclusion.get("no_reviewer") or {})
+    effect = conclusion.get("REVIEWER_EFFECT_RESULT") or "尚未判定"
+    st.caption("本面板只报告预注册指标。不暗示完整系统必然优胜。")
+    st.markdown(
+        f"""<div class="field-block">
+          <div><b>Protocol：</b>{esc(status.get('protocol_id'))}</div>
+          <div><b>Ablation ID：</b>{esc(status.get('ablation_id'))}</div>
+          <div><b>消融组件：</b>Scientific Reviewer（其余科学条件冻结）</div>
+          <div><b>Reviewer Effect Result：</b>{esc(effect)}</div>
+          <div><b>Canonical pointer 已更新：</b>否</div>
+          <div><b>No-Reviewer 可成为 canonical：</b>否</div>
+        </div>
+        <div class="field-block">
+          <div><b>完整系统 malignant_recall：</b>{esc(full_ref.get('round2_malignant_recall'))}</div>
+          <div><b>完整系统是否达目标：</b>{esc(full_ref.get('target_achieved'))}</div>
+          <div><b>完整系统可审计 IssueClosure：</b>{esc(full_ref.get('issue_closure_auditable'))}</div>
+          <div><b>完整系统调用次数：</b>{esc(full_ref.get('provider_call_count'))}</div>
+        </div>
+        <div class="field-block">
+          <div><b>No-Reviewer malignant_recall：</b>{esc(no_rev.get('round2_malignant_recall'))}</div>
+          <div><b>No-Reviewer 是否达目标：</b>{esc(no_rev.get('target_achieved'))}</div>
+          <div><b>是否提出合法修订：</b>{esc(no_rev.get('authorized_revision_proposed'))}</div>
+          <div><b>Round 2 是否执行：</b>{esc(no_rev.get('round2_executed'))}</div>
+          <div><b>结构化 Issue 可用：</b>False</div>
+          <div><b>IssueClosure 可审计：</b>False</div>
+          <div><b>Reviewer 调用成本：</b>完整系统 +1 次 Scientific Reviewer</div>
+        </div>""",
+        unsafe_allow_html=True,
+    )
+    caveats = conclusion.get("caveats") or []
+    if caveats:
+        st.info("\n".join(f"- {item}" for item in caveats))
+    if conclusion.get("negative_result_disclosed"):
+        st.caption("已按协议披露中性或负面结果，未做事后指标挑选。")
+    st.caption("科学边界：本案例不能外推到全部 125 题，不构成临床结论。")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 def _render_flagship_canonical_status(qid: str) -> None:
