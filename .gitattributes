@@ -27,6 +27,17 @@
 # This must not renormalize the historical preliminary ablation package.
 docs/reproducibility/ablations/Q028/verified/** -text
 
+# Historical T06 Wave C / Gate0 fixtures were committed with CRLF blobs.
+# Preserve exact bytes so a Windows fresh checkout is not a dirty tree.
+docs/modules/T06/gate0_fixtures/** -text
+docs/modules/T06/wave_c/** -text
+
+# Flagship scientific plots must keep generated LF bytes for checksums.
+docs/modules/T05/**/*.svg -text
+
+# Formal 125 preflight locks and evidence packages are byte-stable.
+docs/reproducibility/formal_125/** -text
+
 # Binary files are never normalized
 *.png binary
 *.jpg binary
