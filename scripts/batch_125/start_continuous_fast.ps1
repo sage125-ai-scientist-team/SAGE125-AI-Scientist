@@ -1,6 +1,6 @@
 param(
     [string]$Worktree = "D:\SAGE125_Local_Worktrees\formal_125_fast_20260822-155218",
-    [string]$Python = "C:\Users\LYB\Desktop\学习\python\python.exe"
+    [string]$Python = "C:\SAGE125_py\python.exe"
 )
 
 $ErrorActionPreference = "Stop"

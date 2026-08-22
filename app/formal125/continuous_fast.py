@@ -545,6 +545,29 @@ def connect_queue(output_root: Path) -> sqlite3.Connection:
     return conn
 
 
+def reclaim_stale_claims(output_root: Path) -> None:
+    if not queue_path(output_root).exists():
+        return
+    conn = connect_queue(output_root)
+    with _QUEUE_LOCK:
+        conn.execute(
+            """
+            UPDATE jobs
+            SET evidence_status = 'pending', claim_token = NULL, claimed_at = NULL
+            WHERE evidence_status = 'running'
+            """
+        )
+        conn.execute(
+            """
+            UPDATE jobs
+            SET model_status = 'queued', claim_token = NULL, claimed_at = NULL
+            WHERE model_status = 'running' AND evidence_status = 'ready'
+            """
+        )
+        conn.commit()
+    conn.close()
+
+
 def init_queue(output_root: Path, remaining: list[str], catalog: Mapping[str, Any]) -> None:
     conn = connect_queue(output_root)
     with _QUEUE_LOCK:

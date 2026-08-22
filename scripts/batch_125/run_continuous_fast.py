@@ -63,6 +63,7 @@ from app.formal125.continuous_fast import (  # noqa: E402
     mark_model_done,
     official_question_ids,
     progress_payload,
+    reclaim_stale_claims,
     record_event,
     remaining_case_ids,
     reuse_mode,
@@ -92,6 +93,9 @@ _SENTINEL_RELEASED = threading.Event()
 _PDF_SEM = threading.Semaphore(2)
 _HOST_SEM = threading.Semaphore(2)
 _STOP = threading.Event()
+_FETCH_TLS = threading.local()
+_FETCH_WRAP_LOCK = threading.Lock()
+_FETCH_WRAPPED = False
 _DISPLAY = {"api": "http://127.0.0.1:8080", "ui": "http://127.0.0.1:8580"}
 _ORCH_SHA = "pending"
 _429_TIMES: list[float] = []
@@ -142,24 +146,34 @@ def install_fetch_budget(deadline: float) -> dict[str, int]:
     import app.evidence.oa_fulltext as oa
     import app.evidence.remediation as rem
 
-    state = {"n": 0}
-    original = oa.fetch_arxiv_pdf
+    global _FETCH_WRAPPED
+    state = {"n": 0, "deadline": deadline}
+    _FETCH_TLS.budget = state
+    with _FETCH_WRAP_LOCK:
+        if _FETCH_WRAPPED:
+            return state
+        original = oa.fetch_arxiv_pdf
 
-    def wrapped(**kwargs: Any) -> dict[str, Any]:
-        with _HOST_SEM:
-            if time.time() > deadline or state["n"] >= MAX_FULLTEXT_FETCH_ATTEMPTS_PER_QUESTION:
-                return {
-                    "eligibility": "FETCH_FAILED",
-                    "reason": "evidence_budget_exhausted",
-                    "arxiv_id": kwargs.get("arxiv_id"),
-                    "url": "",
-                    "pages": [],
-                }
-            state["n"] += 1
-            return original(**kwargs)
+        def wrapped(**kwargs: Any) -> dict[str, Any]:
+            budget = getattr(_FETCH_TLS, "budget", None)
+            with _HOST_SEM:
+                if budget is not None and (
+                    time.time() > budget["deadline"] or budget["n"] >= MAX_FULLTEXT_FETCH_ATTEMPTS_PER_QUESTION
+                ):
+                    return {
+                        "eligibility": "FETCH_FAILED",
+                        "reason": "evidence_budget_exhausted",
+                        "arxiv_id": kwargs.get("arxiv_id"),
+                        "url": "",
+                        "pages": [],
+                    }
+                if budget is not None:
+                    budget["n"] += 1
+                return original(**kwargs)
 
-    oa.fetch_arxiv_pdf = wrapped
-    rem.fetch_arxiv_pdf = wrapped
+        oa.fetch_arxiv_pdf = wrapped
+        rem.fetch_arxiv_pdf = wrapped
+        _FETCH_WRAPPED = True
     return state
 
 
@@ -643,6 +657,7 @@ def init_workspace() -> None:
         reports.append(copy_reused_question(qid, OUTPUT_ROOT))
     _REUSED_REPORTS = reports
     init_queue(OUTPUT_ROOT, remaining, catalog)
+    reclaim_stale_claims(OUTPUT_ROOT)
     questions_path = OUTPUT_ROOT / "input" / "questions_125.json"
     materialize_questions(questions_path)
     os.environ["SAGE_EVIDENCE_BUNDLE_DIR"] = str(OUTPUT_ROOT / "evidence_seeds")
