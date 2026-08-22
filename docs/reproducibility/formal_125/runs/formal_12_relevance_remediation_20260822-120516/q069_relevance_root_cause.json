@@ -1,0 +1,135 @@
+{
+  "question_id": "Q069",
+  "official_question": "Is there a diffraction limit?",
+  "off_topic_sources": [
+    {
+      "arxiv_id": "2411.00681",
+      "query": "all:diffraction limit optics resolution",
+      "query_function": "app.evidence.remediation._arxiv_search",
+      "contains_core_concepts": false,
+      "cache": true,
+      "cache_key_missing_question_identity": true,
+      "why_accepted": "FULLTEXT_VERIFIED and two generic keyword hits (limit/resolution) in select_quote/scan_local_arxiv_cache",
+      "gate_that_should_have_rejected": "topic_relevance_independent_of_fulltext"
+    },
+    {
+      "arxiv_id": "2307.15471",
+      "query": "all:diffraction limit optics resolution",
+      "query_function": "app.evidence.remediation._arxiv_search",
+      "contains_core_concepts": false,
+      "why_accepted": "FULLTEXT_VERIFIED plus generic token overlap; no topic gate",
+      "gate_that_should_have_rejected": "topic_relevance_independent_of_fulltext"
+    }
+  ],
+  "root_causes": [
+    {
+      "ROOT_CAUSE_ID": "QUERY_TOO_GENERIC",
+      "FILE": "app/evidence/remediation.py",
+      "FUNCTION": "_arxiv_search / QUERY_SEEDS[Q069]",
+      "CURRENT_BEHAVIOR": "Unquoted all:diffraction limit optics resolution matches any paper containing those tokens separately.",
+      "EXPECTED_BEHAVIOR": "Fielded queries must require the optical diffraction-limit object.",
+      "AFFECTED_QUESTIONS": [
+        "Q069",
+        "Q003",
+        "Q026",
+        "Q013",
+        "Q109",
+        "Q091",
+        "Q089",
+        "Q046",
+        "Q095",
+        "Q088"
+      ],
+      "SEVERITY": "P0",
+      "MINIMUM_FIX": "Replace Q069 queries with ti:\"diffraction limit\" AND microscopy/optics.",
+      "REGRESSION_TEST": "tests/evidence/test_topic_relevance_gate.py::test_q069_negative_arxiv_ids_are_off_topic_even_if_fulltext"
+    },
+    {
+      "ROOT_CAUSE_ID": "CROSS_QUESTION_CACHE_COLLISION",
+      "FILE": "app/evidence/remediation.py",
+      "FUNCTION": "scan_local_arxiv_cache",
+      "CURRENT_BEHAVIOR": "Any cached PDF with two keyword hits is reused for the current question, including Q109's 2411.00681.",
+      "EXPECTED_BEHAVIOR": "Content SHA may be reused; relevance decisions must be question-bound.",
+      "AFFECTED_QUESTIONS": [
+        "Q069",
+        "Q003",
+        "Q026",
+        "Q013",
+        "Q109",
+        "Q091",
+        "Q089",
+        "Q046",
+        "Q095",
+        "Q088"
+      ],
+      "SEVERITY": "P0",
+      "MINIMUM_FIX": "list_cached_arxiv_sources + per-question assess_candidate.",
+      "REGRESSION_TEST": "tests/evidence/test_topic_relevance_gate.py::test_q069_cannot_read_other_question_relevance_cache"
+    },
+    {
+      "ROOT_CAUSE_ID": "FULLTEXT_AVAILABILITY_ONLY_SELECTION",
+      "FILE": "app/evidence/remediation.py",
+      "FUNCTION": "_finalize_bundle / prepare_new_case_seeds",
+      "CURRENT_BEHAVIOR": "Seed ready if FULLTEXT_VERIFIED_COUNT >= 2.",
+      "EXPECTED_BEHAVIOR": "Require DIRECT_QUESTION_CORE plus a second DIRECT or SUPPORTING_MECHANISM source.",
+      "AFFECTED_QUESTIONS": [
+        "Q069",
+        "Q003",
+        "Q026",
+        "Q013",
+        "Q109",
+        "Q091",
+        "Q089",
+        "Q046",
+        "Q095",
+        "Q088"
+      ],
+      "SEVERITY": "P0",
+      "MINIMUM_FIX": "evaluate_seed_gate",
+      "REGRESSION_TEST": "tests/evidence/test_topic_relevance_gate.py::test_seed_gate_requires_direct_core_not_just_fulltext"
+    },
+    {
+      "ROOT_CAUSE_ID": "NO_TOPIC_RELEVANCE_GATE",
+      "FILE": "app/evidence/remediation.py",
+      "FUNCTION": "_cards_from_arxiv_ids",
+      "CURRENT_BEHAVIOR": "No DIRECT/OFF_TOPIC status. relevance_score hardcoded 0.6.",
+      "EXPECTED_BEHAVIOR": "Independent topic status; OpenAlex score is discovery-only.",
+      "AFFECTED_QUESTIONS": [
+        "Q069",
+        "Q003",
+        "Q026",
+        "Q013",
+        "Q109",
+        "Q091",
+        "Q089",
+        "Q046",
+        "Q095",
+        "Q088"
+      ],
+      "SEVERITY": "P0",
+      "MINIMUM_FIX": "app.evidence.relevance.assess_candidate",
+      "REGRESSION_TEST": "tests/evidence/test_topic_relevance_gate.py::test_q069_direct_core_from_optical_diffraction_fulltext"
+    },
+    {
+      "ROOT_CAUSE_ID": "NEGATIVE_TOPIC_NOT_FILTERED",
+      "FILE": "app/evidence/remediation.py",
+      "FUNCTION": "select_quote / QUESTION_KEYWORDS",
+      "CURRENT_BEHAVIOR": "limit+resolution in a mutation or network paper counts as a quote.",
+      "EXPECTED_BEHAVIOR": "Prohibited unrelated topics reject the candidate.",
+      "AFFECTED_QUESTIONS": [
+        "Q069"
+      ],
+      "SEVERITY": "P0",
+      "MINIMUM_FIX": "Q069 prohibited topics + permanent negative arXiv IDs.",
+      "REGRESSION_TEST": "tests/evidence/test_topic_relevance_gate.py::test_q069_negative_arxiv_ids_are_off_topic_even_if_fulltext"
+    }
+  ],
+  "SYSTEMIC_ROOT_CAUSE_CONFIRMED": true,
+  "Q069_ROOT_CAUSES": [
+    "QUERY_TOO_GENERIC",
+    "CROSS_QUESTION_CACHE_COLLISION",
+    "FULLTEXT_AVAILABILITY_ONLY_SELECTION",
+    "NO_TOPIC_RELEVANCE_GATE",
+    "NEGATIVE_TOPIC_NOT_FILTERED"
+  ]
+}

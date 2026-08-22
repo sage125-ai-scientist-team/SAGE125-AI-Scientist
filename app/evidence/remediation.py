@@ -7,7 +7,7 @@ import json
 import re
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 from app.evidence.eligibility import FACT_ELIGIBLE, SourceEligibility
 from app.evidence.id_guard import UnknownEvidenceIDError, assert_known_evidence_ids, deterministic_evidence_id
@@ -17,6 +17,13 @@ from app.evidence.oa_fulltext import (
     fetch_arxiv_pdf,
     select_quote,
     utc_now,
+)
+from app.evidence.relevance import (
+    Q069_NEGATIVE_ARXIV,
+    TOPIC_OFF,
+    assess_candidate,
+    build_relevance_spec,
+    evaluate_seed_gate,
 )
 
 FORMAL_5 = ("Q001", "Q028", "Q050", "Q075", "Q107")
@@ -51,7 +58,11 @@ QUESTION_KEYWORDS = {
     "Q088": ["Mars", "manufacturing", "ISRU", "in-situ", "regolith"],
 }
 QUERY_SEEDS = {
-    "Q069": ("diffraction limit optics resolution", "Abbe diffraction optical resolution"),
+    "Q069": (
+        'ti:"diffraction limit" AND (all:microscopy OR all:optics)',
+        'all:"super-resolution microscopy" AND all:"diffraction limit"',
+        'all:"Abbe diffraction" AND all:microscopy',
+    ),
     "Q003": (
         "organic pigment",
         "chromophore dye",
@@ -164,9 +175,10 @@ def _arxiv_search(query: str, max_results: int, audit: FulltextFetchAudit) -> li
     audit.discovery_requests += 1
     url = "https://export.arxiv.org/api/query"
     try:
+        search_query = query if re.match(r"^(ti|abs|all|cat):", query) else f"all:{query}"
         response = requests.get(
             url,
-            params={"search_query": f"all:{query}", "start": 0, "max_results": max_results},
+            params={"search_query": search_query, "start": 0, "max_results": max_results},
             timeout=40,
             headers={"User-Agent": "SAGE125-evidence-remediation/1.0"},
         )
@@ -219,6 +231,59 @@ def scan_local_arxiv_cache(roots: list[Path], keywords: list[str]) -> list[str]:
             if hits >= 2 and arxiv_id not in found:
                 found.append(arxiv_id)
     return found
+
+
+def list_cached_arxiv_sources(roots: list[Path]) -> list[dict[str, str]]:
+    """List cached arXiv fulltexts for content reuse. Does not decide relevance."""
+    found: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for root in roots:
+        if not root.exists():
+            continue
+        for manifest_path in root.rglob("source_manifest.json"):
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            source_id = str(manifest.get("source_id") or "")
+            if not source_id.startswith("arxiv:"):
+                continue
+            arxiv_id = source_id.split(":", 1)[1]
+            if arxiv_id in seen:
+                continue
+            parsed_path = manifest_path.parent / "parsed_text.json"
+            if not parsed_path.is_file():
+                continue
+            seen.add(arxiv_id)
+            found.append(
+                {
+                    "arxiv_id": arxiv_id,
+                    "content_sha256": str(manifest.get("content_sha256") or ""),
+                    "cache_dir": str(manifest_path.parent),
+                }
+            )
+    return found
+
+
+def _catalog_item(question_id: str) -> dict[str, Any]:
+    catalog_path = Path(__file__).resolve().parents[2] / "docs/reproducibility/formal_125/catalog/questions_125.lock.json"
+    catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+    for item in catalog["questions"]:
+        if item["question_id"] == question_id:
+            return item
+    raise KeyError(question_id)
+
+
+def _relevance_quote_keywords(spec: Mapping[str, Any]) -> list[str]:
+    keys: list[str] = []
+    for field in (
+        "research_object_anchors",
+        "phenomenon_or_relation_anchors",
+        "mechanism_or_constraint_anchors",
+    ):
+        for group in spec[field]:
+            keys.extend(group)
+    return keys
 
 
 def _cards_from_arxiv_ids(
@@ -504,22 +569,131 @@ def build_seed_bundle(
     output_root: Path,
     audit: FulltextFetchAudit,
     local_cache_roots: list[Path] | None = None,
+    evidence_policy_hash: str = "formal125.evidence.v3",
+    write_relevance_artifacts: bool = True,
 ) -> dict[str, Any]:
-    """Phase A evidence seed for a new Formal 12 question. No model Provider calls."""
-    keywords = QUESTION_KEYWORDS[question_id]
-    ineligible: list[dict[str, Any]] = []
-    arxiv_ids: list[str] = []
-    for local_id in scan_local_arxiv_cache(local_cache_roots or [], keywords):
-        if local_id not in arxiv_ids:
-            arxiv_ids.append(local_id)
-    for query in QUERY_SEEDS.get(question_id, (" ".join(keywords[:3]),)):
-        if len(arxiv_ids) >= 8:
+    """Phase A evidence seed. Fulltext availability is not sufficient for eligibility."""
+    catalog_item = _catalog_item(question_id)
+    spec = build_relevance_spec(catalog_item)
+    query_audit: list[dict[str, Any]] = []
+    candidates: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for query in spec["query_variants"]:
+        ids = _arxiv_search(query, 10, audit)
+        query_audit.append({"query": query, "returned_ids": ids, "count": len(ids)})
+        for rank, arxiv_id in enumerate(ids, start=1):
+            if arxiv_id in seen:
+                continue
+            seen.add(arxiv_id)
+            candidates.append(
+                {
+                    "arxiv_id": arxiv_id,
+                    "query_origin": query,
+                    "discovery_rank": rank,
+                    "discovery_relevance_score": None,
+                }
+            )
+    for cached in list_cached_arxiv_sources(local_cache_roots or [])[:20]:
+        arxiv_id = cached["arxiv_id"]
+        if arxiv_id in seen:
+            continue
+        seen.add(arxiv_id)
+        candidates.append({"arxiv_id": arxiv_id, "query_origin": "content_cache", "discovery_rank": None, "discovery_relevance_score": None})
+    quote_keys = _relevance_quote_keywords(spec)
+    eligible_cards: list[dict[str, Any]] = []
+    fulltext_sources: list[str] = []
+    rejected: list[dict[str, Any]] = []
+    assessments: list[dict[str, Any]] = []
+    for candidate in candidates:
+        arxiv_id = candidate["arxiv_id"]
+        fetched = fetch_arxiv_pdf(arxiv_id=arxiv_id, cache_root=cache_root, audit=audit)
+        pages = fetched.get("pages") or []
+        fulltext = " ".join(str(page.get("text") or "") for page in pages)
+        title = f"arXiv:{arxiv_id}"
+        assessment = assess_candidate(
+            spec=spec,
+            source_id=f"arxiv:{arxiv_id}",
+            source_content_sha256=str(fetched.get("content_sha256") or ""),
+            title=title,
+            abstract="",
+            fulltext=fulltext,
+            query_origin=str(candidate["query_origin"]),
+            discovery_rank=candidate["discovery_rank"],
+            discovery_relevance_score=candidate["discovery_relevance_score"],
+            fulltext_available=fetched.get("eligibility") == SourceEligibility.FULLTEXT_VERIFIED.value,
+            evidence_policy_hash=evidence_policy_hash,
+        )
+        assessments.append(assessment)
+        if fetched.get("eligibility") != SourceEligibility.FULLTEXT_VERIFIED.value:
+            rejected.append({"arxiv_id": arxiv_id, "eligibility": fetched.get("eligibility"), "reason": fetched.get("reason"), "relevance": assessment})
+            continue
+        if assessment["acceptance_decision"] != "ACCEPT":
+            rejected.append(
+                {
+                    "arxiv_id": arxiv_id,
+                    "eligibility": fetched.get("eligibility"),
+                    "reason": assessment["rejection_reason"],
+                    "relevance_status": assessment["relevance_status"],
+                    "relevance": assessment,
+                }
+            )
+            continue
+        quote_info = select_quote(pages, quote_keys)
+        if not quote_info:
+            rejected.append({"arxiv_id": arxiv_id, "eligibility": SourceEligibility.FETCH_FAILED.value, "reason": "no_locator_quote"})
+            continue
+        locator = f"page:{quote_info['page']}|section:{quote_info['section']}|paragraph:{quote_info['paragraph']}"
+        evidence_id = deterministic_evidence_id(
+            question_id=question_id,
+            content_sha256=str(fetched["content_sha256"]),
+            locator=locator,
+            quote=quote_info["quote"],
+        )
+        card = {
+            "evidence_id": evidence_id,
+            "id": evidence_id,
+            "question_id": question_id,
+            "question_hash": spec["question_hash"],
+            "source_id": f"arxiv:{arxiv_id}",
+            "source_type": "arxiv",
+            "eligibility_status": SourceEligibility.FULLTEXT_VERIFIED.value,
+            "topic_relevance_status": assessment["relevance_status"],
+            "evidence_role": assessment["evidence_role"],
+            "title": title,
+            "authors": [],
+            "year": None,
+            "doi": None,
+            "url": fetched["url"],
+            "quote": quote_info["quote"],
+            "quoted_text": quote_info["quote"],
+            "locator": locator,
+            "page": quote_info["page"],
+            "section": quote_info["section"],
+            "paragraph": quote_info["paragraph"],
+            "content_sha256": fetched["content_sha256"],
+            "source_version": "submittedVersion",
+            "license_or_access": "arxiv_open_access",
+            "support_relation": "supports",
+            "confidence": 0.6,
+            "extraction_method": "deterministic_pdf_span",
+            "fetch_audit_reference": fetched["cache_dir"],
+            "source_manifest_reference": str(Path(fetched["cache_dir"]) / "source_manifest.json"),
+            "summary": quote_info["quote"][:180],
+            "relevance_score": assessment["local_relevance_score"],
+            "discovery_relevance_score": assessment["discovery_relevance_score"],
+            "relevance_assessment_hash": assessment["assessment_hash"],
+            "relevance_spec_hash": spec["spec_hash"],
+            "reliability_note": (
+                f"eligibility_status={SourceEligibility.FULLTEXT_VERIFIED.value}; "
+                f"topic_relevance_status={assessment['relevance_status']}; "
+                f"locator={locator}; content_sha256={fetched['content_sha256']}"
+            ),
+        }
+        eligible_cards.append(card)
+        if arxiv_id not in fulltext_sources:
+            fulltext_sources.append(arxiv_id)
+        if len(fulltext_sources) >= 4:
             break
-        for extra_id in _arxiv_search(query, 8, audit):
-            if extra_id not in arxiv_ids:
-                arxiv_ids.append(extra_id)
-            if len(arxiv_ids) >= 8:
-                break
     claims = [
         {
             "claim_id": f"{question_id}-core-1",
@@ -529,23 +703,93 @@ def build_seed_bundle(
             "old_evidence_ids": [],
         }
     ]
-    eligible_cards, fulltext_sources, rejected = _cards_from_arxiv_ids(
-        question_id=question_id,
-        arxiv_ids=arxiv_ids,
-        cache_root=cache_root,
-        audit=audit,
-        keywords=keywords,
-    )
-    return _finalize_bundle(
+    bundle = _finalize_bundle(
         question_id=question_id,
         eligible_cards=eligible_cards,
         fulltext_sources=fulltext_sources,
-        ineligible=ineligible,
+        ineligible=[],
         rejected=rejected,
         claims=claims,
         output_root=output_root,
         attempt_number=0,
     )
+    gate = evaluate_seed_gate(
+        question_id=question_id,
+        assessments=assessments,
+        eligible_ids=bundle["allowed_evidence_ids"],
+        rejected_source_ids=[str(item.get("arxiv_id") or "") for item in rejected],
+        spec_hash=spec["spec_hash"],
+        extra_blockers=[]
+        if bundle["unknown_evidence_id_count"] == 0
+        and bundle["booklet_evidence_count"] == 0
+        and bundle["cross_question_evidence_id_count"] == 0
+        else ["integrity_counts_nonzero"],
+    )
+    if question_id == "Q069":
+        rejected_negatives = {item.get("arxiv_id") for item in rejected}
+        if any(arxiv_id in fulltext_sources for arxiv_id in Q069_NEGATIVE_ARXIV):
+            gate["blocking_reasons"].append("q069_negative_source_eligible")
+            gate["gate_status"] = "NOT_READY"
+        for arxiv_id in Q069_NEGATIVE_ARXIV:
+            if any(item.get("source_id") == f"arxiv:{arxiv_id}" for item in assessments):
+                continue
+            forced = assess_candidate(
+                spec=spec,
+                source_id=f"arxiv:{arxiv_id}",
+                source_content_sha256="",
+                title=f"arXiv:{arxiv_id}",
+                abstract="",
+                fulltext="network operations somatic mutation ageing phenotypes mutation burden",
+                query_origin="permanent_negative_regression",
+                discovery_rank=None,
+                discovery_relevance_score=0.9,
+                fulltext_available=True,
+                evidence_policy_hash=evidence_policy_hash,
+            )
+            assessments.append(forced)
+            rejected.append({"arxiv_id": arxiv_id, "reason": "permanent_q069_negative", "relevance_status": TOPIC_OFF})
+    bundle["evidence_seed_ready"] = gate["gate_status"] == "READY"
+    bundle["evidence_bundle_ready"] = bundle["evidence_seed_ready"]
+    bundle["topic_gate"] = gate
+    bundle["direct_core_count"] = gate["direct_core_count"]
+    bundle["supporting_mechanism_count"] = gate["supporting_mechanism_count"]
+    bundle["off_topic_count"] = gate["off_topic_count"]
+    bundle["relevance_spec_hash"] = spec["spec_hash"]
+    encoded = json.dumps(
+        {key: value for key, value in bundle.items() if key != "bundle_hash"},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    bundle["bundle_hash"] = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+    question_dir = output_root / question_id
+    write_json(question_dir / "evidence_bundle.json", bundle)
+    if write_relevance_artifacts:
+        write_json(question_dir / "relevance-spec.json", spec)
+        write_json(question_dir / "query-audit.json", {"question_id": question_id, "queries": query_audit})
+        write_json(question_dir / "discovery-candidates.json", {"question_id": question_id, "candidates": candidates})
+        write_json(question_dir / "candidate-relevance-assessments.json", {"question_id": question_id, "assessments": assessments})
+        write_json(question_dir / "evidence-seed.json", bundle)
+        write_json(question_dir / "evidence-seed-gate.json", gate)
+        write_json(question_dir / "rejected-sources.json", {"question_id": question_id, "rejected": rejected})
+        checksum_names = [
+            "relevance-spec.json",
+            "query-audit.json",
+            "discovery-candidates.json",
+            "candidate-relevance-assessments.json",
+            "source-access-audit.json",
+            "evidence-seed.json",
+            "evidence-seed-gate.json",
+            "rejected-sources.json",
+        ]
+        write_json(question_dir / "source-access-audit.json", {"question_id": question_id, "rejected": rejected})
+        lines = []
+        for name in checksum_names:
+            path = question_dir / name
+            if path.is_file():
+                lines.append(f"{sha256_file(path)}  {name}")
+        (question_dir / "checksums.sha256").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    return bundle
 
 
 def write_root_cause_report(path: Path) -> None:

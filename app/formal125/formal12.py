@@ -17,6 +17,7 @@ from typing import Any, Mapping
 
 from app.agents import prompts as prompt_module
 from app.evidence.oa_fulltext import FulltextFetchAudit
+from app.evidence.relevance import is_content_bearing
 from app.evidence.remediation import FORMAL_12_NEW, QUERY_SEEDS, build_seed_bundle, write_json
 from app.formal125 import REQUIRED_RESULT_FILES
 from app.formal125.catalog import T09_DOMAIN_REPRESENTATIVES
@@ -361,7 +362,13 @@ def prepare_new_case_seeds(
         existing = output_root / question_id / "evidence_bundle.json"
         if existing.is_file():
             previous = json.loads(existing.read_text(encoding="utf-8"))
-            if previous.get("evidence_seed_ready") and int(previous.get("fulltext_verified_source_count") or 0) >= 2:
+            topic_ready = str((previous.get("topic_gate") or {}).get("gate_status") or "") == "READY"
+            if (
+                previous.get("evidence_seed_ready")
+                and topic_ready
+                and int(previous.get("direct_core_count") or 0) >= 1
+                and int(previous.get("fulltext_verified_source_count") or 0) >= 2
+            ):
                 item = _question_from_catalog(repo_root, question_id)
                 results[question_id] = {
                     "question_id": question_id,
@@ -739,4 +746,33 @@ def copy_reused_verified_result(
 def refuse_stage_b_without_authorization(text: str) -> None:
     if text != AUTHORIZATION_TEXT:
         raise Formal12Error("stage B requires the exact captain authorization text")
+
+
+def classify_result_content_bearing(result: Mapping[str, Any]) -> bool:
+    """Blocked shells and empty hypothesis templates are not scientific content."""
+    return is_content_bearing(result)
+
+
+def content_bearing_similarity_summary(results: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+    from difflib import SequenceMatcher
+
+    blocked_template_ids = [
+        qid for qid, payload in results.items() if not classify_result_content_bearing(payload)
+    ]
+    bearing = {
+        qid: json.dumps(payload.get("generated_hypotheses") or [], ensure_ascii=False)
+        for qid, payload in results.items()
+        if classify_result_content_bearing(payload)
+    }
+    max_sim = 0.0
+    ids = list(bearing)
+    for index, left in enumerate(ids):
+        for right in ids[index + 1 :]:
+            max_sim = max(max_sim, SequenceMatcher(None, bearing[left], bearing[right]).ratio())
+    return {
+        "content_bearing_max_similarity": round(max_sim, 4),
+        "blocked_template_duplicate_count": len(blocked_template_ids),
+        "blocked_or_non_bearing_ids": blocked_template_ids,
+        "content_bearing_ids": ids,
+    }
 
