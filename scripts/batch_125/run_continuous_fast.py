@@ -381,6 +381,23 @@ def model_worker(worker_id: str) -> None:
         os.environ["SAGE_EVIDENCE_BUNDLE_DIR"] = str(OUTPUT_ROOT / "evidence_seeds")
         question_dir = OUTPUT_ROOT / question_id
         question_dir.mkdir(parents=True, exist_ok=True)
+        existing_manifest = question_dir / "package_manifest.json"
+        if existing_manifest.is_file():
+            manifest = json.loads(existing_manifest.read_text(encoding="utf-8"))
+            status = str(manifest.get("status") or "")
+            if status in {"succeeded", "partial", "failed", "blocked"}:
+                mark_model_done(
+                    OUTPUT_ROOT,
+                    question_id,
+                    status,
+                    int(manifest.get("provider_calls") or 0),
+                    int(manifest.get("input_tokens") or 0),
+                    int(manifest.get("output_tokens") or 0),
+                    _ORCH_SHA,
+                )
+                record_event(OUTPUT_ROOT, "adopted_existing_package", question_id, {"status": status})
+                refresh_manifest()
+                continue
         try:
             plan, state = _pipeline_with_frozen_bundle(question_id)
             with _PDF_SEM:
@@ -727,13 +744,19 @@ def supervisor_loop() -> int:
         counts = job_counts(OUTPUT_ROOT)
         if counts["evidence_pending"] == 0 and counts["evidence_running"] == 0 and counts["model_queued"] == 0 and counts["model_running"] == 0:
             break
+        evidence_drained = counts["evidence_pending"] == 0 and counts["evidence_running"] == 0
+        replacements: list[threading.Thread] = []
         for thread in list(workers):
-            if not thread.is_alive() and not _STOP.is_set():
-                name = thread.name
-                target = evidence_worker if name.startswith("evidence-") else model_worker
-                replacement = threading.Thread(target=target, args=(name,), name=name, daemon=True)
-                replacement.start()
-                workers.append(replacement)
+            if thread.is_alive() or _STOP.is_set():
+                continue
+            name = thread.name
+            if name.startswith("evidence-") and evidence_drained:
+                continue
+            target = evidence_worker if name.startswith("evidence-") else model_worker
+            replacement = threading.Thread(target=target, args=(name,), name=name, daemon=True)
+            replacement.start()
+            replacements.append(replacement)
+        workers[:] = [thread for thread in workers if thread.is_alive()] + replacements
         time.sleep(5)
     refresh_manifest()
     assemble_candidate()
