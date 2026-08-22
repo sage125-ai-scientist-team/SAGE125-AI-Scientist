@@ -75,3 +75,77 @@ projects:
                 value: "75"
               - key: FRONTEND_INGEST_TIMEOUT_SECONDS
                 value: "900"
+
+  - name: SAGE125-Final-Demo
+    environments:
+      - name: production
+        services:
+          - type: web
+            name: sage125-final-api
+            runtime: docker
+            plan: starter
+            region: singapore
+            branch: release/2026-sage125-final-demo
+            autoDeployTrigger: checksPass
+            dockerfilePath: ./Dockerfile.api
+            dockerContext: .
+            healthCheckPath: /health
+            envVars:
+              - key: APP_ENV
+                value: competition_demo
+              - key: DEMO_MODE
+                value: FROZEN_RELEASE_CANDIDATE
+              - key: FORMAL_125_READ_ONLY
+                value: "true"
+              - key: ALLOW_PUBLIC_ACTUAL_RUN
+                value: "false"
+              - key: ALLOW_PUBLIC_PROVIDER_CALL
+                value: "false"
+              - key: PUBLIC_FEEDBACK_WRITE_ENABLED
+                value: "false"
+              - key: RC_MANIFEST_RELATIVE_PATH
+                value: deployment/frozen_rc/manifest.json
+              - key: LOG_LEVEL
+                value: INFO
+              - key: PYTHONUTF8
+                value: "1"
+              - key: CORS_ALLOW_ORIGINS
+                value: https://sage125-final-ui.onrender.com
+
+          - type: web
+            name: sage125-final-ui
+            runtime: docker
+            plan: starter
+            region: singapore
+            branch: release/2026-sage125-final-demo
+            autoDeployTrigger: checksPass
+            dockerfilePath: ./Dockerfile.ui
+            dockerContext: .
+            healthCheckPath: /health
+            envVars:
+              - key: APP_ENV
+                value: competition_demo
+              - key: DEMO_MODE
+                value: FROZEN_RELEASE_CANDIDATE
+              - key: FORMAL_125_READ_ONLY
+                value: "true"
+              - key: ALLOW_PUBLIC_ACTUAL_RUN
+                value: "false"
+              - key: ALLOW_PUBLIC_PROVIDER_CALL
+                value: "false"
+              - key: PUBLIC_FEEDBACK_WRITE_ENABLED
+                value: "false"
+              - key: LOG_LEVEL
+                value: INFO
+              - key: PYTHONUTF8
+                value: "1"
+              - key: SAGE_INTERNAL_API_URL
+                fromService:
+                  name: sage125-final-api
+                  type: web
+                  property: hostport
+              - key: API_BASE_URL
+                fromService:
+                  name: sage125-final-api
+                  type: web
+                  property: hostport

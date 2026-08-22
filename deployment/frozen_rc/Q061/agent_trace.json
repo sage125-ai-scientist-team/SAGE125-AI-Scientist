@@ -1,0 +1,1989 @@
+[
+  {
+    "event_id": "28a4c489b2f9",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:42:01.212472+00:00",
+    "ended_at": "2026-08-22T08:42:01.212472+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "6296e631451c",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:42:01.212472+00:00",
+    "ended_at": "2026-08-22T08:42:05.958731+00:00",
+    "duration_ms": 4746,
+    "input_summary": "{\"question_item\": {\"id\": \"Q061\", \"domain\": \"Astronomy\", \"question\": \"How are pulsars formed?\", \"source_page\": 23, \"booklet_excerpt\": \"Pulsars are rotating neutron stars that produce pulses of radio waves, X-rays, and gamma rays. They are formed when a massive star runs out of fuel and collapses in on itself. The remnants are neutron stars with magnetic fields that range in strength from million times to quadrillion (a million billion) times that of Earth’s. The correct mix of spin frequency and magnetic field strength is needed for a neutron star to be a pulsar. A pulsar’s radiation bursts typ",
+    "output_summary": "{\"domain\": \"Astronomy\", \"core_question\": \"What is the physical formation process of pulsars from massive stars, and what specific conditions define a neutron star as a pulsar?\", \"keywords\": [\"pulsars\", \"neutron stars\", \"massive star collapse\", \"magnetic field strength\", \"spin frequency\", \"millisecond pulsars\", \"black widow pulsars\"], \"entities\": [\"Pulsars\", \"Neutron stars\", \"Massive stars\", \"Radio waves\", \"X-rays\", \"Gamma rays\", \"Magnetic fields\", \"Companion objects\", \"Black widow pulsars\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"Based on the provided excerpt, the scop",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2ba42ebf0b84",
+    "mock": false
+  },
+  {
+    "event_id": "733d308c2c32",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:42:05.958731+00:00",
+    "ended_at": "2026-08-22T08:42:26.081556+00:00",
+    "duration_ms": 20122,
+    "input_summary": "{\"question_item\": {\"id\": \"Q061\", \"domain\": \"Astronomy\", \"question\": \"How are pulsars formed?\", \"source_page\": 23, \"booklet_excerpt\": \"Pulsars are rotating neutron stars that produce pulses of radio waves, X-rays, and gamma rays. They are formed when a massive star runs out of fuel and collapses in on itself. The remnants are neutron stars with magnetic fields that range in strength from million times to quadrillion (a million billion) times that of Earth’s. The correct mix of spin frequency and magnetic field strength is needed for a neutron star to be a pulsar. A pulsar’s radiation bursts typ",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the core mechanism of pulsar formation from massive star collapse as described in the booklet.\", \"query\": \"pulsar formation mechanism massive star core collapse supernova remnant neutron star\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming that pulsars are rotating neutron stars formed from the gravitational collapse of massive stars after exhausting nuclear fuel.\", \"priority\": \"high\"}, {\"purpose\": \"Extract specific details on the magnetic field strength range of pulsars mentioned in the source.\", \"query\": \"pulsar magnetic field streng",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "94ddfd7b8159",
+    "mock": false
+  },
+  {
+    "event_id": "65898dcd6600",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:42:26.091209+00:00",
+    "ended_at": "2026-08-22T08:42:40.953892+00:00",
+    "duration_ms": 14862,
+    "input_summary": "{\"question_item\": {\"id\": \"Q061\", \"domain\": \"Astronomy\", \"question\": \"How are pulsars formed?\", \"source_page\": 23, \"booklet_excerpt\": \"Pulsars are rotating neutron stars that produce pulses of radio waves, X-rays, and gamma rays. They are formed when a massive star runs out of fuel and collapses in on itself. The remnants are neutron stars with magnetic fields that range in strength from million times to quadrillion (a million billion) times that of Earth’s. The correct mix of spin frequency and magnetic field strength is needed for a neutron star to be a pulsar. A pulsar’s radiation bursts typ",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Millisecond pulsars (MSPs) can be produced in globular clusters through the recycling of neutron stars in Low-Mass X-ray Binaries (LMXBs), where accretion spins up the neutron star.\", \"evidence_ids\": [\"EV-Q061-2dbc7fb25dbd3e5e4f661b49\"], \"confidence\": \"high\", \"fact_type\": \"mechanism\", \"caveat\": \"This evidence specifically addresses the formation/recycling mechanism of millisecond pulsars via accretion, rather than the initial core-collapse formation of all neutron stars.\"}], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The provided evidence does not conta",
+    "evidence_ids": [
+      "EV-Q061-2dbc7fb25dbd3e5e4f661b49",
+      "EV-Q061-425c8e502c67ada05513fc8f"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "29e9c20bde62",
+    "mock": false
+  },
+  {
+    "event_id": "cf42b0c49aee",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:42:40.954894+00:00",
+    "ended_at": "2026-08-22T08:42:59.004661+00:00",
+    "duration_ms": 18049,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q061\", \"domain\": \"Astronomy\", \"question\": \"How are pulsars formed?\", \"source_page\": 23, \"booklet_excerpt\": \"Pulsars are rotating neutron stars that produce pulses of radio waves, X-rays, and gamma rays. They are formed when a massive star runs out of fuel and collapses in on itself. The remnants are neutron stars with magnetic fields that range in strength from million times to quadrillion (a million billion) times that of Earth’s. The correct mix of spin frequency and magnetic field strength is needed for a neutron star to be a pulsar. A puls",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"The formation rate of millisecond pulsars (MSPs) in globular clusters is directly proportional to the historical population density of Low-Mass X-ray Binaries (LMXBs), validating the recycling model as the dominant MSP formation channel in these environments.\", \"mechanism\": \"Neutron stars in dense globular cluster environments undergo mass transfer from a companion star in an LMXB phase. The accretion of matter transfers angular momentum to the neutron star, spinning it up to millisecond periods and 'recycling' it into a radio pulsar, as described in EV-Q061-2db",
+    "evidence_ids": [
+      "EV-Q061-2dbc7fb25dbd3e5e4f661b49",
+      "EV-Q061-425c8e502c67ada05513fc8f"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2619806357c4",
+    "mock": false
+  },
+  {
+    "event_id": "469a23e80023",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:42:59.004661+00:00",
+    "ended_at": "2026-08-22T08:43:20.974850+00:00",
+    "duration_ms": 21970,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q061\", \"domain\": \"Astronomy\", \"question\": \"How are pulsars formed?\", \"source_page\": 23, \"booklet_excerpt\": \"Pulsars are rotating neutron stars that produce pulses of radio waves, X-rays, and gamma rays. They are formed when a massive star runs out of fuel and collapses in on itself. The remnants are neutron stars with magnetic fields that range in strength from million times to quadrillion (a million billion) times that of Earth’s. The correct mix of spin frequency and magnetic field strength is needed for a neutron star to be a pulsar. A puls",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that Millisecond Pulsar (MSP) formation in Globular Clusters (GCs) is driven by the recycling of neutron stars in Low-Mass X-ray Binaries (LMXBs), as posited in EV-Q061-2dbc7fb25dbd3e5e4f661b49. The core mechanism involves angular momentum transfer via accretion. To validate this, we will perform a statistical correlation analysis between the observed population of LMXBs and MSPs across a sample of Galactic Globular Clusters. We will control for cluster dynamical properties (central density, encounter rate) which influence binary form",
+    "evidence_ids": [
+      "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2dd60c78bfb1",
+    "mock": false
+  },
+  {
+    "event_id": "787e34cb7f60",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:43:20.974850+00:00",
+    "ended_at": "2026-08-22T08:43:32.974375+00:00",
+    "duration_ms": 11999,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q061\", \"domain\": \"Astronomy\", \"question\": \"How are pulsars formed?\", \"source_page\": 23, \"booklet_excerpt\": \"Pulsars are rotating neutron stars that produce pulses of radio waves, X-rays, and gamma rays. They are formed when a massive star runs out of fuel and collapses in on itself. The remnants are neutron stars with magnetic fields that range in strength from million times to quadrillion (a million billion) times that of Earth’s. The correct mix of spin frequency and magnetic field strength is needed for a neutron star to be a pulsar. A puls",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims a 'directly proportional' relationship between MSP formation rate and 'historical population density' of LMXBs. However, the proposed experiment only measures current observed LMXB counts. Current LMXB abundance is not a validated proxy for historical integrated formation rate without an explicit evolutionary model linking the two; this constitutes a significant construct validity gap.\", \"Evidence EV-Q061-2dbc7fb25dbd3e5e4f661b49 supports the qualitative recycling mechanism but does not provide empirical evidence for a strict linea",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "405f4f8d584f",
+    "mock": false
+  },
+  {
+    "event_id": "2ee8e86a1562",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:43:32.976365+00:00",
+    "ended_at": "2026-08-22T08:43:54.857887+00:00",
+    "duration_ms": 21881,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims a 'directly proportional' relationship between MSP formation rate and 'historical population density' of LMXBs. However, the proposed experiment only measures current observed LMXB counts. Current LMXB abundance is not a validated proxy for historical integrated formation rate without an explicit evolutionary model linking the two; this constitutes a significant construct validity gap.\", \"Evidence EV-Q061-2dbc7fb25dbd3e5e4f661b49 supports the qualitative recycling mechanism but does not pr",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"The current observed abundance of Low-Mass X-ray Binaries (LMXBs) in globular clusters is positively correlated with the current millisecond pulsar (MSP) population size, consistent with the recycling model where LMXBs act as active progenitors for MSPs.\", \"mechanism\": \"According to EV-Q061-2dbc7fb25dbd3e5e4f661b49, accreting neutron stars in LMXBs are spun up and recycled into fast radio pulsars. If this mechanism is dominant and currently active or recently active, clusters exhibiting higher instantaneous LMXB populations should statistically host larger MSP p",
+    "evidence_ids": [
+      "EV-Q061-2dbc7fb25dbd3e5e4f661b49",
+      "EV-Q061-425c8e502c67ada05513fc8f"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "701a1d4d0568",
+    "mock": false
+  },
+  {
+    "event_id": "b8831d8e2331",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:43:54.857887+00:00",
+    "ended_at": "2026-08-22T08:44:20.938882+00:00",
+    "duration_ms": 26080,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims a 'directly proportional' relationship between MSP formation rate and 'historical population density' of LMXBs. However, the proposed experiment only measures current observed LMXB counts. Current LMXB abundance is not a validated proxy for historical integrated formation rate without an explicit evolutionary model linking the two; this constitutes a significant construct validity gap.\", \"Evidence EV-Q061-2dbc7fb25dbd3e5e4f661b49 supports the qualitative recycling mechanism but does not pr",
+    "output_summary": "{\"technical_details\": \"This experiment tests the consistency of the recycling model (EV-Q061-2dbc7fb25dbd3e5e4f661b49) by examining the statistical correlation between current observed Low-Mass X-ray Binary (LMXB) counts and Millisecond Pulsar (MSP) counts in Galactic Globular Clusters. The hypothesis posits that if LMXBs are active progenitors of MSPs, clusters with higher instantaneous LMXB populations should exhibit statistically larger MSP populations, after controlling for cluster mass and dynamical encounter rates. Crucially, this design avoids claiming that current LMXB counts are a dir",
+    "evidence_ids": [
+      "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "26e041a2e0ff",
+    "mock": false
+  },
+  {
+    "event_id": "0807ec48c84e",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:44:20.939886+00:00",
+    "ended_at": "2026-08-22T08:44:26.909108+00:00",
+    "duration_ms": 5969,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims a 'directly proportional' relationship between MSP formation rate and 'historical population density' of LMXBs. However, the proposed experiment only measures current observed LMXB counts. Current LMXB abundance is not a validated proxy for historical integrated formation rate without an explicit evolutionary model linking the two; this constitutes a significant construct validity gap.\", \"Evidence EV-Q061-2dbc7fb25dbd3e5e4f661b49 supports the qualitative recycling mechanism but does not pr",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly shifts focus from unobservable 'historical population density' to observable 'current abundance', resolving the construct validity mismatch identified in the previous review.\", \"The falsifiable prediction has been appropriately softened to require a 'statistically significant deficit' rather than absolute absence of MSPs, correctly accounting for Poisson noise and small-number statistics.\", \"The experiment design now explicitly declares cluster structural parameters (mass, encounter rate) as external control variables not",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2ed8cde05e03",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:6a1a729055ed1ee3",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The formation rate of millisecond pulsars (MSPs) in globular clusters is directly proportional to the historical population density of Low-Mass X-ray Binaries (LMXBs), validating the recycling model as the dominant MSP formation channel in these environments.",
+              "mechanism": "Neutron stars in dense globular cluster environments undergo mass transfer from a companion star in an LMXB phase. The accretion of matter transfers angular momentum to the neutron star, spinning it up to millisecond periods and 'recycling' it into a radio pulsar, as described in EV-Q061-2dbc7fb25dbd3e5e4f661b49.",
+              "falsifiable_prediction": "If the recycling model is the primary formation mechanism, then globular clusters with higher observed LMXB densities must statistically exhibit higher MSP populations. Conversely, clusters with negligible LMXB populations should lack MSPs, regardless of their age or initial neutron star formation rate.",
+              "required_observations": [
+                "Catalog of LMXB counts per globular cluster",
+                "Catalog of confirmed MSP counts per globular cluster",
+                "Cluster stellar encounter rates or central densities to normalize interaction probabilities"
+              ],
+              "risk_of_being_wrong": "Observation of significant MSP populations in globular clusters that currently lack or historically lacked sufficient LMXB progenitors would contradict the standard recycling hypothesis. Additionally, if MSP spin distributions do not match accretion torque models, the mechanism may be incomplete.",
+              "supporting_evidence_ids": [
+                "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Current pulsar population synthesis models, when calibrated against low-frequency survey data (e.g., Cambridge 81.5-MHz), can accurately predict the underlying birth rate of recycled pulsars, thereby constraining the efficiency of the LMXB-to-MSP conversion process.",
+              "mechanism": "Population synthesis models simulate the evolution of binary systems and pulsar detectability. By validating these models against actual survey yields (as demonstrated in EV-Q061-425c8e502c67ada05513fc8f), one can invert the model to derive the physical parameters governing MSP formation efficiency from LMXB progenitors.",
+              "falsifiable_prediction": "A validated model calibrated at 81.5 MHz must successfully predict MSP detection rates in independent surveys at different frequencies (e.g., 400 MHz or 1.4 GHz) within statistical uncertainties. Failure to predict cross-survey yields implies incorrect assumptions about the MSP luminosity function or formation rate.",
+              "required_observations": [
+                "Detection counts from Cambridge 81.5-MHz survey",
+                "Detection counts from independent pulsar surveys at varying frequencies",
+                "Sensitivity parameters and sky coverage for all compared surveys"
+              ],
+              "risk_of_being_wrong": "If the model reproduces the 81.5-MHz count but fails significantly at other frequencies, it suggests that the assumed spectral index or beaming fraction for recycled pulsars is incorrect, undermining the derived formation rate constraints.",
+              "supporting_evidence_ids": [
+                "EV-Q061-425c8e502c67ada05513fc8f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.82
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the only formation mechanism supported by the allowed evidence (recycling in GCs via LMXBs, EV-Q061-2dbc7fb25dbd3e5e4f661b49). It is highly falsifiable using existing astronomical catalogs and avoids speculating on core-collapse physics for which no evidence IDs are provided. Hypothesis 1 is a strong secondary option focusing on methodology but is less direct regarding the physical formation question.",
+          "rejected_directions": [
+            "Core-collapse supernova mechanisms for standard pulsar formation: Rejected due to complete absence of supporting evidence IDs in the allowed set; this remains a critical knowledge_gap.",
+            "Black widow pulsar companion ablation dynamics: Rejected because specific evidence linking 'black widow' terminology to consumption physics is missing from the allowed evidence catalog.",
+            "General relativistic tests using binary pulsars: Rejected as EV-Q061-5a6997dee4ca88fac8c9b5d0 and EV-Q061-77f5fef91c55c7c8afe8cbd4 pertain to fundamental physics tests (Shapiro delay, PK parameters) rather than formation mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Millisecond Pulsar (MSP) formation in Globular Clusters (GCs) is driven by the recycling of neutron stars in Low-Mass X-ray Binaries (LMXBs), as posited in EV-Q061-2dbc7fb25dbd3e5e4f661b49. The core mechanism involves angular momentum transfer via accretion. To validate this, we will perform a statistical correlation analysis between the observed population of LMXBs and MSPs across a sample of Galactic Globular Clusters. We will control for cluster dynamical properties (central density, encounter rate) which influence binary formation rates. The study utilizes publicly available catalogs of GC X-ray sources (LMXB candidates) and radio pulsar timing arrays. The primary metric is the Pearson/Spearman correlation coefficient between LMXB density and MSP count, normalized by cluster stellar mass or encounter rate.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Globular Cluster LMXB Catalog",
+                "description": "Compilation of Low-Mass X-ray Binary counts per globular cluster, derived from Chandra/XMM-Newton surveys. Represents the progenitor population for recycling.",
+                "source_type": "observational_catalog",
+                "access_method": "Public archive query (e.g., NASA HEASARC)",
+                "evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ]
+              },
+              {
+                "name": "Globular Cluster Pulsar Catalog",
+                "description": "Catalog of confirmed millisecond pulsars associated with specific globular clusters, including spin periods and binary status.",
+                "source_type": "observational_catalog",
+                "access_method": "ATNF Pulsar Catalogue / Literature compilation",
+                "evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ]
+              },
+              {
+                "name": "Globular Cluster Structural Parameters",
+                "description": "Core densities, relaxation times, and stellar encounter rates for normalization of interaction probabilities.",
+                "source_type": "astronomical_database",
+                "access_method": "Harris Catalog of Globular Clusters",
+                "evidence_ids": []
+              }
+            ],
+            "target": {
+              "name": "Correlation Analysis Dataset",
+              "description": "A merged table containing per-cluster metrics: N_LMXB, N_MSP, Core Density, Encounter Rate, and Metallicity.",
+              "format": "CSV/Parquet",
+              "schema": {
+                "cluster_id": "string",
+                "n_lmxbs": "integer",
+                "n_msps": "integer",
+                "core_density": "float",
+                "encounter_rate": "float"
+              }
+            }
+          },
+          "methods": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth. 2. Normalization: Normalize counts by cluster stellar mass or core encounter rate to account for dynamical formation biases. 3. Statistical Testing: Perform Spearman rank correlation between normalized LMXB density and MSP density. 4. Regression Analysis: Fit a linear model N_MSP ~ alpha * N_LMXB + beta * Encounter_Rate + gamma * Metallicity to isolate the LMXB contribution. 5. Falsification Check: Identify outliers where high MSP counts exist with negligible LMXB history (or vice versa) to test the 'dominant channel' claim.",
+          "experiments": {
+            "baselines": [
+              "Null Hypothesis: No correlation between LMXB and MSP populations (random distribution).",
+              "Dynamical Baseline: MSP formation proportional only to stellar encounter rates, independent of current LMXB visibility."
+            ],
+            "metrics": [
+              "Spearman Rank Correlation Coefficient (rho)",
+              "Pearson Correlation Coefficient (r)",
+              "P-value for significance of correlation",
+              "R-squared of the multivariate regression model"
+            ],
+            "ablation": "Remove metallicity and encounter rate covariates to assess the raw correlation between LMXB and MSP counts. Exclude clusters with incomplete survey coverage to test robustness against selection bias.",
+            "validation_protocol": "Split clusters into 'Core-Collapsed' and 'Non-Core-Collapsed' subsets to verify if the correlation holds across different dynamical states. Cross-validate with independent radio survey data if available."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define strict criteria for 'confirmed' LMXB and MSP status to avoid classification ambiguity.",
+            "Account for survey sensitivity limits (flux limits) in both X-ray and Radio bands.",
+            "Provide code for merging heterogeneous catalog formats (HEASARC vs ATNF).",
+            "Document handling of upper limits for clusters with zero detected LMXBs/MSPs."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_runtime": "2-4 hours for data cleaning and statistical analysis",
+            "required_resources": "Python environment with Astropy, Pandas, Scipy",
+            "data_availability": "Publicly available via NASA HEASARC and ATNF",
+            "code_repository": null
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-084201-c9cdc1f8",
+        "version_number": 1,
+        "version_id": "20260822-084201-c9cdc1f8:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The formation rate of millisecond pulsars (MSPs) in globular clusters is directly proportional to the historical population density of Low-Mass X-ray Binaries (LMXBs), validating the recycling model as the dominant MSP formation channel in these environments.",
+              "mechanism": "Neutron stars in dense globular cluster environments undergo mass transfer from a companion star in an LMXB phase. The accretion of matter transfers angular momentum to the neutron star, spinning it up to millisecond periods and 'recycling' it into a radio pulsar, as described in EV-Q061-2dbc7fb25dbd3e5e4f661b49.",
+              "falsifiable_prediction": "If the recycling model is the primary formation mechanism, then globular clusters with higher observed LMXB densities must statistically exhibit higher MSP populations. Conversely, clusters with negligible LMXB populations should lack MSPs, regardless of their age or initial neutron star formation rate.",
+              "required_observations": [
+                "Catalog of LMXB counts per globular cluster",
+                "Catalog of confirmed MSP counts per globular cluster",
+                "Cluster stellar encounter rates or central densities to normalize interaction probabilities"
+              ],
+              "risk_of_being_wrong": "Observation of significant MSP populations in globular clusters that currently lack or historically lacked sufficient LMXB progenitors would contradict the standard recycling hypothesis. Additionally, if MSP spin distributions do not match accretion torque models, the mechanism may be incomplete.",
+              "supporting_evidence_ids": [
+                "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Current pulsar population synthesis models, when calibrated against low-frequency survey data (e.g., Cambridge 81.5-MHz), can accurately predict the underlying birth rate of recycled pulsars, thereby constraining the efficiency of the LMXB-to-MSP conversion process.",
+              "mechanism": "Population synthesis models simulate the evolution of binary systems and pulsar detectability. By validating these models against actual survey yields (as demonstrated in EV-Q061-425c8e502c67ada05513fc8f), one can invert the model to derive the physical parameters governing MSP formation efficiency from LMXB progenitors.",
+              "falsifiable_prediction": "A validated model calibrated at 81.5 MHz must successfully predict MSP detection rates in independent surveys at different frequencies (e.g., 400 MHz or 1.4 GHz) within statistical uncertainties. Failure to predict cross-survey yields implies incorrect assumptions about the MSP luminosity function or formation rate.",
+              "required_observations": [
+                "Detection counts from Cambridge 81.5-MHz survey",
+                "Detection counts from independent pulsar surveys at varying frequencies",
+                "Sensitivity parameters and sky coverage for all compared surveys"
+              ],
+              "risk_of_being_wrong": "If the model reproduces the 81.5-MHz count but fails significantly at other frequencies, it suggests that the assumed spectral index or beaming fraction for recycled pulsars is incorrect, undermining the derived formation rate constraints.",
+              "supporting_evidence_ids": [
+                "EV-Q061-425c8e502c67ada05513fc8f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.82
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the only formation mechanism supported by the allowed evidence (recycling in GCs via LMXBs, EV-Q061-2dbc7fb25dbd3e5e4f661b49). It is highly falsifiable using existing astronomical catalogs and avoids speculating on core-collapse physics for which no evidence IDs are provided. Hypothesis 1 is a strong secondary option focusing on methodology but is less direct regarding the physical formation question.",
+          "rejected_directions": [
+            "Core-collapse supernova mechanisms for standard pulsar formation: Rejected due to complete absence of supporting evidence IDs in the allowed set; this remains a critical knowledge_gap.",
+            "Black widow pulsar companion ablation dynamics: Rejected because specific evidence linking 'black widow' terminology to consumption physics is missing from the allowed evidence catalog.",
+            "General relativistic tests using binary pulsars: Rejected as EV-Q061-5a6997dee4ca88fac8c9b5d0 and EV-Q061-77f5fef91c55c7c8afe8cbd4 pertain to fundamental physics tests (Shapiro delay, PK parameters) rather than formation mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Millisecond Pulsar (MSP) formation in Globular Clusters (GCs) is driven by the recycling of neutron stars in Low-Mass X-ray Binaries (LMXBs), as posited in EV-Q061-2dbc7fb25dbd3e5e4f661b49. The core mechanism involves angular momentum transfer via accretion. To validate this, we will perform a statistical correlation analysis between the observed population of LMXBs and MSPs across a sample of Galactic Globular Clusters. We will control for cluster dynamical properties (central density, encounter rate) which influence binary formation rates. The study utilizes publicly available catalogs of GC X-ray sources (LMXB candidates) and radio pulsar timing arrays. The primary metric is the Pearson/Spearman correlation coefficient between LMXB density and MSP count, normalized by cluster stellar mass or encounter rate.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Globular Cluster LMXB Catalog",
+                "description": "Compilation of Low-Mass X-ray Binary counts per globular cluster, derived from Chandra/XMM-Newton surveys. Represents the progenitor population for recycling.",
+                "source_type": "observational_catalog",
+                "access_method": "Public archive query (e.g., NASA HEASARC)",
+                "evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ]
+              },
+              {
+                "name": "Globular Cluster Pulsar Catalog",
+                "description": "Catalog of confirmed millisecond pulsars associated with specific globular clusters, including spin periods and binary status.",
+                "source_type": "observational_catalog",
+                "access_method": "ATNF Pulsar Catalogue / Literature compilation",
+                "evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ]
+              },
+              {
+                "name": "Globular Cluster Structural Parameters",
+                "description": "Core densities, relaxation times, and stellar encounter rates for normalization of interaction probabilities.",
+                "source_type": "astronomical_database",
+                "access_method": "Harris Catalog of Globular Clusters",
+                "evidence_ids": []
+              }
+            ],
+            "target": {
+              "name": "Correlation Analysis Dataset",
+              "description": "A merged table containing per-cluster metrics: N_LMXB, N_MSP, Core Density, Encounter Rate, and Metallicity.",
+              "format": "CSV/Parquet",
+              "schema": {
+                "cluster_id": "string",
+                "n_lmxbs": "integer",
+                "n_msps": "integer",
+                "core_density": "float",
+                "encounter_rate": "float"
+              }
+            }
+          },
+          "methods": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth. 2. Normalization: Normalize counts by cluster stellar mass or core encounter rate to account for dynamical formation biases. 3. Statistical Testing: Perform Spearman rank correlation between normalized LMXB density and MSP density. 4. Regression Analysis: Fit a linear model N_MSP ~ alpha * N_LMXB + beta * Encounter_Rate + gamma * Metallicity to isolate the LMXB contribution. 5. Falsification Check: Identify outliers where high MSP counts exist with negligible LMXB history (or vice versa) to test the 'dominant channel' claim.",
+          "experiments": {
+            "baselines": [
+              "Null Hypothesis: No correlation between LMXB and MSP populations (random distribution).",
+              "Dynamical Baseline: MSP formation proportional only to stellar encounter rates, independent of current LMXB visibility."
+            ],
+            "metrics": [
+              "Spearman Rank Correlation Coefficient (rho)",
+              "Pearson Correlation Coefficient (r)",
+              "P-value for significance of correlation",
+              "R-squared of the multivariate regression model"
+            ],
+            "ablation": "Remove metallicity and encounter rate covariates to assess the raw correlation between LMXB and MSP counts. Exclude clusters with incomplete survey coverage to test robustness against selection bias.",
+            "validation_protocol": "Split clusters into 'Core-Collapsed' and 'Non-Core-Collapsed' subsets to verify if the correlation holds across different dynamical states. Cross-validate with independent radio survey data if available."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define strict criteria for 'confirmed' LMXB and MSP status to avoid classification ambiguity.",
+            "Account for survey sensitivity limits (flux limits) in both X-ray and Radio bands.",
+            "Provide code for merging heterogeneous catalog formats (HEASARC vs ATNF).",
+            "Document handling of upper limits for clusters with zero detected LMXBs/MSPs."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_runtime": "2-4 hours for data cleaning and statistical analysis",
+            "required_resources": "Python environment with Astropy, Pandas, Scipy",
+            "data_availability": "Publicly available via NASA HEASARC and ATNF",
+            "code_repository": null
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis claims a 'directly proportional' relationship between MSP formation rate and 'historical population density' of LMXBs. However, the proposed experiment only measures current observed LMXB counts. Current LMXB abundance is not a validated proxy for historical integrated formation rate without an explicit evolutionary model linking the two; this constitutes a significant construct validity gap.",
+            "Evidence EV-Q061-2dbc7fb25dbd3e5e4f661b49 supports the qualitative recycling mechanism but does not provide empirical evidence for a strict linear proportionality or validate current LMXB counts as a historical tracer. The hypothesis overclaims relative to the provided evidence.",
+            "The 'Globular Cluster Structural Parameters' dataset in the experiment design has an empty evidence_ids list. While structural parameters are standard astronomical data, strictly adhering to the protocol requires either mapping them to an allowed evidence ID or explicitly declaring them as external knowledge/assumptions in the methods section to avoid ungrounded inputs.",
+            "The falsifiable prediction states clusters with negligible LMXBs should 'lack MSPs'. This binary condition ignores stochasticity in small-number statistics and potential alternative (albeit minor) formation channels. A statistical floor or confidence interval is required rather than absolute absence."
+          ],
+          "critical_issues": [
+            "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+            "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+            "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies."
+          ],
+          "required_revisions": [
+            "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+            "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+            "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+            "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.6,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:b665e8abc267",
+            "category": "critical_issue",
+            "description": "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:d7e3ec83aa56",
+            "category": "critical_issue",
+            "description": "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:896f6183a98a",
+            "category": "critical_issue",
+            "description": "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a62ab5875dfa",
+            "category": "required_revision",
+            "description": "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:584630b7ad3d",
+            "category": "required_revision",
+            "description": "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1211754b427b",
+            "category": "required_revision",
+            "description": "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3e869415c1f7",
+            "category": "required_revision",
+            "description": "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "f9b799915bd37f41350d68b7d96c5042dc6acd31ff890a24d48d608eed539937",
+          "experiment_designer": "346d9a07169f020c07fb41333476fb9585eb7ad7d450ce8cc43ba6ba474b8578",
+          "scientific_reviewer": "008f0bf413b30cef2c349e7dacfdc3c297eef38d44c3bc9d1c2387f69254c417"
+        }
+      },
+      "parent_version_id": "20260822-084201-c9cdc1f8:v1",
+      "lineage": [
+        "20260822-084201-c9cdc1f8:v1",
+        "20260822-084201-c9cdc1f8:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis claims a 'directly proportional' relationship between MSP formation rate and 'historical population density' of LMXBs. However, the proposed experiment only measures current observed LMXB counts. Current LMXB abundance is not a validated proxy for historical integrated formation rate without an explicit evolutionary model linking the two; this constitutes a significant construct validity gap.",
+          "Evidence EV-Q061-2dbc7fb25dbd3e5e4f661b49 supports the qualitative recycling mechanism but does not provide empirical evidence for a strict linear proportionality or validate current LMXB counts as a historical tracer. The hypothesis overclaims relative to the provided evidence.",
+          "The 'Globular Cluster Structural Parameters' dataset in the experiment design has an empty evidence_ids list. While structural parameters are standard astronomical data, strictly adhering to the protocol requires either mapping them to an allowed evidence ID or explicitly declaring them as external knowledge/assumptions in the methods section to avoid ungrounded inputs.",
+          "The falsifiable prediction states clusters with negligible LMXBs should 'lack MSPs'. This binary condition ignores stochasticity in small-number statistics and potential alternative (albeit minor) formation channels. A statistical floor or confidence interval is required rather than absolute absence."
+        ],
+        "critical_issues": [
+          "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+          "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+          "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies."
+        ],
+        "required_revisions": [
+          "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+          "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+          "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+          "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.6,
+        "falsifiability_score": 0.8,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly shifts focus from unobservable 'historical population density' to observable 'current abundance', resolving the construct validity mismatch identified in the previous review.",
+          "The falsifiable prediction has been appropriately softened to require a 'statistically significant deficit' rather than absolute absence of MSPs, correctly accounting for Poisson noise and small-number statistics.",
+          "The experiment design now explicitly declares cluster structural parameters (mass, encounter rate) as external control variables not grounded in allowed evidence, satisfying the protocol requirement for transparency regarding ungrounded inputs.",
+          "A 'Primordial Binary Baseline' has been added to distinguish dynamical recycling channels from mass-dependent formation, addressing the confounding variable concern.",
+          "All factual claims regarding the recycling mechanism are strictly traced to EV-Q061-2dbc7fb25dbd3e5e4f661b49, and no overclaiming of proportionality is present.",
+          "Results field correctly states 'pending' with no fabrication of experimental outcomes."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:c53d0c984f7e7587",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+          "issue_id": "critical_issue:b665e8abc267"
+        },
+        {
+          "failure_id": "failure:75b84ca66ae7e615",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+          "issue_id": "critical_issue:d7e3ec83aa56"
+        },
+        {
+          "failure_id": "failure:123a49e7bd504220",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies.",
+          "issue_id": "critical_issue:896f6183a98a"
+        },
+        {
+          "failure_id": "failure:0beebe172694c13a",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+          "issue_id": "required_revision:a62ab5875dfa"
+        },
+        {
+          "failure_id": "failure:256f3c8c23904179",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+          "issue_id": "required_revision:584630b7ad3d"
+        },
+        {
+          "failure_id": "failure:fa7a4dea777e03e5",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+          "issue_id": "required_revision:1211754b427b"
+        },
+        {
+          "failure_id": "failure:65b627e0b76fbb0b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.",
+          "issue_id": "required_revision:3e869415c1f7"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:62ed471e86a52358",
+          "issue_id": "critical_issue:d7e3ec83aa56",
+          "reason": "Reviewer item critical_issue:d7e3ec83aa56 requested 'Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.'. V2 changes methods; deterministic correlation evidence tokens=['catalog', 'cluster', 'cohort', 'evidence', 'globular', 'unground'], coverage=0.462.",
+          "before": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth. 2. Normalization: Normalize counts by cluster stellar mass or core encounter rate to account for dynamical formation biases. 3. Statistical Testing: Perform Spearman rank correlation between normalized LMXB density and MSP density. 4. Regression Analysis: Fit a linear model N_MSP ~ alpha * N_LMXB + beta * Encounter_Rate + gamma * Metallicity to isolate the LMXB contribution. 5. Falsification Check: Identify outliers where high MSP counts exist with negligible LMXB history (or vice versa) to test the 'dominant channel' claim.",
+          "after": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth in both X-ray and Radio bands. 2. External Control Integration: Incorporate cluster stellar mass and core encounter rates from standard astronomical catalogs (e.g., Harris Catalog) as external covariates. These are explicitly declared as ungrounded external controls required to normalize for dynamical formation biases, not derived from the provided evidence set. 3. Statistical Modeling: Perform multivariate regression analysis: N_MSP ~ alpha * N_LMXB + beta * Mass + gamma * Encounter_Rate. 4. Correlation Analysis: Calculate partial Spearman rank correlation between N_LMXB and N_MSP, controlling for mass and encounter rate. 5. Quartile Comparison: Compare mean MSP counts in the lowest vs. highest quartiles of LMXB abundance to test for statistical deficits, accounting for Poisson noise in low-count regimes.",
+          "evidence_refs": [
+            "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:6cbe981593a4957c",
+          "issue_id": "required_revision:a62ab5875dfa",
+          "reason": "Reviewer item required_revision:a62ab5875dfa requested 'Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.'. V2 changes methods; deterministic correlation evidence tokens=['abundance', 'between', 'cohort', 'correlation', 'count', 'evidence', 'formation', 'lmxb', 'model', 'msp', 'rate', 'stellar', 'test'], coverage=0.542.",
+          "before": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth. 2. Normalization: Normalize counts by cluster stellar mass or core encounter rate to account for dynamical formation biases. 3. Statistical Testing: Perform Spearman rank correlation between normalized LMXB density and MSP density. 4. Regression Analysis: Fit a linear model N_MSP ~ alpha * N_LMXB + beta * Encounter_Rate + gamma * Metallicity to isolate the LMXB contribution. 5. Falsification Check: Identify outliers where high MSP counts exist with negligible LMXB history (or vice versa) to test the 'dominant channel' claim.",
+          "after": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth in both X-ray and Radio bands. 2. External Control Integration: Incorporate cluster stellar mass and core encounter rates from standard astronomical catalogs (e.g., Harris Catalog) as external covariates. These are explicitly declared as ungrounded external controls required to normalize for dynamical formation biases, not derived from the provided evidence set. 3. Statistical Modeling: Perform multivariate regression analysis: N_MSP ~ alpha * N_LMXB + beta * Mass + gamma * Encounter_Rate. 4. Correlation Analysis: Calculate partial Spearman rank correlation between N_LMXB and N_MSP, controlling for mass and encounter rate. 5. Quartile Comparison: Compare mean MSP counts in the lowest vs. highest quartiles of LMXB abundance to test for statistical deficits, accounting for Poisson noise in low-count regimes.",
+          "evidence_refs": [
+            "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:39fabea15bfecf28",
+          "issue_id": "required_revision:a62ab5875dfa",
+          "reason": "Reviewer item required_revision:a62ab5875dfa requested 'Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.'. V2 changes technical_details; deterministic correlation evidence tokens=['between', 'cohort', 'consistency', 'correlation', 'count', 'current', 'formation', 'historical', 'hypothesi', 'lmxb', 'model', 'msp', 'rate', 'recycl', 'specific', 'test'], coverage=0.667.",
+          "before": "This experiment tests the hypothesis that Millisecond Pulsar (MSP) formation in Globular Clusters (GCs) is driven by the recycling of neutron stars in Low-Mass X-ray Binaries (LMXBs), as posited in EV-Q061-2dbc7fb25dbd3e5e4f661b49. The core mechanism involves angular momentum transfer via accretion. To validate this, we will perform a statistical correlation analysis between the observed population of LMXBs and MSPs across a sample of Galactic Globular Clusters. We will control for cluster dynamical properties (central density, encounter rate) which influence binary formation rates. The study utilizes publicly available catalogs of GC X-ray sources (LMXB candidates) and radio pulsar timing arrays. The primary metric is the Pearson/Spearman correlation coefficient between LMXB density and MSP count, normalized by cluster stellar mass or encounter rate.",
+          "after": "This experiment tests the consistency of the recycling model (EV-Q061-2dbc7fb25dbd3e5e4f661b49) by examining the statistical correlation between current observed Low-Mass X-ray Binary (LMXB) counts and Millisecond Pulsar (MSP) counts in Galactic Globular Clusters. The hypothesis posits that if LMXBs are active progenitors of MSPs, clusters with higher instantaneous LMXB populations should exhibit statistically larger MSP populations, after controlling for cluster mass and dynamical encounter rates. Crucially, this design avoids claiming that current LMXB counts are a direct proxy for historical integrated formation rates; instead, it tests for a steady-state or evolutionary link observable in current snapshots. Structural parameters (mass, encounter rate) are treated as external control variables to isolate the specific contribution of the LMXB channel from general dynamical binary formation effects.",
+          "evidence_refs": [
+            "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:3dded218b3ec2802",
+          "issue_id": "required_revision:584630b7ad3d",
+          "reason": "Reviewer item required_revision:584630b7ad3d requested 'Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['baseline', 'cluster', 'cohort', 'evidence', 'explicitly', 'external', 'ground', 'not', 'parameter', 'provid', 'structural'], coverage=0.478.",
+          "before": [
+            "Define strict criteria for 'confirmed' LMXB and MSP status to avoid classification ambiguity.",
+            "Account for survey sensitivity limits (flux limits) in both X-ray and Radio bands.",
+            "Provide code for merging heterogeneous catalog formats (HEASARC vs ATNF).",
+            "Document handling of upper limits for clusters with zero detected LMXBs/MSPs."
+          ],
+          "after": [
+            "Explicitly document that cluster structural parameters (mass, encounter rate) are external controls not grounded in the provided evidence IDs.",
+            "Define strict criteria for 'confirmed' LMXB and MSP status to minimize classification ambiguity.",
+            "Account for survey sensitivity limits (flux limits) in both X-ray and Radio bands when interpreting zero-counts.",
+            "Provide code for merging heterogeneous catalog formats and handling upper limits for non-detections.",
+            "Use bootstrapping to quantify uncertainty in correlation metrics due to small sample sizes in individual clusters."
+          ],
+          "evidence_refs": [
+            "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:f2fc093dcbbabe71",
+          "issue_id": "required_revision:3e869415c1f7",
+          "reason": "Reviewer item required_revision:3e869415c1f7 requested 'Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.'. V2 changes control_groups; deterministic correlation evidence tokens=['baseline', 'binary', 'channel', 'cluster', 'correlation', 'dynamical', 'formation', 'lmxb', 'mass', 'model', 'msp', 'non', 'primordial', 'represent'], coverage=0.636.",
+          "before": [
+            "Null Hypothesis: No correlation between LMXB and MSP populations (random distribution).",
+            "Dynamical Baseline: MSP formation proportional only to stellar encounter rates, independent of current LMXB visibility."
+          ],
+          "after": [
+            "Null Hypothesis: No significant partial correlation between current LMXB counts and MSP counts after controlling for cluster mass and encounter rate.",
+            "Primordial Binary Baseline: A model where MSP formation is proportional only to cluster stellar mass (proxy for total binary population) and independent of current LMXB visibility, representing non-dynamical/primordial formation channels."
+          ],
+          "evidence_refs": [
+            "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+          ],
+          "affected_plan_section": "control_groups",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:b665e8abc267",
+          "category": "critical_issue",
+          "description": "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:d7e3ec83aa56",
+          "category": "critical_issue",
+          "description": "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:62ed471e86a52358; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:896f6183a98a",
+          "category": "critical_issue",
+          "description": "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a62ab5875dfa",
+          "category": "required_revision",
+          "description": "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:6cbe981593a4957c,change:39fabea15bfecf28; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:584630b7ad3d",
+          "category": "required_revision",
+          "description": "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:3dded218b3ec2802; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:1211754b427b",
+          "category": "required_revision",
+          "description": "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:3e869415c1f7",
+          "category": "required_revision",
+          "description": "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f2fc093dcbbabe71; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.6,
+          "after": 0.95,
+          "delta": 0.35
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "The current observed abundance of Low-Mass X-ray Binaries (LMXBs) in globular clusters is positively correlated with the current millisecond pulsar (MSP) population size, consistent with the recycling model where LMXBs act as active progenitors for MSPs.",
+          "overall_score": 0.88,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Population synthesis models calibrated to reproduce low-frequency survey yields (e.g., Cambridge 81.5-MHz) can constrain the MSP formation efficiency parameter, providing an indirect test of the recycling channel's productivity consistent with EV-Q061-2dbc7fb25dbd3e5e4f661b49.",
+          "overall_score": 0.82,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 4,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:b665e8abc267",
+        "required_revision_without_change:critical_issue:896f6183a98a",
+        "required_revision_without_change:required_revision:1211754b427b",
+        "unresolved_issue:critical_issue:b665e8abc267",
+        "unresolved_issue:critical_issue:896f6183a98a",
+        "unresolved_issue:required_revision:1211754b427b"
+      ],
+      "remaining_blockers": [
+        "critical_issue:b665e8abc267: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:896f6183a98a: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:1211754b427b: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084201-c9cdc1f8",
+        "version_number": 1,
+        "version_id": "20260822-084201-c9cdc1f8:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The formation rate of millisecond pulsars (MSPs) in globular clusters is directly proportional to the historical population density of Low-Mass X-ray Binaries (LMXBs), validating the recycling model as the dominant MSP formation channel in these environments.",
+              "mechanism": "Neutron stars in dense globular cluster environments undergo mass transfer from a companion star in an LMXB phase. The accretion of matter transfers angular momentum to the neutron star, spinning it up to millisecond periods and 'recycling' it into a radio pulsar, as described in EV-Q061-2dbc7fb25dbd3e5e4f661b49.",
+              "falsifiable_prediction": "If the recycling model is the primary formation mechanism, then globular clusters with higher observed LMXB densities must statistically exhibit higher MSP populations. Conversely, clusters with negligible LMXB populations should lack MSPs, regardless of their age or initial neutron star formation rate.",
+              "required_observations": [
+                "Catalog of LMXB counts per globular cluster",
+                "Catalog of confirmed MSP counts per globular cluster",
+                "Cluster stellar encounter rates or central densities to normalize interaction probabilities"
+              ],
+              "risk_of_being_wrong": "Observation of significant MSP populations in globular clusters that currently lack or historically lacked sufficient LMXB progenitors would contradict the standard recycling hypothesis. Additionally, if MSP spin distributions do not match accretion torque models, the mechanism may be incomplete.",
+              "supporting_evidence_ids": [
+                "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Current pulsar population synthesis models, when calibrated against low-frequency survey data (e.g., Cambridge 81.5-MHz), can accurately predict the underlying birth rate of recycled pulsars, thereby constraining the efficiency of the LMXB-to-MSP conversion process.",
+              "mechanism": "Population synthesis models simulate the evolution of binary systems and pulsar detectability. By validating these models against actual survey yields (as demonstrated in EV-Q061-425c8e502c67ada05513fc8f), one can invert the model to derive the physical parameters governing MSP formation efficiency from LMXB progenitors.",
+              "falsifiable_prediction": "A validated model calibrated at 81.5 MHz must successfully predict MSP detection rates in independent surveys at different frequencies (e.g., 400 MHz or 1.4 GHz) within statistical uncertainties. Failure to predict cross-survey yields implies incorrect assumptions about the MSP luminosity function or formation rate.",
+              "required_observations": [
+                "Detection counts from Cambridge 81.5-MHz survey",
+                "Detection counts from independent pulsar surveys at varying frequencies",
+                "Sensitivity parameters and sky coverage for all compared surveys"
+              ],
+              "risk_of_being_wrong": "If the model reproduces the 81.5-MHz count but fails significantly at other frequencies, it suggests that the assumed spectral index or beaming fraction for recycled pulsars is incorrect, undermining the derived formation rate constraints.",
+              "supporting_evidence_ids": [
+                "EV-Q061-425c8e502c67ada05513fc8f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.82
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the only formation mechanism supported by the allowed evidence (recycling in GCs via LMXBs, EV-Q061-2dbc7fb25dbd3e5e4f661b49). It is highly falsifiable using existing astronomical catalogs and avoids speculating on core-collapse physics for which no evidence IDs are provided. Hypothesis 1 is a strong secondary option focusing on methodology but is less direct regarding the physical formation question.",
+          "rejected_directions": [
+            "Core-collapse supernova mechanisms for standard pulsar formation: Rejected due to complete absence of supporting evidence IDs in the allowed set; this remains a critical knowledge_gap.",
+            "Black widow pulsar companion ablation dynamics: Rejected because specific evidence linking 'black widow' terminology to consumption physics is missing from the allowed evidence catalog.",
+            "General relativistic tests using binary pulsars: Rejected as EV-Q061-5a6997dee4ca88fac8c9b5d0 and EV-Q061-77f5fef91c55c7c8afe8cbd4 pertain to fundamental physics tests (Shapiro delay, PK parameters) rather than formation mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Millisecond Pulsar (MSP) formation in Globular Clusters (GCs) is driven by the recycling of neutron stars in Low-Mass X-ray Binaries (LMXBs), as posited in EV-Q061-2dbc7fb25dbd3e5e4f661b49. The core mechanism involves angular momentum transfer via accretion. To validate this, we will perform a statistical correlation analysis between the observed population of LMXBs and MSPs across a sample of Galactic Globular Clusters. We will control for cluster dynamical properties (central density, encounter rate) which influence binary formation rates. The study utilizes publicly available catalogs of GC X-ray sources (LMXB candidates) and radio pulsar timing arrays. The primary metric is the Pearson/Spearman correlation coefficient between LMXB density and MSP count, normalized by cluster stellar mass or encounter rate.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Globular Cluster LMXB Catalog",
+                "description": "Compilation of Low-Mass X-ray Binary counts per globular cluster, derived from Chandra/XMM-Newton surveys. Represents the progenitor population for recycling.",
+                "source_type": "observational_catalog",
+                "access_method": "Public archive query (e.g., NASA HEASARC)",
+                "evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ]
+              },
+              {
+                "name": "Globular Cluster Pulsar Catalog",
+                "description": "Catalog of confirmed millisecond pulsars associated with specific globular clusters, including spin periods and binary status.",
+                "source_type": "observational_catalog",
+                "access_method": "ATNF Pulsar Catalogue / Literature compilation",
+                "evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ]
+              },
+              {
+                "name": "Globular Cluster Structural Parameters",
+                "description": "Core densities, relaxation times, and stellar encounter rates for normalization of interaction probabilities.",
+                "source_type": "astronomical_database",
+                "access_method": "Harris Catalog of Globular Clusters",
+                "evidence_ids": []
+              }
+            ],
+            "target": {
+              "name": "Correlation Analysis Dataset",
+              "description": "A merged table containing per-cluster metrics: N_LMXB, N_MSP, Core Density, Encounter Rate, and Metallicity.",
+              "format": "CSV/Parquet",
+              "schema": {
+                "cluster_id": "string",
+                "n_lmxbs": "integer",
+                "n_msps": "integer",
+                "core_density": "float",
+                "encounter_rate": "float"
+              }
+            }
+          },
+          "methods": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth. 2. Normalization: Normalize counts by cluster stellar mass or core encounter rate to account for dynamical formation biases. 3. Statistical Testing: Perform Spearman rank correlation between normalized LMXB density and MSP density. 4. Regression Analysis: Fit a linear model N_MSP ~ alpha * N_LMXB + beta * Encounter_Rate + gamma * Metallicity to isolate the LMXB contribution. 5. Falsification Check: Identify outliers where high MSP counts exist with negligible LMXB history (or vice versa) to test the 'dominant channel' claim.",
+          "experiments": {
+            "baselines": [
+              "Null Hypothesis: No correlation between LMXB and MSP populations (random distribution).",
+              "Dynamical Baseline: MSP formation proportional only to stellar encounter rates, independent of current LMXB visibility."
+            ],
+            "metrics": [
+              "Spearman Rank Correlation Coefficient (rho)",
+              "Pearson Correlation Coefficient (r)",
+              "P-value for significance of correlation",
+              "R-squared of the multivariate regression model"
+            ],
+            "ablation": "Remove metallicity and encounter rate covariates to assess the raw correlation between LMXB and MSP counts. Exclude clusters with incomplete survey coverage to test robustness against selection bias.",
+            "validation_protocol": "Split clusters into 'Core-Collapsed' and 'Non-Core-Collapsed' subsets to verify if the correlation holds across different dynamical states. Cross-validate with independent radio survey data if available."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define strict criteria for 'confirmed' LMXB and MSP status to avoid classification ambiguity.",
+            "Account for survey sensitivity limits (flux limits) in both X-ray and Radio bands.",
+            "Provide code for merging heterogeneous catalog formats (HEASARC vs ATNF).",
+            "Document handling of upper limits for clusters with zero detected LMXBs/MSPs."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_runtime": "2-4 hours for data cleaning and statistical analysis",
+            "required_resources": "Python environment with Astropy, Pandas, Scipy",
+            "data_availability": "Publicly available via NASA HEASARC and ATNF",
+            "code_repository": null
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis claims a 'directly proportional' relationship between MSP formation rate and 'historical population density' of LMXBs. However, the proposed experiment only measures current observed LMXB counts. Current LMXB abundance is not a validated proxy for historical integrated formation rate without an explicit evolutionary model linking the two; this constitutes a significant construct validity gap.",
+            "Evidence EV-Q061-2dbc7fb25dbd3e5e4f661b49 supports the qualitative recycling mechanism but does not provide empirical evidence for a strict linear proportionality or validate current LMXB counts as a historical tracer. The hypothesis overclaims relative to the provided evidence.",
+            "The 'Globular Cluster Structural Parameters' dataset in the experiment design has an empty evidence_ids list. While structural parameters are standard astronomical data, strictly adhering to the protocol requires either mapping them to an allowed evidence ID or explicitly declaring them as external knowledge/assumptions in the methods section to avoid ungrounded inputs.",
+            "The falsifiable prediction states clusters with negligible LMXBs should 'lack MSPs'. This binary condition ignores stochasticity in small-number statistics and potential alternative (albeit minor) formation channels. A statistical floor or confidence interval is required rather than absolute absence."
+          ],
+          "critical_issues": [
+            "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+            "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+            "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies."
+          ],
+          "required_revisions": [
+            "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+            "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+            "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+            "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.6,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:b665e8abc267",
+            "category": "critical_issue",
+            "description": "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:d7e3ec83aa56",
+            "category": "critical_issue",
+            "description": "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:896f6183a98a",
+            "category": "critical_issue",
+            "description": "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a62ab5875dfa",
+            "category": "required_revision",
+            "description": "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:584630b7ad3d",
+            "category": "required_revision",
+            "description": "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1211754b427b",
+            "category": "required_revision",
+            "description": "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3e869415c1f7",
+            "category": "required_revision",
+            "description": "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "f9b799915bd37f41350d68b7d96c5042dc6acd31ff890a24d48d608eed539937",
+          "experiment_designer": "346d9a07169f020c07fb41333476fb9585eb7ad7d450ce8cc43ba6ba474b8578",
+          "scientific_reviewer": "008f0bf413b30cef2c349e7dacfdc3c297eef38d44c3bc9d1c2387f69254c417"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084201-c9cdc1f8",
+        "version_number": 2,
+        "version_id": "20260822-084201-c9cdc1f8:v2",
+        "parent_version_id": "20260822-084201-c9cdc1f8:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The current observed abundance of Low-Mass X-ray Binaries (LMXBs) in globular clusters is positively correlated with the current millisecond pulsar (MSP) population size, consistent with the recycling model where LMXBs act as active progenitors for MSPs.",
+              "mechanism": "According to EV-Q061-2dbc7fb25dbd3e5e4f661b49, accreting neutron stars in LMXBs are spun up and recycled into fast radio pulsars. If this mechanism is dominant and currently active or recently active, clusters exhibiting higher instantaneous LMXB populations should statistically host larger MSP populations, reflecting a steady-state or evolutionary link between the two observable phases without assuming a direct linear proxy for historical integration.",
+              "falsifiable_prediction": "After controlling for cluster mass and dynamical encounter rate (treated as external covariates), the partial correlation between current LMXB count and MSP count will be positive and statistically significant (p < 0.05). Specifically, clusters in the lowest quartile of LMXB abundance will exhibit a statistically significant deficit of MSPs compared to clusters in the highest quartile, exceeding Poisson noise expectations for small number statistics.",
+              "required_observations": [
+                "Current catalog of confirmed LMXBs per globular cluster",
+                "Current catalog of confirmed MSPs per globular cluster",
+                "Cluster stellar mass and core encounter rates (declared as external control variables not grounded in allowed evidence)"
+              ],
+              "risk_of_being_wrong": "If MSP formation occurred primarily in a distant past epoch unconnected to current LMXB visibility, or if MSPs form efficiently via primordial binaries independent of dynamical LMXB channels, no significant correlation would exist between current snapshots. Additionally, high stochastic variance in low-count clusters could mask any underlying trend.",
+              "supporting_evidence_ids": [
+                "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.88
+            },
+            {
+              "hypothesis": "Population synthesis models calibrated to reproduce low-frequency survey yields (e.g., Cambridge 81.5-MHz) can constrain the MSP formation efficiency parameter, providing an indirect test of the recycling channel's productivity consistent with EV-Q061-2dbc7fb25dbd3e5e4f661b49.",
+              "mechanism": "EV-Q061-425c8e502c67ada05513fc8f demonstrates that population synthesis models can successfully reproduce observed pulsar tallies in specific surveys when properly calibrated. By applying this validated modeling framework to MSP populations, one can invert the detection statistics to infer the underlying birth rate and formation efficiency required to match observations, thereby testing if the recycling mechanism produces sufficient MSPs to explain current census data.",
+              "falsifiable_prediction": "A model calibrated solely on 81.5-MHz survey data must predict MSP counts in independent higher-frequency surveys within 2-sigma confidence intervals. Failure to cross-predict implies that either the assumed MSP luminosity function is incorrect or the formation efficiency derived from the recycling model is inconsistent with multi-frequency observations.",
+              "required_observations": [
+                "Detection counts and sensitivity parameters from Cambridge 81.5-MHz survey",
+                "Detection counts from independent MSP surveys at different frequencies",
+                "Assumed MSP spectral index and beaming fraction distributions"
+              ],
+              "risk_of_being_wrong": "Discrepancies between predicted and observed counts at other frequencies could stem from incorrect assumptions about MSP spectral properties rather than formation physics, making it difficult to uniquely falsify the formation hypothesis. The model may also be degenerate with respect to formation rate versus beaming geometry.",
+              "supporting_evidence_ids": [
+                "EV-Q061-425c8e502c67ada05513fc8f",
+                "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.82
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the reviewer's critical issues regarding construct validity by shifting the target from 'historical formation rate' to 'current observed correlation', which is measurable and grounded in EV-Q061-2dbc7fb25dbd3e5e4f661b49. It explicitly incorporates the required revisions: softening the falsifiable prediction to account for statistical deficits rather than absolute absence, declaring structural parameters as external controls, and establishing a baseline comparison. Hypothesis 1 remains valid but is secondary as it tests modeling methodology rather than the direct observational consistency of the recycling scenario.",
+          "rejected_directions": [
+            "Core-collapse supernova mechanisms for standard pulsar formation: Rejected due to complete absence of supporting evidence IDs in the allowed set; remains a knowledge_gap.",
+            "Black widow pulsar companion ablation dynamics: Rejected because specific evidence linking 'black widow' terminology to consumption physics is missing from the allowed evidence catalog.",
+            "General relativistic tests using binary pulsars: Rejected as EV-Q061-5a6997dee4ca88fac8c9b5d0 and EV-Q061-77f5fef91c55c7c8afe8cbd4 pertain to fundamental physics tests rather than formation mechanisms.",
+            "Direct proportionality between historical LMXB density and MSP formation rate: Rejected per reviewer feedback due to lack of evidence validating current counts as historical proxies."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the consistency of the recycling model (EV-Q061-2dbc7fb25dbd3e5e4f661b49) by examining the statistical correlation between current observed Low-Mass X-ray Binary (LMXB) counts and Millisecond Pulsar (MSP) counts in Galactic Globular Clusters. The hypothesis posits that if LMXBs are active progenitors of MSPs, clusters with higher instantaneous LMXB populations should exhibit statistically larger MSP populations, after controlling for cluster mass and dynamical encounter rates. Crucially, this design avoids claiming that current LMXB counts are a direct proxy for historical integrated formation rates; instead, it tests for a steady-state or evolutionary link observable in current snapshots. Structural parameters (mass, encounter rate) are treated as external control variables to isolate the specific contribution of the LMXB channel from general dynamical binary formation effects.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Globular Cluster LMXB Catalog",
+                "description": "Counts of confirmed Low-Mass X-ray Binaries per globular cluster, derived from Chandra/XMM-Newton surveys. Grounded in EV-Q061-2dbc7fb25dbd3e5e4f661b49 which identifies GCs as containing large numbers of LMXBs.",
+                "source_type": "observational_catalog",
+                "access_method": "Public archive query (e.g., NASA HEASARC)",
+                "evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ]
+              },
+              {
+                "name": "Globular Cluster MSP Catalog",
+                "description": "Counts of confirmed Millisecond Pulsars per globular cluster. Grounded in EV-Q061-2dbc7fb25dbd3e5e4f661b49 which states GCs are favorite places to search for MSPs produced by LMXBs.",
+                "source_type": "observational_catalog",
+                "access_method": "ATNF Pulsar Catalogue / Literature compilation",
+                "evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ]
+              }
+            ],
+            "target": {
+              "name": "GC LMXB-MSP Correlation Dataset",
+              "description": "Merged dataset containing per-cluster metrics: Cluster ID, N_LMXB, N_MSP, Stellar Mass (external), and Encounter Rate (external).",
+              "format": "CSV/Parquet",
+              "schema": {
+                "cluster_id": "string",
+                "n_lmxbs": "integer",
+                "n_msps": "integer",
+                "stellar_mass_solar": "float",
+                "encounter_rate_gamma": "float"
+              }
+            }
+          },
+          "methods": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth in both X-ray and Radio bands. 2. External Control Integration: Incorporate cluster stellar mass and core encounter rates from standard astronomical catalogs (e.g., Harris Catalog) as external covariates. These are explicitly declared as ungrounded external controls required to normalize for dynamical formation biases, not derived from the provided evidence set. 3. Statistical Modeling: Perform multivariate regression analysis: N_MSP ~ alpha * N_LMXB + beta * Mass + gamma * Encounter_Rate. 4. Correlation Analysis: Calculate partial Spearman rank correlation between N_LMXB and N_MSP, controlling for mass and encounter rate. 5. Quartile Comparison: Compare mean MSP counts in the lowest vs. highest quartiles of LMXB abundance to test for statistical deficits, accounting for Poisson noise in low-count regimes.",
+          "experiments": {
+            "baselines": [
+              "Null Hypothesis: No significant partial correlation between current LMXB counts and MSP counts after controlling for cluster mass and encounter rate.",
+              "Primordial Binary Baseline: A model where MSP formation is proportional only to cluster stellar mass (proxy for total binary population) and independent of current LMXB visibility, representing non-dynamical/primordial formation channels."
+            ],
+            "metrics": [
+              "Partial Spearman Rank Correlation Coefficient (rho)",
+              "P-value for significance of partial correlation (threshold p < 0.05)",
+              "R-squared of the multivariate regression model",
+              "Effect size (Cohen's d) for MSP count difference between high and low LMXB quartiles"
+            ],
+            "ablation": "1. Remove encounter rate covariate to assess the raw correlation between LMXB and MSP counts. 2. Exclude clusters with zero detected LMXBs to test if the correlation is driven primarily by active systems. 3. Sensitivity analysis: Vary the definition of 'confirmed' LMXB to include/exclude faint candidates.",
+            "validation_protocol": "1. Split sample into Core-Collapsed and Non-Core-Collapsed clusters to verify if the correlation holds across different dynamical states. 2. Use bootstrapping (10,000 iterations) to estimate confidence intervals for the correlation coefficient, accounting for small-number statistics in sparse clusters. 3. Check for outliers where high MSP counts exist with negligible LMXB counts, investigating potential alternative formation histories."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Explicitly document that cluster structural parameters (mass, encounter rate) are external controls not grounded in the provided evidence IDs.",
+            "Define strict criteria for 'confirmed' LMXB and MSP status to minimize classification ambiguity.",
+            "Account for survey sensitivity limits (flux limits) in both X-ray and Radio bands when interpreting zero-counts.",
+            "Provide code for merging heterogeneous catalog formats and handling upper limits for non-detections.",
+            "Use bootstrapping to quantify uncertainty in correlation metrics due to small sample sizes in individual clusters."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_runtime": "2-4 hours for data cleaning, merging, and statistical analysis",
+            "required_resources": "Python environment with Astropy, Pandas, Scipy, Statsmodels",
+            "data_availability": "LMXB/MSP catalogs publicly available via NASA HEASARC and ATNF; structural parameters from Harris Catalog (external)",
+            "code_repository": null
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly shifts focus from unobservable 'historical population density' to observable 'current abundance', resolving the construct validity mismatch identified in the previous review.",
+            "The falsifiable prediction has been appropriately softened to require a 'statistically significant deficit' rather than absolute absence of MSPs, correctly accounting for Poisson noise and small-number statistics.",
+            "The experiment design now explicitly declares cluster structural parameters (mass, encounter rate) as external control variables not grounded in allowed evidence, satisfying the protocol requirement for transparency regarding ungrounded inputs.",
+            "A 'Primordial Binary Baseline' has been added to distinguish dynamical recycling channels from mass-dependent formation, addressing the confounding variable concern.",
+            "All factual claims regarding the recycling mechanism are strictly traced to EV-Q061-2dbc7fb25dbd3e5e4f661b49, and no overclaiming of proportionality is present.",
+            "Results field correctly states 'pending' with no fabrication of experimental outcomes."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:b665e8abc267",
+            "category": "critical_issue",
+            "description": "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:d7e3ec83aa56",
+            "category": "critical_issue",
+            "description": "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:62ed471e86a52358; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:896f6183a98a",
+            "category": "critical_issue",
+            "description": "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:a62ab5875dfa",
+            "category": "required_revision",
+            "description": "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:6cbe981593a4957c,change:39fabea15bfecf28; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:584630b7ad3d",
+            "category": "required_revision",
+            "description": "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:3dded218b3ec2802; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:1211754b427b",
+            "category": "required_revision",
+            "description": "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:3e869415c1f7",
+            "category": "required_revision",
+            "description": "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:f2fc093dcbbabe71; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "fedaa449f0322f56213029702c0125777be9bdd4342a58ab835d0c44bd5d59ab",
+          "experiment_designer": "c3a913bc5d62979e9c0042accb2a4b2d5a2eb5df635967c1635f9679b5be14af",
+          "scientific_reviewer": "ecd1d7e2a43a7aefd88df7813c8915cd285945f52ded47f3df0fbbe1ba31cb8d"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-084201-c9cdc1f8",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-084201-c9cdc1f8:review:v1",
+        "20260822-084201-c9cdc1f8:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-084201-c9cdc1f8:v1",
+        "20260822-084201-c9cdc1f8:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-084201-c9cdc1f8",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-084201-c9cdc1f8:review:v1",
+          "20260822-084201-c9cdc1f8:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-084201-c9cdc1f8:v1",
+          "20260822-084201-c9cdc1f8:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084201-c9cdc1f8",
+          "version_number": 1,
+          "version_id": "20260822-084201-c9cdc1f8:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "The formation rate of millisecond pulsars (MSPs) in globular clusters is directly proportional to the historical population density of Low-Mass X-ray Binaries (LMXBs), validating the recycling model as the dominant MSP formation channel in these environments.",
+                "mechanism": "Neutron stars in dense globular cluster environments undergo mass transfer from a companion star in an LMXB phase. The accretion of matter transfers angular momentum to the neutron star, spinning it up to millisecond periods and 'recycling' it into a radio pulsar, as described in EV-Q061-2dbc7fb25dbd3e5e4f661b49.",
+                "falsifiable_prediction": "If the recycling model is the primary formation mechanism, then globular clusters with higher observed LMXB densities must statistically exhibit higher MSP populations. Conversely, clusters with negligible LMXB populations should lack MSPs, regardless of their age or initial neutron star formation rate.",
+                "required_observations": [
+                  "Catalog of LMXB counts per globular cluster",
+                  "Catalog of confirmed MSP counts per globular cluster",
+                  "Cluster stellar encounter rates or central densities to normalize interaction probabilities"
+                ],
+                "risk_of_being_wrong": "Observation of significant MSP populations in globular clusters that currently lack or historically lacked sufficient LMXB progenitors would contradict the standard recycling hypothesis. Additionally, if MSP spin distributions do not match accretion torque models, the mechanism may be incomplete.",
+                "supporting_evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.95,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "Current pulsar population synthesis models, when calibrated against low-frequency survey data (e.g., Cambridge 81.5-MHz), can accurately predict the underlying birth rate of recycled pulsars, thereby constraining the efficiency of the LMXB-to-MSP conversion process.",
+                "mechanism": "Population synthesis models simulate the evolution of binary systems and pulsar detectability. By validating these models against actual survey yields (as demonstrated in EV-Q061-425c8e502c67ada05513fc8f), one can invert the model to derive the physical parameters governing MSP formation efficiency from LMXB progenitors.",
+                "falsifiable_prediction": "A validated model calibrated at 81.5 MHz must successfully predict MSP detection rates in independent surveys at different frequencies (e.g., 400 MHz or 1.4 GHz) within statistical uncertainties. Failure to predict cross-survey yields implies incorrect assumptions about the MSP luminosity function or formation rate.",
+                "required_observations": [
+                  "Detection counts from Cambridge 81.5-MHz survey",
+                  "Detection counts from independent pulsar surveys at varying frequencies",
+                  "Sensitivity parameters and sky coverage for all compared surveys"
+                ],
+                "risk_of_being_wrong": "If the model reproduces the 81.5-MHz count but fails significantly at other frequencies, it suggests that the assumed spectral index or beaming fraction for recycled pulsars is incorrect, undermining the derived formation rate constraints.",
+                "supporting_evidence_ids": [
+                  "EV-Q061-425c8e502c67ada05513fc8f"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.82
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it directly addresses the only formation mechanism supported by the allowed evidence (recycling in GCs via LMXBs, EV-Q061-2dbc7fb25dbd3e5e4f661b49). It is highly falsifiable using existing astronomical catalogs and avoids speculating on core-collapse physics for which no evidence IDs are provided. Hypothesis 1 is a strong secondary option focusing on methodology but is less direct regarding the physical formation question.",
+            "rejected_directions": [
+              "Core-collapse supernova mechanisms for standard pulsar formation: Rejected due to complete absence of supporting evidence IDs in the allowed set; this remains a critical knowledge_gap.",
+              "Black widow pulsar companion ablation dynamics: Rejected because specific evidence linking 'black widow' terminology to consumption physics is missing from the allowed evidence catalog.",
+              "General relativistic tests using binary pulsars: Rejected as EV-Q061-5a6997dee4ca88fac8c9b5d0 and EV-Q061-77f5fef91c55c7c8afe8cbd4 pertain to fundamental physics tests (Shapiro delay, PK parameters) rather than formation mechanisms."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that Millisecond Pulsar (MSP) formation in Globular Clusters (GCs) is driven by the recycling of neutron stars in Low-Mass X-ray Binaries (LMXBs), as posited in EV-Q061-2dbc7fb25dbd3e5e4f661b49. The core mechanism involves angular momentum transfer via accretion. To validate this, we will perform a statistical correlation analysis between the observed population of LMXBs and MSPs across a sample of Galactic Globular Clusters. We will control for cluster dynamical properties (central density, encounter rate) which influence binary formation rates. The study utilizes publicly available catalogs of GC X-ray sources (LMXB candidates) and radio pulsar timing arrays. The primary metric is the Pearson/Spearman correlation coefficient between LMXB density and MSP count, normalized by cluster stellar mass or encounter rate.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Globular Cluster LMXB Catalog",
+                  "description": "Compilation of Low-Mass X-ray Binary counts per globular cluster, derived from Chandra/XMM-Newton surveys. Represents the progenitor population for recycling.",
+                  "source_type": "observational_catalog",
+                  "access_method": "Public archive query (e.g., NASA HEASARC)",
+                  "evidence_ids": [
+                    "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                  ]
+                },
+                {
+                  "name": "Globular Cluster Pulsar Catalog",
+                  "description": "Catalog of confirmed millisecond pulsars associated with specific globular clusters, including spin periods and binary status.",
+                  "source_type": "observational_catalog",
+                  "access_method": "ATNF Pulsar Catalogue / Literature compilation",
+                  "evidence_ids": [
+                    "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                  ]
+                },
+                {
+                  "name": "Globular Cluster Structural Parameters",
+                  "description": "Core densities, relaxation times, and stellar encounter rates for normalization of interaction probabilities.",
+                  "source_type": "astronomical_database",
+                  "access_method": "Harris Catalog of Globular Clusters",
+                  "evidence_ids": []
+                }
+              ],
+              "target": {
+                "name": "Correlation Analysis Dataset",
+                "description": "A merged table containing per-cluster metrics: N_LMXB, N_MSP, Core Density, Encounter Rate, and Metallicity.",
+                "format": "CSV/Parquet",
+                "schema": {
+                  "cluster_id": "string",
+                  "n_lmxbs": "integer",
+                  "n_msps": "integer",
+                  "core_density": "float",
+                  "encounter_rate": "float"
+                }
+              }
+            },
+            "methods": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth. 2. Normalization: Normalize counts by cluster stellar mass or core encounter rate to account for dynamical formation biases. 3. Statistical Testing: Perform Spearman rank correlation between normalized LMXB density and MSP density. 4. Regression Analysis: Fit a linear model N_MSP ~ alpha * N_LMXB + beta * Encounter_Rate + gamma * Metallicity to isolate the LMXB contribution. 5. Falsification Check: Identify outliers where high MSP counts exist with negligible LMXB history (or vice versa) to test the 'dominant channel' claim.",
+            "experiments": {
+              "baselines": [
+                "Null Hypothesis: No correlation between LMXB and MSP populations (random distribution).",
+                "Dynamical Baseline: MSP formation proportional only to stellar encounter rates, independent of current LMXB visibility."
+              ],
+              "metrics": [
+                "Spearman Rank Correlation Coefficient (rho)",
+                "Pearson Correlation Coefficient (r)",
+                "P-value for significance of correlation",
+                "R-squared of the multivariate regression model"
+              ],
+              "ablation": "Remove metallicity and encounter rate covariates to assess the raw correlation between LMXB and MSP counts. Exclude clusters with incomplete survey coverage to test robustness against selection bias.",
+              "validation_protocol": "Split clusters into 'Core-Collapsed' and 'Non-Core-Collapsed' subsets to verify if the correlation holds across different dynamical states. Cross-validate with independent radio survey data if available."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Define strict criteria for 'confirmed' LMXB and MSP status to avoid classification ambiguity.",
+              "Account for survey sensitivity limits (flux limits) in both X-ray and Radio bands.",
+              "Provide code for merging heterogeneous catalog formats (HEASARC vs ATNF).",
+              "Document handling of upper limits for clusters with zero detected LMXBs/MSPs."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_runtime": "2-4 hours for data cleaning and statistical analysis",
+              "required_resources": "Python environment with Astropy, Pandas, Scipy",
+              "data_availability": "Publicly available via NASA HEASARC and ATNF",
+              "code_repository": null
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis claims a 'directly proportional' relationship between MSP formation rate and 'historical population density' of LMXBs. However, the proposed experiment only measures current observed LMXB counts. Current LMXB abundance is not a validated proxy for historical integrated formation rate without an explicit evolutionary model linking the two; this constitutes a significant construct validity gap.",
+              "Evidence EV-Q061-2dbc7fb25dbd3e5e4f661b49 supports the qualitative recycling mechanism but does not provide empirical evidence for a strict linear proportionality or validate current LMXB counts as a historical tracer. The hypothesis overclaims relative to the provided evidence.",
+              "The 'Globular Cluster Structural Parameters' dataset in the experiment design has an empty evidence_ids list. While structural parameters are standard astronomical data, strictly adhering to the protocol requires either mapping them to an allowed evidence ID or explicitly declaring them as external knowledge/assumptions in the methods section to avoid ungrounded inputs.",
+              "The falsifiable prediction states clusters with negligible LMXBs should 'lack MSPs'. This binary condition ignores stochasticity in small-number statistics and potential alternative (albeit minor) formation channels. A statistical floor or confidence interval is required rather than absolute absence."
+            ],
+            "critical_issues": [
+              "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+              "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+              "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies."
+            ],
+            "required_revisions": [
+              "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+              "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+              "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+              "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.6,
+            "falsifiability_score": 0.8,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:b665e8abc267",
+              "category": "critical_issue",
+              "description": "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:d7e3ec83aa56",
+              "category": "critical_issue",
+              "description": "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:896f6183a98a",
+              "category": "critical_issue",
+              "description": "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:a62ab5875dfa",
+              "category": "required_revision",
+              "description": "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:584630b7ad3d",
+              "category": "required_revision",
+              "description": "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:1211754b427b",
+              "category": "required_revision",
+              "description": "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:3e869415c1f7",
+              "category": "required_revision",
+              "description": "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "f9b799915bd37f41350d68b7d96c5042dc6acd31ff890a24d48d608eed539937",
+            "experiment_designer": "346d9a07169f020c07fb41333476fb9585eb7ad7d450ce8cc43ba6ba474b8578",
+            "scientific_reviewer": "008f0bf413b30cef2c349e7dacfdc3c297eef38d44c3bc9d1c2387f69254c417"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084201-c9cdc1f8",
+          "version_number": 2,
+          "version_id": "20260822-084201-c9cdc1f8:v2",
+          "parent_version_id": "20260822-084201-c9cdc1f8:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "The current observed abundance of Low-Mass X-ray Binaries (LMXBs) in globular clusters is positively correlated with the current millisecond pulsar (MSP) population size, consistent with the recycling model where LMXBs act as active progenitors for MSPs.",
+                "mechanism": "According to EV-Q061-2dbc7fb25dbd3e5e4f661b49, accreting neutron stars in LMXBs are spun up and recycled into fast radio pulsars. If this mechanism is dominant and currently active or recently active, clusters exhibiting higher instantaneous LMXB populations should statistically host larger MSP populations, reflecting a steady-state or evolutionary link between the two observable phases without assuming a direct linear proxy for historical integration.",
+                "falsifiable_prediction": "After controlling for cluster mass and dynamical encounter rate (treated as external covariates), the partial correlation between current LMXB count and MSP count will be positive and statistically significant (p < 0.05). Specifically, clusters in the lowest quartile of LMXB abundance will exhibit a statistically significant deficit of MSPs compared to clusters in the highest quartile, exceeding Poisson noise expectations for small number statistics.",
+                "required_observations": [
+                  "Current catalog of confirmed LMXBs per globular cluster",
+                  "Current catalog of confirmed MSPs per globular cluster",
+                  "Cluster stellar mass and core encounter rates (declared as external control variables not grounded in allowed evidence)"
+                ],
+                "risk_of_being_wrong": "If MSP formation occurred primarily in a distant past epoch unconnected to current LMXB visibility, or if MSPs form efficiently via primordial binaries independent of dynamical LMXB channels, no significant correlation would exist between current snapshots. Additionally, high stochastic variance in low-count clusters could mask any underlying trend.",
+                "supporting_evidence_ids": [
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.95,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.88
+              },
+              {
+                "hypothesis": "Population synthesis models calibrated to reproduce low-frequency survey yields (e.g., Cambridge 81.5-MHz) can constrain the MSP formation efficiency parameter, providing an indirect test of the recycling channel's productivity consistent with EV-Q061-2dbc7fb25dbd3e5e4f661b49.",
+                "mechanism": "EV-Q061-425c8e502c67ada05513fc8f demonstrates that population synthesis models can successfully reproduce observed pulsar tallies in specific surveys when properly calibrated. By applying this validated modeling framework to MSP populations, one can invert the detection statistics to infer the underlying birth rate and formation efficiency required to match observations, thereby testing if the recycling mechanism produces sufficient MSPs to explain current census data.",
+                "falsifiable_prediction": "A model calibrated solely on 81.5-MHz survey data must predict MSP counts in independent higher-frequency surveys within 2-sigma confidence intervals. Failure to cross-predict implies that either the assumed MSP luminosity function is incorrect or the formation efficiency derived from the recycling model is inconsistent with multi-frequency observations.",
+                "required_observations": [
+                  "Detection counts and sensitivity parameters from Cambridge 81.5-MHz survey",
+                  "Detection counts from independent MSP surveys at different frequencies",
+                  "Assumed MSP spectral index and beaming fraction distributions"
+                ],
+                "risk_of_being_wrong": "Discrepancies between predicted and observed counts at other frequencies could stem from incorrect assumptions about MSP spectral properties rather than formation physics, making it difficult to uniquely falsify the formation hypothesis. The model may also be degenerate with respect to formation rate versus beaming geometry.",
+                "supporting_evidence_ids": [
+                  "EV-Q061-425c8e502c67ada05513fc8f",
+                  "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.85,
+                "overall_score": 0.82
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses the reviewer's critical issues regarding construct validity by shifting the target from 'historical formation rate' to 'current observed correlation', which is measurable and grounded in EV-Q061-2dbc7fb25dbd3e5e4f661b49. It explicitly incorporates the required revisions: softening the falsifiable prediction to account for statistical deficits rather than absolute absence, declaring structural parameters as external controls, and establishing a baseline comparison. Hypothesis 1 remains valid but is secondary as it tests modeling methodology rather than the direct observational consistency of the recycling scenario.",
+            "rejected_directions": [
+              "Core-collapse supernova mechanisms for standard pulsar formation: Rejected due to complete absence of supporting evidence IDs in the allowed set; remains a knowledge_gap.",
+              "Black widow pulsar companion ablation dynamics: Rejected because specific evidence linking 'black widow' terminology to consumption physics is missing from the allowed evidence catalog.",
+              "General relativistic tests using binary pulsars: Rejected as EV-Q061-5a6997dee4ca88fac8c9b5d0 and EV-Q061-77f5fef91c55c7c8afe8cbd4 pertain to fundamental physics tests rather than formation mechanisms.",
+              "Direct proportionality between historical LMXB density and MSP formation rate: Rejected per reviewer feedback due to lack of evidence validating current counts as historical proxies."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the consistency of the recycling model (EV-Q061-2dbc7fb25dbd3e5e4f661b49) by examining the statistical correlation between current observed Low-Mass X-ray Binary (LMXB) counts and Millisecond Pulsar (MSP) counts in Galactic Globular Clusters. The hypothesis posits that if LMXBs are active progenitors of MSPs, clusters with higher instantaneous LMXB populations should exhibit statistically larger MSP populations, after controlling for cluster mass and dynamical encounter rates. Crucially, this design avoids claiming that current LMXB counts are a direct proxy for historical integrated formation rates; instead, it tests for a steady-state or evolutionary link observable in current snapshots. Structural parameters (mass, encounter rate) are treated as external control variables to isolate the specific contribution of the LMXB channel from general dynamical binary formation effects.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Globular Cluster LMXB Catalog",
+                  "description": "Counts of confirmed Low-Mass X-ray Binaries per globular cluster, derived from Chandra/XMM-Newton surveys. Grounded in EV-Q061-2dbc7fb25dbd3e5e4f661b49 which identifies GCs as containing large numbers of LMXBs.",
+                  "source_type": "observational_catalog",
+                  "access_method": "Public archive query (e.g., NASA HEASARC)",
+                  "evidence_ids": [
+                    "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                  ]
+                },
+                {
+                  "name": "Globular Cluster MSP Catalog",
+                  "description": "Counts of confirmed Millisecond Pulsars per globular cluster. Grounded in EV-Q061-2dbc7fb25dbd3e5e4f661b49 which states GCs are favorite places to search for MSPs produced by LMXBs.",
+                  "source_type": "observational_catalog",
+                  "access_method": "ATNF Pulsar Catalogue / Literature compilation",
+                  "evidence_ids": [
+                    "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+                  ]
+                }
+              ],
+              "target": {
+                "name": "GC LMXB-MSP Correlation Dataset",
+                "description": "Merged dataset containing per-cluster metrics: Cluster ID, N_LMXB, N_MSP, Stellar Mass (external), and Encounter Rate (external).",
+                "format": "CSV/Parquet",
+                "schema": {
+                  "cluster_id": "string",
+                  "n_lmxbs": "integer",
+                  "n_msps": "integer",
+                  "stellar_mass_solar": "float",
+                  "encounter_rate_gamma": "float"
+                }
+              }
+            },
+            "methods": "1. Data Aggregation: Compile N_LMXB and N_MSP for all known Galactic Globular Clusters with sufficient observational depth in both X-ray and Radio bands. 2. External Control Integration: Incorporate cluster stellar mass and core encounter rates from standard astronomical catalogs (e.g., Harris Catalog) as external covariates. These are explicitly declared as ungrounded external controls required to normalize for dynamical formation biases, not derived from the provided evidence set. 3. Statistical Modeling: Perform multivariate regression analysis: N_MSP ~ alpha * N_LMXB + beta * Mass + gamma * Encounter_Rate. 4. Correlation Analysis: Calculate partial Spearman rank correlation between N_LMXB and N_MSP, controlling for mass and encounter rate. 5. Quartile Comparison: Compare mean MSP counts in the lowest vs. highest quartiles of LMXB abundance to test for statistical deficits, accounting for Poisson noise in low-count regimes.",
+            "experiments": {
+              "baselines": [
+                "Null Hypothesis: No significant partial correlation between current LMXB counts and MSP counts after controlling for cluster mass and encounter rate.",
+                "Primordial Binary Baseline: A model where MSP formation is proportional only to cluster stellar mass (proxy for total binary population) and independent of current LMXB visibility, representing non-dynamical/primordial formation channels."
+              ],
+              "metrics": [
+                "Partial Spearman Rank Correlation Coefficient (rho)",
+                "P-value for significance of partial correlation (threshold p < 0.05)",
+                "R-squared of the multivariate regression model",
+                "Effect size (Cohen's d) for MSP count difference between high and low LMXB quartiles"
+              ],
+              "ablation": "1. Remove encounter rate covariate to assess the raw correlation between LMXB and MSP counts. 2. Exclude clusters with zero detected LMXBs to test if the correlation is driven primarily by active systems. 3. Sensitivity analysis: Vary the definition of 'confirmed' LMXB to include/exclude faint candidates.",
+              "validation_protocol": "1. Split sample into Core-Collapsed and Non-Core-Collapsed clusters to verify if the correlation holds across different dynamical states. 2. Use bootstrapping (10,000 iterations) to estimate confidence intervals for the correlation coefficient, accounting for small-number statistics in sparse clusters. 3. Check for outliers where high MSP counts exist with negligible LMXB counts, investigating potential alternative formation histories."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Explicitly document that cluster structural parameters (mass, encounter rate) are external controls not grounded in the provided evidence IDs.",
+              "Define strict criteria for 'confirmed' LMXB and MSP status to minimize classification ambiguity.",
+              "Account for survey sensitivity limits (flux limits) in both X-ray and Radio bands when interpreting zero-counts.",
+              "Provide code for merging heterogeneous catalog formats and handling upper limits for non-detections.",
+              "Use bootstrapping to quantify uncertainty in correlation metrics due to small sample sizes in individual clusters."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_runtime": "2-4 hours for data cleaning, merging, and statistical analysis",
+              "required_resources": "Python environment with Astropy, Pandas, Scipy, Statsmodels",
+              "data_availability": "LMXB/MSP catalogs publicly available via NASA HEASARC and ATNF; structural parameters from Harris Catalog (external)",
+              "code_repository": null
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly shifts focus from unobservable 'historical population density' to observable 'current abundance', resolving the construct validity mismatch identified in the previous review.",
+              "The falsifiable prediction has been appropriately softened to require a 'statistically significant deficit' rather than absolute absence of MSPs, correctly accounting for Poisson noise and small-number statistics.",
+              "The experiment design now explicitly declares cluster structural parameters (mass, encounter rate) as external control variables not grounded in allowed evidence, satisfying the protocol requirement for transparency regarding ungrounded inputs.",
+              "A 'Primordial Binary Baseline' has been added to distinguish dynamical recycling channels from mass-dependent formation, addressing the confounding variable concern.",
+              "All factual claims regarding the recycling mechanism are strictly traced to EV-Q061-2dbc7fb25dbd3e5e4f661b49, and no overclaiming of proportionality is present.",
+              "Results field correctly states 'pending' with no fabrication of experimental outcomes."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:b665e8abc267",
+              "category": "critical_issue",
+              "description": "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:d7e3ec83aa56",
+              "category": "critical_issue",
+              "description": "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:62ed471e86a52358; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:896f6183a98a",
+              "category": "critical_issue",
+              "description": "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:a62ab5875dfa",
+              "category": "required_revision",
+              "description": "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:6cbe981593a4957c,change:39fabea15bfecf28; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:584630b7ad3d",
+              "category": "required_revision",
+              "description": "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:3dded218b3ec2802; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:1211754b427b",
+              "category": "required_revision",
+              "description": "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:3e869415c1f7",
+              "category": "required_revision",
+              "description": "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:f2fc093dcbbabe71; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "fedaa449f0322f56213029702c0125777be9bdd4342a58ab835d0c44bd5d59ab",
+            "experiment_designer": "c3a913bc5d62979e9c0042accb2a4b2d5a2eb5df635967c1635f9679b5be14af",
+            "scientific_reviewer": "ecd1d7e2a43a7aefd88df7813c8915cd285945f52ded47f3df0fbbe1ba31cb8d"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-084201-c9cdc1f8:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-084201-c9cdc1f8:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-084201-c9cdc1f8:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-084201-c9cdc1f8:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:b665e8abc267",
+          "category": "critical_issue",
+          "description": "Construct Validity Mismatch: Hypothesis targets 'historical population density' while experiment measures 'current observed counts' without a validated conversion model supported by allowed evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:d7e3ec83aa56",
+          "category": "critical_issue",
+          "description": "Ungrounded Dataset: 'Globular Cluster Structural Parameters' lacks any associated evidence_id from the allowed catalog.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:62ed471e86a52358; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:896f6183a98a",
+          "category": "critical_issue",
+          "description": "Overclaiming Evidence: EV-Q061-2dbc7fb25dbd3e5e4f661b49 confirms the recycling channel exists but does not substantiate the specific 'directly proportional' functional form or the use of current snapshots as historical proxies.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a62ab5875dfa",
+          "category": "required_revision",
+          "description": "Revise the hypothesis to test the correlation between *current* LMXB abundance and MSP population as a test of the recycling model's consistency, OR introduce a specific, evidence-backed stellar evolution model that converts current LMXB counts to historical formation rates.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:6cbe981593a4957c,change:39fabea15bfecf28; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:584630b7ad3d",
+          "category": "required_revision",
+          "description": "Either find an allowed EvidenceCard supporting the use of cluster structural parameters/dynamical models, or explicitly state in the Methods that these parameters are treated as external control variables not grounded in the provided evidence set.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:3dded218b3ec2802; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:1211754b427b",
+          "category": "required_revision",
+          "description": "Soften the falsifiable prediction from 'must lack MSPs' to 'statistically significant deficit of MSPs compared to clusters with high LMXB density', accounting for Poisson noise and detection limits.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:3e869415c1f7",
+          "category": "required_revision",
+          "description": "Add a baseline model representing 'MSP formation via primordial binaries' (non-dynamical) to distinguish whether the observed correlation is specifically due to the dynamical LMXB channel or general cluster mass/binary fraction.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f2fc093dcbbabe71; evidence=EV-Q061-2dbc7fb25dbd3e5e4f661b49; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "checkpoint_hash": "0bea914a3d16fddefacf88ed4a4cb9ac13284fff44f6894c1e8311b34ea9e6d5"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-084201-c9cdc1f8:wave-b-two-round",
+      "run_id": "20260822-084201-c9cdc1f8",
+      "v1_version_id": "20260822-084201-c9cdc1f8:v1",
+      "v2_version_id": "20260822-084201-c9cdc1f8:v2",
+      "input_fingerprints": {
+        "v1": "346d9a07169f020c07fb41333476fb9585eb7ad7d450ce8cc43ba6ba474b8578",
+        "v2": "c3a913bc5d62979e9c0042accb2a4b2d5a2eb5df635967c1635f9679b5be14af"
+      },
+      "responded_issue_count": 4,
+      "issue_ids": [
+        "critical_issue:d7e3ec83aa56",
+        "required_revision:a62ab5875dfa",
+        "required_revision:584630b7ad3d",
+        "required_revision:3e869415c1f7"
+      ],
+      "change_ids": [
+        "change:62ed471e86a52358",
+        "change:6cbe981593a4957c",
+        "change:39fabea15bfecf28",
+        "change:3dded218b3ec2802",
+        "change:f2fc093dcbbabe71"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.6,
+          "after": 0.95,
+          "delta": 0.35
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "The current observed abundance of Low-Mass X-ray Binaries (LMXBs) in globular clusters is positively correlated with the current millisecond pulsar (MSP) population size, consistent with the recycling model where LMXBs act as active progenitors for MSPs.",
+          "overall_score": 0.88,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Population synthesis models calibrated to reproduce low-frequency survey yields (e.g., Cambridge 81.5-MHz) can constrain the MSP formation efficiency parameter, providing an indirect test of the recycling channel's productivity consistent with EV-Q061-2dbc7fb25dbd3e5e4f661b49.",
+          "overall_score": 0.82,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "4f913cb2c5e6",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:44:26.922105+00:00",
+    "ended_at": "2026-08-22T08:45:15.360403+00:00",
+    "duration_ms": 48438,
+    "input_summary": "{\"question_item\": {\"id\": \"Q061\", \"domain\": \"Astronomy\", \"question\": \"How are pulsars formed?\", \"source_page\": 23, \"booklet_excerpt\": \"Pulsars are rotating neutron stars that produce pulses of radio waves, X-rays, and gamma rays. They are formed when a massive star runs out of fuel and collapses in on itself. The remnants are neutron stars with magnetic fields that range in strength from million times to quadrillion (a million billion) times that of Earth’s. The correct mix of spin frequency and magnetic field strength is needed for a neutron star to be a pulsar. A pulsar’s radiation bursts typ",
+    "output_summary": "{\"input_question\": \"How are pulsars formed?\", \"domain\": \"Astronomy\", \"problem_statement\": \"The provided booklet excerpt asserts that pulsars are rotating neutron stars formed from the collapse of massive stars, with specific conditions regarding magnetic field strength and spin frequency. It further hypothesizes that millisecond pulsars (MSPs) may form by accreting fuel from companion objects ('black widow' scenario). However, the available evidence catalog lacks direct support for the initial core-collapse mechanism or the specific 'black widow' terminology. The only grounded evidence (EV-Q06",
+    "evidence_ids": [
+      "EV-Q061-2dbc7fb25dbd3e5e4f661b49"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "87055b6959be",
+    "mock": false
+  },
+  {
+    "event_id": "c1d4b55669cb",
+    "run_id": "20260822-084201-c9cdc1f8",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:15.361489+00:00",
+    "ended_at": "2026-08-22T08:45:17.219882+00:00",
+    "duration_ms": 1858,
+    "input_summary": "{\"question_item\": {\"id\": \"Q061\", \"domain\": \"Astronomy\", \"question\": \"How are pulsars formed?\", \"source_page\": 23, \"booklet_excerpt\": \"Pulsars are rotating neutron stars that produce pulses of radio waves, X-rays, and gamma rays. They are formed when a massive star runs out of fuel and collapses in on itself. The remnants are neutron stars with magnetic fields that range in strength from million times to quadrillion (a million billion) times that of Earth’s. The correct mix of spin frequency and magnetic field strength is needed for a neutron star to be a pulsar. A pulsar’s radiation bursts typ",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required input fields: EvidenceCards, AgentTrace, execution_metadata. Cannot perform validation without these inputs.\", \"No allowed_evidence_ids provided to verify factual claims against.\"], \"warnings\": [\"Input contains only question_item; unable to cross-reference with evidence cards or check for hallucinated references.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_check\": \"failed\", \"evidence_tracing\": \"skipped\", \"factuality_check\": \"skipped\"}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "446a64d09ec7",
+    "mock": false
+  }
+]

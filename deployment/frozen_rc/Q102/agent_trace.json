@@ -1,0 +1,1550 @@
+[
+  {
+    "event_id": "fb225e8bfbd2",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:07:39.894343+00:00",
+    "ended_at": "2026-08-22T09:07:39.894343+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "3f251701f30f",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:07:39.894343+00:00",
+    "ended_at": "2026-08-22T09:07:43.028857+00:00",
+    "duration_ms": 3134,
+    "input_summary": "{\"question_item\": {\"id\": \"Q102\", \"domain\": \"Neuroscience\", \"question\": \"Why are most people right-handed?\", \"source_page\": 36, \"booklet_excerpt\": \"of satellites and stars. Could an advanced intelligent machine help us predict the future? It is estimated that 85%–90% of humans are right- handed, but there’s no simple reason why. It could be\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Neuroscience\", \"core_question\": \"What are the underlying causes of the high prevalence (85%-90%) of right-handedness in humans?\", \"keywords\": [\"handedness\", \"right-handed\", \"human population\", \"lateralization\"], \"entities\": [\"humans\", \"right-handedness\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The provided excerpt confirms the statistical prevalence of right-handedness but explicitly states there is no simple reason. The analysis must remain within the scope of identifying potential biological, genetic, or evolutionary mechanisms without asserting any speci",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "cacf3cd1f49f",
+    "mock": false
+  },
+  {
+    "event_id": "47e598e73acb",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:07:43.028857+00:00",
+    "ended_at": "2026-08-22T09:08:06.911110+00:00",
+    "duration_ms": 23882,
+    "input_summary": "{\"question_item\": {\"id\": \"Q102\", \"domain\": \"Neuroscience\", \"question\": \"Why are most people right-handed?\", \"source_page\": 36, \"booklet_excerpt\": \"of satellites and stars. Could an advanced intelligent machine help us predict the future? It is estimated that 85%–90% of humans are right- handed, but there’s no simple reason why. It could be\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Neuroscience\", \"core_question\": \"What are the underlying causes of the high prevalence (85%-90%) of right-handedness",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify specific genetic loci and heritability estimates associated with handedness from recent large-scale genome-wide association studies.\", \"query\": \"genome-wide association study handedness lateralization genetics heritability\", \"source_preference\": \"arxiv\", \"expected_evidence\": \"Statistical associations between specific genetic variants (e.g., microtubule-related genes) and left/right handedness, including effect sizes and population variance explained.\", \"priority\": \"high\"}, {\"purpose\": \"Retrieve evolutionary hypotheses explaining the maintenance of right-hande",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0f31a3f576d2",
+    "mock": false
+  },
+  {
+    "event_id": "7722f815d42a",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:06.932602+00:00",
+    "ended_at": "2026-08-22T09:08:16.098153+00:00",
+    "duration_ms": 9165,
+    "input_summary": "{\"question_item\": {\"id\": \"Q102\", \"domain\": \"Neuroscience\", \"question\": \"Why are most people right-handed?\", \"source_page\": 36, \"booklet_excerpt\": \"of satellites and stars. Could an advanced intelligent machine help us predict the future? It is estimated that 85%–90% of humans are right- handed, but there’s no simple reason why. It could be\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q102-c40e40012d0153a82cbf942b\", \"title\": \"arXiv:2607.21156\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://a",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The biological, genetic, or evolutionary mechanisms explaining why the majority of humans are right-handed.\", \"why_it_matters\": \"Understanding the etiology of handedness is crucial for neuroscience, developmental biology, and understanding brain lateralization, yet the provided evidence does not address this topic.\", \"evidence_ids\": [], \"validation_need\": \"Requires neuroscientific, genetic, or anthropological literature specifically addressing handedness prevalence and causality.\"}, {\"gap\": \"Verification of the statis",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d12ca671dae7",
+    "mock": false
+  },
+  {
+    "event_id": "e79177250a29",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:16.098153+00:00",
+    "ended_at": "2026-08-22T09:08:37.450295+00:00",
+    "duration_ms": 21352,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q102\", \"domain\": \"Neuroscience\", \"question\": \"Why are most people right-handed?\", \"source_page\": 36, \"booklet_excerpt\": \"of satellites and stars. Could an advanced intelligent machine help us predict the future? It is estimated that 85%–90% of humans are right- handed, but there’s no simple reason why. It could be\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q102-c40e40012d0153a82cbf942b\", \"title\": \"arXiv:2607.21156\", \"source_type\": \"arxiv\", \"doi\"",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Insufficient Evidence Hypothesis: Current allowed evidence set contains no biological, genetic, or evolutionary data to explain human right-handedness prevalence.\", \"mechanism\": \"The provided evidence cards (EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) exclusively address AI fairness, accessibility technology, and social event recognition. No card contains factual assertions regarding neuroanatomy, genetics, or evolutionary biology relevant to handedness. Therefore, any ca",
+    "evidence_ids": [
+      "EV-Q102-c40e40012d0153a82cbf942b",
+      "EV-Q102-9134ca6c0ed671edc59af966",
+      "EV-Q102-dd2cdb145d3e1bdde7573b59",
+      "EV-Q102-00ebc1e7ba82944f22d42e38"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "caf76a0462a0",
+    "mock": false
+  },
+  {
+    "event_id": "5f2d930f0658",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:37.450295+00:00",
+    "ended_at": "2026-08-22T09:08:56.695787+00:00",
+    "duration_ms": 19245,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q102\", \"domain\": \"Neuroscience\", \"question\": \"Why are most people right-handed?\", \"source_page\": 36, \"booklet_excerpt\": \"of satellites and stars. Could an advanced intelligent machine help us predict the future? It is estimated that 85%–90% of humans are right- handed, but there’s no simple reason why. It could be\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery\", \"recommended_hypothesis\": {\"hypothesis\": \"Insufficient Evidence Hypothesis: Curren",
+    "output_summary": "{\"technical_details\": \"This experiment is designed to rigorously test the 'Insufficient Evidence Hypothesis'. The core technical approach involves a deterministic, full-text semantic search and keyword extraction pipeline applied to the four allowed Evidence IDs. The system will parse the PDF content (or available text extracts) of EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38. It will then query for the presence of specific neuroscientific and biological terms related to handedness (e.g., 'handedness'",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b7be76e1d17d",
+    "mock": false
+  },
+  {
+    "event_id": "6ebb9472f5c4",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:56.695787+00:00",
+    "ended_at": "2026-08-22T09:09:02.712217+00:00",
+    "duration_ms": 6016,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q102\", \"domain\": \"Neuroscience\", \"question\": \"Why are most people right-handed?\", \"source_page\": 36, \"booklet_excerpt\": \"of satellites and stars. Could an advanced intelligent machine help us predict the future? It is estimated that 85%–90% of humans are right- handed, but there’s no simple reason why. It could be\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Insufficient Evidence Hypothesis: Current allowed evidence set contains no biolo",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints.\", \"All supporting evidence IDs are valid and present in the allowed catalog; no hallucinated references detected.\", \"The experiment design appropriately treats the verification of evidence irrelevance as a testable null hypothesis with clear falsification criteria.\", \"Results field correctly states 'pending' and does not fabricate experimental outcomes.\", \"Knowledge gaps are accurately mapped to the absence of biologi",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0a3bd2b629f0",
+    "mock": false
+  },
+  {
+    "event_id": "0cafc289cad4",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:09:02.714216+00:00",
+    "ended_at": "2026-08-22T09:09:27.897296+00:00",
+    "duration_ms": 25183,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints.\", \"All supporting evidence IDs are valid and present in the allowed catalog; no hallucinated references detected.\", \"The experiment design appropriately treats the verification of evidence irrelevance as a testable null hypothesis with clear falsification criteria.\", \"Results field correctly states 'pending' and does not fabricate experimental outcomes.\", \"Knowledge gaps are ",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Evidence Absence Null Hypothesis: The allowed evidence set contains no biological, genetic, or evolutionary data explaining human right-handedness; observed high relevance scores are retrieval artifacts unrelated to topical validity.\", \"mechanism\": \"The four allowed Evidence IDs (EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) exclusively address AI fairness, accessibility technology, and social event recognition. No card contains factual assertions regarding neuroanatomy, ge",
+    "evidence_ids": [
+      "EV-Q102-c40e40012d0153a82cbf942b",
+      "EV-Q102-9134ca6c0ed671edc59af966",
+      "EV-Q102-dd2cdb145d3e1bdde7573b59",
+      "EV-Q102-00ebc1e7ba82944f22d42e38"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "71c5c6330c41",
+    "mock": false
+  },
+  {
+    "event_id": "c0af0a789b32",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:09:27.897296+00:00",
+    "ended_at": "2026-08-22T09:09:49.979828+00:00",
+    "duration_ms": 22082,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints.\", \"All supporting evidence IDs are valid and present in the allowed catalog; no hallucinated references detected.\", \"The experiment design appropriately treats the verification of evidence irrelevance as a testable null hypothesis with clear falsification criteria.\", \"Results field correctly states 'pending' and does not fabricate experimental outcomes.\", \"Knowledge gaps are ",
+    "output_summary": "{\"technical_details\": \"This experiment validates the 'Evidence Absence Null Hypothesis' by performing a deterministic full-text semantic audit of the four allowed Evidence IDs. The technical pipeline involves: (1) PDF text extraction from the provided arXiv URLs for EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38; (2) Application of an expanded biological lexicon including 'right-handed', 'left-handed', 'manual asymmetry', 'lateralization', 'motor cortex', and 'handedness'; (3) Contextual verification to",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "eba08ed299db",
+    "mock": false
+  },
+  {
+    "event_id": "e0f0c25123d6",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:09:49.980834+00:00",
+    "ended_at": "2026-08-22T09:09:55.435029+00:00",
+    "duration_ms": 5454,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints.\", \"All supporting evidence IDs are valid and present in the allowed catalog; no hallucinated references detected.\", \"The experiment design appropriately treats the verification of evidence irrelevance as a testable null hypothesis with clear falsification criteria.\", \"Results field correctly states 'pending' and does not fabricate experimental outcomes.\", \"Knowledge gaps are ",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"Revision 2 successfully incorporates all required revisions from the previous review cycle.\", \"The hypothesis mechanism now explicitly identifies high relevance scores (0.75-0.95) as retrieval artifacts driven by keyword overlap rather than topical validity, satisfying revision request 1a92b6861e94.\", \"The experimental lexicon has been correctly expanded to include 'right-handed', 'left-handed', and 'manual asymmetry' as verified in the methods section, satisfying revision request 06c20200481c.\", \"The mandatory disclaimer distinguishing evidence absence ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8e08767da0b0",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:4adde31f5713f71a",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: Current allowed evidence set contains no biological, genetic, or evolutionary data to explain human right-handedness prevalence.",
+              "mechanism": "The provided evidence cards (EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) exclusively address AI fairness, accessibility technology, and social event recognition. No card contains factual assertions regarding neuroanatomy, genetics, or evolutionary biology relevant to handedness. Therefore, any causal mechanism proposed would be ungrounded speculation relative to the allowed evidence constraints.",
+              "falsifiable_prediction": "A comprehensive semantic search of the full text of all four allowed evidence IDs will yield zero mentions of 'handedness', 'lateralization', 'motor asymmetry', or related biological terms.",
+              "required_observations": [
+                "Full-text verification of EV-Q102-c40e40012d0153a82cbf942b confirming topic is elderly travel assistance AI",
+                "Full-text verification of EV-Q102-9134ca6c0ed671edc59af966 confirming topic is social event image recognition",
+                "Full-text verification of EV-Q102-dd2cdb145d3e1bdde7573b59 confirming topic is AI ethics and disability accessibility",
+                "Full-text verification of EV-Q102-00ebc1e7ba82944f22d42e38 confirming topic is AI fairness for deaf/hard-of-hearing individuals"
+              ],
+              "risk_of_being_wrong": "Low risk. The evidence extraction metadata explicitly states 'insufficient_evidence' and 'topic_relevance_status=DIRECT_QUESTION_CORE' appears to be a retrieval artifact rather than content relevance. If any allowed ID actually contains handedness data, this hypothesis is immediately falsified.",
+              "supporting_evidence_ids": [
+                "EV-Q102-c40e40012d0153a82cbf942b",
+                "EV-Q102-9134ca6c0ed671edc59af966",
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Methodological Artifact Hypothesis: The apparent relevance scores (0.75-0.95) assigned to AI-focused papers for a neuroscience question indicate a systematic error in the evidence retrieval pipeline rather than genuine topical overlap.",
+              "mechanism": "The evidence catalog assigns high relevance_score values to papers on AI accessibility (EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) despite their quoted_text showing no connection to handedness. This suggests the retrieval system may have matched keywords like 'disability' or 'human-centered' without semantic validation, creating a false positive signal that must be filtered before hypothesis generation can proceed.",
+              "falsifiable_prediction": "Re-running the evidence retrieval with strict semantic filtering for 'biological basis of handedness' will reduce the relevance_score of all four current allowed IDs below 0.1 and return zero qualified evidence cards.",
+              "required_observations": [
+                "Comparison of original retrieval query vs. refined semantic query results",
+                "Quantitative analysis of keyword overlap between 'handedness' and retrieved paper abstracts",
+                "Verification that locator field 'topic_relevance_status=DIRECT_QUESTION_CORE' was assigned algorithmically without manual curation"
+              ],
+              "risk_of_being_wrong": "Moderate risk. It is possible that one of the AI papers discusses handedness as a case study in bias or accessibility (e.g., left-handed users interacting with AI systems), which would maintain partial relevance. However, quoted_text excerpts show no such mention.",
+              "supporting_evidence_ids": [
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the fundamental constraint: the allowed evidence set contains no information relevant to the neuroscientific question of handedness. This is the only epistemically valid position given the strict requirement that all factual claims must trace to evidence_ids. Hypothesis 1, while methodologically interesting, is secondary to establishing that no answer can be derived from current inputs. Both hypotheses are fully verifiable using the provided evidence cards without external data.",
+          "rejected_directions": [
+            "Any hypothesis proposing genetic, evolutionary, or neurodevelopmental mechanisms for right-handedness (e.g., LRRTM1 gene, prenatal hormone exposure, language lateralization) - rejected because no allowed evidence_id supports these claims",
+            "Any hypothesis citing the 85-90% prevalence statistic as established fact - rejected because no evidence_id validates this demographic claim",
+            "Any hypothesis linking AI accessibility research to handedness biology - rejected because quoted_text from all four IDs shows no such connection despite high relevance_score artifacts"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to rigorously test the 'Insufficient Evidence Hypothesis'. The core technical approach involves a deterministic, full-text semantic search and keyword extraction pipeline applied to the four allowed Evidence IDs. The system will parse the PDF content (or available text extracts) of EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38. It will then query for the presence of specific neuroscientific and biological terms related to handedness (e.g., 'handedness', 'lateralization', 'motor asymmetry', 'LRRTM1', 'corpus callosum', 'hemisphere dominance'). The hypothesis predicts a zero-hit rate for these terms, confirming that the provided evidence is topically irrelevant to the question of why humans are right-handed, despite high retrieval relevance scores.",
+          "datasets": {
+            "source": [
+              "EV-Q102-c40e40012d0153a82cbf942b",
+              "EV-Q102-9134ca6c0ed671edc59af966",
+              "EV-Q102-dd2cdb145d3e1bdde7573b59",
+              "EV-Q102-00ebc1e7ba82944f22d42e38"
+            ],
+            "target": "Binary verification matrix indicating presence/absence of handedness-related terminology in each Evidence ID."
+          },
+          "methods": "1. Text Extraction: Use PyPDF2 or similar library to extract raw text from the URLs associated with the four Evidence IDs. 2. Keyword Definition: Define a strict lexicon of handedness-related terms: ['handedness', 'left-handed', 'right-handed', 'lateralization', 'asymmetry', 'motor cortex', 'genetic basis of handedness']. 3. Semantic Search: Perform case-insensitive exact match and n-gram search for these terms within the extracted text of each document. 4. Context Verification: For any potential matches, extract the surrounding sentence to verify if the term is used in a biological/neuroscientific context versus a metaphorical or unrelated AI context (e.g., 'left-hand side of the image'). 5. Statistical Validation: Calculate the frequency of hits per document. The hypothesis is supported if frequency == 0 for all documents.",
+          "experiments": {
+            "baselines": [
+              "Random Control: A set of 4 random arXiv papers on neuroscience to ensure the keyword list successfully identifies relevant content when present.",
+              "Keyword-only Retrieval Baseline: Replicate the original retrieval method using only keyword overlap without semantic filtering to demonstrate why these AI papers were initially retrieved (false positives)."
+            ],
+            "metrics": [
+              "Hit Rate: Percentage of documents containing at least one target keyword.",
+              "Precision of Relevance: Ratio of true biological mentions to total keyword matches (expected to be 0/0 or 0/N).",
+              "Semantic Distance Score: Cosine similarity between the document embedding and a canonical 'handedness mechanism' query vector (expected to be low)."
+            ],
+            "ablation": "Remove metaphorical terms (e.g., 'left/right' in spatial contexts) from the keyword list to ensure no false positives from general directional language in AI papers.",
+            "validation_protocol": "Double-blind manual review of any flagged sentences by two independent annotators to confirm whether the context is biological. If no sentences are flagged, the automated zero-hit result is accepted as ground truth."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to the full text of all four arXiv PDFs via the provided URLs.",
+            "Confirm the keyword lexicon is fixed and documented before execution.",
+            "Ensure the text extraction pipeline handles PDF formatting errors gracefully.",
+            "Log all search hits (if any) with line numbers for manual verification.",
+            "Store the raw text extracts and search results in a version-controlled repository."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "script_generated": true,
+            "data_access_verified": false,
+            "estimated_runtime_minutes": 5,
+            "dependencies": [
+              "PyPDF2",
+              "scikit-learn",
+              "numpy"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-090739-99196e54",
+        "version_number": 1,
+        "version_id": "20260822-090739-99196e54:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: Current allowed evidence set contains no biological, genetic, or evolutionary data to explain human right-handedness prevalence.",
+              "mechanism": "The provided evidence cards (EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) exclusively address AI fairness, accessibility technology, and social event recognition. No card contains factual assertions regarding neuroanatomy, genetics, or evolutionary biology relevant to handedness. Therefore, any causal mechanism proposed would be ungrounded speculation relative to the allowed evidence constraints.",
+              "falsifiable_prediction": "A comprehensive semantic search of the full text of all four allowed evidence IDs will yield zero mentions of 'handedness', 'lateralization', 'motor asymmetry', or related biological terms.",
+              "required_observations": [
+                "Full-text verification of EV-Q102-c40e40012d0153a82cbf942b confirming topic is elderly travel assistance AI",
+                "Full-text verification of EV-Q102-9134ca6c0ed671edc59af966 confirming topic is social event image recognition",
+                "Full-text verification of EV-Q102-dd2cdb145d3e1bdde7573b59 confirming topic is AI ethics and disability accessibility",
+                "Full-text verification of EV-Q102-00ebc1e7ba82944f22d42e38 confirming topic is AI fairness for deaf/hard-of-hearing individuals"
+              ],
+              "risk_of_being_wrong": "Low risk. The evidence extraction metadata explicitly states 'insufficient_evidence' and 'topic_relevance_status=DIRECT_QUESTION_CORE' appears to be a retrieval artifact rather than content relevance. If any allowed ID actually contains handedness data, this hypothesis is immediately falsified.",
+              "supporting_evidence_ids": [
+                "EV-Q102-c40e40012d0153a82cbf942b",
+                "EV-Q102-9134ca6c0ed671edc59af966",
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Methodological Artifact Hypothesis: The apparent relevance scores (0.75-0.95) assigned to AI-focused papers for a neuroscience question indicate a systematic error in the evidence retrieval pipeline rather than genuine topical overlap.",
+              "mechanism": "The evidence catalog assigns high relevance_score values to papers on AI accessibility (EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) despite their quoted_text showing no connection to handedness. This suggests the retrieval system may have matched keywords like 'disability' or 'human-centered' without semantic validation, creating a false positive signal that must be filtered before hypothesis generation can proceed.",
+              "falsifiable_prediction": "Re-running the evidence retrieval with strict semantic filtering for 'biological basis of handedness' will reduce the relevance_score of all four current allowed IDs below 0.1 and return zero qualified evidence cards.",
+              "required_observations": [
+                "Comparison of original retrieval query vs. refined semantic query results",
+                "Quantitative analysis of keyword overlap between 'handedness' and retrieved paper abstracts",
+                "Verification that locator field 'topic_relevance_status=DIRECT_QUESTION_CORE' was assigned algorithmically without manual curation"
+              ],
+              "risk_of_being_wrong": "Moderate risk. It is possible that one of the AI papers discusses handedness as a case study in bias or accessibility (e.g., left-handed users interacting with AI systems), which would maintain partial relevance. However, quoted_text excerpts show no such mention.",
+              "supporting_evidence_ids": [
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the fundamental constraint: the allowed evidence set contains no information relevant to the neuroscientific question of handedness. This is the only epistemically valid position given the strict requirement that all factual claims must trace to evidence_ids. Hypothesis 1, while methodologically interesting, is secondary to establishing that no answer can be derived from current inputs. Both hypotheses are fully verifiable using the provided evidence cards without external data.",
+          "rejected_directions": [
+            "Any hypothesis proposing genetic, evolutionary, or neurodevelopmental mechanisms for right-handedness (e.g., LRRTM1 gene, prenatal hormone exposure, language lateralization) - rejected because no allowed evidence_id supports these claims",
+            "Any hypothesis citing the 85-90% prevalence statistic as established fact - rejected because no evidence_id validates this demographic claim",
+            "Any hypothesis linking AI accessibility research to handedness biology - rejected because quoted_text from all four IDs shows no such connection despite high relevance_score artifacts"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to rigorously test the 'Insufficient Evidence Hypothesis'. The core technical approach involves a deterministic, full-text semantic search and keyword extraction pipeline applied to the four allowed Evidence IDs. The system will parse the PDF content (or available text extracts) of EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38. It will then query for the presence of specific neuroscientific and biological terms related to handedness (e.g., 'handedness', 'lateralization', 'motor asymmetry', 'LRRTM1', 'corpus callosum', 'hemisphere dominance'). The hypothesis predicts a zero-hit rate for these terms, confirming that the provided evidence is topically irrelevant to the question of why humans are right-handed, despite high retrieval relevance scores.",
+          "datasets": {
+            "source": [
+              "EV-Q102-c40e40012d0153a82cbf942b",
+              "EV-Q102-9134ca6c0ed671edc59af966",
+              "EV-Q102-dd2cdb145d3e1bdde7573b59",
+              "EV-Q102-00ebc1e7ba82944f22d42e38"
+            ],
+            "target": "Binary verification matrix indicating presence/absence of handedness-related terminology in each Evidence ID."
+          },
+          "methods": "1. Text Extraction: Use PyPDF2 or similar library to extract raw text from the URLs associated with the four Evidence IDs. 2. Keyword Definition: Define a strict lexicon of handedness-related terms: ['handedness', 'left-handed', 'right-handed', 'lateralization', 'asymmetry', 'motor cortex', 'genetic basis of handedness']. 3. Semantic Search: Perform case-insensitive exact match and n-gram search for these terms within the extracted text of each document. 4. Context Verification: For any potential matches, extract the surrounding sentence to verify if the term is used in a biological/neuroscientific context versus a metaphorical or unrelated AI context (e.g., 'left-hand side of the image'). 5. Statistical Validation: Calculate the frequency of hits per document. The hypothesis is supported if frequency == 0 for all documents.",
+          "experiments": {
+            "baselines": [
+              "Random Control: A set of 4 random arXiv papers on neuroscience to ensure the keyword list successfully identifies relevant content when present.",
+              "Keyword-only Retrieval Baseline: Replicate the original retrieval method using only keyword overlap without semantic filtering to demonstrate why these AI papers were initially retrieved (false positives)."
+            ],
+            "metrics": [
+              "Hit Rate: Percentage of documents containing at least one target keyword.",
+              "Precision of Relevance: Ratio of true biological mentions to total keyword matches (expected to be 0/0 or 0/N).",
+              "Semantic Distance Score: Cosine similarity between the document embedding and a canonical 'handedness mechanism' query vector (expected to be low)."
+            ],
+            "ablation": "Remove metaphorical terms (e.g., 'left/right' in spatial contexts) from the keyword list to ensure no false positives from general directional language in AI papers.",
+            "validation_protocol": "Double-blind manual review of any flagged sentences by two independent annotators to confirm whether the context is biological. If no sentences are flagged, the automated zero-hit result is accepted as ground truth."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to the full text of all four arXiv PDFs via the provided URLs.",
+            "Confirm the keyword lexicon is fixed and documented before execution.",
+            "Ensure the text extraction pipeline handles PDF formatting errors gracefully.",
+            "Log all search hits (if any) with line numbers for manual verification.",
+            "Store the raw text extracts and search results in a version-controlled repository."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "script_generated": true,
+            "data_access_verified": false,
+            "estimated_runtime_minutes": 5,
+            "dependencies": [
+              "PyPDF2",
+              "scikit-learn",
+              "numpy"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints.",
+            "All supporting evidence IDs are valid and present in the allowed catalog; no hallucinated references detected.",
+            "The experiment design appropriately treats the verification of evidence irrelevance as a testable null hypothesis with clear falsification criteria.",
+            "Results field correctly states 'pending' and does not fabricate experimental outcomes.",
+            "Knowledge gaps are accurately mapped to the absence of biological data in AI-focused evidence cards."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+            "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+            "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:1a92b6861e94",
+            "category": "required_revision",
+            "description": "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:06c20200481c",
+            "category": "required_revision",
+            "description": "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:30f888051c7b",
+            "category": "required_revision",
+            "description": "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "4215882dc88aa81bef5659c2e7d42a8b91f0a9cc13cb382d2571abd3f0b23d29",
+          "experiment_designer": "b802ce353a6f5b180dfe929bc995fb0f13d2ea9e0fad47d8cfb032b7e9521b7f",
+          "scientific_reviewer": "1fb871bcbe661b8841a3fffc6f858be64d548ce25a528ab5493023549c964e5d"
+        }
+      },
+      "parent_version_id": "20260822-090739-99196e54:v1",
+      "lineage": [
+        "20260822-090739-99196e54:v1",
+        "20260822-090739-99196e54:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints.",
+          "All supporting evidence IDs are valid and present in the allowed catalog; no hallucinated references detected.",
+          "The experiment design appropriately treats the verification of evidence irrelevance as a testable null hypothesis with clear falsification criteria.",
+          "Results field correctly states 'pending' and does not fabricate experimental outcomes.",
+          "Knowledge gaps are accurately mapped to the absence of biological data in AI-focused evidence cards."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+          "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+          "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "Revision 2 successfully incorporates all required revisions from the previous review cycle.",
+          "The hypothesis mechanism now explicitly identifies high relevance scores (0.75-0.95) as retrieval artifacts driven by keyword overlap rather than topical validity, satisfying revision request 1a92b6861e94.",
+          "The experimental lexicon has been correctly expanded to include 'right-handed', 'left-handed', and 'manual asymmetry' as verified in the methods section, satisfying revision request 06c20200481c.",
+          "The mandatory disclaimer distinguishing evidence absence from biological non-existence is present in both the hypothesis mechanism and technical_details, satisfying revision request 30f888051c7b.",
+          "No fabricated results detected; Results field correctly remains 'pending'.",
+          "All supporting evidence IDs are valid and strictly limited to the allowed catalog.",
+          "Experiment design includes appropriate baselines (Random Neuroscience Control) to validate the null result methodology."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.98,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:f2d7c3c3794deb40",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+          "issue_id": "required_revision:1a92b6861e94"
+        },
+        {
+          "failure_id": "failure:f12b2d3b1d5acc23",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+          "issue_id": "required_revision:06c20200481c"
+        },
+        {
+          "failure_id": "failure:fbe6784880644926",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.",
+          "issue_id": "required_revision:30f888051c7b"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:56d5d27bd38a45df",
+          "issue_id": "required_revision:1a92b6861e94",
+          "reason": "Reviewer item required_revision:1a92b6861e94 requested 'In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.'. V2 changes validation_protocol; deterministic correlation evidence tokens=['artifact', 'explicitly', 'final', 'high', 'measure', 'must', 'relevance', 'report', 'retrieval', 'state'], coverage=0.455.",
+          "before": "Double-blind manual review of any flagged sentences by two independent annotators to confirm whether the context is biological. If no sentences are flagged, the automated zero-hit result is accepted as ground truth.",
+          "after": "If any keyword hit is detected, two independent annotators must verify the context. If the context is non-biological (e.g., computer vision spatial reference), it is classified as a false positive. The hypothesis is supported if all hits are false positives or zero hits are found. The final report must explicitly state that high relevance scores are retrieval artifacts.",
+          "evidence_refs": [
+            "EV-Q102-00ebc1e7ba82944f22d42e38",
+            "EV-Q102-9134ca6c0ed671edc59af966",
+            "EV-Q102-c40e40012d0153a82cbf942b",
+            "EV-Q102-dd2cdb145d3e1bdde7573b59"
+          ],
+          "affected_plan_section": "validation_protocol",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:cc0c753b746ed5ef",
+          "issue_id": "required_revision:06c20200481c",
+          "reason": "Reviewer item required_revision:06c20200481c requested 'Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.'. V2 changes methods; deterministic correlation evidence tokens=['asymmetry', 'false', 'hand', 'keyword', 'left', 'lexicon', 'manual', 'right', 'validate'], coverage=0.643.",
+          "before": "1. Text Extraction: Use PyPDF2 or similar library to extract raw text from the URLs associated with the four Evidence IDs. 2. Keyword Definition: Define a strict lexicon of handedness-related terms: ['handedness', 'left-handed', 'right-handed', 'lateralization', 'asymmetry', 'motor cortex', 'genetic basis of handedness']. 3. Semantic Search: Perform case-insensitive exact match and n-gram search for these terms within the extracted text of each document. 4. Context Verification: For any potential matches, extract the surrounding sentence to verify if the term is used in a biological/neuroscientific context versus a metaphorical or unrelated AI context (e.g., 'left-hand side of the image'). 5. Statistical Validation: Calculate the frequency of hits per document. The hypothesis is supported if frequency == 0 for all documents.",
+          "after": "1. Text Extraction: Parse full-text PDFs from the allowed Evidence IDs using PyPDF2/pdfplumber. 2. Lexicon Search: Execute case-insensitive search for the expanded lexicon: ['right-handed', 'left-handed', 'manual asymmetry', 'lateralization', 'motor cortex', 'handedness', 'hemisphere dominance']. 3. Artifact Filtering: Flag any hits containing spatial terms (e.g., 'left side of image', 'right-hand column') as non-biological false positives. 4. Relevance Score Analysis: Correlate the original high relevance scores (0.75–0.95) with the absence of biological keywords to demonstrate retrieval artifact status. 5. Manual Verification: Double-blind review of any potential matches to confirm irrelevance to neurobiology.",
+          "evidence_refs": [
+            "EV-Q102-00ebc1e7ba82944f22d42e38",
+            "EV-Q102-9134ca6c0ed671edc59af966",
+            "EV-Q102-c40e40012d0153a82cbf942b",
+            "EV-Q102-dd2cdb145d3e1bdde7573b59"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:21408d3293423a78",
+          "issue_id": "required_revision:30f888051c7b",
+          "reason": "Reviewer item required_revision:30f888051c7b requested 'Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.'. V2 changes technical_details; deterministic correlation evidence tokens=['absence', 'biological', 'disclaimer', 'evidence', 'existence', 'handedness', 'mandatory', 'mechanism', 'non', 'not', 'validate'], coverage=0.917.",
+          "before": "This experiment is designed to rigorously test the 'Insufficient Evidence Hypothesis'. The core technical approach involves a deterministic, full-text semantic search and keyword extraction pipeline applied to the four allowed Evidence IDs. The system will parse the PDF content (or available text extracts) of EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38. It will then query for the presence of specific neuroscientific and biological terms related to handedness (e.g., 'handedness', 'lateralization', 'motor asymmetry', 'LRRTM1', 'corpus callosum', 'hemisphere dominance'). The hypothesis predicts a zero-hit rate for these terms, confirming that the provided evidence is topically irrelevant to the question of why humans are right-handed, despite high retrieval relevance scores.",
+          "after": "This experiment validates the 'Evidence Absence Null Hypothesis' by performing a deterministic full-text semantic audit of the four allowed Evidence IDs. The technical pipeline involves: (1) PDF text extraction from the provided arXiv URLs for EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38; (2) Application of an expanded biological lexicon including 'right-handed', 'left-handed', 'manual asymmetry', 'lateralization', 'motor cortex', and 'handedness'; (3) Contextual verification to distinguish biological usage from spatial/UI references (e.g., 'left-hand side'); and (4) Explicit documentation that high relevance scores (0.75–0.95) are retrieval artifacts driven by keyword overlap (e.g., 'disability', 'human-centered') rather than topical validity for handedness research. A mandatory disclaimer is included stating that this validation confirms the absence of evidence in the current corpus, not the biological non-existence of handedness mechanisms.",
+          "evidence_refs": [
+            "EV-Q102-00ebc1e7ba82944f22d42e38",
+            "EV-Q102-9134ca6c0ed671edc59af966",
+            "EV-Q102-c40e40012d0153a82cbf942b",
+            "EV-Q102-dd2cdb145d3e1bdde7573b59"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:3d42c87eef02c47b",
+          "issue_id": "required_revision:30f888051c7b",
+          "reason": "Reviewer item required_revision:30f888051c7b requested 'Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['absence', 'biological', 'disclaimer', 'evidence', 'existence', 'non', 'review', 'validate'], coverage=0.667.",
+          "before": [
+            "Verify access to the full text of all four arXiv PDFs via the provided URLs.",
+            "Confirm the keyword lexicon is fixed and documented before execution.",
+            "Ensure the text extraction pipeline handles PDF formatting errors gracefully.",
+            "Log all search hits (if any) with line numbers for manual verification.",
+            "Store the raw text extracts and search results in a version-controlled repository."
+          ],
+          "after": [
+            "Verify full-text access to all four arXiv PDFs via provided URLs.",
+            "Confirm the expanded keyword lexicon includes 'right-handed', 'left-handed', and 'manual asymmetry'.",
+            "Document the explicit disclaimer that evidence absence ≠ biological non-existence.",
+            "Log all keyword hits with line numbers and context snippets for manual review.",
+            "Store raw text extracts and search logs in a version-controlled repository.",
+            "Explicitly label high relevance scores (0.75–0.95) as retrieval artifacts in the final output."
+          ],
+          "evidence_refs": [
+            "EV-Q102-00ebc1e7ba82944f22d42e38",
+            "EV-Q102-9134ca6c0ed671edc59af966",
+            "EV-Q102-c40e40012d0153a82cbf942b",
+            "EV-Q102-dd2cdb145d3e1bdde7573b59"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:1a92b6861e94",
+          "category": "required_revision",
+          "description": "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:56d5d27bd38a45df; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:06c20200481c",
+          "category": "required_revision",
+          "description": "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cc0c753b746ed5ef; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:30f888051c7b",
+          "category": "required_revision",
+          "description": "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:21408d3293423a78,change:3d42c87eef02c47b; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Evidence Absence Null Hypothesis: The allowed evidence set contains no biological, genetic, or evolutionary data explaining human right-handedness; observed high relevance scores are retrieval artifacts unrelated to topical validity.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Retrieval Artifact Hypothesis: High relevance scores (0.75–0.95) for AI-focused papers in response to a neuroscience question indicate systematic failure in semantic filtering, where keyword-based matching on terms like 'disability' or 'human' produces false positives that must be algorithmically distinguished from true topical relevance.",
+          "overall_score": 0.72,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 3,
+      "blocking_reasons": [],
+      "remaining_blockers": [],
+      "stop_reason": null,
+      "accepted": true
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-090739-99196e54",
+        "version_number": 1,
+        "version_id": "20260822-090739-99196e54:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: Current allowed evidence set contains no biological, genetic, or evolutionary data to explain human right-handedness prevalence.",
+              "mechanism": "The provided evidence cards (EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) exclusively address AI fairness, accessibility technology, and social event recognition. No card contains factual assertions regarding neuroanatomy, genetics, or evolutionary biology relevant to handedness. Therefore, any causal mechanism proposed would be ungrounded speculation relative to the allowed evidence constraints.",
+              "falsifiable_prediction": "A comprehensive semantic search of the full text of all four allowed evidence IDs will yield zero mentions of 'handedness', 'lateralization', 'motor asymmetry', or related biological terms.",
+              "required_observations": [
+                "Full-text verification of EV-Q102-c40e40012d0153a82cbf942b confirming topic is elderly travel assistance AI",
+                "Full-text verification of EV-Q102-9134ca6c0ed671edc59af966 confirming topic is social event image recognition",
+                "Full-text verification of EV-Q102-dd2cdb145d3e1bdde7573b59 confirming topic is AI ethics and disability accessibility",
+                "Full-text verification of EV-Q102-00ebc1e7ba82944f22d42e38 confirming topic is AI fairness for deaf/hard-of-hearing individuals"
+              ],
+              "risk_of_being_wrong": "Low risk. The evidence extraction metadata explicitly states 'insufficient_evidence' and 'topic_relevance_status=DIRECT_QUESTION_CORE' appears to be a retrieval artifact rather than content relevance. If any allowed ID actually contains handedness data, this hypothesis is immediately falsified.",
+              "supporting_evidence_ids": [
+                "EV-Q102-c40e40012d0153a82cbf942b",
+                "EV-Q102-9134ca6c0ed671edc59af966",
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Methodological Artifact Hypothesis: The apparent relevance scores (0.75-0.95) assigned to AI-focused papers for a neuroscience question indicate a systematic error in the evidence retrieval pipeline rather than genuine topical overlap.",
+              "mechanism": "The evidence catalog assigns high relevance_score values to papers on AI accessibility (EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) despite their quoted_text showing no connection to handedness. This suggests the retrieval system may have matched keywords like 'disability' or 'human-centered' without semantic validation, creating a false positive signal that must be filtered before hypothesis generation can proceed.",
+              "falsifiable_prediction": "Re-running the evidence retrieval with strict semantic filtering for 'biological basis of handedness' will reduce the relevance_score of all four current allowed IDs below 0.1 and return zero qualified evidence cards.",
+              "required_observations": [
+                "Comparison of original retrieval query vs. refined semantic query results",
+                "Quantitative analysis of keyword overlap between 'handedness' and retrieved paper abstracts",
+                "Verification that locator field 'topic_relevance_status=DIRECT_QUESTION_CORE' was assigned algorithmically without manual curation"
+              ],
+              "risk_of_being_wrong": "Moderate risk. It is possible that one of the AI papers discusses handedness as a case study in bias or accessibility (e.g., left-handed users interacting with AI systems), which would maintain partial relevance. However, quoted_text excerpts show no such mention.",
+              "supporting_evidence_ids": [
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the fundamental constraint: the allowed evidence set contains no information relevant to the neuroscientific question of handedness. This is the only epistemically valid position given the strict requirement that all factual claims must trace to evidence_ids. Hypothesis 1, while methodologically interesting, is secondary to establishing that no answer can be derived from current inputs. Both hypotheses are fully verifiable using the provided evidence cards without external data.",
+          "rejected_directions": [
+            "Any hypothesis proposing genetic, evolutionary, or neurodevelopmental mechanisms for right-handedness (e.g., LRRTM1 gene, prenatal hormone exposure, language lateralization) - rejected because no allowed evidence_id supports these claims",
+            "Any hypothesis citing the 85-90% prevalence statistic as established fact - rejected because no evidence_id validates this demographic claim",
+            "Any hypothesis linking AI accessibility research to handedness biology - rejected because quoted_text from all four IDs shows no such connection despite high relevance_score artifacts"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to rigorously test the 'Insufficient Evidence Hypothesis'. The core technical approach involves a deterministic, full-text semantic search and keyword extraction pipeline applied to the four allowed Evidence IDs. The system will parse the PDF content (or available text extracts) of EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38. It will then query for the presence of specific neuroscientific and biological terms related to handedness (e.g., 'handedness', 'lateralization', 'motor asymmetry', 'LRRTM1', 'corpus callosum', 'hemisphere dominance'). The hypothesis predicts a zero-hit rate for these terms, confirming that the provided evidence is topically irrelevant to the question of why humans are right-handed, despite high retrieval relevance scores.",
+          "datasets": {
+            "source": [
+              "EV-Q102-c40e40012d0153a82cbf942b",
+              "EV-Q102-9134ca6c0ed671edc59af966",
+              "EV-Q102-dd2cdb145d3e1bdde7573b59",
+              "EV-Q102-00ebc1e7ba82944f22d42e38"
+            ],
+            "target": "Binary verification matrix indicating presence/absence of handedness-related terminology in each Evidence ID."
+          },
+          "methods": "1. Text Extraction: Use PyPDF2 or similar library to extract raw text from the URLs associated with the four Evidence IDs. 2. Keyword Definition: Define a strict lexicon of handedness-related terms: ['handedness', 'left-handed', 'right-handed', 'lateralization', 'asymmetry', 'motor cortex', 'genetic basis of handedness']. 3. Semantic Search: Perform case-insensitive exact match and n-gram search for these terms within the extracted text of each document. 4. Context Verification: For any potential matches, extract the surrounding sentence to verify if the term is used in a biological/neuroscientific context versus a metaphorical or unrelated AI context (e.g., 'left-hand side of the image'). 5. Statistical Validation: Calculate the frequency of hits per document. The hypothesis is supported if frequency == 0 for all documents.",
+          "experiments": {
+            "baselines": [
+              "Random Control: A set of 4 random arXiv papers on neuroscience to ensure the keyword list successfully identifies relevant content when present.",
+              "Keyword-only Retrieval Baseline: Replicate the original retrieval method using only keyword overlap without semantic filtering to demonstrate why these AI papers were initially retrieved (false positives)."
+            ],
+            "metrics": [
+              "Hit Rate: Percentage of documents containing at least one target keyword.",
+              "Precision of Relevance: Ratio of true biological mentions to total keyword matches (expected to be 0/0 or 0/N).",
+              "Semantic Distance Score: Cosine similarity between the document embedding and a canonical 'handedness mechanism' query vector (expected to be low)."
+            ],
+            "ablation": "Remove metaphorical terms (e.g., 'left/right' in spatial contexts) from the keyword list to ensure no false positives from general directional language in AI papers.",
+            "validation_protocol": "Double-blind manual review of any flagged sentences by two independent annotators to confirm whether the context is biological. If no sentences are flagged, the automated zero-hit result is accepted as ground truth."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to the full text of all four arXiv PDFs via the provided URLs.",
+            "Confirm the keyword lexicon is fixed and documented before execution.",
+            "Ensure the text extraction pipeline handles PDF formatting errors gracefully.",
+            "Log all search hits (if any) with line numbers for manual verification.",
+            "Store the raw text extracts and search results in a version-controlled repository."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "script_generated": true,
+            "data_access_verified": false,
+            "estimated_runtime_minutes": 5,
+            "dependencies": [
+              "PyPDF2",
+              "scikit-learn",
+              "numpy"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints.",
+            "All supporting evidence IDs are valid and present in the allowed catalog; no hallucinated references detected.",
+            "The experiment design appropriately treats the verification of evidence irrelevance as a testable null hypothesis with clear falsification criteria.",
+            "Results field correctly states 'pending' and does not fabricate experimental outcomes.",
+            "Knowledge gaps are accurately mapped to the absence of biological data in AI-focused evidence cards."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+            "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+            "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:1a92b6861e94",
+            "category": "required_revision",
+            "description": "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:06c20200481c",
+            "category": "required_revision",
+            "description": "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:30f888051c7b",
+            "category": "required_revision",
+            "description": "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "4215882dc88aa81bef5659c2e7d42a8b91f0a9cc13cb382d2571abd3f0b23d29",
+          "experiment_designer": "b802ce353a6f5b180dfe929bc995fb0f13d2ea9e0fad47d8cfb032b7e9521b7f",
+          "scientific_reviewer": "1fb871bcbe661b8841a3fffc6f858be64d548ce25a528ab5493023549c964e5d"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-090739-99196e54",
+        "version_number": 2,
+        "version_id": "20260822-090739-99196e54:v2",
+        "parent_version_id": "20260822-090739-99196e54:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Evidence Absence Null Hypothesis: The allowed evidence set contains no biological, genetic, or evolutionary data explaining human right-handedness; observed high relevance scores are retrieval artifacts unrelated to topical validity.",
+              "mechanism": "The four allowed Evidence IDs (EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) exclusively address AI fairness, accessibility technology, and social event recognition. No card contains factual assertions regarding neuroanatomy, genetics, or evolutionary biology relevant to handedness. The high relevance_score (0.75–0.95) assigned to these papers is a retrieval system artifact resulting from keyword overlap (e.g., 'disability', 'human-centered') rather than semantic alignment with the neuroscience question. Therefore, any causal mechanism for right-handedness derived solely from this evidence set would be ungrounded speculation. This hypothesis validates the absence of evidence in the current corpus, not the biological non-existence of handedness mechanisms.",
+              "falsifiable_prediction": "A comprehensive full-text semantic search of all four allowed Evidence IDs using an expanded lexicon including 'right-handed', 'left-handed', 'manual asymmetry', 'lateralization', and 'motor cortex' will yield zero biologically relevant mentions. Any detected instances will be confirmed as non-biological (e.g., spatial references in computer vision) upon manual context verification.",
+              "required_observations": [
+                "Full-text extraction and keyword search of EV-Q102-c40e40012d0153a82cbf942b confirming topic is elderly travel assistance AI with no handedness content",
+                "Full-text extraction and keyword search of EV-Q102-9134ca6c0ed671edc59af966 confirming topic is social event image recognition with no handedness content",
+                "Full-text extraction and keyword search of EV-Q102-dd2cdb145d3e1bdde7573b59 confirming topic is AI ethics/disability accessibility with no handedness content",
+                "Full-text extraction and keyword search of EV-Q102-00ebc1e7ba82944f22d42e38 confirming topic is AI fairness for deaf/hard-of-hearing with no handedness content",
+                "Manual verification that any keyword hits are false positives (e.g., 'left-hand side of UI') rather than biological discussions"
+              ],
+              "risk_of_being_wrong": "Low risk. The evidence extraction metadata explicitly states 'insufficient_evidence' and quoted_text excerpts show no biological content. If any allowed ID contains genuine neuroscientific discussion of handedness (e.g., as a case study in motor accessibility), this hypothesis is immediately falsified. However, current metadata and excerpts strongly suggest irrelevance.",
+              "supporting_evidence_ids": [
+                "EV-Q102-c40e40012d0153a82cbf942b",
+                "EV-Q102-9134ca6c0ed671edc59af966",
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.98,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Retrieval Artifact Hypothesis: High relevance scores (0.75–0.95) for AI-focused papers in response to a neuroscience question indicate systematic failure in semantic filtering, where keyword-based matching on terms like 'disability' or 'human' produces false positives that must be algorithmically distinguished from true topical relevance.",
+              "mechanism": "The evidence catalog assigns high relevance_score values to papers on AI accessibility (EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) despite quoted_text showing no connection to handedness biology. This discrepancy suggests the retrieval system matched surface-level keywords ('disability', 'accessibility', 'human-centered') without validating semantic alignment to the neuroscientific query. The mechanism is a lexical-semantic gap in the retrieval pipeline that conflates general human-related AI research with specific biological traits. This hypothesis treats the retrieval error itself as a testable phenomenon distinct from the biological question.",
+              "falsifiable_prediction": "Re-running evidence retrieval with strict semantic filtering for 'biological basis of handedness' OR 'manual asymmetry etiology' will reduce relevance_score of all four current allowed IDs below 0.1 AND return zero qualified evidence cards. Alternatively, if manual curation confirms any ID was correctly tagged as relevant, the artifact hypothesis is weakened.",
+              "required_observations": [
+                "Quantitative comparison of original vs. refined semantic query results showing score reduction",
+                "Keyword overlap analysis demonstrating 'disability'/'accessibility' drove initial matches while 'handedness'/'lateralization' were absent",
+                "Verification that locator field 'topic_relevance_status=DIRECT_QUESTION_CORE' was assigned algorithmically without manual validation",
+                "Confirmation that no allowed ID discusses handedness even as an accessibility use case"
+              ],
+              "risk_of_being_wrong": "Moderate risk. One or more AI papers might discuss handedness as a bias factor in interface design or as a demographic variable in accessibility studies, which would maintain partial relevance. However, quoted_text excerpts provide no indication of such content, making this unlikely.",
+              "supporting_evidence_ids": [
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.72
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the fundamental epistemic constraint: the allowed evidence set contains no information relevant to the neuroscientific question of handedness. It incorporates all required revisions by explicitly framing high relevance scores as retrieval artifacts, expanding the verification lexicon to include 'right-handed', 'left-handed', and 'manual asymmetry', and adding the mandatory disclaimer that evidence absence ≠ biological non-existence. This hypothesis achieves perfect evidence grounding (all supporting IDs are valid and topically confirmatory via their irrelevance) and maximum falsifiability through deterministic text search. Hypothesis 1, while methodologically valuable, is secondary to establishing the primary null result and has lower evidence support since only two IDs clearly demonstrate the retrieval artifact pattern.",
+          "rejected_directions": [
+            "Any hypothesis proposing genetic, evolutionary, or neurodevelopmental mechanisms for right-handedness (e.g., LRRTM1 gene, prenatal hormone exposure, language lateralization) - rejected because no allowed evidence_id supports these claims",
+            "Any hypothesis citing the 85-90% prevalence statistic as established fact - rejected because no evidence_id validates this demographic claim",
+            "Any hypothesis linking AI accessibility research to handedness biology - rejected because quoted_text from all four IDs shows no such connection despite high relevance_score artifacts",
+            "Any hypothesis treating high relevance_score as indicative of topical validity - rejected per reviewer requirement to explicitly identify scores as retrieval artifacts"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment validates the 'Evidence Absence Null Hypothesis' by performing a deterministic full-text semantic audit of the four allowed Evidence IDs. The technical pipeline involves: (1) PDF text extraction from the provided arXiv URLs for EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38; (2) Application of an expanded biological lexicon including 'right-handed', 'left-handed', 'manual asymmetry', 'lateralization', 'motor cortex', and 'handedness'; (3) Contextual verification to distinguish biological usage from spatial/UI references (e.g., 'left-hand side'); and (4) Explicit documentation that high relevance scores (0.75–0.95) are retrieval artifacts driven by keyword overlap (e.g., 'disability', 'human-centered') rather than topical validity for handedness research. A mandatory disclaimer is included stating that this validation confirms the absence of evidence in the current corpus, not the biological non-existence of handedness mechanisms.",
+          "datasets": {
+            "source": [
+              "EV-Q102-c40e40012d0153a82cbf942b",
+              "EV-Q102-9134ca6c0ed671edc59af966",
+              "EV-Q102-dd2cdb145d3e1bdde7573b59",
+              "EV-Q102-00ebc1e7ba82944f22d42e38"
+            ],
+            "target": "Binary presence/absence matrix of biological handedness terminology within each Evidence ID, annotated with context classification (Biological vs. Non-Biological/Artifact)."
+          },
+          "methods": "1. Text Extraction: Parse full-text PDFs from the allowed Evidence IDs using PyPDF2/pdfplumber. 2. Lexicon Search: Execute case-insensitive search for the expanded lexicon: ['right-handed', 'left-handed', 'manual asymmetry', 'lateralization', 'motor cortex', 'handedness', 'hemisphere dominance']. 3. Artifact Filtering: Flag any hits containing spatial terms (e.g., 'left side of image', 'right-hand column') as non-biological false positives. 4. Relevance Score Analysis: Correlate the original high relevance scores (0.75–0.95) with the absence of biological keywords to demonstrate retrieval artifact status. 5. Manual Verification: Double-blind review of any potential matches to confirm irrelevance to neurobiology.",
+          "experiments": {
+            "baselines": [
+              "Random Neuroscience Control: 4 random arXiv papers from the 'Neuroscience' category to verify the lexicon successfully detects biological handedness content when present.",
+              "Keyword-Only Retrieval Baseline: Replicate the original retrieval logic using only surface-level keyword matching (e.g., 'disability', 'human') to demonstrate how these AI papers achieved high relevance scores despite lacking biological content."
+            ],
+            "metrics": [
+              "Hit Rate: Percentage of allowed Evidence IDs containing at least one biological handedness term (Expected: 0%).",
+              "Precision of Biological Context: Ratio of true biological mentions to total keyword hits (Expected: 0 or undefined).",
+              "Semantic Distance: Cosine similarity between document embeddings and a canonical 'handedness mechanism' query vector (Expected: Low, indicating topical divergence)."
+            ],
+            "ablation": "Remove general directional terms ('left', 'right') from the search lexicon to isolate specific biological terms ('manual asymmetry', 'lateralization') and prevent false positives from UI/spatial descriptions in AI papers.",
+            "validation_protocol": "If any keyword hit is detected, two independent annotators must verify the context. If the context is non-biological (e.g., computer vision spatial reference), it is classified as a false positive. The hypothesis is supported if all hits are false positives or zero hits are found. The final report must explicitly state that high relevance scores are retrieval artifacts."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify full-text access to all four arXiv PDFs via provided URLs.",
+            "Confirm the expanded keyword lexicon includes 'right-handed', 'left-handed', and 'manual asymmetry'.",
+            "Document the explicit disclaimer that evidence absence ≠ biological non-existence.",
+            "Log all keyword hits with line numbers and context snippets for manual review.",
+            "Store raw text extracts and search logs in a version-controlled repository.",
+            "Explicitly label high relevance scores (0.75–0.95) as retrieval artifacts in the final output."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "script_generated": true,
+            "data_access_verified": false,
+            "estimated_runtime_minutes": 10,
+            "dependencies": [
+              "PyPDF2",
+              "pdfplumber",
+              "scikit-learn",
+              "numpy"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "Revision 2 successfully incorporates all required revisions from the previous review cycle.",
+            "The hypothesis mechanism now explicitly identifies high relevance scores (0.75-0.95) as retrieval artifacts driven by keyword overlap rather than topical validity, satisfying revision request 1a92b6861e94.",
+            "The experimental lexicon has been correctly expanded to include 'right-handed', 'left-handed', and 'manual asymmetry' as verified in the methods section, satisfying revision request 06c20200481c.",
+            "The mandatory disclaimer distinguishing evidence absence from biological non-existence is present in both the hypothesis mechanism and technical_details, satisfying revision request 30f888051c7b.",
+            "No fabricated results detected; Results field correctly remains 'pending'.",
+            "All supporting evidence IDs are valid and strictly limited to the allowed catalog.",
+            "Experiment design includes appropriate baselines (Random Neuroscience Control) to validate the null result methodology."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.98,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:1a92b6861e94",
+            "category": "required_revision",
+            "description": "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:56d5d27bd38a45df; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:06c20200481c",
+            "category": "required_revision",
+            "description": "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:cc0c753b746ed5ef; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:30f888051c7b",
+            "category": "required_revision",
+            "description": "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:21408d3293423a78,change:3d42c87eef02c47b; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "3584f6d6ad0e176f120fa793131588da0ee812691e027f977753495b4709cdb5",
+          "experiment_designer": "862048d6679594f185e947fb11c1b1a4d6f1d0df275ef11301c430d00ad01171",
+          "scientific_reviewer": "c7825614e9482f7070907527f899b0a5ddf5c46943bf61891aab3e4b4cbcf89b"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-090739-99196e54",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "completed",
+      "processed_event_ids": [
+        "20260822-090739-99196e54:review:v1",
+        "20260822-090739-99196e54:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-090739-99196e54:v1",
+        "20260822-090739-99196e54:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": null
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-090739-99196e54",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "completed",
+        "processed_event_ids": [
+          "20260822-090739-99196e54:review:v1",
+          "20260822-090739-99196e54:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-090739-99196e54:v1",
+          "20260822-090739-99196e54:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": null
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-090739-99196e54",
+          "version_number": 1,
+          "version_id": "20260822-090739-99196e54:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Insufficient Evidence Hypothesis: Current allowed evidence set contains no biological, genetic, or evolutionary data to explain human right-handedness prevalence.",
+                "mechanism": "The provided evidence cards (EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) exclusively address AI fairness, accessibility technology, and social event recognition. No card contains factual assertions regarding neuroanatomy, genetics, or evolutionary biology relevant to handedness. Therefore, any causal mechanism proposed would be ungrounded speculation relative to the allowed evidence constraints.",
+                "falsifiable_prediction": "A comprehensive semantic search of the full text of all four allowed evidence IDs will yield zero mentions of 'handedness', 'lateralization', 'motor asymmetry', or related biological terms.",
+                "required_observations": [
+                  "Full-text verification of EV-Q102-c40e40012d0153a82cbf942b confirming topic is elderly travel assistance AI",
+                  "Full-text verification of EV-Q102-9134ca6c0ed671edc59af966 confirming topic is social event image recognition",
+                  "Full-text verification of EV-Q102-dd2cdb145d3e1bdde7573b59 confirming topic is AI ethics and disability accessibility",
+                  "Full-text verification of EV-Q102-00ebc1e7ba82944f22d42e38 confirming topic is AI fairness for deaf/hard-of-hearing individuals"
+                ],
+                "risk_of_being_wrong": "Low risk. The evidence extraction metadata explicitly states 'insufficient_evidence' and 'topic_relevance_status=DIRECT_QUESTION_CORE' appears to be a retrieval artifact rather than content relevance. If any allowed ID actually contains handedness data, this hypothesis is immediately falsified.",
+                "supporting_evidence_ids": [
+                  "EV-Q102-c40e40012d0153a82cbf942b",
+                  "EV-Q102-9134ca6c0ed671edc59af966",
+                  "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                  "EV-Q102-00ebc1e7ba82944f22d42e38"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "Methodological Artifact Hypothesis: The apparent relevance scores (0.75-0.95) assigned to AI-focused papers for a neuroscience question indicate a systematic error in the evidence retrieval pipeline rather than genuine topical overlap.",
+                "mechanism": "The evidence catalog assigns high relevance_score values to papers on AI accessibility (EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) despite their quoted_text showing no connection to handedness. This suggests the retrieval system may have matched keywords like 'disability' or 'human-centered' without semantic validation, creating a false positive signal that must be filtered before hypothesis generation can proceed.",
+                "falsifiable_prediction": "Re-running the evidence retrieval with strict semantic filtering for 'biological basis of handedness' will reduce the relevance_score of all four current allowed IDs below 0.1 and return zero qualified evidence cards.",
+                "required_observations": [
+                  "Comparison of original retrieval query vs. refined semantic query results",
+                  "Quantitative analysis of keyword overlap between 'handedness' and retrieved paper abstracts",
+                  "Verification that locator field 'topic_relevance_status=DIRECT_QUESTION_CORE' was assigned algorithmically without manual curation"
+                ],
+                "risk_of_being_wrong": "Moderate risk. It is possible that one of the AI papers discusses handedness as a case study in bias or accessibility (e.g., left-handed users interacting with AI systems), which would maintain partial relevance. However, quoted_text excerpts show no such mention.",
+                "supporting_evidence_ids": [
+                  "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                  "EV-Q102-00ebc1e7ba82944f22d42e38"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.7
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it directly addresses the fundamental constraint: the allowed evidence set contains no information relevant to the neuroscientific question of handedness. This is the only epistemically valid position given the strict requirement that all factual claims must trace to evidence_ids. Hypothesis 1, while methodologically interesting, is secondary to establishing that no answer can be derived from current inputs. Both hypotheses are fully verifiable using the provided evidence cards without external data.",
+            "rejected_directions": [
+              "Any hypothesis proposing genetic, evolutionary, or neurodevelopmental mechanisms for right-handedness (e.g., LRRTM1 gene, prenatal hormone exposure, language lateralization) - rejected because no allowed evidence_id supports these claims",
+              "Any hypothesis citing the 85-90% prevalence statistic as established fact - rejected because no evidence_id validates this demographic claim",
+              "Any hypothesis linking AI accessibility research to handedness biology - rejected because quoted_text from all four IDs shows no such connection despite high relevance_score artifacts"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment is designed to rigorously test the 'Insufficient Evidence Hypothesis'. The core technical approach involves a deterministic, full-text semantic search and keyword extraction pipeline applied to the four allowed Evidence IDs. The system will parse the PDF content (or available text extracts) of EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38. It will then query for the presence of specific neuroscientific and biological terms related to handedness (e.g., 'handedness', 'lateralization', 'motor asymmetry', 'LRRTM1', 'corpus callosum', 'hemisphere dominance'). The hypothesis predicts a zero-hit rate for these terms, confirming that the provided evidence is topically irrelevant to the question of why humans are right-handed, despite high retrieval relevance scores.",
+            "datasets": {
+              "source": [
+                "EV-Q102-c40e40012d0153a82cbf942b",
+                "EV-Q102-9134ca6c0ed671edc59af966",
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "target": "Binary verification matrix indicating presence/absence of handedness-related terminology in each Evidence ID."
+            },
+            "methods": "1. Text Extraction: Use PyPDF2 or similar library to extract raw text from the URLs associated with the four Evidence IDs. 2. Keyword Definition: Define a strict lexicon of handedness-related terms: ['handedness', 'left-handed', 'right-handed', 'lateralization', 'asymmetry', 'motor cortex', 'genetic basis of handedness']. 3. Semantic Search: Perform case-insensitive exact match and n-gram search for these terms within the extracted text of each document. 4. Context Verification: For any potential matches, extract the surrounding sentence to verify if the term is used in a biological/neuroscientific context versus a metaphorical or unrelated AI context (e.g., 'left-hand side of the image'). 5. Statistical Validation: Calculate the frequency of hits per document. The hypothesis is supported if frequency == 0 for all documents.",
+            "experiments": {
+              "baselines": [
+                "Random Control: A set of 4 random arXiv papers on neuroscience to ensure the keyword list successfully identifies relevant content when present.",
+                "Keyword-only Retrieval Baseline: Replicate the original retrieval method using only keyword overlap without semantic filtering to demonstrate why these AI papers were initially retrieved (false positives)."
+              ],
+              "metrics": [
+                "Hit Rate: Percentage of documents containing at least one target keyword.",
+                "Precision of Relevance: Ratio of true biological mentions to total keyword matches (expected to be 0/0 or 0/N).",
+                "Semantic Distance Score: Cosine similarity between the document embedding and a canonical 'handedness mechanism' query vector (expected to be low)."
+              ],
+              "ablation": "Remove metaphorical terms (e.g., 'left/right' in spatial contexts) from the keyword list to ensure no false positives from general directional language in AI papers.",
+              "validation_protocol": "Double-blind manual review of any flagged sentences by two independent annotators to confirm whether the context is biological. If no sentences are flagged, the automated zero-hit result is accepted as ground truth."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify access to the full text of all four arXiv PDFs via the provided URLs.",
+              "Confirm the keyword lexicon is fixed and documented before execution.",
+              "Ensure the text extraction pipeline handles PDF formatting errors gracefully.",
+              "Log all search hits (if any) with line numbers for manual verification.",
+              "Store the raw text extracts and search results in a version-controlled repository."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "script_generated": true,
+              "data_access_verified": false,
+              "estimated_runtime_minutes": 5,
+              "dependencies": [
+                "PyPDF2",
+                "scikit-learn",
+                "numpy"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints.",
+              "All supporting evidence IDs are valid and present in the allowed catalog; no hallucinated references detected.",
+              "The experiment design appropriately treats the verification of evidence irrelevance as a testable null hypothesis with clear falsification criteria.",
+              "Results field correctly states 'pending' and does not fabricate experimental outcomes.",
+              "Knowledge gaps are accurately mapped to the absence of biological data in AI-focused evidence cards."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+              "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+              "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:1a92b6861e94",
+              "category": "required_revision",
+              "description": "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:06c20200481c",
+              "category": "required_revision",
+              "description": "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:30f888051c7b",
+              "category": "required_revision",
+              "description": "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "4215882dc88aa81bef5659c2e7d42a8b91f0a9cc13cb382d2571abd3f0b23d29",
+            "experiment_designer": "b802ce353a6f5b180dfe929bc995fb0f13d2ea9e0fad47d8cfb032b7e9521b7f",
+            "scientific_reviewer": "1fb871bcbe661b8841a3fffc6f858be64d548ce25a528ab5493023549c964e5d"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-090739-99196e54",
+          "version_number": 2,
+          "version_id": "20260822-090739-99196e54:v2",
+          "parent_version_id": "20260822-090739-99196e54:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Evidence Absence Null Hypothesis: The allowed evidence set contains no biological, genetic, or evolutionary data explaining human right-handedness; observed high relevance scores are retrieval artifacts unrelated to topical validity.",
+                "mechanism": "The four allowed Evidence IDs (EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) exclusively address AI fairness, accessibility technology, and social event recognition. No card contains factual assertions regarding neuroanatomy, genetics, or evolutionary biology relevant to handedness. The high relevance_score (0.75–0.95) assigned to these papers is a retrieval system artifact resulting from keyword overlap (e.g., 'disability', 'human-centered') rather than semantic alignment with the neuroscience question. Therefore, any causal mechanism for right-handedness derived solely from this evidence set would be ungrounded speculation. This hypothesis validates the absence of evidence in the current corpus, not the biological non-existence of handedness mechanisms.",
+                "falsifiable_prediction": "A comprehensive full-text semantic search of all four allowed Evidence IDs using an expanded lexicon including 'right-handed', 'left-handed', 'manual asymmetry', 'lateralization', and 'motor cortex' will yield zero biologically relevant mentions. Any detected instances will be confirmed as non-biological (e.g., spatial references in computer vision) upon manual context verification.",
+                "required_observations": [
+                  "Full-text extraction and keyword search of EV-Q102-c40e40012d0153a82cbf942b confirming topic is elderly travel assistance AI with no handedness content",
+                  "Full-text extraction and keyword search of EV-Q102-9134ca6c0ed671edc59af966 confirming topic is social event image recognition with no handedness content",
+                  "Full-text extraction and keyword search of EV-Q102-dd2cdb145d3e1bdde7573b59 confirming topic is AI ethics/disability accessibility with no handedness content",
+                  "Full-text extraction and keyword search of EV-Q102-00ebc1e7ba82944f22d42e38 confirming topic is AI fairness for deaf/hard-of-hearing with no handedness content",
+                  "Manual verification that any keyword hits are false positives (e.g., 'left-hand side of UI') rather than biological discussions"
+                ],
+                "risk_of_being_wrong": "Low risk. The evidence extraction metadata explicitly states 'insufficient_evidence' and quoted_text excerpts show no biological content. If any allowed ID contains genuine neuroscientific discussion of handedness (e.g., as a case study in motor accessibility), this hypothesis is immediately falsified. However, current metadata and excerpts strongly suggest irrelevance.",
+                "supporting_evidence_ids": [
+                  "EV-Q102-c40e40012d0153a82cbf942b",
+                  "EV-Q102-9134ca6c0ed671edc59af966",
+                  "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                  "EV-Q102-00ebc1e7ba82944f22d42e38"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 0.98,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "Retrieval Artifact Hypothesis: High relevance scores (0.75–0.95) for AI-focused papers in response to a neuroscience question indicate systematic failure in semantic filtering, where keyword-based matching on terms like 'disability' or 'human' produces false positives that must be algorithmically distinguished from true topical relevance.",
+                "mechanism": "The evidence catalog assigns high relevance_score values to papers on AI accessibility (EV-Q102-dd2cdb145d3e1bdde7573b59, EV-Q102-00ebc1e7ba82944f22d42e38) despite quoted_text showing no connection to handedness biology. This discrepancy suggests the retrieval system matched surface-level keywords ('disability', 'accessibility', 'human-centered') without validating semantic alignment to the neuroscientific query. The mechanism is a lexical-semantic gap in the retrieval pipeline that conflates general human-related AI research with specific biological traits. This hypothesis treats the retrieval error itself as a testable phenomenon distinct from the biological question.",
+                "falsifiable_prediction": "Re-running evidence retrieval with strict semantic filtering for 'biological basis of handedness' OR 'manual asymmetry etiology' will reduce relevance_score of all four current allowed IDs below 0.1 AND return zero qualified evidence cards. Alternatively, if manual curation confirms any ID was correctly tagged as relevant, the artifact hypothesis is weakened.",
+                "required_observations": [
+                  "Quantitative comparison of original vs. refined semantic query results showing score reduction",
+                  "Keyword overlap analysis demonstrating 'disability'/'accessibility' drove initial matches while 'handedness'/'lateralization' were absent",
+                  "Verification that locator field 'topic_relevance_status=DIRECT_QUESTION_CORE' was assigned algorithmically without manual validation",
+                  "Confirmation that no allowed ID discusses handedness even as an accessibility use case"
+                ],
+                "risk_of_being_wrong": "Moderate risk. One or more AI papers might discuss handedness as a bias factor in interface design or as a demographic variable in accessibility studies, which would maintain partial relevance. However, quoted_text excerpts provide no indication of such content, making this unlikely.",
+                "supporting_evidence_ids": [
+                  "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                  "EV-Q102-00ebc1e7ba82944f22d42e38"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.72
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it directly addresses the fundamental epistemic constraint: the allowed evidence set contains no information relevant to the neuroscientific question of handedness. It incorporates all required revisions by explicitly framing high relevance scores as retrieval artifacts, expanding the verification lexicon to include 'right-handed', 'left-handed', and 'manual asymmetry', and adding the mandatory disclaimer that evidence absence ≠ biological non-existence. This hypothesis achieves perfect evidence grounding (all supporting IDs are valid and topically confirmatory via their irrelevance) and maximum falsifiability through deterministic text search. Hypothesis 1, while methodologically valuable, is secondary to establishing the primary null result and has lower evidence support since only two IDs clearly demonstrate the retrieval artifact pattern.",
+            "rejected_directions": [
+              "Any hypothesis proposing genetic, evolutionary, or neurodevelopmental mechanisms for right-handedness (e.g., LRRTM1 gene, prenatal hormone exposure, language lateralization) - rejected because no allowed evidence_id supports these claims",
+              "Any hypothesis citing the 85-90% prevalence statistic as established fact - rejected because no evidence_id validates this demographic claim",
+              "Any hypothesis linking AI accessibility research to handedness biology - rejected because quoted_text from all four IDs shows no such connection despite high relevance_score artifacts",
+              "Any hypothesis treating high relevance_score as indicative of topical validity - rejected per reviewer requirement to explicitly identify scores as retrieval artifacts"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment validates the 'Evidence Absence Null Hypothesis' by performing a deterministic full-text semantic audit of the four allowed Evidence IDs. The technical pipeline involves: (1) PDF text extraction from the provided arXiv URLs for EV-Q102-c40e40012d0153a82cbf942b, EV-Q102-9134ca6c0ed671edc59af966, EV-Q102-dd2cdb145d3e1bdde7573b59, and EV-Q102-00ebc1e7ba82944f22d42e38; (2) Application of an expanded biological lexicon including 'right-handed', 'left-handed', 'manual asymmetry', 'lateralization', 'motor cortex', and 'handedness'; (3) Contextual verification to distinguish biological usage from spatial/UI references (e.g., 'left-hand side'); and (4) Explicit documentation that high relevance scores (0.75–0.95) are retrieval artifacts driven by keyword overlap (e.g., 'disability', 'human-centered') rather than topical validity for handedness research. A mandatory disclaimer is included stating that this validation confirms the absence of evidence in the current corpus, not the biological non-existence of handedness mechanisms.",
+            "datasets": {
+              "source": [
+                "EV-Q102-c40e40012d0153a82cbf942b",
+                "EV-Q102-9134ca6c0ed671edc59af966",
+                "EV-Q102-dd2cdb145d3e1bdde7573b59",
+                "EV-Q102-00ebc1e7ba82944f22d42e38"
+              ],
+              "target": "Binary presence/absence matrix of biological handedness terminology within each Evidence ID, annotated with context classification (Biological vs. Non-Biological/Artifact)."
+            },
+            "methods": "1. Text Extraction: Parse full-text PDFs from the allowed Evidence IDs using PyPDF2/pdfplumber. 2. Lexicon Search: Execute case-insensitive search for the expanded lexicon: ['right-handed', 'left-handed', 'manual asymmetry', 'lateralization', 'motor cortex', 'handedness', 'hemisphere dominance']. 3. Artifact Filtering: Flag any hits containing spatial terms (e.g., 'left side of image', 'right-hand column') as non-biological false positives. 4. Relevance Score Analysis: Correlate the original high relevance scores (0.75–0.95) with the absence of biological keywords to demonstrate retrieval artifact status. 5. Manual Verification: Double-blind review of any potential matches to confirm irrelevance to neurobiology.",
+            "experiments": {
+              "baselines": [
+                "Random Neuroscience Control: 4 random arXiv papers from the 'Neuroscience' category to verify the lexicon successfully detects biological handedness content when present.",
+                "Keyword-Only Retrieval Baseline: Replicate the original retrieval logic using only surface-level keyword matching (e.g., 'disability', 'human') to demonstrate how these AI papers achieved high relevance scores despite lacking biological content."
+              ],
+              "metrics": [
+                "Hit Rate: Percentage of allowed Evidence IDs containing at least one biological handedness term (Expected: 0%).",
+                "Precision of Biological Context: Ratio of true biological mentions to total keyword hits (Expected: 0 or undefined).",
+                "Semantic Distance: Cosine similarity between document embeddings and a canonical 'handedness mechanism' query vector (Expected: Low, indicating topical divergence)."
+              ],
+              "ablation": "Remove general directional terms ('left', 'right') from the search lexicon to isolate specific biological terms ('manual asymmetry', 'lateralization') and prevent false positives from UI/spatial descriptions in AI papers.",
+              "validation_protocol": "If any keyword hit is detected, two independent annotators must verify the context. If the context is non-biological (e.g., computer vision spatial reference), it is classified as a false positive. The hypothesis is supported if all hits are false positives or zero hits are found. The final report must explicitly state that high relevance scores are retrieval artifacts."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify full-text access to all four arXiv PDFs via provided URLs.",
+              "Confirm the expanded keyword lexicon includes 'right-handed', 'left-handed', and 'manual asymmetry'.",
+              "Document the explicit disclaimer that evidence absence ≠ biological non-existence.",
+              "Log all keyword hits with line numbers and context snippets for manual review.",
+              "Store raw text extracts and search logs in a version-controlled repository.",
+              "Explicitly label high relevance scores (0.75–0.95) as retrieval artifacts in the final output."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "script_generated": true,
+              "data_access_verified": false,
+              "estimated_runtime_minutes": 10,
+              "dependencies": [
+                "PyPDF2",
+                "pdfplumber",
+                "scikit-learn",
+                "numpy"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "Revision 2 successfully incorporates all required revisions from the previous review cycle.",
+              "The hypothesis mechanism now explicitly identifies high relevance scores (0.75-0.95) as retrieval artifacts driven by keyword overlap rather than topical validity, satisfying revision request 1a92b6861e94.",
+              "The experimental lexicon has been correctly expanded to include 'right-handed', 'left-handed', and 'manual asymmetry' as verified in the methods section, satisfying revision request 06c20200481c.",
+              "The mandatory disclaimer distinguishing evidence absence from biological non-existence is present in both the hypothesis mechanism and technical_details, satisfying revision request 30f888051c7b.",
+              "No fabricated results detected; Results field correctly remains 'pending'.",
+              "All supporting evidence IDs are valid and strictly limited to the allowed catalog.",
+              "Experiment design includes appropriate baselines (Random Neuroscience Control) to validate the null result methodology."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.98,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:1a92b6861e94",
+              "category": "required_revision",
+              "description": "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:56d5d27bd38a45df; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:06c20200481c",
+              "category": "required_revision",
+              "description": "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:cc0c753b746ed5ef; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:30f888051c7b",
+              "category": "required_revision",
+              "description": "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:21408d3293423a78,change:3d42c87eef02c47b; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "3584f6d6ad0e176f120fa793131588da0ee812691e027f977753495b4709cdb5",
+            "experiment_designer": "862048d6679594f185e947fb11c1b1a4d6f1d0df275ef11301c430d00ad01171",
+            "scientific_reviewer": "c7825614e9482f7070907527f899b0a5ddf5c46943bf61891aab3e4b4cbcf89b"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-090739-99196e54:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-090739-99196e54:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-090739-99196e54:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-090739-99196e54:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:1a92b6861e94",
+          "category": "required_revision",
+          "description": "In the final report, explicitly state that the high relevance_score (0.75-0.95) assigned to AI papers is a retrieval system artifact and must not be interpreted as topical validity for handedness research.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:56d5d27bd38a45df; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:06c20200481c",
+          "category": "required_revision",
+          "description": "Ensure the keyword lexicon for the verification experiment includes 'right-handed', 'left-handed', and 'manual asymmetry' to prevent false negatives from terminology variation.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cc0c753b746ed5ef; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:30f888051c7b",
+          "category": "required_revision",
+          "description": "Add a mandatory disclaimer that this review validates the *absence* of evidence, not the biological non-existence of handedness mechanisms.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:21408d3293423a78,change:3d42c87eef02c47b; evidence=EV-Q102-00ebc1e7ba82944f22d42e38,EV-Q102-9134ca6c0ed671edc59af966,EV-Q102-c40e40012d0153a82cbf942b,EV-Q102-dd2cdb145d3e1bdde7573b59; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "checkpoint_hash": "3b806826f733f4cb50c572b4629dd8515b72406648ae86c8b0ba05278b073ae4"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-090739-99196e54:wave-b-two-round",
+      "run_id": "20260822-090739-99196e54",
+      "v1_version_id": "20260822-090739-99196e54:v1",
+      "v2_version_id": "20260822-090739-99196e54:v2",
+      "input_fingerprints": {
+        "v1": "b802ce353a6f5b180dfe929bc995fb0f13d2ea9e0fad47d8cfb032b7e9521b7f",
+        "v2": "862048d6679594f185e947fb11c1b1a4d6f1d0df275ef11301c430d00ad01171"
+      },
+      "responded_issue_count": 3,
+      "issue_ids": [
+        "required_revision:1a92b6861e94",
+        "required_revision:06c20200481c",
+        "required_revision:30f888051c7b"
+      ],
+      "change_ids": [
+        "change:56d5d27bd38a45df",
+        "change:cc0c753b746ed5ef",
+        "change:21408d3293423a78",
+        "change:3d42c87eef02c47b"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Evidence Absence Null Hypothesis: The allowed evidence set contains no biological, genetic, or evolutionary data explaining human right-handedness; observed high relevance scores are retrieval artifacts unrelated to topical validity.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Retrieval Artifact Hypothesis: High relevance scores (0.75–0.95) for AI-focused papers in response to a neuroscience question indicate systematic failure in semantic filtering, where keyword-based matching on terms like 'disability' or 'human' produces false positives that must be algorithmically distinguished from true topical relevance.",
+          "overall_score": 0.72,
+          "recommended": false
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "event_id": "7ba0b381aedc",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:09:55.443613+00:00",
+    "ended_at": "2026-08-22T09:10:42.511808+00:00",
+    "duration_ms": 47068,
+    "input_summary": "{\"question_item\": {\"id\": \"Q102\", \"domain\": \"Neuroscience\", \"question\": \"Why are most people right-handed?\", \"source_page\": 36, \"booklet_excerpt\": \"of satellites and stars. Could an advanced intelligent machine help us predict the future? It is estimated that 85%–90% of humans are right- handed, but there’s no simple reason why. It could be\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Neuroscience\", \"core_question\": \"What are the underlying causes of the high prevalence (85%-90%) of right-handedness",
+    "output_summary": "{\"input_question\": \"Why are most people right-handed?\", \"domain\": \"Neuroscience\", \"problem_statement\": \"The provided booklet excerpt states that 85%–90% of humans are right-handed but explicitly notes there is no simple reason why. The core scientific problem is to identify the underlying biological, genetic, or evolutionary mechanisms driving this population-level lateralization, given that the current evidence set contains no direct neuroscientific data on handedness.\", \"rationale\": \"Understanding the etiology of handedness is fundamental to neuroscience and developmental biology. However, t",
+    "evidence_ids": [
+      "EV-Q102-c40e40012d0153a82cbf942b",
+      "EV-Q102-9134ca6c0ed671edc59af966",
+      "EV-Q102-dd2cdb145d3e1bdde7573b59",
+      "EV-Q102-00ebc1e7ba82944f22d42e38"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7bbf703b59dc",
+    "mock": false
+  },
+  {
+    "event_id": "26f795b03c4e",
+    "run_id": "20260822-090739-99196e54",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:10:42.513320+00:00",
+    "ended_at": "2026-08-22T09:10:43.784753+00:00",
+    "duration_ms": 1271,
+    "input_summary": "{\"question_item\": {\"id\": \"Q102\", \"domain\": \"Neuroscience\", \"question\": \"Why are most people right-handed?\", \"source_page\": 36, \"booklet_excerpt\": \"of satellites and stars. Could an advanced intelligent machine help us predict the future? It is estimated that 85%–90% of humans are right- handed, but there’s no simple reason why. It could be\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required field 'ResearchPlan'.\", \"Missing required field 'EvidenceCards'.\", \"Missing required field 'AgentTrace'.\", \"Missing required field 'execution_metadata'.\"], \"warnings\": [], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "349e5cffad5e",
+    "mock": false
+  }
+]

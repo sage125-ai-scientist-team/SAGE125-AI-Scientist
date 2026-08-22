@@ -1,0 +1,178 @@
+{
+  "question_id": "Q013",
+  "input_question": "Can we predict the next pandemic?",
+  "domain": "Medicine & Health",
+  "problem_statement": "The feasibility of predicting the emergence of novel pandemics is limited by the lack of pre-spillover data streams required by traditional statistical models. Current evidence supports forecasting the trajectory of identified epidemics (e.g., COVID-19) but does not validate the prediction of zoonotic spillover events before human-to-human transmission is established. The core challenge is distinguishing between post-emergence trajectory forecasting and pre-emergence detection, and determining if adaptive models can detect operational regime shifts (sustained spread) earlier than static baselines.",
+  "rationale": "Accurate forecasts are central to resource management for identified epidemics (EV-Q013-2bad792fb502b5382c574bb9). However, existing methods like Poisson regression (EV-Q013-82b904a4b3ad0b0fc6537798) and time-series models (EV-Q013-697ea7a54d639c2ca698106f) rely on observed case counts, rendering them ineffective for pre-spillover prediction. Operational pandemic forecasting involves streaming data with regime shifts (EV-Q013-be07f5d72413bdd05d20b3b7), suggesting that self-evolving agents may offer superior detection capabilities for the transition from sporadic cases to sustained spread, even if they cannot predict the initial spillover event itself.",
+  "generated_hypotheses": [
+    {
+      "hypothesis": "Self-evolving forecasting agents can detect the operational transition from sporadic cases to sustained pandemic spread (defined as Rt > 1 for ≥7 consecutive days) earlier than static models by adapting to regime shifts in streaming epidemiological data, distinct from predicting zoonotic spillover events.",
+      "mechanism": "Operational pandemic forecasting is a streaming process characterized by regime shifts rather than a static supervised task (EV-Q013-be07f5d72413bdd05d20b3b7). Self-evolving agents dynamically adapt internal representations to these distributional changes in real-time. In contrast, static Poisson regression (EV-Q013-82b904a4b3ad0b0fc6537798) and time-series models (EV-Q013-697ea7a54d639c2ca698106f) rely on fixed parameters trained on historical distributions, causing lag when transmission dynamics shift abruptly at the onset of sustained spread. This hypothesis explicitly limits scope to post-spillover detection of exponential growth regimes, acknowledging that pre-emergence spillover prediction is unsupported by current evidence.",
+      "falsifiable_prediction": "In retrospective streaming simulations of emerging outbreaks, self-evolving agents will achieve a statistically significant reduction in time-to-detection of the 'Rt > 1 for ≥7 days' regime compared to static Poisson and time-series baselines. If self-evolving agents fail to outperform static models in detecting this specific operational threshold during the early growth phase, or if they cannot distinguish this regime from transient noise, the hypothesis is falsified.",
+      "required_observations": [
+        "Streaming case/death count data with daily resolution from historical emerging outbreaks",
+        "Ground-truth labels for regime shifts defined strictly as Rt > 1 persisting for ≥7 consecutive days",
+        "Quantitative metrics for detection latency (days from regime shift onset to model alert)",
+        "Comparative performance benchmarks against static Poisson regression (EV-Q013-82b904a4b3ad0b0fc6537798) and standard time-series models (EV-Q013-697ea7a54d639c2ca698106f)"
+      ],
+      "risk_of_being_wrong": "The evidence for self-evolving agents (EV-Q013-be07f5d72413bdd05d20b3b7) validates general streaming forecasting but does not specifically confirm efficacy during the low-signal, high-noise pre-pandemic phase. The model might only detect regime shifts after substantial spread has occurred, offering no practical advantage for early warning. Additionally, the operational definition of 'regime shift' (Rt > 1 for ≥7 days) is a methodological choice for reproducibility, not a biological constant derived from the provided evidence.",
+      "supporting_evidence_ids": [
+        "EV-Q013-be07f5d72413bdd05d20b3b7",
+        "EV-Q013-697ea7a54d639c2ca698106f",
+        "EV-Q013-82b904a4b3ad0b0fc6537798"
+      ],
+      "contradicted_by_evidence_ids": []
+    },
+    {
+      "hypothesis": "Current statistical forecasting frameworks (Poisson/Time-Series) are fundamentally insufficient for predicting the emergence of the next novel pandemic because they require established transmission data streams that do not exist prior to spillover.",
+      "mechanism": "Accurate forecasting is central to managing identified epidemics (EV-Q013-2bad792fb502b5382c574bb9), but existing methods like Poisson regression (EV-Q013-82b904a4b3ad0b0fc6537798) and time-series analysis (EV-Q013-697ea7a54d639c2ca698106f) are mathematically dependent on observed case/death trajectories. Without an existing data stream generated by human-to-human transmission, these models have no input signal to process, rendering them incapable of pre-emergence prediction regardless of algorithmic sophistication.",
+      "falsifiable_prediction": "A systematic review of forecasting literature will reveal zero validated instances where Poisson or time-series models successfully predicted a pandemic outbreak date or location using only pre-spillover data (e.g., wildlife surveillance, climate data) without any human case counts. If any such validated pre-emergence prediction exists using these specific methods, the hypothesis is falsified.",
+      "required_observations": [
+        "Comprehensive audit of forecasting model inputs in cited literature (EV-Q013-82b904a4b3ad0b0fc6537798; EV-Q013-697ea7a54d639c2ca698106f)",
+        "Verification of whether any model utilized non-epidemiological precursors as primary predictive features",
+        "Documentation of model performance on pre-outbreak vs. post-outbreak data segments"
+      ],
+      "risk_of_being_wrong": "This hypothesis assumes a strict definition of 'prediction' as pre-spillover warning. If the scientific community accepts 'early exponential phase detection' (days/weeks after spillover but before global spread) as valid 'pandemic prediction,' this hypothesis becomes semantically incorrect despite being technically accurate regarding pre-emergence capability.",
+      "supporting_evidence_ids": [
+        "EV-Q013-82b904a4b3ad0b0fc6537798",
+        "EV-Q013-697ea7a54d639c2ca698106f",
+        "EV-Q013-2bad792fb502b5382c574bb9"
+      ],
+      "contradicted_by_evidence_ids": []
+    },
+    {
+      "hypothesis": "Integrating self-evolving agents with multi-source streaming data can extend pandemic prediction horizons beyond traditional time-series models by leveraging non-traditional signals during regime shifts.",
+      "mechanism": "While traditional time-series models (EV-Q013-697ea7a54d639c2ca698106f) and Poisson regression (EV-Q013-82b904a4b3ad0b0fc6537798) are limited to epidemiological counts, self-evolving agents designed for streaming processes under regime shifts (EV-Q013-be07f5d72413bdd05d20b3b7) could theoretically ingest heterogeneous data streams (e.g., search trends, mobility, environmental sensors) to detect anomalous patterns preceding confirmed case surges, thereby extending the prediction window.",
+      "falsifiable_prediction": "Self-evolving agents trained on multi-modal streaming data will demonstrate superior lead time in forecasting pandemic acceleration compared to agents trained solely on case/death counts. If multi-modal integration does not improve forecast horizon over unimodal baselines in retrospective testing, the hypothesis is weakened.",
+      "required_observations": [
+        "Multi-modal streaming datasets aligned temporally with pandemic regime shifts",
+        "Ablation studies comparing unimodal vs. multi-modal agent performance",
+        "Lead-time metrics quantifying days of advance warning gained through non-traditional signals"
+      ],
+      "risk_of_being_wrong": "The cited evidence (EV-Q013-be07f5d72413bdd05d20b3b7) mentions streaming processes and regime shifts but does not explicitly validate multi-modal data integration or confirm that non-epidemiological signals improve pre-emergence prediction. This hypothesis extrapolates beyond the provided evidence scope.",
+      "supporting_evidence_ids": [
+        "EV-Q013-be07f5d72413bdd05d20b3b7",
+        "EV-Q013-697ea7a54d639c2ca698106f"
+      ],
+      "contradicted_by_evidence_ids": []
+    }
+  ],
+  "technical_details": "This experiment validates the hypothesis that self-evolving agents detect operational regime shifts in streaming epidemiological data earlier than static baselines. The core technical challenge is defining 'regime shift' reproducibly: we operationally define it as the effective reproduction number (Rt) exceeding 1.0 for ≥7 consecutive days, marking the transition from sporadic cases to sustained spread. This definition addresses reviewer feedback by providing a concrete threshold absent in the general concept of 'regime shifts' in EV-Q013-be07f5d72413bdd05d20b3b7. The study explicitly distinguishes this post-spillover detection task from pre-emergence zoonotic spillover prediction, adhering to evidence scope limitations. We implement a retrospective streaming simulation where historical daily case/death counts (EV-Q013-82b904a4b3ad0b0fc6537798; EV-Q013-697ea7a54d639c2ca698106f) are fed sequentially to models. The self-evolving agent updates its internal representations online to adapt to distributional changes, while static Poisson and time-series models retain fixed parameters trained on pre-shift data. Detection latency is measured as the time difference between the ground-truth onset of the defined regime shift and the model's alert trigger.",
+  "datasets": {
+    "source": [
+      {
+        "name": "Historical Epidemiological Time Series",
+        "description": "Daily confirmed case and death counts from established outbreaks (e.g., early COVID-19 phases) as utilized in EV-Q013-82b904a4b3ad0b0fc6537798 and EV-Q013-697ea7a54d639c2ca698106f.",
+        "evidence_ids": [
+          "EV-Q013-82b904a4b3ad0b0fc6537798",
+          "EV-Q013-697ea7a54d639c2ca698106f"
+        ],
+        "access_status": "public_candidate",
+        "is_downloaded": false
+      }
+    ],
+    "target": {
+      "name": "Streaming Regime Shift Simulation Dataset",
+      "description": "Synthetic streaming data derived from source datasets, with ground-truth labels for regime shifts defined strictly as Rt > 1 for ≥7 consecutive days. This dataset simulates real-time data arrival to test detection latency, aligned with the operational streaming context described in EV-Q013-be07f5d72413bdd05d20b3b7.",
+      "evidence_ids": [
+        "EV-Q013-be07f5d72413bdd05d20b3b7"
+      ],
+      "generation_method": "Retrospective segmentation of historical data with noise injection to simulate streaming conditions and explicit labeling of regime shift onsets based on the operational definition."
+    }
+  },
+  "paper_title": "Detecting Pandemic Regime Shifts: A Comparative Study of Self-Evolving Agents vs. Static Forecasting Models",
+  "paper_abstract": "Background: Accurate forecasting is central to epidemic management (EV-Q013-2bad792fb502b5382c574bb9), but predicting the onset of novel pandemics remains challenging due to the lack of pre-spillover data. Methods: We compare self-evolving agents designed for streaming processes under regime shifts (EV-Q013-be07f5d72413bdd05d20b3b7) against static Poisson regression (EV-Q013-82b904a4b3ad0b0fc6537798) and time-series models (EV-Q013-697ea7a54d639c2ca698106f). We operationally define 'pandemic onset' as Rt > 1 for ≥7 consecutive days. Validation Plan: Retrospective streaming simulations measure time-to-detection latency. Results: pending. This study aims to determine if adaptive models can provide earlier warnings of sustained spread compared to traditional static approaches.",
+  "methods": "1. Data Preprocessing: Convert batch historical data into sequential streams; label regime shifts based on Rt > 1 for ≥7 consecutive days. 2. Model Implementation: Implement a self-evolving agent (referencing EV-Q013-be07f5d72413bdd05d20b3b7) and static baselines (Poisson from EV-Q013-82b904a4b3ad0b0fc6537798; Time-Series from EV-Q013-697ea7a54d639c2ca698106f). 3. Detection Logic: Trigger alerts based on prediction error or state divergence thresholds. 4. Evaluation: Measure Time-to-Detection Latency and False Alarm Rate.",
+  "experiments": {
+    "baselines": [
+      "Over-dispersed Poisson Regression Model (static, as per EV-Q013-82b904a4b3ad0b0fc6537798)",
+      "Standard Time-Series Forecasting Model (e.g., ARIMA/LSTM, static, as per EV-Q013-697ea7a54d639c2ca698106f)",
+      "Naive Constant Growth Baseline"
+    ],
+    "metrics": [
+      "Time-to-Detection Latency (days): Difference between ground-truth regime shift start (Rt > 1 for ≥7 days) and model alert timestamp.",
+      "False Alarm Rate: Number of alerts triggered before actual regime shift per unit time.",
+      "Precision-Recall at K days lead time: Ability to correctly predict exponential growth K days in advance."
+    ],
+    "ablation": [
+      "Impact of update frequency on self-evolving agent performance (daily vs. weekly updates).",
+      "Sensitivity analysis of detection thresholds on False Alarm Rate vs. Detection Latency trade-off.",
+      "Ablation of the '≥7 consecutive days' constraint to test robustness of the operational definition."
+    ],
+    "validation_protocol": "Retrospective simulation using leave-one-out cross-validation across different geographic regions or outbreak waves. Statistical significance of latency reduction tested via paired t-test or Wilcoxon signed-rank test against baselines. Explicitly report limitations regarding the distinction between detecting sustained spread (post-spillover) and predicting zoonotic spillover (pre-emergence)."
+  },
+  "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+  "references": [
+    {
+      "id": "EV-Q013-2bad792fb502b5382c574bb9",
+      "source_type": "arxiv",
+      "title": "arXiv:2004.11372",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2004.11372.pdf",
+      "doi": null,
+      "quoted_text": "Learning to Forecast and Forecasting to Learn from the COVID-19 Pandemic Ajitesh Srivastava1, Viktor K. Prasanna 1 1 Ming Hsieh Department of Electrical and Computer Enginnering, University of Southern California, Los Angeles, California, USA {ajiteshs, prasanna}@usc.edu Abstract Accurate forecasts of COVID-19 is central to resource management and building strategies to deal with the epidemic.",
+      "summary": "Learning to Forecast and Forecasting to Learn from the COVID-19 Pandemic Ajitesh Srivastava1, Viktor K. Prasanna 1 1 Ming Hsieh Department of Electrical and Computer Enginnering, U",
+      "relevance_score": 1.0,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=29cc24a0efa1505904624afa243b36b740e9dc5813bbdc44e81b20cad55a9f17"
+    },
+    {
+      "id": "EV-Q013-82b904a4b3ad0b0fc6537798",
+      "source_type": "arxiv",
+      "title": "arXiv:2007.02105",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2007.02105.pdf",
+      "doi": null,
+      "quoted_text": "Prediction Regions for Poisson and Over-Dispersed Poisson Regression Models with Applications to Forecasting Number of Deaths during the COVID-19 Pandemic T. Kim ∗ B. Lieberman † G.",
+      "summary": "Prediction Regions for Poisson and Over-Dispersed Poisson Regression Models with Applications to Forecasting Number of Deaths during the COVID-19 Pandemic T. Kim ∗ B. Lieberman † G",
+      "relevance_score": 1.0,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=03f8aa647cd75f5ab874d9c89ad9249bdaa8838251f32e35df3f1f877656958c"
+    },
+    {
+      "id": "EV-Q013-697ea7a54d639c2ca698106f",
+      "source_type": "arxiv",
+      "title": "arXiv:2009.12176",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2009.12176.pdf",
+      "doi": null,
+      "quoted_text": "COVID-19 Pandemic Prediction using Time Series Forecasting Models *Note: This paper is accepted in the 11th ICCCNT 2020 conference. The ﬁnal version of this paper will appear in the conference proceedings.",
+      "summary": "COVID-19 Pandemic Prediction using Time Series Forecasting Models *Note: This paper is accepted in the 11th ICCCNT 2020 conference. The ﬁnal version of this paper will appear in th",
+      "relevance_score": 1.0,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=93c89eefef3a27b51a7cbc6250abf565c38fc377feb5ae6e598300293d6fd86c"
+    },
+    {
+      "id": "EV-Q013-be07f5d72413bdd05d20b3b7",
+      "source_type": "arxiv",
+      "title": "arXiv:2606.05513",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2606.05513.pdf",
+      "doi": null,
+      "quoted_text": "EpiEvolve: Self-Evolving Agents for Streaming Pandemic Forecasting under Regime Shifts Yiming Lu1, Sihang Zeng2, Zhengxu Tang1, Max Lau1, Fei Liu1, Wei Jin1 1Emory University 2University of Washington {yiming.lu, wei.jin}@emory.edu Abstract Epidemic LLM forecasters are usually trained and evaluated as static supervised models, whereas operational pandemic forecasting is a streaming process in which labels arrive af- ter predictions and disease regimes shift over time.",
+      "summary": "EpiEvolve: Self-Evolving Agents for Streaming Pandemic Forecasting under Regime Shifts Yiming Lu1, Sihang Zeng2, Zhengxu Tang1, Max Lau1, Fei Liu1, Wei Jin1 1Emory University 2Univ",
+      "relevance_score": 1.0,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=e5474a016064eb66fdc504197a6d2dd924c20b3d54de1800061ef487e37997f6"
+    }
+  ],
+  "reviewer_comments": [
+    "The revision successfully addresses all required revisions from the previous iteration. The hypothesis now explicitly defines 'regime shift' operationally as 'Rt > 1 for ≥7 consecutive days', satisfying the reproducibility requirement.",
+    "The distinction between 'predicting transition from sporadic cases' and 'predicting zoonotic spillover' is clearly articulated in both the hypothesis text and the risk_of_being_wrong section, preventing overclaiming beyond the evidence scope.",
+    "All factual claims remain strictly grounded in the allowed EvidenceCards (EV-Q013-be07f5d72413bdd05d20b3b7, EV-Q013-82b904a4b3ad0b0fc6537798, EV-Q013-697ea7a54d639c2ca698106f). No hallucinated references or unverified assertions detected.",
+    "Experiment design correctly maintains 'pending' status for results and includes appropriate baselines and metrics aligned with the refined hypothesis.",
+    "Reproducibility checklist has been updated to include specific documentation requirements for the operational definition of regime shifts."
+  ],
+  "revision_history": [
+    "auto_revision_1: 依据评审意见重做假设与实验设计。"
+  ],
+  "reproducibility_checklist": [
+    "Code repository for self-evolving agent and baseline implementations must be version-controlled.",
+    "Data preprocessing scripts must explicitly document the calculation of Rt and the application of the 'Rt > 1 for ≥7 consecutive days' rule for labeling regime shifts.",
+    "Random seeds for all stochastic processes (initialization, noise injection) must be fixed and reported.",
+    "Hyperparameters for Poisson and Time-Series baselines must be optimized on a separate validation set not used for final testing.",
+    "Clear documentation distinguishing the scope of 'regime shift detection' from 'zoonotic spillover prediction' in all output reports."
+  ],
+  "validation_status": "needs_data",
+  "actual_execution": false
+}

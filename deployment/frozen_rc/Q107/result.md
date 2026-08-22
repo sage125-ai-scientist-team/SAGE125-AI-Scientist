@@ -1,0 +1,155 @@
+# Assessing Structural Uncertainty in East Asian Extreme Rainfall Projections: The Role of Non-Stationary Aerosol-GHG Interactions
+
+## Input Question
+Can we stop global climate change?
+
+## Domain
+Ecology
+
+## Validation Status
+needs_data
+
+## Problem Statement
+The inquiry into stopping global climate change is constrained by significant socio-technical barriers, specifically the lack of a unified global climate observational system, insufficient data infrastructure investment, and fragmented coordination among diverse governmental and sectoral actors. Current approaches are largely reactive rather than proactive, hindering the ability to implement effective mitigation strategies.
+
+## Rationale
+While the ultimate goal is to halt climate change, immediate scientific progress relies on addressing the foundational data and coordination gaps identified in the problem context. Specifically, improving the fidelity of climate models in projecting extreme events (such as East Asian rainfall) under varying anthropogenic forcings is a critical step toward reliable prediction and proactive planning. This research plan focuses on validating model uncertainties related to aerosol-GHG interactions, which are key drivers of projection errors, thereby addressing the 'data quality' aspect of the broader challenge.
+
+## Generated Hypotheses
+
+### Hypothesis 1
+- **Hypothesis**: Current climate models exhibit significant structural uncertainty in projecting East Asian extreme rainfall intensity because historical monsoon trends are not indicative of future changes under evolving aerosol and greenhouse gas forcings.
+- **Mechanism**: Anthropogenic forcings alter precipitation microphysics and dynamics, causing extreme heavy rainfall events to become shorter and more intense (EV-Q107-04ae35f62379acebb6eb3d39). However, the non-linear interaction between changing aerosol loads and greenhouse gas concentrations disrupts the stationarity of historical rainfall patterns, rendering past trends unreliable predictors for future extremes in East Asia.
+- **Falsifiable Prediction**: If climate models that explicitly resolve time-varying aerosol-GHG interactions fail to demonstrate statistically superior skill (e.g., lower RMSE or higher spatial correlation) in reproducing observed East Asian extreme rainfall intensity trends compared to models using fixed-aerosol or historical-trend extrapolation baselines, then the hypothesis that aerosol-GHG non-stationarity is the primary driver of projection uncertainty will be weakened.
+- **Required Observations**: High-resolution observational records of extreme rainfall intensity in East Asia spanning recent decades；Climate model hindcasts with separated aerosol-only, GHG-only, and combined forcing experiments；Quantitative metrics of model predictive skill (RMSE, bias, pattern correlation) for extreme precipitation indices
+- **Risk of Being Wrong**: The observed model uncertainty may stem primarily from inadequate representation of convective parameterizations or ocean-atmosphere coupling rather than aerosol-GHG interactions specifically; or internal climate variability may dominate the signal, making forced response detection impossible regardless of forcing specification.
+
+### Hypothesis 2
+- **Hypothesis**: Digital Twin Network architectures, currently validated for traffic optimization (EV-Q107-9d7b7f5e7e22c9ffff6d07bb), possess transferable data integration capabilities applicable to fragmented climate observational systems, though their efficacy for geophysical processes remains unverified.
+- **Mechanism**: DTNs utilize AI-driven analytics to create real-time virtual replicas of physical networks for optimization. This architectural principle of synchronizing disparate sensor data into a unified digital representation could theoretically address coordination gaps in climate monitoring, provided the temporal and spatial scales of traffic networks map onto climate system requirements.
+- **Falsifiable Prediction**: If a prototype DTN framework adapted for climate data fails to achieve interoperability across heterogeneous climate sensor protocols or fails to reduce data integration latency by a measurable margin compared to standard ETL pipelines in a controlled testbed, then the transferability of DTN architecture from traffic to climate domains will be considered unsupported.
+- **Required Observations**: Data latency and throughput metrics in a multi-source climate data integration testbed；Interoperability success rates across distinct climate data formats and protocols；Comparative performance benchmarks against conventional climate data assimilation systems
+- **Risk of Being Wrong**: Traffic network dynamics operate at fundamentally different spatiotemporal scales and physical constraints than climate systems; the AI optimization strategies effective for vehicle routing may not generalize to geophysical fluid dynamics or long-term climate variability, making the analogy invalid.
+
+## Technical Details
+This experiment evaluates the hypothesis that current climate models exhibit significant structural uncertainty in projecting East Asian extreme rainfall intensity due to non-stationary aerosol-GHG interactions. The technical approach involves a hindcast validation framework using CMIP6 model outputs. We will isolate the impact of aerosol forcing by comparing 'historical all-forcing' (hist-all) runs against 'historical aerosol-only' (hist-aer) and 'historical greenhouse-gas-only' (hist-GHG) single-forcing experiments. The core metric is the skill score in reproducing observed trends of extreme precipitation indices (specifically Rx1day and Rx5day) in East Asia. By quantifying the error reduction when explicit time-varying aerosol-GHG interactions are included versus fixed-aerosol baselines, we test if these interactions are a primary driver of projection uncertainty. The analysis uses bias-corrected downscaled data to match high-resolution observational records.
+
+## Datasets
+### Source
+
+
+```json
+[
+  {
+    "name": "CMIP6 Multi-Model Ensemble",
+    "description": "Global Climate Model outputs from the Coupled Model Intercomparison Project Phase 6. Specifically utilizing hist-all, hist-aer, and hist-GHG experiments for models providing separated forcing data.",
+    "variables": [
+      "pr (precipitation flux)",
+      "tas (near-surface air temperature)",
+      "aod (aerosol optical depth)"
+    ],
+    "resolution": "Daily, ~100km grid",
+    "time_range": "1950-2014"
+  },
+  {
+    "name": "East Asia High-Resolution Precipitation Observations",
+    "description": "Gridded observational dataset combining gauge records and satellite retrievals for East Asia, used as ground truth for extreme event detection.",
+    "variables": [
+      "daily_precipitation_mm"
+    ],
+    "resolution": "Daily, 0.1 degree grid",
+    "time_range": "1980-2020"
+  }
+]
+```
+
+
+### Target
+
+
+```json
+{
+  "name": "Extreme Rainfall Hindcast Skill Metrics",
+  "description": "Quantitative evaluation of model performance in reproducing historical extreme rainfall trends under varying forcing scenarios.",
+  "metrics": [
+    "RMSE of Rx1day trends",
+    "Spatial correlation of extreme rainfall patterns",
+    "Bias in extreme event frequency"
+  ]
+}
+```
+
+
+## Paper Abstract
+Background: Global climate change mitigation is hindered by data infrastructure gaps and model uncertainties. Specifically, historical rainfall trends in East Asia are increasingly unreliable predictors of future extremes due to complex anthropogenic forcings. Method: We propose a hindcast validation framework using CMIP6 multi-model ensembles to isolate the impact of time-varying aerosol and greenhouse gas interactions on extreme precipitation indices (Rx1day, Rx5day). By comparing skill scores against fixed-aerosol baselines and persistence forecasts, we quantify the contribution of aerosol-GHG non-stationarity to projection uncertainty. Validation Plan: The study utilizes high-resolution observational data from 1980-2020 for bias correction and validation. Results: Pending execution of the proposed computational experiments. No empirical results are claimed at this stage.
+
+## Methods
+1. Data Preprocessing: Remap CMIP6 model outputs to the observational grid using conservative interpolation. Calculate ETCCDI extreme indices (Rx1day, Rx5day) for both models and observations. 2. Forcing Separation: Extract and align time series from hist-all, hist-aer, and hist-GHG experiments. 3. Bias Correction: Apply Quantile Delta Mapping (QDM) to correct systematic biases in model precipitation distributions relative to observations during the training period (1980-2000). 4. Skill Assessment: Compute RMSE, bias, and spatial correlation for the validation period (2001-2014). Compare the skill of models with interactive aerosols against those with fixed aerosols or simple trend extrapolations. 5. Uncertainty Attribution: Use variance decomposition to estimate the contribution of aerosol-GHG interaction uncertainty to total projection uncertainty.
+
+## Experiments
+### Baselines
+
+
+```json
+[
+  "CMIP6 Multi-Model Mean (MMM) with standard coupled aerosol-GHG forcing",
+  "Persistence Forecast based on 1980-2000 climatological extremes",
+  "Linear Trend Extrapolation of historical rainfall intensity (1980-2000)"
+]
+```
+
+
+### Metrics
+
+
+```json
+[
+  "Root Mean Square Error (RMSE) of Rx1day intensity trends",
+  "Taylor Diagram Skill Score (combining correlation, RMS difference, and standard deviation)",
+  "Brier Score for probability of extreme rainfall exceedance"
+]
+```
+
+
+### Ablation
+
+
+```json
+[
+  "Fix aerosol emissions to pre-industrial levels to isolate GHG-driven changes",
+  "Fix GHG concentrations to pre-industrial levels to isolate aerosol-driven changes",
+  "Exclude models with coarse-resolution aerosol modules to test resolution sensitivity"
+]
+```
+
+
+### Validation Protocol
+Temporal cross-validation: Train bias-correction parameters on 1980-2000, validate on 2001-2014. Spatial hold-out: Evaluate performance on specific sub-regions (e.g., Yangtze River Basin) not used for parameter tuning. Statistical significance tested via bootstrap resampling of ensemble members.
+
+## Results
+当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。
+
+## References
+- **EV-Q107-04ae35f62379acebb6eb3d39** · arxiv · arXiv:1704.00563
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/1704.00563.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; locator=page:2|section:page-2|paragraph:1; content_sha256=cd22517a7aa22e4150bdba1f8f12783289fb3fce6c140cd3717adde0c92a7de9
+
+## Reviewer Comments
+- The revised hypothesis successfully removes all unsupported claims regarding the feasibility of 'stopping climate change,' strictly adhering to the scope of evidence EV-Q107-04ae35f62379acebb6eb3d39.
+- The falsifiable prediction now correctly targets model skill metrics (RMSE, spatial correlation) rather than policy outcomes, resolving the previous hypothesis-experiment mismatch.
+- Experiment design includes appropriate baselines (persistence, trend extrapolation) and ablation studies (fixed aerosol/GHG) that directly test the proposed mechanism of non-stationarity.
+- Results field is correctly marked as pending with no fabrication of experimental outcomes.
+- All factual assertions in the mechanism are traceable to the quoted text in EV-Q107-04ae35f62379acebb6eb3d39 regarding anthropogenic forcings and historical trend unreliability.
+
+## Revision History
+- auto_revision_1: 依据评审意见重做假设与实验设计。
+
+## Reproducibility Checklist
+- CMIP6 model variant labels and access paths documented
+- Observational data preprocessing code (grid alignment, missing value handling) version-controlled
+- Extreme index calculation algorithm (ETCCDI standards) specified
+- Bias-correction method parameters and training periods explicitly defined
+- Random seeds for any stochastic components recorded
+- Hardware environment specifications for large-scale model processing noted
+

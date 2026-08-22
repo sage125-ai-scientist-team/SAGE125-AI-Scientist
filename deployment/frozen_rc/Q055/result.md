@@ -1,0 +1,153 @@
+# Verification of Evidence Insufficiency for the Origin of Mass in Particle Physics within Provided Astronomical and Biological Corpus
+
+## Input Question
+What is the origin of mass?
+
+## Domain
+Astronomy
+
+## Validation Status
+needs_data
+
+## Problem Statement
+The provided booklet excerpt claims that the Higgs Field gives particles mass but notes that most proton/neutron mass is not due to the Higgs mechanism. It also mentions ultrahigh-energy cosmic rays. The core scientific problem is to determine the physical origin of mass for fundamental particles and composite hadrons using only the provided evidence set, while distinguishing between different definitions of 'mass' (particle inertia vs. astrophysical object mass).
+
+## Rationale
+The question asks for the origin of mass, a fundamental concept in particle physics. However, the allowed evidence IDs pertain to neutrino astronomy, genetic code information theory, galaxy formation, and exobiology. None of these sources directly address the Higgs mechanism or Quantum Chromodynamics (QCD) binding energy. Therefore, the primary research task is to rigorously verify the absence of relevant mechanistic explanations in the provided corpus to establish an 'insufficient evidence' conclusion, preventing hallucination of external physics knowledge.
+
+## Generated Hypotheses
+
+### Hypothesis 1
+- **Hypothesis**: Insufficient Evidence: No valid scientific hypothesis regarding the origin of mass can be generated from the provided evidence set, as all allowed evidence IDs pertain to unrelated domains (neutrino astronomy, genetic codes, galaxy formation, exobiology) rather than particle physics or the Higgs mechanism.
+- **Mechanism**: N/A. The input evidence catalog contains zero records addressing electroweak symmetry breaking, QCD binding energy, or the Higgs field. Any mechanistic explanation would require external knowledge not present in the allowed_evidence_ids, violating system constraints.
+- **Falsifiable Prediction**: If a comprehensive semantic search of the allowed evidence IDs (EV-Q055-36260aa2746f4f1c201eff07, EV-Q055-11f43018de3ace0d5e17288d, EV-Q055-5ec6d4bb8a1af78cb766a380, EV-Q055-7ac19f944e06da1c6709cbf4) yields no mentions of 'mass generation', 'Higgs', 'QCD', or 'binding energy', then the hypothesis that these sources are irrelevant is confirmed.
+- **Required Observations**: Verification that EV-Q055-36260aa2746f4f1c201eff07 discusses neutrino/gamma-ray origins only.；Verification that EV-Q055-11f43018de3ace0d5e17288d discusses genetic code information theory only.；Verification that EV-Q055-5ec6d4bb8a1af78cb766a380 discusses massive elliptical galaxy formation only.；Verification that EV-Q055-7ac19f944e06da1c6709cbf4 discusses origins of life on exoplanets only.
+- **Risk of Being Wrong**: Low. The quoted text snippets in the evidence extraction explicitly confirm the topics are unrelated to the origin of mass in particle physics. The risk lies only in potential metadata errors where a relevant paper was mislabeled, but the quoted_text fields contradict this possibility.
+
+### Hypothesis 2
+- **Hypothesis**: The term 'mass' in the available evidence refers exclusively to astrophysical object mass (galaxies) or biological mass, not fundamental particle mass, implying the question cannot be answered within the current retrieval scope.
+- **Mechanism**: Semantic ambiguity resolution. While EV-Q055-5ec6d4bb8a1af78cb766a380 mentions 'origin of massive ellipticals', this refers to gravitational assembly and stellar dynamics, not the quantum field theoretic origin of inertia. Conflating these distinct definitions of mass leads to category errors.
+- **Falsifiable Prediction**: If EV-Q055-5ec6d4bb8a1af78cb766a380 is found to contain sections discussing the Higgs boson or quark mass generation alongside galaxy formation, this hypothesis is falsified. Otherwise, it stands.
+- **Required Observations**: Full-text analysis of EV-Q055-5ec6d4bb8a1af78cb766a380 to confirm absence of particle physics content.；Cross-reference check between 'massive ellipticals' context and standard cosmological structure formation literature.
+- **Risk of Being Wrong**: Medium. It is remotely possible that a paper on galaxy formation includes a preamble on fundamental mass that was not captured in the snippet, though unlikely given the specific focus on 'local analogs' and 'high redshift' interactions.
+
+## Technical Details
+This experiment is designed to validate the 'Insufficient Evidence' hypothesis. The core technical task is a deterministic semantic verification of the provided EvidenceCards against a predefined set of particle physics keywords related to mass generation (e.g., 'Higgs', 'electroweak symmetry breaking', 'QCD binding energy', 'quark mass', 'gluon'). The system will perform full-text parsing of the four allowed evidence IDs to confirm the absence of these specific mechanistic explanations for the origin of mass. This serves as a negative control to ensure no hallucinated connections are made between unrelated domains (neutrino astronomy, genetics, galaxy formation, exobiology) and the target question.
+
+## Datasets
+### Source
+
+
+```json
+[
+  {
+    "id": "EV-Q055-36260aa2746f4f1c201eff07",
+    "description": "Neutrino/gamma-ray origins paper",
+    "relevance": "Negative Control"
+  },
+  {
+    "id": "EV-Q055-11f43018de3ace0d5e17288d",
+    "description": "Genetic code information theory paper",
+    "relevance": "Negative Control"
+  },
+  {
+    "id": "EV-Q055-5ec6d4bb8a1af78cb766a380",
+    "description": "Massive elliptical galaxy formation paper",
+    "relevance": "Negative Control (Semantic Ambiguity Check)"
+  },
+  {
+    "id": "EV-Q055-7ac19f944e06da1c6709cbf4",
+    "description": "Origins of life on exoplanets paper",
+    "relevance": "Negative Control"
+  }
+]
+```
+
+
+### Target
+
+
+```json
+{
+  "type": "Verification Report",
+  "description": "Binary classification of each document as 'Contains Mass Generation Mechanism' or 'Does Not Contain Mass Generation Mechanism'"
+}
+```
+
+
+## Paper Abstract
+Background: The question of the origin of mass is central to particle physics, involving the Higgs mechanism and QCD binding energy. The provided booklet excerpt raises this question but limits available evidence to four papers on unrelated topics. Method: We propose a rigorous semantic analysis of the four allowed Evidence IDs to verify their irrelevance to particle mass generation. This involves keyword filtering for terms like 'Higgs', 'QCD', and 'symmetry breaking', and contextual analysis to distinguish astrophysical mass from particle inertia. Validation Plan: Execute full-text search and manual audit of 'mass' occurrences in the provided documents. Results: pending (待执行验证实验). This study aims to formally document the knowledge gap rather than provide a physical answer unsupported by evidence.
+
+## Methods
+1. Text Extraction: Parse full text from the provided URLs for all four Evidence IDs.
+2. Keyword Definition: Define a strict lexicon for 'Origin of Mass' mechanisms: ['Higgs boson', 'Higgs field', 'electroweak symmetry breaking', 'spontaneous symmetry breaking', 'QCD', 'quantum chromodynamics', 'binding energy', 'chiral symmetry breaking', 'constituent quark mass'].
+3. Semantic Search: Perform exact match and context-aware embedding search for these terms within each document.
+4. Contextual Analysis: For any hit on the word 'mass' (especially in EV-Q055-5ec6d4bb8a1af78cb766a380), verify if it refers to 'astrophysical mass/gravity' or 'particle inertia'.
+5. Conclusion Logic: If zero documents contain the target lexicon in the context of particle physics, the 'Insufficient Evidence' hypothesis is confirmed.
+
+## Experiments
+### Baselines
+
+
+```json
+[
+  "Random Keyword Match: Checking for the word 'mass' alone without contextual filtering (expected to yield false positives in galaxy formation paper).",
+  "Domain Classifier: Using a pre-trained scientific topic classifier to label each paper's primary domain (Astrophysics, Biology, Particle Physics)."
+]
+```
+
+
+### Metrics
+
+
+```json
+[
+  "Precision of Negative Classification: Percentage of documents correctly identified as NOT containing particle physics mass mechanisms.",
+  "Recall of Key Terms: Ability to detect if any of the defined 'Origin of Mass' keywords are present.",
+  "False Positive Rate: Frequency of misclassifying astrophysical 'mass' as particle 'mass'."
+]
+```
+
+
+### Ablation
+Remove the contextual filter for the word 'mass' to demonstrate why simple keyword matching fails (specifically for EV-Q055-5ec6d4bb8a1af78cb766a380).
+
+### Validation Protocol
+Manual review of the top 5 sentences containing the word 'mass' in each document to verify the automated classification. Cross-reference with the provided quoted_text snippets which already indicate unrelated topics.
+
+## Results
+当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。
+
+## References
+- **EV-Q055-36260aa2746f4f1c201eff07** · arxiv · arXiv:1407.2536
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/1407.2536.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=0bb80c2695fc28bbe4be830b6fea476516896596c41e4641459832fea5ea77b6
+- **EV-Q055-11f43018de3ace0d5e17288d** · arxiv · arXiv:1007.3906
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/1007.3906.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=cbb4257dbb8faf98e33c8d5128334b0cbd757fc36addbcc1bf33181c542d011c
+- **EV-Q055-5ec6d4bb8a1af78cb766a380** · arxiv · arXiv:2108.07603
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/2108.07603.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=198f5217885eae44be2e36aefd63d8a2d2cd03db368f5c4dcc3371288828baa2
+- **EV-Q055-7ac19f944e06da1c6709cbf4** · arxiv · arXiv:2305.04911
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/2305.04911.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=5380169a7287f1cfbf66aaef44f85563ac1dad06baeee6b66e69a1df9bc4b1bb
+
+## Reviewer Comments
+- The candidate hypothesis correctly identifies 'insufficient_evidence' as the only valid scientific conclusion given the input constraints. The allowed evidence IDs (neutrino astronomy, genetic codes, galaxy formation, exobiology) are semantically disjoint from the query regarding the origin of mass in particle physics.
+- The system successfully avoided hallucinating connections between unrelated domains (e.g., linking genetic code information theory to physical mass) and correctly flagged the semantic ambiguity in EV-Q055-5ec6d4bb8a1af78cb766a380 where 'massive ellipticals' refers to astrophysical objects, not fundamental particle inertia.
+- Experiment design is appropriate for a negative control/validation task. The proposed semantic search protocol with strict keyword filtering and contextual analysis is a reproducible method to verify the absence of relevant content.
+- Results field correctly states 'pending' and explicitly notes that no real experiment has been executed yet, adhering to anti-fabrication protocols.
+- All referenced evidence IDs exist in the provided catalog and are used accurately to support the claim of irrelevance.
+
+## Revision History
+
+## Reproducibility Checklist
+- Verify access to full-text PDFs via provided URLs.
+- Confirm keyword list covers standard Standard Model mass generation terms.
+- Ensure context window analysis distinguishes between gravitational mass and inertial mass.
+- Log all instances of the word 'mass' for manual audit.
+

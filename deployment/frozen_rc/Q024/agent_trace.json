@@ -1,0 +1,1613 @@
+[
+  {
+    "event_id": "467ff6c11a4c",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:20:26.718497+00:00",
+    "ended_at": "2026-08-22T08:20:26.718497+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "ccffea85c196",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:20:26.718497+00:00",
+    "ended_at": "2026-08-22T08:20:29.775421+00:00",
+    "duration_ms": 3056,
+    "input_summary": "{\"question_item\": {\"id\": \"Q024\", \"domain\": \"Biology\", \"question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"source_page\": 13, \"booklet_excerpt\": \"The shortage of organs could be solved by xenotransplantation—the process of transplanting organs between species—if we can overcome toxicity, rejection, and coagulation dysfunction.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Biology\", \"core_question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"keywords\": [\"xenotransplantation\", \"donor organ shortage\", \"toxicity\", \"rejection\", \"coagulation dysfunction\"], \"entities\": [\"xenotransplantation\", \"donor organs\", \"toxicity\", \"rejection\", \"coagulation dysfunction\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The problem is bounded by the feasibility of overcoming specific biological barriers (toxicity, rejection, coagulation) in interspecies transplantation. It does not address ethical, regulatory, or economic aspects un",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "80493a26a032",
+    "mock": false
+  },
+  {
+    "event_id": "b399aaa430ae",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:20:29.775421+00:00",
+    "ended_at": "2026-08-22T08:20:52.292019+00:00",
+    "duration_ms": 22516,
+    "input_summary": "{\"question_item\": {\"id\": \"Q024\", \"domain\": \"Biology\", \"question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"source_page\": 13, \"booklet_excerpt\": \"The shortage of organs could be solved by xenotransplantation—the process of transplanting organs between species—if we can overcome toxicity, rejection, and coagulation dysfunction.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Biology\", \"core_question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"keywords\": [\"xen",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify specific molecular mechanisms of hyperacute rejection in pig-to-human xenotransplantation to understand the 'rejection' barrier mentioned in the booklet.\", \"query\": \"mechanisms of hyperacute rejection pig-to-human xenotransplantation alpha-gal epitope\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Detailed description of antibody-mediated rejection pathways and specific antigens involved.\", \"priority\": \"high\"}, {\"purpose\": \"Investigate the 'coagulation dysfunction' barrier, specifically thrombotic microangiopathy, in xenotransplantation models.\", \"",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a6f7109bbb40",
+    "mock": false
+  },
+  {
+    "event_id": "8ec6ba590b15",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:20:52.302946+00:00",
+    "ended_at": "2026-08-22T08:21:10.305374+00:00",
+    "duration_ms": 18002,
+    "input_summary": "{\"question_item\": {\"id\": \"Q024\", \"domain\": \"Biology\", \"question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"source_page\": 13, \"booklet_excerpt\": \"The shortage of organs could be solved by xenotransplantation—the process of transplanting organs between species—if we can overcome toxicity, rejection, and coagulation dysfunction.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q024-f47c4b5904981f649616e675\", \"title\": \"arXiv:2404.14658\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Clinical hyperacute rejection of genetically engineered porcine organs can be reliably avoided in recent clinical xenotransplantation and human decedent studies.\", \"evidence_ids\": [\"EV-Q024-f47c4b5904981f649616e675\"], \"confidence\": \"high\", \"fact_type\": \"mechanism\", \"caveat\": \"Based on recent studies; long-term outcomes may vary.\"}, {\"fact\": \"Antibody-mediated rejection continues to limit graft survival in xenotransplantation.\", \"evidence_ids\": [\"EV-Q024-f47c4b5904981f649616e675\"], \"confidence\": \"high\", \"fact_type\": \"limitation\", \"caveat\": \"This is a current bar",
+    "evidence_ids": [
+      "EV-Q024-f47c4b5904981f649616e675"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a26aced07a20",
+    "mock": false
+  },
+  {
+    "event_id": "42a7a1a54fac",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:21:10.305374+00:00",
+    "ended_at": "2026-08-22T08:21:30.285365+00:00",
+    "duration_ms": 19979,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q024\", \"domain\": \"Biology\", \"question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"source_page\": 13, \"booklet_excerpt\": \"The shortage of organs could be solved by xenotransplantation—the process of transplanting organs between species—if we can overcome toxicity, rejection, and coagulation dysfunction.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q024-f47c4b5904981f649616e675\", \"title\": \"arXiv:2404.14658\", \"source_type\": \"arxi",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Xenotransplantation cannot currently solve the donor organ shortage because antibody-mediated rejection (AMR) remains an unsolved barrier limiting graft survival, despite the reliable avoidance of hyperacute rejection.\", \"mechanism\": \"While genetic engineering has successfully eliminated hyperacute rejection triggers, residual porcine antigens or de novo immune responses continue to elicit AMR. This ongoing immunological incompatibility restricts long-term graft viability, thereby preventing xenotransplantation from serving as a scalable, reliable solution to or",
+    "evidence_ids": [
+      "EV-Q024-f47c4b5904981f649616e675"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8d406c4662fc",
+    "mock": false
+  },
+  {
+    "event_id": "7289b6a4628b",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:21:30.285365+00:00",
+    "ended_at": "2026-08-22T08:21:52.034160+00:00",
+    "duration_ms": 21748,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q024\", \"domain\": \"Biology\", \"question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"source_page\": 13, \"booklet_excerpt\": \"The shortage of organs could be solved by xenotransplantation—the process of transplanting organs between species—if we can overcome toxicity, rejection, and coagulation dysfunction.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery\", \"recommended_hypothesis\": {\"hypothesis\": \"Xenotransplantation cannot curr",
+    "output_summary": "{\"technical_details\": \"This study designs a retrospective and prospective observational analysis to validate the hypothesis that Antibody-Mediated Rejection (AMR) remains the primary barrier to long-term graft survival in xenotransplantation, despite the successful avoidance of hyperacute rejection. The technical approach involves aggregating data from recent human decedent studies and early-phase clinical trials involving genetically engineered porcine organs. Key technical components include: (1) Standardized histopathological review using Banff criteria adapted for xenotransplantation to co",
+    "evidence_ids": [
+      "EV-Q024-f47c4b5904981f649616e675"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "da5190ec1c67",
+    "mock": false
+  },
+  {
+    "event_id": "2530c89598b5",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:21:52.034160+00:00",
+    "ended_at": "2026-08-22T08:22:00.452676+00:00",
+    "duration_ms": 8418,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q024\", \"domain\": \"Biology\", \"question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"source_page\": 13, \"booklet_excerpt\": \"The shortage of organs could be solved by xenotransplantation—the process of transplanting organs between species—if we can overcome toxicity, rejection, and coagulation dysfunction.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Xenotransplantation cannot currently solve the donor organ shortage bec",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The hypothesis is strictly grounded in the single relevant evidence card (EV-Q024-f47c4b5904981f649616e675), correctly identifying AMR as the current limiting factor while acknowledging hyperacute rejection avoidance.\", \"Experiment design appropriately treats the study as observational/retrospective with 'pending' results, avoiding any fabrication of experimental outcomes.\", \"Datasets clearly distinguish between source (decedent studies) and target (clinical trials) with valid evidence linkage.\", \"Baselines (historical HARC, allograft benchmarks) and met",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8e185f408c96",
+    "mock": false
+  },
+  {
+    "event_id": "e0f5a753f28e",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:22:00.454873+00:00",
+    "ended_at": "2026-08-22T08:22:23.945763+00:00",
+    "duration_ms": 23490,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The hypothesis is strictly grounded in the single relevant evidence card (EV-Q024-f47c4b5904981f649616e675), correctly identifying AMR as the current limiting factor while acknowledging hyperacute rejection avoidance.\", \"Experiment design appropriately treats the study as observational/retrospective with 'pending' results, avoiding any fabrication of experimental outcomes.\", \"Datasets clearly distinguish between source (decedent studies) and target (clinical trials) with valid evidence linkage.\", \"Baselines (his",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Current genetically engineered porcine xenografts cannot solve the donor organ shortage because antibody-mediated rejection (AMR) remains the primary rate-limiting barrier to graft survival, conditional on the immunological scope of available evidence which does not account for non-immunological factors like toxicity or coagulation dysfunction.\", \"mechanism\": \"While genetic engineering has successfully eliminated hyperacute rejection triggers, residual porcine antigens or de novo immune responses continue to elicit AMR. This ongoing immunological incompatibility",
+    "evidence_ids": [
+      "EV-Q024-f47c4b5904981f649616e675"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "67783a17f7e5",
+    "mock": false
+  },
+  {
+    "event_id": "eb9da2eaf914",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:22:23.946843+00:00",
+    "ended_at": "2026-08-22T08:22:48.744685+00:00",
+    "duration_ms": 24797,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The hypothesis is strictly grounded in the single relevant evidence card (EV-Q024-f47c4b5904981f649616e675), correctly identifying AMR as the current limiting factor while acknowledging hyperacute rejection avoidance.\", \"Experiment design appropriately treats the study as observational/retrospective with 'pending' results, avoiding any fabrication of experimental outcomes.\", \"Datasets clearly distinguish between source (decedent studies) and target (clinical trials) with valid evidence linkage.\", \"Baselines (his",
+    "output_summary": "{\"technical_details\": \"This study employs a retrospective observational design to validate that Antibody-Mediated Rejection (AMR) remains the primary rate-limiting barrier to graft survival in current genetically engineered porcine xenotransplantation, conditional on the immunological scope of EV-Q024-f47c4b5904981f649616e675. The technical approach integrates data from human decedent studies and early-phase clinical trials. Key components include: (1) Centralized, blinded histopathological review using adapted Banff criteria to strictly distinguish pure AMR from mixed rejection phenotypes (e.",
+    "evidence_ids": [
+      "EV-Q024-f47c4b5904981f649616e675"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ded708eafc75",
+    "mock": false
+  },
+  {
+    "event_id": "9f1f253bfa9c",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:22:48.745674+00:00",
+    "ended_at": "2026-08-22T08:22:55.481704+00:00",
+    "duration_ms": 6736,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The hypothesis is strictly grounded in the single relevant evidence card (EV-Q024-f47c4b5904981f649616e675), correctly identifying AMR as the current limiting factor while acknowledging hyperacute rejection avoidance.\", \"Experiment design appropriately treats the study as observational/retrospective with 'pending' results, avoiding any fabrication of experimental outcomes.\", \"Datasets clearly distinguish between source (decedent studies) and target (clinical trials) with valid evidence linkage.\", \"Baselines (his",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly conditions the conclusion on the immunological scope of EV-Q024-f47c4b5904981f649616e675, explicitly acknowledging non-immunological barriers as unverified knowledge gaps.\", \"Experiment design now includes a pre-specified protocol for distinguishing AMR from mixed rejection phenotypes using adapted Banff criteria, directly addressing the reproducibility revision requirement.\", \"Results field remains appropriately marked as pending with no fabrication of experimental outcomes.\", \"All factual claims are strictly traceable t",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c12b48553491",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:8b46bcbc9088e63c",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Xenotransplantation cannot currently solve the donor organ shortage because antibody-mediated rejection (AMR) remains an unsolved barrier limiting graft survival, despite the reliable avoidance of hyperacute rejection.",
+              "mechanism": "While genetic engineering has successfully eliminated hyperacute rejection triggers, residual porcine antigens or de novo immune responses continue to elicit AMR. This ongoing immunological incompatibility restricts long-term graft viability, thereby preventing xenotransplantation from serving as a scalable, reliable solution to organ scarcity at this time.",
+              "falsifiable_prediction": "If current genetically engineered porcine organs are transplanted into human recipients or decedent models without novel AMR-specific interventions, graft survival will not exceed the duration limited by AMR, and no cohort will demonstrate sustained function sufficient for clinical adoption as a standard therapy.",
+              "required_observations": [
+                "Longitudinal graft survival data in human recipients or decedent models showing time-to-failure due to AMR",
+                "Histopathological confirmation of AMR as the primary cause of graft loss",
+                "Absence of sustained graft function beyond known AMR-limited windows in recent trials"
+              ],
+              "risk_of_being_wrong": "Recent unreported breakthroughs in AMR suppression (e.g., novel biologics or gene edits not captured in EV-Q024-f47c4b5904981f649616e675) may have already extended graft survival sufficiently to enable scalability, rendering this hypothesis overly pessimistic.",
+              "supporting_evidence_ids": [
+                "EV-Q024-f47c4b5904981f649616e675"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The capacity of xenotransplantation to solve organ shortage is contingent on resolving antibody-mediated rejection; until AMR is controlled, xenotransplantation remains a partial mitigation rather than a definitive solution.",
+              "mechanism": "Hyperacute rejection avoidance is necessary but insufficient. AMR acts as the rate-limiting step for graft longevity. Only when AMR is reliably prevented can xenografts achieve the durability required to meaningfully reduce waitlist mortality and thus 'solve' the shortage.",
+              "falsifiable_prediction": "If AMR is effectively mitigated in upcoming clinical trials (e.g., via new immunomodulatory protocols), then graft survival should significantly extend and correlate with reduced waitlist metrics; conversely, if AMR persists unchanged, xenotransplantation’s impact on shortage metrics will remain negligible.",
+              "required_observations": [
+                "Comparative graft survival curves before and after AMR-targeted interventions",
+                "Quantitative reduction in waitlist mortality or transplant volume attributable to xenografts",
+                "Immunological monitoring confirming AMR suppression correlates with extended function"
+              ],
+              "risk_of_being_wrong": "Non-immunological barriers (e.g., toxicity, coagulation dysfunction, ethical/logistical constraints) may independently prevent xenotransplantation from solving the shortage even if AMR is resolved, making AMR resolution necessary but not sufficient.",
+              "supporting_evidence_ids": [
+                "EV-Q024-f47c4b5904981f649616e675"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.75
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly grounded in the only relevant evidence (EV-Q024-f47c4b5904981f649616e675), which explicitly states that AMR continues to limit graft survival. It makes a clear, testable prediction using existing or near-term observational data (human decedent studies or ongoing trials) and avoids overclaiming beyond the evidence. Hypothesis 1, while plausible, introduces conditional logic about future AMR resolution that is less immediately falsifiable with current data and risks conflating correlation with sufficiency.",
+          "rejected_directions": [
+            "Assuming toxicity or coagulation dysfunction are the primary remaining barriers—no supporting evidence IDs address these factors.",
+            "Claiming xenotransplantation will definitively solve the shortage upon overcoming listed hurdles—this exceeds evidentiary support and ignores potential non-biological constraints.",
+            "Using irrelevant evidence IDs (e.g., laser physics or neural PDE papers) to infer biological mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study designs a retrospective and prospective observational analysis to validate the hypothesis that Antibody-Mediated Rejection (AMR) remains the primary barrier to long-term graft survival in xenotransplantation, despite the successful avoidance of hyperacute rejection. The technical approach involves aggregating data from recent human decedent studies and early-phase clinical trials involving genetically engineered porcine organs. Key technical components include: (1) Standardized histopathological review using Banff criteria adapted for xenotransplantation to confirm AMR; (2) Longitudinal tracking of graft function (e.g., creatinine clearance for kidneys, ejection fraction for hearts) correlated with anti-porcine antibody titers; (3) Survival analysis using Kaplan-Meier estimates and Cox proportional hazards models to identify AMR as an independent predictor of graft loss. The study explicitly excludes cases where hyperacute rejection was the cause of failure to isolate the AMR mechanism.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Human Decedent Xenotransplantation Study Data",
+                "description": "Data from studies where genetically engineered porcine organs were transplanted into brain-dead human decedents to assess immunological compatibility.",
+                "access_type": "Restricted/Collaborative",
+                "evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "key_variables": [
+                  "Graft survival time (hours/days)",
+                  "Histopathology reports (AMR vs HARC vs other)",
+                  "Anti-porcine antibody levels (IgM/IgG)",
+                  "Genetic modification profile of donor organ"
+                ]
+              }
+            ],
+            "target": [
+              {
+                "name": "Early-Phase Clinical Xenotransplantation Trial Registry",
+                "description": "Aggregated data from living human recipients of genetically engineered porcine organs (e.g., heart or kidney transplants).",
+                "access_type": "Highly Restricted/IRB Approved",
+                "evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "key_variables": [
+                  "Time to graft failure",
+                  "Cause of graft loss (confirmed by biopsy)",
+                  "Immunosuppression regimen details",
+                  "Long-term functional metrics"
+                ]
+              }
+            ]
+          },
+          "methods": "1. Data Harmonization: Create a unified schema for graft survival and rejection events across decedent and clinical datasets. 2. Histopathological Central Review: Blinded review of biopsy samples by expert pathologists to classify rejection types according to standardized xenotransplantation criteria, specifically distinguishing AMR from cellular rejection or coagulation dysfunction. 3. Statistical Analysis: Use survival analysis (Kaplan-Meier) to compare graft longevity against historical benchmarks for AMR-limited survival. Perform multivariate Cox regression to control for confounders (e.g., recipient age, genetic edits) and test if AMR presence significantly predicts graft failure. 4. Mechanism Correlation: Correlate temporal spikes in anti-porcine antibodies with histological evidence of AMR and functional decline.",
+          "experiments": {
+            "baselines": [
+              "Historical Hyperacute Rejection (HARC) Baseline: Graft survival times from pre-genetic engineering era xenotransplantation attempts, where HARC caused immediate failure (minutes/hours).",
+              "Allograft Survival Benchmark: Median survival times for standard human-to-human transplants under current immunosuppression, serving as the 'solved' target state."
+            ],
+            "metrics": [
+              "Median Graft Survival Time (days)",
+              "Incidence Rate of Confirmed AMR (percentage of graft losses attributed to AMR)",
+              "Hazard Ratio for AMR-associated graft loss (vs. non-AMR causes)"
+            ],
+            "ablation": "Not applicable in observational context; however, subgroup analysis will be performed based on specific genetic modifications (e.g., GTKO vs. multi-transgenic) to assess if certain edits reduce but do not eliminate AMR risk.",
+            "validation_protocol": "Internal validation via cross-referencing histopathological diagnoses with serological data (antibody titers). External validity assessed by comparing findings with independent case reports not included in the primary dataset. Sensitivity analysis will exclude cases with incomplete biopsy data."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define strict inclusion/exclusion criteria for decedent vs. clinical cases.",
+            "Standardize histopathological scoring system for AMR across all reviewing pathologists.",
+            "Pre-register statistical analysis plan including primary and secondary endpoints.",
+            "Ensure data anonymization compliance for human subject data (HIPAA/GDPR).",
+            "Document all genetic modifications of porcine donors used in the aggregated dataset."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard statistical software (R/Python) for survival analysis; secure server for protected health information.",
+            "estimated_timeline": "6-12 months for data access approval, harmonization, and analysis.",
+            "ethical_considerations": "Requires IRB approval for use of human decedent and clinical trial data. No new animal experiments are proposed."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-082026-a4139fec",
+        "version_number": 1,
+        "version_id": "20260822-082026-a4139fec:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Xenotransplantation cannot currently solve the donor organ shortage because antibody-mediated rejection (AMR) remains an unsolved barrier limiting graft survival, despite the reliable avoidance of hyperacute rejection.",
+              "mechanism": "While genetic engineering has successfully eliminated hyperacute rejection triggers, residual porcine antigens or de novo immune responses continue to elicit AMR. This ongoing immunological incompatibility restricts long-term graft viability, thereby preventing xenotransplantation from serving as a scalable, reliable solution to organ scarcity at this time.",
+              "falsifiable_prediction": "If current genetically engineered porcine organs are transplanted into human recipients or decedent models without novel AMR-specific interventions, graft survival will not exceed the duration limited by AMR, and no cohort will demonstrate sustained function sufficient for clinical adoption as a standard therapy.",
+              "required_observations": [
+                "Longitudinal graft survival data in human recipients or decedent models showing time-to-failure due to AMR",
+                "Histopathological confirmation of AMR as the primary cause of graft loss",
+                "Absence of sustained graft function beyond known AMR-limited windows in recent trials"
+              ],
+              "risk_of_being_wrong": "Recent unreported breakthroughs in AMR suppression (e.g., novel biologics or gene edits not captured in EV-Q024-f47c4b5904981f649616e675) may have already extended graft survival sufficiently to enable scalability, rendering this hypothesis overly pessimistic.",
+              "supporting_evidence_ids": [
+                "EV-Q024-f47c4b5904981f649616e675"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The capacity of xenotransplantation to solve organ shortage is contingent on resolving antibody-mediated rejection; until AMR is controlled, xenotransplantation remains a partial mitigation rather than a definitive solution.",
+              "mechanism": "Hyperacute rejection avoidance is necessary but insufficient. AMR acts as the rate-limiting step for graft longevity. Only when AMR is reliably prevented can xenografts achieve the durability required to meaningfully reduce waitlist mortality and thus 'solve' the shortage.",
+              "falsifiable_prediction": "If AMR is effectively mitigated in upcoming clinical trials (e.g., via new immunomodulatory protocols), then graft survival should significantly extend and correlate with reduced waitlist metrics; conversely, if AMR persists unchanged, xenotransplantation’s impact on shortage metrics will remain negligible.",
+              "required_observations": [
+                "Comparative graft survival curves before and after AMR-targeted interventions",
+                "Quantitative reduction in waitlist mortality or transplant volume attributable to xenografts",
+                "Immunological monitoring confirming AMR suppression correlates with extended function"
+              ],
+              "risk_of_being_wrong": "Non-immunological barriers (e.g., toxicity, coagulation dysfunction, ethical/logistical constraints) may independently prevent xenotransplantation from solving the shortage even if AMR is resolved, making AMR resolution necessary but not sufficient.",
+              "supporting_evidence_ids": [
+                "EV-Q024-f47c4b5904981f649616e675"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.75
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly grounded in the only relevant evidence (EV-Q024-f47c4b5904981f649616e675), which explicitly states that AMR continues to limit graft survival. It makes a clear, testable prediction using existing or near-term observational data (human decedent studies or ongoing trials) and avoids overclaiming beyond the evidence. Hypothesis 1, while plausible, introduces conditional logic about future AMR resolution that is less immediately falsifiable with current data and risks conflating correlation with sufficiency.",
+          "rejected_directions": [
+            "Assuming toxicity or coagulation dysfunction are the primary remaining barriers—no supporting evidence IDs address these factors.",
+            "Claiming xenotransplantation will definitively solve the shortage upon overcoming listed hurdles—this exceeds evidentiary support and ignores potential non-biological constraints.",
+            "Using irrelevant evidence IDs (e.g., laser physics or neural PDE papers) to infer biological mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study designs a retrospective and prospective observational analysis to validate the hypothesis that Antibody-Mediated Rejection (AMR) remains the primary barrier to long-term graft survival in xenotransplantation, despite the successful avoidance of hyperacute rejection. The technical approach involves aggregating data from recent human decedent studies and early-phase clinical trials involving genetically engineered porcine organs. Key technical components include: (1) Standardized histopathological review using Banff criteria adapted for xenotransplantation to confirm AMR; (2) Longitudinal tracking of graft function (e.g., creatinine clearance for kidneys, ejection fraction for hearts) correlated with anti-porcine antibody titers; (3) Survival analysis using Kaplan-Meier estimates and Cox proportional hazards models to identify AMR as an independent predictor of graft loss. The study explicitly excludes cases where hyperacute rejection was the cause of failure to isolate the AMR mechanism.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Human Decedent Xenotransplantation Study Data",
+                "description": "Data from studies where genetically engineered porcine organs were transplanted into brain-dead human decedents to assess immunological compatibility.",
+                "access_type": "Restricted/Collaborative",
+                "evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "key_variables": [
+                  "Graft survival time (hours/days)",
+                  "Histopathology reports (AMR vs HARC vs other)",
+                  "Anti-porcine antibody levels (IgM/IgG)",
+                  "Genetic modification profile of donor organ"
+                ]
+              }
+            ],
+            "target": [
+              {
+                "name": "Early-Phase Clinical Xenotransplantation Trial Registry",
+                "description": "Aggregated data from living human recipients of genetically engineered porcine organs (e.g., heart or kidney transplants).",
+                "access_type": "Highly Restricted/IRB Approved",
+                "evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "key_variables": [
+                  "Time to graft failure",
+                  "Cause of graft loss (confirmed by biopsy)",
+                  "Immunosuppression regimen details",
+                  "Long-term functional metrics"
+                ]
+              }
+            ]
+          },
+          "methods": "1. Data Harmonization: Create a unified schema for graft survival and rejection events across decedent and clinical datasets. 2. Histopathological Central Review: Blinded review of biopsy samples by expert pathologists to classify rejection types according to standardized xenotransplantation criteria, specifically distinguishing AMR from cellular rejection or coagulation dysfunction. 3. Statistical Analysis: Use survival analysis (Kaplan-Meier) to compare graft longevity against historical benchmarks for AMR-limited survival. Perform multivariate Cox regression to control for confounders (e.g., recipient age, genetic edits) and test if AMR presence significantly predicts graft failure. 4. Mechanism Correlation: Correlate temporal spikes in anti-porcine antibodies with histological evidence of AMR and functional decline.",
+          "experiments": {
+            "baselines": [
+              "Historical Hyperacute Rejection (HARC) Baseline: Graft survival times from pre-genetic engineering era xenotransplantation attempts, where HARC caused immediate failure (minutes/hours).",
+              "Allograft Survival Benchmark: Median survival times for standard human-to-human transplants under current immunosuppression, serving as the 'solved' target state."
+            ],
+            "metrics": [
+              "Median Graft Survival Time (days)",
+              "Incidence Rate of Confirmed AMR (percentage of graft losses attributed to AMR)",
+              "Hazard Ratio for AMR-associated graft loss (vs. non-AMR causes)"
+            ],
+            "ablation": "Not applicable in observational context; however, subgroup analysis will be performed based on specific genetic modifications (e.g., GTKO vs. multi-transgenic) to assess if certain edits reduce but do not eliminate AMR risk.",
+            "validation_protocol": "Internal validation via cross-referencing histopathological diagnoses with serological data (antibody titers). External validity assessed by comparing findings with independent case reports not included in the primary dataset. Sensitivity analysis will exclude cases with incomplete biopsy data."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define strict inclusion/exclusion criteria for decedent vs. clinical cases.",
+            "Standardize histopathological scoring system for AMR across all reviewing pathologists.",
+            "Pre-register statistical analysis plan including primary and secondary endpoints.",
+            "Ensure data anonymization compliance for human subject data (HIPAA/GDPR).",
+            "Document all genetic modifications of porcine donors used in the aggregated dataset."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard statistical software (R/Python) for survival analysis; secure server for protected health information.",
+            "estimated_timeline": "6-12 months for data access approval, harmonization, and analysis.",
+            "ethical_considerations": "Requires IRB approval for use of human decedent and clinical trial data. No new animal experiments are proposed."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The hypothesis is strictly grounded in the single relevant evidence card (EV-Q024-f47c4b5904981f649616e675), correctly identifying AMR as the current limiting factor while acknowledging hyperacute rejection avoidance.",
+            "Experiment design appropriately treats the study as observational/retrospective with 'pending' results, avoiding any fabrication of experimental outcomes.",
+            "Datasets clearly distinguish between source (decedent studies) and target (clinical trials) with valid evidence linkage.",
+            "Baselines (historical HARC, allograft benchmarks) and metrics (survival time, AMR incidence) are sufficient to falsify the hypothesis that AMR remains the primary barrier.",
+            "Knowledge gaps regarding toxicity and coagulation are correctly identified rather than being asserted as facts without evidence."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+            "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:8b612915cfbe",
+            "category": "required_revision",
+            "description": "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:d3c424773f48",
+            "category": "required_revision",
+            "description": "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "2444fe67976a1a86e4bba6d3edca5c29b5dd496d2bb3a93b5d87ba970b909752",
+          "experiment_designer": "d811ca9027770b274fcdb4f39c18627061f988cf01af6d3a6172e2f69c015e6f",
+          "scientific_reviewer": "a4255f32aff7f6772b595425de35a7fe323a437a9a6142c783769435836190ce"
+        }
+      },
+      "parent_version_id": "20260822-082026-a4139fec:v1",
+      "lineage": [
+        "20260822-082026-a4139fec:v1",
+        "20260822-082026-a4139fec:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The hypothesis is strictly grounded in the single relevant evidence card (EV-Q024-f47c4b5904981f649616e675), correctly identifying AMR as the current limiting factor while acknowledging hyperacute rejection avoidance.",
+          "Experiment design appropriately treats the study as observational/retrospective with 'pending' results, avoiding any fabrication of experimental outcomes.",
+          "Datasets clearly distinguish between source (decedent studies) and target (clinical trials) with valid evidence linkage.",
+          "Baselines (historical HARC, allograft benchmarks) and metrics (survival time, AMR incidence) are sufficient to falsify the hypothesis that AMR remains the primary barrier.",
+          "Knowledge gaps regarding toxicity and coagulation are correctly identified rather than being asserted as facts without evidence."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+          "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly conditions the conclusion on the immunological scope of EV-Q024-f47c4b5904981f649616e675, explicitly acknowledging non-immunological barriers as unverified knowledge gaps.",
+          "Experiment design now includes a pre-specified protocol for distinguishing AMR from mixed rejection phenotypes using adapted Banff criteria, directly addressing the reproducibility revision requirement.",
+          "Results field remains appropriately marked as pending with no fabrication of experimental outcomes.",
+          "All factual claims are strictly traceable to the single valid evidence ID; irrelevant evidence IDs are correctly excluded from biological assertions.",
+          "Datasets clearly define source (decedent) and target (clinical) populations with appropriate evidence linkage and access constraints."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final statistical analysis plan, explicitly define the threshold or decision rule for classifying 'primary AMR' versus 'mixed phenotype' to ensure inter-rater reliability during centralized review.",
+          "Add a specific data dictionary entry for 'non-immunological cause' variables to ensure they are systematically captured as 'absent', 'present-secondary', or 'present-primary' rather than missing data."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:ab09d0c602a75850",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+          "issue_id": "required_revision:8b612915cfbe"
+        },
+        {
+          "failure_id": "failure:e7a6f9bc1890e17b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.",
+          "issue_id": "required_revision:d3c424773f48"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:346d08be78e4422d",
+          "issue_id": "required_revision:8b612915cfbe",
+          "reason": "Reviewer item required_revision:8b612915cfbe requested 'In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.'. V2 changes technical_details; deterministic correlation evidence tokens=['absent', 'barrier', 'cannot', 'coagulation', 'conclusion', 'conditional', 'currently', 'donor', 'due', 'ev', 'evidence', 'explicitly', 'f47c4b5904981f649616e675', 'immunological', 'non', 'q024', 'scope', 'shortage', 'solve', 'toxicity', 'xenotransplantation'], coverage=0.778.",
+          "before": "This study designs a retrospective and prospective observational analysis to validate the hypothesis that Antibody-Mediated Rejection (AMR) remains the primary barrier to long-term graft survival in xenotransplantation, despite the successful avoidance of hyperacute rejection. The technical approach involves aggregating data from recent human decedent studies and early-phase clinical trials involving genetically engineered porcine organs. Key technical components include: (1) Standardized histopathological review using Banff criteria adapted for xenotransplantation to confirm AMR; (2) Longitudinal tracking of graft function (e.g., creatinine clearance for kidneys, ejection fraction for hearts) correlated with anti-porcine antibody titers; (3) Survival analysis using Kaplan-Meier estimates and Cox proportional hazards models to identify AMR as an independent predictor of graft loss. The study explicitly excludes cases where hyperacute rejection was the cause of failure to isolate the AMR mechanism.",
+          "after": "This study employs a retrospective observational design to validate that Antibody-Mediated Rejection (AMR) remains the primary rate-limiting barrier to graft survival in current genetically engineered porcine xenotransplantation, conditional on the immunological scope of EV-Q024-f47c4b5904981f649616e675. The technical approach integrates data from human decedent studies and early-phase clinical trials. Key components include: (1) Centralized, blinded histopathological review using adapted Banff criteria to strictly distinguish pure AMR from mixed rejection phenotypes (e.g., AMR + cellular rejection) and non-immunological causes (toxicity/coagulation), addressing the reproducibility requirement; (2) Longitudinal correlation of anti-porcine antibody titers with graft dysfunction episodes; (3) Survival analysis (Kaplan-Meier and Cox proportional hazards) to quantify AMR as an independent predictor of graft loss. The conclusion that 'xenotransplantation cannot currently solve donor shortage' is explicitly conditioned on this immunological evidence, acknowledging toxicity and coagulation as unverified knowledge gaps due to lack of supporting evidence IDs.",
+          "evidence_refs": [
+            "EV-Q024-f47c4b5904981f649616e675"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:ff42667bda7bb5c8",
+          "issue_id": "required_revision:d3c424773f48",
+          "reason": "Reviewer item required_revision:d3c424773f48 requested 'Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['amr', 'analysi', 'cause', 'distinguish', 'mix', 'phenotype', 'plan', 'pre', 'primary', 'rejection', 'reproducibility', 'specify', 'statistical'], coverage=0.722.",
+          "before": [
+            "Define strict inclusion/exclusion criteria for decedent vs. clinical cases.",
+            "Standardize histopathological scoring system for AMR across all reviewing pathologists.",
+            "Pre-register statistical analysis plan including primary and secondary endpoints.",
+            "Ensure data anonymization compliance for human subject data (HIPAA/GDPR).",
+            "Document all genetic modifications of porcine donors used in the aggregated dataset."
+          ],
+          "after": [
+            "Define strict inclusion/exclusion criteria for decedent vs. clinical cases.",
+            "Pre-specify histopathological scoring system for distinguishing AMR from mixed rejection phenotypes and non-immunological causes.",
+            "Pre-register statistical analysis plan including primary and secondary endpoints.",
+            "Ensure data anonymization compliance for human subject data (HIPAA/GDPR).",
+            "Document all genetic modifications of porcine donors used in the aggregated dataset.",
+            "Explicitly state that conclusions are conditional on the immunological scope of EV-Q024-f47c4b5904981f649616e675 and do not account for unverified non-immunological barriers."
+          ],
+          "evidence_refs": [
+            "EV-Q024-f47c4b5904981f649616e675"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:6a50f9f9536529a3",
+          "issue_id": "required_revision:d3c424773f48",
+          "reason": "Reviewer item required_revision:d3c424773f48 requested 'Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.'. V2 changes methods; deterministic correlation evidence tokens=['amr', 'analysi', 'cause', 'distinguish', 'graft', 'mix', 'phenotype', 'pre', 'primary', 'rejection', 'reproducibility', 'statistical'], coverage=0.667.",
+          "before": "1. Data Harmonization: Create a unified schema for graft survival and rejection events across decedent and clinical datasets. 2. Histopathological Central Review: Blinded review of biopsy samples by expert pathologists to classify rejection types according to standardized xenotransplantation criteria, specifically distinguishing AMR from cellular rejection or coagulation dysfunction. 3. Statistical Analysis: Use survival analysis (Kaplan-Meier) to compare graft longevity against historical benchmarks for AMR-limited survival. Perform multivariate Cox regression to control for confounders (e.g., recipient age, genetic edits) and test if AMR presence significantly predicts graft failure. 4. Mechanism Correlation: Correlate temporal spikes in anti-porcine antibodies with histological evidence of AMR and functional decline.",
+          "after": "1. Data Harmonization: Create a unified schema for graft survival and rejection events across decedent and clinical datasets, excluding cases with confirmed hyperacute rejection to isolate AMR mechanisms. 2. Histopathological Central Review: Implement a pre-specified protocol for blinded review of biopsy samples by expert pathologists. This protocol explicitly defines criteria to distinguish 'AMR as primary cause' from 'mixed rejection phenotypes' and 'non-immunological causes' (toxicity/coagulation), ensuring reproducibility. 3. Statistical Analysis: Use Kaplan-Meier estimates to compare graft longevity against historical AMR-limited benchmarks. Perform multivariate Cox regression to control for confounders (e.g., recipient age, genetic edits) and test if AMR presence significantly predicts graft failure. 4. Mechanism Correlation: Correlate temporal spikes in anti-porcine antibodies with histological evidence of AMR and functional decline.",
+          "evidence_refs": [
+            "EV-Q024-f47c4b5904981f649616e675"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:8b612915cfbe",
+          "category": "required_revision",
+          "description": "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:346d08be78e4422d; evidence=EV-Q024-f47c4b5904981f649616e675; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:d3c424773f48",
+          "category": "required_revision",
+          "description": "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ff42667bda7bb5c8,change:6a50f9f9536529a3; evidence=EV-Q024-f47c4b5904981f649616e675; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:c6ef2c20524d",
+          "category": "required_revision",
+          "description": "In the final statistical analysis plan, explicitly define the threshold or decision rule for classifying 'primary AMR' versus 'mixed phenotype' to ensure inter-rater reliability during centralized review.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:2030120d466e",
+          "category": "required_revision",
+          "description": "Add a specific data dictionary entry for 'non-immunological cause' variables to ensure they are systematically captured as 'absent', 'present-secondary', or 'present-primary' rather than missing data.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "evaluation_metrics",
+        "dataset_sources",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Current genetically engineered porcine xenografts cannot solve the donor organ shortage because antibody-mediated rejection (AMR) remains the primary rate-limiting barrier to graft survival, conditional on the immunological scope of available evidence which does not account for non-immunological factors like toxicity or coagulation dysfunction.",
+          "overall_score": 0.81,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The resolution of antibody-mediated rejection (AMR) is a necessary but insufficient condition for xenotransplantation to solve the organ shortage, as the sufficiency claim depends on unverified non-immunological factors (toxicity, coagulation) currently lacking evidentiary support.",
+          "overall_score": 0.75,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "unresolved_issue:required_revision:c6ef2c20524d",
+        "unresolved_issue:required_revision:2030120d466e",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:c6ef2c20524d: In the final statistical analysis plan, explicitly define the threshold or decision rule for classifying 'primary AMR' versus 'mixed phenotype' to ensure inter-rater reliability during centralized review.",
+        "required_revision:2030120d466e: Add a specific data dictionary entry for 'non-immunological cause' variables to ensure they are systematically captured as 'absent', 'present-secondary', or 'present-primary' rather than missing data."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-082026-a4139fec",
+        "version_number": 1,
+        "version_id": "20260822-082026-a4139fec:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Xenotransplantation cannot currently solve the donor organ shortage because antibody-mediated rejection (AMR) remains an unsolved barrier limiting graft survival, despite the reliable avoidance of hyperacute rejection.",
+              "mechanism": "While genetic engineering has successfully eliminated hyperacute rejection triggers, residual porcine antigens or de novo immune responses continue to elicit AMR. This ongoing immunological incompatibility restricts long-term graft viability, thereby preventing xenotransplantation from serving as a scalable, reliable solution to organ scarcity at this time.",
+              "falsifiable_prediction": "If current genetically engineered porcine organs are transplanted into human recipients or decedent models without novel AMR-specific interventions, graft survival will not exceed the duration limited by AMR, and no cohort will demonstrate sustained function sufficient for clinical adoption as a standard therapy.",
+              "required_observations": [
+                "Longitudinal graft survival data in human recipients or decedent models showing time-to-failure due to AMR",
+                "Histopathological confirmation of AMR as the primary cause of graft loss",
+                "Absence of sustained graft function beyond known AMR-limited windows in recent trials"
+              ],
+              "risk_of_being_wrong": "Recent unreported breakthroughs in AMR suppression (e.g., novel biologics or gene edits not captured in EV-Q024-f47c4b5904981f649616e675) may have already extended graft survival sufficiently to enable scalability, rendering this hypothesis overly pessimistic.",
+              "supporting_evidence_ids": [
+                "EV-Q024-f47c4b5904981f649616e675"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The capacity of xenotransplantation to solve organ shortage is contingent on resolving antibody-mediated rejection; until AMR is controlled, xenotransplantation remains a partial mitigation rather than a definitive solution.",
+              "mechanism": "Hyperacute rejection avoidance is necessary but insufficient. AMR acts as the rate-limiting step for graft longevity. Only when AMR is reliably prevented can xenografts achieve the durability required to meaningfully reduce waitlist mortality and thus 'solve' the shortage.",
+              "falsifiable_prediction": "If AMR is effectively mitigated in upcoming clinical trials (e.g., via new immunomodulatory protocols), then graft survival should significantly extend and correlate with reduced waitlist metrics; conversely, if AMR persists unchanged, xenotransplantation’s impact on shortage metrics will remain negligible.",
+              "required_observations": [
+                "Comparative graft survival curves before and after AMR-targeted interventions",
+                "Quantitative reduction in waitlist mortality or transplant volume attributable to xenografts",
+                "Immunological monitoring confirming AMR suppression correlates with extended function"
+              ],
+              "risk_of_being_wrong": "Non-immunological barriers (e.g., toxicity, coagulation dysfunction, ethical/logistical constraints) may independently prevent xenotransplantation from solving the shortage even if AMR is resolved, making AMR resolution necessary but not sufficient.",
+              "supporting_evidence_ids": [
+                "EV-Q024-f47c4b5904981f649616e675"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.75
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly grounded in the only relevant evidence (EV-Q024-f47c4b5904981f649616e675), which explicitly states that AMR continues to limit graft survival. It makes a clear, testable prediction using existing or near-term observational data (human decedent studies or ongoing trials) and avoids overclaiming beyond the evidence. Hypothesis 1, while plausible, introduces conditional logic about future AMR resolution that is less immediately falsifiable with current data and risks conflating correlation with sufficiency.",
+          "rejected_directions": [
+            "Assuming toxicity or coagulation dysfunction are the primary remaining barriers—no supporting evidence IDs address these factors.",
+            "Claiming xenotransplantation will definitively solve the shortage upon overcoming listed hurdles—this exceeds evidentiary support and ignores potential non-biological constraints.",
+            "Using irrelevant evidence IDs (e.g., laser physics or neural PDE papers) to infer biological mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study designs a retrospective and prospective observational analysis to validate the hypothesis that Antibody-Mediated Rejection (AMR) remains the primary barrier to long-term graft survival in xenotransplantation, despite the successful avoidance of hyperacute rejection. The technical approach involves aggregating data from recent human decedent studies and early-phase clinical trials involving genetically engineered porcine organs. Key technical components include: (1) Standardized histopathological review using Banff criteria adapted for xenotransplantation to confirm AMR; (2) Longitudinal tracking of graft function (e.g., creatinine clearance for kidneys, ejection fraction for hearts) correlated with anti-porcine antibody titers; (3) Survival analysis using Kaplan-Meier estimates and Cox proportional hazards models to identify AMR as an independent predictor of graft loss. The study explicitly excludes cases where hyperacute rejection was the cause of failure to isolate the AMR mechanism.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Human Decedent Xenotransplantation Study Data",
+                "description": "Data from studies where genetically engineered porcine organs were transplanted into brain-dead human decedents to assess immunological compatibility.",
+                "access_type": "Restricted/Collaborative",
+                "evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "key_variables": [
+                  "Graft survival time (hours/days)",
+                  "Histopathology reports (AMR vs HARC vs other)",
+                  "Anti-porcine antibody levels (IgM/IgG)",
+                  "Genetic modification profile of donor organ"
+                ]
+              }
+            ],
+            "target": [
+              {
+                "name": "Early-Phase Clinical Xenotransplantation Trial Registry",
+                "description": "Aggregated data from living human recipients of genetically engineered porcine organs (e.g., heart or kidney transplants).",
+                "access_type": "Highly Restricted/IRB Approved",
+                "evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "key_variables": [
+                  "Time to graft failure",
+                  "Cause of graft loss (confirmed by biopsy)",
+                  "Immunosuppression regimen details",
+                  "Long-term functional metrics"
+                ]
+              }
+            ]
+          },
+          "methods": "1. Data Harmonization: Create a unified schema for graft survival and rejection events across decedent and clinical datasets. 2. Histopathological Central Review: Blinded review of biopsy samples by expert pathologists to classify rejection types according to standardized xenotransplantation criteria, specifically distinguishing AMR from cellular rejection or coagulation dysfunction. 3. Statistical Analysis: Use survival analysis (Kaplan-Meier) to compare graft longevity against historical benchmarks for AMR-limited survival. Perform multivariate Cox regression to control for confounders (e.g., recipient age, genetic edits) and test if AMR presence significantly predicts graft failure. 4. Mechanism Correlation: Correlate temporal spikes in anti-porcine antibodies with histological evidence of AMR and functional decline.",
+          "experiments": {
+            "baselines": [
+              "Historical Hyperacute Rejection (HARC) Baseline: Graft survival times from pre-genetic engineering era xenotransplantation attempts, where HARC caused immediate failure (minutes/hours).",
+              "Allograft Survival Benchmark: Median survival times for standard human-to-human transplants under current immunosuppression, serving as the 'solved' target state."
+            ],
+            "metrics": [
+              "Median Graft Survival Time (days)",
+              "Incidence Rate of Confirmed AMR (percentage of graft losses attributed to AMR)",
+              "Hazard Ratio for AMR-associated graft loss (vs. non-AMR causes)"
+            ],
+            "ablation": "Not applicable in observational context; however, subgroup analysis will be performed based on specific genetic modifications (e.g., GTKO vs. multi-transgenic) to assess if certain edits reduce but do not eliminate AMR risk.",
+            "validation_protocol": "Internal validation via cross-referencing histopathological diagnoses with serological data (antibody titers). External validity assessed by comparing findings with independent case reports not included in the primary dataset. Sensitivity analysis will exclude cases with incomplete biopsy data."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define strict inclusion/exclusion criteria for decedent vs. clinical cases.",
+            "Standardize histopathological scoring system for AMR across all reviewing pathologists.",
+            "Pre-register statistical analysis plan including primary and secondary endpoints.",
+            "Ensure data anonymization compliance for human subject data (HIPAA/GDPR).",
+            "Document all genetic modifications of porcine donors used in the aggregated dataset."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard statistical software (R/Python) for survival analysis; secure server for protected health information.",
+            "estimated_timeline": "6-12 months for data access approval, harmonization, and analysis.",
+            "ethical_considerations": "Requires IRB approval for use of human decedent and clinical trial data. No new animal experiments are proposed."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The hypothesis is strictly grounded in the single relevant evidence card (EV-Q024-f47c4b5904981f649616e675), correctly identifying AMR as the current limiting factor while acknowledging hyperacute rejection avoidance.",
+            "Experiment design appropriately treats the study as observational/retrospective with 'pending' results, avoiding any fabrication of experimental outcomes.",
+            "Datasets clearly distinguish between source (decedent studies) and target (clinical trials) with valid evidence linkage.",
+            "Baselines (historical HARC, allograft benchmarks) and metrics (survival time, AMR incidence) are sufficient to falsify the hypothesis that AMR remains the primary barrier.",
+            "Knowledge gaps regarding toxicity and coagulation are correctly identified rather than being asserted as facts without evidence."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+            "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:8b612915cfbe",
+            "category": "required_revision",
+            "description": "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:d3c424773f48",
+            "category": "required_revision",
+            "description": "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "2444fe67976a1a86e4bba6d3edca5c29b5dd496d2bb3a93b5d87ba970b909752",
+          "experiment_designer": "d811ca9027770b274fcdb4f39c18627061f988cf01af6d3a6172e2f69c015e6f",
+          "scientific_reviewer": "a4255f32aff7f6772b595425de35a7fe323a437a9a6142c783769435836190ce"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-082026-a4139fec",
+        "version_number": 2,
+        "version_id": "20260822-082026-a4139fec:v2",
+        "parent_version_id": "20260822-082026-a4139fec:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current genetically engineered porcine xenografts cannot solve the donor organ shortage because antibody-mediated rejection (AMR) remains the primary rate-limiting barrier to graft survival, conditional on the immunological scope of available evidence which does not account for non-immunological factors like toxicity or coagulation dysfunction.",
+              "mechanism": "While genetic engineering has successfully eliminated hyperacute rejection triggers, residual porcine antigens or de novo immune responses continue to elicit AMR. This ongoing immunological incompatibility restricts long-term graft viability below the threshold required for clinical scalability. Crucially, this mechanism is asserted only within the immunological domain supported by EV-Q024-f47c4b5904981f649616e675; other potential barriers (toxicity, coagulation) are acknowledged as unverified knowledge gaps rather than established facts.",
+              "falsifiable_prediction": "In observational cohorts of human recipients or decedent models using current genetically engineered porcine organs without novel AMR-specific interventions, graft loss will be predominantly attributed to histopathologically confirmed AMR rather than mixed phenotypes or non-immunological causes, and median survival will remain statistically indistinguishable from historical AMR-limited benchmarks.",
+              "required_observations": [
+                "Longitudinal graft survival data in human recipients or decedent models showing time-to-failure",
+                "Centralized histopathological review distinguishing AMR as the primary cause of graft loss versus mixed rejection phenotypes using pre-specified Banff-like criteria",
+                "Serological correlation of anti-porcine antibody titers with graft dysfunction episodes",
+                "Documentation that non-immunological causes (toxicity, coagulation) are either absent or secondary to AMR in the analyzed cohort"
+              ],
+              "risk_of_being_wrong": "Recent unreported breakthroughs in AMR suppression or gene editing not captured in EV-Q024-f47c4b5904981f649616e675 may have already extended graft survival sufficiently. Additionally, if non-immunological barriers (toxicity, coagulation) prove to be the dominant cause of failure in newer cohorts, AMR may no longer be the 'primary' limiter even if still present.",
+              "supporting_evidence_ids": [
+                "EV-Q024-f47c4b5904981f649616e675"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.45,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.81
+            },
+            {
+              "hypothesis": "The resolution of antibody-mediated rejection (AMR) is a necessary but insufficient condition for xenotransplantation to solve the organ shortage, as the sufficiency claim depends on unverified non-immunological factors (toxicity, coagulation) currently lacking evidentiary support.",
+              "mechanism": "Hyperacute rejection avoidance is established as achievable, making AMR the current observable bottleneck. However, the booklet's assertion that overcoming AMR, toxicity, and coagulation would 'solve' the shortage implies these are the only remaining barriers. Since evidence only validates the AMR bottleneck, resolving AMR is predicted to extend graft survival but not guarantee a solution to the shortage until toxicity and coagulation are also empirically validated as resolved.",
+              "falsifiable_prediction": "If AMR is effectively mitigated in upcoming trials (e.g., via new immunomodulatory protocols), graft survival should significantly extend beyond current AMR-limited windows; however, if graft loss continues due to non-AMR causes (toxicity/coagulation) despite AMR control, then AMR resolution alone will be proven insufficient for solving the shortage.",
+              "required_observations": [
+                "Comparative graft survival curves before and after AMR-targeted interventions",
+                "Categorization of graft loss etiology in post-AMR-intervention cohorts to identify residual non-immunological failures",
+                "Quantitative metrics linking extended xenograft survival to actual reduction in waitlist mortality or transplant volume"
+              ],
+              "risk_of_being_wrong": "Non-immunological barriers may have already been solved in parallel with AMR research but not reported in the single available evidence source, making the 'insufficiency' claim overly conservative. Alternatively, logistical or ethical barriers not mentioned in the biological evidence could render the entire premise moot regardless of biological success.",
+              "supporting_evidence_ids": [
+                "EV-Q024-f47c4b5904981f649616e675"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.65,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.75
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best candidate because it directly addresses the reviewer's required revisions by explicitly conditioning the conclusion on the immunological scope of EV-Q024-f47c4b5904981f649616e675 and acknowledging non-immunological barriers as unverified knowledge gaps. It also incorporates the requirement to distinguish AMR from mixed rejection phenotypes in its falsifiable prediction and required observations, ensuring reproducibility. While Hypothesis 2 offers higher novelty by framing AMR as necessary-but-insufficient, Hypothesis 0 provides a more immediate, observationally testable framework using existing decedent and clinical trial data, with higher feasibility and evidence grounding scores.",
+          "rejected_directions": [
+            "Asserting that toxicity or coagulation dysfunction are currently the primary barriers to solving organ shortage—no supporting evidence IDs address these factors, making such claims unverifiable.",
+            "Claiming xenotransplantation will definitively solve the shortage upon overcoming listed hurdles—this exceeds evidentiary support and ignores potential non-biological constraints.",
+            "Using irrelevant evidence IDs (e.g., laser physics or neural PDE papers) to infer biological mechanisms or validate xenotransplantation claims.",
+            "Formulating hypotheses that treat 'solving organ shortage' as a binary biological outcome rather than a conditional, multi-factorial socio-medical goal."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study employs a retrospective observational design to validate that Antibody-Mediated Rejection (AMR) remains the primary rate-limiting barrier to graft survival in current genetically engineered porcine xenotransplantation, conditional on the immunological scope of EV-Q024-f47c4b5904981f649616e675. The technical approach integrates data from human decedent studies and early-phase clinical trials. Key components include: (1) Centralized, blinded histopathological review using adapted Banff criteria to strictly distinguish pure AMR from mixed rejection phenotypes (e.g., AMR + cellular rejection) and non-immunological causes (toxicity/coagulation), addressing the reproducibility requirement; (2) Longitudinal correlation of anti-porcine antibody titers with graft dysfunction episodes; (3) Survival analysis (Kaplan-Meier and Cox proportional hazards) to quantify AMR as an independent predictor of graft loss. The conclusion that 'xenotransplantation cannot currently solve donor shortage' is explicitly conditioned on this immunological evidence, acknowledging toxicity and coagulation as unverified knowledge gaps due to lack of supporting evidence IDs.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Human Decedent Xenotransplantation Study Data",
+                "description": "Data from studies where genetically engineered porcine organs were transplanted into brain-dead human decedents to assess immunological compatibility and hyperacute rejection avoidance.",
+                "access_type": "Restricted/Collaborative",
+                "evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "key_variables": [
+                  "Graft survival time (hours/days)",
+                  "Histopathology reports (AMR vs HARC vs other)",
+                  "Anti-porcine antibody levels (IgM/IgG)",
+                  "Genetic modification profile of donor organ"
+                ]
+              }
+            ],
+            "target": [
+              {
+                "name": "Early-Phase Clinical Xenotransplantation Trial Registry",
+                "description": "Aggregated data from living human recipients of genetically engineered porcine organs (e.g., heart or kidney transplants).",
+                "access_type": "Highly Restricted/IRB Approved",
+                "evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "key_variables": [
+                  "Time to graft failure",
+                  "Cause of graft loss (confirmed by biopsy)",
+                  "Immunosuppression regimen details",
+                  "Long-term functional metrics"
+                ]
+              }
+            ]
+          },
+          "methods": "1. Data Harmonization: Create a unified schema for graft survival and rejection events across decedent and clinical datasets, excluding cases with confirmed hyperacute rejection to isolate AMR mechanisms. 2. Histopathological Central Review: Implement a pre-specified protocol for blinded review of biopsy samples by expert pathologists. This protocol explicitly defines criteria to distinguish 'AMR as primary cause' from 'mixed rejection phenotypes' and 'non-immunological causes' (toxicity/coagulation), ensuring reproducibility. 3. Statistical Analysis: Use Kaplan-Meier estimates to compare graft longevity against historical AMR-limited benchmarks. Perform multivariate Cox regression to control for confounders (e.g., recipient age, genetic edits) and test if AMR presence significantly predicts graft failure. 4. Mechanism Correlation: Correlate temporal spikes in anti-porcine antibodies with histological evidence of AMR and functional decline.",
+          "experiments": {
+            "baselines": [
+              "Historical Hyperacute Rejection (HARC) Baseline: Graft survival times from pre-genetic engineering era xenotransplantation attempts, where HARC caused immediate failure (minutes/hours).",
+              "Allograft Survival Benchmark: Median survival times for standard human-to-human transplants under current immunosuppression, serving as the 'solved' target state."
+            ],
+            "metrics": [
+              "Median Graft Survival Time (days)",
+              "Incidence Rate of Confirmed AMR (percentage of graft losses attributed primarily to AMR)",
+              "Hazard Ratio for AMR-associated graft loss (vs. non-AMR causes)"
+            ],
+            "ablation": "Subgroup analysis will be performed based on specific genetic modifications (e.g., GTKO vs. multi-transgenic) to assess if certain edits reduce but do not eliminate AMR risk, while maintaining the distinction from non-immunological barriers.",
+            "validation_protocol": "Internal validation via cross-referencing histopathological diagnoses with serological data (antibody titers). External validity assessed by comparing findings with independent case reports not included in the primary dataset. Sensitivity analysis will exclude cases with incomplete biopsy data or ambiguous rejection phenotypes."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define strict inclusion/exclusion criteria for decedent vs. clinical cases.",
+            "Pre-specify histopathological scoring system for distinguishing AMR from mixed rejection phenotypes and non-immunological causes.",
+            "Pre-register statistical analysis plan including primary and secondary endpoints.",
+            "Ensure data anonymization compliance for human subject data (HIPAA/GDPR).",
+            "Document all genetic modifications of porcine donors used in the aggregated dataset.",
+            "Explicitly state that conclusions are conditional on the immunological scope of EV-Q024-f47c4b5904981f649616e675 and do not account for unverified non-immunological barriers."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard statistical software (R/Python) for survival analysis; secure server for protected health information.",
+            "estimated_timeline": "6-12 months for data access approval, harmonization, and analysis.",
+            "ethical_considerations": "Requires IRB approval for use of human decedent and clinical trial data. No new animal experiments are proposed."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly conditions the conclusion on the immunological scope of EV-Q024-f47c4b5904981f649616e675, explicitly acknowledging non-immunological barriers as unverified knowledge gaps.",
+            "Experiment design now includes a pre-specified protocol for distinguishing AMR from mixed rejection phenotypes using adapted Banff criteria, directly addressing the reproducibility revision requirement.",
+            "Results field remains appropriately marked as pending with no fabrication of experimental outcomes.",
+            "All factual claims are strictly traceable to the single valid evidence ID; irrelevant evidence IDs are correctly excluded from biological assertions.",
+            "Datasets clearly define source (decedent) and target (clinical) populations with appropriate evidence linkage and access constraints."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final statistical analysis plan, explicitly define the threshold or decision rule for classifying 'primary AMR' versus 'mixed phenotype' to ensure inter-rater reliability during centralized review.",
+            "Add a specific data dictionary entry for 'non-immunological cause' variables to ensure they are systematically captured as 'absent', 'present-secondary', or 'present-primary' rather than missing data."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:8b612915cfbe",
+            "category": "required_revision",
+            "description": "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:346d08be78e4422d; evidence=EV-Q024-f47c4b5904981f649616e675; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:d3c424773f48",
+            "category": "required_revision",
+            "description": "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:ff42667bda7bb5c8,change:6a50f9f9536529a3; evidence=EV-Q024-f47c4b5904981f649616e675; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:c6ef2c20524d",
+            "category": "required_revision",
+            "description": "In the final statistical analysis plan, explicitly define the threshold or decision rule for classifying 'primary AMR' versus 'mixed phenotype' to ensure inter-rater reliability during centralized review.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2030120d466e",
+            "category": "required_revision",
+            "description": "Add a specific data dictionary entry for 'non-immunological cause' variables to ensure they are systematically captured as 'absent', 'present-secondary', or 'present-primary' rather than missing data.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "27d9c91917b58fdf21f8d14e51f607cb39bcc22c8e1426bffbc235b3992c2414",
+          "experiment_designer": "52bc3f4e43ebf8d80f2e82be48eace8da71b3c2df29019e8cb99bbe1b739d2be",
+          "scientific_reviewer": "47486e97ce6502498ca4d25a1d9d7a8ac7821ca774db981870ee60b2dfc37efd"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-082026-a4139fec",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-082026-a4139fec:review:v1",
+        "20260822-082026-a4139fec:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-082026-a4139fec:v1",
+        "20260822-082026-a4139fec:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-082026-a4139fec",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-082026-a4139fec:review:v1",
+          "20260822-082026-a4139fec:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-082026-a4139fec:v1",
+          "20260822-082026-a4139fec:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-082026-a4139fec",
+          "version_number": 1,
+          "version_id": "20260822-082026-a4139fec:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Xenotransplantation cannot currently solve the donor organ shortage because antibody-mediated rejection (AMR) remains an unsolved barrier limiting graft survival, despite the reliable avoidance of hyperacute rejection.",
+                "mechanism": "While genetic engineering has successfully eliminated hyperacute rejection triggers, residual porcine antigens or de novo immune responses continue to elicit AMR. This ongoing immunological incompatibility restricts long-term graft viability, thereby preventing xenotransplantation from serving as a scalable, reliable solution to organ scarcity at this time.",
+                "falsifiable_prediction": "If current genetically engineered porcine organs are transplanted into human recipients or decedent models without novel AMR-specific interventions, graft survival will not exceed the duration limited by AMR, and no cohort will demonstrate sustained function sufficient for clinical adoption as a standard therapy.",
+                "required_observations": [
+                  "Longitudinal graft survival data in human recipients or decedent models showing time-to-failure due to AMR",
+                  "Histopathological confirmation of AMR as the primary cause of graft loss",
+                  "Absence of sustained graft function beyond known AMR-limited windows in recent trials"
+                ],
+                "risk_of_being_wrong": "Recent unreported breakthroughs in AMR suppression (e.g., novel biologics or gene edits not captured in EV-Q024-f47c4b5904981f649616e675) may have already extended graft survival sufficiently to enable scalability, rendering this hypothesis overly pessimistic.",
+                "supporting_evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "The capacity of xenotransplantation to solve organ shortage is contingent on resolving antibody-mediated rejection; until AMR is controlled, xenotransplantation remains a partial mitigation rather than a definitive solution.",
+                "mechanism": "Hyperacute rejection avoidance is necessary but insufficient. AMR acts as the rate-limiting step for graft longevity. Only when AMR is reliably prevented can xenografts achieve the durability required to meaningfully reduce waitlist mortality and thus 'solve' the shortage.",
+                "falsifiable_prediction": "If AMR is effectively mitigated in upcoming clinical trials (e.g., via new immunomodulatory protocols), then graft survival should significantly extend and correlate with reduced waitlist metrics; conversely, if AMR persists unchanged, xenotransplantation’s impact on shortage metrics will remain negligible.",
+                "required_observations": [
+                  "Comparative graft survival curves before and after AMR-targeted interventions",
+                  "Quantitative reduction in waitlist mortality or transplant volume attributable to xenografts",
+                  "Immunological monitoring confirming AMR suppression correlates with extended function"
+                ],
+                "risk_of_being_wrong": "Non-immunological barriers (e.g., toxicity, coagulation dysfunction, ethical/logistical constraints) may independently prevent xenotransplantation from solving the shortage even if AMR is resolved, making AMR resolution necessary but not sufficient.",
+                "supporting_evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.85,
+                "overall_score": 0.75
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is directly grounded in the only relevant evidence (EV-Q024-f47c4b5904981f649616e675), which explicitly states that AMR continues to limit graft survival. It makes a clear, testable prediction using existing or near-term observational data (human decedent studies or ongoing trials) and avoids overclaiming beyond the evidence. Hypothesis 1, while plausible, introduces conditional logic about future AMR resolution that is less immediately falsifiable with current data and risks conflating correlation with sufficiency.",
+            "rejected_directions": [
+              "Assuming toxicity or coagulation dysfunction are the primary remaining barriers—no supporting evidence IDs address these factors.",
+              "Claiming xenotransplantation will definitively solve the shortage upon overcoming listed hurdles—this exceeds evidentiary support and ignores potential non-biological constraints.",
+              "Using irrelevant evidence IDs (e.g., laser physics or neural PDE papers) to infer biological mechanisms."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study designs a retrospective and prospective observational analysis to validate the hypothesis that Antibody-Mediated Rejection (AMR) remains the primary barrier to long-term graft survival in xenotransplantation, despite the successful avoidance of hyperacute rejection. The technical approach involves aggregating data from recent human decedent studies and early-phase clinical trials involving genetically engineered porcine organs. Key technical components include: (1) Standardized histopathological review using Banff criteria adapted for xenotransplantation to confirm AMR; (2) Longitudinal tracking of graft function (e.g., creatinine clearance for kidneys, ejection fraction for hearts) correlated with anti-porcine antibody titers; (3) Survival analysis using Kaplan-Meier estimates and Cox proportional hazards models to identify AMR as an independent predictor of graft loss. The study explicitly excludes cases where hyperacute rejection was the cause of failure to isolate the AMR mechanism.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Human Decedent Xenotransplantation Study Data",
+                  "description": "Data from studies where genetically engineered porcine organs were transplanted into brain-dead human decedents to assess immunological compatibility.",
+                  "access_type": "Restricted/Collaborative",
+                  "evidence_ids": [
+                    "EV-Q024-f47c4b5904981f649616e675"
+                  ],
+                  "key_variables": [
+                    "Graft survival time (hours/days)",
+                    "Histopathology reports (AMR vs HARC vs other)",
+                    "Anti-porcine antibody levels (IgM/IgG)",
+                    "Genetic modification profile of donor organ"
+                  ]
+                }
+              ],
+              "target": [
+                {
+                  "name": "Early-Phase Clinical Xenotransplantation Trial Registry",
+                  "description": "Aggregated data from living human recipients of genetically engineered porcine organs (e.g., heart or kidney transplants).",
+                  "access_type": "Highly Restricted/IRB Approved",
+                  "evidence_ids": [
+                    "EV-Q024-f47c4b5904981f649616e675"
+                  ],
+                  "key_variables": [
+                    "Time to graft failure",
+                    "Cause of graft loss (confirmed by biopsy)",
+                    "Immunosuppression regimen details",
+                    "Long-term functional metrics"
+                  ]
+                }
+              ]
+            },
+            "methods": "1. Data Harmonization: Create a unified schema for graft survival and rejection events across decedent and clinical datasets. 2. Histopathological Central Review: Blinded review of biopsy samples by expert pathologists to classify rejection types according to standardized xenotransplantation criteria, specifically distinguishing AMR from cellular rejection or coagulation dysfunction. 3. Statistical Analysis: Use survival analysis (Kaplan-Meier) to compare graft longevity against historical benchmarks for AMR-limited survival. Perform multivariate Cox regression to control for confounders (e.g., recipient age, genetic edits) and test if AMR presence significantly predicts graft failure. 4. Mechanism Correlation: Correlate temporal spikes in anti-porcine antibodies with histological evidence of AMR and functional decline.",
+            "experiments": {
+              "baselines": [
+                "Historical Hyperacute Rejection (HARC) Baseline: Graft survival times from pre-genetic engineering era xenotransplantation attempts, where HARC caused immediate failure (minutes/hours).",
+                "Allograft Survival Benchmark: Median survival times for standard human-to-human transplants under current immunosuppression, serving as the 'solved' target state."
+              ],
+              "metrics": [
+                "Median Graft Survival Time (days)",
+                "Incidence Rate of Confirmed AMR (percentage of graft losses attributed to AMR)",
+                "Hazard Ratio for AMR-associated graft loss (vs. non-AMR causes)"
+              ],
+              "ablation": "Not applicable in observational context; however, subgroup analysis will be performed based on specific genetic modifications (e.g., GTKO vs. multi-transgenic) to assess if certain edits reduce but do not eliminate AMR risk.",
+              "validation_protocol": "Internal validation via cross-referencing histopathological diagnoses with serological data (antibody titers). External validity assessed by comparing findings with independent case reports not included in the primary dataset. Sensitivity analysis will exclude cases with incomplete biopsy data."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Define strict inclusion/exclusion criteria for decedent vs. clinical cases.",
+              "Standardize histopathological scoring system for AMR across all reviewing pathologists.",
+              "Pre-register statistical analysis plan including primary and secondary endpoints.",
+              "Ensure data anonymization compliance for human subject data (HIPAA/GDPR).",
+              "Document all genetic modifications of porcine donors used in the aggregated dataset."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard statistical software (R/Python) for survival analysis; secure server for protected health information.",
+              "estimated_timeline": "6-12 months for data access approval, harmonization, and analysis.",
+              "ethical_considerations": "Requires IRB approval for use of human decedent and clinical trial data. No new animal experiments are proposed."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The hypothesis is strictly grounded in the single relevant evidence card (EV-Q024-f47c4b5904981f649616e675), correctly identifying AMR as the current limiting factor while acknowledging hyperacute rejection avoidance.",
+              "Experiment design appropriately treats the study as observational/retrospective with 'pending' results, avoiding any fabrication of experimental outcomes.",
+              "Datasets clearly distinguish between source (decedent studies) and target (clinical trials) with valid evidence linkage.",
+              "Baselines (historical HARC, allograft benchmarks) and metrics (survival time, AMR incidence) are sufficient to falsify the hypothesis that AMR remains the primary barrier.",
+              "Knowledge gaps regarding toxicity and coagulation are correctly identified rather than being asserted as facts without evidence."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+              "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:8b612915cfbe",
+              "category": "required_revision",
+              "description": "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:d3c424773f48",
+              "category": "required_revision",
+              "description": "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "2444fe67976a1a86e4bba6d3edca5c29b5dd496d2bb3a93b5d87ba970b909752",
+            "experiment_designer": "d811ca9027770b274fcdb4f39c18627061f988cf01af6d3a6172e2f69c015e6f",
+            "scientific_reviewer": "a4255f32aff7f6772b595425de35a7fe323a437a9a6142c783769435836190ce"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-082026-a4139fec",
+          "version_number": 2,
+          "version_id": "20260822-082026-a4139fec:v2",
+          "parent_version_id": "20260822-082026-a4139fec:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Current genetically engineered porcine xenografts cannot solve the donor organ shortage because antibody-mediated rejection (AMR) remains the primary rate-limiting barrier to graft survival, conditional on the immunological scope of available evidence which does not account for non-immunological factors like toxicity or coagulation dysfunction.",
+                "mechanism": "While genetic engineering has successfully eliminated hyperacute rejection triggers, residual porcine antigens or de novo immune responses continue to elicit AMR. This ongoing immunological incompatibility restricts long-term graft viability below the threshold required for clinical scalability. Crucially, this mechanism is asserted only within the immunological domain supported by EV-Q024-f47c4b5904981f649616e675; other potential barriers (toxicity, coagulation) are acknowledged as unverified knowledge gaps rather than established facts.",
+                "falsifiable_prediction": "In observational cohorts of human recipients or decedent models using current genetically engineered porcine organs without novel AMR-specific interventions, graft loss will be predominantly attributed to histopathologically confirmed AMR rather than mixed phenotypes or non-immunological causes, and median survival will remain statistically indistinguishable from historical AMR-limited benchmarks.",
+                "required_observations": [
+                  "Longitudinal graft survival data in human recipients or decedent models showing time-to-failure",
+                  "Centralized histopathological review distinguishing AMR as the primary cause of graft loss versus mixed rejection phenotypes using pre-specified Banff-like criteria",
+                  "Serological correlation of anti-porcine antibody titers with graft dysfunction episodes",
+                  "Documentation that non-immunological causes (toxicity, coagulation) are either absent or secondary to AMR in the analyzed cohort"
+                ],
+                "risk_of_being_wrong": "Recent unreported breakthroughs in AMR suppression or gene editing not captured in EV-Q024-f47c4b5904981f649616e675 may have already extended graft survival sufficiently. Additionally, if non-immunological barriers (toxicity, coagulation) prove to be the dominant cause of failure in newer cohorts, AMR may no longer be the 'primary' limiter even if still present.",
+                "supporting_evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.45,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.81
+              },
+              {
+                "hypothesis": "The resolution of antibody-mediated rejection (AMR) is a necessary but insufficient condition for xenotransplantation to solve the organ shortage, as the sufficiency claim depends on unverified non-immunological factors (toxicity, coagulation) currently lacking evidentiary support.",
+                "mechanism": "Hyperacute rejection avoidance is established as achievable, making AMR the current observable bottleneck. However, the booklet's assertion that overcoming AMR, toxicity, and coagulation would 'solve' the shortage implies these are the only remaining barriers. Since evidence only validates the AMR bottleneck, resolving AMR is predicted to extend graft survival but not guarantee a solution to the shortage until toxicity and coagulation are also empirically validated as resolved.",
+                "falsifiable_prediction": "If AMR is effectively mitigated in upcoming trials (e.g., via new immunomodulatory protocols), graft survival should significantly extend beyond current AMR-limited windows; however, if graft loss continues due to non-AMR causes (toxicity/coagulation) despite AMR control, then AMR resolution alone will be proven insufficient for solving the shortage.",
+                "required_observations": [
+                  "Comparative graft survival curves before and after AMR-targeted interventions",
+                  "Categorization of graft loss etiology in post-AMR-intervention cohorts to identify residual non-immunological failures",
+                  "Quantitative metrics linking extended xenograft survival to actual reduction in waitlist mortality or transplant volume"
+                ],
+                "risk_of_being_wrong": "Non-immunological barriers may have already been solved in parallel with AMR research but not reported in the single available evidence source, making the 'insufficiency' claim overly conservative. Alternatively, logistical or ethical barriers not mentioned in the biological evidence could render the entire premise moot regardless of biological success.",
+                "supporting_evidence_ids": [
+                  "EV-Q024-f47c4b5904981f649616e675"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.65,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.85,
+                "overall_score": 0.75
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected as the best candidate because it directly addresses the reviewer's required revisions by explicitly conditioning the conclusion on the immunological scope of EV-Q024-f47c4b5904981f649616e675 and acknowledging non-immunological barriers as unverified knowledge gaps. It also incorporates the requirement to distinguish AMR from mixed rejection phenotypes in its falsifiable prediction and required observations, ensuring reproducibility. While Hypothesis 2 offers higher novelty by framing AMR as necessary-but-insufficient, Hypothesis 0 provides a more immediate, observationally testable framework using existing decedent and clinical trial data, with higher feasibility and evidence grounding scores.",
+            "rejected_directions": [
+              "Asserting that toxicity or coagulation dysfunction are currently the primary barriers to solving organ shortage—no supporting evidence IDs address these factors, making such claims unverifiable.",
+              "Claiming xenotransplantation will definitively solve the shortage upon overcoming listed hurdles—this exceeds evidentiary support and ignores potential non-biological constraints.",
+              "Using irrelevant evidence IDs (e.g., laser physics or neural PDE papers) to infer biological mechanisms or validate xenotransplantation claims.",
+              "Formulating hypotheses that treat 'solving organ shortage' as a binary biological outcome rather than a conditional, multi-factorial socio-medical goal."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study employs a retrospective observational design to validate that Antibody-Mediated Rejection (AMR) remains the primary rate-limiting barrier to graft survival in current genetically engineered porcine xenotransplantation, conditional on the immunological scope of EV-Q024-f47c4b5904981f649616e675. The technical approach integrates data from human decedent studies and early-phase clinical trials. Key components include: (1) Centralized, blinded histopathological review using adapted Banff criteria to strictly distinguish pure AMR from mixed rejection phenotypes (e.g., AMR + cellular rejection) and non-immunological causes (toxicity/coagulation), addressing the reproducibility requirement; (2) Longitudinal correlation of anti-porcine antibody titers with graft dysfunction episodes; (3) Survival analysis (Kaplan-Meier and Cox proportional hazards) to quantify AMR as an independent predictor of graft loss. The conclusion that 'xenotransplantation cannot currently solve donor shortage' is explicitly conditioned on this immunological evidence, acknowledging toxicity and coagulation as unverified knowledge gaps due to lack of supporting evidence IDs.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Human Decedent Xenotransplantation Study Data",
+                  "description": "Data from studies where genetically engineered porcine organs were transplanted into brain-dead human decedents to assess immunological compatibility and hyperacute rejection avoidance.",
+                  "access_type": "Restricted/Collaborative",
+                  "evidence_ids": [
+                    "EV-Q024-f47c4b5904981f649616e675"
+                  ],
+                  "key_variables": [
+                    "Graft survival time (hours/days)",
+                    "Histopathology reports (AMR vs HARC vs other)",
+                    "Anti-porcine antibody levels (IgM/IgG)",
+                    "Genetic modification profile of donor organ"
+                  ]
+                }
+              ],
+              "target": [
+                {
+                  "name": "Early-Phase Clinical Xenotransplantation Trial Registry",
+                  "description": "Aggregated data from living human recipients of genetically engineered porcine organs (e.g., heart or kidney transplants).",
+                  "access_type": "Highly Restricted/IRB Approved",
+                  "evidence_ids": [
+                    "EV-Q024-f47c4b5904981f649616e675"
+                  ],
+                  "key_variables": [
+                    "Time to graft failure",
+                    "Cause of graft loss (confirmed by biopsy)",
+                    "Immunosuppression regimen details",
+                    "Long-term functional metrics"
+                  ]
+                }
+              ]
+            },
+            "methods": "1. Data Harmonization: Create a unified schema for graft survival and rejection events across decedent and clinical datasets, excluding cases with confirmed hyperacute rejection to isolate AMR mechanisms. 2. Histopathological Central Review: Implement a pre-specified protocol for blinded review of biopsy samples by expert pathologists. This protocol explicitly defines criteria to distinguish 'AMR as primary cause' from 'mixed rejection phenotypes' and 'non-immunological causes' (toxicity/coagulation), ensuring reproducibility. 3. Statistical Analysis: Use Kaplan-Meier estimates to compare graft longevity against historical AMR-limited benchmarks. Perform multivariate Cox regression to control for confounders (e.g., recipient age, genetic edits) and test if AMR presence significantly predicts graft failure. 4. Mechanism Correlation: Correlate temporal spikes in anti-porcine antibodies with histological evidence of AMR and functional decline.",
+            "experiments": {
+              "baselines": [
+                "Historical Hyperacute Rejection (HARC) Baseline: Graft survival times from pre-genetic engineering era xenotransplantation attempts, where HARC caused immediate failure (minutes/hours).",
+                "Allograft Survival Benchmark: Median survival times for standard human-to-human transplants under current immunosuppression, serving as the 'solved' target state."
+              ],
+              "metrics": [
+                "Median Graft Survival Time (days)",
+                "Incidence Rate of Confirmed AMR (percentage of graft losses attributed primarily to AMR)",
+                "Hazard Ratio for AMR-associated graft loss (vs. non-AMR causes)"
+              ],
+              "ablation": "Subgroup analysis will be performed based on specific genetic modifications (e.g., GTKO vs. multi-transgenic) to assess if certain edits reduce but do not eliminate AMR risk, while maintaining the distinction from non-immunological barriers.",
+              "validation_protocol": "Internal validation via cross-referencing histopathological diagnoses with serological data (antibody titers). External validity assessed by comparing findings with independent case reports not included in the primary dataset. Sensitivity analysis will exclude cases with incomplete biopsy data or ambiguous rejection phenotypes."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Define strict inclusion/exclusion criteria for decedent vs. clinical cases.",
+              "Pre-specify histopathological scoring system for distinguishing AMR from mixed rejection phenotypes and non-immunological causes.",
+              "Pre-register statistical analysis plan including primary and secondary endpoints.",
+              "Ensure data anonymization compliance for human subject data (HIPAA/GDPR).",
+              "Document all genetic modifications of porcine donors used in the aggregated dataset.",
+              "Explicitly state that conclusions are conditional on the immunological scope of EV-Q024-f47c4b5904981f649616e675 and do not account for unverified non-immunological barriers."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard statistical software (R/Python) for survival analysis; secure server for protected health information.",
+              "estimated_timeline": "6-12 months for data access approval, harmonization, and analysis.",
+              "ethical_considerations": "Requires IRB approval for use of human decedent and clinical trial data. No new animal experiments are proposed."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly conditions the conclusion on the immunological scope of EV-Q024-f47c4b5904981f649616e675, explicitly acknowledging non-immunological barriers as unverified knowledge gaps.",
+              "Experiment design now includes a pre-specified protocol for distinguishing AMR from mixed rejection phenotypes using adapted Banff criteria, directly addressing the reproducibility revision requirement.",
+              "Results field remains appropriately marked as pending with no fabrication of experimental outcomes.",
+              "All factual claims are strictly traceable to the single valid evidence ID; irrelevant evidence IDs are correctly excluded from biological assertions.",
+              "Datasets clearly define source (decedent) and target (clinical) populations with appropriate evidence linkage and access constraints."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final statistical analysis plan, explicitly define the threshold or decision rule for classifying 'primary AMR' versus 'mixed phenotype' to ensure inter-rater reliability during centralized review.",
+              "Add a specific data dictionary entry for 'non-immunological cause' variables to ensure they are systematically captured as 'absent', 'present-secondary', or 'present-primary' rather than missing data."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:8b612915cfbe",
+              "category": "required_revision",
+              "description": "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:346d08be78e4422d; evidence=EV-Q024-f47c4b5904981f649616e675; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:d3c424773f48",
+              "category": "required_revision",
+              "description": "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:ff42667bda7bb5c8,change:6a50f9f9536529a3; evidence=EV-Q024-f47c4b5904981f649616e675; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:c6ef2c20524d",
+              "category": "required_revision",
+              "description": "In the final statistical analysis plan, explicitly define the threshold or decision rule for classifying 'primary AMR' versus 'mixed phenotype' to ensure inter-rater reliability during centralized review.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:2030120d466e",
+              "category": "required_revision",
+              "description": "Add a specific data dictionary entry for 'non-immunological cause' variables to ensure they are systematically captured as 'absent', 'present-secondary', or 'present-primary' rather than missing data.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "27d9c91917b58fdf21f8d14e51f607cb39bcc22c8e1426bffbc235b3992c2414",
+            "experiment_designer": "52bc3f4e43ebf8d80f2e82be48eace8da71b3c2df29019e8cb99bbe1b739d2be",
+            "scientific_reviewer": "47486e97ce6502498ca4d25a1d9d7a8ac7821ca774db981870ee60b2dfc37efd"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-082026-a4139fec:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-082026-a4139fec:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-082026-a4139fec:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-082026-a4139fec:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:8b612915cfbe",
+          "category": "required_revision",
+          "description": "In the final report, explicitly state that the conclusion 'xenotransplantation cannot currently solve donor shortage' is conditional on the scope of EV-Q024-f47c4b5904981f649616e675 and does not account for non-immunological barriers (toxicity, coagulation) due to lack of evidence.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:346d08be78e4422d; evidence=EV-Q024-f47c4b5904981f649616e675; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:d3c424773f48",
+          "category": "required_revision",
+          "description": "Ensure the statistical analysis plan pre-specifies how 'AMR as primary cause of graft loss' will be distinguished from mixed rejection phenotypes to maintain reproducibility.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ff42667bda7bb5c8,change:6a50f9f9536529a3; evidence=EV-Q024-f47c4b5904981f649616e675; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:c6ef2c20524d",
+          "category": "required_revision",
+          "description": "In the final statistical analysis plan, explicitly define the threshold or decision rule for classifying 'primary AMR' versus 'mixed phenotype' to ensure inter-rater reliability during centralized review.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:2030120d466e",
+          "category": "required_revision",
+          "description": "Add a specific data dictionary entry for 'non-immunological cause' variables to ensure they are systematically captured as 'absent', 'present-secondary', or 'present-primary' rather than missing data.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "4321cb7bd51746d6dcc4ded5a3d48c162d65be90647572159e9ee7a6df56dba1"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-082026-a4139fec:wave-b-two-round",
+      "run_id": "20260822-082026-a4139fec",
+      "v1_version_id": "20260822-082026-a4139fec:v1",
+      "v2_version_id": "20260822-082026-a4139fec:v2",
+      "input_fingerprints": {
+        "v1": "d811ca9027770b274fcdb4f39c18627061f988cf01af6d3a6172e2f69c015e6f",
+        "v2": "52bc3f4e43ebf8d80f2e82be48eace8da71b3c2df29019e8cb99bbe1b739d2be"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "required_revision:8b612915cfbe",
+        "required_revision:d3c424773f48"
+      ],
+      "change_ids": [
+        "change:346d08be78e4422d",
+        "change:ff42667bda7bb5c8",
+        "change:6a50f9f9536529a3"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Current genetically engineered porcine xenografts cannot solve the donor organ shortage because antibody-mediated rejection (AMR) remains the primary rate-limiting barrier to graft survival, conditional on the immunological scope of available evidence which does not account for non-immunological factors like toxicity or coagulation dysfunction.",
+          "overall_score": 0.81,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The resolution of antibody-mediated rejection (AMR) is a necessary but insufficient condition for xenotransplantation to solve the organ shortage, as the sufficiency claim depends on unverified non-immunological factors (toxicity, coagulation) currently lacking evidentiary support.",
+          "overall_score": 0.75,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "a596f102cd26",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:22:55.562215+00:00",
+    "ended_at": "2026-08-22T08:23:41.769315+00:00",
+    "duration_ms": 46207,
+    "input_summary": "{\"question_item\": {\"id\": \"Q024\", \"domain\": \"Biology\", \"question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"source_page\": 13, \"booklet_excerpt\": \"The shortage of organs could be solved by xenotransplantation—the process of transplanting organs between species—if we can overcome toxicity, rejection, and coagulation dysfunction.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Biology\", \"core_question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"keywords\": [\"xen",
+    "output_summary": "{\"input_question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"domain\": \"Biology\", \"problem_statement\": \"The global shortage of donor organs presents a critical medical challenge. Xenotransplantation, specifically using genetically engineered porcine organs, is proposed as a solution. However, its viability is contingent upon overcoming biological barriers such as toxicity, rejection, and coagulation dysfunction. Current evidence suggests that while hyperacute rejection can be avoided, antibody-mediated rejection (AMR) remains a significant limiter of graft survival. It is ",
+    "evidence_ids": [
+      "EV-Q024-f47c4b5904981f649616e675"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "78f0474a8bc5",
+    "mock": false
+  },
+  {
+    "event_id": "2ad9561fd45a",
+    "run_id": "20260822-082026-a4139fec",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:23:41.770326+00:00",
+    "ended_at": "2026-08-22T08:23:43.425690+00:00",
+    "duration_ms": 1655,
+    "input_summary": "{\"question_item\": {\"id\": \"Q024\", \"domain\": \"Biology\", \"question\": \"Can xenotransplantation solve the shortage of donor organs?\", \"source_page\": 13, \"booklet_excerpt\": \"The shortage of organs could be solved by xenotransplantation—the process of transplanting organs between species—if we can overcome toxicity, rejection, and coagulation dysfunction.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not ResearchPlan. SchemaValidator requires a 'ResearchPlan' object containing fields such as hypothesis, evidence, datasets, experiments, and references to perform validation.\", \"MissingFieldError: 'ResearchPlan' object is missing.\"], \"warnings\": [], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "45edd59fb57f",
+    "mock": false
+  }
+]

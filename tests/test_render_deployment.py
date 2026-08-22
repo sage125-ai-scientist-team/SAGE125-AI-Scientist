@@ -197,8 +197,14 @@ def test_render_blueprint_and_entrypoint_contracts(monkeypatch):
     assert blueprint.count("repo: https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist") == 2
     assert blueprint.count("branch: integration/2026-08-10") == 2
     assert blueprint.count("plan: free") == 2
-    assert blueprint.count("region: singapore") == 2
-    assert blueprint.count("autoDeployTrigger: checksPass") == 2
+    assert blueprint.count("region: singapore") == 4
+    assert blueprint.count("autoDeployTrigger: checksPass") == 4
+    assert "name: SAGE125-Final-Demo" in blueprint
+    assert "name: sage125-final-api" in blueprint
+    assert "name: sage125-final-ui" in blueprint
+    assert "branch: release/2026-sage125-final-demo" in blueprint
+    assert "ALLOW_PUBLIC_ACTUAL_RUN" in blueprint
+    assert "plan: starter" in blueprint
     assert "startCommand: python -m scripts.start_api" in blueprint
     assert "startCommand: python -m scripts.start_ui" in blueprint
     assert "healthCheckPath: /health" in blueprint

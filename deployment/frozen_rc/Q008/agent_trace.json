@@ -1,0 +1,1778 @@
+[
+  {
+    "event_id": "68c5bb815ab0",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:07:50.581643+00:00",
+    "ended_at": "2026-08-22T08:07:50.581643+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "1572a4621da5",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:07:50.581643+00:00",
+    "ended_at": "2026-08-22T08:07:53.776780+00:00",
+    "duration_ms": 3195,
+    "input_summary": "{\"question_item\": {\"id\": \"Q008\", \"domain\": \"Chemistry\", \"question\": \"Why does life require chirality?\", \"source_page\": 9, \"booklet_excerpt\": \"Molecules in DNA and RNA have the interesting feature of “handedness,” also called chirality. While these molecules naturally appear in both left- and right-handed forms, only the right-handed molecules are found in living organisms. “Handedness serves an essential function in living beings,” writes Emily Singer in Quanta. “Many of the chemical reactions that drive our cells only work with molecules of the correct handedness.” Many scientists believe tha",
+    "output_summary": "{\"domain\": \"Chemistry\", \"core_question\": \"Why does life require chirality?\", \"keywords\": [\"chirality\", \"handedness\", \"DNA\", \"RNA\", \"biochemistry\", \"cellular reactions\"], \"entities\": [\"DNA\", \"RNA\", \"living organisms\", \"cells\", \"chemical reactions\", \"Emily Singer\", \"Quanta\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"Based on the provided excerpt, the boundary is limited to the observation that only right-handed molecules are found in living organisms and that correct handedness is required for specific chemical reactions (molecular locks). The explanation must rely on the ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e5ee7883ed5c",
+    "mock": false
+  },
+  {
+    "event_id": "66392c626aae",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:07:53.776780+00:00",
+    "ended_at": "2026-08-22T08:08:17.466452+00:00",
+    "duration_ms": 23689,
+    "input_summary": "{\"question_item\": {\"id\": \"Q008\", \"domain\": \"Chemistry\", \"question\": \"Why does life require chirality?\", \"source_page\": 9, \"booklet_excerpt\": \"Molecules in DNA and RNA have the interesting feature of “handedness,” also called chirality. While these molecules naturally appear in both left- and right-handed forms, only the right-handed molecules are found in living organisms. “Handedness serves an essential function in living beings,” writes Emily Singer in Quanta. “Many of the chemical reactions that drive our cells only work with molecules of the correct handedness.” Many scientists believe tha",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the specific claim in the booklet that DNA/RNA molecules in living organisms are exclusively 'right-handed' and identify if this refers to D-sugars or L-amino acids contextually.\", \"query\": \"chirality of DNA RNA sugars amino acids living organisms right-handed left-handed\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming the specific handedness (D/L) of biological macromolecules mentioned in the source material.\", \"priority\": \"high\"}, {\"purpose\": \"Extract the exact explanation provided by Emily Singer in Quanta regarding why 'molecular l",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3710713a5dc8",
+    "mock": false
+  },
+  {
+    "event_id": "0f9e35d6ebe0",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:08:17.578770+00:00",
+    "ended_at": "2026-08-22T08:08:28.459445+00:00",
+    "duration_ms": 10880,
+    "input_summary": "{\"question_item\": {\"id\": \"Q008\", \"domain\": \"Chemistry\", \"question\": \"Why does life require chirality?\", \"source_page\": 9, \"booklet_excerpt\": \"Molecules in DNA and RNA have the interesting feature of “handedness,” also called chirality. While these molecules naturally appear in both left- and right-handed forms, only the right-handed molecules are found in living organisms. “Handedness serves an essential function in living beings,” writes Emily Singer in Quanta. “Many of the chemical reactions that drive our cells only work with molecules of the correct handedness.” Many scientists believe tha",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The biochemical and biophysical mechanisms explaining why life requires molecular chirality (homochirality) for function, such as enzyme specificity or structural stability.\", \"why_it_matters\": \"Understanding the necessity of chirality is fundamental to origins of life research and astrobiology, yet the provided evidence does not address molecular biochemistry.\", \"evidence_ids\": [], \"validation_need\": \"Requires experimental or theoretical studies on stereospecific interactions in biological systems, which are absent f",
+    "evidence_ids": [
+      "EV-Q008-e23b1ea12259b0e264bc2da2",
+      "EV-Q008-f28910b2f0fe1504e61fd9da",
+      "EV-Q008-b9756de0118da590def87983",
+      "EV-Q008-e173ebb45997fa7670a0deb2"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e0574b581ba7",
+    "mock": false
+  },
+  {
+    "event_id": "47ad22fa9e76",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:08:28.460517+00:00",
+    "ended_at": "2026-08-22T08:08:46.576926+00:00",
+    "duration_ms": 18116,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q008\", \"domain\": \"Chemistry\", \"question\": \"Why does life require chirality?\", \"source_page\": 9, \"booklet_excerpt\": \"Molecules in DNA and RNA have the interesting feature of “handedness,” also called chirality. While these molecules naturally appear in both left- and right-handed forms, only the right-handed molecules are found in living organisms. “Handedness serves an essential function in living beings,” writes Emily Singer in Quanta. “Many of the chemical reactions that drive our cells only work with molecules of the correct handedness.” Ma",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Life requires chirality because homochirality is a prerequisite for the specific molecular recognition events ('locks and keys') described in general biochemistry, but current exoplanet characterization frameworks (e.g., LIFE mission requirements) lack the spectral resolution to distinguish chiral biosignatures from abiotic racemic mixtures.\", \"mechanism\": \"Biochemical function relies on stereospecific interactions (lock-and-key). However, the translation of this molecular necessity into a remotely detectable planetary signal is constrained by instrument design.",
+    "evidence_ids": [
+      "EV-Q008-f28910b2f0fe1504e61fd9da",
+      "EV-Q008-e173ebb45997fa7670a0deb2",
+      "EV-Q008-b9756de0118da590def87983",
+      "EV-Q008-e23b1ea12259b0e264bc2da2"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "22099d439782",
+    "mock": false
+  },
+  {
+    "event_id": "c8f9846dc3ab",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:08:46.576926+00:00",
+    "ended_at": "2026-08-22T08:09:10.023459+00:00",
+    "duration_ms": 23446,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q008\", \"domain\": \"Chemistry\", \"question\": \"Why does life require chirality?\", \"source_page\": 9, \"booklet_excerpt\": \"Molecules in DNA and RNA have the interesting feature of “handedness,” also called chirality. While these molecules naturally appear in both left- and right-handed forms, only the right-handed molecules are found in living organisms. “Handedness serves an essential function in living beings,” writes Emily Singer in Quanta. “Many of the chemical reactions that drive our cells only work with molecules of the correct handedness.” Ma",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that current exoplanet characterization frameworks (specifically LIFE mission baselines) lack the spectral resolution or retrieval model complexity to distinguish chiral biosignatures from abiotic racemic mixtures. The core mechanism is that while homochirality is biochemically necessary for 'lock-and-key' molecular recognition, this molecular property does not translate into a distinct, detectable spectral feature in mid-infrared emission spectra under current instrument noise models. We will generate synthetic thermal emission spect",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "10482f3c3144",
+    "mock": false
+  },
+  {
+    "event_id": "4d60e015a68a",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:09:10.024458+00:00",
+    "ended_at": "2026-08-22T08:09:20.978406+00:00",
+    "duration_ms": 10953,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q008\", \"domain\": \"Chemistry\", \"question\": \"Why does life require chirality?\", \"source_page\": 9, \"booklet_excerpt\": \"Molecules in DNA and RNA have the interesting feature of “handedness,” also called chirality. While these molecules naturally appear in both left- and right-handed forms, only the right-handed molecules are found in living organisms. “Handedness serves an essential function in living beings,” writes Emily Singer in Quanta. “Many of the chemical reactions that drive our cells only work with molecules of the correct handedness.” Ma",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a biochemical premise ('Life requires chirality because homochirality is a prerequisite for lock-and-key recognition') that is explicitly identified as a knowledge_gap in the EvidenceExtractionResult. No allowed evidence_id supports this foundational claim.\", \"The experiment design proposes detecting chiral biosignatures via 'indirect effects' or 'correlated abundance changes' in thermal emission spectra. This is scientifically unsound without specific evidence linking enantiomeric excess to distinct intensity features in mid-IR",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b3ad36677cae",
+    "mock": false
+  },
+  {
+    "event_id": "7f026340ec7c",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:09:20.979470+00:00",
+    "ended_at": "2026-08-22T08:09:44.194020+00:00",
+    "duration_ms": 23214,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a biochemical premise ('Life requires chirality because homochirality is a prerequisite for lock-and-key recognition') that is explicitly identified as a knowledge_gap in the EvidenceExtractionResult. No allowed evidence_id supports this foundational claim.\", \"The experiment design proposes detecting chiral biosignatures via 'indirect effects' or 'correlated abundance changes' in thermal emission spectra. This is scientifically unsound without specific evidence linking enantiomeric exce",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Current LIFE mission architectures, as defined in the provided evidence set, lack the polarimetric measurement capabilities required to detect homochirality, rendering the biochemical necessity of chirality observationally unverifiable with this specific instrument baseline.\", \"mechanism\": \"The detection of molecular homochirality via remote sensing physically requires circular polarization measurements (circular dichroism or optical rotatory dispersion). The provided evidence cards (EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-e173ebb45997fa7670a0deb2) define the ",
+    "evidence_ids": [
+      "EV-Q008-e23b1ea12259b0e264bc2da2",
+      "EV-Q008-e173ebb45997fa7670a0deb2",
+      "EV-Q008-f28910b2f0fe1504e61fd9da",
+      "EV-Q008-b9756de0118da590def87983"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "74564d713d36",
+    "mock": false
+  },
+  {
+    "event_id": "606be9d0175b",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:09:44.195030+00:00",
+    "ended_at": "2026-08-22T08:10:09.069178+00:00",
+    "duration_ms": 24874,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a biochemical premise ('Life requires chirality because homochirality is a prerequisite for lock-and-key recognition') that is explicitly identified as a knowledge_gap in the EvidenceExtractionResult. No allowed evidence_id supports this foundational claim.\", \"The experiment design proposes detecting chiral biosignatures via 'indirect effects' or 'correlated abundance changes' in thermal emission spectra. This is scientifically unsound without specific evidence linking enantiomeric exce",
+    "output_summary": "{\"technical_details\": \"This experiment is a systematic audit of the technical specifications and retrieval frameworks defined in the allowed evidence set to verify the absence of polarimetric capabilities. The hypothesis posits that the LIFE mission architecture, as described in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, is designed exclusively for intensity-based spectroscopy (Stokes I) and lacks the optical components (e.g., modulators, polarizers) or data processing pipelines required to measure circular polarization (Stokes V), which is the physical observable n",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2f242f2cf9d7",
+    "mock": false
+  },
+  {
+    "event_id": "630283623663",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:10:09.070187+00:00",
+    "ended_at": "2026-08-22T08:10:14.083115+00:00",
+    "duration_ms": 5012,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a biochemical premise ('Life requires chirality because homochirality is a prerequisite for lock-and-key recognition') that is explicitly identified as a knowledge_gap in the EvidenceExtractionResult. No allowed evidence_id supports this foundational claim.\", \"The experiment design proposes detecting chiral biosignatures via 'indirect effects' or 'correlated abundance changes' in thermal emission spectra. This is scientifically unsound without specific evidence linking enantiomeric exce",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly reframes the inquiry from an unsupported biochemical assertion to a verifiable audit of instrument capabilities within the allowed evidence set.\", \"All references to 'lock-and-key' mechanisms and intensity-based chiral retrieval have been removed, resolving the critical scientific soundness issues identified in the previous review.\", \"The experiment design is now a valid textual audit of EV-Q008-* evidence cards for polarimetric keywords, which is fully reproducible and grounded strictly in the provided sources.\", \"The Re",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c93b88e6503b",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:e810649db06e2f36",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Life requires chirality because homochirality is a prerequisite for the specific molecular recognition events ('locks and keys') described in general biochemistry, but current exoplanet characterization frameworks (e.g., LIFE mission requirements) lack the spectral resolution to distinguish chiral biosignatures from abiotic racemic mixtures.",
+              "mechanism": "Biochemical function relies on stereospecific interactions (lock-and-key). However, the translation of this molecular necessity into a remotely detectable planetary signal is constrained by instrument design. If current retrieval frameworks do not explicitly model chiral asymmetry, they cannot validate the 'requirement' of chirality via remote observation, creating a gap between biochemical theory and observational verification.",
+              "falsifiable_prediction": "If atmospheric retrieval simulations using current LIFE baseline parameters are performed on synthetic spectra containing chiral vs. racemic biosignatures, the Bayesian evidence will show no statistically significant preference for the chiral model over the racemic model.",
+              "required_observations": [
+                "Synthetic emission spectra of Earth-twins with varying degrees of enantiomeric excess",
+                "Atmospheric retrieval performance metrics (Bayesian evidence ratios) using LIFE instrument noise models"
+              ],
+              "risk_of_being_wrong": "The hypothesis assumes that current retrieval frameworks ignore chirality; if existing models already account for circular polarization or specific chiral spectral features within the cited wavelength ranges, the prediction fails.",
+              "supporting_evidence_ids": [
+                "EV-Q008-f28910b2f0fe1504e61fd9da",
+                "EV-Q008-e173ebb45997fa7670a0deb2"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "The requirement for chirality in life is not an absolute biochemical constraint but an evolutionary contingency that produces distinct atmospheric evolution trajectories, which can be differentiated by analyzing Earth's spectral history through the lens of proposed LIFE mission architectures.",
+              "mechanism": "If chirality were strictly required for *any* life, all habitable planets would converge on similar spectral states. If it is contingent, 'life' without terrestrial-style chirality might produce different atmospheric compositions. Comparing retrieval robustness across different Earth evolutionary stages tests whether our definition of 'biosignature' is overly biased toward terrestrial homochirality.",
+              "falsifiable_prediction": "Retrieval frameworks applied to Archean/Proterozoic Earth analogs will demonstrate equal or higher confidence in detecting 'non-standard' (potentially non-chiral or differently chiral) metabolic byproducts compared to modern Earth biosignatures when using optimized kernel-nulling architectures.",
+              "required_observations": [
+                "Emission spectra of Earth at various evolutionary stages (Archean, Proterozoic, Modern)",
+                "Comparison of retrieval confidence intervals between standard and kernel-nulling instrument architectures"
+              ],
+              "risk_of_being_wrong": "The hypothesis conflates 'chirality' with 'evolutionary stage'; if spectral differences are driven solely by abiotic factors (e.g., stellar UV flux) rather than biological chirality, the link to the research question is broken.",
+              "supporting_evidence_ids": [
+                "EV-Q008-b9756de0118da590def87983",
+                "EV-Q008-e23b1ea12259b0e264bc2da2"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it directly addresses the methodological constraints identified in the evidence extraction: the available evidence pertains to instrument design and retrieval frameworks (LIFE mission) rather than molecular biochemistry. This hypothesis bridges the gap by framing the 'requirement for chirality' as a testable limitation within current observational capabilities, making it falsifiable using the cited literature's domain (atmospheric retrieval). Hypothesis 2 is more speculative regarding evolutionary contingency and less grounded in the specific technical constraints of the provided evidence cards.",
+          "rejected_directions": [
+            "Direct biochemical explanations of enzyme specificity or DNA structure (rejected due to complete absence of supporting evidence_ids in allowed set)",
+            "Abiotic symmetry breaking mechanisms like CPL or weak nuclear force (rejected as no evidence_ids cover prebiotic chemistry)",
+            "General assertions that 'chirality is essential for life' based solely on booklet excerpt (rejected as booklet is not an allowed evidence source)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that current exoplanet characterization frameworks (specifically LIFE mission baselines) lack the spectral resolution or retrieval model complexity to distinguish chiral biosignatures from abiotic racemic mixtures. The core mechanism is that while homochirality is biochemically necessary for 'lock-and-key' molecular recognition, this molecular property does not translate into a distinct, detectable spectral feature in mid-infrared emission spectra under current instrument noise models. We will generate synthetic thermal emission spectra for Earth-twin exoplanets at 10 pc, varying the enantiomeric excess (ee) of key chiral biomarkers (e.g., amino acids, sugars) from 0% (racemic/abiotic) to 100% (homochiral/biotic). These spectra will be processed through a simulated LIFE instrument pipeline (using kernel-nulling architecture parameters from EV-Q008-e23b1ea12259b0e264bc2da2) and subjected to Bayesian atmospheric retrieval. The falsifiable prediction is that the Bayesian evidence ratio (Bayes Factor) between a 'chiral model' and a 'racemic model' will not exceed statistical significance thresholds (e.g., ln(BF) < 2.5), indicating indistinguishability.",
+          "datasets": {
+            "source": "Synthetic spectral datasets generated using radiative transfer models (e.g., petitRADTRANS or similar) configured for Earth-twin atmospheres. Input parameters include varying enantiomeric excess (0%, 50%, 100%) for chiral molecules, based on biochemical constraints implied by the hypothesis but modeled as spectral opacity variations. Instrument noise models derived from LIFE mission requirements (EV-Q008-e173ebb45997fa7670a0deb2, EV-Q008-f28910b2f0fe1504e61fd9da).",
+            "target": "Posterior distributions of atmospheric parameters and Bayesian evidence values (log-evidence) for chiral vs. racemic models. Metrics include detection confidence, parameter retrieval accuracy, and Bayes Factors."
+          },
+          "methods": "1. Spectral Simulation: Generate high-resolution mid-IR emission spectra (4-18 μm) for Earth-twins with controlled chiral asymmetry. Since direct chiral spectral features are weak in IR, we model the indirect effect via assumed correlated abundance changes or specific circular polarization proxies if applicable, but primarily test the null hypothesis that standard intensity-based retrieval cannot distinguish them. 2. Instrument Simulation: Convolve spectra with LIFE instrument line spread functions and add photon noise, zodiacal light, and stellar leakage noise based on EV-Q008-e23b1ea12259b0e264bc2da2 (kernel-nulling) and EV-Q008-e173ebb45997fa7670a0deb2. 3. Atmospheric Retrieval: Use a nested sampling algorithm (e.g., MultiNest) to compute Bayesian evidence for two models: M_chiral (fixed high ee) and M_racemic (ee=0). 4. Statistical Comparison: Calculate Bayes Factors to determine if data favors one model over the other.",
+          "experiments": {
+            "baselines": [
+              "Standard LIFE Baseline (Emma X-array configuration as referenced in EV-Q008-e23b1ea12259b0e264bc2da2, though noted as potentially suboptimal, it serves as a conservative baseline).",
+              "Optimized Kernel-Nulling Array (5-telescope design from EV-Q008-e23b1ea12259b0e264bc2da2) to test if improved architecture resolves the ambiguity."
+            ],
+            "metrics": [
+              "Bayesian Evidence Ratio (Bayes Factor, ln(BF)) between chiral and racemic models.",
+              "Posterior precision of enantiomeric excess parameter (if retrievable).",
+              "False Positive Rate: Frequency with which racemic spectra are incorrectly classified as chiral with high confidence."
+            ],
+            "ablation": "Vary spectral resolution (R=50, R=100, R=300) to identify the threshold where chiral distinctions might emerge. Vary signal-to-noise ratio (SNR) by integration time (10h, 50h, 100h).",
+            "validation_protocol": "Inject known chiral signals into synthetic data and verify retrieval recovery. Compare results against Archean/Proterozoic Earth analogs (EV-Q008-b9756de0118da590def87983) to ensure framework robustness across different atmospheric states."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for spectral generation and instrument simulation must be version-controlled and containerized.",
+            "Random seeds for noise generation must be fixed and recorded.",
+            "Prior distributions for retrieval parameters must be explicitly defined.",
+            "Instrument parameters (aperture size, baseline, throughput) must match those cited in EV-Q008-e173ebb45997fa7670a0deb2 and EV-Q008-e23b1ea12259b0e264bc2da2."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for nested sampling retrieval (estimated 10^5 model evaluations per spectrum).",
+            "data_availability": "Synthetic data will be generated on-demand; no external observational data used.",
+            "software_dependencies": [
+              "petitRADTRANS (or equivalent radiative transfer code)",
+              "MultiNest or UltraNest for Bayesian inference",
+              "Python 3.9+"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-080750-0804daec",
+        "version_number": 1,
+        "version_id": "20260822-080750-0804daec:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Life requires chirality because homochirality is a prerequisite for the specific molecular recognition events ('locks and keys') described in general biochemistry, but current exoplanet characterization frameworks (e.g., LIFE mission requirements) lack the spectral resolution to distinguish chiral biosignatures from abiotic racemic mixtures.",
+              "mechanism": "Biochemical function relies on stereospecific interactions (lock-and-key). However, the translation of this molecular necessity into a remotely detectable planetary signal is constrained by instrument design. If current retrieval frameworks do not explicitly model chiral asymmetry, they cannot validate the 'requirement' of chirality via remote observation, creating a gap between biochemical theory and observational verification.",
+              "falsifiable_prediction": "If atmospheric retrieval simulations using current LIFE baseline parameters are performed on synthetic spectra containing chiral vs. racemic biosignatures, the Bayesian evidence will show no statistically significant preference for the chiral model over the racemic model.",
+              "required_observations": [
+                "Synthetic emission spectra of Earth-twins with varying degrees of enantiomeric excess",
+                "Atmospheric retrieval performance metrics (Bayesian evidence ratios) using LIFE instrument noise models"
+              ],
+              "risk_of_being_wrong": "The hypothesis assumes that current retrieval frameworks ignore chirality; if existing models already account for circular polarization or specific chiral spectral features within the cited wavelength ranges, the prediction fails.",
+              "supporting_evidence_ids": [
+                "EV-Q008-f28910b2f0fe1504e61fd9da",
+                "EV-Q008-e173ebb45997fa7670a0deb2"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "The requirement for chirality in life is not an absolute biochemical constraint but an evolutionary contingency that produces distinct atmospheric evolution trajectories, which can be differentiated by analyzing Earth's spectral history through the lens of proposed LIFE mission architectures.",
+              "mechanism": "If chirality were strictly required for *any* life, all habitable planets would converge on similar spectral states. If it is contingent, 'life' without terrestrial-style chirality might produce different atmospheric compositions. Comparing retrieval robustness across different Earth evolutionary stages tests whether our definition of 'biosignature' is overly biased toward terrestrial homochirality.",
+              "falsifiable_prediction": "Retrieval frameworks applied to Archean/Proterozoic Earth analogs will demonstrate equal or higher confidence in detecting 'non-standard' (potentially non-chiral or differently chiral) metabolic byproducts compared to modern Earth biosignatures when using optimized kernel-nulling architectures.",
+              "required_observations": [
+                "Emission spectra of Earth at various evolutionary stages (Archean, Proterozoic, Modern)",
+                "Comparison of retrieval confidence intervals between standard and kernel-nulling instrument architectures"
+              ],
+              "risk_of_being_wrong": "The hypothesis conflates 'chirality' with 'evolutionary stage'; if spectral differences are driven solely by abiotic factors (e.g., stellar UV flux) rather than biological chirality, the link to the research question is broken.",
+              "supporting_evidence_ids": [
+                "EV-Q008-b9756de0118da590def87983",
+                "EV-Q008-e23b1ea12259b0e264bc2da2"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it directly addresses the methodological constraints identified in the evidence extraction: the available evidence pertains to instrument design and retrieval frameworks (LIFE mission) rather than molecular biochemistry. This hypothesis bridges the gap by framing the 'requirement for chirality' as a testable limitation within current observational capabilities, making it falsifiable using the cited literature's domain (atmospheric retrieval). Hypothesis 2 is more speculative regarding evolutionary contingency and less grounded in the specific technical constraints of the provided evidence cards.",
+          "rejected_directions": [
+            "Direct biochemical explanations of enzyme specificity or DNA structure (rejected due to complete absence of supporting evidence_ids in allowed set)",
+            "Abiotic symmetry breaking mechanisms like CPL or weak nuclear force (rejected as no evidence_ids cover prebiotic chemistry)",
+            "General assertions that 'chirality is essential for life' based solely on booklet excerpt (rejected as booklet is not an allowed evidence source)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that current exoplanet characterization frameworks (specifically LIFE mission baselines) lack the spectral resolution or retrieval model complexity to distinguish chiral biosignatures from abiotic racemic mixtures. The core mechanism is that while homochirality is biochemically necessary for 'lock-and-key' molecular recognition, this molecular property does not translate into a distinct, detectable spectral feature in mid-infrared emission spectra under current instrument noise models. We will generate synthetic thermal emission spectra for Earth-twin exoplanets at 10 pc, varying the enantiomeric excess (ee) of key chiral biomarkers (e.g., amino acids, sugars) from 0% (racemic/abiotic) to 100% (homochiral/biotic). These spectra will be processed through a simulated LIFE instrument pipeline (using kernel-nulling architecture parameters from EV-Q008-e23b1ea12259b0e264bc2da2) and subjected to Bayesian atmospheric retrieval. The falsifiable prediction is that the Bayesian evidence ratio (Bayes Factor) between a 'chiral model' and a 'racemic model' will not exceed statistical significance thresholds (e.g., ln(BF) < 2.5), indicating indistinguishability.",
+          "datasets": {
+            "source": "Synthetic spectral datasets generated using radiative transfer models (e.g., petitRADTRANS or similar) configured for Earth-twin atmospheres. Input parameters include varying enantiomeric excess (0%, 50%, 100%) for chiral molecules, based on biochemical constraints implied by the hypothesis but modeled as spectral opacity variations. Instrument noise models derived from LIFE mission requirements (EV-Q008-e173ebb45997fa7670a0deb2, EV-Q008-f28910b2f0fe1504e61fd9da).",
+            "target": "Posterior distributions of atmospheric parameters and Bayesian evidence values (log-evidence) for chiral vs. racemic models. Metrics include detection confidence, parameter retrieval accuracy, and Bayes Factors."
+          },
+          "methods": "1. Spectral Simulation: Generate high-resolution mid-IR emission spectra (4-18 μm) for Earth-twins with controlled chiral asymmetry. Since direct chiral spectral features are weak in IR, we model the indirect effect via assumed correlated abundance changes or specific circular polarization proxies if applicable, but primarily test the null hypothesis that standard intensity-based retrieval cannot distinguish them. 2. Instrument Simulation: Convolve spectra with LIFE instrument line spread functions and add photon noise, zodiacal light, and stellar leakage noise based on EV-Q008-e23b1ea12259b0e264bc2da2 (kernel-nulling) and EV-Q008-e173ebb45997fa7670a0deb2. 3. Atmospheric Retrieval: Use a nested sampling algorithm (e.g., MultiNest) to compute Bayesian evidence for two models: M_chiral (fixed high ee) and M_racemic (ee=0). 4. Statistical Comparison: Calculate Bayes Factors to determine if data favors one model over the other.",
+          "experiments": {
+            "baselines": [
+              "Standard LIFE Baseline (Emma X-array configuration as referenced in EV-Q008-e23b1ea12259b0e264bc2da2, though noted as potentially suboptimal, it serves as a conservative baseline).",
+              "Optimized Kernel-Nulling Array (5-telescope design from EV-Q008-e23b1ea12259b0e264bc2da2) to test if improved architecture resolves the ambiguity."
+            ],
+            "metrics": [
+              "Bayesian Evidence Ratio (Bayes Factor, ln(BF)) between chiral and racemic models.",
+              "Posterior precision of enantiomeric excess parameter (if retrievable).",
+              "False Positive Rate: Frequency with which racemic spectra are incorrectly classified as chiral with high confidence."
+            ],
+            "ablation": "Vary spectral resolution (R=50, R=100, R=300) to identify the threshold where chiral distinctions might emerge. Vary signal-to-noise ratio (SNR) by integration time (10h, 50h, 100h).",
+            "validation_protocol": "Inject known chiral signals into synthetic data and verify retrieval recovery. Compare results against Archean/Proterozoic Earth analogs (EV-Q008-b9756de0118da590def87983) to ensure framework robustness across different atmospheric states."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for spectral generation and instrument simulation must be version-controlled and containerized.",
+            "Random seeds for noise generation must be fixed and recorded.",
+            "Prior distributions for retrieval parameters must be explicitly defined.",
+            "Instrument parameters (aperture size, baseline, throughput) must match those cited in EV-Q008-e173ebb45997fa7670a0deb2 and EV-Q008-e23b1ea12259b0e264bc2da2."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for nested sampling retrieval (estimated 10^5 model evaluations per spectrum).",
+            "data_availability": "Synthetic data will be generated on-demand; no external observational data used.",
+            "software_dependencies": [
+              "petitRADTRANS (or equivalent radiative transfer code)",
+              "MultiNest or UltraNest for Bayesian inference",
+              "Python 3.9+"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis relies on a biochemical premise ('Life requires chirality because homochirality is a prerequisite for lock-and-key recognition') that is explicitly identified as a knowledge_gap in the EvidenceExtractionResult. No allowed evidence_id supports this foundational claim.",
+            "The experiment design proposes detecting chiral biosignatures via 'indirect effects' or 'correlated abundance changes' in thermal emission spectra. This is scientifically unsound without specific evidence linking enantiomeric excess to distinct intensity features in mid-IR emission; standard thermal emission is insensitive to chirality absent circular polarization measurements, which are not supported by the cited LIFE instrument papers.",
+            "The supporting_evidence_ids (EV-Q008-f28910b2f0fe1504e61fd9da, EV-Q008-e173ebb45997fa7670a0deb2) refer to general atmospheric retrieval and instrument requirements for biosignatures like O3/CH4, not chiral molecules. Citing them to support the detectability (or lack thereof) of chirality specifically is a misattribution.",
+            "While the Results field correctly states 'pending', the experimental methodology itself is flawed because it attempts to test a variable (chirality) using an instrument model (LIFE intensity interferometry) that likely lacks the physical observable (polarization) necessary to measure it, rendering the falsifiable prediction untestable rather than merely negative."
+          ],
+          "critical_issues": [
+            "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+            "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+            "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits."
+          ],
+          "required_revisions": [
+            "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+            "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+            "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+            "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.2,
+          "falsifiability_score": 0.4,
+          "reproducibility_score": 0.8,
+          "reference_reliability_score": 0.3
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:cb16795ec71a",
+            "category": "critical_issue",
+            "description": "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:aa14d84f252a",
+            "category": "critical_issue",
+            "description": "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:fc3755b10f7b",
+            "category": "critical_issue",
+            "description": "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:afb8941bea3e",
+            "category": "required_revision",
+            "description": "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:542baf126b1f",
+            "category": "required_revision",
+            "description": "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:09964774f56a",
+            "category": "required_revision",
+            "description": "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b71fb7cc2ab1",
+            "category": "required_revision",
+            "description": "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "3338d367fb133608fc501d9d2ba3c5e90a47048ca6a44bf6e616fca5cea17bab",
+          "experiment_designer": "57ebf817fe04376e9d18abc9ad510afaca46c0769d730d8dc2bbf4b1f04792df",
+          "scientific_reviewer": "f986be6a18d4948d1b52cb3b951db8e312ecbe1d39187881dc6789deede7e1f8"
+        }
+      },
+      "parent_version_id": "20260822-080750-0804daec:v1",
+      "lineage": [
+        "20260822-080750-0804daec:v1",
+        "20260822-080750-0804daec:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis relies on a biochemical premise ('Life requires chirality because homochirality is a prerequisite for lock-and-key recognition') that is explicitly identified as a knowledge_gap in the EvidenceExtractionResult. No allowed evidence_id supports this foundational claim.",
+          "The experiment design proposes detecting chiral biosignatures via 'indirect effects' or 'correlated abundance changes' in thermal emission spectra. This is scientifically unsound without specific evidence linking enantiomeric excess to distinct intensity features in mid-IR emission; standard thermal emission is insensitive to chirality absent circular polarization measurements, which are not supported by the cited LIFE instrument papers.",
+          "The supporting_evidence_ids (EV-Q008-f28910b2f0fe1504e61fd9da, EV-Q008-e173ebb45997fa7670a0deb2) refer to general atmospheric retrieval and instrument requirements for biosignatures like O3/CH4, not chiral molecules. Citing them to support the detectability (or lack thereof) of chirality specifically is a misattribution.",
+          "While the Results field correctly states 'pending', the experimental methodology itself is flawed because it attempts to test a variable (chirality) using an instrument model (LIFE intensity interferometry) that likely lacks the physical observable (polarization) necessary to measure it, rendering the falsifiable prediction untestable rather than merely negative."
+        ],
+        "critical_issues": [
+          "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+          "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+          "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits."
+        ],
+        "required_revisions": [
+          "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+          "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+          "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+          "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.2,
+        "falsifiability_score": 0.4,
+        "reproducibility_score": 0.8,
+        "reference_reliability_score": 0.3
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly reframes the inquiry from an unsupported biochemical assertion to a verifiable audit of instrument capabilities within the allowed evidence set.",
+          "All references to 'lock-and-key' mechanisms and intensity-based chiral retrieval have been removed, resolving the critical scientific soundness issues identified in the previous review.",
+          "The experiment design is now a valid textual audit of EV-Q008-* evidence cards for polarimetric keywords, which is fully reproducible and grounded strictly in the provided sources.",
+          "The Results field correctly indicates 'pending' status, avoiding any fabrication of experimental outcomes.",
+          "Knowledge gaps regarding the biochemical necessity of chirality are explicitly acknowledged in the EvidenceExtractionResult rather than being asserted as facts."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 1.0,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:c05d58f9b06dead0",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+          "issue_id": "critical_issue:cb16795ec71a"
+        },
+        {
+          "failure_id": "failure:be8d2e38155c1d5c",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+          "issue_id": "critical_issue:aa14d84f252a"
+        },
+        {
+          "failure_id": "failure:6fbce1671696bff1",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits.",
+          "issue_id": "critical_issue:fc3755b10f7b"
+        },
+        {
+          "failure_id": "failure:be87a97cbfcf16e5",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+          "issue_id": "required_revision:afb8941bea3e"
+        },
+        {
+          "failure_id": "failure:530a080848447191",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+          "issue_id": "required_revision:542baf126b1f"
+        },
+        {
+          "failure_id": "failure:aa5e46320ad81278",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+          "issue_id": "required_revision:09964774f56a"
+        },
+        {
+          "failure_id": "failure:2c865778d8fa5cc0",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE.",
+          "issue_id": "required_revision:b71fb7cc2ab1"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:f9d1677385555d0f",
+          "issue_id": "required_revision:09964774f56a",
+          "reason": "Reviewer item required_revision:09964774f56a requested 'Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.'. V2 changes methods; deterministic correlation evidence tokens=['absence', 'chiral', 'e173ebb45997fa7670a0deb2', 'e23b1ea12259b0e264bc2da2', 'ev', 'instrument', 'intensity', 'q008', 'retrieval', 'specification'], coverage=0.476.",
+          "before": "1. Spectral Simulation: Generate high-resolution mid-IR emission spectra (4-18 μm) for Earth-twins with controlled chiral asymmetry. Since direct chiral spectral features are weak in IR, we model the indirect effect via assumed correlated abundance changes or specific circular polarization proxies if applicable, but primarily test the null hypothesis that standard intensity-based retrieval cannot distinguish them. 2. Instrument Simulation: Convolve spectra with LIFE instrument line spread functions and add photon noise, zodiacal light, and stellar leakage noise based on EV-Q008-e23b1ea12259b0e264bc2da2 (kernel-nulling) and EV-Q008-e173ebb45997fa7670a0deb2. 3. Atmospheric Retrieval: Use a nested sampling algorithm (e.g., MultiNest) to compute Bayesian evidence for two models: M_chiral (fixed high ee) and M_racemic (ee=0). 4. Statistical Comparison: Calculate Bayes Factors to determine if data favors one model over the other.",
+          "after": "1. Text Mining & Keyword Search: Systematically search the full text of EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-e173ebb45997fa7670a0deb2, and EV-Q008-f28910b2f0fe1504e61fd9da for terms: 'polarization', 'circular', 'Stokes', 'chiral', 'enantiomer', 'handedness', 'modulator'. 2. Instrument Specification Audit: Extract all listed detector modes, optical elements, and measurement types from EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2. Verify if any component supports polarization analysis. 3. Retrieval Framework Analysis: Examine the forward models and retrieved parameters in EV-Q008-f28910b2f0fe1504e61fd9da to confirm they are limited to scalar intensity spectra and standard atmospheric constituents (e.g., temperature, pressure, gas abundances). 4. Gap Confirmation: Cross-reference the extracted capabilities with the physical requirement for circular dichroism/polarization to detect chirality. Confirm the absence of this capability constitutes a hard constraint in the described designs.",
+          "evidence_refs": [
+            "EV-Q008-b9756de0118da590def87983",
+            "EV-Q008-e173ebb45997fa7670a0deb2",
+            "EV-Q008-e23b1ea12259b0e264bc2da2",
+            "EV-Q008-f28910b2f0fe1504e61fd9da"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:6dea6bdd05695020",
+          "issue_id": "required_revision:09964774f56a",
+          "reason": "Reviewer item required_revision:09964774f56a requested 'Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.'. V2 changes technical_details; deterministic correlation evidence tokens=['absence', 'bas', 'chiral', 'defin', 'e173ebb45997fa7670a0deb2', 'e23b1ea12259b0e264bc2da2', 'ev', 'experiment', 'instrument', 'intensity', 'polarimetric', 'q008', 'retrieval', 'specification', 'test'], coverage=0.714.",
+          "before": "This experiment tests the hypothesis that current exoplanet characterization frameworks (specifically LIFE mission baselines) lack the spectral resolution or retrieval model complexity to distinguish chiral biosignatures from abiotic racemic mixtures. The core mechanism is that while homochirality is biochemically necessary for 'lock-and-key' molecular recognition, this molecular property does not translate into a distinct, detectable spectral feature in mid-infrared emission spectra under current instrument noise models. We will generate synthetic thermal emission spectra for Earth-twin exoplanets at 10 pc, varying the enantiomeric excess (ee) of key chiral biomarkers (e.g., amino acids, sugars) from 0% (racemic/abiotic) to 100% (homochiral/biotic). These spectra will be processed through a simulated LIFE instrument pipeline (using kernel-nulling architecture parameters from EV-Q008-e23b1ea12259b0e264bc2da2) and subjected to Bayesian atmospheric retrieval. The falsifiable prediction is that the Bayesian evidence ratio (Bayes Factor) between a 'chiral model' and a 'racemic model' will not exceed statistical significance thresholds (e.g., ln(BF) < 2.5), indicating indistinguishability.",
+          "after": "This experiment is a systematic audit of the technical specifications and retrieval frameworks defined in the allowed evidence set to verify the absence of polarimetric capabilities. The hypothesis posits that the LIFE mission architecture, as described in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, is designed exclusively for intensity-based spectroscopy (Stokes I) and lacks the optical components (e.g., modulators, polarizers) or data processing pipelines required to measure circular polarization (Stokes V), which is the physical observable necessary for detecting molecular homochirality. The experiment involves parsing the full text of the specified evidence cards for keywords related to polarization, chirality, and Stokes parameters. It also involves mapping the listed instrument requirements (wavelength coverage, spectral resolution, sensitivity) against the known physical requirements for chiral discrimination to confirm the domain mismatch. No synthetic spectral simulation of chiral molecules is performed, as the primary test is the verification of instrument design limitations documented in the source texts.",
+          "evidence_refs": [
+            "EV-Q008-b9756de0118da590def87983",
+            "EV-Q008-e173ebb45997fa7670a0deb2",
+            "EV-Q008-e23b1ea12259b0e264bc2da2",
+            "EV-Q008-f28910b2f0fe1504e61fd9da"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:cb16795ec71a",
+          "category": "critical_issue",
+          "description": "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:aa14d84f252a",
+          "category": "critical_issue",
+          "description": "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:fc3755b10f7b",
+          "category": "critical_issue",
+          "description": "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:afb8941bea3e",
+          "category": "required_revision",
+          "description": "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:542baf126b1f",
+          "category": "required_revision",
+          "description": "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:09964774f56a",
+          "category": "required_revision",
+          "description": "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f9d1677385555d0f,change:6dea6bdd05695020; evidence=EV-Q008-b9756de0118da590def87983,EV-Q008-e173ebb45997fa7670a0deb2,EV-Q008-e23b1ea12259b0e264bc2da2,EV-Q008-f28910b2f0fe1504e61fd9da; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b71fb7cc2ab1",
+          "category": "required_revision",
+          "description": "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.2,
+          "after": 0.95,
+          "delta": 0.75
+        },
+        "falsifiability_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.8,
+          "after": 1.0,
+          "delta": 0.19999999999999996
+        },
+        "reference_reliability_score": {
+          "before": 0.3,
+          "after": 1.0,
+          "delta": 0.7
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Current LIFE mission architectures, as defined in the provided evidence set, lack the polarimetric measurement capabilities required to detect homochirality, rendering the biochemical necessity of chirality observationally unverifiable with this specific instrument baseline.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The question 'Why does life require chirality?' cannot be addressed using the current LIFE evidence bundle because the available data constrains only atmospheric composition retrieval, creating a fundamental domain mismatch between the biochemical query and the astronomical evidence.",
+          "overall_score": 0.8,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 1,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:cb16795ec71a",
+        "required_revision_without_change:critical_issue:aa14d84f252a",
+        "required_revision_without_change:critical_issue:fc3755b10f7b",
+        "required_revision_without_change:required_revision:afb8941bea3e",
+        "required_revision_without_change:required_revision:542baf126b1f",
+        "required_revision_without_change:required_revision:b71fb7cc2ab1",
+        "unresolved_issue:critical_issue:cb16795ec71a",
+        "unresolved_issue:critical_issue:aa14d84f252a",
+        "unresolved_issue:critical_issue:fc3755b10f7b",
+        "unresolved_issue:required_revision:afb8941bea3e",
+        "unresolved_issue:required_revision:542baf126b1f",
+        "unresolved_issue:required_revision:b71fb7cc2ab1"
+      ],
+      "remaining_blockers": [
+        "critical_issue:cb16795ec71a: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:aa14d84f252a: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:fc3755b10f7b: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:afb8941bea3e: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:542baf126b1f: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:b71fb7cc2ab1: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-080750-0804daec",
+        "version_number": 1,
+        "version_id": "20260822-080750-0804daec:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Life requires chirality because homochirality is a prerequisite for the specific molecular recognition events ('locks and keys') described in general biochemistry, but current exoplanet characterization frameworks (e.g., LIFE mission requirements) lack the spectral resolution to distinguish chiral biosignatures from abiotic racemic mixtures.",
+              "mechanism": "Biochemical function relies on stereospecific interactions (lock-and-key). However, the translation of this molecular necessity into a remotely detectable planetary signal is constrained by instrument design. If current retrieval frameworks do not explicitly model chiral asymmetry, they cannot validate the 'requirement' of chirality via remote observation, creating a gap between biochemical theory and observational verification.",
+              "falsifiable_prediction": "If atmospheric retrieval simulations using current LIFE baseline parameters are performed on synthetic spectra containing chiral vs. racemic biosignatures, the Bayesian evidence will show no statistically significant preference for the chiral model over the racemic model.",
+              "required_observations": [
+                "Synthetic emission spectra of Earth-twins with varying degrees of enantiomeric excess",
+                "Atmospheric retrieval performance metrics (Bayesian evidence ratios) using LIFE instrument noise models"
+              ],
+              "risk_of_being_wrong": "The hypothesis assumes that current retrieval frameworks ignore chirality; if existing models already account for circular polarization or specific chiral spectral features within the cited wavelength ranges, the prediction fails.",
+              "supporting_evidence_ids": [
+                "EV-Q008-f28910b2f0fe1504e61fd9da",
+                "EV-Q008-e173ebb45997fa7670a0deb2"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "The requirement for chirality in life is not an absolute biochemical constraint but an evolutionary contingency that produces distinct atmospheric evolution trajectories, which can be differentiated by analyzing Earth's spectral history through the lens of proposed LIFE mission architectures.",
+              "mechanism": "If chirality were strictly required for *any* life, all habitable planets would converge on similar spectral states. If it is contingent, 'life' without terrestrial-style chirality might produce different atmospheric compositions. Comparing retrieval robustness across different Earth evolutionary stages tests whether our definition of 'biosignature' is overly biased toward terrestrial homochirality.",
+              "falsifiable_prediction": "Retrieval frameworks applied to Archean/Proterozoic Earth analogs will demonstrate equal or higher confidence in detecting 'non-standard' (potentially non-chiral or differently chiral) metabolic byproducts compared to modern Earth biosignatures when using optimized kernel-nulling architectures.",
+              "required_observations": [
+                "Emission spectra of Earth at various evolutionary stages (Archean, Proterozoic, Modern)",
+                "Comparison of retrieval confidence intervals between standard and kernel-nulling instrument architectures"
+              ],
+              "risk_of_being_wrong": "The hypothesis conflates 'chirality' with 'evolutionary stage'; if spectral differences are driven solely by abiotic factors (e.g., stellar UV flux) rather than biological chirality, the link to the research question is broken.",
+              "supporting_evidence_ids": [
+                "EV-Q008-b9756de0118da590def87983",
+                "EV-Q008-e23b1ea12259b0e264bc2da2"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it directly addresses the methodological constraints identified in the evidence extraction: the available evidence pertains to instrument design and retrieval frameworks (LIFE mission) rather than molecular biochemistry. This hypothesis bridges the gap by framing the 'requirement for chirality' as a testable limitation within current observational capabilities, making it falsifiable using the cited literature's domain (atmospheric retrieval). Hypothesis 2 is more speculative regarding evolutionary contingency and less grounded in the specific technical constraints of the provided evidence cards.",
+          "rejected_directions": [
+            "Direct biochemical explanations of enzyme specificity or DNA structure (rejected due to complete absence of supporting evidence_ids in allowed set)",
+            "Abiotic symmetry breaking mechanisms like CPL or weak nuclear force (rejected as no evidence_ids cover prebiotic chemistry)",
+            "General assertions that 'chirality is essential for life' based solely on booklet excerpt (rejected as booklet is not an allowed evidence source)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that current exoplanet characterization frameworks (specifically LIFE mission baselines) lack the spectral resolution or retrieval model complexity to distinguish chiral biosignatures from abiotic racemic mixtures. The core mechanism is that while homochirality is biochemically necessary for 'lock-and-key' molecular recognition, this molecular property does not translate into a distinct, detectable spectral feature in mid-infrared emission spectra under current instrument noise models. We will generate synthetic thermal emission spectra for Earth-twin exoplanets at 10 pc, varying the enantiomeric excess (ee) of key chiral biomarkers (e.g., amino acids, sugars) from 0% (racemic/abiotic) to 100% (homochiral/biotic). These spectra will be processed through a simulated LIFE instrument pipeline (using kernel-nulling architecture parameters from EV-Q008-e23b1ea12259b0e264bc2da2) and subjected to Bayesian atmospheric retrieval. The falsifiable prediction is that the Bayesian evidence ratio (Bayes Factor) between a 'chiral model' and a 'racemic model' will not exceed statistical significance thresholds (e.g., ln(BF) < 2.5), indicating indistinguishability.",
+          "datasets": {
+            "source": "Synthetic spectral datasets generated using radiative transfer models (e.g., petitRADTRANS or similar) configured for Earth-twin atmospheres. Input parameters include varying enantiomeric excess (0%, 50%, 100%) for chiral molecules, based on biochemical constraints implied by the hypothesis but modeled as spectral opacity variations. Instrument noise models derived from LIFE mission requirements (EV-Q008-e173ebb45997fa7670a0deb2, EV-Q008-f28910b2f0fe1504e61fd9da).",
+            "target": "Posterior distributions of atmospheric parameters and Bayesian evidence values (log-evidence) for chiral vs. racemic models. Metrics include detection confidence, parameter retrieval accuracy, and Bayes Factors."
+          },
+          "methods": "1. Spectral Simulation: Generate high-resolution mid-IR emission spectra (4-18 μm) for Earth-twins with controlled chiral asymmetry. Since direct chiral spectral features are weak in IR, we model the indirect effect via assumed correlated abundance changes or specific circular polarization proxies if applicable, but primarily test the null hypothesis that standard intensity-based retrieval cannot distinguish them. 2. Instrument Simulation: Convolve spectra with LIFE instrument line spread functions and add photon noise, zodiacal light, and stellar leakage noise based on EV-Q008-e23b1ea12259b0e264bc2da2 (kernel-nulling) and EV-Q008-e173ebb45997fa7670a0deb2. 3. Atmospheric Retrieval: Use a nested sampling algorithm (e.g., MultiNest) to compute Bayesian evidence for two models: M_chiral (fixed high ee) and M_racemic (ee=0). 4. Statistical Comparison: Calculate Bayes Factors to determine if data favors one model over the other.",
+          "experiments": {
+            "baselines": [
+              "Standard LIFE Baseline (Emma X-array configuration as referenced in EV-Q008-e23b1ea12259b0e264bc2da2, though noted as potentially suboptimal, it serves as a conservative baseline).",
+              "Optimized Kernel-Nulling Array (5-telescope design from EV-Q008-e23b1ea12259b0e264bc2da2) to test if improved architecture resolves the ambiguity."
+            ],
+            "metrics": [
+              "Bayesian Evidence Ratio (Bayes Factor, ln(BF)) between chiral and racemic models.",
+              "Posterior precision of enantiomeric excess parameter (if retrievable).",
+              "False Positive Rate: Frequency with which racemic spectra are incorrectly classified as chiral with high confidence."
+            ],
+            "ablation": "Vary spectral resolution (R=50, R=100, R=300) to identify the threshold where chiral distinctions might emerge. Vary signal-to-noise ratio (SNR) by integration time (10h, 50h, 100h).",
+            "validation_protocol": "Inject known chiral signals into synthetic data and verify retrieval recovery. Compare results against Archean/Proterozoic Earth analogs (EV-Q008-b9756de0118da590def87983) to ensure framework robustness across different atmospheric states."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for spectral generation and instrument simulation must be version-controlled and containerized.",
+            "Random seeds for noise generation must be fixed and recorded.",
+            "Prior distributions for retrieval parameters must be explicitly defined.",
+            "Instrument parameters (aperture size, baseline, throughput) must match those cited in EV-Q008-e173ebb45997fa7670a0deb2 and EV-Q008-e23b1ea12259b0e264bc2da2."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for nested sampling retrieval (estimated 10^5 model evaluations per spectrum).",
+            "data_availability": "Synthetic data will be generated on-demand; no external observational data used.",
+            "software_dependencies": [
+              "petitRADTRANS (or equivalent radiative transfer code)",
+              "MultiNest or UltraNest for Bayesian inference",
+              "Python 3.9+"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis relies on a biochemical premise ('Life requires chirality because homochirality is a prerequisite for lock-and-key recognition') that is explicitly identified as a knowledge_gap in the EvidenceExtractionResult. No allowed evidence_id supports this foundational claim.",
+            "The experiment design proposes detecting chiral biosignatures via 'indirect effects' or 'correlated abundance changes' in thermal emission spectra. This is scientifically unsound without specific evidence linking enantiomeric excess to distinct intensity features in mid-IR emission; standard thermal emission is insensitive to chirality absent circular polarization measurements, which are not supported by the cited LIFE instrument papers.",
+            "The supporting_evidence_ids (EV-Q008-f28910b2f0fe1504e61fd9da, EV-Q008-e173ebb45997fa7670a0deb2) refer to general atmospheric retrieval and instrument requirements for biosignatures like O3/CH4, not chiral molecules. Citing them to support the detectability (or lack thereof) of chirality specifically is a misattribution.",
+            "While the Results field correctly states 'pending', the experimental methodology itself is flawed because it attempts to test a variable (chirality) using an instrument model (LIFE intensity interferometry) that likely lacks the physical observable (polarization) necessary to measure it, rendering the falsifiable prediction untestable rather than merely negative."
+          ],
+          "critical_issues": [
+            "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+            "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+            "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits."
+          ],
+          "required_revisions": [
+            "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+            "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+            "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+            "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.2,
+          "falsifiability_score": 0.4,
+          "reproducibility_score": 0.8,
+          "reference_reliability_score": 0.3
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:cb16795ec71a",
+            "category": "critical_issue",
+            "description": "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:aa14d84f252a",
+            "category": "critical_issue",
+            "description": "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:fc3755b10f7b",
+            "category": "critical_issue",
+            "description": "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:afb8941bea3e",
+            "category": "required_revision",
+            "description": "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:542baf126b1f",
+            "category": "required_revision",
+            "description": "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:09964774f56a",
+            "category": "required_revision",
+            "description": "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b71fb7cc2ab1",
+            "category": "required_revision",
+            "description": "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "3338d367fb133608fc501d9d2ba3c5e90a47048ca6a44bf6e616fca5cea17bab",
+          "experiment_designer": "57ebf817fe04376e9d18abc9ad510afaca46c0769d730d8dc2bbf4b1f04792df",
+          "scientific_reviewer": "f986be6a18d4948d1b52cb3b951db8e312ecbe1d39187881dc6789deede7e1f8"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-080750-0804daec",
+        "version_number": 2,
+        "version_id": "20260822-080750-0804daec:v2",
+        "parent_version_id": "20260822-080750-0804daec:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current LIFE mission architectures, as defined in the provided evidence set, lack the polarimetric measurement capabilities required to detect homochirality, rendering the biochemical necessity of chirality observationally unverifiable with this specific instrument baseline.",
+              "mechanism": "The detection of molecular homochirality via remote sensing physically requires circular polarization measurements (circular dichroism or optical rotatory dispersion). The provided evidence cards (EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-e173ebb45997fa7670a0deb2) define the LIFE mission's wavelength coverage, spectral resolution, and sensitivity requirements exclusively for intensity-based spectroscopy of atmospheric gases (e.g., O3, CH4). Since the instrument specifications do not include polarimetric channels or modulation optics, the physical observable necessary to validate chirality is absent from the system design.",
+              "falsifiable_prediction": "A systematic audit of the instrument parameters and retrieval frameworks described in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2 will confirm zero references to Stokes V parameters, circular polarization, or chiral-specific spectral features. If any such capability is documented, the hypothesis is falsified.",
+              "required_observations": [
+                "Complete list of instrumental observables and detector modes specified in EV-Q008-e23b1ea12259b0e264bc2da2",
+                "Atmospheric retrieval parameter lists and forward model physics from EV-Q008-f28910b2f0fe1504e61fd9da and EV-Q008-e173ebb45997fa7670a0deb2",
+                "Verification of absence of polarimetric calibration sources or modulators in the proposed Emma X-array or kernel-nulling designs"
+              ],
+              "risk_of_being_wrong": "The hypothesis assumes the provided evidence cards are exhaustive regarding the current LIFE baseline. If supplementary technical documentation (not in the allowed set) includes polarimetry, or if 'kernel-nulling' inherently enables polarization separation without explicit mention in these texts, the claim of incapability would be incorrect based on external knowledge, though valid within the closed evidence set.",
+              "supporting_evidence_ids": [
+                "EV-Q008-e23b1ea12259b0e264bc2da2",
+                "EV-Q008-e173ebb45997fa7670a0deb2",
+                "EV-Q008-f28910b2f0fe1504e61fd9da"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "The question 'Why does life require chirality?' cannot be addressed using the current LIFE evidence bundle because the available data constrains only atmospheric composition retrieval, creating a fundamental domain mismatch between the biochemical query and the astronomical evidence.",
+              "mechanism": "The provided evidence cards focus entirely on exoplanet characterization metrics (SNR, spectral resolution, architecture optimization) for detecting gaseous biosignatures. There is no causal or correlational link established in these texts between atmospheric spectral features and the molecular stereochemistry of surface life. Therefore, any attempt to derive the 'reason' for chirality from this dataset is structurally invalid, regardless of the biochemical truth.",
+              "falsifiable_prediction": "Semantic analysis of all four allowed evidence IDs will yield no mentions of 'stereochemistry', 'enantiomer', 'chirality', 'homochirality', or 'handedness'. If any of these terms appear in a functional context (not just as a keyword in a bibliography), the hypothesis of total domain mismatch is weakened.",
+              "required_observations": [
+                "Full-text search results for chirality-related terminology across EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-f28910b2f0fe1504e61fd9da, EV-Q008-b9756de0118da590def87983, EV-Q008-e173ebb45997fa7670a0deb2",
+                "Mapping of retrieved atmospheric parameters to biological mechanisms in the cited retrieval frameworks"
+              ],
+              "risk_of_being_wrong": "Low risk within the closed system. The primary risk is that implicit assumptions in the retrieval papers (e.g., assuming Earth-like biology implies chirality) might be interpreted as addressing the 'why', but strictly speaking, they do not explain the requirement.",
+              "supporting_evidence_ids": [
+                "EV-Q008-b9756de0118da590def87983",
+                "EV-Q008-f28910b2f0fe1504e61fd9da"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.8
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it directly addresses the reviewer's critical feedback regarding the lack of polarimetric capabilities and the misuse of intensity-based retrieval evidence. It transforms the previous 'unsound' experimental design into a valid verification of instrument limitations grounded strictly in the allowed evidence IDs. Unlike Hypothesis 2, which merely states insufficiency, Hypothesis 1 provides a specific, testable mechanism (absence of polarimetric observables) that explains *why* the current evidence cannot answer the user's question about chirality, satisfying the requirement to reframe around the observational gap.",
+          "rejected_directions": [
+            "Any hypothesis positing a biochemical function for chirality (e.g., enzyme efficiency, replication fidelity) due to complete absence of supporting evidence_ids in the allowed set.",
+            "Hypotheses proposing intensity-based detection of chirality via 'indirect spectral features' or 'abundance correlations', as explicitly rejected by the reviewer for contradicting spectroscopic principles and lacking evidence support.",
+            "Speculative links between kernel-nulling architecture improvements and chiral discrimination, as the evidence only supports gas detection enhancements."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is a systematic audit of the technical specifications and retrieval frameworks defined in the allowed evidence set to verify the absence of polarimetric capabilities. The hypothesis posits that the LIFE mission architecture, as described in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, is designed exclusively for intensity-based spectroscopy (Stokes I) and lacks the optical components (e.g., modulators, polarizers) or data processing pipelines required to measure circular polarization (Stokes V), which is the physical observable necessary for detecting molecular homochirality. The experiment involves parsing the full text of the specified evidence cards for keywords related to polarization, chirality, and Stokes parameters. It also involves mapping the listed instrument requirements (wavelength coverage, spectral resolution, sensitivity) against the known physical requirements for chiral discrimination to confirm the domain mismatch. No synthetic spectral simulation of chiral molecules is performed, as the primary test is the verification of instrument design limitations documented in the source texts.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q008-e23b1ea12259b0e264bc2da2",
+                "type": "text",
+                "description": "Technical paper describing LIFE mission architectures (Emma X-array vs. kernel-nulling), focusing on interferometric baseline, collecting area, and achromatic phase shifts."
+              },
+              {
+                "id": "EV-Q008-e173ebb45997fa7670a0deb2",
+                "type": "text",
+                "description": "Paper deriving LIFE science requirements including wavelength coverage, spectral resolution, and sensitivity for atmospheric characterization of terrestrial exoplanets."
+              },
+              {
+                "id": "EV-Q008-f28910b2f0fe1504e61fd9da",
+                "type": "text",
+                "description": "Study on atmospheric retrieval performance for biosignatures (O3, CH4) using LIFE-like instrument models."
+              }
+            ],
+            "target": "Structured inventory of instrumental observables, detection methods, and retrieval parameters explicitly mentioned in the source texts."
+          },
+          "methods": "1. Text Mining & Keyword Search: Systematically search the full text of EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-e173ebb45997fa7670a0deb2, and EV-Q008-f28910b2f0fe1504e61fd9da for terms: 'polarization', 'circular', 'Stokes', 'chiral', 'enantiomer', 'handedness', 'modulator'. 2. Instrument Specification Audit: Extract all listed detector modes, optical elements, and measurement types from EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2. Verify if any component supports polarization analysis. 3. Retrieval Framework Analysis: Examine the forward models and retrieved parameters in EV-Q008-f28910b2f0fe1504e61fd9da to confirm they are limited to scalar intensity spectra and standard atmospheric constituents (e.g., temperature, pressure, gas abundances). 4. Gap Confirmation: Cross-reference the extracted capabilities with the physical requirement for circular dichroism/polarization to detect chirality. Confirm the absence of this capability constitutes a hard constraint in the described designs.",
+          "experiments": {
+            "baselines": [
+              "Null Baseline: Assume no polarimetric capability exists unless explicitly stated in the text.",
+              "General Biosignature Baseline: Compare the listed capabilities against standard intensity-based biosignature detection (O3, CH4, H2O) to confirm the instrument is optimized for these, not chirality."
+            ],
+            "metrics": [
+              "Keyword Presence Count: Number of occurrences of polarization/chirality-related terms in the allowed evidence texts.",
+              "Instrument Observable Completeness: Binary flag (0/1) indicating whether Stokes V or circular polarization is listed as a measurable quantity.",
+              "Retrieval Parameter Scope: List of retrieved atmospheric parameters to verify exclusion of chiral metrics."
+            ],
+            "ablation": "N/A (Textual audit does not involve parameter ablation in the traditional sense; instead, we verify consistency across all three provided evidence cards).",
+            "validation_protocol": "Double-blind keyword search by two independent agents to ensure no mentions of polarimetry are missed. Cross-verification of instrument specs against the abstract and conclusion sections of each paper to ensure no hidden capabilities are described in supplementary contexts within the provided texts."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Use exact PDF/text versions of EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-e173ebb45997fa7670a0deb2, and EV-Q008-f28910b2f0fe1504e61fd9da as provided in the evidence catalog.",
+            "Record all search terms and their context windows.",
+            "Document the extraction logic for instrument specifications (e.g., tables vs. prose).",
+            "Ensure no external knowledge about LIFE mission updates beyond the provided evidence IDs is introduced."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Minimal; text processing and keyword search.",
+            "data_availability": "All data sources are provided in the input evidence_catalog.",
+            "software_dependencies": [
+              "Python 3.9+",
+              "PyPDF2 or similar PDF text extraction library",
+              "Natural Language Processing toolkit for keyword context analysis"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly reframes the inquiry from an unsupported biochemical assertion to a verifiable audit of instrument capabilities within the allowed evidence set.",
+            "All references to 'lock-and-key' mechanisms and intensity-based chiral retrieval have been removed, resolving the critical scientific soundness issues identified in the previous review.",
+            "The experiment design is now a valid textual audit of EV-Q008-* evidence cards for polarimetric keywords, which is fully reproducible and grounded strictly in the provided sources.",
+            "The Results field correctly indicates 'pending' status, avoiding any fabrication of experimental outcomes.",
+            "Knowledge gaps regarding the biochemical necessity of chirality are explicitly acknowledged in the EvidenceExtractionResult rather than being asserted as facts."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 1.0,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:cb16795ec71a",
+            "category": "critical_issue",
+            "description": "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:aa14d84f252a",
+            "category": "critical_issue",
+            "description": "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:fc3755b10f7b",
+            "category": "critical_issue",
+            "description": "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:afb8941bea3e",
+            "category": "required_revision",
+            "description": "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:542baf126b1f",
+            "category": "required_revision",
+            "description": "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:09964774f56a",
+            "category": "required_revision",
+            "description": "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:f9d1677385555d0f,change:6dea6bdd05695020; evidence=EV-Q008-b9756de0118da590def87983,EV-Q008-e173ebb45997fa7670a0deb2,EV-Q008-e23b1ea12259b0e264bc2da2,EV-Q008-f28910b2f0fe1504e61fd9da; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:b71fb7cc2ab1",
+            "category": "required_revision",
+            "description": "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "2fe0a273e1d2c1f847e121994d6f43f90581e5e08e598bc2f1034133087821f0",
+          "experiment_designer": "7d45dc03094d143b405717c4f306db128008e42e03f72ea7cb44fe368e3cd7d7",
+          "scientific_reviewer": "1b52cc33051dc35b07ad7d657c03799a132758473b44aecb38ad9bd3a8cd2ffe"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-080750-0804daec",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-080750-0804daec:review:v1",
+        "20260822-080750-0804daec:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-080750-0804daec:v1",
+        "20260822-080750-0804daec:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-080750-0804daec",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-080750-0804daec:review:v1",
+          "20260822-080750-0804daec:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-080750-0804daec:v1",
+          "20260822-080750-0804daec:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-080750-0804daec",
+          "version_number": 1,
+          "version_id": "20260822-080750-0804daec:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Life requires chirality because homochirality is a prerequisite for the specific molecular recognition events ('locks and keys') described in general biochemistry, but current exoplanet characterization frameworks (e.g., LIFE mission requirements) lack the spectral resolution to distinguish chiral biosignatures from abiotic racemic mixtures.",
+                "mechanism": "Biochemical function relies on stereospecific interactions (lock-and-key). However, the translation of this molecular necessity into a remotely detectable planetary signal is constrained by instrument design. If current retrieval frameworks do not explicitly model chiral asymmetry, they cannot validate the 'requirement' of chirality via remote observation, creating a gap between biochemical theory and observational verification.",
+                "falsifiable_prediction": "If atmospheric retrieval simulations using current LIFE baseline parameters are performed on synthetic spectra containing chiral vs. racemic biosignatures, the Bayesian evidence will show no statistically significant preference for the chiral model over the racemic model.",
+                "required_observations": [
+                  "Synthetic emission spectra of Earth-twins with varying degrees of enantiomeric excess",
+                  "Atmospheric retrieval performance metrics (Bayesian evidence ratios) using LIFE instrument noise models"
+                ],
+                "risk_of_being_wrong": "The hypothesis assumes that current retrieval frameworks ignore chirality; if existing models already account for circular polarization or specific chiral spectral features within the cited wavelength ranges, the prediction fails.",
+                "supporting_evidence_ids": [
+                  "EV-Q008-f28910b2f0fe1504e61fd9da",
+                  "EV-Q008-e173ebb45997fa7670a0deb2"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.4,
+                "overall_score": 0.7
+              },
+              {
+                "hypothesis": "The requirement for chirality in life is not an absolute biochemical constraint but an evolutionary contingency that produces distinct atmospheric evolution trajectories, which can be differentiated by analyzing Earth's spectral history through the lens of proposed LIFE mission architectures.",
+                "mechanism": "If chirality were strictly required for *any* life, all habitable planets would converge on similar spectral states. If it is contingent, 'life' without terrestrial-style chirality might produce different atmospheric compositions. Comparing retrieval robustness across different Earth evolutionary stages tests whether our definition of 'biosignature' is overly biased toward terrestrial homochirality.",
+                "falsifiable_prediction": "Retrieval frameworks applied to Archean/Proterozoic Earth analogs will demonstrate equal or higher confidence in detecting 'non-standard' (potentially non-chiral or differently chiral) metabolic byproducts compared to modern Earth biosignatures when using optimized kernel-nulling architectures.",
+                "required_observations": [
+                  "Emission spectra of Earth at various evolutionary stages (Archean, Proterozoic, Modern)",
+                  "Comparison of retrieval confidence intervals between standard and kernel-nulling instrument architectures"
+                ],
+                "risk_of_being_wrong": "The hypothesis conflates 'chirality' with 'evolutionary stage'; if spectral differences are driven solely by abiotic factors (e.g., stellar UV flux) rather than biological chirality, the link to the research question is broken.",
+                "supporting_evidence_ids": [
+                  "EV-Q008-b9756de0118da590def87983",
+                  "EV-Q008-e23b1ea12259b0e264bc2da2"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.3,
+                "overall_score": 0.55
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 is selected because it directly addresses the methodological constraints identified in the evidence extraction: the available evidence pertains to instrument design and retrieval frameworks (LIFE mission) rather than molecular biochemistry. This hypothesis bridges the gap by framing the 'requirement for chirality' as a testable limitation within current observational capabilities, making it falsifiable using the cited literature's domain (atmospheric retrieval). Hypothesis 2 is more speculative regarding evolutionary contingency and less grounded in the specific technical constraints of the provided evidence cards.",
+            "rejected_directions": [
+              "Direct biochemical explanations of enzyme specificity or DNA structure (rejected due to complete absence of supporting evidence_ids in allowed set)",
+              "Abiotic symmetry breaking mechanisms like CPL or weak nuclear force (rejected as no evidence_ids cover prebiotic chemistry)",
+              "General assertions that 'chirality is essential for life' based solely on booklet excerpt (rejected as booklet is not an allowed evidence source)"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that current exoplanet characterization frameworks (specifically LIFE mission baselines) lack the spectral resolution or retrieval model complexity to distinguish chiral biosignatures from abiotic racemic mixtures. The core mechanism is that while homochirality is biochemically necessary for 'lock-and-key' molecular recognition, this molecular property does not translate into a distinct, detectable spectral feature in mid-infrared emission spectra under current instrument noise models. We will generate synthetic thermal emission spectra for Earth-twin exoplanets at 10 pc, varying the enantiomeric excess (ee) of key chiral biomarkers (e.g., amino acids, sugars) from 0% (racemic/abiotic) to 100% (homochiral/biotic). These spectra will be processed through a simulated LIFE instrument pipeline (using kernel-nulling architecture parameters from EV-Q008-e23b1ea12259b0e264bc2da2) and subjected to Bayesian atmospheric retrieval. The falsifiable prediction is that the Bayesian evidence ratio (Bayes Factor) between a 'chiral model' and a 'racemic model' will not exceed statistical significance thresholds (e.g., ln(BF) < 2.5), indicating indistinguishability.",
+            "datasets": {
+              "source": "Synthetic spectral datasets generated using radiative transfer models (e.g., petitRADTRANS or similar) configured for Earth-twin atmospheres. Input parameters include varying enantiomeric excess (0%, 50%, 100%) for chiral molecules, based on biochemical constraints implied by the hypothesis but modeled as spectral opacity variations. Instrument noise models derived from LIFE mission requirements (EV-Q008-e173ebb45997fa7670a0deb2, EV-Q008-f28910b2f0fe1504e61fd9da).",
+              "target": "Posterior distributions of atmospheric parameters and Bayesian evidence values (log-evidence) for chiral vs. racemic models. Metrics include detection confidence, parameter retrieval accuracy, and Bayes Factors."
+            },
+            "methods": "1. Spectral Simulation: Generate high-resolution mid-IR emission spectra (4-18 μm) for Earth-twins with controlled chiral asymmetry. Since direct chiral spectral features are weak in IR, we model the indirect effect via assumed correlated abundance changes or specific circular polarization proxies if applicable, but primarily test the null hypothesis that standard intensity-based retrieval cannot distinguish them. 2. Instrument Simulation: Convolve spectra with LIFE instrument line spread functions and add photon noise, zodiacal light, and stellar leakage noise based on EV-Q008-e23b1ea12259b0e264bc2da2 (kernel-nulling) and EV-Q008-e173ebb45997fa7670a0deb2. 3. Atmospheric Retrieval: Use a nested sampling algorithm (e.g., MultiNest) to compute Bayesian evidence for two models: M_chiral (fixed high ee) and M_racemic (ee=0). 4. Statistical Comparison: Calculate Bayes Factors to determine if data favors one model over the other.",
+            "experiments": {
+              "baselines": [
+                "Standard LIFE Baseline (Emma X-array configuration as referenced in EV-Q008-e23b1ea12259b0e264bc2da2, though noted as potentially suboptimal, it serves as a conservative baseline).",
+                "Optimized Kernel-Nulling Array (5-telescope design from EV-Q008-e23b1ea12259b0e264bc2da2) to test if improved architecture resolves the ambiguity."
+              ],
+              "metrics": [
+                "Bayesian Evidence Ratio (Bayes Factor, ln(BF)) between chiral and racemic models.",
+                "Posterior precision of enantiomeric excess parameter (if retrievable).",
+                "False Positive Rate: Frequency with which racemic spectra are incorrectly classified as chiral with high confidence."
+              ],
+              "ablation": "Vary spectral resolution (R=50, R=100, R=300) to identify the threshold where chiral distinctions might emerge. Vary signal-to-noise ratio (SNR) by integration time (10h, 50h, 100h).",
+              "validation_protocol": "Inject known chiral signals into synthetic data and verify retrieval recovery. Compare results against Archean/Proterozoic Earth analogs (EV-Q008-b9756de0118da590def87983) to ensure framework robustness across different atmospheric states."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code for spectral generation and instrument simulation must be version-controlled and containerized.",
+              "Random seeds for noise generation must be fixed and recorded.",
+              "Prior distributions for retrieval parameters must be explicitly defined.",
+              "Instrument parameters (aperture size, baseline, throughput) must match those cited in EV-Q008-e173ebb45997fa7670a0deb2 and EV-Q008-e23b1ea12259b0e264bc2da2."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-performance computing cluster required for nested sampling retrieval (estimated 10^5 model evaluations per spectrum).",
+              "data_availability": "Synthetic data will be generated on-demand; no external observational data used.",
+              "software_dependencies": [
+                "petitRADTRANS (or equivalent radiative transfer code)",
+                "MultiNest or UltraNest for Bayesian inference",
+                "Python 3.9+"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis relies on a biochemical premise ('Life requires chirality because homochirality is a prerequisite for lock-and-key recognition') that is explicitly identified as a knowledge_gap in the EvidenceExtractionResult. No allowed evidence_id supports this foundational claim.",
+              "The experiment design proposes detecting chiral biosignatures via 'indirect effects' or 'correlated abundance changes' in thermal emission spectra. This is scientifically unsound without specific evidence linking enantiomeric excess to distinct intensity features in mid-IR emission; standard thermal emission is insensitive to chirality absent circular polarization measurements, which are not supported by the cited LIFE instrument papers.",
+              "The supporting_evidence_ids (EV-Q008-f28910b2f0fe1504e61fd9da, EV-Q008-e173ebb45997fa7670a0deb2) refer to general atmospheric retrieval and instrument requirements for biosignatures like O3/CH4, not chiral molecules. Citing them to support the detectability (or lack thereof) of chirality specifically is a misattribution.",
+              "While the Results field correctly states 'pending', the experimental methodology itself is flawed because it attempts to test a variable (chirality) using an instrument model (LIFE intensity interferometry) that likely lacks the physical observable (polarization) necessary to measure it, rendering the falsifiable prediction untestable rather than merely negative."
+            ],
+            "critical_issues": [
+              "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+              "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+              "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits."
+            ],
+            "required_revisions": [
+              "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+              "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+              "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+              "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.2,
+            "falsifiability_score": 0.4,
+            "reproducibility_score": 0.8,
+            "reference_reliability_score": 0.3
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:cb16795ec71a",
+              "category": "critical_issue",
+              "description": "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:aa14d84f252a",
+              "category": "critical_issue",
+              "description": "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:fc3755b10f7b",
+              "category": "critical_issue",
+              "description": "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:afb8941bea3e",
+              "category": "required_revision",
+              "description": "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:542baf126b1f",
+              "category": "required_revision",
+              "description": "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:09964774f56a",
+              "category": "required_revision",
+              "description": "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:b71fb7cc2ab1",
+              "category": "required_revision",
+              "description": "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "3338d367fb133608fc501d9d2ba3c5e90a47048ca6a44bf6e616fca5cea17bab",
+            "experiment_designer": "57ebf817fe04376e9d18abc9ad510afaca46c0769d730d8dc2bbf4b1f04792df",
+            "scientific_reviewer": "f986be6a18d4948d1b52cb3b951db8e312ecbe1d39187881dc6789deede7e1f8"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-080750-0804daec",
+          "version_number": 2,
+          "version_id": "20260822-080750-0804daec:v2",
+          "parent_version_id": "20260822-080750-0804daec:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Current LIFE mission architectures, as defined in the provided evidence set, lack the polarimetric measurement capabilities required to detect homochirality, rendering the biochemical necessity of chirality observationally unverifiable with this specific instrument baseline.",
+                "mechanism": "The detection of molecular homochirality via remote sensing physically requires circular polarization measurements (circular dichroism or optical rotatory dispersion). The provided evidence cards (EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-e173ebb45997fa7670a0deb2) define the LIFE mission's wavelength coverage, spectral resolution, and sensitivity requirements exclusively for intensity-based spectroscopy of atmospheric gases (e.g., O3, CH4). Since the instrument specifications do not include polarimetric channels or modulation optics, the physical observable necessary to validate chirality is absent from the system design.",
+                "falsifiable_prediction": "A systematic audit of the instrument parameters and retrieval frameworks described in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2 will confirm zero references to Stokes V parameters, circular polarization, or chiral-specific spectral features. If any such capability is documented, the hypothesis is falsified.",
+                "required_observations": [
+                  "Complete list of instrumental observables and detector modes specified in EV-Q008-e23b1ea12259b0e264bc2da2",
+                  "Atmospheric retrieval parameter lists and forward model physics from EV-Q008-f28910b2f0fe1504e61fd9da and EV-Q008-e173ebb45997fa7670a0deb2",
+                  "Verification of absence of polarimetric calibration sources or modulators in the proposed Emma X-array or kernel-nulling designs"
+                ],
+                "risk_of_being_wrong": "The hypothesis assumes the provided evidence cards are exhaustive regarding the current LIFE baseline. If supplementary technical documentation (not in the allowed set) includes polarimetry, or if 'kernel-nulling' inherently enables polarization separation without explicit mention in these texts, the claim of incapability would be incorrect based on external knowledge, though valid within the closed evidence set.",
+                "supporting_evidence_ids": [
+                  "EV-Q008-e23b1ea12259b0e264bc2da2",
+                  "EV-Q008-e173ebb45997fa7670a0deb2",
+                  "EV-Q008-f28910b2f0fe1504e61fd9da"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "The question 'Why does life require chirality?' cannot be addressed using the current LIFE evidence bundle because the available data constrains only atmospheric composition retrieval, creating a fundamental domain mismatch between the biochemical query and the astronomical evidence.",
+                "mechanism": "The provided evidence cards focus entirely on exoplanet characterization metrics (SNR, spectral resolution, architecture optimization) for detecting gaseous biosignatures. There is no causal or correlational link established in these texts between atmospheric spectral features and the molecular stereochemistry of surface life. Therefore, any attempt to derive the 'reason' for chirality from this dataset is structurally invalid, regardless of the biochemical truth.",
+                "falsifiable_prediction": "Semantic analysis of all four allowed evidence IDs will yield no mentions of 'stereochemistry', 'enantiomer', 'chirality', 'homochirality', or 'handedness'. If any of these terms appear in a functional context (not just as a keyword in a bibliography), the hypothesis of total domain mismatch is weakened.",
+                "required_observations": [
+                  "Full-text search results for chirality-related terminology across EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-f28910b2f0fe1504e61fd9da, EV-Q008-b9756de0118da590def87983, EV-Q008-e173ebb45997fa7670a0deb2",
+                  "Mapping of retrieved atmospheric parameters to biological mechanisms in the cited retrieval frameworks"
+                ],
+                "risk_of_being_wrong": "Low risk within the closed system. The primary risk is that implicit assumptions in the retrieval papers (e.g., assuming Earth-like biology implies chirality) might be interpreted as addressing the 'why', but strictly speaking, they do not explain the requirement.",
+                "supporting_evidence_ids": [
+                  "EV-Q008-b9756de0118da590def87983",
+                  "EV-Q008-f28910b2f0fe1504e61fd9da"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.8
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 is selected because it directly addresses the reviewer's critical feedback regarding the lack of polarimetric capabilities and the misuse of intensity-based retrieval evidence. It transforms the previous 'unsound' experimental design into a valid verification of instrument limitations grounded strictly in the allowed evidence IDs. Unlike Hypothesis 2, which merely states insufficiency, Hypothesis 1 provides a specific, testable mechanism (absence of polarimetric observables) that explains *why* the current evidence cannot answer the user's question about chirality, satisfying the requirement to reframe around the observational gap.",
+            "rejected_directions": [
+              "Any hypothesis positing a biochemical function for chirality (e.g., enzyme efficiency, replication fidelity) due to complete absence of supporting evidence_ids in the allowed set.",
+              "Hypotheses proposing intensity-based detection of chirality via 'indirect spectral features' or 'abundance correlations', as explicitly rejected by the reviewer for contradicting spectroscopic principles and lacking evidence support.",
+              "Speculative links between kernel-nulling architecture improvements and chiral discrimination, as the evidence only supports gas detection enhancements."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment is a systematic audit of the technical specifications and retrieval frameworks defined in the allowed evidence set to verify the absence of polarimetric capabilities. The hypothesis posits that the LIFE mission architecture, as described in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, is designed exclusively for intensity-based spectroscopy (Stokes I) and lacks the optical components (e.g., modulators, polarizers) or data processing pipelines required to measure circular polarization (Stokes V), which is the physical observable necessary for detecting molecular homochirality. The experiment involves parsing the full text of the specified evidence cards for keywords related to polarization, chirality, and Stokes parameters. It also involves mapping the listed instrument requirements (wavelength coverage, spectral resolution, sensitivity) against the known physical requirements for chiral discrimination to confirm the domain mismatch. No synthetic spectral simulation of chiral molecules is performed, as the primary test is the verification of instrument design limitations documented in the source texts.",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q008-e23b1ea12259b0e264bc2da2",
+                  "type": "text",
+                  "description": "Technical paper describing LIFE mission architectures (Emma X-array vs. kernel-nulling), focusing on interferometric baseline, collecting area, and achromatic phase shifts."
+                },
+                {
+                  "id": "EV-Q008-e173ebb45997fa7670a0deb2",
+                  "type": "text",
+                  "description": "Paper deriving LIFE science requirements including wavelength coverage, spectral resolution, and sensitivity for atmospheric characterization of terrestrial exoplanets."
+                },
+                {
+                  "id": "EV-Q008-f28910b2f0fe1504e61fd9da",
+                  "type": "text",
+                  "description": "Study on atmospheric retrieval performance for biosignatures (O3, CH4) using LIFE-like instrument models."
+                }
+              ],
+              "target": "Structured inventory of instrumental observables, detection methods, and retrieval parameters explicitly mentioned in the source texts."
+            },
+            "methods": "1. Text Mining & Keyword Search: Systematically search the full text of EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-e173ebb45997fa7670a0deb2, and EV-Q008-f28910b2f0fe1504e61fd9da for terms: 'polarization', 'circular', 'Stokes', 'chiral', 'enantiomer', 'handedness', 'modulator'. 2. Instrument Specification Audit: Extract all listed detector modes, optical elements, and measurement types from EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2. Verify if any component supports polarization analysis. 3. Retrieval Framework Analysis: Examine the forward models and retrieved parameters in EV-Q008-f28910b2f0fe1504e61fd9da to confirm they are limited to scalar intensity spectra and standard atmospheric constituents (e.g., temperature, pressure, gas abundances). 4. Gap Confirmation: Cross-reference the extracted capabilities with the physical requirement for circular dichroism/polarization to detect chirality. Confirm the absence of this capability constitutes a hard constraint in the described designs.",
+            "experiments": {
+              "baselines": [
+                "Null Baseline: Assume no polarimetric capability exists unless explicitly stated in the text.",
+                "General Biosignature Baseline: Compare the listed capabilities against standard intensity-based biosignature detection (O3, CH4, H2O) to confirm the instrument is optimized for these, not chirality."
+              ],
+              "metrics": [
+                "Keyword Presence Count: Number of occurrences of polarization/chirality-related terms in the allowed evidence texts.",
+                "Instrument Observable Completeness: Binary flag (0/1) indicating whether Stokes V or circular polarization is listed as a measurable quantity.",
+                "Retrieval Parameter Scope: List of retrieved atmospheric parameters to verify exclusion of chiral metrics."
+              ],
+              "ablation": "N/A (Textual audit does not involve parameter ablation in the traditional sense; instead, we verify consistency across all three provided evidence cards).",
+              "validation_protocol": "Double-blind keyword search by two independent agents to ensure no mentions of polarimetry are missed. Cross-verification of instrument specs against the abstract and conclusion sections of each paper to ensure no hidden capabilities are described in supplementary contexts within the provided texts."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Use exact PDF/text versions of EV-Q008-e23b1ea12259b0e264bc2da2, EV-Q008-e173ebb45997fa7670a0deb2, and EV-Q008-f28910b2f0fe1504e61fd9da as provided in the evidence catalog.",
+              "Record all search terms and their context windows.",
+              "Document the extraction logic for instrument specifications (e.g., tables vs. prose).",
+              "Ensure no external knowledge about LIFE mission updates beyond the provided evidence IDs is introduced."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Minimal; text processing and keyword search.",
+              "data_availability": "All data sources are provided in the input evidence_catalog.",
+              "software_dependencies": [
+                "Python 3.9+",
+                "PyPDF2 or similar PDF text extraction library",
+                "Natural Language Processing toolkit for keyword context analysis"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly reframes the inquiry from an unsupported biochemical assertion to a verifiable audit of instrument capabilities within the allowed evidence set.",
+              "All references to 'lock-and-key' mechanisms and intensity-based chiral retrieval have been removed, resolving the critical scientific soundness issues identified in the previous review.",
+              "The experiment design is now a valid textual audit of EV-Q008-* evidence cards for polarimetric keywords, which is fully reproducible and grounded strictly in the provided sources.",
+              "The Results field correctly indicates 'pending' status, avoiding any fabrication of experimental outcomes.",
+              "Knowledge gaps regarding the biochemical necessity of chirality are explicitly acknowledged in the EvidenceExtractionResult rather than being asserted as facts."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 1.0,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:cb16795ec71a",
+              "category": "critical_issue",
+              "description": "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:aa14d84f252a",
+              "category": "critical_issue",
+              "description": "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:fc3755b10f7b",
+              "category": "critical_issue",
+              "description": "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:afb8941bea3e",
+              "category": "required_revision",
+              "description": "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:542baf126b1f",
+              "category": "required_revision",
+              "description": "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:09964774f56a",
+              "category": "required_revision",
+              "description": "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:f9d1677385555d0f,change:6dea6bdd05695020; evidence=EV-Q008-b9756de0118da590def87983,EV-Q008-e173ebb45997fa7670a0deb2,EV-Q008-e23b1ea12259b0e264bc2da2,EV-Q008-f28910b2f0fe1504e61fd9da; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:b71fb7cc2ab1",
+              "category": "required_revision",
+              "description": "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "2fe0a273e1d2c1f847e121994d6f43f90581e5e08e598bc2f1034133087821f0",
+            "experiment_designer": "7d45dc03094d143b405717c4f306db128008e42e03f72ea7cb44fe368e3cd7d7",
+            "scientific_reviewer": "1b52cc33051dc35b07ad7d657c03799a132758473b44aecb38ad9bd3a8cd2ffe"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-080750-0804daec:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-080750-0804daec:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-080750-0804daec:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-080750-0804daec:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:cb16795ec71a",
+          "category": "critical_issue",
+          "description": "Foundational biochemical claim lacks any supporting evidence_id from the allowed set.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:aa14d84f252a",
+          "category": "critical_issue",
+          "description": "Proposed detection mechanism (intensity-based retrieval of chirality) contradicts established spectroscopic principles and is not supported by the provided instrument evidence cards.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:fc3755b10f7b",
+          "category": "critical_issue",
+          "description": "Misuse of evidence: General biosignature retrieval papers are cited to justify specific claims about chiral discrimination limits.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:afb8941bea3e",
+          "category": "required_revision",
+          "description": "Reframe the hypothesis to focus strictly on the observational gap: 'Current LIFE mission architectures (per EV-Q008-*) do not include polarimetric capabilities required to detect homochirality,' removing the unsupported biochemical justification.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:542baf126b1f",
+          "category": "required_revision",
+          "description": "Remove references to 'lock-and-key' mechanisms unless they can be grounded in an allowed evidence_id; otherwise, treat chirality as an external definition rather than a derived fact.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:09964774f56a",
+          "category": "required_revision",
+          "description": "Revise the experiment design to test for the *absence of polarimetric channels* in the instrument specifications defined in EV-Q008-e23b1ea12259b0e264bc2da2 and EV-Q008-e173ebb45997fa7670a0deb2, rather than simulating impossible intensity-based chiral retrievals.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f9d1677385555d0f,change:6dea6bdd05695020; evidence=EV-Q008-b9756de0118da590def87983,EV-Q008-e173ebb45997fa7670a0deb2,EV-Q008-e23b1ea12259b0e264bc2da2,EV-Q008-f28910b2f0fe1504e61fd9da; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b71fb7cc2ab1",
+          "category": "required_revision",
+          "description": "Explicitly list 'chiral spectral features in mid-IR emission' as a knowledge_gap if no evidence supports their existence or detectability with LIFE.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "checkpoint_hash": "7c151e96c9b8a905f33fb62346220168cdebd331582ea0ff36ab345d2de1bdc4"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-080750-0804daec:wave-b-two-round",
+      "run_id": "20260822-080750-0804daec",
+      "v1_version_id": "20260822-080750-0804daec:v1",
+      "v2_version_id": "20260822-080750-0804daec:v2",
+      "input_fingerprints": {
+        "v1": "57ebf817fe04376e9d18abc9ad510afaca46c0769d730d8dc2bbf4b1f04792df",
+        "v2": "7d45dc03094d143b405717c4f306db128008e42e03f72ea7cb44fe368e3cd7d7"
+      },
+      "responded_issue_count": 1,
+      "issue_ids": [
+        "required_revision:09964774f56a"
+      ],
+      "change_ids": [
+        "change:f9d1677385555d0f",
+        "change:6dea6bdd05695020"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.2,
+          "after": 0.95,
+          "delta": 0.75
+        },
+        "falsifiability_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.8,
+          "after": 1.0,
+          "delta": 0.19999999999999996
+        },
+        "reference_reliability_score": {
+          "before": 0.3,
+          "after": 1.0,
+          "delta": 0.7
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Current LIFE mission architectures, as defined in the provided evidence set, lack the polarimetric measurement capabilities required to detect homochirality, rendering the biochemical necessity of chirality observationally unverifiable with this specific instrument baseline.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The question 'Why does life require chirality?' cannot be addressed using the current LIFE evidence bundle because the available data constrains only atmospheric composition retrieval, creating a fundamental domain mismatch between the biochemical query and the astronomical evidence.",
+          "overall_score": 0.8,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "0391260d3732",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:10:14.093568+00:00",
+    "ended_at": "2026-08-22T08:10:52.247289+00:00",
+    "duration_ms": 38153,
+    "input_summary": "{\"question_item\": {\"id\": \"Q008\", \"domain\": \"Chemistry\", \"question\": \"Why does life require chirality?\", \"source_page\": 9, \"booklet_excerpt\": \"Molecules in DNA and RNA have the interesting feature of “handedness,” also called chirality. While these molecules naturally appear in both left- and right-handed forms, only the right-handed molecules are found in living organisms. “Handedness serves an essential function in living beings,” writes Emily Singer in Quanta. “Many of the chemical reactions that drive our cells only work with molecules of the correct handedness.” Many scientists believe tha",
+    "output_summary": "{\"input_question\": \"Why does life require chirality?\", \"domain\": \"Chemistry\", \"problem_statement\": \"The user asks for the biochemical mechanism explaining why life requires molecular chirality (homochirality). However, the provided evidence set (EV-Q008-*) consists exclusively of technical papers regarding the design and retrieval capabilities of the LIFE (Large Interferometer For Exoplanets) mission, focusing on intensity-based spectroscopy for atmospheric biosignatures. There is a fundamental domain mismatch between the biochemical question and the astronomical instrumentation evidence.\", \"r",
+    "evidence_ids": [
+      "EV-Q008-e23b1ea12259b0e264bc2da2",
+      "EV-Q008-f28910b2f0fe1504e61fd9da",
+      "EV-Q008-b9756de0118da590def87983",
+      "EV-Q008-e173ebb45997fa7670a0deb2"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "eb754c24df7a",
+    "mock": false
+  },
+  {
+    "event_id": "5949e5738a5b",
+    "run_id": "20260822-080750-0804daec",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:10:52.247852+00:00",
+    "ended_at": "2026-08-22T08:10:54.984974+00:00",
+    "duration_ms": 2737,
+    "input_summary": "{\"question_item\": {\"id\": \"Q008\", \"domain\": \"Chemistry\", \"question\": \"Why does life require chirality?\", \"source_page\": 9, \"booklet_excerpt\": \"Molecules in DNA and RNA have the interesting feature of “handedness,” also called chirality. While these molecules naturally appear in both left- and right-handed forms, only the right-handed molecules are found in living organisms. “Handedness serves an essential function in living beings,” writes Emily Singer in Quanta. “Many of the chemical reactions that drive our cells only work with molecules of the correct handedness.” Many scientists believe tha",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required input fields: EvidenceCards, AgentTrace, execution_metadata.\", \"Cannot validate ResearchPlan structure or evidence traceability without provided EvidenceCards and AgentTrace.\", \"Cannot determine validation_status due to missing execution_metadata.\"], \"warnings\": [\"Input contains only question_item; schema validation for ValidationResult requires ResearchPlan, EvidenceCards, AgentTrace, and execution_metadata.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "12469ed111cd",
+    "mock": false
+  }
+]

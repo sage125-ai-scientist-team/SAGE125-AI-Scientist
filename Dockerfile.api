@@ -1,0 +1,35 @@
+FROM python:3.12-slim-bookworm
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONUTF8=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    HOME=/home/sage125 \
+    APP_ENV=competition_demo \
+    DEMO_MODE=FROZEN_RELEASE_CANDIDATE \
+    FORMAL_125_READ_ONLY=true \
+    ALLOW_PUBLIC_ACTUAL_RUN=false \
+    ALLOW_PUBLIC_PROVIDER_CALL=false \
+    PUBLIC_FEEDBACK_WRITE_ENABLED=false \
+    RC_MANIFEST_RELATIVE_PATH=deployment/frozen_rc/manifest.json
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 sage125 \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin sage125
+
+WORKDIR /opt/sage125
+
+COPY requirements-final-demo.txt ./requirements-final-demo.txt
+RUN python -m pip install --no-cache-dir -r requirements-final-demo.txt
+
+COPY --chown=10001:10001 app ./app
+COPY --chown=10001:10001 scripts/start_final_api.py ./scripts/start_final_api.py
+COPY --chown=10001:10001 scripts/__init__.py ./scripts/__init__.py
+COPY --chown=10001:10001 deployment/frozen_rc ./deployment/frozen_rc
+
+USER 10001:10001
+
+CMD ["python", "-m", "scripts.start_final_api"]

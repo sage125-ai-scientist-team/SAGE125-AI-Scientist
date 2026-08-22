@@ -1,0 +1,1919 @@
+[
+  {
+    "event_id": "b4f1c2f82c39",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:05:06.046935+00:00",
+    "ended_at": "2026-08-22T09:05:06.046935+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "84619052feaa",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:05:06.046935+00:00",
+    "ended_at": "2026-08-22T09:05:10.473411+00:00",
+    "duration_ms": 4426,
+    "input_summary": "{\"question_item\": {\"id\": \"Q099\", \"domain\": \"Neuroscience\", \"question\": \"What is addiction and how does it work?\", \"source_page\": 34, \"booklet_excerpt\": \"The U.S. National Institute on Drug Abuse, National Institutes of Health (NIH), defines addiction as “a chronic, relapsing disorder characterized by compulsive drug [or other substance] seeking, continued use despite harmful consequences, and long-lasting changes in the brain. It is considered both a complex brain disorder and a mental illness.” The repeated use of a substance or activity has dynamic consequences for our brain’s ability to pro",
+    "output_summary": "{\"domain\": \"Neuroscience\", \"core_question\": \"How does the definition of addiction as a chronic, relapsing brain disorder explain the mechanisms behind compulsive substance seeking and the long-lasting changes in brain function related to reward, inhibition, and decision-making?\", \"keywords\": [\"addiction\", \"chronic relapsing disorder\", \"compulsive drug seeking\", \"brain disorder\", \"NIH definition\", \"hijack brain\", \"reward processing\", \"self-control\"], \"entities\": [\"U.S. National Institute on Drug Abuse (NIDA)\", \"National Institutes of Health (NIH)\", \"Brain\", \"Substance/Drug\", \"Reward system\", \"I",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6bee9edf6190",
+    "mock": false
+  },
+  {
+    "event_id": "69d2ee160120",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:05:10.473411+00:00",
+    "ended_at": "2026-08-22T09:05:33.301114+00:00",
+    "duration_ms": 22827,
+    "input_summary": "{\"question_item\": {\"id\": \"Q099\", \"domain\": \"Neuroscience\", \"question\": \"What is addiction and how does it work?\", \"source_page\": 34, \"booklet_excerpt\": \"The U.S. National Institute on Drug Abuse, National Institutes of Health (NIH), defines addiction as “a chronic, relapsing disorder characterized by compulsive drug [or other substance] seeking, continued use despite harmful consequences, and long-lasting changes in the brain. It is considered both a complex brain disorder and a mental illness.” The repeated use of a substance or activity has dynamic consequences for our brain’s ability to pro",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the exact official definition of addiction provided by NIDA/NIH to establish the baseline factual claim regarding 'chronic, relapsing disorder' and 'brain changes'.\", \"query\": \"\\\"addiction\\\" \\\"chronic, relapsing disorder\\\" \\\"compulsive drug seeking\\\" site:nida.nih.gov OR site:nih.gov\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Official NIDA/NIH webpage or publication text defining addiction with specific phrasing about brain hijacking and long-lasting changes.\", \"priority\": \"high\"}, {\"purpose\": \"Identify specific brain regions and functions (rewar",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a993c90733a2",
+    "mock": false
+  },
+  {
+    "event_id": "3b35e950a2f5",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:05:33.311711+00:00",
+    "ended_at": "2026-08-22T09:05:48.620463+00:00",
+    "duration_ms": 15308,
+    "input_summary": "{\"question_item\": {\"id\": \"Q099\", \"domain\": \"Neuroscience\", \"question\": \"What is addiction and how does it work?\", \"source_page\": 34, \"booklet_excerpt\": \"The U.S. National Institute on Drug Abuse, National Institutes of Health (NIH), defines addiction as “a chronic, relapsing disorder characterized by compulsive drug [or other substance] seeking, continued use despite harmful consequences, and long-lasting changes in the brain. It is considered both a complex brain disorder and a mental illness.” The repeated use of a substance or activity has dynamic consequences for our brain’s ability to pro",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Misuse of addictive substances results in significant healthcare costs (billions in the US) and high mortality rates (over 100,000 deaths annually).\", \"evidence_ids\": [\"EV-Q099-2f1a6d91fbb53a21d1fbe2d6\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": \"Specific figures are attributed to Peterson et al. (2021) and NIDA (2023) within the source text.\"}], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The specific neurobiological mechanisms defining addiction as a 'chronic, relapsing disorder' involving brain changes in inhibition, reward, and deci",
+    "evidence_ids": [
+      "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+      "EV-Q099-7556a928fd6b02150f4e35de",
+      "EV-Q099-094f5c0c88dcd7c61f92708f",
+      "EV-Q099-f2c4c61b7491ac6dbbe03e74"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "07233e230f1d",
+    "mock": false
+  },
+  {
+    "event_id": "90b64315efcb",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:05:48.620463+00:00",
+    "ended_at": "2026-08-22T09:06:11.613082+00:00",
+    "duration_ms": 22992,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q099\", \"domain\": \"Neuroscience\", \"question\": \"What is addiction and how does it work?\", \"source_page\": 34, \"booklet_excerpt\": \"The U.S. National Institute on Drug Abuse, National Institutes of Health (NIH), defines addiction as “a chronic, relapsing disorder characterized by compulsive drug [or other substance] seeking, continued use despite harmful consequences, and long-lasting changes in the brain. It is considered both a complex brain disorder and a mental illness.” The repeated use of a substance or activity has dynamic consequences for o",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Computational models of short-video and gambling addiction simulate the core 'hijacking' mechanism by optimizing for engagement metrics that serve as valid behavioral proxies for the neurobiological reward deficits described in clinical definitions, despite the absence of direct neural data in current CS literature.\", \"mechanism\": \"Clinical definitions characterize addiction as a disorder of reward processing and inhibition (booklet context). Computational models in arXiv literature (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) operational",
+    "evidence_ids": [
+      "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+      "EV-Q099-7556a928fd6b02150f4e35de",
+      "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+      "EV-Q099-094f5c0c88dcd7c61f92708f"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "22f0574adfdc",
+    "mock": false
+  },
+  {
+    "event_id": "e001525d702c",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:06:11.613082+00:00",
+    "ended_at": "2026-08-22T09:06:37.281656+00:00",
+    "duration_ms": 25668,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q099\", \"domain\": \"Neuroscience\", \"question\": \"What is addiction and how does it work?\", \"source_page\": 34, \"booklet_excerpt\": \"The U.S. National Institute on Drug Abuse, National Institutes of Health (NIH), defines addiction as “a chronic, relapsing disorder characterized by compulsive drug [or other substance] seeking, continued use despite harmful consequences, and long-lasting changes in the brain. It is considered both a complex brain disorder and a mental illness.” The repeated use of a substance or activity has dynamic consequences for o",
+    "output_summary": "{\"technical_details\": \"This study proposes a cross-domain validation framework to test if computational parameters from short-video (EV-Q099-f2c4c61b7491ac6dbbe03e74) and gambling/auction (EV-Q099-7556a928fd6b02150f4e35de) models serve as valid behavioral proxies for clinical addiction mechanisms. The core technical challenge is mapping latent algorithmic variables (e.g., recommendation feedback loop strength, lucky-draw probability variance) to clinical constructs of 'reward deficit' and 'inhibition failure'. We will implement a hybrid agent-based model where 'virtual users' are governed by r",
+    "evidence_ids": [
+      "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+      "EV-Q099-7556a928fd6b02150f4e35de"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "66ffa721a93b",
+    "mock": false
+  },
+  {
+    "event_id": "f4a7ea7309bb",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:06:37.281656+00:00",
+    "ended_at": "2026-08-22T09:06:51.620835+00:00",
+    "duration_ms": 14339,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q099\", \"domain\": \"Neuroscience\", \"question\": \"What is addiction and how does it work?\", \"source_page\": 34, \"booklet_excerpt\": \"The U.S. National Institute on Drug Abuse, National Institutes of Health (NIH), defines addiction as “a chronic, relapsing disorder characterized by compulsive drug [or other substance] seeking, continued use despite harmful consequences, and long-lasting changes in the brain. It is considered both a complex brain disorder and a mental illness.” The repeated use of a substance or activity has dynamic consequences for o",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The proposed experiment relies on a 'Synthetic Clinical Benchmark' derived from general knowledge (DSM-5) rather than data traceable to allowed EvidenceCards. This violates the strict evidence grounding requirement; validating a model against external knowledge not present in the input evidence set renders the verification loop ungrounded within this system's constraints.\", \"The hypothesis asserts that engagement metrics serve as 'valid behavioral proxies' for neurobiological deficits. However, no provided EvidenceCard establishes this mapping. The cite",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1ca86e880ce9",
+    "mock": false
+  },
+  {
+    "event_id": "ce9406213e85",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:06:51.623833+00:00",
+    "ended_at": "2026-08-22T09:07:31.018165+00:00",
+    "duration_ms": 39394,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The proposed experiment relies on a 'Synthetic Clinical Benchmark' derived from general knowledge (DSM-5) rather than data traceable to allowed EvidenceCards. This violates the strict evidence grounding requirement; validating a model against external knowledge not present in the input evidence set renders the verification loop ungrounded within this system's constraints.\", \"The hypothesis asserts that engagement metrics serve as 'valid behavioral proxies' for neurobiological deficits. However, no provided Evid",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), as they optimize for engagement metrics that lack formal mapping to clinical harm or mortality drivers.\", \"mechanism\": \"Evidence EV-Q099-2f1a6d91fbb53a21d1fbe2d6 establishes that addiction entails severe outcomes (>100k deaths/year, billions in costs). Evidence EV-Q099-f2c4c61b7491ac6dbbe03e74 and E",
+    "evidence_ids": [
+      "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+      "EV-Q099-7556a928fd6b02150f4e35de",
+      "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+      "EV-Q099-094f5c0c88dcd7c61f92708f"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "552026ed5a98",
+    "mock": false
+  },
+  {
+    "event_id": "a5c21cb4b7b8",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:07:31.019164+00:00",
+    "ended_at": "2026-08-22T09:08:00.733266+00:00",
+    "duration_ms": 29714,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The proposed experiment relies on a 'Synthetic Clinical Benchmark' derived from general knowledge (DSM-5) rather than data traceable to allowed EvidenceCards. This violates the strict evidence grounding requirement; validating a model against external knowledge not present in the input evidence set renders the verification loop ungrounded within this system's constraints.\", \"The hypothesis asserts that engagement metrics serve as 'valid behavioral proxies' for neurobiological deficits. However, no provided Evid",
+    "output_summary": "{\"technical_details\": \"This study conducts a structural gap analysis to test the hypothesis that current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6). The methodology involves: 1) Formal extraction of objective functions, state variables, and optimization targets from the computational models in EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b021",
+    "evidence_ids": [
+      "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+      "EV-Q099-7556a928fd6b02150f4e35de",
+      "EV-Q099-2f1a6d91fbb53a21d1fbe2d6"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b83683ec889f",
+    "mock": false
+  },
+  {
+    "event_id": "15bca0ce0cab",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:00.733266+00:00",
+    "ended_at": "2026-08-22T09:08:06.983111+00:00",
+    "duration_ms": 6249,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The proposed experiment relies on a 'Synthetic Clinical Benchmark' derived from general knowledge (DSM-5) rather than data traceable to allowed EvidenceCards. This violates the strict evidence grounding requirement; validating a model against external knowledge not present in the input evidence set renders the verification loop ungrounded within this system's constraints.\", \"The hypothesis asserts that engagement metrics serve as 'valid behavioral proxies' for neurobiological deficits. However, no provided Evid",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis successfully reframes the investigation as a structural gap analysis between computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) and societal burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), eliminating all ungrounded neurobiological claims.\", \"The 'Synthetic Clinical Benchmarks' dataset has been correctly removed and replaced with a 'Structural Alignment Matrix' derived strictly from allowed evidence IDs, resolving the critical issue of non-evidence-based ground truth.\", \"The falsifiable pr",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "35b8e9961e02",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:c4532faf4f2c7c94",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Computational models of short-video and gambling addiction simulate the core 'hijacking' mechanism by optimizing for engagement metrics that serve as valid behavioral proxies for the neurobiological reward deficits described in clinical definitions, despite the absence of direct neural data in current CS literature.",
+              "mechanism": "Clinical definitions characterize addiction as a disorder of reward processing and inhibition (booklet context). Computational models in arXiv literature (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) operationalize these constructs via algorithmic parameters (e.g., lucky-draw probabilities, video recommendation feedback loops). If these computational parameters accurately map onto the latent variables of clinical addiction, then simulation outputs should predict real-world behavioral persistence patterns without requiring direct neuroimaging.",
+              "falsifiable_prediction": "If a computational model calibrated solely on engagement data fails to reproduce the specific temporal dynamics of 'relapse' or 'compulsive seeking' observed in clinical cohorts (as defined in standard nosologies), then the model does not capture the mechanistic essence of addiction, implying current CS simulations are merely descriptive of platform usage rather than explanatory of the disorder.",
+              "required_observations": [
+                "Quantitative comparison of simulated user trajectories from EV-Q099-f2c4c61b7491ac6dbbe03e74 against longitudinal clinical behavioral data.",
+                "Validation that 'lucky-draw' parameters in EV-Q099-7556a928fd6b02150f4e35de correlate with established measures of impulsivity or reward sensitivity."
+              ],
+              "risk_of_being_wrong": "High risk that computational engagement metrics are orthogonal to neurobiological pathology; models may successfully predict platform revenue while failing to represent the 'chronic brain disorder' aspect, rendering them irrelevant to the biological question of 'how addiction works'.",
+              "supporting_evidence_ids": [
+                "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                "EV-Q099-7556a928fd6b02150f4e35de"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "The societal burden of addiction (mortality and cost) is statistically decoupled from the specific behavioral mechanisms modeled in current computational research, indicating a critical knowledge gap where available evidence cannot explain the clinical severity of the disorder.",
+              "mechanism": "Evidence establishes high mortality/cost (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) and separate evidence establishes behavioral models for digital contexts (EV-Q099-094f5c0c88dcd7c61f92708f, EV-Q099-f2c4c61b7491ac6dbbe03e74). However, no provided evidence links the two. This hypothesis posits that the mechanisms driving the >100k annual deaths are distinct from or insufficiently captured by the variables in current gaming/auction/video simulations.",
+              "falsifiable_prediction": "If a meta-analysis reveals that parameters from current computational addiction models (e.g., from EV-Q099-094f5c0c88dcd7c61f92708f) significantly predict clinical health outcomes or mortality risk factors, then the decoupling hypothesis is false, and current CS models do capture the lethal mechanism.",
+              "required_observations": [
+                "Statistical correlation analysis between model-derived addiction severity scores and public health mortality datasets referenced in EV-Q099-2f1a6d91fbb53a21d1fbe2d6.",
+                "Systematic review checking if any cited paper in EV-Q099-094f5c0c88dcd7c61f92708f includes clinical health endpoints."
+              ],
+              "risk_of_being_wrong": "Moderate risk; future interdisciplinary studies might retrospectively validate current models as early proxies for severe pathology, or the 'decoupling' might be an artifact of limited search scope rather than a true scientific gap.",
+              "supporting_evidence_ids": [
+                "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+                "EV-Q099-094f5c0c88dcd7c61f92708f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it constructively bridges the available computational evidence (short-video/gambling models) with the clinical definition implied in the question, proposing a verifiable pathway to validate these models as mechanistic explanations. It adheres to the constraint of using only allowed evidence IDs while addressing the 'how it works' aspect through the lens of computational simulation, which is the only domain covered by the provided sources. Hypothesis 2, while valid as a gap analysis, is less generative for immediate research execution using the existing arXiv papers.",
+          "rejected_directions": [
+            "Direct neurobiological explanation of dopaminergic pathways or synaptic plasticity: Rejected because no allowed evidence IDs contain neuroscience primary literature; generating such a hypothesis would violate the prohibition on unsupported factual claims.",
+            "Unified clinical definition synthesis: Rejected because the provided evidence covers disparate domains (auctions, gaming, video) without a bridging medical text, making any unified definition speculative and ungrounded in the allowed source set."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes a cross-domain validation framework to test if computational parameters from short-video (EV-Q099-f2c4c61b7491ac6dbbe03e74) and gambling/auction (EV-Q099-7556a928fd6b02150f4e35de) models serve as valid behavioral proxies for clinical addiction mechanisms. The core technical challenge is mapping latent algorithmic variables (e.g., recommendation feedback loop strength, lucky-draw probability variance) to clinical constructs of 'reward deficit' and 'inhibition failure'. We will implement a hybrid agent-based model where 'virtual users' are governed by reinforcement learning policies calibrated against the engagement metrics described in the arXiv papers. These simulated trajectories will be compared against synthetic clinical benchmarks derived from standard nosological criteria (e.g., DSM-5 temporal patterns of relapse), as direct neural data is absent in the provided evidence. The hypothesis is falsified if the simulation fails to reproduce the 'compulsive seeking' temporal dynamics despite optimizing for the specified engagement metrics.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Computational Model Parameters Extraction",
+                "description": "Extraction of key algorithmic parameters from EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw probabilities).",
+                "evidence_ids": [
+                  "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                  "EV-Q099-7556a928fd6b02150f4e35de"
+                ],
+                "type": "model_specification"
+              },
+              {
+                "name": "Clinical Behavioral Benchmarks (Synthetic)",
+                "description": "Since no direct clinical dataset is provided in allowed evidence, we will construct a benchmark dataset based on the temporal definitions of 'relapse' and 'compulsive seeking' as described in standard clinical nosologies (referenced as knowledge gap). This serves as the ground truth for mechanism validation.",
+                "evidence_ids": [],
+                "type": "benchmark_synthetic",
+                "note": "Derived from general clinical knowledge gaps identified in evidence_extraction; not directly from provided evidence IDs."
+              }
+            ],
+            "target": {
+              "name": "Simulation-to-Clinical Mapping Metrics",
+              "description": "Quantitative measures of similarity between simulated user engagement trajectories and clinical behavioral patterns.",
+              "type": "derived_metrics"
+            }
+          },
+          "methods": "1. Parameter Extraction: Parse EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de to identify control variables for 'engagement optimization' (e.g., reward frequency, variable ratio schedules). 2. Agent-Based Simulation: Develop a Qwen-powered simulation environment where agents maximize these extracted engagement metrics. 3. Trajectory Analysis: Record time-series data of agent actions (clicks, bets, watch time). 4. Pattern Matching: Use Dynamic Time Warping (DTW) and recurrence quantification analysis to compare simulated trajectories against the synthetic clinical benchmarks for 'relapse' cycles. 5. Correlation Analysis: Test if high-engagement parameter settings correlate with increased 'compulsive' markers in the simulation.",
+          "experiments": {
+            "baselines": [
+              "Random Walk Agent: Agents with no reward-sensitive policy, serving as a null model for engagement.",
+              "Standard RL Agent (PPO): A standard Proximal Policy Optimization agent trained only on immediate reward maximization without specific 'addiction-mimicking' architectural constraints from the arXiv papers."
+            ],
+            "metrics": [
+              "Temporal Similarity Score (DTW Distance): Measures how closely simulated relapse cycles match clinical benchmarks.",
+              "Engagement-Reward Decoupling Index: Quantifies if engagement persists even when simulated 'reward' (utility) decreases, mimicking compulsive behavior.",
+              "Parameter Sensitivity Elasticity: Measures how small changes in 'lucky-draw' or 'recommendation' parameters affect the persistence of behavior."
+            ],
+            "ablation": "Remove the 'variable ratio' reward schedule from the gambling model (EV-Q099-7556a928fd6b02150f4e35de) to test if fixed rewards fail to produce compulsive patterns. Remove the 'feedback loop' component from the short-video model (EV-Q099-f2c4c61b7491ac6dbbe03e74) to test its necessity for sustained engagement.",
+            "validation_protocol": "Cross-validation across different initial agent states. Statistical significance testing (p < 0.05) using permutation tests to ensure observed similarities are not due to chance. Validation against the 'knowledge gap' definition of clinical relapse dynamics."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for parameter extraction from arXiv PDFs (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) is version-controlled.",
+            "Simulation environment seeds are fixed for deterministic reproducibility.",
+            "Synthetic clinical benchmark generation logic is documented and open-source.",
+            "All metrics (DTW, Elasticity) are implemented using standard libraries (e.g., scipy, numpy)."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "Estimated 48 hours on 8x NVIDIA A100 GPUs for large-scale agent simulations.",
+            "data_availability": "Source parameters from arXiv papers are publicly accessible; clinical benchmarks are synthetic and generated via script.",
+            "limitations": "Lack of direct neural data means validation is purely behavioral/phenomenological. The 'clinical benchmark' is a theoretical construct based on general medical knowledge, not a specific dataset from the provided evidence IDs."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-090506-60910918",
+        "version_number": 1,
+        "version_id": "20260822-090506-60910918:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Computational models of short-video and gambling addiction simulate the core 'hijacking' mechanism by optimizing for engagement metrics that serve as valid behavioral proxies for the neurobiological reward deficits described in clinical definitions, despite the absence of direct neural data in current CS literature.",
+              "mechanism": "Clinical definitions characterize addiction as a disorder of reward processing and inhibition (booklet context). Computational models in arXiv literature (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) operationalize these constructs via algorithmic parameters (e.g., lucky-draw probabilities, video recommendation feedback loops). If these computational parameters accurately map onto the latent variables of clinical addiction, then simulation outputs should predict real-world behavioral persistence patterns without requiring direct neuroimaging.",
+              "falsifiable_prediction": "If a computational model calibrated solely on engagement data fails to reproduce the specific temporal dynamics of 'relapse' or 'compulsive seeking' observed in clinical cohorts (as defined in standard nosologies), then the model does not capture the mechanistic essence of addiction, implying current CS simulations are merely descriptive of platform usage rather than explanatory of the disorder.",
+              "required_observations": [
+                "Quantitative comparison of simulated user trajectories from EV-Q099-f2c4c61b7491ac6dbbe03e74 against longitudinal clinical behavioral data.",
+                "Validation that 'lucky-draw' parameters in EV-Q099-7556a928fd6b02150f4e35de correlate with established measures of impulsivity or reward sensitivity."
+              ],
+              "risk_of_being_wrong": "High risk that computational engagement metrics are orthogonal to neurobiological pathology; models may successfully predict platform revenue while failing to represent the 'chronic brain disorder' aspect, rendering them irrelevant to the biological question of 'how addiction works'.",
+              "supporting_evidence_ids": [
+                "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                "EV-Q099-7556a928fd6b02150f4e35de"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "The societal burden of addiction (mortality and cost) is statistically decoupled from the specific behavioral mechanisms modeled in current computational research, indicating a critical knowledge gap where available evidence cannot explain the clinical severity of the disorder.",
+              "mechanism": "Evidence establishes high mortality/cost (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) and separate evidence establishes behavioral models for digital contexts (EV-Q099-094f5c0c88dcd7c61f92708f, EV-Q099-f2c4c61b7491ac6dbbe03e74). However, no provided evidence links the two. This hypothesis posits that the mechanisms driving the >100k annual deaths are distinct from or insufficiently captured by the variables in current gaming/auction/video simulations.",
+              "falsifiable_prediction": "If a meta-analysis reveals that parameters from current computational addiction models (e.g., from EV-Q099-094f5c0c88dcd7c61f92708f) significantly predict clinical health outcomes or mortality risk factors, then the decoupling hypothesis is false, and current CS models do capture the lethal mechanism.",
+              "required_observations": [
+                "Statistical correlation analysis between model-derived addiction severity scores and public health mortality datasets referenced in EV-Q099-2f1a6d91fbb53a21d1fbe2d6.",
+                "Systematic review checking if any cited paper in EV-Q099-094f5c0c88dcd7c61f92708f includes clinical health endpoints."
+              ],
+              "risk_of_being_wrong": "Moderate risk; future interdisciplinary studies might retrospectively validate current models as early proxies for severe pathology, or the 'decoupling' might be an artifact of limited search scope rather than a true scientific gap.",
+              "supporting_evidence_ids": [
+                "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+                "EV-Q099-094f5c0c88dcd7c61f92708f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it constructively bridges the available computational evidence (short-video/gambling models) with the clinical definition implied in the question, proposing a verifiable pathway to validate these models as mechanistic explanations. It adheres to the constraint of using only allowed evidence IDs while addressing the 'how it works' aspect through the lens of computational simulation, which is the only domain covered by the provided sources. Hypothesis 2, while valid as a gap analysis, is less generative for immediate research execution using the existing arXiv papers.",
+          "rejected_directions": [
+            "Direct neurobiological explanation of dopaminergic pathways or synaptic plasticity: Rejected because no allowed evidence IDs contain neuroscience primary literature; generating such a hypothesis would violate the prohibition on unsupported factual claims.",
+            "Unified clinical definition synthesis: Rejected because the provided evidence covers disparate domains (auctions, gaming, video) without a bridging medical text, making any unified definition speculative and ungrounded in the allowed source set."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes a cross-domain validation framework to test if computational parameters from short-video (EV-Q099-f2c4c61b7491ac6dbbe03e74) and gambling/auction (EV-Q099-7556a928fd6b02150f4e35de) models serve as valid behavioral proxies for clinical addiction mechanisms. The core technical challenge is mapping latent algorithmic variables (e.g., recommendation feedback loop strength, lucky-draw probability variance) to clinical constructs of 'reward deficit' and 'inhibition failure'. We will implement a hybrid agent-based model where 'virtual users' are governed by reinforcement learning policies calibrated against the engagement metrics described in the arXiv papers. These simulated trajectories will be compared against synthetic clinical benchmarks derived from standard nosological criteria (e.g., DSM-5 temporal patterns of relapse), as direct neural data is absent in the provided evidence. The hypothesis is falsified if the simulation fails to reproduce the 'compulsive seeking' temporal dynamics despite optimizing for the specified engagement metrics.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Computational Model Parameters Extraction",
+                "description": "Extraction of key algorithmic parameters from EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw probabilities).",
+                "evidence_ids": [
+                  "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                  "EV-Q099-7556a928fd6b02150f4e35de"
+                ],
+                "type": "model_specification"
+              },
+              {
+                "name": "Clinical Behavioral Benchmarks (Synthetic)",
+                "description": "Since no direct clinical dataset is provided in allowed evidence, we will construct a benchmark dataset based on the temporal definitions of 'relapse' and 'compulsive seeking' as described in standard clinical nosologies (referenced as knowledge gap). This serves as the ground truth for mechanism validation.",
+                "evidence_ids": [],
+                "type": "benchmark_synthetic",
+                "note": "Derived from general clinical knowledge gaps identified in evidence_extraction; not directly from provided evidence IDs."
+              }
+            ],
+            "target": {
+              "name": "Simulation-to-Clinical Mapping Metrics",
+              "description": "Quantitative measures of similarity between simulated user engagement trajectories and clinical behavioral patterns.",
+              "type": "derived_metrics"
+            }
+          },
+          "methods": "1. Parameter Extraction: Parse EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de to identify control variables for 'engagement optimization' (e.g., reward frequency, variable ratio schedules). 2. Agent-Based Simulation: Develop a Qwen-powered simulation environment where agents maximize these extracted engagement metrics. 3. Trajectory Analysis: Record time-series data of agent actions (clicks, bets, watch time). 4. Pattern Matching: Use Dynamic Time Warping (DTW) and recurrence quantification analysis to compare simulated trajectories against the synthetic clinical benchmarks for 'relapse' cycles. 5. Correlation Analysis: Test if high-engagement parameter settings correlate with increased 'compulsive' markers in the simulation.",
+          "experiments": {
+            "baselines": [
+              "Random Walk Agent: Agents with no reward-sensitive policy, serving as a null model for engagement.",
+              "Standard RL Agent (PPO): A standard Proximal Policy Optimization agent trained only on immediate reward maximization without specific 'addiction-mimicking' architectural constraints from the arXiv papers."
+            ],
+            "metrics": [
+              "Temporal Similarity Score (DTW Distance): Measures how closely simulated relapse cycles match clinical benchmarks.",
+              "Engagement-Reward Decoupling Index: Quantifies if engagement persists even when simulated 'reward' (utility) decreases, mimicking compulsive behavior.",
+              "Parameter Sensitivity Elasticity: Measures how small changes in 'lucky-draw' or 'recommendation' parameters affect the persistence of behavior."
+            ],
+            "ablation": "Remove the 'variable ratio' reward schedule from the gambling model (EV-Q099-7556a928fd6b02150f4e35de) to test if fixed rewards fail to produce compulsive patterns. Remove the 'feedback loop' component from the short-video model (EV-Q099-f2c4c61b7491ac6dbbe03e74) to test its necessity for sustained engagement.",
+            "validation_protocol": "Cross-validation across different initial agent states. Statistical significance testing (p < 0.05) using permutation tests to ensure observed similarities are not due to chance. Validation against the 'knowledge gap' definition of clinical relapse dynamics."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for parameter extraction from arXiv PDFs (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) is version-controlled.",
+            "Simulation environment seeds are fixed for deterministic reproducibility.",
+            "Synthetic clinical benchmark generation logic is documented and open-source.",
+            "All metrics (DTW, Elasticity) are implemented using standard libraries (e.g., scipy, numpy)."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "Estimated 48 hours on 8x NVIDIA A100 GPUs for large-scale agent simulations.",
+            "data_availability": "Source parameters from arXiv papers are publicly accessible; clinical benchmarks are synthetic and generated via script.",
+            "limitations": "Lack of direct neural data means validation is purely behavioral/phenomenological. The 'clinical benchmark' is a theoretical construct based on general medical knowledge, not a specific dataset from the provided evidence IDs."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The proposed experiment relies on a 'Synthetic Clinical Benchmark' derived from general knowledge (DSM-5) rather than data traceable to allowed EvidenceCards. This violates the strict evidence grounding requirement; validating a model against external knowledge not present in the input evidence set renders the verification loop ungrounded within this system's constraints.",
+            "The hypothesis asserts that engagement metrics serve as 'valid behavioral proxies' for neurobiological deficits. However, no provided EvidenceCard establishes this mapping. The cited papers (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) discuss computational mechanisms but do not validate them against clinical or neurobiological ground truth. Treating this proxy validity as a premise rather than an unverified assumption is a critical factual overreach.",
+            "While the Results field correctly states 'pending', the experimental design is fundamentally unfalsifiable within the current evidence scope because the 'ground truth' for relapse dynamics is missing from the allowed sources. You cannot verify if a simulation matches clinical reality using only CS papers that do not contain clinical data."
+          ],
+          "critical_issues": [
+            "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+            "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+            "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms."
+          ],
+          "required_revisions": [
+            "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+            "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+            "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+            "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.3,
+          "falsifiability_score": 0.4,
+          "reproducibility_score": 0.8,
+          "reference_reliability_score": 0.9
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:c471deb8c9b6",
+            "category": "critical_issue",
+            "description": "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:a3040c9d8351",
+            "category": "critical_issue",
+            "description": "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:6ef8a049a9be",
+            "category": "critical_issue",
+            "description": "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:9a7d6285cf29",
+            "category": "required_revision",
+            "description": "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:9baf188b323f",
+            "category": "required_revision",
+            "description": "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b4cc5318e97b",
+            "category": "required_revision",
+            "description": "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:58c4a6b8092e",
+            "category": "required_revision",
+            "description": "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "165d537d1ea8e6644dc436dc5e3969c3619f3929f56205be501af3d08205ea27",
+          "experiment_designer": "4ee6e25c2ffc1d4eb1aa1915e78946927dc6008ba86e42ae52e6f4863d926fb6",
+          "scientific_reviewer": "ed710bd1392f5f83f04c679a76a0934090112a35acd5b61fe2dc515e9cceb307"
+        }
+      },
+      "parent_version_id": "20260822-090506-60910918:v1",
+      "lineage": [
+        "20260822-090506-60910918:v1",
+        "20260822-090506-60910918:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The proposed experiment relies on a 'Synthetic Clinical Benchmark' derived from general knowledge (DSM-5) rather than data traceable to allowed EvidenceCards. This violates the strict evidence grounding requirement; validating a model against external knowledge not present in the input evidence set renders the verification loop ungrounded within this system's constraints.",
+          "The hypothesis asserts that engagement metrics serve as 'valid behavioral proxies' for neurobiological deficits. However, no provided EvidenceCard establishes this mapping. The cited papers (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) discuss computational mechanisms but do not validate them against clinical or neurobiological ground truth. Treating this proxy validity as a premise rather than an unverified assumption is a critical factual overreach.",
+          "While the Results field correctly states 'pending', the experimental design is fundamentally unfalsifiable within the current evidence scope because the 'ground truth' for relapse dynamics is missing from the allowed sources. You cannot verify if a simulation matches clinical reality using only CS papers that do not contain clinical data."
+        ],
+        "critical_issues": [
+          "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+          "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+          "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms."
+        ],
+        "required_revisions": [
+          "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+          "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+          "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+          "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.3,
+        "falsifiability_score": 0.4,
+        "reproducibility_score": 0.8,
+        "reference_reliability_score": 0.9
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis successfully reframes the investigation as a structural gap analysis between computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) and societal burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), eliminating all ungrounded neurobiological claims.",
+          "The 'Synthetic Clinical Benchmarks' dataset has been correctly removed and replaced with a 'Structural Alignment Matrix' derived strictly from allowed evidence IDs, resolving the critical issue of non-evidence-based ground truth.",
+          "The falsifiable prediction is now logically sound within the system constraints: it tests for the presence/absence of specific semantic mappings between model parameters and burden descriptors, making it verifiable without external clinical data.",
+          "The Results field correctly remains 'pending', and the experimental design includes appropriate baselines (Null Model, General Engagement Model) and metrics (Variable-Harm Coverage Score) that directly operationalize the revised hypothesis."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:3b5b489b7dce383b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+          "issue_id": "critical_issue:c471deb8c9b6"
+        },
+        {
+          "failure_id": "failure:e90a420f7beb7d39",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+          "issue_id": "critical_issue:a3040c9d8351"
+        },
+        {
+          "failure_id": "failure:8c62f4b463993d6c",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms.",
+          "issue_id": "critical_issue:6ef8a049a9be"
+        },
+        {
+          "failure_id": "failure:3e1e0849b10f6a0e",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+          "issue_id": "required_revision:9a7d6285cf29"
+        },
+        {
+          "failure_id": "failure:e6f5037fc5459b95",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+          "issue_id": "required_revision:9baf188b323f"
+        },
+        {
+          "failure_id": "failure:12ca00a1e8d45868",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+          "issue_id": "required_revision:b4cc5318e97b"
+        },
+        {
+          "failure_id": "failure:39d8169635cec7ef",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation.",
+          "issue_id": "required_revision:58c4a6b8092e"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:4609b1c899f1a957",
+          "issue_id": "required_revision:9a7d6285cf29",
+          "reason": "Reviewer item required_revision:9a7d6285cf29 requested 'Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.'. V2 changes technical_details; deterministic correlation evidence tokens=['7556a928fd6b02150f4e35de', 'addiction', 'claim', 'computational', 'ev', 'f2c4c61b7491ac6dbbe03e74', 'hypothesi', 'model', 'neurobiological', 'q099', 'structural', 'test', 'whether', 'within'], coverage=0.500.",
+          "before": "This study proposes a cross-domain validation framework to test if computational parameters from short-video (EV-Q099-f2c4c61b7491ac6dbbe03e74) and gambling/auction (EV-Q099-7556a928fd6b02150f4e35de) models serve as valid behavioral proxies for clinical addiction mechanisms. The core technical challenge is mapping latent algorithmic variables (e.g., recommendation feedback loop strength, lucky-draw probability variance) to clinical constructs of 'reward deficit' and 'inhibition failure'. We will implement a hybrid agent-based model where 'virtual users' are governed by reinforcement learning policies calibrated against the engagement metrics described in the arXiv papers. These simulated trajectories will be compared against synthetic clinical benchmarks derived from standard nosological criteria (e.g., DSM-5 temporal patterns of relapse), as direct neural data is absent in the provided evidence. The hypothesis is falsified if the simulation fails to reproduce the 'compulsive seeking' temporal dynamics despite optimizing for the specified engagement metrics.",
+          "after": "This study conducts a structural gap analysis to test the hypothesis that current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6). The methodology involves: 1) Formal extraction of objective functions, state variables, and optimization targets from the computational models in EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw/auction mechanisms). 2) Semantic mapping of these computational variables against the specific harm/cost descriptors (e.g., healthcare spending, mortality drivers) identified in EV-Q099-2f1a6d91fbb53a21d1fbe2d6. 3) Verification of whether any cited references within the computational papers bridge the gap to clinical severity metrics. The core technical challenge is defining a 'structural alignment metric' that quantifies the presence or absence of harm-mitigation constraints or severity-correlated variables in the engagement-optimization algorithms. This approach avoids ungrounded neurobiological claims and synthetic clinical benchmarks, focusing strictly on the internal consistency and external validity of the provided evidence set.",
+          "evidence_refs": [
+            "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+            "EV-Q099-7556a928fd6b02150f4e35de",
+            "EV-Q099-f2c4c61b7491ac6dbbe03e74"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:d805b310ac854a02",
+          "issue_id": "required_revision:9baf188b323f",
+          "reason": "Reviewer item required_revision:9baf188b323f requested 'Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.'. V2 changes technical_details; deterministic correlation evidence tokens=['2f1a6d91fbb53a21d1fbe2d6', 'analysi', 'benchmark', 'burden', 'clinical', 'cohort', 'computational', 'data', 'ev', 'gap', 'model', 'provid', 'q099', 'societal', 'specific', 'strictly', 'study', 'synthetic'], coverage=0.529.",
+          "before": "This study proposes a cross-domain validation framework to test if computational parameters from short-video (EV-Q099-f2c4c61b7491ac6dbbe03e74) and gambling/auction (EV-Q099-7556a928fd6b02150f4e35de) models serve as valid behavioral proxies for clinical addiction mechanisms. The core technical challenge is mapping latent algorithmic variables (e.g., recommendation feedback loop strength, lucky-draw probability variance) to clinical constructs of 'reward deficit' and 'inhibition failure'. We will implement a hybrid agent-based model where 'virtual users' are governed by reinforcement learning policies calibrated against the engagement metrics described in the arXiv papers. These simulated trajectories will be compared against synthetic clinical benchmarks derived from standard nosological criteria (e.g., DSM-5 temporal patterns of relapse), as direct neural data is absent in the provided evidence. The hypothesis is falsified if the simulation fails to reproduce the 'compulsive seeking' temporal dynamics despite optimizing for the specified engagement metrics.",
+          "after": "This study conducts a structural gap analysis to test the hypothesis that current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6). The methodology involves: 1) Formal extraction of objective functions, state variables, and optimization targets from the computational models in EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw/auction mechanisms). 2) Semantic mapping of these computational variables against the specific harm/cost descriptors (e.g., healthcare spending, mortality drivers) identified in EV-Q099-2f1a6d91fbb53a21d1fbe2d6. 3) Verification of whether any cited references within the computational papers bridge the gap to clinical severity metrics. The core technical challenge is defining a 'structural alignment metric' that quantifies the presence or absence of harm-mitigation constraints or severity-correlated variables in the engagement-optimization algorithms. This approach avoids ungrounded neurobiological claims and synthetic clinical benchmarks, focusing strictly on the internal consistency and external validity of the provided evidence set.",
+          "evidence_refs": [
+            "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+            "EV-Q099-7556a928fd6b02150f4e35de",
+            "EV-Q099-f2c4c61b7491ac6dbbe03e74"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:b4027707883188c6",
+          "issue_id": "required_revision:b4cc5318e97b",
+          "reason": "Reviewer item required_revision:b4cc5318e97b requested 'Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.''. V2 changes technical_details; deterministic correlation evidence tokens=['2f1a6d91fbb53a21d1fbe2d6', 'account', 'addiction', 'cost', 'current', 'dimension', 'driver', 'engagement', 'ev', 'evidence', 'f2c4c61b7491ac6dbbe03e74', 'model', 'mortality', 'optimization', 'q099', 'severity', 'structurally', 'variable'], coverage=0.529.",
+          "before": "This study proposes a cross-domain validation framework to test if computational parameters from short-video (EV-Q099-f2c4c61b7491ac6dbbe03e74) and gambling/auction (EV-Q099-7556a928fd6b02150f4e35de) models serve as valid behavioral proxies for clinical addiction mechanisms. The core technical challenge is mapping latent algorithmic variables (e.g., recommendation feedback loop strength, lucky-draw probability variance) to clinical constructs of 'reward deficit' and 'inhibition failure'. We will implement a hybrid agent-based model where 'virtual users' are governed by reinforcement learning policies calibrated against the engagement metrics described in the arXiv papers. These simulated trajectories will be compared against synthetic clinical benchmarks derived from standard nosological criteria (e.g., DSM-5 temporal patterns of relapse), as direct neural data is absent in the provided evidence. The hypothesis is falsified if the simulation fails to reproduce the 'compulsive seeking' temporal dynamics despite optimizing for the specified engagement metrics.",
+          "after": "This study conducts a structural gap analysis to test the hypothesis that current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6). The methodology involves: 1) Formal extraction of objective functions, state variables, and optimization targets from the computational models in EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw/auction mechanisms). 2) Semantic mapping of these computational variables against the specific harm/cost descriptors (e.g., healthcare spending, mortality drivers) identified in EV-Q099-2f1a6d91fbb53a21d1fbe2d6. 3) Verification of whether any cited references within the computational papers bridge the gap to clinical severity metrics. The core technical challenge is defining a 'structural alignment metric' that quantifies the presence or absence of harm-mitigation constraints or severity-correlated variables in the engagement-optimization algorithms. This approach avoids ungrounded neurobiological claims and synthetic clinical benchmarks, focusing strictly on the internal consistency and external validity of the provided evidence set.",
+          "evidence_refs": [
+            "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+            "EV-Q099-7556a928fd6b02150f4e35de",
+            "EV-Q099-f2c4c61b7491ac6dbbe03e74"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:c471deb8c9b6",
+          "category": "critical_issue",
+          "description": "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:a3040c9d8351",
+          "category": "critical_issue",
+          "description": "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:6ef8a049a9be",
+          "category": "critical_issue",
+          "description": "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:9a7d6285cf29",
+          "category": "required_revision",
+          "description": "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:4609b1c899f1a957; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:9baf188b323f",
+          "category": "required_revision",
+          "description": "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:d805b310ac854a02; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b4cc5318e97b",
+          "category": "required_revision",
+          "description": "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:b4027707883188c6; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:58c4a6b8092e",
+          "category": "required_revision",
+          "description": "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist",
+        "evidence_references"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.3,
+          "after": 0.95,
+          "delta": 0.6499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.8,
+          "after": 0.9,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 0.9,
+          "after": 1.0,
+          "delta": 0.09999999999999998
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), as they optimize for engagement metrics that lack formal mapping to clinical harm or mortality drivers.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Computational models of short-video and auction addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit convergent structural properties in reward scheduling that distinguish them from standard engagement optimization, representing a distinct 'computational phenotype' of addiction within the CS literature independent of neurobiological validation.",
+          "overall_score": 0.81,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "The definition of addiction in the provided computational literature is exclusively operationalized via participation maximization, creating a fundamental epistemic mismatch with the 'harm-based' definition implied by societal burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6).",
+          "overall_score": 0.8,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 3,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:c471deb8c9b6",
+        "required_revision_without_change:critical_issue:a3040c9d8351",
+        "required_revision_without_change:critical_issue:6ef8a049a9be",
+        "required_revision_without_change:required_revision:58c4a6b8092e",
+        "unresolved_issue:critical_issue:c471deb8c9b6",
+        "unresolved_issue:critical_issue:a3040c9d8351",
+        "unresolved_issue:critical_issue:6ef8a049a9be",
+        "unresolved_issue:required_revision:58c4a6b8092e"
+      ],
+      "remaining_blockers": [
+        "critical_issue:c471deb8c9b6: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:a3040c9d8351: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:6ef8a049a9be: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:58c4a6b8092e: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-090506-60910918",
+        "version_number": 1,
+        "version_id": "20260822-090506-60910918:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Computational models of short-video and gambling addiction simulate the core 'hijacking' mechanism by optimizing for engagement metrics that serve as valid behavioral proxies for the neurobiological reward deficits described in clinical definitions, despite the absence of direct neural data in current CS literature.",
+              "mechanism": "Clinical definitions characterize addiction as a disorder of reward processing and inhibition (booklet context). Computational models in arXiv literature (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) operationalize these constructs via algorithmic parameters (e.g., lucky-draw probabilities, video recommendation feedback loops). If these computational parameters accurately map onto the latent variables of clinical addiction, then simulation outputs should predict real-world behavioral persistence patterns without requiring direct neuroimaging.",
+              "falsifiable_prediction": "If a computational model calibrated solely on engagement data fails to reproduce the specific temporal dynamics of 'relapse' or 'compulsive seeking' observed in clinical cohorts (as defined in standard nosologies), then the model does not capture the mechanistic essence of addiction, implying current CS simulations are merely descriptive of platform usage rather than explanatory of the disorder.",
+              "required_observations": [
+                "Quantitative comparison of simulated user trajectories from EV-Q099-f2c4c61b7491ac6dbbe03e74 against longitudinal clinical behavioral data.",
+                "Validation that 'lucky-draw' parameters in EV-Q099-7556a928fd6b02150f4e35de correlate with established measures of impulsivity or reward sensitivity."
+              ],
+              "risk_of_being_wrong": "High risk that computational engagement metrics are orthogonal to neurobiological pathology; models may successfully predict platform revenue while failing to represent the 'chronic brain disorder' aspect, rendering them irrelevant to the biological question of 'how addiction works'.",
+              "supporting_evidence_ids": [
+                "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                "EV-Q099-7556a928fd6b02150f4e35de"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "The societal burden of addiction (mortality and cost) is statistically decoupled from the specific behavioral mechanisms modeled in current computational research, indicating a critical knowledge gap where available evidence cannot explain the clinical severity of the disorder.",
+              "mechanism": "Evidence establishes high mortality/cost (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) and separate evidence establishes behavioral models for digital contexts (EV-Q099-094f5c0c88dcd7c61f92708f, EV-Q099-f2c4c61b7491ac6dbbe03e74). However, no provided evidence links the two. This hypothesis posits that the mechanisms driving the >100k annual deaths are distinct from or insufficiently captured by the variables in current gaming/auction/video simulations.",
+              "falsifiable_prediction": "If a meta-analysis reveals that parameters from current computational addiction models (e.g., from EV-Q099-094f5c0c88dcd7c61f92708f) significantly predict clinical health outcomes or mortality risk factors, then the decoupling hypothesis is false, and current CS models do capture the lethal mechanism.",
+              "required_observations": [
+                "Statistical correlation analysis between model-derived addiction severity scores and public health mortality datasets referenced in EV-Q099-2f1a6d91fbb53a21d1fbe2d6.",
+                "Systematic review checking if any cited paper in EV-Q099-094f5c0c88dcd7c61f92708f includes clinical health endpoints."
+              ],
+              "risk_of_being_wrong": "Moderate risk; future interdisciplinary studies might retrospectively validate current models as early proxies for severe pathology, or the 'decoupling' might be an artifact of limited search scope rather than a true scientific gap.",
+              "supporting_evidence_ids": [
+                "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+                "EV-Q099-094f5c0c88dcd7c61f92708f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it constructively bridges the available computational evidence (short-video/gambling models) with the clinical definition implied in the question, proposing a verifiable pathway to validate these models as mechanistic explanations. It adheres to the constraint of using only allowed evidence IDs while addressing the 'how it works' aspect through the lens of computational simulation, which is the only domain covered by the provided sources. Hypothesis 2, while valid as a gap analysis, is less generative for immediate research execution using the existing arXiv papers.",
+          "rejected_directions": [
+            "Direct neurobiological explanation of dopaminergic pathways or synaptic plasticity: Rejected because no allowed evidence IDs contain neuroscience primary literature; generating such a hypothesis would violate the prohibition on unsupported factual claims.",
+            "Unified clinical definition synthesis: Rejected because the provided evidence covers disparate domains (auctions, gaming, video) without a bridging medical text, making any unified definition speculative and ungrounded in the allowed source set."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes a cross-domain validation framework to test if computational parameters from short-video (EV-Q099-f2c4c61b7491ac6dbbe03e74) and gambling/auction (EV-Q099-7556a928fd6b02150f4e35de) models serve as valid behavioral proxies for clinical addiction mechanisms. The core technical challenge is mapping latent algorithmic variables (e.g., recommendation feedback loop strength, lucky-draw probability variance) to clinical constructs of 'reward deficit' and 'inhibition failure'. We will implement a hybrid agent-based model where 'virtual users' are governed by reinforcement learning policies calibrated against the engagement metrics described in the arXiv papers. These simulated trajectories will be compared against synthetic clinical benchmarks derived from standard nosological criteria (e.g., DSM-5 temporal patterns of relapse), as direct neural data is absent in the provided evidence. The hypothesis is falsified if the simulation fails to reproduce the 'compulsive seeking' temporal dynamics despite optimizing for the specified engagement metrics.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Computational Model Parameters Extraction",
+                "description": "Extraction of key algorithmic parameters from EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw probabilities).",
+                "evidence_ids": [
+                  "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                  "EV-Q099-7556a928fd6b02150f4e35de"
+                ],
+                "type": "model_specification"
+              },
+              {
+                "name": "Clinical Behavioral Benchmarks (Synthetic)",
+                "description": "Since no direct clinical dataset is provided in allowed evidence, we will construct a benchmark dataset based on the temporal definitions of 'relapse' and 'compulsive seeking' as described in standard clinical nosologies (referenced as knowledge gap). This serves as the ground truth for mechanism validation.",
+                "evidence_ids": [],
+                "type": "benchmark_synthetic",
+                "note": "Derived from general clinical knowledge gaps identified in evidence_extraction; not directly from provided evidence IDs."
+              }
+            ],
+            "target": {
+              "name": "Simulation-to-Clinical Mapping Metrics",
+              "description": "Quantitative measures of similarity between simulated user engagement trajectories and clinical behavioral patterns.",
+              "type": "derived_metrics"
+            }
+          },
+          "methods": "1. Parameter Extraction: Parse EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de to identify control variables for 'engagement optimization' (e.g., reward frequency, variable ratio schedules). 2. Agent-Based Simulation: Develop a Qwen-powered simulation environment where agents maximize these extracted engagement metrics. 3. Trajectory Analysis: Record time-series data of agent actions (clicks, bets, watch time). 4. Pattern Matching: Use Dynamic Time Warping (DTW) and recurrence quantification analysis to compare simulated trajectories against the synthetic clinical benchmarks for 'relapse' cycles. 5. Correlation Analysis: Test if high-engagement parameter settings correlate with increased 'compulsive' markers in the simulation.",
+          "experiments": {
+            "baselines": [
+              "Random Walk Agent: Agents with no reward-sensitive policy, serving as a null model for engagement.",
+              "Standard RL Agent (PPO): A standard Proximal Policy Optimization agent trained only on immediate reward maximization without specific 'addiction-mimicking' architectural constraints from the arXiv papers."
+            ],
+            "metrics": [
+              "Temporal Similarity Score (DTW Distance): Measures how closely simulated relapse cycles match clinical benchmarks.",
+              "Engagement-Reward Decoupling Index: Quantifies if engagement persists even when simulated 'reward' (utility) decreases, mimicking compulsive behavior.",
+              "Parameter Sensitivity Elasticity: Measures how small changes in 'lucky-draw' or 'recommendation' parameters affect the persistence of behavior."
+            ],
+            "ablation": "Remove the 'variable ratio' reward schedule from the gambling model (EV-Q099-7556a928fd6b02150f4e35de) to test if fixed rewards fail to produce compulsive patterns. Remove the 'feedback loop' component from the short-video model (EV-Q099-f2c4c61b7491ac6dbbe03e74) to test its necessity for sustained engagement.",
+            "validation_protocol": "Cross-validation across different initial agent states. Statistical significance testing (p < 0.05) using permutation tests to ensure observed similarities are not due to chance. Validation against the 'knowledge gap' definition of clinical relapse dynamics."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for parameter extraction from arXiv PDFs (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) is version-controlled.",
+            "Simulation environment seeds are fixed for deterministic reproducibility.",
+            "Synthetic clinical benchmark generation logic is documented and open-source.",
+            "All metrics (DTW, Elasticity) are implemented using standard libraries (e.g., scipy, numpy)."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "Estimated 48 hours on 8x NVIDIA A100 GPUs for large-scale agent simulations.",
+            "data_availability": "Source parameters from arXiv papers are publicly accessible; clinical benchmarks are synthetic and generated via script.",
+            "limitations": "Lack of direct neural data means validation is purely behavioral/phenomenological. The 'clinical benchmark' is a theoretical construct based on general medical knowledge, not a specific dataset from the provided evidence IDs."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The proposed experiment relies on a 'Synthetic Clinical Benchmark' derived from general knowledge (DSM-5) rather than data traceable to allowed EvidenceCards. This violates the strict evidence grounding requirement; validating a model against external knowledge not present in the input evidence set renders the verification loop ungrounded within this system's constraints.",
+            "The hypothesis asserts that engagement metrics serve as 'valid behavioral proxies' for neurobiological deficits. However, no provided EvidenceCard establishes this mapping. The cited papers (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) discuss computational mechanisms but do not validate them against clinical or neurobiological ground truth. Treating this proxy validity as a premise rather than an unverified assumption is a critical factual overreach.",
+            "While the Results field correctly states 'pending', the experimental design is fundamentally unfalsifiable within the current evidence scope because the 'ground truth' for relapse dynamics is missing from the allowed sources. You cannot verify if a simulation matches clinical reality using only CS papers that do not contain clinical data."
+          ],
+          "critical_issues": [
+            "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+            "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+            "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms."
+          ],
+          "required_revisions": [
+            "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+            "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+            "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+            "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.3,
+          "falsifiability_score": 0.4,
+          "reproducibility_score": 0.8,
+          "reference_reliability_score": 0.9
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:c471deb8c9b6",
+            "category": "critical_issue",
+            "description": "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:a3040c9d8351",
+            "category": "critical_issue",
+            "description": "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:6ef8a049a9be",
+            "category": "critical_issue",
+            "description": "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:9a7d6285cf29",
+            "category": "required_revision",
+            "description": "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:9baf188b323f",
+            "category": "required_revision",
+            "description": "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b4cc5318e97b",
+            "category": "required_revision",
+            "description": "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:58c4a6b8092e",
+            "category": "required_revision",
+            "description": "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "165d537d1ea8e6644dc436dc5e3969c3619f3929f56205be501af3d08205ea27",
+          "experiment_designer": "4ee6e25c2ffc1d4eb1aa1915e78946927dc6008ba86e42ae52e6f4863d926fb6",
+          "scientific_reviewer": "ed710bd1392f5f83f04c679a76a0934090112a35acd5b61fe2dc515e9cceb307"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-090506-60910918",
+        "version_number": 2,
+        "version_id": "20260822-090506-60910918:v2",
+        "parent_version_id": "20260822-090506-60910918:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), as they optimize for engagement metrics that lack formal mapping to clinical harm or mortality drivers.",
+              "mechanism": "Evidence EV-Q099-2f1a6d91fbb53a21d1fbe2d6 establishes that addiction entails severe outcomes (>100k deaths/year, billions in costs). Evidence EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de provide computational mechanisms optimizing for participation/engagement. A critical Knowledge Gap exists: no allowed evidence links these computational engagement parameters to the clinical severity or mortality drivers cited in the burden literature. This hypothesis posits that the objective functions in current CS models are orthogonal to the variables driving the societal burden, rendering them descriptive of platform usage but not explanatory of the 'chronic, relapsing disorder' defined by harm.",
+              "falsifiable_prediction": "If a systematic parameter audit reveals that the engagement optimization variables in EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de explicitly incorporate constraints or cost functions corresponding to the healthcare/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then the structural insufficiency hypothesis is false.",
+              "required_observations": [
+                "Formal extraction of objective functions and state variables from EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de.",
+                "Semantic mapping analysis comparing extracted computational variables against the specific harm/cost descriptors in EV-Q099-2f1a6d91fbb53a21d1fbe2d6.",
+                "Verification of whether any cited references within the computational papers bridge the gap to clinical severity metrics."
+              ],
+              "risk_of_being_wrong": "Moderate risk; the computational papers might implicitly model severity through proxy variables (e.g., 'retention under negative feedback') that align with burden drivers, even if not explicitly labeled as 'mortality' or 'healthcare cost'.",
+              "supporting_evidence_ids": [
+                "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                "EV-Q099-7556a928fd6b02150f4e35de",
+                "EV-Q099-2f1a6d91fbb53a21d1fbe2d6"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Computational models of short-video and auction addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit convergent structural properties in reward scheduling that distinguish them from standard engagement optimization, representing a distinct 'computational phenotype' of addiction within the CS literature independent of neurobiological validation.",
+              "mechanism": "While neurobiological validation is absent (Knowledge Gap), the CS literature itself may define addiction operationally. If EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de share specific algorithmic motifs (e.g., variable-ratio reinforcement, feedback loop latency) that differ from generic recommendation systems (referenced in EV-Q099-094f5c0c88dcd7c61f92708f), this suggests an internal theoretical consistency in how CS conceptualizes 'addiction' as a computational process. This hypothesis tests the internal validity of the CS construct rather than its external clinical validity.",
+              "falsifiable_prediction": "If the algorithmic parameters for 'addiction' in EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de are statistically indistinguishable from standard engagement metrics in general user behavior models (EV-Q099-094f5c0c88dcd7c61f92708f), then there is no distinct 'computational addiction phenotype' in the provided literature.",
+              "required_observations": [
+                "Comparative code/model specification analysis between the 'addiction' focused papers and general behavior papers.",
+                "Quantification of specific reward schedule parameters (e.g., probability distributions, decay rates) across the three evidence sources.",
+                "Clustering analysis to determine if 'addiction' models form a distinct group based on architectural features."
+              ],
+              "risk_of_being_wrong": "High risk; the papers may use identical underlying RL architectures with only superficial labeling differences, meaning 'addiction' in CS is merely a semantic tag rather than a structural distinction.",
+              "supporting_evidence_ids": [
+                "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                "EV-Q099-7556a928fd6b02150f4e35de",
+                "EV-Q099-094f5c0c88dcd7c61f92708f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.81
+            },
+            {
+              "hypothesis": "The definition of addiction in the provided computational literature is exclusively operationalized via participation maximization, creating a fundamental epistemic mismatch with the 'harm-based' definition implied by societal burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6).",
+              "mechanism": "This hypothesis reframes the question 'how does it work' to 'how is it modeled vs. how is it burdened'. It posits that the mechanism of action in CS papers (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) is strictly positive-reinforcement driven (participation/lucky-draw), whereas the burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) implies a negative-outcome driven mechanism (death/cost). The 'working' of addiction in CS is thus hypothesized to be the inverse of its 'working' in public health contexts.",
+              "falsifiable_prediction": "If the computational models explicitly include negative utility terms, safety constraints, or harm-minimization objectives alongside participation metrics, then the exclusive operationalization hypothesis is false.",
+              "required_observations": [
+                "Text mining and mathematical formulation extraction from EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de to identify all objective function components.",
+                "Categorization of identified components as 'participation-promoting' vs. 'harm-mitigating'.",
+                "Cross-reference with burden drivers in EV-Q099-2f1a6d91fbb53a21d1fbe2d6 to check for alignment."
+              ],
+              "risk_of_being_wrong": "Low risk; it is highly probable that CS papers focus on engagement, but there is a non-zero chance that ethical AI or safe RL frameworks have been integrated into these specific preprints.",
+              "supporting_evidence_ids": [
+                "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                "EV-Q099-7556a928fd6b02150f4e35de",
+                "EV-Q099-2f1a6d91fbb53a21d1fbe2d6"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.8
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it directly addresses the reviewer's critical feedback regarding the lack of grounded validation. By reframing the study as a test of 'structural sufficiency' relative to the *provided* burden evidence (rather than external clinical benchmarks), it transforms the unresolvable 'neurobiological gap' into a verifiable 'model-to-burden alignment gap'. It uses only allowed evidence IDs, avoids synthetic data, and produces a definitive falsifiable prediction based on parameter auditing. This satisfies the requirement to ground the verification loop strictly within the system's evidence constraints while acknowledging the limitations of the CS literature.",
+          "rejected_directions": [
+            "Neurobiological mechanism validation: Rejected because no allowed evidence contains neural data; attempting to validate against biological reality remains ungrounded.",
+            "Synthetic clinical benchmark generation: Rejected per reviewer feedback as circular and outside the allowed evidence scope.",
+            "Unified definition synthesis: Rejected because the evidence set is too fragmented (auctions vs. mortality) to support a unified theory without external bridging sources."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study conducts a structural gap analysis to test the hypothesis that current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6). The methodology involves: 1) Formal extraction of objective functions, state variables, and optimization targets from the computational models in EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw/auction mechanisms). 2) Semantic mapping of these computational variables against the specific harm/cost descriptors (e.g., healthcare spending, mortality drivers) identified in EV-Q099-2f1a6d91fbb53a21d1fbe2d6. 3) Verification of whether any cited references within the computational papers bridge the gap to clinical severity metrics. The core technical challenge is defining a 'structural alignment metric' that quantifies the presence or absence of harm-mitigation constraints or severity-correlated variables in the engagement-optimization algorithms. This approach avoids ungrounded neurobiological claims and synthetic clinical benchmarks, focusing strictly on the internal consistency and external validity of the provided evidence set.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Computational Model Specifications",
+                "description": "Extraction of algorithmic parameters, objective functions, and reward structures from EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de.",
+                "evidence_ids": [
+                  "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                  "EV-Q099-7556a928fd6b02150f4e35de"
+                ],
+                "type": "model_specification"
+              },
+              {
+                "name": "Societal Burden Descriptors",
+                "description": "Extraction of specific harm indicators (mortality, healthcare costs) and their drivers as described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6.",
+                "evidence_ids": [
+                  "EV-Q099-2f1a6d91fbb53a21d1fbe2d6"
+                ],
+                "type": "textual_evidence"
+              }
+            ],
+            "target": {
+              "name": "Structural Alignment Matrix",
+              "description": "A binary or weighted matrix indicating whether each computational variable in the source models has a corresponding counterpart in the societal burden descriptors.",
+              "type": "derived_analysis"
+            }
+          },
+          "methods": "1. Text Mining & Parameter Extraction: Use NLP techniques to identify mathematical formulations and key variables (e.g., 'participation rate', 'lucky-draw probability', 'retention time') in EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de. 2. Semantic Ontology Mapping: Create a controlled vocabulary of 'harm drivers' from EV-Q099-2f1a6d91fbb53a21d1fbe2d6 (e.g., 'mortality', 'healthcare cost', 'relapse severity'). 3. Gap Analysis: Systematically check if any extracted computational variable explicitly optimizes for, constrains, or correlates with the harm drivers. 4. Citation Network Analysis: Verify if the computational papers cite clinical literature that establishes this link, thereby testing if the gap is acknowledged but deferred, or entirely absent.",
+          "experiments": {
+            "baselines": [
+              "Null Model: Assumes no alignment between computational variables and harm drivers (expected outcome if hypothesis is true).",
+              "General Engagement Model: A baseline representation of standard recommendation systems (referenced in EV-Q099-094f5c0c88dcd7c61f92708f if applicable, or generic RL) to contrast with 'addiction-specific' claims."
+            ],
+            "metrics": [
+              "Variable-Harm Coverage Score: Percentage of harm drivers from EV-Q099-2f1a6d91fbb53a21d1fbe2d6 that have a direct mapping in the computational models' objective functions.",
+              "Explicit Constraint Count: Number of explicit safety/harm-minimization terms found in the mathematical formulations of EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de.",
+              "Citation Bridge Index: Binary indicator of whether the computational papers cite sources that link their specific engagement metrics to clinical severity outcomes."
+            ],
+            "ablation": "Remove the 'addiction' labeling from the computational models and treat them as standard optimization problems to see if the structural properties change; if not, it suggests the 'addiction' label is semantic rather than mechanistic.",
+            "validation_protocol": "Peer review of the semantic mapping ontology to ensure no forced correlations. Cross-checking extracted equations against the original PDFs for accuracy. Sensitivity analysis on the definition of 'harm driver' to ensure robustness of the gap finding."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Extraction scripts for mathematical formulations from arXiv PDFs are version-controlled.",
+            "Semantic ontology for harm drivers is documented and open for review.",
+            "Mapping logic between computational variables and harm descriptors is explicitly defined and deterministic.",
+            "Citation network analysis uses standard bibliometric tools."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "Minimal CPU resources required for text mining and semantic analysis.",
+            "data_availability": "All source data is contained within the provided EvidenceCards (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de, EV-Q099-2f1a6d91fbb53a21d1fbe2d6).",
+            "limitations": "This study identifies structural gaps in the literature but does not provide neurobiological validation. The absence of alignment in the models does not prove they are incorrect, only that they do not currently account for the severity dimension described in the burden evidence."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis successfully reframes the investigation as a structural gap analysis between computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) and societal burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), eliminating all ungrounded neurobiological claims.",
+            "The 'Synthetic Clinical Benchmarks' dataset has been correctly removed and replaced with a 'Structural Alignment Matrix' derived strictly from allowed evidence IDs, resolving the critical issue of non-evidence-based ground truth.",
+            "The falsifiable prediction is now logically sound within the system constraints: it tests for the presence/absence of specific semantic mappings between model parameters and burden descriptors, making it verifiable without external clinical data.",
+            "The Results field correctly remains 'pending', and the experimental design includes appropriate baselines (Null Model, General Engagement Model) and metrics (Variable-Harm Coverage Score) that directly operationalize the revised hypothesis."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:c471deb8c9b6",
+            "category": "critical_issue",
+            "description": "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:a3040c9d8351",
+            "category": "critical_issue",
+            "description": "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:6ef8a049a9be",
+            "category": "critical_issue",
+            "description": "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:9a7d6285cf29",
+            "category": "required_revision",
+            "description": "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:4609b1c899f1a957; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:9baf188b323f",
+            "category": "required_revision",
+            "description": "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:d805b310ac854a02; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:b4cc5318e97b",
+            "category": "required_revision",
+            "description": "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:b4027707883188c6; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:58c4a6b8092e",
+            "category": "required_revision",
+            "description": "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "c0ac42e8879b131a0b70b29f3a7b592954b79081bec114e161c9dbd191debf49",
+          "experiment_designer": "f66d212b1134803cfa9b14508097a589b28e19577cba1a975d9a35d6fe837069",
+          "scientific_reviewer": "c581827f477cbcad8e243ed39e7adfd4fadd64a44add7e3dfa2279140ceed677"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-090506-60910918",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-090506-60910918:review:v1",
+        "20260822-090506-60910918:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-090506-60910918:v1",
+        "20260822-090506-60910918:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-090506-60910918",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-090506-60910918:review:v1",
+          "20260822-090506-60910918:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-090506-60910918:v1",
+          "20260822-090506-60910918:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-090506-60910918",
+          "version_number": 1,
+          "version_id": "20260822-090506-60910918:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Computational models of short-video and gambling addiction simulate the core 'hijacking' mechanism by optimizing for engagement metrics that serve as valid behavioral proxies for the neurobiological reward deficits described in clinical definitions, despite the absence of direct neural data in current CS literature.",
+                "mechanism": "Clinical definitions characterize addiction as a disorder of reward processing and inhibition (booklet context). Computational models in arXiv literature (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) operationalize these constructs via algorithmic parameters (e.g., lucky-draw probabilities, video recommendation feedback loops). If these computational parameters accurately map onto the latent variables of clinical addiction, then simulation outputs should predict real-world behavioral persistence patterns without requiring direct neuroimaging.",
+                "falsifiable_prediction": "If a computational model calibrated solely on engagement data fails to reproduce the specific temporal dynamics of 'relapse' or 'compulsive seeking' observed in clinical cohorts (as defined in standard nosologies), then the model does not capture the mechanistic essence of addiction, implying current CS simulations are merely descriptive of platform usage rather than explanatory of the disorder.",
+                "required_observations": [
+                  "Quantitative comparison of simulated user trajectories from EV-Q099-f2c4c61b7491ac6dbbe03e74 against longitudinal clinical behavioral data.",
+                  "Validation that 'lucky-draw' parameters in EV-Q099-7556a928fd6b02150f4e35de correlate with established measures of impulsivity or reward sensitivity."
+                ],
+                "risk_of_being_wrong": "High risk that computational engagement metrics are orthogonal to neurobiological pathology; models may successfully predict platform revenue while failing to represent the 'chronic brain disorder' aspect, rendering them irrelevant to the biological question of 'how addiction works'.",
+                "supporting_evidence_ids": [
+                  "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                  "EV-Q099-7556a928fd6b02150f4e35de"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.4,
+                "overall_score": 0.7
+              },
+              {
+                "hypothesis": "The societal burden of addiction (mortality and cost) is statistically decoupled from the specific behavioral mechanisms modeled in current computational research, indicating a critical knowledge gap where available evidence cannot explain the clinical severity of the disorder.",
+                "mechanism": "Evidence establishes high mortality/cost (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) and separate evidence establishes behavioral models for digital contexts (EV-Q099-094f5c0c88dcd7c61f92708f, EV-Q099-f2c4c61b7491ac6dbbe03e74). However, no provided evidence links the two. This hypothesis posits that the mechanisms driving the >100k annual deaths are distinct from or insufficiently captured by the variables in current gaming/auction/video simulations.",
+                "falsifiable_prediction": "If a meta-analysis reveals that parameters from current computational addiction models (e.g., from EV-Q099-094f5c0c88dcd7c61f92708f) significantly predict clinical health outcomes or mortality risk factors, then the decoupling hypothesis is false, and current CS models do capture the lethal mechanism.",
+                "required_observations": [
+                  "Statistical correlation analysis between model-derived addiction severity scores and public health mortality datasets referenced in EV-Q099-2f1a6d91fbb53a21d1fbe2d6.",
+                  "Systematic review checking if any cited paper in EV-Q099-094f5c0c88dcd7c61f92708f includes clinical health endpoints."
+                ],
+                "risk_of_being_wrong": "Moderate risk; future interdisciplinary studies might retrospectively validate current models as early proxies for severe pathology, or the 'decoupling' might be an artifact of limited search scope rather than a true scientific gap.",
+                "supporting_evidence_ids": [
+                  "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+                  "EV-Q099-094f5c0c88dcd7c61f92708f"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.7
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 is selected because it constructively bridges the available computational evidence (short-video/gambling models) with the clinical definition implied in the question, proposing a verifiable pathway to validate these models as mechanistic explanations. It adheres to the constraint of using only allowed evidence IDs while addressing the 'how it works' aspect through the lens of computational simulation, which is the only domain covered by the provided sources. Hypothesis 2, while valid as a gap analysis, is less generative for immediate research execution using the existing arXiv papers.",
+            "rejected_directions": [
+              "Direct neurobiological explanation of dopaminergic pathways or synaptic plasticity: Rejected because no allowed evidence IDs contain neuroscience primary literature; generating such a hypothesis would violate the prohibition on unsupported factual claims.",
+              "Unified clinical definition synthesis: Rejected because the provided evidence covers disparate domains (auctions, gaming, video) without a bridging medical text, making any unified definition speculative and ungrounded in the allowed source set."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study proposes a cross-domain validation framework to test if computational parameters from short-video (EV-Q099-f2c4c61b7491ac6dbbe03e74) and gambling/auction (EV-Q099-7556a928fd6b02150f4e35de) models serve as valid behavioral proxies for clinical addiction mechanisms. The core technical challenge is mapping latent algorithmic variables (e.g., recommendation feedback loop strength, lucky-draw probability variance) to clinical constructs of 'reward deficit' and 'inhibition failure'. We will implement a hybrid agent-based model where 'virtual users' are governed by reinforcement learning policies calibrated against the engagement metrics described in the arXiv papers. These simulated trajectories will be compared against synthetic clinical benchmarks derived from standard nosological criteria (e.g., DSM-5 temporal patterns of relapse), as direct neural data is absent in the provided evidence. The hypothesis is falsified if the simulation fails to reproduce the 'compulsive seeking' temporal dynamics despite optimizing for the specified engagement metrics.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Computational Model Parameters Extraction",
+                  "description": "Extraction of key algorithmic parameters from EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw probabilities).",
+                  "evidence_ids": [
+                    "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                    "EV-Q099-7556a928fd6b02150f4e35de"
+                  ],
+                  "type": "model_specification"
+                },
+                {
+                  "name": "Clinical Behavioral Benchmarks (Synthetic)",
+                  "description": "Since no direct clinical dataset is provided in allowed evidence, we will construct a benchmark dataset based on the temporal definitions of 'relapse' and 'compulsive seeking' as described in standard clinical nosologies (referenced as knowledge gap). This serves as the ground truth for mechanism validation.",
+                  "evidence_ids": [],
+                  "type": "benchmark_synthetic",
+                  "note": "Derived from general clinical knowledge gaps identified in evidence_extraction; not directly from provided evidence IDs."
+                }
+              ],
+              "target": {
+                "name": "Simulation-to-Clinical Mapping Metrics",
+                "description": "Quantitative measures of similarity between simulated user engagement trajectories and clinical behavioral patterns.",
+                "type": "derived_metrics"
+              }
+            },
+            "methods": "1. Parameter Extraction: Parse EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de to identify control variables for 'engagement optimization' (e.g., reward frequency, variable ratio schedules). 2. Agent-Based Simulation: Develop a Qwen-powered simulation environment where agents maximize these extracted engagement metrics. 3. Trajectory Analysis: Record time-series data of agent actions (clicks, bets, watch time). 4. Pattern Matching: Use Dynamic Time Warping (DTW) and recurrence quantification analysis to compare simulated trajectories against the synthetic clinical benchmarks for 'relapse' cycles. 5. Correlation Analysis: Test if high-engagement parameter settings correlate with increased 'compulsive' markers in the simulation.",
+            "experiments": {
+              "baselines": [
+                "Random Walk Agent: Agents with no reward-sensitive policy, serving as a null model for engagement.",
+                "Standard RL Agent (PPO): A standard Proximal Policy Optimization agent trained only on immediate reward maximization without specific 'addiction-mimicking' architectural constraints from the arXiv papers."
+              ],
+              "metrics": [
+                "Temporal Similarity Score (DTW Distance): Measures how closely simulated relapse cycles match clinical benchmarks.",
+                "Engagement-Reward Decoupling Index: Quantifies if engagement persists even when simulated 'reward' (utility) decreases, mimicking compulsive behavior.",
+                "Parameter Sensitivity Elasticity: Measures how small changes in 'lucky-draw' or 'recommendation' parameters affect the persistence of behavior."
+              ],
+              "ablation": "Remove the 'variable ratio' reward schedule from the gambling model (EV-Q099-7556a928fd6b02150f4e35de) to test if fixed rewards fail to produce compulsive patterns. Remove the 'feedback loop' component from the short-video model (EV-Q099-f2c4c61b7491ac6dbbe03e74) to test its necessity for sustained engagement.",
+              "validation_protocol": "Cross-validation across different initial agent states. Statistical significance testing (p < 0.05) using permutation tests to ensure observed similarities are not due to chance. Validation against the 'knowledge gap' definition of clinical relapse dynamics."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code for parameter extraction from arXiv PDFs (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) is version-controlled.",
+              "Simulation environment seeds are fixed for deterministic reproducibility.",
+              "Synthetic clinical benchmark generation logic is documented and open-source.",
+              "All metrics (DTW, Elasticity) are implemented using standard libraries (e.g., scipy, numpy)."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "compute_resources": "Estimated 48 hours on 8x NVIDIA A100 GPUs for large-scale agent simulations.",
+              "data_availability": "Source parameters from arXiv papers are publicly accessible; clinical benchmarks are synthetic and generated via script.",
+              "limitations": "Lack of direct neural data means validation is purely behavioral/phenomenological. The 'clinical benchmark' is a theoretical construct based on general medical knowledge, not a specific dataset from the provided evidence IDs."
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The proposed experiment relies on a 'Synthetic Clinical Benchmark' derived from general knowledge (DSM-5) rather than data traceable to allowed EvidenceCards. This violates the strict evidence grounding requirement; validating a model against external knowledge not present in the input evidence set renders the verification loop ungrounded within this system's constraints.",
+              "The hypothesis asserts that engagement metrics serve as 'valid behavioral proxies' for neurobiological deficits. However, no provided EvidenceCard establishes this mapping. The cited papers (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) discuss computational mechanisms but do not validate them against clinical or neurobiological ground truth. Treating this proxy validity as a premise rather than an unverified assumption is a critical factual overreach.",
+              "While the Results field correctly states 'pending', the experimental design is fundamentally unfalsifiable within the current evidence scope because the 'ground truth' for relapse dynamics is missing from the allowed sources. You cannot verify if a simulation matches clinical reality using only CS papers that do not contain clinical data."
+            ],
+            "critical_issues": [
+              "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+              "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+              "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms."
+            ],
+            "required_revisions": [
+              "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+              "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+              "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+              "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.3,
+            "falsifiability_score": 0.4,
+            "reproducibility_score": 0.8,
+            "reference_reliability_score": 0.9
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:c471deb8c9b6",
+              "category": "critical_issue",
+              "description": "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:a3040c9d8351",
+              "category": "critical_issue",
+              "description": "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:6ef8a049a9be",
+              "category": "critical_issue",
+              "description": "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:9a7d6285cf29",
+              "category": "required_revision",
+              "description": "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:9baf188b323f",
+              "category": "required_revision",
+              "description": "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:b4cc5318e97b",
+              "category": "required_revision",
+              "description": "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:58c4a6b8092e",
+              "category": "required_revision",
+              "description": "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "165d537d1ea8e6644dc436dc5e3969c3619f3929f56205be501af3d08205ea27",
+            "experiment_designer": "4ee6e25c2ffc1d4eb1aa1915e78946927dc6008ba86e42ae52e6f4863d926fb6",
+            "scientific_reviewer": "ed710bd1392f5f83f04c679a76a0934090112a35acd5b61fe2dc515e9cceb307"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-090506-60910918",
+          "version_number": 2,
+          "version_id": "20260822-090506-60910918:v2",
+          "parent_version_id": "20260822-090506-60910918:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), as they optimize for engagement metrics that lack formal mapping to clinical harm or mortality drivers.",
+                "mechanism": "Evidence EV-Q099-2f1a6d91fbb53a21d1fbe2d6 establishes that addiction entails severe outcomes (>100k deaths/year, billions in costs). Evidence EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de provide computational mechanisms optimizing for participation/engagement. A critical Knowledge Gap exists: no allowed evidence links these computational engagement parameters to the clinical severity or mortality drivers cited in the burden literature. This hypothesis posits that the objective functions in current CS models are orthogonal to the variables driving the societal burden, rendering them descriptive of platform usage but not explanatory of the 'chronic, relapsing disorder' defined by harm.",
+                "falsifiable_prediction": "If a systematic parameter audit reveals that the engagement optimization variables in EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de explicitly incorporate constraints or cost functions corresponding to the healthcare/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then the structural insufficiency hypothesis is false.",
+                "required_observations": [
+                  "Formal extraction of objective functions and state variables from EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de.",
+                  "Semantic mapping analysis comparing extracted computational variables against the specific harm/cost descriptors in EV-Q099-2f1a6d91fbb53a21d1fbe2d6.",
+                  "Verification of whether any cited references within the computational papers bridge the gap to clinical severity metrics."
+                ],
+                "risk_of_being_wrong": "Moderate risk; the computational papers might implicitly model severity through proxy variables (e.g., 'retention under negative feedback') that align with burden drivers, even if not explicitly labeled as 'mortality' or 'healthcare cost'.",
+                "supporting_evidence_ids": [
+                  "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                  "EV-Q099-7556a928fd6b02150f4e35de",
+                  "EV-Q099-2f1a6d91fbb53a21d1fbe2d6"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.95,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "Computational models of short-video and auction addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit convergent structural properties in reward scheduling that distinguish them from standard engagement optimization, representing a distinct 'computational phenotype' of addiction within the CS literature independent of neurobiological validation.",
+                "mechanism": "While neurobiological validation is absent (Knowledge Gap), the CS literature itself may define addiction operationally. If EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de share specific algorithmic motifs (e.g., variable-ratio reinforcement, feedback loop latency) that differ from generic recommendation systems (referenced in EV-Q099-094f5c0c88dcd7c61f92708f), this suggests an internal theoretical consistency in how CS conceptualizes 'addiction' as a computational process. This hypothesis tests the internal validity of the CS construct rather than its external clinical validity.",
+                "falsifiable_prediction": "If the algorithmic parameters for 'addiction' in EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de are statistically indistinguishable from standard engagement metrics in general user behavior models (EV-Q099-094f5c0c88dcd7c61f92708f), then there is no distinct 'computational addiction phenotype' in the provided literature.",
+                "required_observations": [
+                  "Comparative code/model specification analysis between the 'addiction' focused papers and general behavior papers.",
+                  "Quantification of specific reward schedule parameters (e.g., probability distributions, decay rates) across the three evidence sources.",
+                  "Clustering analysis to determine if 'addiction' models form a distinct group based on architectural features."
+                ],
+                "risk_of_being_wrong": "High risk; the papers may use identical underlying RL architectures with only superficial labeling differences, meaning 'addiction' in CS is merely a semantic tag rather than a structural distinction.",
+                "supporting_evidence_ids": [
+                  "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                  "EV-Q099-7556a928fd6b02150f4e35de",
+                  "EV-Q099-094f5c0c88dcd7c61f92708f"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.81
+              },
+              {
+                "hypothesis": "The definition of addiction in the provided computational literature is exclusively operationalized via participation maximization, creating a fundamental epistemic mismatch with the 'harm-based' definition implied by societal burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6).",
+                "mechanism": "This hypothesis reframes the question 'how does it work' to 'how is it modeled vs. how is it burdened'. It posits that the mechanism of action in CS papers (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) is strictly positive-reinforcement driven (participation/lucky-draw), whereas the burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) implies a negative-outcome driven mechanism (death/cost). The 'working' of addiction in CS is thus hypothesized to be the inverse of its 'working' in public health contexts.",
+                "falsifiable_prediction": "If the computational models explicitly include negative utility terms, safety constraints, or harm-minimization objectives alongside participation metrics, then the exclusive operationalization hypothesis is false.",
+                "required_observations": [
+                  "Text mining and mathematical formulation extraction from EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de to identify all objective function components.",
+                  "Categorization of identified components as 'participation-promoting' vs. 'harm-mitigating'.",
+                  "Cross-reference with burden drivers in EV-Q099-2f1a6d91fbb53a21d1fbe2d6 to check for alignment."
+                ],
+                "risk_of_being_wrong": "Low risk; it is highly probable that CS papers focus on engagement, but there is a non-zero chance that ethical AI or safe RL frameworks have been integrated into these specific preprints.",
+                "supporting_evidence_ids": [
+                  "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                  "EV-Q099-7556a928fd6b02150f4e35de",
+                  "EV-Q099-2f1a6d91fbb53a21d1fbe2d6"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.95,
+                "evidence_support_score": 0.85,
+                "overall_score": 0.8
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 is selected because it directly addresses the reviewer's critical feedback regarding the lack of grounded validation. By reframing the study as a test of 'structural sufficiency' relative to the *provided* burden evidence (rather than external clinical benchmarks), it transforms the unresolvable 'neurobiological gap' into a verifiable 'model-to-burden alignment gap'. It uses only allowed evidence IDs, avoids synthetic data, and produces a definitive falsifiable prediction based on parameter auditing. This satisfies the requirement to ground the verification loop strictly within the system's evidence constraints while acknowledging the limitations of the CS literature.",
+            "rejected_directions": [
+              "Neurobiological mechanism validation: Rejected because no allowed evidence contains neural data; attempting to validate against biological reality remains ungrounded.",
+              "Synthetic clinical benchmark generation: Rejected per reviewer feedback as circular and outside the allowed evidence scope.",
+              "Unified definition synthesis: Rejected because the evidence set is too fragmented (auctions vs. mortality) to support a unified theory without external bridging sources."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study conducts a structural gap analysis to test the hypothesis that current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6). The methodology involves: 1) Formal extraction of objective functions, state variables, and optimization targets from the computational models in EV-Q099-f2c4c61b7491ac6dbbe03e74 (short-video feedback loops) and EV-Q099-7556a928fd6b02150f4e35de (lucky-draw/auction mechanisms). 2) Semantic mapping of these computational variables against the specific harm/cost descriptors (e.g., healthcare spending, mortality drivers) identified in EV-Q099-2f1a6d91fbb53a21d1fbe2d6. 3) Verification of whether any cited references within the computational papers bridge the gap to clinical severity metrics. The core technical challenge is defining a 'structural alignment metric' that quantifies the presence or absence of harm-mitigation constraints or severity-correlated variables in the engagement-optimization algorithms. This approach avoids ungrounded neurobiological claims and synthetic clinical benchmarks, focusing strictly on the internal consistency and external validity of the provided evidence set.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Computational Model Specifications",
+                  "description": "Extraction of algorithmic parameters, objective functions, and reward structures from EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de.",
+                  "evidence_ids": [
+                    "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+                    "EV-Q099-7556a928fd6b02150f4e35de"
+                  ],
+                  "type": "model_specification"
+                },
+                {
+                  "name": "Societal Burden Descriptors",
+                  "description": "Extraction of specific harm indicators (mortality, healthcare costs) and their drivers as described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6.",
+                  "evidence_ids": [
+                    "EV-Q099-2f1a6d91fbb53a21d1fbe2d6"
+                  ],
+                  "type": "textual_evidence"
+                }
+              ],
+              "target": {
+                "name": "Structural Alignment Matrix",
+                "description": "A binary or weighted matrix indicating whether each computational variable in the source models has a corresponding counterpart in the societal burden descriptors.",
+                "type": "derived_analysis"
+              }
+            },
+            "methods": "1. Text Mining & Parameter Extraction: Use NLP techniques to identify mathematical formulations and key variables (e.g., 'participation rate', 'lucky-draw probability', 'retention time') in EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de. 2. Semantic Ontology Mapping: Create a controlled vocabulary of 'harm drivers' from EV-Q099-2f1a6d91fbb53a21d1fbe2d6 (e.g., 'mortality', 'healthcare cost', 'relapse severity'). 3. Gap Analysis: Systematically check if any extracted computational variable explicitly optimizes for, constrains, or correlates with the harm drivers. 4. Citation Network Analysis: Verify if the computational papers cite clinical literature that establishes this link, thereby testing if the gap is acknowledged but deferred, or entirely absent.",
+            "experiments": {
+              "baselines": [
+                "Null Model: Assumes no alignment between computational variables and harm drivers (expected outcome if hypothesis is true).",
+                "General Engagement Model: A baseline representation of standard recommendation systems (referenced in EV-Q099-094f5c0c88dcd7c61f92708f if applicable, or generic RL) to contrast with 'addiction-specific' claims."
+              ],
+              "metrics": [
+                "Variable-Harm Coverage Score: Percentage of harm drivers from EV-Q099-2f1a6d91fbb53a21d1fbe2d6 that have a direct mapping in the computational models' objective functions.",
+                "Explicit Constraint Count: Number of explicit safety/harm-minimization terms found in the mathematical formulations of EV-Q099-f2c4c61b7491ac6dbbe03e74 and EV-Q099-7556a928fd6b02150f4e35de.",
+                "Citation Bridge Index: Binary indicator of whether the computational papers cite sources that link their specific engagement metrics to clinical severity outcomes."
+              ],
+              "ablation": "Remove the 'addiction' labeling from the computational models and treat them as standard optimization problems to see if the structural properties change; if not, it suggests the 'addiction' label is semantic rather than mechanistic.",
+              "validation_protocol": "Peer review of the semantic mapping ontology to ensure no forced correlations. Cross-checking extracted equations against the original PDFs for accuracy. Sensitivity analysis on the definition of 'harm driver' to ensure robustness of the gap finding."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Extraction scripts for mathematical formulations from arXiv PDFs are version-controlled.",
+              "Semantic ontology for harm drivers is documented and open for review.",
+              "Mapping logic between computational variables and harm descriptors is explicitly defined and deterministic.",
+              "Citation network analysis uses standard bibliometric tools."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "compute_resources": "Minimal CPU resources required for text mining and semantic analysis.",
+              "data_availability": "All source data is contained within the provided EvidenceCards (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de, EV-Q099-2f1a6d91fbb53a21d1fbe2d6).",
+              "limitations": "This study identifies structural gaps in the literature but does not provide neurobiological validation. The absence of alignment in the models does not prove they are incorrect, only that they do not currently account for the severity dimension described in the burden evidence."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis successfully reframes the investigation as a structural gap analysis between computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) and societal burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), eliminating all ungrounded neurobiological claims.",
+              "The 'Synthetic Clinical Benchmarks' dataset has been correctly removed and replaced with a 'Structural Alignment Matrix' derived strictly from allowed evidence IDs, resolving the critical issue of non-evidence-based ground truth.",
+              "The falsifiable prediction is now logically sound within the system constraints: it tests for the presence/absence of specific semantic mappings between model parameters and burden descriptors, making it verifiable without external clinical data.",
+              "The Results field correctly remains 'pending', and the experimental design includes appropriate baselines (Null Model, General Engagement Model) and metrics (Variable-Harm Coverage Score) that directly operationalize the revised hypothesis."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:c471deb8c9b6",
+              "category": "critical_issue",
+              "description": "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:a3040c9d8351",
+              "category": "critical_issue",
+              "description": "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:6ef8a049a9be",
+              "category": "critical_issue",
+              "description": "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:9a7d6285cf29",
+              "category": "required_revision",
+              "description": "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:4609b1c899f1a957; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:9baf188b323f",
+              "category": "required_revision",
+              "description": "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:d805b310ac854a02; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:b4cc5318e97b",
+              "category": "required_revision",
+              "description": "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:b4027707883188c6; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:58c4a6b8092e",
+              "category": "required_revision",
+              "description": "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "c0ac42e8879b131a0b70b29f3a7b592954b79081bec114e161c9dbd191debf49",
+            "experiment_designer": "f66d212b1134803cfa9b14508097a589b28e19577cba1a975d9a35d6fe837069",
+            "scientific_reviewer": "c581827f477cbcad8e243ed39e7adfd4fadd64a44add7e3dfa2279140ceed677"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-090506-60910918:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-090506-60910918:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-090506-60910918:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-090506-60910918:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:c471deb8c9b6",
+          "category": "critical_issue",
+          "description": "Use of non-evidence-based ground truth: The 'Clinical Behavioral Benchmarks (Synthetic)' dataset is explicitly noted as 'not directly from provided evidence IDs'. All validation targets must be traceable to allowed evidence or explicitly framed as knowledge gaps to be filled by external retrieval, not assumed known.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:a3040c9d8351",
+          "category": "critical_issue",
+          "description": "Ungrounded construct validity: The link between 'engagement metrics' and 'neurobiological reward deficits' is asserted without supporting evidence_id. The available evidence supports the existence of computational models and societal costs separately, but not their mechanistic equivalence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:6ef8a049a9be",
+          "category": "critical_issue",
+          "description": "Circular validation risk: Comparing a simulation based on CS papers to a synthetic benchmark based on general medical knowledge tests the researcher's ability to encode DSM-5 criteria, not whether the CS papers actually capture addiction mechanisms.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:9a7d6285cf29",
+          "category": "required_revision",
+          "description": "Reframe the hypothesis to test whether computational models (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit structural properties consistent with theoretical descriptions of addiction *within the CS literature itself*, rather than claiming they simulate neurobiological deficits.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:4609b1c899f1a957; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:9baf188b323f",
+          "category": "required_revision",
+          "description": "Remove 'Synthetic Clinical Benchmarks' from the dataset list. Replace with a comparative analysis strictly between the provided computational models and the societal burden context (EV-Q099-2f1a6d91fbb53a21d1fbe2d6) to identify specific discrepancies/gaps, OR explicitly define the study as a 'Gap Analysis' where the lack of matching clinical data is the primary finding.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:d805b310ac854a02; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b4cc5318e97b",
+          "category": "required_revision",
+          "description": "Revise the falsifiable prediction to rely solely on variables present in the EvidenceCards. For example: 'If the engagement optimization parameters in EV-Q099-f2c4c61b7491ac6dbbe03e74 do not structurally align with the cost/mortality drivers described in EV-Q099-2f1a6d91fbb53a21d1fbe2d6, then current CS models fail to account for the severity dimension of addiction.'",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:b4027707883188c6; evidence=EV-Q099-2f1a6d91fbb53a21d1fbe2d6,EV-Q099-7556a928fd6b02150f4e35de,EV-Q099-f2c4c61b7491ac6dbbe03e74; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:58c4a6b8092e",
+          "category": "required_revision",
+          "description": "Explicitly list the absence of neurobiological validation data in the EvidenceCards as a primary Knowledge Gap in the hypothesis mechanism section, rather than treating it as a solvable engineering problem via synthetic data generation.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "checkpoint_hash": "fffb6bb8decf9aa495e671b7e84568f43447bb985278642affa213dd3c46035e"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-090506-60910918:wave-b-two-round",
+      "run_id": "20260822-090506-60910918",
+      "v1_version_id": "20260822-090506-60910918:v1",
+      "v2_version_id": "20260822-090506-60910918:v2",
+      "input_fingerprints": {
+        "v1": "4ee6e25c2ffc1d4eb1aa1915e78946927dc6008ba86e42ae52e6f4863d926fb6",
+        "v2": "f66d212b1134803cfa9b14508097a589b28e19577cba1a975d9a35d6fe837069"
+      },
+      "responded_issue_count": 3,
+      "issue_ids": [
+        "required_revision:9a7d6285cf29",
+        "required_revision:9baf188b323f",
+        "required_revision:b4cc5318e97b"
+      ],
+      "change_ids": [
+        "change:4609b1c899f1a957",
+        "change:d805b310ac854a02",
+        "change:b4027707883188c6"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.3,
+          "after": 0.95,
+          "delta": 0.6499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.8,
+          "after": 0.9,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 0.9,
+          "after": 1.0,
+          "delta": 0.09999999999999998
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Current computational models of digital addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) are structurally insufficient to account for the severity dimension of addiction implied by societal burden data (EV-Q099-2f1a6d91fbb53a21d1fbe2d6), as they optimize for engagement metrics that lack formal mapping to clinical harm or mortality drivers.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Computational models of short-video and auction addiction (EV-Q099-f2c4c61b7491ac6dbbe03e74, EV-Q099-7556a928fd6b02150f4e35de) exhibit convergent structural properties in reward scheduling that distinguish them from standard engagement optimization, representing a distinct 'computational phenotype' of addiction within the CS literature independent of neurobiological validation.",
+          "overall_score": 0.81,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "The definition of addiction in the provided computational literature is exclusively operationalized via participation maximization, creating a fundamental epistemic mismatch with the 'harm-based' definition implied by societal burden evidence (EV-Q099-2f1a6d91fbb53a21d1fbe2d6).",
+          "overall_score": 0.8,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "61da32e7cc9a",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:06.991619+00:00",
+    "ended_at": "2026-08-22T09:08:56.254904+00:00",
+    "duration_ms": 49263,
+    "input_summary": "{\"question_item\": {\"id\": \"Q099\", \"domain\": \"Neuroscience\", \"question\": \"What is addiction and how does it work?\", \"source_page\": 34, \"booklet_excerpt\": \"The U.S. National Institute on Drug Abuse, National Institutes of Health (NIH), defines addiction as “a chronic, relapsing disorder characterized by compulsive drug [or other substance] seeking, continued use despite harmful consequences, and long-lasting changes in the brain. It is considered both a complex brain disorder and a mental illness.” The repeated use of a substance or activity has dynamic consequences for our brain’s ability to pro",
+    "output_summary": "{\"input_question\": \"What is addiction and how does it work?\", \"domain\": \"Neuroscience\", \"problem_statement\": \"The U.S. National Institute on Drug Abuse (NIH) defines addiction as a chronic, relapsing disorder characterized by compulsive drug seeking and long-lasting brain changes affecting inhibition, reward, and decision-making. However, the provided evidence base consists primarily of computational models of digital addiction (e.g., auctions, short-videos) and societal burden statistics, lacking direct neurobiological mechanistic data. The core problem is to determine how current computation",
+    "evidence_ids": [
+      "EV-Q099-f2c4c61b7491ac6dbbe03e74",
+      "EV-Q099-7556a928fd6b02150f4e35de",
+      "EV-Q099-2f1a6d91fbb53a21d1fbe2d6",
+      "EV-Q099-094f5c0c88dcd7c61f92708f"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e2ddcdf5ba0c",
+    "mock": false
+  },
+  {
+    "event_id": "9c9b8bd7fcde",
+    "run_id": "20260822-090506-60910918",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:56.255977+00:00",
+    "ended_at": "2026-08-22T09:08:58.472720+00:00",
+    "duration_ms": 2216,
+    "input_summary": "{\"question_item\": {\"id\": \"Q099\", \"domain\": \"Neuroscience\", \"question\": \"What is addiction and how does it work?\", \"source_page\": 34, \"booklet_excerpt\": \"The U.S. National Institute on Drug Abuse, National Institutes of Health (NIH), defines addiction as “a chronic, relapsing disorder characterized by compulsive drug [or other substance] seeking, continued use despite harmful consequences, and long-lasting changes in the brain. It is considered both a complex brain disorder and a mental illness.” The repeated use of a substance or activity has dynamic consequences for our brain’s ability to pro",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required field: ResearchPlan. SchemaValidator requires a 'ResearchPlan' object to validate against EvidenceCards and AgentTrace.\", \"Missing required field: EvidenceCards. Cannot verify factual claims or evidence_ids without input data.\", \"Missing required field: AgentTrace. Cannot trace reasoning steps without input data.\", \"Missing required field: execution_metadata. Cannot determine validation_status (e.g., validated vs draft) without execution status.\"], \"warnings\": [\"Input provided is only the question item (Q099). Validation cannot proceed without the ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7fc713f31c5e",
+    "mock": false
+  }
+]

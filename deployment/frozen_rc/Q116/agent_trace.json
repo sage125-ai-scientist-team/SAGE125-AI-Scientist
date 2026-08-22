@@ -1,0 +1,1541 @@
+[
+  {
+    "event_id": "e280b179d2c5",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:13:58.026585+00:00",
+    "ended_at": "2026-08-22T09:13:58.026585+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "d74f4bbeafa7",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:13:58.026585+00:00",
+    "ended_at": "2026-08-22T09:14:01.983830+00:00",
+    "duration_ms": 3957,
+    "input_summary": "{\"question_item\": {\"id\": \"Q116\", \"domain\": \"Energy Science\", \"question\": \"What is the future of hydrogen energy?\", \"source_page\": 40, \"booklet_excerpt\": \"\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Energy Science\", \"core_question\": \"What are the projected trajectories, technological bottlenecks, and economic viability of hydrogen energy systems in future energy landscapes?\", \"keywords\": [\"hydrogen energy\", \"future trends\", \"energy transition\", \"green hydrogen\", \"infrastructure\"], \"entities\": [\"Hydrogen\", \"Energy Systems\", \"Renewable Energy Integration\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"The question addresses long-term projections and systemic analysis rather than a specific mechanistic discovery or immediate experimental result. It requi",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c2c4a41e148d",
+    "mock": false
+  },
+  {
+    "event_id": "96aab64df941",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:14:01.983830+00:00",
+    "ended_at": "2026-08-22T09:14:24.332215+00:00",
+    "duration_ms": 22348,
+    "input_summary": "{\"question_item\": {\"id\": \"Q116\", \"domain\": \"Energy Science\", \"question\": \"What is the future of hydrogen energy?\", \"source_page\": 40, \"booklet_excerpt\": \"\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Energy Science\", \"core_question\": \"What are the projected trajectories, technological bottlenecks, and economic viability of hydrogen energy systems in future energy landscapes?\", \"keywords\": [\"hydrogen energy\", \"future trends\", \"energy transition\", \"green hydrogen\", \"infrastructure\"], \"entities\": [\"H",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify current technological bottlenecks in green hydrogen production, specifically focusing on electrolyzer efficiency and durability metrics.\", \"query\": \"green hydrogen electrolysis efficiency durability bottlenecks PEM alkaline\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Technical performance data and identified limitations of current electrolysis technologies from internal reports or textbooks.\", \"priority\": \"high\"}, {\"purpose\": \"Retrieve data on hydrogen storage challenges, including volumetric energy density and material compatibility issues for ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a2a88fdad1cf",
+    "mock": false
+  },
+  {
+    "event_id": "f313e9cc7832",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:14:24.616014+00:00",
+    "ended_at": "2026-08-22T09:14:32.728720+00:00",
+    "duration_ms": 8112,
+    "input_summary": "{\"question_item\": {\"id\": \"Q116\", \"domain\": \"Energy Science\", \"question\": \"What is the future of hydrogen energy?\", \"source_page\": 40, \"booklet_excerpt\": \"\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q116-df35f895433236f4ceb28c22\", \"title\": \"arXiv:2511.20417\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pdf/2511.20417.pdf\", \"year\": null, \"relevance_score\": 0.8, \"locator\": \"eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:7|section:",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"Lack of evidence regarding the future trajectory, technological challenges, or economic viability of hydrogen energy.\", \"why_it_matters\": \"The provided evidence cards discuss high-energy physics (colliders, Standard Model tests) and Earth system detectability, which are unrelated to hydrogen energy infrastructure, production, or consumption. Without relevant evidence, no factual claims about hydrogen energy can be established.\", \"evidence_ids\": [], \"validation_need\": \"Requires retrieval of literature specifically addr",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e645c5a1ad60",
+    "mock": false
+  },
+  {
+    "event_id": "cff392f36fdb",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:14:32.730205+00:00",
+    "ended_at": "2026-08-22T09:14:52.817890+00:00",
+    "duration_ms": 20087,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q116\", \"domain\": \"Energy Science\", \"question\": \"What is the future of hydrogen energy?\", \"source_page\": 40, \"booklet_excerpt\": \"\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q116-df35f895433236f4ceb28c22\", \"title\": \"arXiv:2511.20417\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pdf/2511.20417.pdf\", \"year\": null, \"relevance_score\": 0.8, \"locator\": \"eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Insufficient Evidence Hypothesis: Current provided evidence base contains no verifiable data regarding hydrogen energy systems, rendering any specific prediction about its future trajectory currently untestable within this context.\", \"mechanism\": \"The semantic distance between the query domain (Hydrogen Energy) and the retrieved evidence domains (High Energy Physics/Colliders, Earth System Detectability) exceeds the threshold for valid inference. No causal or correlational links exist in the provided cards to bridge particle accelerator feasibility or exoplanet ",
+    "evidence_ids": [
+      "EV-Q116-df35f895433236f4ceb28c22"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "81aa743d9171",
+    "mock": false
+  },
+  {
+    "event_id": "764fd2446471",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:14:52.817890+00:00",
+    "ended_at": "2026-08-22T09:15:10.557030+00:00",
+    "duration_ms": 17739,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q116\", \"domain\": \"Energy Science\", \"question\": \"What is the future of hydrogen energy?\", \"source_page\": 40, \"booklet_excerpt\": \"\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"general_scientific_unknown\", \"recommended_hypothesis\": {\"hypothesis\": \"Insufficient Evidence Hypothesis: Current provided evidence base contains no verifiable data regarding hydrogen energy systems, rendering any specific prediction about its future trajectory currently untestable within t",
+    "output_summary": "{\"technical_details\": \"This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by systematically testing the retrieval system's ability to locate relevant hydrogen energy literature. The core technical challenge is distinguishing between a true absence of evidence in the index and a retrieval failure due to semantic mismatch. The protocol involves executing a targeted re-retrieval campaign using domain-specific keywords ('hydrogen economy', 'PEM electrolysis', 'H2 storage') and evaluating the relevance scores of newly retrieved documents against a threshold of 0.8. Simul",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e21f41cd7397",
+    "mock": false
+  },
+  {
+    "event_id": "3df647727e9a",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:15:10.557030+00:00",
+    "ended_at": "2026-08-22T09:15:16.984394+00:00",
+    "duration_ms": 6427,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q116\", \"domain\": \"Energy Science\", \"question\": \"What is the future of hydrogen energy?\", \"source_page\": 40, \"booklet_excerpt\": \"\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Insufficient Evidence Hypothesis: Current provided evidence base contains no verifiable data regarding hydrogen energy systems, rendering any specific prediction about its future trajectory currently untestable within this context.\", \"mechanism\": \"The semantic dista",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The system correctly identified that the provided evidence cards (High Energy Physics/Earth Detectability) are topically irrelevant to the user's query regarding Hydrogen Energy.\", \"The 'Insufficient Evidence Hypothesis' is scientifically valid and adheres strictly to the constraint against fabricating connections between unrelated domains.\", \"Experiment design appropriately targets the retrieval system's failure mode rather than attempting to answer the scientific question with bad data.\", \"Results field correctly states 'pending' and does not hallucina",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "23c8b18276ba",
+    "mock": false
+  },
+  {
+    "event_id": "77d2c6641dcc",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:15:16.984394+00:00",
+    "ended_at": "2026-08-22T09:15:48.518616+00:00",
+    "duration_ms": 31534,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The system correctly identified that the provided evidence cards (High Energy Physics/Earth Detectability) are topically irrelevant to the user's query regarding Hydrogen Energy.\", \"The 'Insufficient Evidence Hypothesis' is scientifically valid and adheres strictly to the constraint against fabricating connections between unrelated domains.\", \"Experiment design appropriately targets the retrieval system's failure mode rather than attempting to answer the scientific question with bad data.\", \"Results field correc",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Semantic Retrieval Failure Hypothesis: The current evidence base lacks hydrogen energy content due to a systematic retrieval failure (semantic mismatch) rather than true absence of literature, verifiable via targeted re-retrieval with domain-specific expansion terms.\", \"mechanism\": \"The vector space distance between the query 'future of hydrogen energy' and the retrieved high-energy physics/earth science documents exceeds the relevance threshold. This gap is hypothesized to be an artifact of indexing or embedding limitations, not a reflection of the scientific c",
+    "evidence_ids": [
+      "EV-Q116-df35f895433236f4ceb28c22",
+      "EV-Q116-31ebaf07631cc6937983e244",
+      "EV-Q116-1aa0198c2026b4b3143f4f51",
+      "EV-Q116-2a7742bf1b9ed7bfd3373248"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "783fef79ecfe",
+    "mock": false
+  },
+  {
+    "event_id": "7dad472d74cd",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:15:48.519732+00:00",
+    "ended_at": "2026-08-22T09:16:08.668033+00:00",
+    "duration_ms": 20148,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The system correctly identified that the provided evidence cards (High Energy Physics/Earth Detectability) are topically irrelevant to the user's query regarding Hydrogen Energy.\", \"The 'Insufficient Evidence Hypothesis' is scientifically valid and adheres strictly to the constraint against fabricating connections between unrelated domains.\", \"Experiment design appropriately targets the retrieval system's failure mode rather than attempting to answer the scientific question with bad data.\", \"Results field correc",
+    "output_summary": "{\"technical_details\": \"This experiment validates the 'Semantic Retrieval Failure Hypothesis' by quantifying the topical irrelevance of currently allowed evidence IDs (EV-Q116-*) and testing if targeted query expansion retrieves relevant hydrogen energy literature. The technical core involves two parallel tracks: (1) Negative Control Verification, which computes cosine similarity between embeddings of the allowed EV-Q116-* documents and a standard 'future of hydrogen energy' query vector to establish a baseline for exclusion; and (2) Active Retrieval Campaign, which executes three iterations of",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "012c833b814b",
+    "mock": false
+  },
+  {
+    "event_id": "66498e9d3014",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:08.668033+00:00",
+    "ended_at": "2026-08-22T09:16:15.932902+00:00",
+    "duration_ms": 7264,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The system correctly identified that the provided evidence cards (High Energy Physics/Earth Detectability) are topically irrelevant to the user's query regarding Hydrogen Energy.\", \"The 'Insufficient Evidence Hypothesis' is scientifically valid and adheres strictly to the constraint against fabricating connections between unrelated domains.\", \"Experiment design appropriately targets the retrieval system's failure mode rather than attempting to answer the scientific question with bad data.\", \"Results field correc",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revision successfully addresses previous required revisions by explicitly incorporating semantic distance metrics into the Negative Control Verification method and mandating immutable logging of query expansion terms.\", \"The 'Semantic Retrieval Failure Hypothesis' is correctly framed as a testable system-level hypothesis rather than an attempt to answer the hydrogen energy question with irrelevant physics data.\", \"Evidence grounding is strictly maintained; supporting_evidence_ids are used only to define the negative control set (irrelevant documents)",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "44e02687e0ca",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:ee5a99ff99ccce77",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: Current provided evidence base contains no verifiable data regarding hydrogen energy systems, rendering any specific prediction about its future trajectory currently untestable within this context.",
+              "mechanism": "The semantic distance between the query domain (Hydrogen Energy) and the retrieved evidence domains (High Energy Physics/Colliders, Earth System Detectability) exceeds the threshold for valid inference. No causal or correlational links exist in the provided cards to bridge particle accelerator feasibility or exoplanet detection metrics to hydrogen production/storage economics.",
+              "falsifiable_prediction": "A comprehensive re-retrieval campaign targeting 'hydrogen economy', 'PEM electrolysis', or 'H2 storage' will yield at least one EvidenceCard with relevance_score > 0.8 that directly addresses hydrogen energy futures. If such retrieval fails after 3 iterations with expanded query terms, the hypothesis that 'relevant literature is inaccessible or non-existent in current index' is strengthened.",
+              "required_observations": [
+                "Execution of new literature search with hydrogen-specific keywords",
+                "Verification of relevance scores for newly retrieved documents",
+                "Confirmation that existing EV-Q116-* IDs remain topically irrelevant upon manual review"
+              ],
+              "risk_of_being_wrong": "Moderate. Relevant hydrogen energy literature likely exists in broader databases but was not captured due to retrieval failure or indexing gaps. Assuming total absence based on current null result risks false negative.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "Cross-Domain Analogy Hypothesis (Null Test): Methodologies used to assess 'future circular collider' feasibility (EV-Q116-df35f895433236f4ceb28c22) cannot be validly transferred to predict hydrogen energy futures without explicit bridging evidence.",
+              "mechanism": "While both involve 'future' assessment, the physical constraints (quantum field theory vs. electrochemical thermodynamics), economic scales, and stakeholder ecosystems are disjoint. Any attempt to map collider feasibility study structures onto hydrogen roadmaps constitutes a category error absent mediating evidence.",
+              "falsifiable_prediction": "If a document is found that explicitly cites CERN FCC feasibility frameworks as applicable to national hydrogen strategy assessments, then cross-domain transferability is validated. Absence of such citation in next 50 retrieved documents supports the null hypothesis of non-transferability.",
+              "required_observations": [
+                "Citation network analysis linking EV-Q116-df35f895433236f4ceb28c22 to hydrogen policy documents",
+                "Semantic similarity scoring between collider feasibility sections and hydrogen roadmap sections",
+                "Expert validation of methodological compatibility"
+              ],
+              "risk_of_being_wrong": "High. Interdisciplinary methodology transfer does occur (e.g., systems engineering), and dismissing it entirely may miss valid analogical reasoning pathways. However, without direct evidence, asserting transferability is speculative.",
+              "supporting_evidence_ids": [
+                "EV-Q116-df35f895433236f4ceb28c22"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.1,
+              "overall_score": 0.4
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Given complete absence of topically relevant evidence (all allowed IDs pertain to particle physics or Earth detectability, not hydrogen energy), the only scientifically defensible position is to formally acknowledge insufficient evidence and define a falsifiable path to remedy it. Hypothesis 0 avoids fabrication, adheres strictly to evidence constraints, and provides actionable next steps (targeted retrieval) rather than speculative extrapolation from irrelevant domains. Hypothesis 1, while referencing an allowed ID, risks implying false relevance through analogy without supporting linkage evidence.",
+          "rejected_directions": [
+            "Speculating on green hydrogen cost curves using unrelated Earth system data (EV-Q116-2a7742bf1b9ed7bfd3373248)",
+            "Inferring hydrogen storage breakthroughs from particle detector technology (EV-Q116-31ebaf07631cc6937983e244)",
+            "Projecting hydrogen adoption timelines based on linear collider energy scaling (EV-Q116-1aa0198c2026b4b3143f4f51)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by systematically testing the retrieval system's ability to locate relevant hydrogen energy literature. The core technical challenge is distinguishing between a true absence of evidence in the index and a retrieval failure due to semantic mismatch. The protocol involves executing a targeted re-retrieval campaign using domain-specific keywords ('hydrogen economy', 'PEM electrolysis', 'H2 storage') and evaluating the relevance scores of newly retrieved documents against a threshold of 0.8. Simultaneously, it verifies the topical irrelevance of the currently allowed evidence IDs (EV-Q116-*) through manual or automated semantic classification. This approach ensures that any claim about hydrogen energy futures is grounded in verifiable data rather than extrapolation from unrelated fields like high-energy physics.",
+          "datasets": {
+            "source": [
+              "Internal Literature Index (Current)",
+              "Expanded Query Set: ['hydrogen economy', 'green hydrogen production', 'PEM electrolysis efficiency', 'H2 storage materials', 'hydrogen fuel cell durability']"
+            ],
+            "target": "Relevance-scored EvidenceCards for Hydrogen Energy Domain"
+          },
+          "methods": "1. **Query Expansion & Retrieval**: Execute three iterations of literature search using the expanded query set. \n2. **Relevance Scoring**: Apply the existing relevance scoring model to all newly retrieved documents. \n3. **Threshold Analysis**: Count the number of documents with relevance_score > 0.8. \n4. **Negative Control Verification**: Re-evaluate the existing allowed evidence IDs (EV-Q116-df35f895433236f4ceb28c22, EV-Q116-31ebaf07631cc6937983e244, EV-Q116-1aa0198c2026b4b3143f4f51, EV-Q116-2a7742bf1b9ed7bfd3373248) using a topic classifier trained on energy vs. particle physics/earth science labels to confirm their irrelevance to hydrogen energy.\n5. **Statistical Test**: If zero documents with relevance_score > 0.8 are found after 3 iterations, perform a binomial test to assess the probability of this outcome under the null hypothesis that relevant literature exists in the index but was missed by chance.",
+          "experiments": {
+            "baselines": [
+              "Baseline 1: Current Retrieval Result (Zero relevant hydrogen cards found).",
+              "Baseline 2: Random Keyword Search (Using generic terms like 'energy future' without hydrogen specificity)."
+            ],
+            "metrics": [
+              "Count of EvidenceCards with relevance_score > 0.8",
+              "Precision@10 for hydrogen-specific queries",
+              "Semantic Similarity Score (Cosine Similarity) between query embeddings and document embeddings"
+            ],
+            "ablation": "Remove 'PEM electrolysis' and 'H2 storage' from query terms to test if broader terms like 'hydrogen economy' alone are sufficient for retrieval.",
+            "validation_protocol": "Manual review of top 5 retrieved documents per iteration by a domain expert to confirm topical relevance. Cross-check with external databases (e.g., Web of Science, Scopus) to verify if the identified literature exists outside the current index."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact query strings for each of the 3 iterations.",
+            "Specify the relevance scoring algorithm version and parameters.",
+            "Document the manual review criteria for topical relevance.",
+            "Archive the list of all retrieved document IDs and their scores for each iteration.",
+            "Provide the code for the semantic similarity calculation."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "generated_by": "Qwen/ExperimentDesigner",
+            "timestamp": "2024-05-20T10:00:00Z",
+            "dependencies": [
+              "Access to Internal Literature Index API",
+              "Relevance Scoring Model v1.2",
+              "Topic Classification Model for Energy Domains"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-091358-4bb759b8",
+        "version_number": 1,
+        "version_id": "20260822-091358-4bb759b8:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: Current provided evidence base contains no verifiable data regarding hydrogen energy systems, rendering any specific prediction about its future trajectory currently untestable within this context.",
+              "mechanism": "The semantic distance between the query domain (Hydrogen Energy) and the retrieved evidence domains (High Energy Physics/Colliders, Earth System Detectability) exceeds the threshold for valid inference. No causal or correlational links exist in the provided cards to bridge particle accelerator feasibility or exoplanet detection metrics to hydrogen production/storage economics.",
+              "falsifiable_prediction": "A comprehensive re-retrieval campaign targeting 'hydrogen economy', 'PEM electrolysis', or 'H2 storage' will yield at least one EvidenceCard with relevance_score > 0.8 that directly addresses hydrogen energy futures. If such retrieval fails after 3 iterations with expanded query terms, the hypothesis that 'relevant literature is inaccessible or non-existent in current index' is strengthened.",
+              "required_observations": [
+                "Execution of new literature search with hydrogen-specific keywords",
+                "Verification of relevance scores for newly retrieved documents",
+                "Confirmation that existing EV-Q116-* IDs remain topically irrelevant upon manual review"
+              ],
+              "risk_of_being_wrong": "Moderate. Relevant hydrogen energy literature likely exists in broader databases but was not captured due to retrieval failure or indexing gaps. Assuming total absence based on current null result risks false negative.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "Cross-Domain Analogy Hypothesis (Null Test): Methodologies used to assess 'future circular collider' feasibility (EV-Q116-df35f895433236f4ceb28c22) cannot be validly transferred to predict hydrogen energy futures without explicit bridging evidence.",
+              "mechanism": "While both involve 'future' assessment, the physical constraints (quantum field theory vs. electrochemical thermodynamics), economic scales, and stakeholder ecosystems are disjoint. Any attempt to map collider feasibility study structures onto hydrogen roadmaps constitutes a category error absent mediating evidence.",
+              "falsifiable_prediction": "If a document is found that explicitly cites CERN FCC feasibility frameworks as applicable to national hydrogen strategy assessments, then cross-domain transferability is validated. Absence of such citation in next 50 retrieved documents supports the null hypothesis of non-transferability.",
+              "required_observations": [
+                "Citation network analysis linking EV-Q116-df35f895433236f4ceb28c22 to hydrogen policy documents",
+                "Semantic similarity scoring between collider feasibility sections and hydrogen roadmap sections",
+                "Expert validation of methodological compatibility"
+              ],
+              "risk_of_being_wrong": "High. Interdisciplinary methodology transfer does occur (e.g., systems engineering), and dismissing it entirely may miss valid analogical reasoning pathways. However, without direct evidence, asserting transferability is speculative.",
+              "supporting_evidence_ids": [
+                "EV-Q116-df35f895433236f4ceb28c22"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.1,
+              "overall_score": 0.4
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Given complete absence of topically relevant evidence (all allowed IDs pertain to particle physics or Earth detectability, not hydrogen energy), the only scientifically defensible position is to formally acknowledge insufficient evidence and define a falsifiable path to remedy it. Hypothesis 0 avoids fabrication, adheres strictly to evidence constraints, and provides actionable next steps (targeted retrieval) rather than speculative extrapolation from irrelevant domains. Hypothesis 1, while referencing an allowed ID, risks implying false relevance through analogy without supporting linkage evidence.",
+          "rejected_directions": [
+            "Speculating on green hydrogen cost curves using unrelated Earth system data (EV-Q116-2a7742bf1b9ed7bfd3373248)",
+            "Inferring hydrogen storage breakthroughs from particle detector technology (EV-Q116-31ebaf07631cc6937983e244)",
+            "Projecting hydrogen adoption timelines based on linear collider energy scaling (EV-Q116-1aa0198c2026b4b3143f4f51)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by systematically testing the retrieval system's ability to locate relevant hydrogen energy literature. The core technical challenge is distinguishing between a true absence of evidence in the index and a retrieval failure due to semantic mismatch. The protocol involves executing a targeted re-retrieval campaign using domain-specific keywords ('hydrogen economy', 'PEM electrolysis', 'H2 storage') and evaluating the relevance scores of newly retrieved documents against a threshold of 0.8. Simultaneously, it verifies the topical irrelevance of the currently allowed evidence IDs (EV-Q116-*) through manual or automated semantic classification. This approach ensures that any claim about hydrogen energy futures is grounded in verifiable data rather than extrapolation from unrelated fields like high-energy physics.",
+          "datasets": {
+            "source": [
+              "Internal Literature Index (Current)",
+              "Expanded Query Set: ['hydrogen economy', 'green hydrogen production', 'PEM electrolysis efficiency', 'H2 storage materials', 'hydrogen fuel cell durability']"
+            ],
+            "target": "Relevance-scored EvidenceCards for Hydrogen Energy Domain"
+          },
+          "methods": "1. **Query Expansion & Retrieval**: Execute three iterations of literature search using the expanded query set. \n2. **Relevance Scoring**: Apply the existing relevance scoring model to all newly retrieved documents. \n3. **Threshold Analysis**: Count the number of documents with relevance_score > 0.8. \n4. **Negative Control Verification**: Re-evaluate the existing allowed evidence IDs (EV-Q116-df35f895433236f4ceb28c22, EV-Q116-31ebaf07631cc6937983e244, EV-Q116-1aa0198c2026b4b3143f4f51, EV-Q116-2a7742bf1b9ed7bfd3373248) using a topic classifier trained on energy vs. particle physics/earth science labels to confirm their irrelevance to hydrogen energy.\n5. **Statistical Test**: If zero documents with relevance_score > 0.8 are found after 3 iterations, perform a binomial test to assess the probability of this outcome under the null hypothesis that relevant literature exists in the index but was missed by chance.",
+          "experiments": {
+            "baselines": [
+              "Baseline 1: Current Retrieval Result (Zero relevant hydrogen cards found).",
+              "Baseline 2: Random Keyword Search (Using generic terms like 'energy future' without hydrogen specificity)."
+            ],
+            "metrics": [
+              "Count of EvidenceCards with relevance_score > 0.8",
+              "Precision@10 for hydrogen-specific queries",
+              "Semantic Similarity Score (Cosine Similarity) between query embeddings and document embeddings"
+            ],
+            "ablation": "Remove 'PEM electrolysis' and 'H2 storage' from query terms to test if broader terms like 'hydrogen economy' alone are sufficient for retrieval.",
+            "validation_protocol": "Manual review of top 5 retrieved documents per iteration by a domain expert to confirm topical relevance. Cross-check with external databases (e.g., Web of Science, Scopus) to verify if the identified literature exists outside the current index."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact query strings for each of the 3 iterations.",
+            "Specify the relevance scoring algorithm version and parameters.",
+            "Document the manual review criteria for topical relevance.",
+            "Archive the list of all retrieved document IDs and their scores for each iteration.",
+            "Provide the code for the semantic similarity calculation."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "generated_by": "Qwen/ExperimentDesigner",
+            "timestamp": "2024-05-20T10:00:00Z",
+            "dependencies": [
+              "Access to Internal Literature Index API",
+              "Relevance Scoring Model v1.2",
+              "Topic Classification Model for Energy Domains"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The system correctly identified that the provided evidence cards (High Energy Physics/Earth Detectability) are topically irrelevant to the user's query regarding Hydrogen Energy.",
+            "The 'Insufficient Evidence Hypothesis' is scientifically valid and adheres strictly to the constraint against fabricating connections between unrelated domains.",
+            "Experiment design appropriately targets the retrieval system's failure mode rather than attempting to answer the scientific question with bad data.",
+            "Results field correctly states 'pending' and does not hallucinate experimental outcomes.",
+            "No forbidden references or fabricated DOIs were detected."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+            "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:b1bed5bd861b",
+            "category": "required_revision",
+            "description": "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f3e4ff617ae6",
+            "category": "required_revision",
+            "description": "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "2be8d0cf9c2eacd73ed722ef495e7c2849e3d2cd5a4b3bac23df46c3705394b3",
+          "experiment_designer": "5a0d6e683f4b34c02873b59337367847d14b8d35d49e7f59363c7a9d4b5f4eb6",
+          "scientific_reviewer": "6558b1b4bda400aa4a2483d1494140e6fb517bf2eaecaa8b28d5454536d92ea3"
+        }
+      },
+      "parent_version_id": "20260822-091358-4bb759b8:v1",
+      "lineage": [
+        "20260822-091358-4bb759b8:v1",
+        "20260822-091358-4bb759b8:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The system correctly identified that the provided evidence cards (High Energy Physics/Earth Detectability) are topically irrelevant to the user's query regarding Hydrogen Energy.",
+          "The 'Insufficient Evidence Hypothesis' is scientifically valid and adheres strictly to the constraint against fabricating connections between unrelated domains.",
+          "Experiment design appropriately targets the retrieval system's failure mode rather than attempting to answer the scientific question with bad data.",
+          "Results field correctly states 'pending' and does not hallucinate experimental outcomes.",
+          "No forbidden references or fabricated DOIs were detected."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+          "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revision successfully addresses previous required revisions by explicitly incorporating semantic distance metrics into the Negative Control Verification method and mandating immutable logging of query expansion terms.",
+          "The 'Semantic Retrieval Failure Hypothesis' is correctly framed as a testable system-level hypothesis rather than an attempt to answer the hydrogen energy question with irrelevant physics data.",
+          "Evidence grounding is strictly maintained; supporting_evidence_ids are used only to define the negative control set (irrelevant documents), avoiding any false attribution of hydrogen-related content to high-energy physics papers.",
+          "Results field correctly remains 'pending' with no fabrication of experimental outcomes.",
+          "Reproducibility is significantly improved through specific technical details (embedding model examples, threshold definitions, log immutability requirements)."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "During execution, ensure the embedding model version specified in the reproducibility checklist matches exactly the model used for the original retrieval to guarantee valid semantic distance comparison.",
+          "Define a priori criteria for distinguishing 'retrieval failure' from 'index coverage gap' if re-retrieval yields zero results >0.8 but non-zero results in the 0.5-0.8 range."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.98,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:34e0960772068ac4",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+          "issue_id": "required_revision:b1bed5bd861b"
+        },
+        {
+          "failure_id": "failure:11e28d49618fa921",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.",
+          "issue_id": "required_revision:f3e4ff617ae6"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:ad18f77fa657ecb5",
+          "issue_id": "required_revision:b1bed5bd861b",
+          "reason": "Reviewer item required_revision:b1bed5bd861b requested 'In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.'. V2 changes methods; deterministic correlation evidence tokens=['allow', 'baseline', 'document', 'ev', 'exclusion', 'hydrogen', 'justify', 'measure', 'negative', 'q116', 'query', 'validate'], coverage=0.571.",
+          "before": "1. **Query Expansion & Retrieval**: Execute three iterations of literature search using the expanded query set. \n2. **Relevance Scoring**: Apply the existing relevance scoring model to all newly retrieved documents. \n3. **Threshold Analysis**: Count the number of documents with relevance_score > 0.8. \n4. **Negative Control Verification**: Re-evaluate the existing allowed evidence IDs (EV-Q116-df35f895433236f4ceb28c22, EV-Q116-31ebaf07631cc6937983e244, EV-Q116-1aa0198c2026b4b3143f4f51, EV-Q116-2a7742bf1b9ed7bfd3373248) using a topic classifier trained on energy vs. particle physics/earth science labels to confirm their irrelevance to hydrogen energy.\n5. **Statistical Test**: If zero documents with relevance_score > 0.8 are found after 3 iterations, perform a binomial test to assess the probability of this outcome under the null hypothesis that relevant literature exists in the index but was missed by chance.",
+          "after": "1. **Negative Control Verification**: Generate embeddings for the text content of each allowed EV-Q116-* ID and the query 'future of hydrogen energy'. Compute pairwise cosine similarities. Document these scores to justify exclusion.\n2. **Strictly Logged Re-retrieval**: Execute 3 retrieval iterations. In each iteration, use one or a combination of the predefined query expansion terms. Log the exact query string used for each iteration in a immutable log file.\n3. **Relevance Scoring**: For all newly retrieved documents, compute relevance scores against the hydrogen energy query. \n4. **Threshold Analysis**: Count documents with relevance_score > 0.8. \n5. **Falsification Check**: If >=1 document with score > 0.8 is found, the retrieval failure hypothesis is supported (indicating literature exists but was previously missed). If 0 such documents are found after 3 iterations, the hypothesis is weakened, suggesting an index coverage gap.",
+          "evidence_refs": [
+            "EV-Q116-1aa0198c2026b4b3143f4f51",
+            "EV-Q116-2a7742bf1b9ed7bfd3373248",
+            "EV-Q116-31ebaf07631cc6937983e244",
+            "EV-Q116-df35f895433236f4ceb28c22"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:8a07c5de4367f379",
+          "issue_id": "required_revision:b1bed5bd861b",
+          "reason": "Reviewer item required_revision:b1bed5bd861b requested 'In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['distance', 'document', 'ev', 'execution', 'hydrogen', 'ids', 'measure', 'q116', 'query', 'semantic', 'their'], coverage=0.524.",
+          "before": [
+            "Define exact query strings for each of the 3 iterations.",
+            "Specify the relevance scoring algorithm version and parameters.",
+            "Document the manual review criteria for topical relevance.",
+            "Archive the list of all retrieved document IDs and their scores for each iteration.",
+            "Provide the code for the semantic similarity calculation."
+          ],
+          "after": [
+            "Log exact query strings for all 3 retrieval iterations before execution.",
+            "Record the specific embedding model version and parameters used for semantic distance calculation.",
+            "Save the raw cosine similarity scores for each EV-Q116-* ID against the hydrogen query.",
+            "Archive the list of all newly retrieved document IDs and their relevance scores per iteration.",
+            "Provide the script used for computing cosine similarity and relevance scoring."
+          ],
+          "evidence_refs": [
+            "EV-Q116-1aa0198c2026b4b3143f4f51",
+            "EV-Q116-2a7742bf1b9ed7bfd3373248",
+            "EV-Q116-31ebaf07631cc6937983e244",
+            "EV-Q116-df35f895433236f4ceb28c22"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:cfd7db4edd906c11",
+          "issue_id": "required_revision:f3e4ff617ae6",
+          "reason": "Reviewer item required_revision:f3e4ff617ae6 requested 'When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.'. V2 changes technical_details; deterministic correlation evidence tokens=['campaign', 'expansion', 'hoc', 'post', 'prevent', 'query', 'rationalization', 'result', 'retrieval', 'search', 'strictly', 'term'], coverage=0.706.",
+          "before": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by systematically testing the retrieval system's ability to locate relevant hydrogen energy literature. The core technical challenge is distinguishing between a true absence of evidence in the index and a retrieval failure due to semantic mismatch. The protocol involves executing a targeted re-retrieval campaign using domain-specific keywords ('hydrogen economy', 'PEM electrolysis', 'H2 storage') and evaluating the relevance scores of newly retrieved documents against a threshold of 0.8. Simultaneously, it verifies the topical irrelevance of the currently allowed evidence IDs (EV-Q116-*) through manual or automated semantic classification. This approach ensures that any claim about hydrogen energy futures is grounded in verifiable data rather than extrapolation from unrelated fields like high-energy physics.",
+          "after": "This experiment validates the 'Semantic Retrieval Failure Hypothesis' by quantifying the topical irrelevance of currently allowed evidence IDs (EV-Q116-*) and testing if targeted query expansion retrieves relevant hydrogen energy literature. The technical core involves two parallel tracks: (1) Negative Control Verification, which computes cosine similarity between embeddings of the allowed EV-Q116-* documents and a standard 'future of hydrogen energy' query vector to establish a baseline for exclusion; and (2) Active Retrieval Campaign, which executes three iterations of search using strictly logged, domain-specific query terms. The system uses a pre-trained sentence-transformer model (e.g., all-MiniLM-L6-v2 or similar) for embedding generation. Relevance is determined by a threshold of 0.8 on the cosine similarity score. All query strings and resulting document IDs are logged to prevent post-hoc rationalization.",
+          "evidence_refs": [
+            "EV-Q116-1aa0198c2026b4b3143f4f51",
+            "EV-Q116-2a7742bf1b9ed7bfd3373248",
+            "EV-Q116-31ebaf07631cc6937983e244",
+            "EV-Q116-df35f895433236f4ceb28c22"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:b1bed5bd861b",
+          "category": "required_revision",
+          "description": "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ad18f77fa657ecb5,change:8a07c5de4367f379; evidence=EV-Q116-1aa0198c2026b4b3143f4f51,EV-Q116-2a7742bf1b9ed7bfd3373248,EV-Q116-31ebaf07631cc6937983e244,EV-Q116-df35f895433236f4ceb28c22; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:f3e4ff617ae6",
+          "category": "required_revision",
+          "description": "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cfd7db4edd906c11; evidence=EV-Q116-1aa0198c2026b4b3143f4f51,EV-Q116-2a7742bf1b9ed7bfd3373248,EV-Q116-31ebaf07631cc6937983e244,EV-Q116-df35f895433236f4ceb28c22; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:7965932287d6",
+          "category": "required_revision",
+          "description": "During execution, ensure the embedding model version specified in the reproducibility checklist matches exactly the model used for the original retrieval to guarantee valid semantic distance comparison.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:418260133818",
+          "category": "required_revision",
+          "description": "Define a priori criteria for distinguishing 'retrieval failure' from 'index coverage gap' if re-retrieval yields zero results >0.8 but non-zero results in the 0.5-0.8 range.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Semantic Retrieval Failure Hypothesis: The current evidence base lacks hydrogen energy content due to a systematic retrieval failure (semantic mismatch) rather than true absence of literature, verifiable via targeted re-retrieval with domain-specific expansion terms.",
+          "overall_score": 0.56,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Negative Control Semantic Distance Hypothesis: The allowed evidence IDs (EV-Q116-*) are definitively irrelevant to hydrogen energy futures, as quantifiable semantic distance metrics will confirm their exclusion is scientifically justified and not arbitrary.",
+          "overall_score": 0.55,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Cross-Domain Methodology Transfer Null Hypothesis: Feasibility assessment frameworks from particle collider studies (EV-Q116-df35f895433236f4ceb28c22) cannot be validly applied to hydrogen energy futures without explicit bridging evidence, constituting a category error.",
+          "overall_score": 0.42,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "unresolved_issue:required_revision:7965932287d6",
+        "unresolved_issue:required_revision:418260133818",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:7965932287d6: During execution, ensure the embedding model version specified in the reproducibility checklist matches exactly the model used for the original retrieval to guarantee valid semantic distance comparison.",
+        "required_revision:418260133818: Define a priori criteria for distinguishing 'retrieval failure' from 'index coverage gap' if re-retrieval yields zero results >0.8 but non-zero results in the 0.5-0.8 range."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-091358-4bb759b8",
+        "version_number": 1,
+        "version_id": "20260822-091358-4bb759b8:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: Current provided evidence base contains no verifiable data regarding hydrogen energy systems, rendering any specific prediction about its future trajectory currently untestable within this context.",
+              "mechanism": "The semantic distance between the query domain (Hydrogen Energy) and the retrieved evidence domains (High Energy Physics/Colliders, Earth System Detectability) exceeds the threshold for valid inference. No causal or correlational links exist in the provided cards to bridge particle accelerator feasibility or exoplanet detection metrics to hydrogen production/storage economics.",
+              "falsifiable_prediction": "A comprehensive re-retrieval campaign targeting 'hydrogen economy', 'PEM electrolysis', or 'H2 storage' will yield at least one EvidenceCard with relevance_score > 0.8 that directly addresses hydrogen energy futures. If such retrieval fails after 3 iterations with expanded query terms, the hypothesis that 'relevant literature is inaccessible or non-existent in current index' is strengthened.",
+              "required_observations": [
+                "Execution of new literature search with hydrogen-specific keywords",
+                "Verification of relevance scores for newly retrieved documents",
+                "Confirmation that existing EV-Q116-* IDs remain topically irrelevant upon manual review"
+              ],
+              "risk_of_being_wrong": "Moderate. Relevant hydrogen energy literature likely exists in broader databases but was not captured due to retrieval failure or indexing gaps. Assuming total absence based on current null result risks false negative.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "Cross-Domain Analogy Hypothesis (Null Test): Methodologies used to assess 'future circular collider' feasibility (EV-Q116-df35f895433236f4ceb28c22) cannot be validly transferred to predict hydrogen energy futures without explicit bridging evidence.",
+              "mechanism": "While both involve 'future' assessment, the physical constraints (quantum field theory vs. electrochemical thermodynamics), economic scales, and stakeholder ecosystems are disjoint. Any attempt to map collider feasibility study structures onto hydrogen roadmaps constitutes a category error absent mediating evidence.",
+              "falsifiable_prediction": "If a document is found that explicitly cites CERN FCC feasibility frameworks as applicable to national hydrogen strategy assessments, then cross-domain transferability is validated. Absence of such citation in next 50 retrieved documents supports the null hypothesis of non-transferability.",
+              "required_observations": [
+                "Citation network analysis linking EV-Q116-df35f895433236f4ceb28c22 to hydrogen policy documents",
+                "Semantic similarity scoring between collider feasibility sections and hydrogen roadmap sections",
+                "Expert validation of methodological compatibility"
+              ],
+              "risk_of_being_wrong": "High. Interdisciplinary methodology transfer does occur (e.g., systems engineering), and dismissing it entirely may miss valid analogical reasoning pathways. However, without direct evidence, asserting transferability is speculative.",
+              "supporting_evidence_ids": [
+                "EV-Q116-df35f895433236f4ceb28c22"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.1,
+              "overall_score": 0.4
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Given complete absence of topically relevant evidence (all allowed IDs pertain to particle physics or Earth detectability, not hydrogen energy), the only scientifically defensible position is to formally acknowledge insufficient evidence and define a falsifiable path to remedy it. Hypothesis 0 avoids fabrication, adheres strictly to evidence constraints, and provides actionable next steps (targeted retrieval) rather than speculative extrapolation from irrelevant domains. Hypothesis 1, while referencing an allowed ID, risks implying false relevance through analogy without supporting linkage evidence.",
+          "rejected_directions": [
+            "Speculating on green hydrogen cost curves using unrelated Earth system data (EV-Q116-2a7742bf1b9ed7bfd3373248)",
+            "Inferring hydrogen storage breakthroughs from particle detector technology (EV-Q116-31ebaf07631cc6937983e244)",
+            "Projecting hydrogen adoption timelines based on linear collider energy scaling (EV-Q116-1aa0198c2026b4b3143f4f51)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by systematically testing the retrieval system's ability to locate relevant hydrogen energy literature. The core technical challenge is distinguishing between a true absence of evidence in the index and a retrieval failure due to semantic mismatch. The protocol involves executing a targeted re-retrieval campaign using domain-specific keywords ('hydrogen economy', 'PEM electrolysis', 'H2 storage') and evaluating the relevance scores of newly retrieved documents against a threshold of 0.8. Simultaneously, it verifies the topical irrelevance of the currently allowed evidence IDs (EV-Q116-*) through manual or automated semantic classification. This approach ensures that any claim about hydrogen energy futures is grounded in verifiable data rather than extrapolation from unrelated fields like high-energy physics.",
+          "datasets": {
+            "source": [
+              "Internal Literature Index (Current)",
+              "Expanded Query Set: ['hydrogen economy', 'green hydrogen production', 'PEM electrolysis efficiency', 'H2 storage materials', 'hydrogen fuel cell durability']"
+            ],
+            "target": "Relevance-scored EvidenceCards for Hydrogen Energy Domain"
+          },
+          "methods": "1. **Query Expansion & Retrieval**: Execute three iterations of literature search using the expanded query set. \n2. **Relevance Scoring**: Apply the existing relevance scoring model to all newly retrieved documents. \n3. **Threshold Analysis**: Count the number of documents with relevance_score > 0.8. \n4. **Negative Control Verification**: Re-evaluate the existing allowed evidence IDs (EV-Q116-df35f895433236f4ceb28c22, EV-Q116-31ebaf07631cc6937983e244, EV-Q116-1aa0198c2026b4b3143f4f51, EV-Q116-2a7742bf1b9ed7bfd3373248) using a topic classifier trained on energy vs. particle physics/earth science labels to confirm their irrelevance to hydrogen energy.\n5. **Statistical Test**: If zero documents with relevance_score > 0.8 are found after 3 iterations, perform a binomial test to assess the probability of this outcome under the null hypothesis that relevant literature exists in the index but was missed by chance.",
+          "experiments": {
+            "baselines": [
+              "Baseline 1: Current Retrieval Result (Zero relevant hydrogen cards found).",
+              "Baseline 2: Random Keyword Search (Using generic terms like 'energy future' without hydrogen specificity)."
+            ],
+            "metrics": [
+              "Count of EvidenceCards with relevance_score > 0.8",
+              "Precision@10 for hydrogen-specific queries",
+              "Semantic Similarity Score (Cosine Similarity) between query embeddings and document embeddings"
+            ],
+            "ablation": "Remove 'PEM electrolysis' and 'H2 storage' from query terms to test if broader terms like 'hydrogen economy' alone are sufficient for retrieval.",
+            "validation_protocol": "Manual review of top 5 retrieved documents per iteration by a domain expert to confirm topical relevance. Cross-check with external databases (e.g., Web of Science, Scopus) to verify if the identified literature exists outside the current index."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact query strings for each of the 3 iterations.",
+            "Specify the relevance scoring algorithm version and parameters.",
+            "Document the manual review criteria for topical relevance.",
+            "Archive the list of all retrieved document IDs and their scores for each iteration.",
+            "Provide the code for the semantic similarity calculation."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "generated_by": "Qwen/ExperimentDesigner",
+            "timestamp": "2024-05-20T10:00:00Z",
+            "dependencies": [
+              "Access to Internal Literature Index API",
+              "Relevance Scoring Model v1.2",
+              "Topic Classification Model for Energy Domains"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The system correctly identified that the provided evidence cards (High Energy Physics/Earth Detectability) are topically irrelevant to the user's query regarding Hydrogen Energy.",
+            "The 'Insufficient Evidence Hypothesis' is scientifically valid and adheres strictly to the constraint against fabricating connections between unrelated domains.",
+            "Experiment design appropriately targets the retrieval system's failure mode rather than attempting to answer the scientific question with bad data.",
+            "Results field correctly states 'pending' and does not hallucinate experimental outcomes.",
+            "No forbidden references or fabricated DOIs were detected."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+            "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:b1bed5bd861b",
+            "category": "required_revision",
+            "description": "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f3e4ff617ae6",
+            "category": "required_revision",
+            "description": "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "2be8d0cf9c2eacd73ed722ef495e7c2849e3d2cd5a4b3bac23df46c3705394b3",
+          "experiment_designer": "5a0d6e683f4b34c02873b59337367847d14b8d35d49e7f59363c7a9d4b5f4eb6",
+          "scientific_reviewer": "6558b1b4bda400aa4a2483d1494140e6fb517bf2eaecaa8b28d5454536d92ea3"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-091358-4bb759b8",
+        "version_number": 2,
+        "version_id": "20260822-091358-4bb759b8:v2",
+        "parent_version_id": "20260822-091358-4bb759b8:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Semantic Retrieval Failure Hypothesis: The current evidence base lacks hydrogen energy content due to a systematic retrieval failure (semantic mismatch) rather than true absence of literature, verifiable via targeted re-retrieval with domain-specific expansion terms.",
+              "mechanism": "The vector space distance between the query 'future of hydrogen energy' and the retrieved high-energy physics/earth science documents exceeds the relevance threshold. This gap is hypothesized to be an artifact of indexing or embedding limitations, not a reflection of the scientific corpus. Validating this requires demonstrating that specific hydrogen-related keywords yield high-relevance results that were previously missed.",
+              "falsifiable_prediction": "Executing a re-retrieval campaign using the strictly logged query set ['hydrogen economy', 'green hydrogen production', 'PEM electrolysis efficiency', 'H2 storage materials', 'hydrogen fuel cell durability'] will retrieve at least one EvidenceCard with relevance_score > 0.8. If zero such cards are found after 3 iterations, the hypothesis of retrieval failure is weakened in favor of index coverage gaps.",
+              "required_observations": [
+                "Execution of 3 retrieval iterations with the exact specified query expansion terms",
+                "Logging of all query strings used to prevent post-hoc rationalization",
+                "Relevance scores of all newly retrieved documents",
+                "Count of documents exceeding relevance threshold 0.8"
+              ],
+              "risk_of_being_wrong": "Moderate. Relevant literature may exist but remain unindexed or inaccessible even with expanded queries, leading to a false confirmation of retrieval failure when the issue is actually database scope.",
+              "supporting_evidence_ids": [
+                "EV-Q116-df35f895433236f4ceb28c22",
+                "EV-Q116-31ebaf07631cc6937983e244",
+                "EV-Q116-1aa0198c2026b4b3143f4f51",
+                "EV-Q116-2a7742bf1b9ed7bfd3373248"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.2,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.1,
+              "overall_score": 0.56
+            },
+            {
+              "hypothesis": "Negative Control Semantic Distance Hypothesis: The allowed evidence IDs (EV-Q116-*) are definitively irrelevant to hydrogen energy futures, as quantifiable semantic distance metrics will confirm their exclusion is scientifically justified and not arbitrary.",
+              "mechanism": "Topical irrelevance is operationalized as a measurable semantic distance between document embeddings and the hydrogen energy query vector. By computing cosine similarity or equivalent metrics for each allowed ID against the query, we establish a quantitative baseline for exclusion. This prevents future attempts to force-fit unrelated physics/earth science content into hydrogen energy analysis.",
+              "falsifiable_prediction": "All four allowed evidence IDs will exhibit semantic similarity scores < 0.3 against the hydrogen energy query embedding. If any ID shows similarity > 0.5, the exclusion criterion is invalidated and potential cross-domain relevance must be re-evaluated.",
+              "required_observations": [
+                "Computation of semantic distance metrics (e.g., cosine similarity) for each EV-Q116-* ID against 'future of hydrogen energy' query",
+                "Documentation of the embedding model and version used for distance calculation",
+                "Threshold validation confirming all scores fall below relevance cutoff"
+              ],
+              "risk_of_being_wrong": "Low. Semantic distance metrics are well-established; primary risk is model bias toward certain domains, but this is mitigated by using multiple embedding models if initial results are borderline.",
+              "supporting_evidence_ids": [
+                "EV-Q116-df35f895433236f4ceb28c22",
+                "EV-Q116-31ebaf07631cc6937983e244",
+                "EV-Q116-1aa0198c2026b4b3143f4f51",
+                "EV-Q116-2a7742bf1b9ed7bfd3373248"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.55
+            },
+            {
+              "hypothesis": "Cross-Domain Methodology Transfer Null Hypothesis: Feasibility assessment frameworks from particle collider studies (EV-Q116-df35f895433236f4ceb28c22) cannot be validly applied to hydrogen energy futures without explicit bridging evidence, constituting a category error.",
+              "mechanism": "While both domains involve 'future' planning, the underlying physical constraints (quantum field theory vs. electrochemical thermodynamics), economic scales, and stakeholder ecosystems are disjoint. Absent mediating evidence showing methodology transfer, applying collider feasibility structures to hydrogen roadmaps is invalid. This hypothesis serves as a guardrail against speculative analogical reasoning.",
+              "falsifiable_prediction": "Citation network analysis of next 50 retrieved hydrogen energy documents will reveal zero citations to CERN FCC feasibility frameworks (EV-Q116-df35f895433236f4ceb28c22). Discovery of ≥1 such citation would invalidate the null hypothesis and suggest legitimate cross-domain methodology transfer.",
+              "required_observations": [
+                "Citation network analysis linking EV-Q116-df35f895433236f4ceb28c22 to hydrogen policy/technical documents",
+                "Semantic similarity scoring between collider feasibility sections and hydrogen roadmap sections",
+                "Expert validation of methodological compatibility (if citations found)"
+              ],
+              "risk_of_being_wrong": "High. Interdisciplinary methodology transfer does occur (e.g., systems engineering, project management frameworks), and dismissing it entirely may miss valid analogical reasoning pathways. However, without direct evidence, asserting transferability remains speculative.",
+              "supporting_evidence_ids": [
+                "EV-Q116-df35f895433236f4ceb28c22"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.1,
+              "overall_score": 0.42
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the reviewer's required revisions by incorporating strict logging of query expansion terms and defining a clear falsification pathway through re-retrieval. It maintains scientific integrity by treating the evidence gap as a testable system failure rather than fabricating hydrogen energy claims from irrelevant physics data. Unlike Hypothesis 2 (which risks implying false relevance through analogy), Hypothesis 0 provides actionable next steps grounded in information retrieval science. Hypothesis 1 serves as a necessary complementary validation but does not advance the core research objective of determining hydrogen energy futures.",
+          "rejected_directions": [
+            "Speculating on green hydrogen cost curves using unrelated Earth system detectability data (EV-Q116-2a7742bf1b9ed7bfd3373248)",
+            "Inferring hydrogen storage breakthroughs from particle detector spin structure measurements (EV-Q116-31ebaf07631cc6937983e244)",
+            "Projecting hydrogen adoption timelines based on linear collider center-of-mass energy scaling (EV-Q116-1aa0198c2026b4b3143f4f51)",
+            "Asserting hydrogen energy futures are unknowable without proposing a verification mechanism"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment validates the 'Semantic Retrieval Failure Hypothesis' by quantifying the topical irrelevance of currently allowed evidence IDs (EV-Q116-*) and testing if targeted query expansion retrieves relevant hydrogen energy literature. The technical core involves two parallel tracks: (1) Negative Control Verification, which computes cosine similarity between embeddings of the allowed EV-Q116-* documents and a standard 'future of hydrogen energy' query vector to establish a baseline for exclusion; and (2) Active Retrieval Campaign, which executes three iterations of search using strictly logged, domain-specific query terms. The system uses a pre-trained sentence-transformer model (e.g., all-MiniLM-L6-v2 or similar) for embedding generation. Relevance is determined by a threshold of 0.8 on the cosine similarity score. All query strings and resulting document IDs are logged to prevent post-hoc rationalization.",
+          "datasets": {
+            "source": [
+              "Internal Literature Index containing EV-Q116-df35f895433236f4ceb28c22, EV-Q116-31ebaf07631cc6937983e244, EV-Q116-1aa0198c2026b4b3143f4f51, EV-Q116-2a7742bf1b9ed7bfd3373248",
+              "Query Expansion Set: ['hydrogen economy', 'green hydrogen production', 'PEM electrolysis efficiency', 'H2 storage materials', 'hydrogen fuel cell durability']"
+            ],
+            "target": "Relevance-scored EvidenceCards for Hydrogen Energy Domain and Semantic Distance Metrics for EV-Q116-* IDs"
+          },
+          "methods": "1. **Negative Control Verification**: Generate embeddings for the text content of each allowed EV-Q116-* ID and the query 'future of hydrogen energy'. Compute pairwise cosine similarities. Document these scores to justify exclusion.\n2. **Strictly Logged Re-retrieval**: Execute 3 retrieval iterations. In each iteration, use one or a combination of the predefined query expansion terms. Log the exact query string used for each iteration in a immutable log file.\n3. **Relevance Scoring**: For all newly retrieved documents, compute relevance scores against the hydrogen energy query. \n4. **Threshold Analysis**: Count documents with relevance_score > 0.8. \n5. **Falsification Check**: If >=1 document with score > 0.8 is found, the retrieval failure hypothesis is supported (indicating literature exists but was previously missed). If 0 such documents are found after 3 iterations, the hypothesis is weakened, suggesting an index coverage gap.",
+          "experiments": {
+            "baselines": [
+              "Baseline 1: Current State - Zero relevant hydrogen cards among allowed EV-Q116-* IDs.",
+              "Baseline 2: Generic Query - Retrieval results using only 'energy future' without hydrogen-specific terms."
+            ],
+            "metrics": [
+              "Cosine Similarity Score between EV-Q116-* embeddings and hydrogen query embedding",
+              "Count of newly retrieved EvidenceCards with relevance_score > 0.8",
+              "Precision@10 for the expanded hydrogen-specific queries"
+            ],
+            "ablation": "Compare retrieval performance when using single-term queries (e.g., 'hydrogen economy') versus multi-term combined queries (e.g., 'green hydrogen production AND PEM electrolysis') to determine if specificity improves relevance scoring.",
+            "validation_protocol": "1. Verify that all EV-Q116-* IDs have cosine similarity < 0.3 with the hydrogen query. 2. Review the top 5 retrieved documents from each re-retrieval iteration manually to confirm they discuss hydrogen energy technologies or policy. 3. Ensure the query log matches the executed searches exactly."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Log exact query strings for all 3 retrieval iterations before execution.",
+            "Record the specific embedding model version and parameters used for semantic distance calculation.",
+            "Save the raw cosine similarity scores for each EV-Q116-* ID against the hydrogen query.",
+            "Archive the list of all newly retrieved document IDs and their relevance scores per iteration.",
+            "Provide the script used for computing cosine similarity and relevance scoring."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "generated_by": "Qwen/ExperimentDesigner",
+            "timestamp": "2024-05-20T10:00:00Z",
+            "dependencies": [
+              "Access to Internal Literature Index API",
+              "Sentence-Transformer Embedding Model",
+              "Relevance Scoring Algorithm v1.2"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revision successfully addresses previous required revisions by explicitly incorporating semantic distance metrics into the Negative Control Verification method and mandating immutable logging of query expansion terms.",
+            "The 'Semantic Retrieval Failure Hypothesis' is correctly framed as a testable system-level hypothesis rather than an attempt to answer the hydrogen energy question with irrelevant physics data.",
+            "Evidence grounding is strictly maintained; supporting_evidence_ids are used only to define the negative control set (irrelevant documents), avoiding any false attribution of hydrogen-related content to high-energy physics papers.",
+            "Results field correctly remains 'pending' with no fabrication of experimental outcomes.",
+            "Reproducibility is significantly improved through specific technical details (embedding model examples, threshold definitions, log immutability requirements)."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "During execution, ensure the embedding model version specified in the reproducibility checklist matches exactly the model used for the original retrieval to guarantee valid semantic distance comparison.",
+            "Define a priori criteria for distinguishing 'retrieval failure' from 'index coverage gap' if re-retrieval yields zero results >0.8 but non-zero results in the 0.5-0.8 range."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.98,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:b1bed5bd861b",
+            "category": "required_revision",
+            "description": "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:ad18f77fa657ecb5,change:8a07c5de4367f379; evidence=EV-Q116-1aa0198c2026b4b3143f4f51,EV-Q116-2a7742bf1b9ed7bfd3373248,EV-Q116-31ebaf07631cc6937983e244,EV-Q116-df35f895433236f4ceb28c22; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:f3e4ff617ae6",
+            "category": "required_revision",
+            "description": "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:cfd7db4edd906c11; evidence=EV-Q116-1aa0198c2026b4b3143f4f51,EV-Q116-2a7742bf1b9ed7bfd3373248,EV-Q116-31ebaf07631cc6937983e244,EV-Q116-df35f895433236f4ceb28c22; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:7965932287d6",
+            "category": "required_revision",
+            "description": "During execution, ensure the embedding model version specified in the reproducibility checklist matches exactly the model used for the original retrieval to guarantee valid semantic distance comparison.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:418260133818",
+            "category": "required_revision",
+            "description": "Define a priori criteria for distinguishing 'retrieval failure' from 'index coverage gap' if re-retrieval yields zero results >0.8 but non-zero results in the 0.5-0.8 range.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "9e31bbcfde4b8e6519c0a65422e264616b2a75b91503aad6f8bf0b4625385da1",
+          "experiment_designer": "7d337eca56b28e1b82ad20b449f496faa8e86d2ecc0630a08088861a4fccab7f",
+          "scientific_reviewer": "f5eef070cb266c5dc9909a201d4d29fc1a5e5f955d409a8bce5006742b4e33f0"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-091358-4bb759b8",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-091358-4bb759b8:review:v1",
+        "20260822-091358-4bb759b8:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-091358-4bb759b8:v1",
+        "20260822-091358-4bb759b8:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-091358-4bb759b8",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-091358-4bb759b8:review:v1",
+          "20260822-091358-4bb759b8:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-091358-4bb759b8:v1",
+          "20260822-091358-4bb759b8:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-091358-4bb759b8",
+          "version_number": 1,
+          "version_id": "20260822-091358-4bb759b8:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Insufficient Evidence Hypothesis: Current provided evidence base contains no verifiable data regarding hydrogen energy systems, rendering any specific prediction about its future trajectory currently untestable within this context.",
+                "mechanism": "The semantic distance between the query domain (Hydrogen Energy) and the retrieved evidence domains (High Energy Physics/Colliders, Earth System Detectability) exceeds the threshold for valid inference. No causal or correlational links exist in the provided cards to bridge particle accelerator feasibility or exoplanet detection metrics to hydrogen production/storage economics.",
+                "falsifiable_prediction": "A comprehensive re-retrieval campaign targeting 'hydrogen economy', 'PEM electrolysis', or 'H2 storage' will yield at least one EvidenceCard with relevance_score > 0.8 that directly addresses hydrogen energy futures. If such retrieval fails after 3 iterations with expanded query terms, the hypothesis that 'relevant literature is inaccessible or non-existent in current index' is strengthened.",
+                "required_observations": [
+                  "Execution of new literature search with hydrogen-specific keywords",
+                  "Verification of relevance scores for newly retrieved documents",
+                  "Confirmation that existing EV-Q116-* IDs remain topically irrelevant upon manual review"
+                ],
+                "risk_of_being_wrong": "Moderate. Relevant hydrogen energy literature likely exists in broader databases but was not captured due to retrieval failure or indexing gaps. Assuming total absence based on current null result risks false negative.",
+                "supporting_evidence_ids": [],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.0,
+                "overall_score": 0.5
+              },
+              {
+                "hypothesis": "Cross-Domain Analogy Hypothesis (Null Test): Methodologies used to assess 'future circular collider' feasibility (EV-Q116-df35f895433236f4ceb28c22) cannot be validly transferred to predict hydrogen energy futures without explicit bridging evidence.",
+                "mechanism": "While both involve 'future' assessment, the physical constraints (quantum field theory vs. electrochemical thermodynamics), economic scales, and stakeholder ecosystems are disjoint. Any attempt to map collider feasibility study structures onto hydrogen roadmaps constitutes a category error absent mediating evidence.",
+                "falsifiable_prediction": "If a document is found that explicitly cites CERN FCC feasibility frameworks as applicable to national hydrogen strategy assessments, then cross-domain transferability is validated. Absence of such citation in next 50 retrieved documents supports the null hypothesis of non-transferability.",
+                "required_observations": [
+                  "Citation network analysis linking EV-Q116-df35f895433236f4ceb28c22 to hydrogen policy documents",
+                  "Semantic similarity scoring between collider feasibility sections and hydrogen roadmap sections",
+                  "Expert validation of methodological compatibility"
+                ],
+                "risk_of_being_wrong": "High. Interdisciplinary methodology transfer does occur (e.g., systems engineering), and dismissing it entirely may miss valid analogical reasoning pathways. However, without direct evidence, asserting transferability is speculative.",
+                "supporting_evidence_ids": [
+                  "EV-Q116-df35f895433236f4ceb28c22"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.1,
+                "overall_score": 0.4
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Given complete absence of topically relevant evidence (all allowed IDs pertain to particle physics or Earth detectability, not hydrogen energy), the only scientifically defensible position is to formally acknowledge insufficient evidence and define a falsifiable path to remedy it. Hypothesis 0 avoids fabrication, adheres strictly to evidence constraints, and provides actionable next steps (targeted retrieval) rather than speculative extrapolation from irrelevant domains. Hypothesis 1, while referencing an allowed ID, risks implying false relevance through analogy without supporting linkage evidence.",
+            "rejected_directions": [
+              "Speculating on green hydrogen cost curves using unrelated Earth system data (EV-Q116-2a7742bf1b9ed7bfd3373248)",
+              "Inferring hydrogen storage breakthroughs from particle detector technology (EV-Q116-31ebaf07631cc6937983e244)",
+              "Projecting hydrogen adoption timelines based on linear collider energy scaling (EV-Q116-1aa0198c2026b4b3143f4f51)"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by systematically testing the retrieval system's ability to locate relevant hydrogen energy literature. The core technical challenge is distinguishing between a true absence of evidence in the index and a retrieval failure due to semantic mismatch. The protocol involves executing a targeted re-retrieval campaign using domain-specific keywords ('hydrogen economy', 'PEM electrolysis', 'H2 storage') and evaluating the relevance scores of newly retrieved documents against a threshold of 0.8. Simultaneously, it verifies the topical irrelevance of the currently allowed evidence IDs (EV-Q116-*) through manual or automated semantic classification. This approach ensures that any claim about hydrogen energy futures is grounded in verifiable data rather than extrapolation from unrelated fields like high-energy physics.",
+            "datasets": {
+              "source": [
+                "Internal Literature Index (Current)",
+                "Expanded Query Set: ['hydrogen economy', 'green hydrogen production', 'PEM electrolysis efficiency', 'H2 storage materials', 'hydrogen fuel cell durability']"
+              ],
+              "target": "Relevance-scored EvidenceCards for Hydrogen Energy Domain"
+            },
+            "methods": "1. **Query Expansion & Retrieval**: Execute three iterations of literature search using the expanded query set. \n2. **Relevance Scoring**: Apply the existing relevance scoring model to all newly retrieved documents. \n3. **Threshold Analysis**: Count the number of documents with relevance_score > 0.8. \n4. **Negative Control Verification**: Re-evaluate the existing allowed evidence IDs (EV-Q116-df35f895433236f4ceb28c22, EV-Q116-31ebaf07631cc6937983e244, EV-Q116-1aa0198c2026b4b3143f4f51, EV-Q116-2a7742bf1b9ed7bfd3373248) using a topic classifier trained on energy vs. particle physics/earth science labels to confirm their irrelevance to hydrogen energy.\n5. **Statistical Test**: If zero documents with relevance_score > 0.8 are found after 3 iterations, perform a binomial test to assess the probability of this outcome under the null hypothesis that relevant literature exists in the index but was missed by chance.",
+            "experiments": {
+              "baselines": [
+                "Baseline 1: Current Retrieval Result (Zero relevant hydrogen cards found).",
+                "Baseline 2: Random Keyword Search (Using generic terms like 'energy future' without hydrogen specificity)."
+              ],
+              "metrics": [
+                "Count of EvidenceCards with relevance_score > 0.8",
+                "Precision@10 for hydrogen-specific queries",
+                "Semantic Similarity Score (Cosine Similarity) between query embeddings and document embeddings"
+              ],
+              "ablation": "Remove 'PEM electrolysis' and 'H2 storage' from query terms to test if broader terms like 'hydrogen economy' alone are sufficient for retrieval.",
+              "validation_protocol": "Manual review of top 5 retrieved documents per iteration by a domain expert to confirm topical relevance. Cross-check with external databases (e.g., Web of Science, Scopus) to verify if the identified literature exists outside the current index."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Define exact query strings for each of the 3 iterations.",
+              "Specify the relevance scoring algorithm version and parameters.",
+              "Document the manual review criteria for topical relevance.",
+              "Archive the list of all retrieved document IDs and their scores for each iteration.",
+              "Provide the code for the semantic similarity calculation."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "generated_by": "Qwen/ExperimentDesigner",
+              "timestamp": "2024-05-20T10:00:00Z",
+              "dependencies": [
+                "Access to Internal Literature Index API",
+                "Relevance Scoring Model v1.2",
+                "Topic Classification Model for Energy Domains"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The system correctly identified that the provided evidence cards (High Energy Physics/Earth Detectability) are topically irrelevant to the user's query regarding Hydrogen Energy.",
+              "The 'Insufficient Evidence Hypothesis' is scientifically valid and adheres strictly to the constraint against fabricating connections between unrelated domains.",
+              "Experiment design appropriately targets the retrieval system's failure mode rather than attempting to answer the scientific question with bad data.",
+              "Results field correctly states 'pending' and does not hallucinate experimental outcomes.",
+              "No forbidden references or fabricated DOIs were detected."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+              "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:b1bed5bd861b",
+              "category": "required_revision",
+              "description": "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:f3e4ff617ae6",
+              "category": "required_revision",
+              "description": "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "2be8d0cf9c2eacd73ed722ef495e7c2849e3d2cd5a4b3bac23df46c3705394b3",
+            "experiment_designer": "5a0d6e683f4b34c02873b59337367847d14b8d35d49e7f59363c7a9d4b5f4eb6",
+            "scientific_reviewer": "6558b1b4bda400aa4a2483d1494140e6fb517bf2eaecaa8b28d5454536d92ea3"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-091358-4bb759b8",
+          "version_number": 2,
+          "version_id": "20260822-091358-4bb759b8:v2",
+          "parent_version_id": "20260822-091358-4bb759b8:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Semantic Retrieval Failure Hypothesis: The current evidence base lacks hydrogen energy content due to a systematic retrieval failure (semantic mismatch) rather than true absence of literature, verifiable via targeted re-retrieval with domain-specific expansion terms.",
+                "mechanism": "The vector space distance between the query 'future of hydrogen energy' and the retrieved high-energy physics/earth science documents exceeds the relevance threshold. This gap is hypothesized to be an artifact of indexing or embedding limitations, not a reflection of the scientific corpus. Validating this requires demonstrating that specific hydrogen-related keywords yield high-relevance results that were previously missed.",
+                "falsifiable_prediction": "Executing a re-retrieval campaign using the strictly logged query set ['hydrogen economy', 'green hydrogen production', 'PEM electrolysis efficiency', 'H2 storage materials', 'hydrogen fuel cell durability'] will retrieve at least one EvidenceCard with relevance_score > 0.8. If zero such cards are found after 3 iterations, the hypothesis of retrieval failure is weakened in favor of index coverage gaps.",
+                "required_observations": [
+                  "Execution of 3 retrieval iterations with the exact specified query expansion terms",
+                  "Logging of all query strings used to prevent post-hoc rationalization",
+                  "Relevance scores of all newly retrieved documents",
+                  "Count of documents exceeding relevance threshold 0.8"
+                ],
+                "risk_of_being_wrong": "Moderate. Relevant literature may exist but remain unindexed or inaccessible even with expanded queries, leading to a false confirmation of retrieval failure when the issue is actually database scope.",
+                "supporting_evidence_ids": [
+                  "EV-Q116-df35f895433236f4ceb28c22",
+                  "EV-Q116-31ebaf07631cc6937983e244",
+                  "EV-Q116-1aa0198c2026b4b3143f4f51",
+                  "EV-Q116-2a7742bf1b9ed7bfd3373248"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.2,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.1,
+                "overall_score": 0.56
+              },
+              {
+                "hypothesis": "Negative Control Semantic Distance Hypothesis: The allowed evidence IDs (EV-Q116-*) are definitively irrelevant to hydrogen energy futures, as quantifiable semantic distance metrics will confirm their exclusion is scientifically justified and not arbitrary.",
+                "mechanism": "Topical irrelevance is operationalized as a measurable semantic distance between document embeddings and the hydrogen energy query vector. By computing cosine similarity or equivalent metrics for each allowed ID against the query, we establish a quantitative baseline for exclusion. This prevents future attempts to force-fit unrelated physics/earth science content into hydrogen energy analysis.",
+                "falsifiable_prediction": "All four allowed evidence IDs will exhibit semantic similarity scores < 0.3 against the hydrogen energy query embedding. If any ID shows similarity > 0.5, the exclusion criterion is invalidated and potential cross-domain relevance must be re-evaluated.",
+                "required_observations": [
+                  "Computation of semantic distance metrics (e.g., cosine similarity) for each EV-Q116-* ID against 'future of hydrogen energy' query",
+                  "Documentation of the embedding model and version used for distance calculation",
+                  "Threshold validation confirming all scores fall below relevance cutoff"
+                ],
+                "risk_of_being_wrong": "Low. Semantic distance metrics are well-established; primary risk is model bias toward certain domains, but this is mitigated by using multiple embedding models if initial results are borderline.",
+                "supporting_evidence_ids": [
+                  "EV-Q116-df35f895433236f4ceb28c22",
+                  "EV-Q116-31ebaf07631cc6937983e244",
+                  "EV-Q116-1aa0198c2026b4b3143f4f51",
+                  "EV-Q116-2a7742bf1b9ed7bfd3373248"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.2,
+                "overall_score": 0.55
+              },
+              {
+                "hypothesis": "Cross-Domain Methodology Transfer Null Hypothesis: Feasibility assessment frameworks from particle collider studies (EV-Q116-df35f895433236f4ceb28c22) cannot be validly applied to hydrogen energy futures without explicit bridging evidence, constituting a category error.",
+                "mechanism": "While both domains involve 'future' planning, the underlying physical constraints (quantum field theory vs. electrochemical thermodynamics), economic scales, and stakeholder ecosystems are disjoint. Absent mediating evidence showing methodology transfer, applying collider feasibility structures to hydrogen roadmaps is invalid. This hypothesis serves as a guardrail against speculative analogical reasoning.",
+                "falsifiable_prediction": "Citation network analysis of next 50 retrieved hydrogen energy documents will reveal zero citations to CERN FCC feasibility frameworks (EV-Q116-df35f895433236f4ceb28c22). Discovery of ≥1 such citation would invalidate the null hypothesis and suggest legitimate cross-domain methodology transfer.",
+                "required_observations": [
+                  "Citation network analysis linking EV-Q116-df35f895433236f4ceb28c22 to hydrogen policy/technical documents",
+                  "Semantic similarity scoring between collider feasibility sections and hydrogen roadmap sections",
+                  "Expert validation of methodological compatibility (if citations found)"
+                ],
+                "risk_of_being_wrong": "High. Interdisciplinary methodology transfer does occur (e.g., systems engineering, project management frameworks), and dismissing it entirely may miss valid analogical reasoning pathways. However, without direct evidence, asserting transferability remains speculative.",
+                "supporting_evidence_ids": [
+                  "EV-Q116-df35f895433236f4ceb28c22"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.1,
+                "overall_score": 0.42
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses the reviewer's required revisions by incorporating strict logging of query expansion terms and defining a clear falsification pathway through re-retrieval. It maintains scientific integrity by treating the evidence gap as a testable system failure rather than fabricating hydrogen energy claims from irrelevant physics data. Unlike Hypothesis 2 (which risks implying false relevance through analogy), Hypothesis 0 provides actionable next steps grounded in information retrieval science. Hypothesis 1 serves as a necessary complementary validation but does not advance the core research objective of determining hydrogen energy futures.",
+            "rejected_directions": [
+              "Speculating on green hydrogen cost curves using unrelated Earth system detectability data (EV-Q116-2a7742bf1b9ed7bfd3373248)",
+              "Inferring hydrogen storage breakthroughs from particle detector spin structure measurements (EV-Q116-31ebaf07631cc6937983e244)",
+              "Projecting hydrogen adoption timelines based on linear collider center-of-mass energy scaling (EV-Q116-1aa0198c2026b4b3143f4f51)",
+              "Asserting hydrogen energy futures are unknowable without proposing a verification mechanism"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment validates the 'Semantic Retrieval Failure Hypothesis' by quantifying the topical irrelevance of currently allowed evidence IDs (EV-Q116-*) and testing if targeted query expansion retrieves relevant hydrogen energy literature. The technical core involves two parallel tracks: (1) Negative Control Verification, which computes cosine similarity between embeddings of the allowed EV-Q116-* documents and a standard 'future of hydrogen energy' query vector to establish a baseline for exclusion; and (2) Active Retrieval Campaign, which executes three iterations of search using strictly logged, domain-specific query terms. The system uses a pre-trained sentence-transformer model (e.g., all-MiniLM-L6-v2 or similar) for embedding generation. Relevance is determined by a threshold of 0.8 on the cosine similarity score. All query strings and resulting document IDs are logged to prevent post-hoc rationalization.",
+            "datasets": {
+              "source": [
+                "Internal Literature Index containing EV-Q116-df35f895433236f4ceb28c22, EV-Q116-31ebaf07631cc6937983e244, EV-Q116-1aa0198c2026b4b3143f4f51, EV-Q116-2a7742bf1b9ed7bfd3373248",
+                "Query Expansion Set: ['hydrogen economy', 'green hydrogen production', 'PEM electrolysis efficiency', 'H2 storage materials', 'hydrogen fuel cell durability']"
+              ],
+              "target": "Relevance-scored EvidenceCards for Hydrogen Energy Domain and Semantic Distance Metrics for EV-Q116-* IDs"
+            },
+            "methods": "1. **Negative Control Verification**: Generate embeddings for the text content of each allowed EV-Q116-* ID and the query 'future of hydrogen energy'. Compute pairwise cosine similarities. Document these scores to justify exclusion.\n2. **Strictly Logged Re-retrieval**: Execute 3 retrieval iterations. In each iteration, use one or a combination of the predefined query expansion terms. Log the exact query string used for each iteration in a immutable log file.\n3. **Relevance Scoring**: For all newly retrieved documents, compute relevance scores against the hydrogen energy query. \n4. **Threshold Analysis**: Count documents with relevance_score > 0.8. \n5. **Falsification Check**: If >=1 document with score > 0.8 is found, the retrieval failure hypothesis is supported (indicating literature exists but was previously missed). If 0 such documents are found after 3 iterations, the hypothesis is weakened, suggesting an index coverage gap.",
+            "experiments": {
+              "baselines": [
+                "Baseline 1: Current State - Zero relevant hydrogen cards among allowed EV-Q116-* IDs.",
+                "Baseline 2: Generic Query - Retrieval results using only 'energy future' without hydrogen-specific terms."
+              ],
+              "metrics": [
+                "Cosine Similarity Score between EV-Q116-* embeddings and hydrogen query embedding",
+                "Count of newly retrieved EvidenceCards with relevance_score > 0.8",
+                "Precision@10 for the expanded hydrogen-specific queries"
+              ],
+              "ablation": "Compare retrieval performance when using single-term queries (e.g., 'hydrogen economy') versus multi-term combined queries (e.g., 'green hydrogen production AND PEM electrolysis') to determine if specificity improves relevance scoring.",
+              "validation_protocol": "1. Verify that all EV-Q116-* IDs have cosine similarity < 0.3 with the hydrogen query. 2. Review the top 5 retrieved documents from each re-retrieval iteration manually to confirm they discuss hydrogen energy technologies or policy. 3. Ensure the query log matches the executed searches exactly."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Log exact query strings for all 3 retrieval iterations before execution.",
+              "Record the specific embedding model version and parameters used for semantic distance calculation.",
+              "Save the raw cosine similarity scores for each EV-Q116-* ID against the hydrogen query.",
+              "Archive the list of all newly retrieved document IDs and their relevance scores per iteration.",
+              "Provide the script used for computing cosine similarity and relevance scoring."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "generated_by": "Qwen/ExperimentDesigner",
+              "timestamp": "2024-05-20T10:00:00Z",
+              "dependencies": [
+                "Access to Internal Literature Index API",
+                "Sentence-Transformer Embedding Model",
+                "Relevance Scoring Algorithm v1.2"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revision successfully addresses previous required revisions by explicitly incorporating semantic distance metrics into the Negative Control Verification method and mandating immutable logging of query expansion terms.",
+              "The 'Semantic Retrieval Failure Hypothesis' is correctly framed as a testable system-level hypothesis rather than an attempt to answer the hydrogen energy question with irrelevant physics data.",
+              "Evidence grounding is strictly maintained; supporting_evidence_ids are used only to define the negative control set (irrelevant documents), avoiding any false attribution of hydrogen-related content to high-energy physics papers.",
+              "Results field correctly remains 'pending' with no fabrication of experimental outcomes.",
+              "Reproducibility is significantly improved through specific technical details (embedding model examples, threshold definitions, log immutability requirements)."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "During execution, ensure the embedding model version specified in the reproducibility checklist matches exactly the model used for the original retrieval to guarantee valid semantic distance comparison.",
+              "Define a priori criteria for distinguishing 'retrieval failure' from 'index coverage gap' if re-retrieval yields zero results >0.8 but non-zero results in the 0.5-0.8 range."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.98,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:b1bed5bd861b",
+              "category": "required_revision",
+              "description": "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:ad18f77fa657ecb5,change:8a07c5de4367f379; evidence=EV-Q116-1aa0198c2026b4b3143f4f51,EV-Q116-2a7742bf1b9ed7bfd3373248,EV-Q116-31ebaf07631cc6937983e244,EV-Q116-df35f895433236f4ceb28c22; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:f3e4ff617ae6",
+              "category": "required_revision",
+              "description": "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:cfd7db4edd906c11; evidence=EV-Q116-1aa0198c2026b4b3143f4f51,EV-Q116-2a7742bf1b9ed7bfd3373248,EV-Q116-31ebaf07631cc6937983e244,EV-Q116-df35f895433236f4ceb28c22; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:7965932287d6",
+              "category": "required_revision",
+              "description": "During execution, ensure the embedding model version specified in the reproducibility checklist matches exactly the model used for the original retrieval to guarantee valid semantic distance comparison.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:418260133818",
+              "category": "required_revision",
+              "description": "Define a priori criteria for distinguishing 'retrieval failure' from 'index coverage gap' if re-retrieval yields zero results >0.8 but non-zero results in the 0.5-0.8 range.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "9e31bbcfde4b8e6519c0a65422e264616b2a75b91503aad6f8bf0b4625385da1",
+            "experiment_designer": "7d337eca56b28e1b82ad20b449f496faa8e86d2ecc0630a08088861a4fccab7f",
+            "scientific_reviewer": "f5eef070cb266c5dc9909a201d4d29fc1a5e5f955d409a8bce5006742b4e33f0"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-091358-4bb759b8:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-091358-4bb759b8:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-091358-4bb759b8:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-091358-4bb759b8:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:b1bed5bd861b",
+          "category": "required_revision",
+          "description": "In the execution phase, ensure the 'Negative Control Verification' explicitly documents the semantic distance metrics between the allowed EV-Q116-* IDs and hydrogen queries to permanently justify their exclusion.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ad18f77fa657ecb5,change:8a07c5de4367f379; evidence=EV-Q116-1aa0198c2026b4b3143f4f51,EV-Q116-2a7742bf1b9ed7bfd3373248,EV-Q116-31ebaf07631cc6937983e244,EV-Q116-df35f895433236f4ceb28c22; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:f3e4ff617ae6",
+          "category": "required_revision",
+          "description": "When executing the re-retrieval campaign, strictly log the query expansion terms used to prevent post-hoc rationalization of search results.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cfd7db4edd906c11; evidence=EV-Q116-1aa0198c2026b4b3143f4f51,EV-Q116-2a7742bf1b9ed7bfd3373248,EV-Q116-31ebaf07631cc6937983e244,EV-Q116-df35f895433236f4ceb28c22; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:7965932287d6",
+          "category": "required_revision",
+          "description": "During execution, ensure the embedding model version specified in the reproducibility checklist matches exactly the model used for the original retrieval to guarantee valid semantic distance comparison.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:418260133818",
+          "category": "required_revision",
+          "description": "Define a priori criteria for distinguishing 'retrieval failure' from 'index coverage gap' if re-retrieval yields zero results >0.8 but non-zero results in the 0.5-0.8 range.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "00be7e26a2fd7695a13ae61ba07d3c057955c253a6971acca85c33621adbc8ee"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-091358-4bb759b8:wave-b-two-round",
+      "run_id": "20260822-091358-4bb759b8",
+      "v1_version_id": "20260822-091358-4bb759b8:v1",
+      "v2_version_id": "20260822-091358-4bb759b8:v2",
+      "input_fingerprints": {
+        "v1": "5a0d6e683f4b34c02873b59337367847d14b8d35d49e7f59363c7a9d4b5f4eb6",
+        "v2": "7d337eca56b28e1b82ad20b449f496faa8e86d2ecc0630a08088861a4fccab7f"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "required_revision:b1bed5bd861b",
+        "required_revision:f3e4ff617ae6"
+      ],
+      "change_ids": [
+        "change:ad18f77fa657ecb5",
+        "change:8a07c5de4367f379",
+        "change:cfd7db4edd906c11"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Semantic Retrieval Failure Hypothesis: The current evidence base lacks hydrogen energy content due to a systematic retrieval failure (semantic mismatch) rather than true absence of literature, verifiable via targeted re-retrieval with domain-specific expansion terms.",
+          "overall_score": 0.56,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Negative Control Semantic Distance Hypothesis: The allowed evidence IDs (EV-Q116-*) are definitively irrelevant to hydrogen energy futures, as quantifiable semantic distance metrics will confirm their exclusion is scientifically justified and not arbitrary.",
+          "overall_score": 0.55,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Cross-Domain Methodology Transfer Null Hypothesis: Feasibility assessment frameworks from particle collider studies (EV-Q116-df35f895433236f4ceb28c22) cannot be validly applied to hydrogen energy futures without explicit bridging evidence, constituting a category error.",
+          "overall_score": 0.42,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "3ce0dec0d79e",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:15.944346+00:00",
+    "ended_at": "2026-08-22T09:16:59.959276+00:00",
+    "duration_ms": 44014,
+    "input_summary": "{\"question_item\": {\"id\": \"Q116\", \"domain\": \"Energy Science\", \"question\": \"What is the future of hydrogen energy?\", \"source_page\": 40, \"booklet_excerpt\": \"\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Energy Science\", \"core_question\": \"What are the projected trajectories, technological bottlenecks, and economic viability of hydrogen energy systems in future energy landscapes?\", \"keywords\": [\"hydrogen energy\", \"future trends\", \"energy transition\", \"green hydrogen\", \"infrastructure\"], \"entities\": [\"H",
+    "output_summary": "{\"input_question\": \"What is the future of hydrogen energy?\", \"domain\": \"Energy Science\", \"problem_statement\": \"The question seeks to understand the projected trajectories, technological bottlenecks, and economic viability of hydrogen energy systems. However, the currently available evidence base consists exclusively of literature on high-energy particle physics (colliders, Standard Model tests) and general Earth system detectability, which are topically irrelevant to hydrogen energy infrastructure, production, or consumption.\", \"rationale\": \"Given the complete absence of domain-relevant eviden",
+    "evidence_ids": [
+      "EV-Q116-df35f895433236f4ceb28c22",
+      "EV-Q116-31ebaf07631cc6937983e244",
+      "EV-Q116-1aa0198c2026b4b3143f4f51",
+      "EV-Q116-2a7742bf1b9ed7bfd3373248"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d864962d57b8",
+    "mock": false
+  },
+  {
+    "event_id": "b89489467243",
+    "run_id": "20260822-091358-4bb759b8",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:59.959789+00:00",
+    "ended_at": "2026-08-22T09:17:02.358306+00:00",
+    "duration_ms": 2398,
+    "input_summary": "{\"question_item\": {\"id\": \"Q116\", \"domain\": \"Energy Science\", \"question\": \"What is the future of hydrogen energy?\", \"source_page\": 40, \"booklet_excerpt\": \"\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Input data is missing required fields: ResearchPlan, EvidenceCards, AgentTrace, execution_metadata.\", \"Cannot perform schema validation or evidence tracing without the specified input components.\"], \"warnings\": [], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_completeness\": false, \"evidence_tracing\": \"skipped\", \"factuality_check\": \"skipped\"}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "dbd337448736",
+    "mock": false
+  }
+]

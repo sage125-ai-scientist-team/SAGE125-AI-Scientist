@@ -1,0 +1,142 @@
+{
+  "question_id": "Q080",
+  "input_question": "Can we accurately simulate the macro- and microworld?",
+  "domain": "Physics",
+  "problem_statement": "The provided context distinguishes between straightforward macroworld simulation and rigorous microworld simulation requiring powerful quantum computers. While hybrid frameworks have demonstrated accuracy for small organic molecules, it remains unverified whether current methods can accurately simulate the broader microworld or how numerical limitations (such as error compounding in residue functions) scale with system complexity.",
+  "rationale": "Evidence EV-Q080-020d35b4cc376b20a380de7b confirms accurate simulation of small molecule pathways using quantum-classical hybrids, but EV-Q080-eb272278534673aa3ae6583f highlights that first-order residue functions drop second-order error terms ($e_y^2$), leading to potential inaccuracies. This suggests a specific, testable bottleneck in scaling simulation accuracy from small to larger systems, rather than a general inability to simulate the microworld.",
+  "generated_hypotheses": [
+    {
+      "hypothesis": "The causal link between first-order residue function approximations and super-linear system-size scaling failure in quantum-classical hybrid simulations is a testable hypothesis: specifically, that neglecting the e_y^2 term causes error compounding which scales non-linearly with system size, limiting accuracy for medium-sized molecules beyond the small-molecule regime.",
+      "mechanism": "Hybrid frameworks utilize iterative feedback where classical optimizers rely on residue functions. EV-Q080-eb272278534673aa3ae6583f establishes that first-order residue functions drop the e_y^2 term, leading to local error compounding. This hypothesis posits that this local numerical artifact aggregates systematically as system dimension increases, causing global convergence failure for systems larger than those validated in EV-Q080-020d35b4cc376b20a380de7b. Crucially, this scaling law is not an established fact but a proposed mechanism to be verified against higher-order corrections.",
+      "falsifiable_prediction": "If the e_y^2 term is accurately approximated (e.g., via Hessian-vector products or finite differences) in a Second-Order Corrected Residue (SOCR) implementation, the simulation error scaling exponent α for alkane chains (C2-C10) will reduce from super-linear (α > 1) to linear or sub-linear, restoring chemical accuracy (<1 kcal/mol). Conversely, if SOCR fails to improve scaling despite correct implementation, the hypothesis that residue order is the primary bottleneck is falsified.",
+      "required_observations": [
+        "Quantitative comparison of error scaling exponents (α) between First-Order Residue (FOR) and Second-Order Corrected Residue (SOCR) implementations across increasing system sizes",
+        "Verification that SOCR correctly approximates e_y^2 via specified numerical methods (Hessian-vector products or finite differences)",
+        "Reproduction of small-molecule accuracy baselines consistent with EV-Q080-020d35b4cc376b20a380de7b to validate framework integrity"
+      ],
+      "risk_of_being_wrong": "The observed scaling failure may stem from ansatz expressibility limits, hardware noise, or optimizer landscape issues rather than residue function order; additionally, the e_y^2 term might be negligible compared to other error sources in practical regimes, making higher-order corrections ineffective despite theoretical validity.",
+      "supporting_evidence_ids": [
+        "EV-Q080-eb272278534673aa3ae6583f",
+        "EV-Q080-020d35b4cc376b20a380de7b"
+      ],
+      "contradicted_by_evidence_ids": []
+    },
+    {
+      "hypothesis": "Accurate microworld simulation beyond small molecules is fundamentally constrained by the conditioning of underlying linear systems, such that even perfect quantum hardware cannot achieve fidelity without rigorous classical preconditioning that guarantees accurate inverse application.",
+      "mechanism": "Many microworld simulation tasks reduce to solving ill-conditioned linear systems Ax=b. EV-Q080-311a5e41800bf9b81c1e4640 proves that accurate solution requires accurate application of the preconditioner inverse M⁻¹. This hypothesis extends that principle to quantum-classical hybrids, proposing that numerical instability from poor preconditioning creates an irreducible error floor independent of quantum resource scaling.",
+      "falsifiable_prediction": "For a fixed ill-conditioned microworld problem, improving preconditioner inverse accuracy will yield proportional improvements in final simulation fidelity up to a saturation point; increasing quantum circuit depth or qubit count without corresponding preconditioner improvement will show no statistically significant accuracy gain beyond this saturation.",
+      "required_observations": [
+        "Correlation analysis between preconditioner inverse application error and final simulation error under fixed quantum resources",
+        "Identification of accuracy saturation points where additional quantum resources provide diminishing returns",
+        "Demonstration of high-fidelity simulation using minimal quantum resources paired with optimal classical preconditioning"
+      ],
+      "risk_of_being_wrong": "Quantum algorithms may circumvent classical linear system formulations entirely (e.g., via direct Hamiltonian simulation); fault-tolerant error correction might suppress numerical instabilities independently; or the specific problems tested may not be representative of general microworld simulation bottlenecks.",
+      "supporting_evidence_ids": [
+        "EV-Q080-311a5e41800bf9b81c1e4640"
+      ],
+      "contradicted_by_evidence_ids": []
+    },
+    {
+      "hypothesis": "Current quantum-classical hybrid frameworks exhibit a sharp accuracy phase transition at a critical system size threshold, below which they match EV-Q080-020d35b4cc376b20a380de7b benchmarks and above which they catastrophically fail due to uncharacterized emergent numerical instabilities.",
+      "mechanism": "While EV-Q080-020d35b4cc376b20a380de7b validates accuracy for small organic molecules and EV-Q080-eb272278534673aa3ae6583f identifies local error compounding, neither establishes whether degradation is gradual or abrupt. This hypothesis proposes a non-linear phase transition driven by collective effects not captured by local residue analysis alone.",
+      "falsifiable_prediction": "Simulation error will remain within chemical accuracy bounds up to a specific critical system size N_c, then increase by >2 orders of magnitude within a narrow size window [N_c, N_c+Δ]; if error instead scales smoothly and monotonically, the phase transition hypothesis is falsified.",
+      "required_observations": [
+        "High-resolution error vs. system size curve with sufficient sampling density to detect abrupt transitions",
+        "Statistical tests distinguishing smooth scaling from discontinuous jumps",
+        "Characterization of system properties (entanglement entropy, condition number) at the transition point"
+      ],
+      "risk_of_being_wrong": "Error scaling may be smooth and monotonic as predicted by standard perturbation theory; apparent transitions could be artifacts of insufficient sampling or optimizer initialization; or the transition threshold may lie beyond computationally accessible system sizes.",
+      "supporting_evidence_ids": [
+        "EV-Q080-020d35b4cc376b20a380de7b",
+        "EV-Q080-eb272278534673aa3ae6583f"
+      ],
+      "contradicted_by_evidence_ids": []
+    }
+  ],
+  "technical_details": "This experiment tests the hypothesis that first-order residue function approximations in quantum-classical hybrid frameworks cause super-linear error scaling with system size, specifically due to the neglect of the $e_y^2$ term leading to error compounding. We implement a modular VQE-based hybrid solver. Two residue calculation variants are compared: (1) First-Order Residue (FOR), which computes gradients ignoring second-order error interactions as described in EV-Q080-eb272278534673aa3ae6583f; and (2) Second-Order Corrected Residue (SOCR), which explicitly approximates the $e_y^2$ term. The SOCR implementation uses finite-difference methods to estimate the Hessian-vector product required for the second-order correction, ensuring reproducibility of the core independent variable. Simulations target linear alkane chains ($C_2$ to $C_{10}$) using statevector simulators with injected synthetic Gaussian noise to isolate numerical compounding from hardware decoherence. Accuracy is benchmarked against CCSD(T) reference energies. The causal link between residue order and scaling failure is treated as a testable hypothesis, not an established fact.",
+  "datasets": {
+    "source": {
+      "description": "Molecular geometries for linear alkanes ($C_n H_{2n+2}$, n=2 to 10) and small organic isomers used in EV-Q080-020d35b4cc376b20a380de7b.",
+      "format": "XYZ coordinates generated via RDKit; Hamiltonians constructed using PySCF with STO-3G basis set.",
+      "access_method": "Generated programmatically; reference energies retrieved from NIST CCCBDB or computed locally via CCSD(T).",
+      "evidence_ids": [
+        "EV-Q080-020d35b4cc376b20a380de7b"
+      ]
+    },
+    "target": {
+      "description": "Simulation logs containing energy errors, convergence iterations, and residue norms for FOR and SOCR variants across system sizes.",
+      "format": "CSV/JSON records with fields: molecule_id, n_atoms, residue_type (FOR/SOCR), energy_error_kcal_mol, iterations, seed_id.",
+      "validation_metric": "Deviation from CCSD(T) ground state energy."
+    }
+  },
+  "paper_title": "Scaling Limits of Quantum-Classical Hybrid Simulations: The Role of Second-Order Residue Corrections in Microworld Accuracy",
+  "paper_abstract": "Background: While quantum-classical hybrid frameworks have shown promise in simulating small molecular systems, their scalability to larger microworld phenomena remains constrained by numerical instabilities. Methods: We propose a Second-Order Corrected Residue (SOCR) method that explicitly accounts for error compounding terms ($e_y^2$) neglected in standard first-order approaches. Validation Plan: We validate this approach by simulating linear alkane chains (C2-C10) and comparing error scaling exponents against standard First-Order Residue (FOR) implementations. Results: pending (待执行验证实验). This study aims to determine if correcting second-order residue errors can restore linear scaling and chemical accuracy for medium-sized systems.",
+  "methods": "1. **Hamiltonian Generation**: Use PySCF to generate electronic structure Hamiltonians for alkane chains. Map to qubit operators via Jordan-Wigner transformation.\n2. **VQE Loop Implementation**: Implement a variational loop with a Hardware-Efficient Ansatz (HEA) and L-BFGS-B classical optimizer.\n3. **Residue Calculation Variants**:\n   - **FOR**: Standard parameter-shift rule for gradient estimation, ignoring $e_y^2$ terms (EV-Q080-eb272278534673aa3ae6583f).\n   - **SOCR**: Approximate the $e_y^2$ term using finite-difference Hessian-vector products. Specifically, compute $H v \\approx [\\nabla E(\\theta + \\epsilon v) - \\nabla E(\\theta)] / \\epsilon$ to correct the update step.\n4. **Noise Injection**: Inject controlled Gaussian noise into energy measurements to simulate shot noise.\n5. **Scaling Analysis**: Fit error vs. system size ($N$) to $E(N) \\propto N^\\alpha$ to determine scaling exponent $\\alpha$.",
+  "experiments": {
+    "baselines": [
+      "CCSD(T): Classical high-accuracy reference for chemical accuracy benchmarking.",
+      "Standard VQE (FOR): First-order residue implementation representing current standard practice.",
+      "ZNE-Mitigated VQE: Zero-Noise Extrapolation applied to FOR to distinguish numerical compounding from general noise sensitivity."
+    ],
+    "metrics": [
+      "Energy Error (kcal/mol): Absolute difference from CCSD(T) reference.",
+      "Error Scaling Exponent ($\\alpha$): Fitted exponent from $E(N) \\propto N^\\alpha$; hypothesis predicts $\\alpha_{FOR} > 1$ and $\\alpha_{SOCR} \\le 1$.",
+      "Chemical Accuracy Success Rate: Percentage of runs achieving error < 1 kcal/mol.",
+      "Convergence Iterations: Number of optimizer steps to reach gradient norm < 1e-4."
+    ],
+    "ablation": [
+      "Noise Level Sensitivity: Vary injected noise $\\sigma$ to test if SOCR advantage persists under high uncertainty.",
+      "Ansatz Depth: Compare shallow vs. deep circuits to rule out expressibility bottlenecks.",
+      "Topology Check: Compare linear alkanes vs. cyclic structures to assess generality of scaling behavior."
+    ],
+    "validation_protocol": "5-fold random seed initialization per molecule size. Paired t-test to assess statistical significance of error differences between FOR and SOCR. Reproduce small-molecule results from EV-Q080-020d35b4cc376b20a380de7b as sanity check before scaling up."
+  },
+  "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+  "references": [
+    {
+      "id": "EV-Q080-020d35b4cc376b20a380de7b",
+      "source_type": "arxiv",
+      "title": "arXiv:2210.08930",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2210.08930.pdf",
+      "doi": null,
+      "quoted_text": "In this work, we present a modular quantum-classical hybrid framework, to accurately simulate chemical reaction pathway of various kinds of molecular reactions. We demonstrate our framework by accurately tracing the isomerization pathway for small organic molecules.",
+      "summary": "In this work, we present a modular quantum-classical hybrid framework, to accurately simulate chemical reaction pathway of various kinds of molecular reactions. We demonstrate our ",
+      "relevance_score": 0.8,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=bc611bc97a035809965cd22887c29e1c6d5f0825f16a362f1d2638702b9a00f8"
+    },
+    {
+      "id": "EV-Q080-eb272278534673aa3ae6583f",
+      "source_type": "arxiv",
+      "title": "arXiv:2604.06258",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2604.06258.pdf",
+      "doi": null,
+      "quoted_text": "The residue𝑒 𝑧 is computed as 𝑧− ˆ𝑧=𝑦·𝑦− ˆ𝑦ˆ· ˆ𝑦=( ˆ𝑦+𝑒 𝑦)·( ˆ𝑦+𝑒 𝑦)−( ˆ𝑦· ˆ𝑦−𝜇 𝑧)=𝜇 𝑧+2 ˆ𝑦𝑒𝑦+𝑒 2 𝑦, but a first-order residue function drops the 𝑒2 𝑦 term. While these first-order residue functions typically computesomeresidues accurately, they can lead to significant inaccuracies as errors interact and compound.",
+      "summary": "The residue𝑒 𝑧 is computed as 𝑧− ˆ𝑧=𝑦·𝑦− ˆ𝑦ˆ· ˆ𝑦=( ˆ𝑦+𝑒 𝑦)·( ˆ𝑦+𝑒 𝑦)−( ˆ𝑦· ˆ𝑦−𝜇 𝑧)=𝜇 𝑧+2 ˆ𝑦𝑒𝑦+𝑒 2 𝑦, but a first-order residue function drops the 𝑒2 𝑦 term. While these first-order",
+      "relevance_score": 0.95,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:4|section:page-4|paragraph:1; content_sha256=e3a3176ad76f9081d906851578f2b4d128affd9d75a9bfa9630bb13eb40eff17"
+    }
+  ],
+  "reviewer_comments": [
+    "Revision 2 successfully addresses all required revisions from the previous review cycle.",
+    "The hypothesis text now explicitly frames the link between residue function order and system-size scaling failure as a 'testable hypothesis' rather than an established fact, correctly reflecting the scope of EV-Q080-eb272278534673aa3ae6583f which only confirms local error compounding.",
+    "The SOCR implementation details in the methods section have been updated to specify finite-difference Hessian-vector products ($H v \\approx [\\nabla E(\\theta + \\epsilon v) - \\nabla E(\\theta)] / \\epsilon$) for approximating the $e_y^2$ term, satisfying the reproducibility requirement for the core independent variable.",
+    "Results field remains correctly marked as pending/unexecuted, avoiding any fabrication of experimental outcomes.",
+    "All evidence citations (EV-Q080-020d35b4cc376b20a380de7b, EV-Q080-eb272278534673aa3ae6583f) are valid and appropriately scoped; no hallucinated references or misattributed claims detected."
+  ],
+  "revision_history": [
+    "auto_revision_1: 依据评审意见重做假设与实验设计。"
+  ],
+  "reproducibility_checklist": [
+    "Dockerfile with pinned versions of Qiskit, PySCF, NumPy, and SciPy.",
+    "Fixed random seeds for optimizer initialization and noise injection logged in metadata.",
+    "Pre-computed CCSD(T) reference energies stored in JSON for consistent comparison.",
+    "Explicit geometry and basis set parameters in Hamiltonian generation scripts.",
+    "Modular code structure separating FOR and SOCR residue calculators for easy swapping."
+  ],
+  "validation_status": "needs_data",
+  "actual_execution": false
+}

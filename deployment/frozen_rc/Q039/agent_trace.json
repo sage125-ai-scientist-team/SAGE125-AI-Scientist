@@ -1,0 +1,1809 @@
+[
+  {
+    "event_id": "727bd8346882",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:27:43.089506+00:00",
+    "ended_at": "2026-08-22T08:27:43.089506+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "8014caff390b",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:27:43.089506+00:00",
+    "ended_at": "2026-08-22T08:27:46.985396+00:00",
+    "duration_ms": 3895,
+    "input_summary": "{\"question_item\": {\"id\": \"Q039\", \"domain\": \"Biology\", \"question\": \"Why do we stop growing?\", \"source_page\": 18, \"booklet_excerpt\": \"Our genes determine when we stop growing. When we reach the age of maturation and have the ability to reproduce, our physical growth ceases.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Biology\", \"core_question\": \"What is the biological mechanism by which genetic factors regulate the cessation of physical growth upon reaching sexual maturity?\", \"keywords\": [\"growth cessation\", \"genetic regulation\", \"maturation\", \"reproduction\", \"physical development\"], \"entities\": [\"genes\", \"physical growth\", \"age of maturation\", \"reproductive ability\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The analysis must focus on the causal link between genetic programming, the onset of reproductive capability, and the stopping of somatic growth. It should not extend",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0f54e4095971",
+    "mock": false
+  },
+  {
+    "event_id": "5e32fc420a56",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:27:46.985396+00:00",
+    "ended_at": "2026-08-22T08:28:08.898679+00:00",
+    "duration_ms": 21913,
+    "input_summary": "{\"question_item\": {\"id\": \"Q039\", \"domain\": \"Biology\", \"question\": \"Why do we stop growing?\", \"source_page\": 18, \"booklet_excerpt\": \"Our genes determine when we stop growing. When we reach the age of maturation and have the ability to reproduce, our physical growth ceases.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Biology\", \"core_question\": \"What is the biological mechanism by which genetic factors regulate the cessation of physical growth upon reaching sexual maturity?\", \"keywords\": [\"growth ces",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify specific genetic loci and molecular pathways cited in local RAG documents that link sexual maturation to growth plate closure.\", \"query\": \"genetic regulation of epiphyseal plate closure sexual maturity growth cessation mechanism\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Specific gene names, hormonal axes (e.g., HPG axis), or signaling pathways mentioned in the provided booklet or associated local documents that explain the timing of growth stoppage.\", \"priority\": \"high\"}, {\"purpose\": \"Verify the claim that 'genes determine when we stop growing",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e75e5b872c02",
+    "mock": false
+  },
+  {
+    "event_id": "9245649759e1",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:28:08.907714+00:00",
+    "ended_at": "2026-08-22T08:28:18.467410+00:00",
+    "duration_ms": 9559,
+    "input_summary": "{\"question_item\": {\"id\": \"Q039\", \"domain\": \"Biology\", \"question\": \"Why do we stop growing?\", \"source_page\": 18, \"booklet_excerpt\": \"Our genes determine when we stop growing. When we reach the age of maturation and have the ability to reproduce, our physical growth ceases.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q039-42560d81e95b0c4f23de71a3\", \"title\": \"arXiv:1908.06601\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pdf/1908.06601.pdf\", \"year\": null, \"relevance_score\": 0.55, ",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"Biological mechanisms underlying the cessation of human physical growth (e.g., epiphyseal plate closure, hormonal regulation).\", \"why_it_matters\": \"The provided evidence cards are from physics and computer science domains and do not contain biological data regarding human growth. Without relevant biological evidence, the question cannot be answered scientifically based on the allowed sources.\", \"evidence_ids\": [], \"validation_need\": \"Requires retrieval of peer-reviewed literature in developmental biology, endocrinolog",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9d5ffa065352",
+    "mock": false
+  },
+  {
+    "event_id": "0c94371a7404",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:28:18.467410+00:00",
+    "ended_at": "2026-08-22T08:28:39.356910+00:00",
+    "duration_ms": 20889,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q039\", \"domain\": \"Biology\", \"question\": \"Why do we stop growing?\", \"source_page\": 18, \"booklet_excerpt\": \"Our genes determine when we stop growing. When we reach the age of maturation and have the ability to reproduce, our physical growth ceases.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q039-42560d81e95b0c4f23de71a3\", \"title\": \"arXiv:1908.06601\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pdf/1908.06601.pdf\", \"year\": null, ",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Insufficient Evidence Hypothesis: The cessation of human physical growth is regulated by specific genetic and hormonal mechanisms (e.g., epiphyseal fusion), but no valid scientific hypothesis can be generated or tested using the currently allowed evidence set due to complete domain mismatch.\", \"mechanism\": \"The provided evidence cards pertain exclusively to computer science formal methods (VMS processes), high-energy physics (stop squarks/neutralinos), and adversarial machine learning. There is no semantic or causal link between these domains and human developme",
+    "evidence_ids": [
+      "EV-Q039-42560d81e95b0c4f23de71a3",
+      "EV-Q039-ff67ff8ae23635737ef4b0d0",
+      "EV-Q039-1bc8d552959bd3bbb7c80972",
+      "EV-Q039-86b487e1058c423e23ac0f6d"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a42c93563a9a",
+    "mock": false
+  },
+  {
+    "event_id": "294fabf84ede",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:28:39.357900+00:00",
+    "ended_at": "2026-08-22T08:29:06.083871+00:00",
+    "duration_ms": 26725,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q039\", \"domain\": \"Biology\", \"question\": \"Why do we stop growing?\", \"source_page\": 18, \"booklet_excerpt\": \"Our genes determine when we stop growing. When we reach the age of maturation and have the ability to reproduce, our physical growth ceases.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery\", \"recommended_hypothesis\": {\"hypothesis\": \"Insufficient Evidence Hypothesis: The cessation of human physical growth is regulated by specific genetic and",
+    "output_summary": "{\"technical_details\": \"This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by rigorously demonstrating the semantic disconnect between the provided evidence set and the biological domain of human growth cessation. The methodology employs Natural Language Processing (NLP) techniques, specifically Named Entity Recognition (NER) and Semantic Similarity Analysis, to quantify the absence of biological concepts in the allowed evidence cards. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de7",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "cca3c29187c1",
+    "mock": false
+  },
+  {
+    "event_id": "60abaf86ba21",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:29:06.084878+00:00",
+    "ended_at": "2026-08-22T08:29:14.578482+00:00",
+    "duration_ms": 8493,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q039\", \"domain\": \"Biology\", \"question\": \"Why do we stop growing?\", \"source_page\": 18, \"booklet_excerpt\": \"Our genes determine when we stop growing. When we reach the age of maturation and have the ability to reproduce, our physical growth ceases.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Insufficient Evidence Hypothesis: The cessation of human physical growth is regulated by specific genetic and hormonal mechanisms (e.g., epiphyseal f",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the complete domain mismatch between the biological query and the provided physics/CS evidence cards.\", \"The experiment design proposes a valid NLP-based verification protocol to confirm the absence of biological entities in the source texts.\", \"However, the 'target' dataset (50 PubMed articles) is not part of the allowed_evidence_ids. While necessary for a similarity baseline, its inclusion must be explicitly framed as an external validation control, not as derived evidence.\", \"The Results field correctly s",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b9e3d5111bf2",
+    "mock": false
+  },
+  {
+    "event_id": "0f89ca49d8cb",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:29:14.579480+00:00",
+    "ended_at": "2026-08-22T08:29:38.200674+00:00",
+    "duration_ms": 23621,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the complete domain mismatch between the biological query and the provided physics/CS evidence cards.\", \"The experiment design proposes a valid NLP-based verification protocol to confirm the absence of biological entities in the source texts.\", \"However, the 'target' dataset (50 PubMed articles) is not part of the allowed_evidence_ids. While necessary for a similarity baseline, its inclusion must be explicitly framed as an external validation control, not as derived",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Domain Mismatch Null Hypothesis: The allowed evidence set contains zero information regarding biological growth cessation, rendering the question scientifically unanswerable within current constraints.\", \"mechanism\": \"The semantic content of all allowed evidence IDs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d) is strictly confined to non-biological domains (process algebra, particle physics, computer vision). The term 'stop' functions exclusively as a technical operator o",
+    "evidence_ids": [
+      "EV-Q039-42560d81e95b0c4f23de71a3",
+      "EV-Q039-ff67ff8ae23635737ef4b0d0",
+      "EV-Q039-1bc8d552959bd3bbb7c80972",
+      "EV-Q039-86b487e1058c423e23ac0f6d"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ccaa876cd6e5",
+    "mock": false
+  },
+  {
+    "event_id": "87e0746fc2d9",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:29:38.201748+00:00",
+    "ended_at": "2026-08-22T08:30:05.058015+00:00",
+    "duration_ms": 26856,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the complete domain mismatch between the biological query and the provided physics/CS evidence cards.\", \"The experiment design proposes a valid NLP-based verification protocol to confirm the absence of biological entities in the source texts.\", \"However, the 'target' dataset (50 PubMed articles) is not part of the allowed_evidence_ids. While necessary for a similarity baseline, its inclusion must be explicitly framed as an external validation control, not as derived",
+    "output_summary": "{\"technical_details\": \"This experiment validates the 'Domain Mismatch Null Hypothesis' by rigorously demonstrating that the allowed evidence set contains no biological information regarding human growth cessation. The methodology relies on deterministic string matching and keyword density analysis within the allowed evidence IDs, avoiding dependence on external embeddings or ontologies for the primary falsification test. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "fd5cc05bfe7d",
+    "mock": false
+  },
+  {
+    "event_id": "86534711c22c",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:30:05.059027+00:00",
+    "ended_at": "2026-08-22T08:30:11.332436+00:00",
+    "duration_ms": 6273,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the complete domain mismatch between the biological query and the provided physics/CS evidence cards.\", \"The experiment design proposes a valid NLP-based verification protocol to confirm the absence of biological entities in the source texts.\", \"However, the 'target' dataset (50 PubMed articles) is not part of the allowed_evidence_ids. While necessary for a similarity baseline, its inclusion must be explicitly framed as an external validation control, not as derived",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised plan successfully addresses all critical issues from the previous review iteration.\", \"The target dataset is now correctly labeled as 'external_validation_resource' and explicitly distinguished from allowed evidence, resolving the evidence grounding violation.\", \"Hypothesis 1 has been appropriately demoted to a secondary diagnostic role, with the Domain Mismatch Null Hypothesis established as the primary scientific output.\", \"The experiment design now includes a deterministic string-matching metric ('Evidence Relevance Confirmation Score') th",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "768a0a57a8a6",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:82ba11b767c758db",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: The cessation of human physical growth is regulated by specific genetic and hormonal mechanisms (e.g., epiphyseal fusion), but no valid scientific hypothesis can be generated or tested using the currently allowed evidence set due to complete domain mismatch.",
+              "mechanism": "The provided evidence cards pertain exclusively to computer science formal methods (VMS processes), high-energy physics (stop squarks/neutralinos), and adversarial machine learning. There is no semantic or causal link between these domains and human developmental biology. Therefore, no mechanism connecting the allowed evidence to biological growth cessation exists.",
+              "falsifiable_prediction": "If a comprehensive semantic search of the full text of all allowed evidence IDs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d) reveals zero mentions of biological terms (e.g., 'growth plate', 'hormone', 'gene expression', 'skeletal maturation'), then the hypothesis that these sources are insufficient is confirmed.",
+              "required_observations": [
+                "Full-text semantic analysis of EV-Q039-42560d81e95b0c4f23de71a3 confirming it describes Vending Machine Systems only",
+                "Full-text semantic analysis of EV-Q039-ff67ff8ae23635737ef4b0d0 confirming it describes particle physics coannihilation only",
+                "Full-text semantic analysis of EV-Q039-1bc8d552959bd3bbb7c80972 confirming it describes adversarial examples in computer vision only",
+                "Full-text semantic analysis of EV-Q039-86b487e1058c423e23ac0f6d confirming it describes R-parity breaking in MSSM only"
+              ],
+              "risk_of_being_wrong": "Low risk. The quoted texts and metadata explicitly identify non-biological domains. The only risk is if the papers contain obscure, unquoted biological analogies or interdisciplinary sections not captured in the extraction, which is statistically negligible given the specific titles and quotes.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "Keyword Ambiguity Artifact Hypothesis: The retrieval of physics and CS papers for a biology question is solely caused by lexical matching of the token 'stop' without semantic disambiguation, implying that any future hypothesis generation on this topic requires a pre-filtering step to exclude non-biological 'stop' senses.",
+              "mechanism": "The evidence retrieval system matched the query term 'stop growing' against documents containing 'STOP' (process algebra), 'stop' (supersymmetric particle), and 'stop signs' (vision). This indicates a failure in domain-aware embedding or entity linking. The mechanism of retrieval error is polysemy in technical corpora.",
+              "falsifiable_prediction": "If re-running the evidence retrieval with a biological ontology filter or sense-disambiguated embeddings yields at least one relevant biological paper, then the current irrelevance is confirmed to be a retrieval artifact rather than a true absence of literature in the broader corpus.",
+              "required_observations": [
+                "Comparison of retrieval results using raw keyword 'stop' vs. biologically constrained query 'human growth cessation'",
+                "Verification that current allowed_evidence_ids contain 'stop' as a noun/verb in non-biological contexts"
+              ],
+              "risk_of_being_wrong": "Moderate risk. It is possible the retrieval was correct but the corpus simply lacks biology papers. However, given the high relevance scores (1.0) assigned to clearly irrelevant physics papers, a scoring/retrieval bug is highly probable.",
+              "supporting_evidence_ids": [
+                "EV-Q039-42560d81e95b0c4f23de71a3",
+                "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "EV-Q039-86b487e1058c423e23ac0f6d"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it strictly adheres to the constraint that factual claims must be traceable to evidence. Since no allowed evidence supports a biological mechanism, the only scientifically valid stance is to declare insufficient evidence. Hypothesis 1, while analytically useful for system debugging, relies on meta-analysis of the retrieval process rather than the scientific content of the evidence cards themselves, and uses evidence IDs only as negative examples. Hypothesis 0 correctly identifies the knowledge gap as the primary scientific output.",
+          "rejected_directions": [
+            "Attempting to map 'STOPαVMS' process algebra states to biological growth checkpoints (false analogy, no evidentiary basis)",
+            "Hypothesizing that 'stop squark' mass differences correlate with biological maturation rates (nonsensical cross-domain conflation)",
+            "Assuming the booklet excerpt is factually sufficient to generate a hypothesis without external validation (violates evidence tracing requirement)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by rigorously demonstrating the semantic disconnect between the provided evidence set and the biological domain of human growth cessation. The methodology employs Natural Language Processing (NLP) techniques, specifically Named Entity Recognition (NER) and Semantic Similarity Analysis, to quantify the absence of biological concepts in the allowed evidence cards. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d). 2) Applying a biomedical entity filter (using UMLS or MeSH terminologies) to identify any mentions of 'growth plate', 'epiphysis', 'hormone', 'GH/IGF-1 axis', or 'skeletal maturation'. 3) Computing cosine similarity between the vector embeddings of the evidence documents and a reference corpus of established biological literature on growth cessation. A near-zero similarity score and zero entity matches will confirm the hypothesis that the evidence is domain-mismatched.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q039-42560d81e95b0c4f23de71a3",
+                "description": "Full text of arXiv:1908.06601 regarding Vending Machine Systems (VMS) and process algebra."
+              },
+              {
+                "id": "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "description": "Full text of arXiv:1212.6847 regarding stop squark and neutralino coannihilation in high-energy physics."
+              },
+              {
+                "id": "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "description": "Full text of arXiv:1710.03337 regarding adversarial examples on physical stop signs in computer vision."
+              },
+              {
+                "id": "EV-Q039-86b487e1058c423e23ac0f6d",
+                "description": "Full text of arXiv:1401.7989 regarding R-Parity Breaking and Stop LSP Decays in MSSM."
+              }
+            ],
+            "target": {
+              "description": "A control corpus of 50 peer-reviewed articles from PubMed/PMC explicitly discussing 'human epiphyseal fusion', 'growth hormone regulation', and 'cessation of skeletal growth'. This serves as the positive control for semantic similarity metrics.",
+              "source_type": "Biomedical Literature Control Set"
+            }
+          },
+          "methods": "1. **Text Extraction**: Use PyPDF2 or pdfminer.six to extract raw text from the four source PDFs identified by their evidence IDs. 2. **Entity Filtering**: Apply SpaCy with a custom biomedical NER pipeline (trained on MedSpaCy or BioBERT) to scan for entities related to anatomy (bone, cartilage), physiology (hormone, secretion), and development (maturation, fusion). 3. **Semantic Embedding**: Generate document-level embeddings using BioBERT (for the target control set) and SciBERT (for the source evidence set) to handle domain-specific vocabulary. 4. **Similarity Calculation**: Compute pairwise cosine similarity between each source evidence document and the centroid of the target biological corpus. 5. **Keyword Density Analysis**: Calculate the frequency of the token 'stop' in each document and classify its context (e.g., 'process stop', 'particle stop', 'sign stop') vs. biological contexts (e.g., 'growth stop').",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: Cosine similarity scores between random non-biological arXiv papers (e.g., pure mathematics) and the biological control corpus.",
+              "Keyword-Only Baseline: Retrieval relevance based solely on the presence of the token 'stop' without semantic disambiguation, replicating the initial retrieval error."
+            ],
+            "metrics": [
+              "Biomedical Entity Recall: The proportion of expected biological terms (from a standard glossary of growth biology) found in the source documents. Expected value: 0.0.",
+              "Cross-Domain Cosine Similarity: The average cosine similarity between source evidence embeddings and the biological control corpus centroid. Expected value: < 0.1.",
+              "Contextual Polysemy Score: A classification accuracy metric determining how often the word 'stop' is correctly classified as non-biological in the source texts. Expected value: 1.0 (100% non-biological)."
+            ],
+            "ablation": "Remove the biomedical NER filter and rely only on general-purpose NER to test if any generic entities (e.g., 'cell', 'mass') are misinterpreted as biological evidence. This tests the robustness of the 'insufficient evidence' claim against loose keyword matching.",
+            "validation_protocol": "Double-blind verification: Two independent annotators will manually review 10% of the extracted text segments containing the word 'stop' to confirm they do not refer to biological growth. Inter-annotator agreement (Cohen's Kappa) must exceed 0.8 to validate the automated NER results."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to the four specific arXiv PDFs via their provided URLs.",
+            "Ensure BioBERT and SciBERT models are loaded from HuggingFace Hub with fixed seeds.",
+            "Confirm the biomedical entity list includes standard terms: 'epiphysis', 'chondrocyte', 'somatotropin', 'gonadotropin'.",
+            "Log all cosine similarity scores and entity counts in a structured CSV for audit.",
+            "Archive the exact version of the NER pipeline used for filtering."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "timestamp": null,
+            "compute_resources": "CPU/GPU for embedding generation; Storage for PDF parsing.",
+            "code_repository": null,
+            "data_availability": "Source PDFs are publicly available via arXiv; Control corpus requires PubMed API access."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-082743-123916ce",
+        "version_number": 1,
+        "version_id": "20260822-082743-123916ce:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: The cessation of human physical growth is regulated by specific genetic and hormonal mechanisms (e.g., epiphyseal fusion), but no valid scientific hypothesis can be generated or tested using the currently allowed evidence set due to complete domain mismatch.",
+              "mechanism": "The provided evidence cards pertain exclusively to computer science formal methods (VMS processes), high-energy physics (stop squarks/neutralinos), and adversarial machine learning. There is no semantic or causal link between these domains and human developmental biology. Therefore, no mechanism connecting the allowed evidence to biological growth cessation exists.",
+              "falsifiable_prediction": "If a comprehensive semantic search of the full text of all allowed evidence IDs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d) reveals zero mentions of biological terms (e.g., 'growth plate', 'hormone', 'gene expression', 'skeletal maturation'), then the hypothesis that these sources are insufficient is confirmed.",
+              "required_observations": [
+                "Full-text semantic analysis of EV-Q039-42560d81e95b0c4f23de71a3 confirming it describes Vending Machine Systems only",
+                "Full-text semantic analysis of EV-Q039-ff67ff8ae23635737ef4b0d0 confirming it describes particle physics coannihilation only",
+                "Full-text semantic analysis of EV-Q039-1bc8d552959bd3bbb7c80972 confirming it describes adversarial examples in computer vision only",
+                "Full-text semantic analysis of EV-Q039-86b487e1058c423e23ac0f6d confirming it describes R-parity breaking in MSSM only"
+              ],
+              "risk_of_being_wrong": "Low risk. The quoted texts and metadata explicitly identify non-biological domains. The only risk is if the papers contain obscure, unquoted biological analogies or interdisciplinary sections not captured in the extraction, which is statistically negligible given the specific titles and quotes.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "Keyword Ambiguity Artifact Hypothesis: The retrieval of physics and CS papers for a biology question is solely caused by lexical matching of the token 'stop' without semantic disambiguation, implying that any future hypothesis generation on this topic requires a pre-filtering step to exclude non-biological 'stop' senses.",
+              "mechanism": "The evidence retrieval system matched the query term 'stop growing' against documents containing 'STOP' (process algebra), 'stop' (supersymmetric particle), and 'stop signs' (vision). This indicates a failure in domain-aware embedding or entity linking. The mechanism of retrieval error is polysemy in technical corpora.",
+              "falsifiable_prediction": "If re-running the evidence retrieval with a biological ontology filter or sense-disambiguated embeddings yields at least one relevant biological paper, then the current irrelevance is confirmed to be a retrieval artifact rather than a true absence of literature in the broader corpus.",
+              "required_observations": [
+                "Comparison of retrieval results using raw keyword 'stop' vs. biologically constrained query 'human growth cessation'",
+                "Verification that current allowed_evidence_ids contain 'stop' as a noun/verb in non-biological contexts"
+              ],
+              "risk_of_being_wrong": "Moderate risk. It is possible the retrieval was correct but the corpus simply lacks biology papers. However, given the high relevance scores (1.0) assigned to clearly irrelevant physics papers, a scoring/retrieval bug is highly probable.",
+              "supporting_evidence_ids": [
+                "EV-Q039-42560d81e95b0c4f23de71a3",
+                "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "EV-Q039-86b487e1058c423e23ac0f6d"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it strictly adheres to the constraint that factual claims must be traceable to evidence. Since no allowed evidence supports a biological mechanism, the only scientifically valid stance is to declare insufficient evidence. Hypothesis 1, while analytically useful for system debugging, relies on meta-analysis of the retrieval process rather than the scientific content of the evidence cards themselves, and uses evidence IDs only as negative examples. Hypothesis 0 correctly identifies the knowledge gap as the primary scientific output.",
+          "rejected_directions": [
+            "Attempting to map 'STOPαVMS' process algebra states to biological growth checkpoints (false analogy, no evidentiary basis)",
+            "Hypothesizing that 'stop squark' mass differences correlate with biological maturation rates (nonsensical cross-domain conflation)",
+            "Assuming the booklet excerpt is factually sufficient to generate a hypothesis without external validation (violates evidence tracing requirement)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by rigorously demonstrating the semantic disconnect between the provided evidence set and the biological domain of human growth cessation. The methodology employs Natural Language Processing (NLP) techniques, specifically Named Entity Recognition (NER) and Semantic Similarity Analysis, to quantify the absence of biological concepts in the allowed evidence cards. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d). 2) Applying a biomedical entity filter (using UMLS or MeSH terminologies) to identify any mentions of 'growth plate', 'epiphysis', 'hormone', 'GH/IGF-1 axis', or 'skeletal maturation'. 3) Computing cosine similarity between the vector embeddings of the evidence documents and a reference corpus of established biological literature on growth cessation. A near-zero similarity score and zero entity matches will confirm the hypothesis that the evidence is domain-mismatched.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q039-42560d81e95b0c4f23de71a3",
+                "description": "Full text of arXiv:1908.06601 regarding Vending Machine Systems (VMS) and process algebra."
+              },
+              {
+                "id": "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "description": "Full text of arXiv:1212.6847 regarding stop squark and neutralino coannihilation in high-energy physics."
+              },
+              {
+                "id": "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "description": "Full text of arXiv:1710.03337 regarding adversarial examples on physical stop signs in computer vision."
+              },
+              {
+                "id": "EV-Q039-86b487e1058c423e23ac0f6d",
+                "description": "Full text of arXiv:1401.7989 regarding R-Parity Breaking and Stop LSP Decays in MSSM."
+              }
+            ],
+            "target": {
+              "description": "A control corpus of 50 peer-reviewed articles from PubMed/PMC explicitly discussing 'human epiphyseal fusion', 'growth hormone regulation', and 'cessation of skeletal growth'. This serves as the positive control for semantic similarity metrics.",
+              "source_type": "Biomedical Literature Control Set"
+            }
+          },
+          "methods": "1. **Text Extraction**: Use PyPDF2 or pdfminer.six to extract raw text from the four source PDFs identified by their evidence IDs. 2. **Entity Filtering**: Apply SpaCy with a custom biomedical NER pipeline (trained on MedSpaCy or BioBERT) to scan for entities related to anatomy (bone, cartilage), physiology (hormone, secretion), and development (maturation, fusion). 3. **Semantic Embedding**: Generate document-level embeddings using BioBERT (for the target control set) and SciBERT (for the source evidence set) to handle domain-specific vocabulary. 4. **Similarity Calculation**: Compute pairwise cosine similarity between each source evidence document and the centroid of the target biological corpus. 5. **Keyword Density Analysis**: Calculate the frequency of the token 'stop' in each document and classify its context (e.g., 'process stop', 'particle stop', 'sign stop') vs. biological contexts (e.g., 'growth stop').",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: Cosine similarity scores between random non-biological arXiv papers (e.g., pure mathematics) and the biological control corpus.",
+              "Keyword-Only Baseline: Retrieval relevance based solely on the presence of the token 'stop' without semantic disambiguation, replicating the initial retrieval error."
+            ],
+            "metrics": [
+              "Biomedical Entity Recall: The proportion of expected biological terms (from a standard glossary of growth biology) found in the source documents. Expected value: 0.0.",
+              "Cross-Domain Cosine Similarity: The average cosine similarity between source evidence embeddings and the biological control corpus centroid. Expected value: < 0.1.",
+              "Contextual Polysemy Score: A classification accuracy metric determining how often the word 'stop' is correctly classified as non-biological in the source texts. Expected value: 1.0 (100% non-biological)."
+            ],
+            "ablation": "Remove the biomedical NER filter and rely only on general-purpose NER to test if any generic entities (e.g., 'cell', 'mass') are misinterpreted as biological evidence. This tests the robustness of the 'insufficient evidence' claim against loose keyword matching.",
+            "validation_protocol": "Double-blind verification: Two independent annotators will manually review 10% of the extracted text segments containing the word 'stop' to confirm they do not refer to biological growth. Inter-annotator agreement (Cohen's Kappa) must exceed 0.8 to validate the automated NER results."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to the four specific arXiv PDFs via their provided URLs.",
+            "Ensure BioBERT and SciBERT models are loaded from HuggingFace Hub with fixed seeds.",
+            "Confirm the biomedical entity list includes standard terms: 'epiphysis', 'chondrocyte', 'somatotropin', 'gonadotropin'.",
+            "Log all cosine similarity scores and entity counts in a structured CSV for audit.",
+            "Archive the exact version of the NER pipeline used for filtering."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "timestamp": null,
+            "compute_resources": "CPU/GPU for embedding generation; Storage for PDF parsing.",
+            "code_repository": null,
+            "data_availability": "Source PDFs are publicly available via arXiv; Control corpus requires PubMed API access."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies the complete domain mismatch between the biological query and the provided physics/CS evidence cards.",
+            "The experiment design proposes a valid NLP-based verification protocol to confirm the absence of biological entities in the source texts.",
+            "However, the 'target' dataset (50 PubMed articles) is not part of the allowed_evidence_ids. While necessary for a similarity baseline, its inclusion must be explicitly framed as an external validation control, not as derived evidence.",
+            "The Results field correctly states 'pending', avoiding fabrication.",
+            "Risk level is elevated to 'medium' because the experimental validation relies entirely on external resources (PubMed, BioBERT) not guaranteed to be available or permissible in the strict evidence-grounded workflow."
+          ],
+          "critical_issues": [
+            "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+            "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope."
+          ],
+          "required_revisions": [
+            "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+            "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+            "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+            "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:3fe9d324355a",
+            "category": "critical_issue",
+            "description": "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:e27ac2855cec",
+            "category": "critical_issue",
+            "description": "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2b57869509a8",
+            "category": "required_revision",
+            "description": "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:5c4700c68c1d",
+            "category": "required_revision",
+            "description": "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:4565d60b055e",
+            "category": "required_revision",
+            "description": "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:52043509ef28",
+            "category": "required_revision",
+            "description": "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "b6706c567bb14911b47f64c8b65dd0715d055802de43a34d76d93a138da5d085",
+          "experiment_designer": "6bc7816230ab80b9a9a3f3d42771497350cb4d8912ee42f9542efec1c8a8861e",
+          "scientific_reviewer": "46b9d7e3c7936c8d8ba0181d8e6f4d91fc384c61f209ccb4e97d2a2ca5b90933"
+        }
+      },
+      "parent_version_id": "20260822-082743-123916ce:v1",
+      "lineage": [
+        "20260822-082743-123916ce:v1",
+        "20260822-082743-123916ce:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The candidate hypothesis correctly identifies the complete domain mismatch between the biological query and the provided physics/CS evidence cards.",
+          "The experiment design proposes a valid NLP-based verification protocol to confirm the absence of biological entities in the source texts.",
+          "However, the 'target' dataset (50 PubMed articles) is not part of the allowed_evidence_ids. While necessary for a similarity baseline, its inclusion must be explicitly framed as an external validation control, not as derived evidence.",
+          "The Results field correctly states 'pending', avoiding fabrication.",
+          "Risk level is elevated to 'medium' because the experimental validation relies entirely on external resources (PubMed, BioBERT) not guaranteed to be available or permissible in the strict evidence-grounded workflow."
+        ],
+        "critical_issues": [
+          "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+          "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope."
+        ],
+        "required_revisions": [
+          "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+          "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+          "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+          "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.7,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised plan successfully addresses all critical issues from the previous review iteration.",
+          "The target dataset is now correctly labeled as 'external_validation_resource' and explicitly distinguished from allowed evidence, resolving the evidence grounding violation.",
+          "Hypothesis 1 has been appropriately demoted to a secondary diagnostic role, with the Domain Mismatch Null Hypothesis established as the primary scientific output.",
+          "The experiment design now includes a deterministic string-matching metric ('Evidence Relevance Confirmation Score') that does not depend on external embeddings, ensuring robustness and reproducibility.",
+          "The reproducibility checklist correctly clarifies that external biomedical ontologies are optional dependencies for validation only, not required for the primary falsification test.",
+          "All supporting evidence IDs in the recommended hypothesis are valid and present in the allowed_evidence_ids list.",
+          "Results field correctly remains 'pending' with no fabrication of experimental outcomes."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 1.0,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:baeea81af985656a",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+          "issue_id": "critical_issue:3fe9d324355a"
+        },
+        {
+          "failure_id": "failure:1c616d033bdf5dfd",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope.",
+          "issue_id": "critical_issue:e27ac2855cec"
+        },
+        {
+          "failure_id": "failure:d97299d4aee14155",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+          "issue_id": "required_revision:2b57869509a8"
+        },
+        {
+          "failure_id": "failure:fd1ba932e42aabff",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+          "issue_id": "required_revision:5c4700c68c1d"
+        },
+        {
+          "failure_id": "failure:8bdf175db13fff9b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+          "issue_id": "required_revision:4565d60b055e"
+        },
+        {
+          "failure_id": "failure:03093a156d64644a",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.",
+          "issue_id": "required_revision:52043509ef28"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:8223a86562bbd4c4",
+          "issue_id": "required_revision:4565d60b055e",
+          "reason": "Reviewer item required_revision:4565d60b055e requested 'Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.'. V2 changes technical_details; deterministic correlation evidence tokens=['biological', 'e.g', 'embedding', 'evidence', 'exact', 'external', 'keyword', 'match', 'pdfs', 'str'], coverage=0.435.",
+          "before": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by rigorously demonstrating the semantic disconnect between the provided evidence set and the biological domain of human growth cessation. The methodology employs Natural Language Processing (NLP) techniques, specifically Named Entity Recognition (NER) and Semantic Similarity Analysis, to quantify the absence of biological concepts in the allowed evidence cards. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d). 2) Applying a biomedical entity filter (using UMLS or MeSH terminologies) to identify any mentions of 'growth plate', 'epiphysis', 'hormone', 'GH/IGF-1 axis', or 'skeletal maturation'. 3) Computing cosine similarity between the vector embeddings of the evidence documents and a reference corpus of established biological literature on growth cessation. A near-zero similarity score and zero entity matches will confirm the hypothesis that the evidence is domain-mismatched.",
+          "after": "This experiment validates the 'Domain Mismatch Null Hypothesis' by rigorously demonstrating that the allowed evidence set contains no biological information regarding human growth cessation. The methodology relies on deterministic string matching and keyword density analysis within the allowed evidence IDs, avoiding dependence on external embeddings or ontologies for the primary falsification test. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d). 2) Performing exact case-insensitive string matching for a predefined list of high-specificity biological keywords (e.g., 'epiphysis', 'chondrocyte', 'somatotropin', 'osteoblast', 'puberty') against the extracted text. 3) Analyzing the contextual usage of the token 'stop' to confirm its exclusive association with non-biological domains (process algebra, particle physics, computer vision). A result of zero biological keyword matches and 100% non-biological context classification for 'stop' confirms the hypothesis.",
+          "evidence_refs": [
+            "EV-Q039-1bc8d552959bd3bbb7c80972",
+            "EV-Q039-42560d81e95b0c4f23de71a3",
+            "EV-Q039-86b487e1058c423e23ac0f6d",
+            "EV-Q039-ff67ff8ae23635737ef4b0d0"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:cd85f435480a022f",
+          "issue_id": "required_revision:52043509ef28",
+          "reason": "Reviewer item required_revision:52043509ef28 requested 'Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['access', 'biomedical', 'checklist', 'clarify', 'external', 'me', 'not', 'ontology', 'reproducibility', 'sh', 'umls'], coverage=0.846.",
+          "before": [
+            "Verify access to the four specific arXiv PDFs via their provided URLs.",
+            "Ensure BioBERT and SciBERT models are loaded from HuggingFace Hub with fixed seeds.",
+            "Confirm the biomedical entity list includes standard terms: 'epiphysis', 'chondrocyte', 'somatotropin', 'gonadotropin'.",
+            "Log all cosine similarity scores and entity counts in a structured CSV for audit.",
+            "Archive the exact version of the NER pipeline used for filtering."
+          ],
+          "after": [
+            "Verify access to the four specific arXiv PDFs via their provided URLs in the evidence catalog.",
+            "Confirm the exact list of biological keywords used for matching is logged and fixed before execution.",
+            "Ensure the text extraction script handles PDF encoding correctly to avoid missing hidden text.",
+            "Clarify that access to external biomedical ontologies (UMLS/MeSH) is NOT required for the primary string-matching experiment, only for the optional external validation resource.",
+            "Log all keyword match counts and context classifications in a structured CSV for audit."
+          ],
+          "evidence_refs": [
+            "EV-Q039-1bc8d552959bd3bbb7c80972",
+            "EV-Q039-42560d81e95b0c4f23de71a3",
+            "EV-Q039-86b487e1058c423e23ac0f6d",
+            "EV-Q039-ff67ff8ae23635737ef4b0d0"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:3fe9d324355a",
+          "category": "critical_issue",
+          "description": "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:e27ac2855cec",
+          "category": "critical_issue",
+          "description": "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:2b57869509a8",
+          "category": "required_revision",
+          "description": "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:5c4700c68c1d",
+          "category": "required_revision",
+          "description": "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:4565d60b055e",
+          "category": "required_revision",
+          "description": "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:8223a86562bbd4c4; evidence=EV-Q039-1bc8d552959bd3bbb7c80972,EV-Q039-42560d81e95b0c4f23de71a3,EV-Q039-86b487e1058c423e23ac0f6d,EV-Q039-ff67ff8ae23635737ef4b0d0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:52043509ef28",
+          "category": "required_revision",
+          "description": "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cd85f435480a022f; evidence=EV-Q039-1bc8d552959bd3bbb7c80972,EV-Q039-42560d81e95b0c4f23de71a3,EV-Q039-86b487e1058c423e23ac0f6d,EV-Q039-ff67ff8ae23635737ef4b0d0; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 1.0,
+          "delta": 0.050000000000000044
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 1.0,
+          "delta": 0.09999999999999998
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.95,
+          "delta": 0.25
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Domain Mismatch Null Hypothesis: The allowed evidence set contains zero information regarding biological growth cessation, rendering the question scientifically unanswerable within current constraints.",
+          "overall_score": 0.95,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Polysemous Retrieval Artifact Hypothesis: The presence of physics/CS evidence for a biology query is an artifact of lexical ambiguity where 'stop' was matched without domain disambiguation, confirming that the current evidence set is invalid for biological inquiry.",
+          "overall_score": 0.7,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:3fe9d324355a",
+        "required_revision_without_change:critical_issue:e27ac2855cec",
+        "required_revision_without_change:required_revision:2b57869509a8",
+        "required_revision_without_change:required_revision:5c4700c68c1d",
+        "unresolved_issue:critical_issue:3fe9d324355a",
+        "unresolved_issue:critical_issue:e27ac2855cec",
+        "unresolved_issue:required_revision:2b57869509a8",
+        "unresolved_issue:required_revision:5c4700c68c1d"
+      ],
+      "remaining_blockers": [
+        "critical_issue:3fe9d324355a: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:e27ac2855cec: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:2b57869509a8: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:5c4700c68c1d: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-082743-123916ce",
+        "version_number": 1,
+        "version_id": "20260822-082743-123916ce:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: The cessation of human physical growth is regulated by specific genetic and hormonal mechanisms (e.g., epiphyseal fusion), but no valid scientific hypothesis can be generated or tested using the currently allowed evidence set due to complete domain mismatch.",
+              "mechanism": "The provided evidence cards pertain exclusively to computer science formal methods (VMS processes), high-energy physics (stop squarks/neutralinos), and adversarial machine learning. There is no semantic or causal link between these domains and human developmental biology. Therefore, no mechanism connecting the allowed evidence to biological growth cessation exists.",
+              "falsifiable_prediction": "If a comprehensive semantic search of the full text of all allowed evidence IDs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d) reveals zero mentions of biological terms (e.g., 'growth plate', 'hormone', 'gene expression', 'skeletal maturation'), then the hypothesis that these sources are insufficient is confirmed.",
+              "required_observations": [
+                "Full-text semantic analysis of EV-Q039-42560d81e95b0c4f23de71a3 confirming it describes Vending Machine Systems only",
+                "Full-text semantic analysis of EV-Q039-ff67ff8ae23635737ef4b0d0 confirming it describes particle physics coannihilation only",
+                "Full-text semantic analysis of EV-Q039-1bc8d552959bd3bbb7c80972 confirming it describes adversarial examples in computer vision only",
+                "Full-text semantic analysis of EV-Q039-86b487e1058c423e23ac0f6d confirming it describes R-parity breaking in MSSM only"
+              ],
+              "risk_of_being_wrong": "Low risk. The quoted texts and metadata explicitly identify non-biological domains. The only risk is if the papers contain obscure, unquoted biological analogies or interdisciplinary sections not captured in the extraction, which is statistically negligible given the specific titles and quotes.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "Keyword Ambiguity Artifact Hypothesis: The retrieval of physics and CS papers for a biology question is solely caused by lexical matching of the token 'stop' without semantic disambiguation, implying that any future hypothesis generation on this topic requires a pre-filtering step to exclude non-biological 'stop' senses.",
+              "mechanism": "The evidence retrieval system matched the query term 'stop growing' against documents containing 'STOP' (process algebra), 'stop' (supersymmetric particle), and 'stop signs' (vision). This indicates a failure in domain-aware embedding or entity linking. The mechanism of retrieval error is polysemy in technical corpora.",
+              "falsifiable_prediction": "If re-running the evidence retrieval with a biological ontology filter or sense-disambiguated embeddings yields at least one relevant biological paper, then the current irrelevance is confirmed to be a retrieval artifact rather than a true absence of literature in the broader corpus.",
+              "required_observations": [
+                "Comparison of retrieval results using raw keyword 'stop' vs. biologically constrained query 'human growth cessation'",
+                "Verification that current allowed_evidence_ids contain 'stop' as a noun/verb in non-biological contexts"
+              ],
+              "risk_of_being_wrong": "Moderate risk. It is possible the retrieval was correct but the corpus simply lacks biology papers. However, given the high relevance scores (1.0) assigned to clearly irrelevant physics papers, a scoring/retrieval bug is highly probable.",
+              "supporting_evidence_ids": [
+                "EV-Q039-42560d81e95b0c4f23de71a3",
+                "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "EV-Q039-86b487e1058c423e23ac0f6d"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it strictly adheres to the constraint that factual claims must be traceable to evidence. Since no allowed evidence supports a biological mechanism, the only scientifically valid stance is to declare insufficient evidence. Hypothesis 1, while analytically useful for system debugging, relies on meta-analysis of the retrieval process rather than the scientific content of the evidence cards themselves, and uses evidence IDs only as negative examples. Hypothesis 0 correctly identifies the knowledge gap as the primary scientific output.",
+          "rejected_directions": [
+            "Attempting to map 'STOPαVMS' process algebra states to biological growth checkpoints (false analogy, no evidentiary basis)",
+            "Hypothesizing that 'stop squark' mass differences correlate with biological maturation rates (nonsensical cross-domain conflation)",
+            "Assuming the booklet excerpt is factually sufficient to generate a hypothesis without external validation (violates evidence tracing requirement)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by rigorously demonstrating the semantic disconnect between the provided evidence set and the biological domain of human growth cessation. The methodology employs Natural Language Processing (NLP) techniques, specifically Named Entity Recognition (NER) and Semantic Similarity Analysis, to quantify the absence of biological concepts in the allowed evidence cards. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d). 2) Applying a biomedical entity filter (using UMLS or MeSH terminologies) to identify any mentions of 'growth plate', 'epiphysis', 'hormone', 'GH/IGF-1 axis', or 'skeletal maturation'. 3) Computing cosine similarity between the vector embeddings of the evidence documents and a reference corpus of established biological literature on growth cessation. A near-zero similarity score and zero entity matches will confirm the hypothesis that the evidence is domain-mismatched.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q039-42560d81e95b0c4f23de71a3",
+                "description": "Full text of arXiv:1908.06601 regarding Vending Machine Systems (VMS) and process algebra."
+              },
+              {
+                "id": "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "description": "Full text of arXiv:1212.6847 regarding stop squark and neutralino coannihilation in high-energy physics."
+              },
+              {
+                "id": "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "description": "Full text of arXiv:1710.03337 regarding adversarial examples on physical stop signs in computer vision."
+              },
+              {
+                "id": "EV-Q039-86b487e1058c423e23ac0f6d",
+                "description": "Full text of arXiv:1401.7989 regarding R-Parity Breaking and Stop LSP Decays in MSSM."
+              }
+            ],
+            "target": {
+              "description": "A control corpus of 50 peer-reviewed articles from PubMed/PMC explicitly discussing 'human epiphyseal fusion', 'growth hormone regulation', and 'cessation of skeletal growth'. This serves as the positive control for semantic similarity metrics.",
+              "source_type": "Biomedical Literature Control Set"
+            }
+          },
+          "methods": "1. **Text Extraction**: Use PyPDF2 or pdfminer.six to extract raw text from the four source PDFs identified by their evidence IDs. 2. **Entity Filtering**: Apply SpaCy with a custom biomedical NER pipeline (trained on MedSpaCy or BioBERT) to scan for entities related to anatomy (bone, cartilage), physiology (hormone, secretion), and development (maturation, fusion). 3. **Semantic Embedding**: Generate document-level embeddings using BioBERT (for the target control set) and SciBERT (for the source evidence set) to handle domain-specific vocabulary. 4. **Similarity Calculation**: Compute pairwise cosine similarity between each source evidence document and the centroid of the target biological corpus. 5. **Keyword Density Analysis**: Calculate the frequency of the token 'stop' in each document and classify its context (e.g., 'process stop', 'particle stop', 'sign stop') vs. biological contexts (e.g., 'growth stop').",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: Cosine similarity scores between random non-biological arXiv papers (e.g., pure mathematics) and the biological control corpus.",
+              "Keyword-Only Baseline: Retrieval relevance based solely on the presence of the token 'stop' without semantic disambiguation, replicating the initial retrieval error."
+            ],
+            "metrics": [
+              "Biomedical Entity Recall: The proportion of expected biological terms (from a standard glossary of growth biology) found in the source documents. Expected value: 0.0.",
+              "Cross-Domain Cosine Similarity: The average cosine similarity between source evidence embeddings and the biological control corpus centroid. Expected value: < 0.1.",
+              "Contextual Polysemy Score: A classification accuracy metric determining how often the word 'stop' is correctly classified as non-biological in the source texts. Expected value: 1.0 (100% non-biological)."
+            ],
+            "ablation": "Remove the biomedical NER filter and rely only on general-purpose NER to test if any generic entities (e.g., 'cell', 'mass') are misinterpreted as biological evidence. This tests the robustness of the 'insufficient evidence' claim against loose keyword matching.",
+            "validation_protocol": "Double-blind verification: Two independent annotators will manually review 10% of the extracted text segments containing the word 'stop' to confirm they do not refer to biological growth. Inter-annotator agreement (Cohen's Kappa) must exceed 0.8 to validate the automated NER results."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to the four specific arXiv PDFs via their provided URLs.",
+            "Ensure BioBERT and SciBERT models are loaded from HuggingFace Hub with fixed seeds.",
+            "Confirm the biomedical entity list includes standard terms: 'epiphysis', 'chondrocyte', 'somatotropin', 'gonadotropin'.",
+            "Log all cosine similarity scores and entity counts in a structured CSV for audit.",
+            "Archive the exact version of the NER pipeline used for filtering."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "timestamp": null,
+            "compute_resources": "CPU/GPU for embedding generation; Storage for PDF parsing.",
+            "code_repository": null,
+            "data_availability": "Source PDFs are publicly available via arXiv; Control corpus requires PubMed API access."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies the complete domain mismatch between the biological query and the provided physics/CS evidence cards.",
+            "The experiment design proposes a valid NLP-based verification protocol to confirm the absence of biological entities in the source texts.",
+            "However, the 'target' dataset (50 PubMed articles) is not part of the allowed_evidence_ids. While necessary for a similarity baseline, its inclusion must be explicitly framed as an external validation control, not as derived evidence.",
+            "The Results field correctly states 'pending', avoiding fabrication.",
+            "Risk level is elevated to 'medium' because the experimental validation relies entirely on external resources (PubMed, BioBERT) not guaranteed to be available or permissible in the strict evidence-grounded workflow."
+          ],
+          "critical_issues": [
+            "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+            "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope."
+          ],
+          "required_revisions": [
+            "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+            "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+            "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+            "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:3fe9d324355a",
+            "category": "critical_issue",
+            "description": "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:e27ac2855cec",
+            "category": "critical_issue",
+            "description": "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2b57869509a8",
+            "category": "required_revision",
+            "description": "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:5c4700c68c1d",
+            "category": "required_revision",
+            "description": "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:4565d60b055e",
+            "category": "required_revision",
+            "description": "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:52043509ef28",
+            "category": "required_revision",
+            "description": "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "b6706c567bb14911b47f64c8b65dd0715d055802de43a34d76d93a138da5d085",
+          "experiment_designer": "6bc7816230ab80b9a9a3f3d42771497350cb4d8912ee42f9542efec1c8a8861e",
+          "scientific_reviewer": "46b9d7e3c7936c8d8ba0181d8e6f4d91fc384c61f209ccb4e97d2a2ca5b90933"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-082743-123916ce",
+        "version_number": 2,
+        "version_id": "20260822-082743-123916ce:v2",
+        "parent_version_id": "20260822-082743-123916ce:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Domain Mismatch Null Hypothesis: The allowed evidence set contains zero information regarding biological growth cessation, rendering the question scientifically unanswerable within current constraints.",
+              "mechanism": "The semantic content of all allowed evidence IDs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d) is strictly confined to non-biological domains (process algebra, particle physics, computer vision). The term 'stop' functions exclusively as a technical operator or physical object label in these texts, with no causal or descriptive link to physiological development. Therefore, no valid inference about human growth can be derived.",
+              "falsifiable_prediction": "If exact string matching for a predefined list of biological keywords (e.g., 'epiphysis', 'growth plate', 'hormone', 'skeletal', 'chondrocyte') against the full text of any allowed evidence ID yields >0 matches, this hypothesis is falsified.",
+              "required_observations": [
+                "Exact string match count of biological keywords in EV-Q039-42560d81e95b0c4f23de71a3 equals 0",
+                "Exact string match count of biological keywords in EV-Q039-ff67ff8ae23635737ef4b0d0 equals 0",
+                "Exact string match count of biological keywords in EV-Q039-1bc8d552959bd3bbb7c80972 equals 0",
+                "Exact string match count of biological keywords in EV-Q039-86b487e1058c423e23ac0f6d equals 0"
+              ],
+              "risk_of_being_wrong": "Low. The quoted excerpts and titles explicitly define non-biological contexts. Risk exists only if obscure biological metaphors appear in unquoted sections, which is statistically negligible given the specialized nature of the source material.",
+              "supporting_evidence_ids": [
+                "EV-Q039-42560d81e95b0c4f23de71a3",
+                "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "EV-Q039-86b487e1058c423e23ac0f6d"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 1.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.95
+            },
+            {
+              "hypothesis": "Polysemous Retrieval Artifact Hypothesis: The presence of physics/CS evidence for a biology query is an artifact of lexical ambiguity where 'stop' was matched without domain disambiguation, confirming that the current evidence set is invalid for biological inquiry.",
+              "mechanism": "The retrieval system indexed documents based on the token 'stop' present in EV-Q039-42560d81e95b0c4f23de71a3 (STOPαVMS process), EV-Q039-ff67ff8ae23635737ef4b0d0 (stop squark), and EV-Q039-1bc8d552959bd3bbb7c80972 (stop signs). This mechanism explains the domain mismatch as a systematic retrieval failure rather than a lack of literature in the broader universe, but confirms insufficiency within the allowed set.",
+              "falsifiable_prediction": "If context analysis shows that the token 'stop' in any allowed evidence ID appears in a sentence containing biological entities or developmental processes, the artifact hypothesis is weakened (suggesting potential relevance). If 'stop' appears only in technical/non-biological contexts, the artifact hypothesis is supported.",
+              "required_observations": [
+                "Contextual classification of every instance of 'stop' in EV-Q039-42560d81e95b0c4f23de71a3 as 'process_algebra'",
+                "Contextual classification of every instance of 'stop' in EV-Q039-ff67ff8ae23635737ef4b0d0 as 'particle_physics'",
+                "Contextual classification of every instance of 'stop' in EV-Q039-1bc8d552959bd3bbb7c80972 as 'computer_vision'",
+                "Verification that no instance of 'stop' co-occurs with biological terms in allowed IDs"
+              ],
+              "risk_of_being_wrong": "Medium. While highly likely given the titles, this hypothesis relies on interpreting the *absence* of biological context as proof of retrieval error. It is secondary to the Null Hypothesis because it diagnoses the system rather than the science.",
+              "supporting_evidence_ids": [
+                "EV-Q039-42560d81e95b0c4f23de71a3",
+                "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "EV-Q039-86b487e1058c423e23ac0f6d"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.2,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the primary scientific output because it directly addresses the user's question by rigorously defining the boundary of available knowledge. It adheres strictly to the reviewer's requirement to focus on the 'Insufficient Evidence' declaration and uses a validation metric (exact string matching) that does not depend on external embeddings or resources. Hypothesis 1 is retained only as a secondary diagnostic explanation for the domain mismatch but is demoted per reviewer feedback regarding meta-analysis scope.",
+          "rejected_directions": [
+            "Generating biological hypotheses based on booklet excerpts without evidence support (violates evidence tracing)",
+            "Using external PubMed corpus as primary evidence rather than external_validation_resource (violates allowed_evidence_ids constraint)",
+            "Mapping 'STOP' process algebra states to biological growth checkpoints (false analogy without evidentiary basis)",
+            "Relying solely on BioBERT embeddings for relevance confirmation without fallback string matching (fails reproducibility requirement)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment validates the 'Domain Mismatch Null Hypothesis' by rigorously demonstrating that the allowed evidence set contains no biological information regarding human growth cessation. The methodology relies on deterministic string matching and keyword density analysis within the allowed evidence IDs, avoiding dependence on external embeddings or ontologies for the primary falsification test. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d). 2) Performing exact case-insensitive string matching for a predefined list of high-specificity biological keywords (e.g., 'epiphysis', 'chondrocyte', 'somatotropin', 'osteoblast', 'puberty') against the extracted text. 3) Analyzing the contextual usage of the token 'stop' to confirm its exclusive association with non-biological domains (process algebra, particle physics, computer vision). A result of zero biological keyword matches and 100% non-biological context classification for 'stop' confirms the hypothesis.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q039-42560d81e95b0c4f23de71a3",
+                "description": "Full text of arXiv:1908.06601 regarding Vending Machine Systems (VMS) and process algebra."
+              },
+              {
+                "id": "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                "description": "Full text of arXiv:1212.6847 regarding stop squark and neutralino coannihilation in high-energy physics."
+              },
+              {
+                "id": "EV-Q039-1bc8d552959bd3bbb7c80972",
+                "description": "Full text of arXiv:1710.03337 regarding adversarial examples on physical stop signs in computer vision."
+              },
+              {
+                "id": "EV-Q039-86b487e1058c423e23ac0f6d",
+                "description": "Full text of arXiv:1401.7989 regarding R-Parity Breaking and Stop LSP Decays in MSSM."
+              }
+            ],
+            "target": {
+              "description": "External Validation Resource: A control corpus of peer-reviewed articles from PubMed/PMC explicitly discussing 'human epiphyseal fusion' and 'growth hormone regulation'. This dataset is strictly used for external validation of the semantic gap and is NOT part of the allowed evidence set. It serves only to establish a positive control for what biological relevance looks like, ensuring the negative result in the source set is meaningful.",
+              "source_type": "external_validation_resource"
+            }
+          },
+          "methods": "1. **Text Extraction**: Use pdfminer.six to extract raw text from the four source PDFs identified by their evidence IDs. 2. **Deterministic Keyword Matching**: Define a strict list of biological terms: ['epiphysis', 'growth plate', 'chondrocyte', 'osteoblast', 'somatotropin', 'gonadotropin', 'puberty', 'skeletal maturation']. Perform case-insensitive exact string matching against the full text of each source document. 3. **Contextual Classification of 'Stop'**: Extract all sentences containing the token 'stop'. Manually or via simple rule-based classification (checking for co-occurrence with domain-specific terms like 'process', 'squark', 'sign') to label each instance as 'non-biological'. 4. **Negative Control Verification**: Confirm that the count of biological keywords in all source documents is exactly zero.",
+          "experiments": {
+            "baselines": [
+              "Null Baseline: A document known to contain no text (empty string) to verify the keyword matcher returns zero matches correctly.",
+              "Random Noise Baseline: A document filled with random English words to ensure the keyword matcher does not produce false positives on non-sensical text."
+            ],
+            "metrics": [
+              "Biological Keyword Hit Rate: The total count of exact matches for the predefined biological keyword list across all allowed evidence IDs. Expected value: 0.",
+              "Non-Biological Context Precision: The proportion of 'stop' token instances classified as non-biological. Expected value: 1.0 (100%).",
+              "Evidence Relevance Confirmation Score: A binary metric (0 or 1) indicating whether any sentence in the source documents contains both the token 'stop' and a biological entity. Expected value: 0."
+            ],
+            "ablation": "Remove the case-insensitivity flag to test if capitalization variations (e.g., 'Epiphysis' vs 'epiphysis') affect the zero-match result. This ensures the robustness of the negative finding.",
+            "validation_protocol": "Manual audit of all extracted text segments containing the word 'stop' by two independent reviewers to confirm they do not refer to biological growth. Inter-reviewer agreement must be 100% for the 'non-biological' classification to validate the automated string matching results."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to the four specific arXiv PDFs via their provided URLs in the evidence catalog.",
+            "Confirm the exact list of biological keywords used for matching is logged and fixed before execution.",
+            "Ensure the text extraction script handles PDF encoding correctly to avoid missing hidden text.",
+            "Clarify that access to external biomedical ontologies (UMLS/MeSH) is NOT required for the primary string-matching experiment, only for the optional external validation resource.",
+            "Log all keyword match counts and context classifications in a structured CSV for audit."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "timestamp": null,
+            "compute_resources": "CPU for PDF parsing and string matching; no GPU required.",
+            "code_repository": null,
+            "data_availability": "Source PDFs are publicly available via arXiv URLs provided in evidence cards. External validation resource requires separate PubMed API access but is not critical for the primary hypothesis test."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised plan successfully addresses all critical issues from the previous review iteration.",
+            "The target dataset is now correctly labeled as 'external_validation_resource' and explicitly distinguished from allowed evidence, resolving the evidence grounding violation.",
+            "Hypothesis 1 has been appropriately demoted to a secondary diagnostic role, with the Domain Mismatch Null Hypothesis established as the primary scientific output.",
+            "The experiment design now includes a deterministic string-matching metric ('Evidence Relevance Confirmation Score') that does not depend on external embeddings, ensuring robustness and reproducibility.",
+            "The reproducibility checklist correctly clarifies that external biomedical ontologies are optional dependencies for validation only, not required for the primary falsification test.",
+            "All supporting evidence IDs in the recommended hypothesis are valid and present in the allowed_evidence_ids list.",
+            "Results field correctly remains 'pending' with no fabrication of experimental outcomes."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 1.0,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:3fe9d324355a",
+            "category": "critical_issue",
+            "description": "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:e27ac2855cec",
+            "category": "critical_issue",
+            "description": "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:2b57869509a8",
+            "category": "required_revision",
+            "description": "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:5c4700c68c1d",
+            "category": "required_revision",
+            "description": "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:4565d60b055e",
+            "category": "required_revision",
+            "description": "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:8223a86562bbd4c4; evidence=EV-Q039-1bc8d552959bd3bbb7c80972,EV-Q039-42560d81e95b0c4f23de71a3,EV-Q039-86b487e1058c423e23ac0f6d,EV-Q039-ff67ff8ae23635737ef4b0d0; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:52043509ef28",
+            "category": "required_revision",
+            "description": "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:cd85f435480a022f; evidence=EV-Q039-1bc8d552959bd3bbb7c80972,EV-Q039-42560d81e95b0c4f23de71a3,EV-Q039-86b487e1058c423e23ac0f6d,EV-Q039-ff67ff8ae23635737ef4b0d0; V2 Reviewer no longer reports the issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "c6e531181bf0a1ad2ae506039a0f661b8654487d302dc3a92a91c7ad22970d09",
+          "experiment_designer": "25715dae9116a11975e4452afb5dbe84552c75181c5b3a3226497694d9a3ec9e",
+          "scientific_reviewer": "56820bb925fdbdb59649cbf627259f59126e2cce26400e0e5d89275ef74afe2c"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-082743-123916ce",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-082743-123916ce:review:v1",
+        "20260822-082743-123916ce:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-082743-123916ce:v1",
+        "20260822-082743-123916ce:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-082743-123916ce",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-082743-123916ce:review:v1",
+          "20260822-082743-123916ce:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-082743-123916ce:v1",
+          "20260822-082743-123916ce:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-082743-123916ce",
+          "version_number": 1,
+          "version_id": "20260822-082743-123916ce:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Insufficient Evidence Hypothesis: The cessation of human physical growth is regulated by specific genetic and hormonal mechanisms (e.g., epiphyseal fusion), but no valid scientific hypothesis can be generated or tested using the currently allowed evidence set due to complete domain mismatch.",
+                "mechanism": "The provided evidence cards pertain exclusively to computer science formal methods (VMS processes), high-energy physics (stop squarks/neutralinos), and adversarial machine learning. There is no semantic or causal link between these domains and human developmental biology. Therefore, no mechanism connecting the allowed evidence to biological growth cessation exists.",
+                "falsifiable_prediction": "If a comprehensive semantic search of the full text of all allowed evidence IDs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d) reveals zero mentions of biological terms (e.g., 'growth plate', 'hormone', 'gene expression', 'skeletal maturation'), then the hypothesis that these sources are insufficient is confirmed.",
+                "required_observations": [
+                  "Full-text semantic analysis of EV-Q039-42560d81e95b0c4f23de71a3 confirming it describes Vending Machine Systems only",
+                  "Full-text semantic analysis of EV-Q039-ff67ff8ae23635737ef4b0d0 confirming it describes particle physics coannihilation only",
+                  "Full-text semantic analysis of EV-Q039-1bc8d552959bd3bbb7c80972 confirming it describes adversarial examples in computer vision only",
+                  "Full-text semantic analysis of EV-Q039-86b487e1058c423e23ac0f6d confirming it describes R-parity breaking in MSSM only"
+                ],
+                "risk_of_being_wrong": "Low risk. The quoted texts and metadata explicitly identify non-biological domains. The only risk is if the papers contain obscure, unquoted biological analogies or interdisciplinary sections not captured in the extraction, which is statistically negligible given the specific titles and quotes.",
+                "supporting_evidence_ids": [],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.0,
+                "overall_score": 0.5
+              },
+              {
+                "hypothesis": "Keyword Ambiguity Artifact Hypothesis: The retrieval of physics and CS papers for a biology question is solely caused by lexical matching of the token 'stop' without semantic disambiguation, implying that any future hypothesis generation on this topic requires a pre-filtering step to exclude non-biological 'stop' senses.",
+                "mechanism": "The evidence retrieval system matched the query term 'stop growing' against documents containing 'STOP' (process algebra), 'stop' (supersymmetric particle), and 'stop signs' (vision). This indicates a failure in domain-aware embedding or entity linking. The mechanism of retrieval error is polysemy in technical corpora.",
+                "falsifiable_prediction": "If re-running the evidence retrieval with a biological ontology filter or sense-disambiguated embeddings yields at least one relevant biological paper, then the current irrelevance is confirmed to be a retrieval artifact rather than a true absence of literature in the broader corpus.",
+                "required_observations": [
+                  "Comparison of retrieval results using raw keyword 'stop' vs. biologically constrained query 'human growth cessation'",
+                  "Verification that current allowed_evidence_ids contain 'stop' as a noun/verb in non-biological contexts"
+                ],
+                "risk_of_being_wrong": "Moderate risk. It is possible the retrieval was correct but the corpus simply lacks biology papers. However, given the high relevance scores (1.0) assigned to clearly irrelevant physics papers, a scoring/retrieval bug is highly probable.",
+                "supporting_evidence_ids": [
+                  "EV-Q039-42560d81e95b0c4f23de71a3",
+                  "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                  "EV-Q039-1bc8d552959bd3bbb7c80972",
+                  "EV-Q039-86b487e1058c423e23ac0f6d"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.2,
+                "overall_score": 0.55
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it strictly adheres to the constraint that factual claims must be traceable to evidence. Since no allowed evidence supports a biological mechanism, the only scientifically valid stance is to declare insufficient evidence. Hypothesis 1, while analytically useful for system debugging, relies on meta-analysis of the retrieval process rather than the scientific content of the evidence cards themselves, and uses evidence IDs only as negative examples. Hypothesis 0 correctly identifies the knowledge gap as the primary scientific output.",
+            "rejected_directions": [
+              "Attempting to map 'STOPαVMS' process algebra states to biological growth checkpoints (false analogy, no evidentiary basis)",
+              "Hypothesizing that 'stop squark' mass differences correlate with biological maturation rates (nonsensical cross-domain conflation)",
+              "Assuming the booklet excerpt is factually sufficient to generate a hypothesis without external validation (violates evidence tracing requirement)"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment is designed to validate the 'Insufficient Evidence Hypothesis' by rigorously demonstrating the semantic disconnect between the provided evidence set and the biological domain of human growth cessation. The methodology employs Natural Language Processing (NLP) techniques, specifically Named Entity Recognition (NER) and Semantic Similarity Analysis, to quantify the absence of biological concepts in the allowed evidence cards. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d). 2) Applying a biomedical entity filter (using UMLS or MeSH terminologies) to identify any mentions of 'growth plate', 'epiphysis', 'hormone', 'GH/IGF-1 axis', or 'skeletal maturation'. 3) Computing cosine similarity between the vector embeddings of the evidence documents and a reference corpus of established biological literature on growth cessation. A near-zero similarity score and zero entity matches will confirm the hypothesis that the evidence is domain-mismatched.",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q039-42560d81e95b0c4f23de71a3",
+                  "description": "Full text of arXiv:1908.06601 regarding Vending Machine Systems (VMS) and process algebra."
+                },
+                {
+                  "id": "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                  "description": "Full text of arXiv:1212.6847 regarding stop squark and neutralino coannihilation in high-energy physics."
+                },
+                {
+                  "id": "EV-Q039-1bc8d552959bd3bbb7c80972",
+                  "description": "Full text of arXiv:1710.03337 regarding adversarial examples on physical stop signs in computer vision."
+                },
+                {
+                  "id": "EV-Q039-86b487e1058c423e23ac0f6d",
+                  "description": "Full text of arXiv:1401.7989 regarding R-Parity Breaking and Stop LSP Decays in MSSM."
+                }
+              ],
+              "target": {
+                "description": "A control corpus of 50 peer-reviewed articles from PubMed/PMC explicitly discussing 'human epiphyseal fusion', 'growth hormone regulation', and 'cessation of skeletal growth'. This serves as the positive control for semantic similarity metrics.",
+                "source_type": "Biomedical Literature Control Set"
+              }
+            },
+            "methods": "1. **Text Extraction**: Use PyPDF2 or pdfminer.six to extract raw text from the four source PDFs identified by their evidence IDs. 2. **Entity Filtering**: Apply SpaCy with a custom biomedical NER pipeline (trained on MedSpaCy or BioBERT) to scan for entities related to anatomy (bone, cartilage), physiology (hormone, secretion), and development (maturation, fusion). 3. **Semantic Embedding**: Generate document-level embeddings using BioBERT (for the target control set) and SciBERT (for the source evidence set) to handle domain-specific vocabulary. 4. **Similarity Calculation**: Compute pairwise cosine similarity between each source evidence document and the centroid of the target biological corpus. 5. **Keyword Density Analysis**: Calculate the frequency of the token 'stop' in each document and classify its context (e.g., 'process stop', 'particle stop', 'sign stop') vs. biological contexts (e.g., 'growth stop').",
+            "experiments": {
+              "baselines": [
+                "Random Baseline: Cosine similarity scores between random non-biological arXiv papers (e.g., pure mathematics) and the biological control corpus.",
+                "Keyword-Only Baseline: Retrieval relevance based solely on the presence of the token 'stop' without semantic disambiguation, replicating the initial retrieval error."
+              ],
+              "metrics": [
+                "Biomedical Entity Recall: The proportion of expected biological terms (from a standard glossary of growth biology) found in the source documents. Expected value: 0.0.",
+                "Cross-Domain Cosine Similarity: The average cosine similarity between source evidence embeddings and the biological control corpus centroid. Expected value: < 0.1.",
+                "Contextual Polysemy Score: A classification accuracy metric determining how often the word 'stop' is correctly classified as non-biological in the source texts. Expected value: 1.0 (100% non-biological)."
+              ],
+              "ablation": "Remove the biomedical NER filter and rely only on general-purpose NER to test if any generic entities (e.g., 'cell', 'mass') are misinterpreted as biological evidence. This tests the robustness of the 'insufficient evidence' claim against loose keyword matching.",
+              "validation_protocol": "Double-blind verification: Two independent annotators will manually review 10% of the extracted text segments containing the word 'stop' to confirm they do not refer to biological growth. Inter-annotator agreement (Cohen's Kappa) must exceed 0.8 to validate the automated NER results."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify access to the four specific arXiv PDFs via their provided URLs.",
+              "Ensure BioBERT and SciBERT models are loaded from HuggingFace Hub with fixed seeds.",
+              "Confirm the biomedical entity list includes standard terms: 'epiphysis', 'chondrocyte', 'somatotropin', 'gonadotropin'.",
+              "Log all cosine similarity scores and entity counts in a structured CSV for audit.",
+              "Archive the exact version of the NER pipeline used for filtering."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "timestamp": null,
+              "compute_resources": "CPU/GPU for embedding generation; Storage for PDF parsing.",
+              "code_repository": null,
+              "data_availability": "Source PDFs are publicly available via arXiv; Control corpus requires PubMed API access."
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The candidate hypothesis correctly identifies the complete domain mismatch between the biological query and the provided physics/CS evidence cards.",
+              "The experiment design proposes a valid NLP-based verification protocol to confirm the absence of biological entities in the source texts.",
+              "However, the 'target' dataset (50 PubMed articles) is not part of the allowed_evidence_ids. While necessary for a similarity baseline, its inclusion must be explicitly framed as an external validation control, not as derived evidence.",
+              "The Results field correctly states 'pending', avoiding fabrication.",
+              "Risk level is elevated to 'medium' because the experimental validation relies entirely on external resources (PubMed, BioBERT) not guaranteed to be available or permissible in the strict evidence-grounded workflow."
+            ],
+            "critical_issues": [
+              "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+              "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope."
+            ],
+            "required_revisions": [
+              "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+              "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+              "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+              "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.7,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:3fe9d324355a",
+              "category": "critical_issue",
+              "description": "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:e27ac2855cec",
+              "category": "critical_issue",
+              "description": "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:2b57869509a8",
+              "category": "required_revision",
+              "description": "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:5c4700c68c1d",
+              "category": "required_revision",
+              "description": "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:4565d60b055e",
+              "category": "required_revision",
+              "description": "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:52043509ef28",
+              "category": "required_revision",
+              "description": "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "b6706c567bb14911b47f64c8b65dd0715d055802de43a34d76d93a138da5d085",
+            "experiment_designer": "6bc7816230ab80b9a9a3f3d42771497350cb4d8912ee42f9542efec1c8a8861e",
+            "scientific_reviewer": "46b9d7e3c7936c8d8ba0181d8e6f4d91fc384c61f209ccb4e97d2a2ca5b90933"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-082743-123916ce",
+          "version_number": 2,
+          "version_id": "20260822-082743-123916ce:v2",
+          "parent_version_id": "20260822-082743-123916ce:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Domain Mismatch Null Hypothesis: The allowed evidence set contains zero information regarding biological growth cessation, rendering the question scientifically unanswerable within current constraints.",
+                "mechanism": "The semantic content of all allowed evidence IDs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d) is strictly confined to non-biological domains (process algebra, particle physics, computer vision). The term 'stop' functions exclusively as a technical operator or physical object label in these texts, with no causal or descriptive link to physiological development. Therefore, no valid inference about human growth can be derived.",
+                "falsifiable_prediction": "If exact string matching for a predefined list of biological keywords (e.g., 'epiphysis', 'growth plate', 'hormone', 'skeletal', 'chondrocyte') against the full text of any allowed evidence ID yields >0 matches, this hypothesis is falsified.",
+                "required_observations": [
+                  "Exact string match count of biological keywords in EV-Q039-42560d81e95b0c4f23de71a3 equals 0",
+                  "Exact string match count of biological keywords in EV-Q039-ff67ff8ae23635737ef4b0d0 equals 0",
+                  "Exact string match count of biological keywords in EV-Q039-1bc8d552959bd3bbb7c80972 equals 0",
+                  "Exact string match count of biological keywords in EV-Q039-86b487e1058c423e23ac0f6d equals 0"
+                ],
+                "risk_of_being_wrong": "Low. The quoted excerpts and titles explicitly define non-biological contexts. Risk exists only if obscure biological metaphors appear in unquoted sections, which is statistically negligible given the specialized nature of the source material.",
+                "supporting_evidence_ids": [
+                  "EV-Q039-42560d81e95b0c4f23de71a3",
+                  "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                  "EV-Q039-1bc8d552959bd3bbb7c80972",
+                  "EV-Q039-86b487e1058c423e23ac0f6d"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 1.0,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.95
+              },
+              {
+                "hypothesis": "Polysemous Retrieval Artifact Hypothesis: The presence of physics/CS evidence for a biology query is an artifact of lexical ambiguity where 'stop' was matched without domain disambiguation, confirming that the current evidence set is invalid for biological inquiry.",
+                "mechanism": "The retrieval system indexed documents based on the token 'stop' present in EV-Q039-42560d81e95b0c4f23de71a3 (STOPαVMS process), EV-Q039-ff67ff8ae23635737ef4b0d0 (stop squark), and EV-Q039-1bc8d552959bd3bbb7c80972 (stop signs). This mechanism explains the domain mismatch as a systematic retrieval failure rather than a lack of literature in the broader universe, but confirms insufficiency within the allowed set.",
+                "falsifiable_prediction": "If context analysis shows that the token 'stop' in any allowed evidence ID appears in a sentence containing biological entities or developmental processes, the artifact hypothesis is weakened (suggesting potential relevance). If 'stop' appears only in technical/non-biological contexts, the artifact hypothesis is supported.",
+                "required_observations": [
+                  "Contextual classification of every instance of 'stop' in EV-Q039-42560d81e95b0c4f23de71a3 as 'process_algebra'",
+                  "Contextual classification of every instance of 'stop' in EV-Q039-ff67ff8ae23635737ef4b0d0 as 'particle_physics'",
+                  "Contextual classification of every instance of 'stop' in EV-Q039-1bc8d552959bd3bbb7c80972 as 'computer_vision'",
+                  "Verification that no instance of 'stop' co-occurs with biological terms in allowed IDs"
+                ],
+                "risk_of_being_wrong": "Medium. While highly likely given the titles, this hypothesis relies on interpreting the *absence* of biological context as proof of retrieval error. It is secondary to the Null Hypothesis because it diagnoses the system rather than the science.",
+                "supporting_evidence_ids": [
+                  "EV-Q039-42560d81e95b0c4f23de71a3",
+                  "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                  "EV-Q039-1bc8d552959bd3bbb7c80972",
+                  "EV-Q039-86b487e1058c423e23ac0f6d"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.2,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.7
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected as the primary scientific output because it directly addresses the user's question by rigorously defining the boundary of available knowledge. It adheres strictly to the reviewer's requirement to focus on the 'Insufficient Evidence' declaration and uses a validation metric (exact string matching) that does not depend on external embeddings or resources. Hypothesis 1 is retained only as a secondary diagnostic explanation for the domain mismatch but is demoted per reviewer feedback regarding meta-analysis scope.",
+            "rejected_directions": [
+              "Generating biological hypotheses based on booklet excerpts without evidence support (violates evidence tracing)",
+              "Using external PubMed corpus as primary evidence rather than external_validation_resource (violates allowed_evidence_ids constraint)",
+              "Mapping 'STOP' process algebra states to biological growth checkpoints (false analogy without evidentiary basis)",
+              "Relying solely on BioBERT embeddings for relevance confirmation without fallback string matching (fails reproducibility requirement)"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment validates the 'Domain Mismatch Null Hypothesis' by rigorously demonstrating that the allowed evidence set contains no biological information regarding human growth cessation. The methodology relies on deterministic string matching and keyword density analysis within the allowed evidence IDs, avoiding dependence on external embeddings or ontologies for the primary falsification test. The core technical approach involves: 1) Extracting full-text content from the four allowed arXiv PDFs (EV-Q039-42560d81e95b0c4f23de71a3, EV-Q039-ff67ff8ae23635737ef4b0d0, EV-Q039-1bc8d552959bd3bbb7c80972, EV-Q039-86b487e1058c423e23ac0f6d). 2) Performing exact case-insensitive string matching for a predefined list of high-specificity biological keywords (e.g., 'epiphysis', 'chondrocyte', 'somatotropin', 'osteoblast', 'puberty') against the extracted text. 3) Analyzing the contextual usage of the token 'stop' to confirm its exclusive association with non-biological domains (process algebra, particle physics, computer vision). A result of zero biological keyword matches and 100% non-biological context classification for 'stop' confirms the hypothesis.",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q039-42560d81e95b0c4f23de71a3",
+                  "description": "Full text of arXiv:1908.06601 regarding Vending Machine Systems (VMS) and process algebra."
+                },
+                {
+                  "id": "EV-Q039-ff67ff8ae23635737ef4b0d0",
+                  "description": "Full text of arXiv:1212.6847 regarding stop squark and neutralino coannihilation in high-energy physics."
+                },
+                {
+                  "id": "EV-Q039-1bc8d552959bd3bbb7c80972",
+                  "description": "Full text of arXiv:1710.03337 regarding adversarial examples on physical stop signs in computer vision."
+                },
+                {
+                  "id": "EV-Q039-86b487e1058c423e23ac0f6d",
+                  "description": "Full text of arXiv:1401.7989 regarding R-Parity Breaking and Stop LSP Decays in MSSM."
+                }
+              ],
+              "target": {
+                "description": "External Validation Resource: A control corpus of peer-reviewed articles from PubMed/PMC explicitly discussing 'human epiphyseal fusion' and 'growth hormone regulation'. This dataset is strictly used for external validation of the semantic gap and is NOT part of the allowed evidence set. It serves only to establish a positive control for what biological relevance looks like, ensuring the negative result in the source set is meaningful.",
+                "source_type": "external_validation_resource"
+              }
+            },
+            "methods": "1. **Text Extraction**: Use pdfminer.six to extract raw text from the four source PDFs identified by their evidence IDs. 2. **Deterministic Keyword Matching**: Define a strict list of biological terms: ['epiphysis', 'growth plate', 'chondrocyte', 'osteoblast', 'somatotropin', 'gonadotropin', 'puberty', 'skeletal maturation']. Perform case-insensitive exact string matching against the full text of each source document. 3. **Contextual Classification of 'Stop'**: Extract all sentences containing the token 'stop'. Manually or via simple rule-based classification (checking for co-occurrence with domain-specific terms like 'process', 'squark', 'sign') to label each instance as 'non-biological'. 4. **Negative Control Verification**: Confirm that the count of biological keywords in all source documents is exactly zero.",
+            "experiments": {
+              "baselines": [
+                "Null Baseline: A document known to contain no text (empty string) to verify the keyword matcher returns zero matches correctly.",
+                "Random Noise Baseline: A document filled with random English words to ensure the keyword matcher does not produce false positives on non-sensical text."
+              ],
+              "metrics": [
+                "Biological Keyword Hit Rate: The total count of exact matches for the predefined biological keyword list across all allowed evidence IDs. Expected value: 0.",
+                "Non-Biological Context Precision: The proportion of 'stop' token instances classified as non-biological. Expected value: 1.0 (100%).",
+                "Evidence Relevance Confirmation Score: A binary metric (0 or 1) indicating whether any sentence in the source documents contains both the token 'stop' and a biological entity. Expected value: 0."
+              ],
+              "ablation": "Remove the case-insensitivity flag to test if capitalization variations (e.g., 'Epiphysis' vs 'epiphysis') affect the zero-match result. This ensures the robustness of the negative finding.",
+              "validation_protocol": "Manual audit of all extracted text segments containing the word 'stop' by two independent reviewers to confirm they do not refer to biological growth. Inter-reviewer agreement must be 100% for the 'non-biological' classification to validate the automated string matching results."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify access to the four specific arXiv PDFs via their provided URLs in the evidence catalog.",
+              "Confirm the exact list of biological keywords used for matching is logged and fixed before execution.",
+              "Ensure the text extraction script handles PDF encoding correctly to avoid missing hidden text.",
+              "Clarify that access to external biomedical ontologies (UMLS/MeSH) is NOT required for the primary string-matching experiment, only for the optional external validation resource.",
+              "Log all keyword match counts and context classifications in a structured CSV for audit."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "timestamp": null,
+              "compute_resources": "CPU for PDF parsing and string matching; no GPU required.",
+              "code_repository": null,
+              "data_availability": "Source PDFs are publicly available via arXiv URLs provided in evidence cards. External validation resource requires separate PubMed API access but is not critical for the primary hypothesis test."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised plan successfully addresses all critical issues from the previous review iteration.",
+              "The target dataset is now correctly labeled as 'external_validation_resource' and explicitly distinguished from allowed evidence, resolving the evidence grounding violation.",
+              "Hypothesis 1 has been appropriately demoted to a secondary diagnostic role, with the Domain Mismatch Null Hypothesis established as the primary scientific output.",
+              "The experiment design now includes a deterministic string-matching metric ('Evidence Relevance Confirmation Score') that does not depend on external embeddings, ensuring robustness and reproducibility.",
+              "The reproducibility checklist correctly clarifies that external biomedical ontologies are optional dependencies for validation only, not required for the primary falsification test.",
+              "All supporting evidence IDs in the recommended hypothesis are valid and present in the allowed_evidence_ids list.",
+              "Results field correctly remains 'pending' with no fabrication of experimental outcomes."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 1.0,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:3fe9d324355a",
+              "category": "critical_issue",
+              "description": "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:e27ac2855cec",
+              "category": "critical_issue",
+              "description": "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:2b57869509a8",
+              "category": "required_revision",
+              "description": "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:5c4700c68c1d",
+              "category": "required_revision",
+              "description": "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:4565d60b055e",
+              "category": "required_revision",
+              "description": "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:8223a86562bbd4c4; evidence=EV-Q039-1bc8d552959bd3bbb7c80972,EV-Q039-42560d81e95b0c4f23de71a3,EV-Q039-86b487e1058c423e23ac0f6d,EV-Q039-ff67ff8ae23635737ef4b0d0; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:52043509ef28",
+              "category": "required_revision",
+              "description": "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:cd85f435480a022f; evidence=EV-Q039-1bc8d552959bd3bbb7c80972,EV-Q039-42560d81e95b0c4f23de71a3,EV-Q039-86b487e1058c423e23ac0f6d,EV-Q039-ff67ff8ae23635737ef4b0d0; V2 Reviewer no longer reports the issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "c6e531181bf0a1ad2ae506039a0f661b8654487d302dc3a92a91c7ad22970d09",
+            "experiment_designer": "25715dae9116a11975e4452afb5dbe84552c75181c5b3a3226497694d9a3ec9e",
+            "scientific_reviewer": "56820bb925fdbdb59649cbf627259f59126e2cce26400e0e5d89275ef74afe2c"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-082743-123916ce:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-082743-123916ce:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-082743-123916ce:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-082743-123916ce:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:3fe9d324355a",
+          "category": "critical_issue",
+          "description": "Target dataset definition violates strict evidence constraints: The 'control corpus of 50 peer-reviewed articles' is not in allowed_evidence_ids. Using external data for validation is methodologically sound but must be clearly distinguished from 'evidence-backed facts'.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:e27ac2855cec",
+          "category": "critical_issue",
+          "description": "Hypothesis 1 ('Keyword Ambiguity Artifact') uses evidence IDs only as negative examples to diagnose system failure, which borders on meta-analysis rather than scientific inquiry within the allowed scope.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:2b57869509a8",
+          "category": "required_revision",
+          "description": "Explicitly label the PubMed control corpus as 'external_validation_resource' distinct from 'allowed_evidence' to prevent confusion about evidence grounding.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:5c4700c68c1d",
+          "category": "required_revision",
+          "description": "Remove or demote Hypothesis 1; focus solely on the 'Insufficient Evidence' declaration as the primary scientific output.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:4565d60b055e",
+          "category": "required_revision",
+          "description": "Add a specific metric for 'Evidence Relevance Confirmation' that does not depend on external embeddings (e.g., exact string matching of biological keywords in source PDFs) to ensure the conclusion holds even if external tools fail.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:8223a86562bbd4c4; evidence=EV-Q039-1bc8d552959bd3bbb7c80972,EV-Q039-42560d81e95b0c4f23de71a3,EV-Q039-86b487e1058c423e23ac0f6d,EV-Q039-ff67ff8ae23635737ef4b0d0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:52043509ef28",
+          "category": "required_revision",
+          "description": "Clarify in the reproducibility checklist that access to external biomedical ontologies (UMLS/MeSH) is a dependency, not a given.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cd85f435480a022f; evidence=EV-Q039-1bc8d552959bd3bbb7c80972,EV-Q039-42560d81e95b0c4f23de71a3,EV-Q039-86b487e1058c423e23ac0f6d,EV-Q039-ff67ff8ae23635737ef4b0d0; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "checkpoint_hash": "e52c62b820d4429456d3ad4d3131dd525309ec8d8b5b7c192569bd2b9e8a6c5d"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-082743-123916ce:wave-b-two-round",
+      "run_id": "20260822-082743-123916ce",
+      "v1_version_id": "20260822-082743-123916ce:v1",
+      "v2_version_id": "20260822-082743-123916ce:v2",
+      "input_fingerprints": {
+        "v1": "6bc7816230ab80b9a9a3f3d42771497350cb4d8912ee42f9542efec1c8a8861e",
+        "v2": "25715dae9116a11975e4452afb5dbe84552c75181c5b3a3226497694d9a3ec9e"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "required_revision:4565d60b055e",
+        "required_revision:52043509ef28"
+      ],
+      "change_ids": [
+        "change:8223a86562bbd4c4",
+        "change:cd85f435480a022f"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 1.0,
+          "delta": 0.050000000000000044
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 1.0,
+          "delta": 0.09999999999999998
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.95,
+          "delta": 0.25
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Domain Mismatch Null Hypothesis: The allowed evidence set contains zero information regarding biological growth cessation, rendering the question scientifically unanswerable within current constraints.",
+          "overall_score": 0.95,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Polysemous Retrieval Artifact Hypothesis: The presence of physics/CS evidence for a biology query is an artifact of lexical ambiguity where 'stop' was matched without domain disambiguation, confirming that the current evidence set is invalid for biological inquiry.",
+          "overall_score": 0.7,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "3536a4ff4806",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:30:11.339946+00:00",
+    "ended_at": "2026-08-22T08:30:55.495542+00:00",
+    "duration_ms": 44155,
+    "input_summary": "{\"question_item\": {\"id\": \"Q039\", \"domain\": \"Biology\", \"question\": \"Why do we stop growing?\", \"source_page\": 18, \"booklet_excerpt\": \"Our genes determine when we stop growing. When we reach the age of maturation and have the ability to reproduce, our physical growth ceases.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Biology\", \"core_question\": \"What is the biological mechanism by which genetic factors regulate the cessation of physical growth upon reaching sexual maturity?\", \"keywords\": [\"growth ces",
+    "output_summary": "{\"input_question\": \"Why do we stop growing?\", \"domain\": \"Biology\", \"problem_statement\": \"The user asks for the biological mechanism behind the cessation of physical growth, citing a booklet claim that genes determine this timing upon reaching reproductive maturity. However, the provided evidence set consists entirely of documents from computer science (process algebra, computer vision) and high-energy physics (particle physics), where the term 'stop' refers to computational states, traffic signs, or subatomic particles (stop squarks), not physiological development.\", \"rationale\": \"Scientific i",
+    "evidence_ids": [
+      "EV-Q039-42560d81e95b0c4f23de71a3",
+      "EV-Q039-ff67ff8ae23635737ef4b0d0",
+      "EV-Q039-1bc8d552959bd3bbb7c80972",
+      "EV-Q039-86b487e1058c423e23ac0f6d"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1154500a365a",
+    "mock": false
+  },
+  {
+    "event_id": "55b5fbafc086",
+    "run_id": "20260822-082743-123916ce",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:30:55.496541+00:00",
+    "ended_at": "2026-08-22T08:30:58.065329+00:00",
+    "duration_ms": 2568,
+    "input_summary": "{\"question_item\": {\"id\": \"Q039\", \"domain\": \"Biology\", \"question\": \"Why do we stop growing?\", \"source_page\": 18, \"booklet_excerpt\": \"Our genes determine when we stop growing. When we reach the age of maturation and have the ability to reproduce, our physical growth ceases.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"EvidenceCard 'Q039_booklet' is not in the allowed_evidence_ids list. Only evidence with explicit IDs from the provided EvidenceCards can be cited.\", \"The ResearchPlan relies on a source (booklet excerpt) which is explicitly prohibited as a factual evidence source according to rule 10.\", \"No valid Evidence ID was found to support the claim about genes determining growth cessation.\"], \"warnings\": [\"Insufficient evidence to validate the biological mechanism of growth cessation.\", \"The plan cannot be validated without referencing an allowed EvidenceCard.\"], \"validation",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8d8708be7994",
+    "mock": false
+  }
+]

@@ -1,0 +1,2020 @@
+[
+  {
+    "event_id": "a9b1df1b8b9d",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T04:36:40.242946+00:00",
+    "ended_at": "2026-08-22T04:36:40.242946+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "85fdb657a95c",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T04:36:40.242946+00:00",
+    "ended_at": "2026-08-22T04:36:45.035583+00:00",
+    "duration_ms": 4792,
+    "input_summary": "{\"question_item\": {\"id\": \"Q069\", \"domain\": \"Physics\", \"question\": \"Is there a diffraction limit?\", \"source_page\": 25, \"booklet_excerpt\": \"The 2014 Nobel Prize in Physics recognized the development of techniques that bypass the diffraction limit, which is the physical limit for maximum resolution of traditional optical microscopy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Physics\", \"core_question\": \"What constitutes the diffraction limit in optical microscopy, and what physical principles define its boundaries?\", \"keywords\": [\"diffraction limit\", \"optical microscopy\", \"resolution\", \"physical limit\"], \"entities\": [\"diffraction limit\", \"traditional optical microscopy\", \"2014 Nobel Prize in Physics\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The analysis is restricted to the definition of the diffraction limit as a physical constraint on resolution within traditional optical microscopy. It must not claim that all forms of microsc",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9b788e092872",
+    "mock": false
+  },
+  {
+    "event_id": "5aabcddb7188",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T04:36:45.035583+00:00",
+    "ended_at": "2026-08-22T04:37:06.170955+00:00",
+    "duration_ms": 21135,
+    "input_summary": "{\"question_item\": {\"id\": \"Q069\", \"domain\": \"Physics\", \"question\": \"Is there a diffraction limit?\", \"source_page\": 25, \"booklet_excerpt\": \"The 2014 Nobel Prize in Physics recognized the development of techniques that bypass the diffraction limit, which is the physical limit for maximum resolution of traditional optical microscopy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Physics\", \"core_question\": \"What constitutes the diffraction limit in optical microscopy, and what physical principles define ",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Define the mathematical and physical basis of the diffraction limit in traditional optical microscopy.\", \"query\": \"Abbe diffraction limit formula numerical aperture wavelength resolution definition\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Formal definition of the diffraction limit (e.g., d = lambda / 2NA) and its derivation from wave optics principles.\", \"priority\": \"high\"}, {\"purpose\": \"Confirm the statement that the 2014 Nobel Prize recognized techniques bypassing this limit.\", \"query\": \"2014 Nobel Prize in Physics citation super-resolved fluorescen",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "21d4c21fc2b5",
+    "mock": false
+  },
+  {
+    "event_id": "8bfd5363e78e",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T04:37:06.180214+00:00",
+    "ended_at": "2026-08-22T04:37:24.075009+00:00",
+    "duration_ms": 17894,
+    "input_summary": "{\"question_item\": {\"id\": \"Q069\", \"domain\": \"Physics\", \"question\": \"Is there a diffraction limit?\", \"source_page\": 25, \"booklet_excerpt\": \"The 2014 Nobel Prize in Physics recognized the development of techniques that bypass the diffraction limit, which is the physical limit for maximum resolution of traditional optical microscopy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q069-c69a3b088b10f4da838d65a4\", \"title\": \"arXiv:0708.3336\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pd",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"The diffraction limit is a physical limit for the maximum resolution of traditional optical microscopy, originally described by Abbe in the late 19th century.\", \"evidence_ids\": [\"EV-Q069-c69a3b088b10f4da838d65a4\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": null}, {\"fact\": \"In nonlinear optical microscopy, resolution is currently limited by the Abbe diffraction limit.\", \"evidence_ids\": [\"EV-Q069-e9fbe460ae6d73ab0980eef0\"], \"confidence\": \"high\", \"fact_type\": \"limitation\", \"caveat\": null}, {\"fact\": \"X-ray telescopes can achieve diffraction-limited",
+    "evidence_ids": [
+      "EV-Q069-c69a3b088b10f4da838d65a4",
+      "EV-Q069-e9fbe460ae6d73ab0980eef0",
+      "EV-Q069-eb73ba4622ab3b68452370fd",
+      "EV-Q069-9885e2d068a40e85f0b8ca55"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "31a0a4ae610a",
+    "mock": false
+  },
+  {
+    "event_id": "78337aadda10",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T04:37:24.075009+00:00",
+    "ended_at": "2026-08-22T04:37:46.262258+00:00",
+    "duration_ms": 22187,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q069\", \"domain\": \"Physics\", \"question\": \"Is there a diffraction limit?\", \"source_page\": 25, \"booklet_excerpt\": \"The 2014 Nobel Prize in Physics recognized the development of techniques that bypass the diffraction limit, which is the physical limit for maximum resolution of traditional optical microscopy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q069-c69a3b088b10f4da838d65a4\", \"title\": \"arXiv:0708.3336\", \"source_type\": \"arxiv\", \"doi\": null, \"ur",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"The diffraction limit is a conditional constraint specific to linear, far-field optical systems, rather than a fundamental physical law, and can be bypassed by introducing nonlinearity or structured illumination as indicated by super-resolution research.\", \"mechanism\": \"Abbe's diffraction limit arises from the loss of evanescent waves and the finite aperture in linear imaging systems (EV-Q069-c69a3b088b10f4da838d65a4). By exploiting nonlinear optical responses or customized speckle patterns (EV-Q069-9885e2d068a40e85f0b8ca55), the effective point spread function ",
+    "evidence_ids": [
+      "EV-Q069-c69a3b088b10f4da838d65a4",
+      "EV-Q069-9885e2d068a40e85f0b8ca55",
+      "EV-Q069-e9fbe460ae6d73ab0980eef0",
+      "EV-Q069-eb73ba4622ab3b68452370fd"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5238b5122760",
+    "mock": false
+  },
+  {
+    "event_id": "96f9c90764d3",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T04:37:46.263246+00:00",
+    "ended_at": "2026-08-22T04:38:06.442590+00:00",
+    "duration_ms": 20179,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q069\", \"domain\": \"Physics\", \"question\": \"Is there a diffraction limit?\", \"source_page\": 25, \"booklet_excerpt\": \"The 2014 Nobel Prize in Physics recognized the development of techniques that bypass the diffraction limit, which is the physical limit for maximum resolution of traditional optical microscopy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery\", \"recommended_hypothesis\": {\"hypothesis\": \"The diffraction limit is a conditional constraint ",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that the diffraction limit is a conditional constraint of linear, far-field systems by comparing resolution limits across three regimes: (1) Linear widefield microscopy (control), (2) Nonlinear saturation-based microscopy (simulating STED-like physics), and (3) Structured illumination with customized speckles. The core mechanism to verify is whether nonlinearity or high-frequency encoding via speckles allows the recovery of spatial frequencies beyond the cutoff defined by Abbe's limit (d = λ/2NA). We will simulate the Point Spread Fun",
+    "evidence_ids": [
+      "EV-Q069-c69a3b088b10f4da838d65a4",
+      "EV-Q069-9885e2d068a40e85f0b8ca55",
+      "EV-Q069-e9fbe460ae6d73ab0980eef0"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9de5434c7cbe",
+    "mock": false
+  },
+  {
+    "event_id": "e2b98fbc1ccb",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T04:38:06.442590+00:00",
+    "ended_at": "2026-08-22T04:38:19.112097+00:00",
+    "duration_ms": 12669,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q069\", \"domain\": \"Physics\", \"question\": \"Is there a diffraction limit?\", \"source_page\": 25, \"booklet_excerpt\": \"The 2014 Nobel Prize in Physics recognized the development of techniques that bypass the diffraction limit, which is the physical limit for maximum resolution of traditional optical microscopy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"The diffraction limit is a conditional constraint specific to linear, far-field optical sy",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims that nonlinear optical responses bypass the diffraction limit, but Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 explicitly states that resolution in nonlinear optical microscopy is 'currently limited by the famous Abbe diffraction limit.' This direct contradiction is not addressed in the hypothesis or experiment design.\", \"The mechanism description attributes the ability to circumvent the limit to 'nonlinear optical responses' generally, citing EV-Q069-9885e2d068a40e85f0b8ca55. However, this evidence specifically discusses 'customized",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "791382ca9a02",
+    "mock": false
+  },
+  {
+    "event_id": "597f50632d3f",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T04:38:19.115095+00:00",
+    "ended_at": "2026-08-22T04:38:44.612371+00:00",
+    "duration_ms": 25497,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims that nonlinear optical responses bypass the diffraction limit, but Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 explicitly states that resolution in nonlinear optical microscopy is 'currently limited by the famous Abbe diffraction limit.' This direct contradiction is not addressed in the hypothesis or experiment design.\", \"The mechanism description attributes the ability to circumvent the limit to 'nonlinear optical responses' generally, citing EV-Q069-9885e2d068a40e85f0b8ca55. However, this ",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"The Abbe diffraction limit is a valid constraint for standard linear and conventional nonlinear optical microscopy, but can be specifically circumvented in far-field imaging through the use of customized speckle illumination patterns that encode high-frequency spatial information into the detectable passband.\", \"mechanism\": \"Standard optical microscopy is physically limited by diffraction as defined by Abbe (EV-Q069-c69a3b088b10f4da838d65a4), and this limitation persists even in conventional nonlinear optical microscopy (EV-Q069-e9fbe460ae6d73ab0980eef0). Howeve",
+    "evidence_ids": [
+      "EV-Q069-9885e2d068a40e85f0b8ca55",
+      "EV-Q069-c69a3b088b10f4da838d65a4",
+      "EV-Q069-e9fbe460ae6d73ab0980eef0",
+      "EV-Q069-eb73ba4622ab3b68452370fd"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "915d06096fd5",
+    "mock": false
+  },
+  {
+    "event_id": "53187efb1a98",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T04:38:44.612371+00:00",
+    "ended_at": "2026-08-22T04:39:14.095828+00:00",
+    "duration_ms": 29483,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims that nonlinear optical responses bypass the diffraction limit, but Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 explicitly states that resolution in nonlinear optical microscopy is 'currently limited by the famous Abbe diffraction limit.' This direct contradiction is not addressed in the hypothesis or experiment design.\", \"The mechanism description attributes the ability to circumvent the limit to 'nonlinear optical responses' generally, citing EV-Q069-9885e2d068a40e85f0b8ca55. However, this ",
+    "output_summary": "{\"technical_details\": \"This experiment is designed to validate the refined hypothesis that 'customized speckle illumination' specifically circumvents the Abbe diffraction limit, while explicitly acknowledging that conventional nonlinear microscopy remains limited by it (per EV-Q069-e9fbe460ae6d73ab0980eef0). The technical approach involves a comparative computational optics simulation. We will model three imaging regimes: (1) Linear Widefield (Control), (2) Conventional Nonlinear Microscopy (e.g., Two-Photon, modeled with quadratic intensity dependence but no saturation/depletion), and (3) Cus",
+    "evidence_ids": [
+      "EV-Q069-9885e2d068a40e85f0b8ca55",
+      "EV-Q069-c69a3b088b10f4da838d65a4",
+      "EV-Q069-e9fbe460ae6d73ab0980eef0"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "680b2966c736",
+    "mock": false
+  },
+  {
+    "event_id": "7ba9c0f8ec57",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T04:39:14.096911+00:00",
+    "ended_at": "2026-08-22T04:39:22.244304+00:00",
+    "duration_ms": 8147,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims that nonlinear optical responses bypass the diffraction limit, but Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 explicitly states that resolution in nonlinear optical microscopy is 'currently limited by the famous Abbe diffraction limit.' This direct contradiction is not addressed in the hypothesis or experiment design.\", \"The mechanism description attributes the ability to circumvent the limit to 'nonlinear optical responses' generally, citing EV-Q069-9885e2d068a40e85f0b8ca55. However, this ",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly resolves the previous contradiction by explicitly distinguishing between 'conventional nonlinear microscopy' (limited by Abbe limit per EV-Q069-e9fbe460ae6d73ab0980eef0) and 'customized speckle illumination' (bypass mechanism per EV-Q069-9885e2d068a40e85f0b8ca55).\", \"Evidence grounding is now robust: EV-Q069-e9fbe460ae6d73ab0980eef0 is correctly listed in contradicted_by_evidence_ids to define the boundary condition, preventing overgeneralization of nonlinearity.\", \"Experiment design adequately addresses the simulation-re",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e9127ab77da9",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:4412f9fd538077ff",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The diffraction limit is a conditional constraint specific to linear, far-field optical systems, rather than a fundamental physical law, and can be bypassed by introducing nonlinearity or structured illumination as indicated by super-resolution research.",
+              "mechanism": "Abbe's diffraction limit arises from the loss of evanescent waves and the finite aperture in linear imaging systems (EV-Q069-c69a3b088b10f4da838d65a4). By exploiting nonlinear optical responses or customized speckle patterns (EV-Q069-9885e2d068a40e85f0b8ca55), the effective point spread function can be narrowed or high-frequency information encoded into detectable bands, effectively circumventing the linear transfer function cutoff.",
+              "falsifiable_prediction": "If an imaging system utilizes verified nonlinear mechanisms or customized speckles yet consistently fails to resolve features below λ/(2NA) under controlled conditions where signal-to-noise is sufficient, then the hypothesis that these mechanisms bypass the limit is false.",
+              "required_observations": [
+                "Experimental demonstration of resolution beyond λ/(2NA) using customized speckles or nonlinear optics",
+                "Quantitative comparison of resolved feature sizes against the theoretical Abbe limit for the same wavelength and NA",
+                "Verification that the bypass mechanism relies on nonlinearity or structured illumination rather than mere noise reduction"
+              ],
+              "risk_of_being_wrong": "High risk if 'bypass' techniques actually rely on prior knowledge or sparse reconstruction assumptions rather than true physical information recovery; medium risk if evidence EV-Q069-e9fbe460ae6d73ab0980eef0 implies that even nonlinear microscopy remains fundamentally limited without additional specific modifications not detailed in current evidence.",
+              "supporting_evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-e9fbe460ae6d73ab0980eef0"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.82
+            },
+            {
+              "hypothesis": "The term 'diffraction limit' refers to distinct physical benchmarks in different domains: a surmountable barrier in visible light microscopy via state-switching, but a hard performance ceiling in X-ray astronomy defined by optical path matching.",
+              "mechanism": "In traditional optical microscopy, the limit is defined by Abbe's theory for linear systems (EV-Q069-c69a3b088b10f4da838d65a4). In X-ray telescopes, achieving 'diffraction-limited performance' requires precise matching of optical path lengths across nested shells (EV-Q069-eb73ba4622ab3b68452370fd), suggesting that in this regime, the limit is an engineering target representing perfect coherence rather than a barrier to be broken. The 'bypass' in optics (Nobel context) and 'achievement' in X-rays represent opposite relationships to the same mathematical bound.",
+              "falsifiable_prediction": "If X-ray imaging systems are demonstrated to resolve angular separations significantly below the Rayleigh criterion defined by their aperture and wavelength (not just achieving it), or if optical super-resolution is shown to be mathematically identical to X-ray path matching rather than distinct nonlinear/state-switching physics, this domain-specific distinction hypothesis is weakened.",
+              "required_observations": [
+                "Comparative analysis of 'diffraction limit' definitions in optical vs. X-ray literature",
+                "Measurement of X-ray telescope resolution relative to theoretical diffraction limit",
+                "Characterization of the physical mechanism enabling super-resolution in optics vs. X-ray focusing"
+              ],
+              "risk_of_being_wrong": "Moderate risk due to lack of detailed mechanism for optical bypass in provided evidence; the distinction may be semantic rather than physical. Evidence EV-Q069-eb73ba4622ab3b68452370fd confirms X-ray limit achievement but does not explicitly forbid surpassing it.",
+              "supporting_evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-eb73ba4622ab3b68452370fd"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly addresses the core tension in the question ('Is there a diffraction limit?') by reconciling the existence of the limit in traditional systems (EV-Q069-c69a3b088b10f4da838d65a4) with the documented efforts to circumvent it (EV-Q069-9885e2d068a40e85f0b8ca55). It offers a clear mechanistic pathway (nonlinearity/structured illumination) that is falsifiable through standard super-resolution validation experiments. Hypothesis 2, while interesting, relies more heavily on semantic interpretation of 'diffraction-limited performance' in X-rays and is less central to the primary query regarding the fundamental nature of the limit in microscopy.",
+          "rejected_directions": [
+            "Hypothesis claiming the diffraction limit is absolutely fundamental and cannot be bypassed under any circumstances, as this contradicts the explicit mention of circumvention techniques in EV-Q069-9885e2d068a40e85f0b8ca55 and the Nobel Prize context.",
+            "Hypothesis focusing solely on near-field microscopy, as no evidence cards specifically discuss near-field techniques, making such a hypothesis unsupported by allowed evidence."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that the diffraction limit is a conditional constraint of linear, far-field systems by comparing resolution limits across three regimes: (1) Linear widefield microscopy (control), (2) Nonlinear saturation-based microscopy (simulating STED-like physics), and (3) Structured illumination with customized speckles. The core mechanism to verify is whether nonlinearity or high-frequency encoding via speckles allows the recovery of spatial frequencies beyond the cutoff defined by Abbe's limit (d = λ/2NA). We will simulate the Point Spread Function (PSF) and Optical Transfer Function (OTF) for each regime. For the nonlinear case, we model the effective PSF as PSF_eff = PSF_linear * exp(-I/I_sat), where I is the excitation intensity and I_sat is the saturation intensity. For the speckle case, we model the illumination pattern as a random phase mask modulated by the sample's high-frequency content. The falsifiable prediction is that regimes 2 and 3 will resolve features < λ/2NA with sufficient SNR, while regime 1 will not.",
+          "datasets": {
+            "source": {
+              "description": "Synthetic ground-truth samples containing sub-diffraction features (e.g., paired nanospheres at varying separations from 0.5*d_Abbe to 2.0*d_Abbe) and experimental calibration data from standard fluorescent beads.",
+              "access_method": "Generated via computational optics simulation engine; calibration data from public repositories if available, otherwise simulated.",
+              "evidence_ids": []
+            },
+            "target": {
+              "description": "Simulated image stacks for Linear, Nonlinear, and Speckle-structured illumination modes. Metrics include resolved feature size, contrast-to-noise ratio, and Fourier ring correlation.",
+              "evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-e9fbe460ae6d73ab0980eef0"
+              ]
+            }
+          },
+          "methods": "1. **Optical Simulation**: Use scalar diffraction theory to generate the coherent transfer function for a high-NA objective (NA=1.4, λ=532nm). 2. **Nonlinear Modeling**: Implement a saturation model where the fluorescence emission is non-linearly dependent on excitation intensity, effectively narrowing the PSF. 3. **Speckle Illumination**: Generate randomized speckle patterns using a spatial light modulator (SLM) model and apply them to the sample. Use compressed sensing or correlation-based reconstruction to recover high-frequency information. 4. **Resolution Metric**: Calculate the Full Width at Half Maximum (FWHM) of reconstructed point sources and the minimum resolvable distance between two point sources (Rayleigh criterion extension).",
+          "experiments": {
+            "baselines": [
+              "Standard Linear Widefield Microscopy (Abbe limit bound)",
+              "Confocal Microscopy (Linear pinhole detection, ~1.4x improvement but still diffraction-limited)"
+            ],
+            "metrics": [
+              "Resolved Feature Size (nm) vs. Theoretical Abbe Limit (λ/2NA)",
+              "Fourier Ring Correlation (FRC) Resolution Estimate",
+              "Signal-to-Noise Ratio (SNR) required for successful super-resolution reconstruction"
+            ],
+            "ablation": "Vary the saturation intensity (I_sat) in the nonlinear model to determine the threshold at which the effective PSF narrows significantly. Vary the speckle grain size and number of patterns in the structured illumination model to assess information encoding efficiency.",
+            "validation_protocol": "Compare the reconstructed images against the known ground-truth synthetic samples. A successful bypass is defined as resolving two point sources separated by < λ/2NA with a contrast > 0.26 (Sparrow criterion equivalent) and statistical significance (p < 0.05) over multiple noise realizations."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact NA, wavelength, and pixel size in simulation parameters.",
+            "Specify the mathematical form of the nonlinear saturation curve.",
+            "Provide the seed for random speckle generation to ensure reproducibility.",
+            "Document the reconstruction algorithm (e.g., Richardson-Lucy deconvolution, compressed sensing solver) and its hyperparameters.",
+            "Ensure ground-truth samples are stored and version-controlled."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Python with NumPy/SciPy for optical simulations; GPU acceleration optional for large-scale speckle reconstruction.",
+            "estimated_time": "4-6 hours for full parameter sweep.",
+            "data_availability": "Synthetic data generated on-the-fly; no external download required for core validation."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-043640-a411acc7",
+        "version_number": 1,
+        "version_id": "20260822-043640-a411acc7:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The diffraction limit is a conditional constraint specific to linear, far-field optical systems, rather than a fundamental physical law, and can be bypassed by introducing nonlinearity or structured illumination as indicated by super-resolution research.",
+              "mechanism": "Abbe's diffraction limit arises from the loss of evanescent waves and the finite aperture in linear imaging systems (EV-Q069-c69a3b088b10f4da838d65a4). By exploiting nonlinear optical responses or customized speckle patterns (EV-Q069-9885e2d068a40e85f0b8ca55), the effective point spread function can be narrowed or high-frequency information encoded into detectable bands, effectively circumventing the linear transfer function cutoff.",
+              "falsifiable_prediction": "If an imaging system utilizes verified nonlinear mechanisms or customized speckles yet consistently fails to resolve features below λ/(2NA) under controlled conditions where signal-to-noise is sufficient, then the hypothesis that these mechanisms bypass the limit is false.",
+              "required_observations": [
+                "Experimental demonstration of resolution beyond λ/(2NA) using customized speckles or nonlinear optics",
+                "Quantitative comparison of resolved feature sizes against the theoretical Abbe limit for the same wavelength and NA",
+                "Verification that the bypass mechanism relies on nonlinearity or structured illumination rather than mere noise reduction"
+              ],
+              "risk_of_being_wrong": "High risk if 'bypass' techniques actually rely on prior knowledge or sparse reconstruction assumptions rather than true physical information recovery; medium risk if evidence EV-Q069-e9fbe460ae6d73ab0980eef0 implies that even nonlinear microscopy remains fundamentally limited without additional specific modifications not detailed in current evidence.",
+              "supporting_evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-e9fbe460ae6d73ab0980eef0"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.82
+            },
+            {
+              "hypothesis": "The term 'diffraction limit' refers to distinct physical benchmarks in different domains: a surmountable barrier in visible light microscopy via state-switching, but a hard performance ceiling in X-ray astronomy defined by optical path matching.",
+              "mechanism": "In traditional optical microscopy, the limit is defined by Abbe's theory for linear systems (EV-Q069-c69a3b088b10f4da838d65a4). In X-ray telescopes, achieving 'diffraction-limited performance' requires precise matching of optical path lengths across nested shells (EV-Q069-eb73ba4622ab3b68452370fd), suggesting that in this regime, the limit is an engineering target representing perfect coherence rather than a barrier to be broken. The 'bypass' in optics (Nobel context) and 'achievement' in X-rays represent opposite relationships to the same mathematical bound.",
+              "falsifiable_prediction": "If X-ray imaging systems are demonstrated to resolve angular separations significantly below the Rayleigh criterion defined by their aperture and wavelength (not just achieving it), or if optical super-resolution is shown to be mathematically identical to X-ray path matching rather than distinct nonlinear/state-switching physics, this domain-specific distinction hypothesis is weakened.",
+              "required_observations": [
+                "Comparative analysis of 'diffraction limit' definitions in optical vs. X-ray literature",
+                "Measurement of X-ray telescope resolution relative to theoretical diffraction limit",
+                "Characterization of the physical mechanism enabling super-resolution in optics vs. X-ray focusing"
+              ],
+              "risk_of_being_wrong": "Moderate risk due to lack of detailed mechanism for optical bypass in provided evidence; the distinction may be semantic rather than physical. Evidence EV-Q069-eb73ba4622ab3b68452370fd confirms X-ray limit achievement but does not explicitly forbid surpassing it.",
+              "supporting_evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-eb73ba4622ab3b68452370fd"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly addresses the core tension in the question ('Is there a diffraction limit?') by reconciling the existence of the limit in traditional systems (EV-Q069-c69a3b088b10f4da838d65a4) with the documented efforts to circumvent it (EV-Q069-9885e2d068a40e85f0b8ca55). It offers a clear mechanistic pathway (nonlinearity/structured illumination) that is falsifiable through standard super-resolution validation experiments. Hypothesis 2, while interesting, relies more heavily on semantic interpretation of 'diffraction-limited performance' in X-rays and is less central to the primary query regarding the fundamental nature of the limit in microscopy.",
+          "rejected_directions": [
+            "Hypothesis claiming the diffraction limit is absolutely fundamental and cannot be bypassed under any circumstances, as this contradicts the explicit mention of circumvention techniques in EV-Q069-9885e2d068a40e85f0b8ca55 and the Nobel Prize context.",
+            "Hypothesis focusing solely on near-field microscopy, as no evidence cards specifically discuss near-field techniques, making such a hypothesis unsupported by allowed evidence."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that the diffraction limit is a conditional constraint of linear, far-field systems by comparing resolution limits across three regimes: (1) Linear widefield microscopy (control), (2) Nonlinear saturation-based microscopy (simulating STED-like physics), and (3) Structured illumination with customized speckles. The core mechanism to verify is whether nonlinearity or high-frequency encoding via speckles allows the recovery of spatial frequencies beyond the cutoff defined by Abbe's limit (d = λ/2NA). We will simulate the Point Spread Function (PSF) and Optical Transfer Function (OTF) for each regime. For the nonlinear case, we model the effective PSF as PSF_eff = PSF_linear * exp(-I/I_sat), where I is the excitation intensity and I_sat is the saturation intensity. For the speckle case, we model the illumination pattern as a random phase mask modulated by the sample's high-frequency content. The falsifiable prediction is that regimes 2 and 3 will resolve features < λ/2NA with sufficient SNR, while regime 1 will not.",
+          "datasets": {
+            "source": {
+              "description": "Synthetic ground-truth samples containing sub-diffraction features (e.g., paired nanospheres at varying separations from 0.5*d_Abbe to 2.0*d_Abbe) and experimental calibration data from standard fluorescent beads.",
+              "access_method": "Generated via computational optics simulation engine; calibration data from public repositories if available, otherwise simulated.",
+              "evidence_ids": []
+            },
+            "target": {
+              "description": "Simulated image stacks for Linear, Nonlinear, and Speckle-structured illumination modes. Metrics include resolved feature size, contrast-to-noise ratio, and Fourier ring correlation.",
+              "evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-e9fbe460ae6d73ab0980eef0"
+              ]
+            }
+          },
+          "methods": "1. **Optical Simulation**: Use scalar diffraction theory to generate the coherent transfer function for a high-NA objective (NA=1.4, λ=532nm). 2. **Nonlinear Modeling**: Implement a saturation model where the fluorescence emission is non-linearly dependent on excitation intensity, effectively narrowing the PSF. 3. **Speckle Illumination**: Generate randomized speckle patterns using a spatial light modulator (SLM) model and apply them to the sample. Use compressed sensing or correlation-based reconstruction to recover high-frequency information. 4. **Resolution Metric**: Calculate the Full Width at Half Maximum (FWHM) of reconstructed point sources and the minimum resolvable distance between two point sources (Rayleigh criterion extension).",
+          "experiments": {
+            "baselines": [
+              "Standard Linear Widefield Microscopy (Abbe limit bound)",
+              "Confocal Microscopy (Linear pinhole detection, ~1.4x improvement but still diffraction-limited)"
+            ],
+            "metrics": [
+              "Resolved Feature Size (nm) vs. Theoretical Abbe Limit (λ/2NA)",
+              "Fourier Ring Correlation (FRC) Resolution Estimate",
+              "Signal-to-Noise Ratio (SNR) required for successful super-resolution reconstruction"
+            ],
+            "ablation": "Vary the saturation intensity (I_sat) in the nonlinear model to determine the threshold at which the effective PSF narrows significantly. Vary the speckle grain size and number of patterns in the structured illumination model to assess information encoding efficiency.",
+            "validation_protocol": "Compare the reconstructed images against the known ground-truth synthetic samples. A successful bypass is defined as resolving two point sources separated by < λ/2NA with a contrast > 0.26 (Sparrow criterion equivalent) and statistical significance (p < 0.05) over multiple noise realizations."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact NA, wavelength, and pixel size in simulation parameters.",
+            "Specify the mathematical form of the nonlinear saturation curve.",
+            "Provide the seed for random speckle generation to ensure reproducibility.",
+            "Document the reconstruction algorithm (e.g., Richardson-Lucy deconvolution, compressed sensing solver) and its hyperparameters.",
+            "Ensure ground-truth samples are stored and version-controlled."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Python with NumPy/SciPy for optical simulations; GPU acceleration optional for large-scale speckle reconstruction.",
+            "estimated_time": "4-6 hours for full parameter sweep.",
+            "data_availability": "Synthetic data generated on-the-fly; no external download required for core validation."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis claims that nonlinear optical responses bypass the diffraction limit, but Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 explicitly states that resolution in nonlinear optical microscopy is 'currently limited by the famous Abbe diffraction limit.' This direct contradiction is not addressed in the hypothesis or experiment design.",
+            "The mechanism description attributes the ability to circumvent the limit to 'nonlinear optical responses' generally, citing EV-Q069-9885e2d068a40e85f0b8ca55. However, this evidence specifically discusses 'customized speckles,' not general nonlinearity. Conflating these distinct mechanisms without specific evidence for nonlinearity bypassing the limit constitutes an overgeneralization.",
+            "The experiment design relies entirely on synthetic data and simulation ('Synthetic ground-truth samples', 'Generated via computational optics simulation engine'). While valid for theoretical exploration, the hypothesis makes a physical claim about bypassing a fundamental limit. Without at least one experimental dataset or a validation protocol against real-world super-resolution benchmarks, the risk of simulating artifacts rather than physical reality is high.",
+            "The 'risk_of_being_wrong' field correctly identifies that evidence EV-Q069-e9fbe460ae6d73ab0980eef0 implies limitations even in nonlinear microscopy, yet the hypothesis text ignores this nuance, presenting nonlinearity as a confirmed bypass mechanism."
+          ],
+          "critical_issues": [
+            "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+            "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+            "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap."
+          ],
+          "required_revisions": [
+            "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+            "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+            "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+            "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.4,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.5
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:93c9e87ff6d8",
+            "category": "critical_issue",
+            "description": "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:799f8bfbd185",
+            "category": "critical_issue",
+            "description": "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:3558fd39832e",
+            "category": "critical_issue",
+            "description": "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:6d9e5f66d8eb",
+            "category": "required_revision",
+            "description": "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:6852459e619a",
+            "category": "required_revision",
+            "description": "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:74d8546b6356",
+            "category": "required_revision",
+            "description": "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:cc494d5a5e9f",
+            "category": "required_revision",
+            "description": "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "4bb6f70deda6191e5ea7a01f60e5590ccbcc82ab36acb2fce7e7bf529655c431",
+          "experiment_designer": "d0c3aeab4a92cf79aa69e4ed574694fd1c172540f2d97f0e5b6a8b31207c40a3",
+          "scientific_reviewer": "3ad1d0c0ea1ef1106cb5aa7569ffe4500a14ceae5e5f0a14f3e018ca79690775"
+        }
+      },
+      "parent_version_id": "20260822-043640-a411acc7:v1",
+      "lineage": [
+        "20260822-043640-a411acc7:v1",
+        "20260822-043640-a411acc7:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis claims that nonlinear optical responses bypass the diffraction limit, but Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 explicitly states that resolution in nonlinear optical microscopy is 'currently limited by the famous Abbe diffraction limit.' This direct contradiction is not addressed in the hypothesis or experiment design.",
+          "The mechanism description attributes the ability to circumvent the limit to 'nonlinear optical responses' generally, citing EV-Q069-9885e2d068a40e85f0b8ca55. However, this evidence specifically discusses 'customized speckles,' not general nonlinearity. Conflating these distinct mechanisms without specific evidence for nonlinearity bypassing the limit constitutes an overgeneralization.",
+          "The experiment design relies entirely on synthetic data and simulation ('Synthetic ground-truth samples', 'Generated via computational optics simulation engine'). While valid for theoretical exploration, the hypothesis makes a physical claim about bypassing a fundamental limit. Without at least one experimental dataset or a validation protocol against real-world super-resolution benchmarks, the risk of simulating artifacts rather than physical reality is high.",
+          "The 'risk_of_being_wrong' field correctly identifies that evidence EV-Q069-e9fbe460ae6d73ab0980eef0 implies limitations even in nonlinear microscopy, yet the hypothesis text ignores this nuance, presenting nonlinearity as a confirmed bypass mechanism."
+        ],
+        "critical_issues": [
+          "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+          "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+          "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap."
+        ],
+        "required_revisions": [
+          "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+          "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+          "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+          "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.4,
+        "falsifiability_score": 0.8,
+        "reproducibility_score": 0.7,
+        "reference_reliability_score": 0.5
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly resolves the previous contradiction by explicitly distinguishing between 'conventional nonlinear microscopy' (limited by Abbe limit per EV-Q069-e9fbe460ae6d73ab0980eef0) and 'customized speckle illumination' (bypass mechanism per EV-Q069-9885e2d068a40e85f0b8ca55).",
+          "Evidence grounding is now robust: EV-Q069-e9fbe460ae6d73ab0980eef0 is correctly listed in contradicted_by_evidence_ids to define the boundary condition, preventing overgeneralization of nonlinearity.",
+          "Experiment design adequately addresses the simulation-reality gap by incorporating a mandatory calibration step against public experimental benchmark data (e.g., BBBC) to validate the linear PSF model before testing super-resolution claims.",
+          "Falsifiability is high: The prediction explicitly states that failure to resolve features < λ/2NA with customized speckles, or success with conventional nonlinearity alone, would falsify the specific mechanism claim.",
+          "Results field correctly indicates 'pending' status, avoiding any fabrication of experimental outcomes."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "Ensure the 'Reality Check' validation protocol explicitly defines quantitative acceptance criteria for the linear PSF calibration (e.g., FWHM deviation < 5% from theoretical Abbe limit) to prevent subjective baseline fitting.",
+          "In the reproducibility checklist, specify the exact version or DOI of the public benchmark dataset (e.g., BBBC0xx) to be used, as 'public repositories' is too vague for strict replication.",
+          "Clarify in the methods whether the 'customized speckles' are optimized via feedback or pre-computed, as this distinction affects the physical interpretation of 'circumventing' vs 'reconstructing' the limit."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.85,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:aefe3337560332bc",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+          "issue_id": "critical_issue:93c9e87ff6d8"
+        },
+        {
+          "failure_id": "failure:2cfb074448305fb5",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+          "issue_id": "critical_issue:799f8bfbd185"
+        },
+        {
+          "failure_id": "failure:4f99e3945e3e2067",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.",
+          "issue_id": "critical_issue:3558fd39832e"
+        },
+        {
+          "failure_id": "failure:bc4b8b4908ddc695",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+          "issue_id": "required_revision:6d9e5f66d8eb"
+        },
+        {
+          "failure_id": "failure:954be6bd0af80170",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+          "issue_id": "required_revision:6852459e619a"
+        },
+        {
+          "failure_id": "failure:68525571c12b5904",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+          "issue_id": "required_revision:74d8546b6356"
+        },
+        {
+          "failure_id": "failure:82e9a5dbb3ce8496",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.",
+          "issue_id": "required_revision:cc494d5a5e9f"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:e983e9accd81b9fb",
+          "issue_id": "critical_issue:93c9e87ff6d8",
+          "reason": "Reviewer item critical_issue:93c9e87ff6d8 requested 'Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).'. V2 changes control_groups; deterministic correlation evidence tokens=['abbe', 'e9fbe460ae6d73ab0980eef0', 'ev', 'limit', 'microscopy', 'nonlinear', 'q069'], coverage=0.500.",
+          "before": [
+            "Standard Linear Widefield Microscopy (Abbe limit bound)",
+            "Confocal Microscopy (Linear pinhole detection, ~1.4x improvement but still diffraction-limited)"
+          ],
+          "after": [
+            "Linear Widefield Microscopy (Theoretical Abbe Limit Baseline)",
+            "Conventional Nonlinear Microscopy (Two-Photon, no saturation, expected to be diffraction-limited per EV-Q069-e9fbe460ae6d73ab0980eef0)"
+          ],
+          "evidence_refs": [
+            "EV-Q069-9885e2d068a40e85f0b8ca55",
+            "EV-Q069-c69a3b088b10f4da838d65a4",
+            "EV-Q069-e9fbe460ae6d73ab0980eef0"
+          ],
+          "affected_plan_section": "control_groups",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:4c139e329a6be730",
+          "issue_id": "critical_issue:93c9e87ff6d8",
+          "reason": "Reviewer item critical_issue:93c9e87ff6d8 requested 'Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).'. V2 changes methods; deterministic correlation evidence tokens=['abbe', 'e9fbe460ae6d73ab0980eef0', 'ev', 'limit', 'nonlinear', 'q069'], coverage=0.429.",
+          "before": "1. **Optical Simulation**: Use scalar diffraction theory to generate the coherent transfer function for a high-NA objective (NA=1.4, λ=532nm). 2. **Nonlinear Modeling**: Implement a saturation model where the fluorescence emission is non-linearly dependent on excitation intensity, effectively narrowing the PSF. 3. **Speckle Illumination**: Generate randomized speckle patterns using a spatial light modulator (SLM) model and apply them to the sample. Use compressed sensing or correlation-based reconstruction to recover high-frequency information. 4. **Resolution Metric**: Calculate the Full Width at Half Maximum (FWHM) of reconstructed point sources and the minimum resolvable distance between two point sources (Rayleigh criterion extension).",
+          "after": "1. **Physical Model Calibration**: Use public experimental data of sub-resolution beads to fit the linear PSF parameters (NA, wavelength, aberration coefficients) ensuring the simulated linear system strictly adheres to the Abbe limit (EV-Q069-c69a3b088b10f4da838d65a4). 2. **Conventional Nonlinear Simulation**: Implement a standard two-photon excitation model (I^2 dependence) without saturation effects to demonstrate that it remains diffraction-limited, consistent with EV-Q069-e9fbe460ae6d73ab0980eef0. 3. **Customized Speckle Simulation**: Generate N randomized but 'customized' speckle illumination patterns. Simulate the interaction with the sample and capture the resulting fluorescence/intensity maps. 4. **Reconstruction Algorithm**: Apply a correlation-based or compressed sensing reconstruction algorithm to the speckle dataset to recover high-frequency information. 5. **Comparative Analysis**: Quantitatively compare the resolution limits of all three regimes against the theoretical Abbe limit.",
+          "evidence_refs": [
+            "EV-Q069-9885e2d068a40e85f0b8ca55",
+            "EV-Q069-c69a3b088b10f4da838d65a4",
+            "EV-Q069-e9fbe460ae6d73ab0980eef0"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:ec8119f439cf6788",
+          "issue_id": "critical_issue:799f8bfbd185",
+          "reason": "Reviewer item critical_issue:799f8bfbd185 requested 'Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['9885e2d068a40e85f0b8ca55', 'customiz', 'ev', 'evidence', 'optical', 'q069', 'speckle'], coverage=0.438.",
+          "before": {
+            "description": "Synthetic ground-truth samples containing sub-diffraction features (e.g., paired nanospheres at varying separations from 0.5*d_Abbe to 2.0*d_Abbe) and experimental calibration data from standard fluorescent beads.",
+            "access_method": "Generated via computational optics simulation engine; calibration data from public repositories if available, otherwise simulated.",
+            "evidence_ids": []
+          },
+          "after": {
+            "description": "1. Synthetic Ground Truth: Pairs of point sources with separations ranging from 0.2*d_Abbe to 1.5*d_Abbe. 2. Public Experimental Benchmark Data: Standard fluorescent bead images (e.g., from open-source microscopy datasets like Broad Bioimage Benchmark Collection) to calibrate the linear PSF model and verify the Abbe limit baseline. 3. Speckle Pattern Library: Generated via computational propagation through random phase masks, consistent with the 'customized speckles' description in EV-Q069-9885e2d068a40e85f0b8ca55.",
+            "access_method": "Synthetic data generated via Python-based optical simulation (NumPy/SciPy). Experimental benchmark data accessed via public repositories (e.g., BBBC) for calibration purposes only.",
+            "evidence_ids": [
+              "EV-Q069-9885e2d068a40e85f0b8ca55",
+              "EV-Q069-c69a3b088b10f4da838d65a4"
+            ]
+          },
+          "evidence_refs": [
+            "EV-Q069-9885e2d068a40e85f0b8ca55",
+            "EV-Q069-c69a3b088b10f4da838d65a4",
+            "EV-Q069-e9fbe460ae6d73ab0980eef0"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:f5e6a91347d004e4",
+          "issue_id": "critical_issue:3558fd39832e",
+          "reason": "Reviewer item critical_issue:3558fd39832e requested 'Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.'. V2 changes technical_details; deterministic correlation evidence tokens=['absent', 'claim', 'data', 'experiment', 'hypothesi', 'limit', 'physical', 'reality', 'risk', 'simulation', 'validate'], coverage=0.579.",
+          "before": "This experiment tests the hypothesis that the diffraction limit is a conditional constraint of linear, far-field systems by comparing resolution limits across three regimes: (1) Linear widefield microscopy (control), (2) Nonlinear saturation-based microscopy (simulating STED-like physics), and (3) Structured illumination with customized speckles. The core mechanism to verify is whether nonlinearity or high-frequency encoding via speckles allows the recovery of spatial frequencies beyond the cutoff defined by Abbe's limit (d = λ/2NA). We will simulate the Point Spread Function (PSF) and Optical Transfer Function (OTF) for each regime. For the nonlinear case, we model the effective PSF as PSF_eff = PSF_linear * exp(-I/I_sat), where I is the excitation intensity and I_sat is the saturation intensity. For the speckle case, we model the illumination pattern as a random phase mask modulated by the sample's high-frequency content. The falsifiable prediction is that regimes 2 and 3 will resolve features < λ/2NA with sufficient SNR, while regime 1 will not.",
+          "after": "This experiment is designed to validate the refined hypothesis that 'customized speckle illumination' specifically circumvents the Abbe diffraction limit, while explicitly acknowledging that conventional nonlinear microscopy remains limited by it (per EV-Q069-e9fbe460ae6d73ab0980eef0). The technical approach involves a comparative computational optics simulation. We will model three imaging regimes: (1) Linear Widefield (Control), (2) Conventional Nonlinear Microscopy (e.g., Two-Photon, modeled with quadratic intensity dependence but no saturation/depletion), and (3) Customized Speckle Illumination (as per EV-Q069-9885e2d068a40e85f0b8ca55). The core mechanism tested is whether the statistical correlation of speckle patterns allows the reconstruction of spatial frequencies beyond the optical transfer function (OTF) cutoff defined by Abbe (EV-Q069-c69a3b088b10f4da838d65a4). The simulation will generate ground-truth sub-diffraction features (paired emitters at separations < λ/2NA) and simulate their image formation under each regime. For the speckle regime, we will implement a reconstruction algorithm based on blind structured illumination or compressed sensing principles implied by the 'customized' nature of the speckles. Crucially, to address the risk of simulation artifacts, the validation protocol includes a 'Reality Check' step where the simulation parameters are calibrated against publicly available experimental benchmark data for standard diffraction-limited systems to ensure the physical model's fidelity before testing the super-resolution claim.",
+          "evidence_refs": [
+            "EV-Q069-9885e2d068a40e85f0b8ca55",
+            "EV-Q069-c69a3b088b10f4da838d65a4",
+            "EV-Q069-e9fbe460ae6d73ab0980eef0"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:cf04654d0358713c",
+          "issue_id": "required_revision:74d8546b6356",
+          "reason": "Reviewer item required_revision:74d8546b6356 requested 'Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.'. V2 changes technical_details; deterministic correlation evidence tokens=['address', 'artifact', 'data', 'experimental', 'explicitly', 'physical', 'resolution', 'risk', 'simulation', 'step', 'super', 'validate'], coverage=0.545.",
+          "before": "This experiment tests the hypothesis that the diffraction limit is a conditional constraint of linear, far-field systems by comparing resolution limits across three regimes: (1) Linear widefield microscopy (control), (2) Nonlinear saturation-based microscopy (simulating STED-like physics), and (3) Structured illumination with customized speckles. The core mechanism to verify is whether nonlinearity or high-frequency encoding via speckles allows the recovery of spatial frequencies beyond the cutoff defined by Abbe's limit (d = λ/2NA). We will simulate the Point Spread Function (PSF) and Optical Transfer Function (OTF) for each regime. For the nonlinear case, we model the effective PSF as PSF_eff = PSF_linear * exp(-I/I_sat), where I is the excitation intensity and I_sat is the saturation intensity. For the speckle case, we model the illumination pattern as a random phase mask modulated by the sample's high-frequency content. The falsifiable prediction is that regimes 2 and 3 will resolve features < λ/2NA with sufficient SNR, while regime 1 will not.",
+          "after": "This experiment is designed to validate the refined hypothesis that 'customized speckle illumination' specifically circumvents the Abbe diffraction limit, while explicitly acknowledging that conventional nonlinear microscopy remains limited by it (per EV-Q069-e9fbe460ae6d73ab0980eef0). The technical approach involves a comparative computational optics simulation. We will model three imaging regimes: (1) Linear Widefield (Control), (2) Conventional Nonlinear Microscopy (e.g., Two-Photon, modeled with quadratic intensity dependence but no saturation/depletion), and (3) Customized Speckle Illumination (as per EV-Q069-9885e2d068a40e85f0b8ca55). The core mechanism tested is whether the statistical correlation of speckle patterns allows the reconstruction of spatial frequencies beyond the optical transfer function (OTF) cutoff defined by Abbe (EV-Q069-c69a3b088b10f4da838d65a4). The simulation will generate ground-truth sub-diffraction features (paired emitters at separations < λ/2NA) and simulate their image formation under each regime. For the speckle regime, we will implement a reconstruction algorithm based on blind structured illumination or compressed sensing principles implied by the 'customized' nature of the speckles. Crucially, to address the risk of simulation artifacts, the validation protocol includes a 'Reality Check' step where the simulation parameters are calibrated against publicly available experimental benchmark data for standard diffraction-limited systems to ensure the physical model's fidelity before testing the super-resolution claim.",
+          "evidence_refs": [
+            "EV-Q069-9885e2d068a40e85f0b8ca55",
+            "EV-Q069-c69a3b088b10f4da838d65a4",
+            "EV-Q069-e9fbe460ae6d73ab0980eef0"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:72ca83df7962052b",
+          "issue_id": "required_revision:cc494d5a5e9f",
+          "reason": "Reviewer item required_revision:cc494d5a5e9f requested 'Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.'. V2 changes technical_details; deterministic correlation evidence tokens=['e9fbe460ae6d73ab0980eef0', 'ev', 'hypothesi', 'limit', 'microscopy', 'nonlinear', 'q069'], coverage=0.500.",
+          "before": "This experiment tests the hypothesis that the diffraction limit is a conditional constraint of linear, far-field systems by comparing resolution limits across three regimes: (1) Linear widefield microscopy (control), (2) Nonlinear saturation-based microscopy (simulating STED-like physics), and (3) Structured illumination with customized speckles. The core mechanism to verify is whether nonlinearity or high-frequency encoding via speckles allows the recovery of spatial frequencies beyond the cutoff defined by Abbe's limit (d = λ/2NA). We will simulate the Point Spread Function (PSF) and Optical Transfer Function (OTF) for each regime. For the nonlinear case, we model the effective PSF as PSF_eff = PSF_linear * exp(-I/I_sat), where I is the excitation intensity and I_sat is the saturation intensity. For the speckle case, we model the illumination pattern as a random phase mask modulated by the sample's high-frequency content. The falsifiable prediction is that regimes 2 and 3 will resolve features < λ/2NA with sufficient SNR, while regime 1 will not.",
+          "after": "This experiment is designed to validate the refined hypothesis that 'customized speckle illumination' specifically circumvents the Abbe diffraction limit, while explicitly acknowledging that conventional nonlinear microscopy remains limited by it (per EV-Q069-e9fbe460ae6d73ab0980eef0). The technical approach involves a comparative computational optics simulation. We will model three imaging regimes: (1) Linear Widefield (Control), (2) Conventional Nonlinear Microscopy (e.g., Two-Photon, modeled with quadratic intensity dependence but no saturation/depletion), and (3) Customized Speckle Illumination (as per EV-Q069-9885e2d068a40e85f0b8ca55). The core mechanism tested is whether the statistical correlation of speckle patterns allows the reconstruction of spatial frequencies beyond the optical transfer function (OTF) cutoff defined by Abbe (EV-Q069-c69a3b088b10f4da838d65a4). The simulation will generate ground-truth sub-diffraction features (paired emitters at separations < λ/2NA) and simulate their image formation under each regime. For the speckle regime, we will implement a reconstruction algorithm based on blind structured illumination or compressed sensing principles implied by the 'customized' nature of the speckles. Crucially, to address the risk of simulation artifacts, the validation protocol includes a 'Reality Check' step where the simulation parameters are calibrated against publicly available experimental benchmark data for standard diffraction-limited systems to ensure the physical model's fidelity before testing the super-resolution claim.",
+          "evidence_refs": [
+            "EV-Q069-9885e2d068a40e85f0b8ca55",
+            "EV-Q069-c69a3b088b10f4da838d65a4",
+            "EV-Q069-e9fbe460ae6d73ab0980eef0"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:93c9e87ff6d8",
+          "category": "critical_issue",
+          "description": "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:e983e9accd81b9fb,change:4c139e329a6be730; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:799f8bfbd185",
+          "category": "critical_issue",
+          "description": "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ec8119f439cf6788; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:3558fd39832e",
+          "category": "critical_issue",
+          "description": "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f5e6a91347d004e4; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:6d9e5f66d8eb",
+          "category": "required_revision",
+          "description": "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:6852459e619a",
+          "category": "required_revision",
+          "description": "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:74d8546b6356",
+          "category": "required_revision",
+          "description": "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cf04654d0358713c; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:cc494d5a5e9f",
+          "category": "required_revision",
+          "description": "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:72ca83df7962052b; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:197d42329e07",
+          "category": "required_revision",
+          "description": "Ensure the 'Reality Check' validation protocol explicitly defines quantitative acceptance criteria for the linear PSF calibration (e.g., FWHM deviation < 5% from theoretical Abbe limit) to prevent subjective baseline fitting.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:6c4ed3d3d45b",
+          "category": "required_revision",
+          "description": "In the reproducibility checklist, specify the exact version or DOI of the public benchmark dataset (e.g., BBBC0xx) to be used, as 'public repositories' is too vague for strict replication.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:a42eef8459b8",
+          "category": "required_revision",
+          "description": "Clarify in the methods whether the 'customized speckles' are optimized via feedback or pre-computed, as this distinction affects the physical interpretation of 'circumventing' vs 'reconstructing' the limit.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.85,
+          "delta": 0.15000000000000002
+        },
+        "reference_reliability_score": {
+          "before": 0.5,
+          "after": 1.0,
+          "delta": 0.5
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "The Abbe diffraction limit is a valid constraint for standard linear and conventional nonlinear optical microscopy, but can be specifically circumvented in far-field imaging through the use of customized speckle illumination patterns that encode high-frequency spatial information into the detectable passband.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The 'diffraction limit' functions as a fundamental barrier in traditional optical microscopy but serves as a performance benchmark (rather than a barrier) in X-ray astronomy, where achieving it requires precise optical path matching rather than bypass mechanisms.",
+          "overall_score": 0.65,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 5,
+      "blocking_reasons": [
+        "required_revision_without_change:required_revision:6d9e5f66d8eb",
+        "required_revision_without_change:required_revision:6852459e619a",
+        "unresolved_issue:required_revision:6d9e5f66d8eb",
+        "unresolved_issue:required_revision:6852459e619a",
+        "unresolved_issue:required_revision:197d42329e07",
+        "unresolved_issue:required_revision:6c4ed3d3d45b",
+        "unresolved_issue:required_revision:a42eef8459b8",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:6d9e5f66d8eb: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:6852459e619a: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:197d42329e07: Ensure the 'Reality Check' validation protocol explicitly defines quantitative acceptance criteria for the linear PSF calibration (e.g., FWHM deviation < 5% from theoretical Abbe limit) to prevent subjective baseline fitting.",
+        "required_revision:6c4ed3d3d45b: In the reproducibility checklist, specify the exact version or DOI of the public benchmark dataset (e.g., BBBC0xx) to be used, as 'public repositories' is too vague for strict replication.",
+        "required_revision:a42eef8459b8: Clarify in the methods whether the 'customized speckles' are optimized via feedback or pre-computed, as this distinction affects the physical interpretation of 'circumventing' vs 'reconstructing' the limit."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-043640-a411acc7",
+        "version_number": 1,
+        "version_id": "20260822-043640-a411acc7:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The diffraction limit is a conditional constraint specific to linear, far-field optical systems, rather than a fundamental physical law, and can be bypassed by introducing nonlinearity or structured illumination as indicated by super-resolution research.",
+              "mechanism": "Abbe's diffraction limit arises from the loss of evanescent waves and the finite aperture in linear imaging systems (EV-Q069-c69a3b088b10f4da838d65a4). By exploiting nonlinear optical responses or customized speckle patterns (EV-Q069-9885e2d068a40e85f0b8ca55), the effective point spread function can be narrowed or high-frequency information encoded into detectable bands, effectively circumventing the linear transfer function cutoff.",
+              "falsifiable_prediction": "If an imaging system utilizes verified nonlinear mechanisms or customized speckles yet consistently fails to resolve features below λ/(2NA) under controlled conditions where signal-to-noise is sufficient, then the hypothesis that these mechanisms bypass the limit is false.",
+              "required_observations": [
+                "Experimental demonstration of resolution beyond λ/(2NA) using customized speckles or nonlinear optics",
+                "Quantitative comparison of resolved feature sizes against the theoretical Abbe limit for the same wavelength and NA",
+                "Verification that the bypass mechanism relies on nonlinearity or structured illumination rather than mere noise reduction"
+              ],
+              "risk_of_being_wrong": "High risk if 'bypass' techniques actually rely on prior knowledge or sparse reconstruction assumptions rather than true physical information recovery; medium risk if evidence EV-Q069-e9fbe460ae6d73ab0980eef0 implies that even nonlinear microscopy remains fundamentally limited without additional specific modifications not detailed in current evidence.",
+              "supporting_evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-e9fbe460ae6d73ab0980eef0"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.82
+            },
+            {
+              "hypothesis": "The term 'diffraction limit' refers to distinct physical benchmarks in different domains: a surmountable barrier in visible light microscopy via state-switching, but a hard performance ceiling in X-ray astronomy defined by optical path matching.",
+              "mechanism": "In traditional optical microscopy, the limit is defined by Abbe's theory for linear systems (EV-Q069-c69a3b088b10f4da838d65a4). In X-ray telescopes, achieving 'diffraction-limited performance' requires precise matching of optical path lengths across nested shells (EV-Q069-eb73ba4622ab3b68452370fd), suggesting that in this regime, the limit is an engineering target representing perfect coherence rather than a barrier to be broken. The 'bypass' in optics (Nobel context) and 'achievement' in X-rays represent opposite relationships to the same mathematical bound.",
+              "falsifiable_prediction": "If X-ray imaging systems are demonstrated to resolve angular separations significantly below the Rayleigh criterion defined by their aperture and wavelength (not just achieving it), or if optical super-resolution is shown to be mathematically identical to X-ray path matching rather than distinct nonlinear/state-switching physics, this domain-specific distinction hypothesis is weakened.",
+              "required_observations": [
+                "Comparative analysis of 'diffraction limit' definitions in optical vs. X-ray literature",
+                "Measurement of X-ray telescope resolution relative to theoretical diffraction limit",
+                "Characterization of the physical mechanism enabling super-resolution in optics vs. X-ray focusing"
+              ],
+              "risk_of_being_wrong": "Moderate risk due to lack of detailed mechanism for optical bypass in provided evidence; the distinction may be semantic rather than physical. Evidence EV-Q069-eb73ba4622ab3b68452370fd confirms X-ray limit achievement but does not explicitly forbid surpassing it.",
+              "supporting_evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-eb73ba4622ab3b68452370fd"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly addresses the core tension in the question ('Is there a diffraction limit?') by reconciling the existence of the limit in traditional systems (EV-Q069-c69a3b088b10f4da838d65a4) with the documented efforts to circumvent it (EV-Q069-9885e2d068a40e85f0b8ca55). It offers a clear mechanistic pathway (nonlinearity/structured illumination) that is falsifiable through standard super-resolution validation experiments. Hypothesis 2, while interesting, relies more heavily on semantic interpretation of 'diffraction-limited performance' in X-rays and is less central to the primary query regarding the fundamental nature of the limit in microscopy.",
+          "rejected_directions": [
+            "Hypothesis claiming the diffraction limit is absolutely fundamental and cannot be bypassed under any circumstances, as this contradicts the explicit mention of circumvention techniques in EV-Q069-9885e2d068a40e85f0b8ca55 and the Nobel Prize context.",
+            "Hypothesis focusing solely on near-field microscopy, as no evidence cards specifically discuss near-field techniques, making such a hypothesis unsupported by allowed evidence."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that the diffraction limit is a conditional constraint of linear, far-field systems by comparing resolution limits across three regimes: (1) Linear widefield microscopy (control), (2) Nonlinear saturation-based microscopy (simulating STED-like physics), and (3) Structured illumination with customized speckles. The core mechanism to verify is whether nonlinearity or high-frequency encoding via speckles allows the recovery of spatial frequencies beyond the cutoff defined by Abbe's limit (d = λ/2NA). We will simulate the Point Spread Function (PSF) and Optical Transfer Function (OTF) for each regime. For the nonlinear case, we model the effective PSF as PSF_eff = PSF_linear * exp(-I/I_sat), where I is the excitation intensity and I_sat is the saturation intensity. For the speckle case, we model the illumination pattern as a random phase mask modulated by the sample's high-frequency content. The falsifiable prediction is that regimes 2 and 3 will resolve features < λ/2NA with sufficient SNR, while regime 1 will not.",
+          "datasets": {
+            "source": {
+              "description": "Synthetic ground-truth samples containing sub-diffraction features (e.g., paired nanospheres at varying separations from 0.5*d_Abbe to 2.0*d_Abbe) and experimental calibration data from standard fluorescent beads.",
+              "access_method": "Generated via computational optics simulation engine; calibration data from public repositories if available, otherwise simulated.",
+              "evidence_ids": []
+            },
+            "target": {
+              "description": "Simulated image stacks for Linear, Nonlinear, and Speckle-structured illumination modes. Metrics include resolved feature size, contrast-to-noise ratio, and Fourier ring correlation.",
+              "evidence_ids": [
+                "EV-Q069-c69a3b088b10f4da838d65a4",
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-e9fbe460ae6d73ab0980eef0"
+              ]
+            }
+          },
+          "methods": "1. **Optical Simulation**: Use scalar diffraction theory to generate the coherent transfer function for a high-NA objective (NA=1.4, λ=532nm). 2. **Nonlinear Modeling**: Implement a saturation model where the fluorescence emission is non-linearly dependent on excitation intensity, effectively narrowing the PSF. 3. **Speckle Illumination**: Generate randomized speckle patterns using a spatial light modulator (SLM) model and apply them to the sample. Use compressed sensing or correlation-based reconstruction to recover high-frequency information. 4. **Resolution Metric**: Calculate the Full Width at Half Maximum (FWHM) of reconstructed point sources and the minimum resolvable distance between two point sources (Rayleigh criterion extension).",
+          "experiments": {
+            "baselines": [
+              "Standard Linear Widefield Microscopy (Abbe limit bound)",
+              "Confocal Microscopy (Linear pinhole detection, ~1.4x improvement but still diffraction-limited)"
+            ],
+            "metrics": [
+              "Resolved Feature Size (nm) vs. Theoretical Abbe Limit (λ/2NA)",
+              "Fourier Ring Correlation (FRC) Resolution Estimate",
+              "Signal-to-Noise Ratio (SNR) required for successful super-resolution reconstruction"
+            ],
+            "ablation": "Vary the saturation intensity (I_sat) in the nonlinear model to determine the threshold at which the effective PSF narrows significantly. Vary the speckle grain size and number of patterns in the structured illumination model to assess information encoding efficiency.",
+            "validation_protocol": "Compare the reconstructed images against the known ground-truth synthetic samples. A successful bypass is defined as resolving two point sources separated by < λ/2NA with a contrast > 0.26 (Sparrow criterion equivalent) and statistical significance (p < 0.05) over multiple noise realizations."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact NA, wavelength, and pixel size in simulation parameters.",
+            "Specify the mathematical form of the nonlinear saturation curve.",
+            "Provide the seed for random speckle generation to ensure reproducibility.",
+            "Document the reconstruction algorithm (e.g., Richardson-Lucy deconvolution, compressed sensing solver) and its hyperparameters.",
+            "Ensure ground-truth samples are stored and version-controlled."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Python with NumPy/SciPy for optical simulations; GPU acceleration optional for large-scale speckle reconstruction.",
+            "estimated_time": "4-6 hours for full parameter sweep.",
+            "data_availability": "Synthetic data generated on-the-fly; no external download required for core validation."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis claims that nonlinear optical responses bypass the diffraction limit, but Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 explicitly states that resolution in nonlinear optical microscopy is 'currently limited by the famous Abbe diffraction limit.' This direct contradiction is not addressed in the hypothesis or experiment design.",
+            "The mechanism description attributes the ability to circumvent the limit to 'nonlinear optical responses' generally, citing EV-Q069-9885e2d068a40e85f0b8ca55. However, this evidence specifically discusses 'customized speckles,' not general nonlinearity. Conflating these distinct mechanisms without specific evidence for nonlinearity bypassing the limit constitutes an overgeneralization.",
+            "The experiment design relies entirely on synthetic data and simulation ('Synthetic ground-truth samples', 'Generated via computational optics simulation engine'). While valid for theoretical exploration, the hypothesis makes a physical claim about bypassing a fundamental limit. Without at least one experimental dataset or a validation protocol against real-world super-resolution benchmarks, the risk of simulating artifacts rather than physical reality is high.",
+            "The 'risk_of_being_wrong' field correctly identifies that evidence EV-Q069-e9fbe460ae6d73ab0980eef0 implies limitations even in nonlinear microscopy, yet the hypothesis text ignores this nuance, presenting nonlinearity as a confirmed bypass mechanism."
+          ],
+          "critical_issues": [
+            "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+            "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+            "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap."
+          ],
+          "required_revisions": [
+            "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+            "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+            "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+            "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.4,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.5
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:93c9e87ff6d8",
+            "category": "critical_issue",
+            "description": "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:799f8bfbd185",
+            "category": "critical_issue",
+            "description": "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:3558fd39832e",
+            "category": "critical_issue",
+            "description": "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:6d9e5f66d8eb",
+            "category": "required_revision",
+            "description": "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:6852459e619a",
+            "category": "required_revision",
+            "description": "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:74d8546b6356",
+            "category": "required_revision",
+            "description": "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:cc494d5a5e9f",
+            "category": "required_revision",
+            "description": "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "4bb6f70deda6191e5ea7a01f60e5590ccbcc82ab36acb2fce7e7bf529655c431",
+          "experiment_designer": "d0c3aeab4a92cf79aa69e4ed574694fd1c172540f2d97f0e5b6a8b31207c40a3",
+          "scientific_reviewer": "3ad1d0c0ea1ef1106cb5aa7569ffe4500a14ceae5e5f0a14f3e018ca79690775"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-043640-a411acc7",
+        "version_number": 2,
+        "version_id": "20260822-043640-a411acc7:v2",
+        "parent_version_id": "20260822-043640-a411acc7:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The Abbe diffraction limit is a valid constraint for standard linear and conventional nonlinear optical microscopy, but can be specifically circumvented in far-field imaging through the use of customized speckle illumination patterns that encode high-frequency spatial information into the detectable passband.",
+              "mechanism": "Standard optical microscopy is physically limited by diffraction as defined by Abbe (EV-Q069-c69a3b088b10f4da838d65a4), and this limitation persists even in conventional nonlinear optical microscopy (EV-Q069-e9fbe460ae6d73ab0980eef0). However, the application of 'customized speckles' acts as a distinct physical mechanism to circumvent this limit (EV-Q069-9885e2d068a40e85f0b8ca55), likely by shifting high-frequency object information into the transmission band of the optical system via structured illumination correlation, rather than by general nonlinearity alone.",
+              "falsifiable_prediction": "If an imaging system employs customized speckle illumination under conditions described in EV-Q069-9885e2d068a40e85f0b8ca55 yet fails to resolve features below the Abbe limit (λ/2NA) when compared to a linear baseline with equivalent signal-to-noise ratio, then the claim that customized speckles circumvent the diffraction limit is false. Conversely, if standard nonlinear microscopy without such specific structuring achieves super-resolution, the specificity of the speckle mechanism is falsified.",
+              "required_observations": [
+                "Quantitative resolution measurement using customized speckle illumination demonstrating feature separation < λ/(2NA)",
+                "Control experiment showing that conventional nonlinear microscopy (without customized speckles) remains limited by the Abbe limit consistent with EV-Q069-e9fbe460ae6d73ab0980eef0",
+                "Validation against real-world experimental super-resolution benchmarks or raw data to exclude simulation artifacts"
+              ],
+              "risk_of_being_wrong": "High risk if 'customized speckles' rely on prior assumptions or sparse reconstruction priors rather than physical information encoding; Medium risk if the effect is only observable under idealized simulation conditions not reproducible in physical experiments due to noise or aberrations.",
+              "supporting_evidence_ids": [
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-c69a3b088b10f4da838d65a4"
+              ],
+              "contradicted_by_evidence_ids": [
+                "EV-Q069-e9fbe460ae6d73ab0980eef0"
+              ],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "The 'diffraction limit' functions as a fundamental barrier in traditional optical microscopy but serves as a performance benchmark (rather than a barrier) in X-ray astronomy, where achieving it requires precise optical path matching rather than bypass mechanisms.",
+              "mechanism": "In optical microscopy, the diffraction limit restricts resolution due to wave nature constraints (EV-Q069-c69a3b088b10f4da838d65a4). In contrast, X-ray telescopes aim to achieve 'diffraction-limited performance' through engineering solutions like nested-shell architectures and grazing-incidence mirrors that match optical path lengths (EV-Q069-eb73ba4622ab3b68452370fd). This suggests the limit is context-dependent: a hard boundary to be broken in optics (via specialized means like speckles) versus a coherence target to be met in X-ray imaging.",
+              "falsifiable_prediction": "If X-ray telescopes are demonstrated to routinely surpass the theoretical diffraction limit defined by their aperture (not just achieve it), or if optical microscopy cannot physically exceed the limit even with customized speckles, the domain-specific distinction collapses. Specifically, if 'achieving' the limit in X-rays is shown to be physically identical to 'bypassing' it in optics, the hypothesis is weakened.",
+              "required_observations": [
+                "Comparative analysis of resolution metrics relative to theoretical limits in both X-ray and optical domains",
+                "Verification that X-ray systems do not employ super-resolution techniques analogous to optical speckle methods",
+                "Confirmation that optical bypass requires specific structural modifications absent in standard X-ray designs"
+              ],
+              "risk_of_being_wrong": "Moderate risk due to semantic ambiguity; 'diffraction-limited' may simply mean 'perfect optics' in both fields without implying different physical relationships to the limit. Lack of explicit evidence linking X-ray path matching to the concept of 'limit' as a barrier vs benchmark.",
+              "supporting_evidence_ids": [
+                "EV-Q069-eb73ba4622ab3b68452370fd",
+                "EV-Q069-c69a3b088b10f4da838d65a4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.65
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly resolves the critical reviewer feedback by explicitly distinguishing between 'general nonlinear microscopy' (confirmed limited by EV-Q069-e9fbe460ae6d73ab0980eef0) and 'customized speckles' (confirmed bypass mechanism in EV-Q069-9885e2d068a40e85f0b8ca55). It corrects the previous overgeneralization and incorporates the contradictory evidence as a boundary condition rather than ignoring it. Furthermore, it mandates validation against real-world benchmarks to address the simulation-artifact risk identified in the review. Hypothesis 2, while valid, is less central to the core question of bypassing the limit in the context of the Nobel Prize citation and does not address the primary critical issues regarding optical mechanisms.",
+          "rejected_directions": [
+            "General claim that 'nonlinearity bypasses the diffraction limit' without qualification, as this is directly contradicted by EV-Q069-e9fbe460ae6d73ab0980eef0 which states nonlinear microscopy is currently limited by Abbe's limit.",
+            "Purely synthetic validation of physical bypass claims without a protocol for real-data benchmarking, given the high risk of simulation artifacts noted in review.",
+            "Attributing the bypass mechanism solely to general nonlinear optical responses based on EV-Q069-9885e2d068a40e85f0b8ca55, as this evidence specifically cites 'customized speckles'."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to validate the refined hypothesis that 'customized speckle illumination' specifically circumvents the Abbe diffraction limit, while explicitly acknowledging that conventional nonlinear microscopy remains limited by it (per EV-Q069-e9fbe460ae6d73ab0980eef0). The technical approach involves a comparative computational optics simulation. We will model three imaging regimes: (1) Linear Widefield (Control), (2) Conventional Nonlinear Microscopy (e.g., Two-Photon, modeled with quadratic intensity dependence but no saturation/depletion), and (3) Customized Speckle Illumination (as per EV-Q069-9885e2d068a40e85f0b8ca55). The core mechanism tested is whether the statistical correlation of speckle patterns allows the reconstruction of spatial frequencies beyond the optical transfer function (OTF) cutoff defined by Abbe (EV-Q069-c69a3b088b10f4da838d65a4). The simulation will generate ground-truth sub-diffraction features (paired emitters at separations < λ/2NA) and simulate their image formation under each regime. For the speckle regime, we will implement a reconstruction algorithm based on blind structured illumination or compressed sensing principles implied by the 'customized' nature of the speckles. Crucially, to address the risk of simulation artifacts, the validation protocol includes a 'Reality Check' step where the simulation parameters are calibrated against publicly available experimental benchmark data for standard diffraction-limited systems to ensure the physical model's fidelity before testing the super-resolution claim.",
+          "datasets": {
+            "source": {
+              "description": "1. Synthetic Ground Truth: Pairs of point sources with separations ranging from 0.2*d_Abbe to 1.5*d_Abbe. 2. Public Experimental Benchmark Data: Standard fluorescent bead images (e.g., from open-source microscopy datasets like Broad Bioimage Benchmark Collection) to calibrate the linear PSF model and verify the Abbe limit baseline. 3. Speckle Pattern Library: Generated via computational propagation through random phase masks, consistent with the 'customized speckles' description in EV-Q069-9885e2d068a40e85f0b8ca55.",
+              "access_method": "Synthetic data generated via Python-based optical simulation (NumPy/SciPy). Experimental benchmark data accessed via public repositories (e.g., BBBC) for calibration purposes only.",
+              "evidence_ids": [
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-c69a3b088b10f4da838d65a4"
+              ]
+            },
+            "target": {
+              "description": "Reconstructed image stacks for each regime. Key outputs: Resolution metrics (FWHM, minimum resolvable distance), Reconstruction Error (RMSE vs Ground Truth), and Spectral Content Analysis (power spectrum extension beyond cutoff).",
+              "evidence_ids": [
+                "EV-Q069-9885e2d068a40e85f0b8ca55",
+                "EV-Q069-e9fbe460ae6d73ab0980eef0"
+              ]
+            }
+          },
+          "methods": "1. **Physical Model Calibration**: Use public experimental data of sub-resolution beads to fit the linear PSF parameters (NA, wavelength, aberration coefficients) ensuring the simulated linear system strictly adheres to the Abbe limit (EV-Q069-c69a3b088b10f4da838d65a4). 2. **Conventional Nonlinear Simulation**: Implement a standard two-photon excitation model (I^2 dependence) without saturation effects to demonstrate that it remains diffraction-limited, consistent with EV-Q069-e9fbe460ae6d73ab0980eef0. 3. **Customized Speckle Simulation**: Generate N randomized but 'customized' speckle illumination patterns. Simulate the interaction with the sample and capture the resulting fluorescence/intensity maps. 4. **Reconstruction Algorithm**: Apply a correlation-based or compressed sensing reconstruction algorithm to the speckle dataset to recover high-frequency information. 5. **Comparative Analysis**: Quantitatively compare the resolution limits of all three regimes against the theoretical Abbe limit.",
+          "experiments": {
+            "baselines": [
+              "Linear Widefield Microscopy (Theoretical Abbe Limit Baseline)",
+              "Conventional Nonlinear Microscopy (Two-Photon, no saturation, expected to be diffraction-limited per EV-Q069-e9fbe460ae6d73ab0980eef0)"
+            ],
+            "metrics": [
+              "Minimum Resolvable Distance (nm) compared to λ/2NA",
+              "Fourier Ring Correlation (FRC) Resolution Estimate",
+              "Reconstruction Signal-to-Noise Ratio (rSNR)",
+              "Spectral Support Extension (percentage of energy recovered beyond the OTF cutoff)"
+            ],
+            "ablation": "Vary the number of speckle patterns (N) to determine the minimum data requirement for super-resolution. Vary the 'customization' level of speckles (e.g., fully random vs. optimized for specific spatial frequencies) to test the mechanism's specificity. Test different noise levels to assess robustness.",
+            "validation_protocol": "1. **Baseline Validation**: Confirm that the Linear and Conventional Nonlinear simulations fail to resolve features < λ/2NA, aligning with EV-Q069-e9fbe460ae6d73ab0980eef0 and EV-Q069-c69a3b088b10f4da838d65a4. 2. **Super-Resolution Validation**: Demonstrate that the Customized Speckle regime resolves features < λ/2NA with statistical significance (p < 0.05) over multiple noise realizations. 3. **Artifact Check**: Verify that the reconstructed high-frequency content is not an artifact of the reconstruction prior by testing on samples with known sparse vs. dense structures."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Provide exact code for PSF generation and optical propagation model.",
+            "Specify the seed and algorithm for 'customized speckle' generation.",
+            "Document the reconstruction algorithm hyperparameters (e.g., regularization strength, iteration count).",
+            "List the specific public dataset IDs used for baseline calibration.",
+            "Include the mathematical definition of the 'Abbe limit' used for comparison (λ/2NA).",
+            "Ensure the distinction between 'conventional nonlinear' and 'speckle-enhanced' models is clearly coded and commented."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Python environment with NumPy, SciPy, and potentially PyTorch for reconstruction optimization. CPU/GPU depending on simulation scale.",
+            "estimated_time": "6-8 hours for full parameter sweep and reconstruction.",
+            "data_availability": "Synthetic data generated on-the-fly; public benchmark data requires internet access for initial calibration download."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly resolves the previous contradiction by explicitly distinguishing between 'conventional nonlinear microscopy' (limited by Abbe limit per EV-Q069-e9fbe460ae6d73ab0980eef0) and 'customized speckle illumination' (bypass mechanism per EV-Q069-9885e2d068a40e85f0b8ca55).",
+            "Evidence grounding is now robust: EV-Q069-e9fbe460ae6d73ab0980eef0 is correctly listed in contradicted_by_evidence_ids to define the boundary condition, preventing overgeneralization of nonlinearity.",
+            "Experiment design adequately addresses the simulation-reality gap by incorporating a mandatory calibration step against public experimental benchmark data (e.g., BBBC) to validate the linear PSF model before testing super-resolution claims.",
+            "Falsifiability is high: The prediction explicitly states that failure to resolve features < λ/2NA with customized speckles, or success with conventional nonlinearity alone, would falsify the specific mechanism claim.",
+            "Results field correctly indicates 'pending' status, avoiding any fabrication of experimental outcomes."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Ensure the 'Reality Check' validation protocol explicitly defines quantitative acceptance criteria for the linear PSF calibration (e.g., FWHM deviation < 5% from theoretical Abbe limit) to prevent subjective baseline fitting.",
+            "In the reproducibility checklist, specify the exact version or DOI of the public benchmark dataset (e.g., BBBC0xx) to be used, as 'public repositories' is too vague for strict replication.",
+            "Clarify in the methods whether the 'customized speckles' are optimized via feedback or pre-computed, as this distinction affects the physical interpretation of 'circumventing' vs 'reconstructing' the limit."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:93c9e87ff6d8",
+            "category": "critical_issue",
+            "description": "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:e983e9accd81b9fb,change:4c139e329a6be730; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:799f8bfbd185",
+            "category": "critical_issue",
+            "description": "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:ec8119f439cf6788; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:3558fd39832e",
+            "category": "critical_issue",
+            "description": "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:f5e6a91347d004e4; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:6d9e5f66d8eb",
+            "category": "required_revision",
+            "description": "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:6852459e619a",
+            "category": "required_revision",
+            "description": "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:74d8546b6356",
+            "category": "required_revision",
+            "description": "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:cf04654d0358713c; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:cc494d5a5e9f",
+            "category": "required_revision",
+            "description": "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:72ca83df7962052b; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:197d42329e07",
+            "category": "required_revision",
+            "description": "Ensure the 'Reality Check' validation protocol explicitly defines quantitative acceptance criteria for the linear PSF calibration (e.g., FWHM deviation < 5% from theoretical Abbe limit) to prevent subjective baseline fitting.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:6c4ed3d3d45b",
+            "category": "required_revision",
+            "description": "In the reproducibility checklist, specify the exact version or DOI of the public benchmark dataset (e.g., BBBC0xx) to be used, as 'public repositories' is too vague for strict replication.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a42eef8459b8",
+            "category": "required_revision",
+            "description": "Clarify in the methods whether the 'customized speckles' are optimized via feedback or pre-computed, as this distinction affects the physical interpretation of 'circumventing' vs 'reconstructing' the limit.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "089b3645e81b0406a0d68778a0bf69f05fa4e46106c647d33113aebca172fa47",
+          "experiment_designer": "23b4fd7127a38e09e220327359f342882791cb7c62d05d0d4920da4001b50890",
+          "scientific_reviewer": "1efbc9ee6ed4908fc3f402be1552020a69067e501447bd852ed5517d58c6a9df"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-043640-a411acc7",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-043640-a411acc7:review:v1",
+        "20260822-043640-a411acc7:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-043640-a411acc7:v1",
+        "20260822-043640-a411acc7:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-043640-a411acc7",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-043640-a411acc7:review:v1",
+          "20260822-043640-a411acc7:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-043640-a411acc7:v1",
+          "20260822-043640-a411acc7:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-043640-a411acc7",
+          "version_number": 1,
+          "version_id": "20260822-043640-a411acc7:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "The diffraction limit is a conditional constraint specific to linear, far-field optical systems, rather than a fundamental physical law, and can be bypassed by introducing nonlinearity or structured illumination as indicated by super-resolution research.",
+                "mechanism": "Abbe's diffraction limit arises from the loss of evanescent waves and the finite aperture in linear imaging systems (EV-Q069-c69a3b088b10f4da838d65a4). By exploiting nonlinear optical responses or customized speckle patterns (EV-Q069-9885e2d068a40e85f0b8ca55), the effective point spread function can be narrowed or high-frequency information encoded into detectable bands, effectively circumventing the linear transfer function cutoff.",
+                "falsifiable_prediction": "If an imaging system utilizes verified nonlinear mechanisms or customized speckles yet consistently fails to resolve features below λ/(2NA) under controlled conditions where signal-to-noise is sufficient, then the hypothesis that these mechanisms bypass the limit is false.",
+                "required_observations": [
+                  "Experimental demonstration of resolution beyond λ/(2NA) using customized speckles or nonlinear optics",
+                  "Quantitative comparison of resolved feature sizes against the theoretical Abbe limit for the same wavelength and NA",
+                  "Verification that the bypass mechanism relies on nonlinearity or structured illumination rather than mere noise reduction"
+                ],
+                "risk_of_being_wrong": "High risk if 'bypass' techniques actually rely on prior knowledge or sparse reconstruction assumptions rather than true physical information recovery; medium risk if evidence EV-Q069-e9fbe460ae6d73ab0980eef0 implies that even nonlinear microscopy remains fundamentally limited without additional specific modifications not detailed in current evidence.",
+                "supporting_evidence_ids": [
+                  "EV-Q069-c69a3b088b10f4da838d65a4",
+                  "EV-Q069-9885e2d068a40e85f0b8ca55",
+                  "EV-Q069-e9fbe460ae6d73ab0980eef0"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.85,
+                "overall_score": 0.82
+              },
+              {
+                "hypothesis": "The term 'diffraction limit' refers to distinct physical benchmarks in different domains: a surmountable barrier in visible light microscopy via state-switching, but a hard performance ceiling in X-ray astronomy defined by optical path matching.",
+                "mechanism": "In traditional optical microscopy, the limit is defined by Abbe's theory for linear systems (EV-Q069-c69a3b088b10f4da838d65a4). In X-ray telescopes, achieving 'diffraction-limited performance' requires precise matching of optical path lengths across nested shells (EV-Q069-eb73ba4622ab3b68452370fd), suggesting that in this regime, the limit is an engineering target representing perfect coherence rather than a barrier to be broken. The 'bypass' in optics (Nobel context) and 'achievement' in X-rays represent opposite relationships to the same mathematical bound.",
+                "falsifiable_prediction": "If X-ray imaging systems are demonstrated to resolve angular separations significantly below the Rayleigh criterion defined by their aperture and wavelength (not just achieving it), or if optical super-resolution is shown to be mathematically identical to X-ray path matching rather than distinct nonlinear/state-switching physics, this domain-specific distinction hypothesis is weakened.",
+                "required_observations": [
+                  "Comparative analysis of 'diffraction limit' definitions in optical vs. X-ray literature",
+                  "Measurement of X-ray telescope resolution relative to theoretical diffraction limit",
+                  "Characterization of the physical mechanism enabling super-resolution in optics vs. X-ray focusing"
+                ],
+                "risk_of_being_wrong": "Moderate risk due to lack of detailed mechanism for optical bypass in provided evidence; the distinction may be semantic rather than physical. Evidence EV-Q069-eb73ba4622ab3b68452370fd confirms X-ray limit achievement but does not explicitly forbid surpassing it.",
+                "supporting_evidence_ids": [
+                  "EV-Q069-c69a3b088b10f4da838d65a4",
+                  "EV-Q069-eb73ba4622ab3b68452370fd"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.75,
+                "overall_score": 0.7
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 directly addresses the core tension in the question ('Is there a diffraction limit?') by reconciling the existence of the limit in traditional systems (EV-Q069-c69a3b088b10f4da838d65a4) with the documented efforts to circumvent it (EV-Q069-9885e2d068a40e85f0b8ca55). It offers a clear mechanistic pathway (nonlinearity/structured illumination) that is falsifiable through standard super-resolution validation experiments. Hypothesis 2, while interesting, relies more heavily on semantic interpretation of 'diffraction-limited performance' in X-rays and is less central to the primary query regarding the fundamental nature of the limit in microscopy.",
+            "rejected_directions": [
+              "Hypothesis claiming the diffraction limit is absolutely fundamental and cannot be bypassed under any circumstances, as this contradicts the explicit mention of circumvention techniques in EV-Q069-9885e2d068a40e85f0b8ca55 and the Nobel Prize context.",
+              "Hypothesis focusing solely on near-field microscopy, as no evidence cards specifically discuss near-field techniques, making such a hypothesis unsupported by allowed evidence."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that the diffraction limit is a conditional constraint of linear, far-field systems by comparing resolution limits across three regimes: (1) Linear widefield microscopy (control), (2) Nonlinear saturation-based microscopy (simulating STED-like physics), and (3) Structured illumination with customized speckles. The core mechanism to verify is whether nonlinearity or high-frequency encoding via speckles allows the recovery of spatial frequencies beyond the cutoff defined by Abbe's limit (d = λ/2NA). We will simulate the Point Spread Function (PSF) and Optical Transfer Function (OTF) for each regime. For the nonlinear case, we model the effective PSF as PSF_eff = PSF_linear * exp(-I/I_sat), where I is the excitation intensity and I_sat is the saturation intensity. For the speckle case, we model the illumination pattern as a random phase mask modulated by the sample's high-frequency content. The falsifiable prediction is that regimes 2 and 3 will resolve features < λ/2NA with sufficient SNR, while regime 1 will not.",
+            "datasets": {
+              "source": {
+                "description": "Synthetic ground-truth samples containing sub-diffraction features (e.g., paired nanospheres at varying separations from 0.5*d_Abbe to 2.0*d_Abbe) and experimental calibration data from standard fluorescent beads.",
+                "access_method": "Generated via computational optics simulation engine; calibration data from public repositories if available, otherwise simulated.",
+                "evidence_ids": []
+              },
+              "target": {
+                "description": "Simulated image stacks for Linear, Nonlinear, and Speckle-structured illumination modes. Metrics include resolved feature size, contrast-to-noise ratio, and Fourier ring correlation.",
+                "evidence_ids": [
+                  "EV-Q069-c69a3b088b10f4da838d65a4",
+                  "EV-Q069-9885e2d068a40e85f0b8ca55",
+                  "EV-Q069-e9fbe460ae6d73ab0980eef0"
+                ]
+              }
+            },
+            "methods": "1. **Optical Simulation**: Use scalar diffraction theory to generate the coherent transfer function for a high-NA objective (NA=1.4, λ=532nm). 2. **Nonlinear Modeling**: Implement a saturation model where the fluorescence emission is non-linearly dependent on excitation intensity, effectively narrowing the PSF. 3. **Speckle Illumination**: Generate randomized speckle patterns using a spatial light modulator (SLM) model and apply them to the sample. Use compressed sensing or correlation-based reconstruction to recover high-frequency information. 4. **Resolution Metric**: Calculate the Full Width at Half Maximum (FWHM) of reconstructed point sources and the minimum resolvable distance between two point sources (Rayleigh criterion extension).",
+            "experiments": {
+              "baselines": [
+                "Standard Linear Widefield Microscopy (Abbe limit bound)",
+                "Confocal Microscopy (Linear pinhole detection, ~1.4x improvement but still diffraction-limited)"
+              ],
+              "metrics": [
+                "Resolved Feature Size (nm) vs. Theoretical Abbe Limit (λ/2NA)",
+                "Fourier Ring Correlation (FRC) Resolution Estimate",
+                "Signal-to-Noise Ratio (SNR) required for successful super-resolution reconstruction"
+              ],
+              "ablation": "Vary the saturation intensity (I_sat) in the nonlinear model to determine the threshold at which the effective PSF narrows significantly. Vary the speckle grain size and number of patterns in the structured illumination model to assess information encoding efficiency.",
+              "validation_protocol": "Compare the reconstructed images against the known ground-truth synthetic samples. A successful bypass is defined as resolving two point sources separated by < λ/2NA with a contrast > 0.26 (Sparrow criterion equivalent) and statistical significance (p < 0.05) over multiple noise realizations."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Define exact NA, wavelength, and pixel size in simulation parameters.",
+              "Specify the mathematical form of the nonlinear saturation curve.",
+              "Provide the seed for random speckle generation to ensure reproducibility.",
+              "Document the reconstruction algorithm (e.g., Richardson-Lucy deconvolution, compressed sensing solver) and its hyperparameters.",
+              "Ensure ground-truth samples are stored and version-controlled."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Python with NumPy/SciPy for optical simulations; GPU acceleration optional for large-scale speckle reconstruction.",
+              "estimated_time": "4-6 hours for full parameter sweep.",
+              "data_availability": "Synthetic data generated on-the-fly; no external download required for core validation."
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis claims that nonlinear optical responses bypass the diffraction limit, but Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 explicitly states that resolution in nonlinear optical microscopy is 'currently limited by the famous Abbe diffraction limit.' This direct contradiction is not addressed in the hypothesis or experiment design.",
+              "The mechanism description attributes the ability to circumvent the limit to 'nonlinear optical responses' generally, citing EV-Q069-9885e2d068a40e85f0b8ca55. However, this evidence specifically discusses 'customized speckles,' not general nonlinearity. Conflating these distinct mechanisms without specific evidence for nonlinearity bypassing the limit constitutes an overgeneralization.",
+              "The experiment design relies entirely on synthetic data and simulation ('Synthetic ground-truth samples', 'Generated via computational optics simulation engine'). While valid for theoretical exploration, the hypothesis makes a physical claim about bypassing a fundamental limit. Without at least one experimental dataset or a validation protocol against real-world super-resolution benchmarks, the risk of simulating artifacts rather than physical reality is high.",
+              "The 'risk_of_being_wrong' field correctly identifies that evidence EV-Q069-e9fbe460ae6d73ab0980eef0 implies limitations even in nonlinear microscopy, yet the hypothesis text ignores this nuance, presenting nonlinearity as a confirmed bypass mechanism."
+            ],
+            "critical_issues": [
+              "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+              "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+              "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap."
+            ],
+            "required_revisions": [
+              "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+              "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+              "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+              "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.4,
+            "falsifiability_score": 0.8,
+            "reproducibility_score": 0.7,
+            "reference_reliability_score": 0.5
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:93c9e87ff6d8",
+              "category": "critical_issue",
+              "description": "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:799f8bfbd185",
+              "category": "critical_issue",
+              "description": "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:3558fd39832e",
+              "category": "critical_issue",
+              "description": "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:6d9e5f66d8eb",
+              "category": "required_revision",
+              "description": "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:6852459e619a",
+              "category": "required_revision",
+              "description": "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:74d8546b6356",
+              "category": "required_revision",
+              "description": "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:cc494d5a5e9f",
+              "category": "required_revision",
+              "description": "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "4bb6f70deda6191e5ea7a01f60e5590ccbcc82ab36acb2fce7e7bf529655c431",
+            "experiment_designer": "d0c3aeab4a92cf79aa69e4ed574694fd1c172540f2d97f0e5b6a8b31207c40a3",
+            "scientific_reviewer": "3ad1d0c0ea1ef1106cb5aa7569ffe4500a14ceae5e5f0a14f3e018ca79690775"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-043640-a411acc7",
+          "version_number": 2,
+          "version_id": "20260822-043640-a411acc7:v2",
+          "parent_version_id": "20260822-043640-a411acc7:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "The Abbe diffraction limit is a valid constraint for standard linear and conventional nonlinear optical microscopy, but can be specifically circumvented in far-field imaging through the use of customized speckle illumination patterns that encode high-frequency spatial information into the detectable passband.",
+                "mechanism": "Standard optical microscopy is physically limited by diffraction as defined by Abbe (EV-Q069-c69a3b088b10f4da838d65a4), and this limitation persists even in conventional nonlinear optical microscopy (EV-Q069-e9fbe460ae6d73ab0980eef0). However, the application of 'customized speckles' acts as a distinct physical mechanism to circumvent this limit (EV-Q069-9885e2d068a40e85f0b8ca55), likely by shifting high-frequency object information into the transmission band of the optical system via structured illumination correlation, rather than by general nonlinearity alone.",
+                "falsifiable_prediction": "If an imaging system employs customized speckle illumination under conditions described in EV-Q069-9885e2d068a40e85f0b8ca55 yet fails to resolve features below the Abbe limit (λ/2NA) when compared to a linear baseline with equivalent signal-to-noise ratio, then the claim that customized speckles circumvent the diffraction limit is false. Conversely, if standard nonlinear microscopy without such specific structuring achieves super-resolution, the specificity of the speckle mechanism is falsified.",
+                "required_observations": [
+                  "Quantitative resolution measurement using customized speckle illumination demonstrating feature separation < λ/(2NA)",
+                  "Control experiment showing that conventional nonlinear microscopy (without customized speckles) remains limited by the Abbe limit consistent with EV-Q069-e9fbe460ae6d73ab0980eef0",
+                  "Validation against real-world experimental super-resolution benchmarks or raw data to exclude simulation artifacts"
+                ],
+                "risk_of_being_wrong": "High risk if 'customized speckles' rely on prior assumptions or sparse reconstruction priors rather than physical information encoding; Medium risk if the effect is only observable under idealized simulation conditions not reproducible in physical experiments due to noise or aberrations.",
+                "supporting_evidence_ids": [
+                  "EV-Q069-9885e2d068a40e85f0b8ca55",
+                  "EV-Q069-c69a3b088b10f4da838d65a4"
+                ],
+                "contradicted_by_evidence_ids": [
+                  "EV-Q069-e9fbe460ae6d73ab0980eef0"
+                ],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "The 'diffraction limit' functions as a fundamental barrier in traditional optical microscopy but serves as a performance benchmark (rather than a barrier) in X-ray astronomy, where achieving it requires precise optical path matching rather than bypass mechanisms.",
+                "mechanism": "In optical microscopy, the diffraction limit restricts resolution due to wave nature constraints (EV-Q069-c69a3b088b10f4da838d65a4). In contrast, X-ray telescopes aim to achieve 'diffraction-limited performance' through engineering solutions like nested-shell architectures and grazing-incidence mirrors that match optical path lengths (EV-Q069-eb73ba4622ab3b68452370fd). This suggests the limit is context-dependent: a hard boundary to be broken in optics (via specialized means like speckles) versus a coherence target to be met in X-ray imaging.",
+                "falsifiable_prediction": "If X-ray telescopes are demonstrated to routinely surpass the theoretical diffraction limit defined by their aperture (not just achieve it), or if optical microscopy cannot physically exceed the limit even with customized speckles, the domain-specific distinction collapses. Specifically, if 'achieving' the limit in X-rays is shown to be physically identical to 'bypassing' it in optics, the hypothesis is weakened.",
+                "required_observations": [
+                  "Comparative analysis of resolution metrics relative to theoretical limits in both X-ray and optical domains",
+                  "Verification that X-ray systems do not employ super-resolution techniques analogous to optical speckle methods",
+                  "Confirmation that optical bypass requires specific structural modifications absent in standard X-ray designs"
+                ],
+                "risk_of_being_wrong": "Moderate risk due to semantic ambiguity; 'diffraction-limited' may simply mean 'perfect optics' in both fields without implying different physical relationships to the limit. Lack of explicit evidence linking X-ray path matching to the concept of 'limit' as a barrier vs benchmark.",
+                "supporting_evidence_ids": [
+                  "EV-Q069-eb73ba4622ab3b68452370fd",
+                  "EV-Q069-c69a3b088b10f4da838d65a4"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.75,
+                "overall_score": 0.65
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 directly resolves the critical reviewer feedback by explicitly distinguishing between 'general nonlinear microscopy' (confirmed limited by EV-Q069-e9fbe460ae6d73ab0980eef0) and 'customized speckles' (confirmed bypass mechanism in EV-Q069-9885e2d068a40e85f0b8ca55). It corrects the previous overgeneralization and incorporates the contradictory evidence as a boundary condition rather than ignoring it. Furthermore, it mandates validation against real-world benchmarks to address the simulation-artifact risk identified in the review. Hypothesis 2, while valid, is less central to the core question of bypassing the limit in the context of the Nobel Prize citation and does not address the primary critical issues regarding optical mechanisms.",
+            "rejected_directions": [
+              "General claim that 'nonlinearity bypasses the diffraction limit' without qualification, as this is directly contradicted by EV-Q069-e9fbe460ae6d73ab0980eef0 which states nonlinear microscopy is currently limited by Abbe's limit.",
+              "Purely synthetic validation of physical bypass claims without a protocol for real-data benchmarking, given the high risk of simulation artifacts noted in review.",
+              "Attributing the bypass mechanism solely to general nonlinear optical responses based on EV-Q069-9885e2d068a40e85f0b8ca55, as this evidence specifically cites 'customized speckles'."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment is designed to validate the refined hypothesis that 'customized speckle illumination' specifically circumvents the Abbe diffraction limit, while explicitly acknowledging that conventional nonlinear microscopy remains limited by it (per EV-Q069-e9fbe460ae6d73ab0980eef0). The technical approach involves a comparative computational optics simulation. We will model three imaging regimes: (1) Linear Widefield (Control), (2) Conventional Nonlinear Microscopy (e.g., Two-Photon, modeled with quadratic intensity dependence but no saturation/depletion), and (3) Customized Speckle Illumination (as per EV-Q069-9885e2d068a40e85f0b8ca55). The core mechanism tested is whether the statistical correlation of speckle patterns allows the reconstruction of spatial frequencies beyond the optical transfer function (OTF) cutoff defined by Abbe (EV-Q069-c69a3b088b10f4da838d65a4). The simulation will generate ground-truth sub-diffraction features (paired emitters at separations < λ/2NA) and simulate their image formation under each regime. For the speckle regime, we will implement a reconstruction algorithm based on blind structured illumination or compressed sensing principles implied by the 'customized' nature of the speckles. Crucially, to address the risk of simulation artifacts, the validation protocol includes a 'Reality Check' step where the simulation parameters are calibrated against publicly available experimental benchmark data for standard diffraction-limited systems to ensure the physical model's fidelity before testing the super-resolution claim.",
+            "datasets": {
+              "source": {
+                "description": "1. Synthetic Ground Truth: Pairs of point sources with separations ranging from 0.2*d_Abbe to 1.5*d_Abbe. 2. Public Experimental Benchmark Data: Standard fluorescent bead images (e.g., from open-source microscopy datasets like Broad Bioimage Benchmark Collection) to calibrate the linear PSF model and verify the Abbe limit baseline. 3. Speckle Pattern Library: Generated via computational propagation through random phase masks, consistent with the 'customized speckles' description in EV-Q069-9885e2d068a40e85f0b8ca55.",
+                "access_method": "Synthetic data generated via Python-based optical simulation (NumPy/SciPy). Experimental benchmark data accessed via public repositories (e.g., BBBC) for calibration purposes only.",
+                "evidence_ids": [
+                  "EV-Q069-9885e2d068a40e85f0b8ca55",
+                  "EV-Q069-c69a3b088b10f4da838d65a4"
+                ]
+              },
+              "target": {
+                "description": "Reconstructed image stacks for each regime. Key outputs: Resolution metrics (FWHM, minimum resolvable distance), Reconstruction Error (RMSE vs Ground Truth), and Spectral Content Analysis (power spectrum extension beyond cutoff).",
+                "evidence_ids": [
+                  "EV-Q069-9885e2d068a40e85f0b8ca55",
+                  "EV-Q069-e9fbe460ae6d73ab0980eef0"
+                ]
+              }
+            },
+            "methods": "1. **Physical Model Calibration**: Use public experimental data of sub-resolution beads to fit the linear PSF parameters (NA, wavelength, aberration coefficients) ensuring the simulated linear system strictly adheres to the Abbe limit (EV-Q069-c69a3b088b10f4da838d65a4). 2. **Conventional Nonlinear Simulation**: Implement a standard two-photon excitation model (I^2 dependence) without saturation effects to demonstrate that it remains diffraction-limited, consistent with EV-Q069-e9fbe460ae6d73ab0980eef0. 3. **Customized Speckle Simulation**: Generate N randomized but 'customized' speckle illumination patterns. Simulate the interaction with the sample and capture the resulting fluorescence/intensity maps. 4. **Reconstruction Algorithm**: Apply a correlation-based or compressed sensing reconstruction algorithm to the speckle dataset to recover high-frequency information. 5. **Comparative Analysis**: Quantitatively compare the resolution limits of all three regimes against the theoretical Abbe limit.",
+            "experiments": {
+              "baselines": [
+                "Linear Widefield Microscopy (Theoretical Abbe Limit Baseline)",
+                "Conventional Nonlinear Microscopy (Two-Photon, no saturation, expected to be diffraction-limited per EV-Q069-e9fbe460ae6d73ab0980eef0)"
+              ],
+              "metrics": [
+                "Minimum Resolvable Distance (nm) compared to λ/2NA",
+                "Fourier Ring Correlation (FRC) Resolution Estimate",
+                "Reconstruction Signal-to-Noise Ratio (rSNR)",
+                "Spectral Support Extension (percentage of energy recovered beyond the OTF cutoff)"
+              ],
+              "ablation": "Vary the number of speckle patterns (N) to determine the minimum data requirement for super-resolution. Vary the 'customization' level of speckles (e.g., fully random vs. optimized for specific spatial frequencies) to test the mechanism's specificity. Test different noise levels to assess robustness.",
+              "validation_protocol": "1. **Baseline Validation**: Confirm that the Linear and Conventional Nonlinear simulations fail to resolve features < λ/2NA, aligning with EV-Q069-e9fbe460ae6d73ab0980eef0 and EV-Q069-c69a3b088b10f4da838d65a4. 2. **Super-Resolution Validation**: Demonstrate that the Customized Speckle regime resolves features < λ/2NA with statistical significance (p < 0.05) over multiple noise realizations. 3. **Artifact Check**: Verify that the reconstructed high-frequency content is not an artifact of the reconstruction prior by testing on samples with known sparse vs. dense structures."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Provide exact code for PSF generation and optical propagation model.",
+              "Specify the seed and algorithm for 'customized speckle' generation.",
+              "Document the reconstruction algorithm hyperparameters (e.g., regularization strength, iteration count).",
+              "List the specific public dataset IDs used for baseline calibration.",
+              "Include the mathematical definition of the 'Abbe limit' used for comparison (λ/2NA).",
+              "Ensure the distinction between 'conventional nonlinear' and 'speckle-enhanced' models is clearly coded and commented."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Python environment with NumPy, SciPy, and potentially PyTorch for reconstruction optimization. CPU/GPU depending on simulation scale.",
+              "estimated_time": "6-8 hours for full parameter sweep and reconstruction.",
+              "data_availability": "Synthetic data generated on-the-fly; public benchmark data requires internet access for initial calibration download."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly resolves the previous contradiction by explicitly distinguishing between 'conventional nonlinear microscopy' (limited by Abbe limit per EV-Q069-e9fbe460ae6d73ab0980eef0) and 'customized speckle illumination' (bypass mechanism per EV-Q069-9885e2d068a40e85f0b8ca55).",
+              "Evidence grounding is now robust: EV-Q069-e9fbe460ae6d73ab0980eef0 is correctly listed in contradicted_by_evidence_ids to define the boundary condition, preventing overgeneralization of nonlinearity.",
+              "Experiment design adequately addresses the simulation-reality gap by incorporating a mandatory calibration step against public experimental benchmark data (e.g., BBBC) to validate the linear PSF model before testing super-resolution claims.",
+              "Falsifiability is high: The prediction explicitly states that failure to resolve features < λ/2NA with customized speckles, or success with conventional nonlinearity alone, would falsify the specific mechanism claim.",
+              "Results field correctly indicates 'pending' status, avoiding any fabrication of experimental outcomes."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "Ensure the 'Reality Check' validation protocol explicitly defines quantitative acceptance criteria for the linear PSF calibration (e.g., FWHM deviation < 5% from theoretical Abbe limit) to prevent subjective baseline fitting.",
+              "In the reproducibility checklist, specify the exact version or DOI of the public benchmark dataset (e.g., BBBC0xx) to be used, as 'public repositories' is too vague for strict replication.",
+              "Clarify in the methods whether the 'customized speckles' are optimized via feedback or pre-computed, as this distinction affects the physical interpretation of 'circumventing' vs 'reconstructing' the limit."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.85,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:93c9e87ff6d8",
+              "category": "critical_issue",
+              "description": "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:e983e9accd81b9fb,change:4c139e329a6be730; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:799f8bfbd185",
+              "category": "critical_issue",
+              "description": "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:ec8119f439cf6788; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:3558fd39832e",
+              "category": "critical_issue",
+              "description": "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:f5e6a91347d004e4; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:6d9e5f66d8eb",
+              "category": "required_revision",
+              "description": "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:6852459e619a",
+              "category": "required_revision",
+              "description": "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:74d8546b6356",
+              "category": "required_revision",
+              "description": "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:cf04654d0358713c; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:cc494d5a5e9f",
+              "category": "required_revision",
+              "description": "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:72ca83df7962052b; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:197d42329e07",
+              "category": "required_revision",
+              "description": "Ensure the 'Reality Check' validation protocol explicitly defines quantitative acceptance criteria for the linear PSF calibration (e.g., FWHM deviation < 5% from theoretical Abbe limit) to prevent subjective baseline fitting.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:6c4ed3d3d45b",
+              "category": "required_revision",
+              "description": "In the reproducibility checklist, specify the exact version or DOI of the public benchmark dataset (e.g., BBBC0xx) to be used, as 'public repositories' is too vague for strict replication.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:a42eef8459b8",
+              "category": "required_revision",
+              "description": "Clarify in the methods whether the 'customized speckles' are optimized via feedback or pre-computed, as this distinction affects the physical interpretation of 'circumventing' vs 'reconstructing' the limit.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "089b3645e81b0406a0d68778a0bf69f05fa4e46106c647d33113aebca172fa47",
+            "experiment_designer": "23b4fd7127a38e09e220327359f342882791cb7c62d05d0d4920da4001b50890",
+            "scientific_reviewer": "1efbc9ee6ed4908fc3f402be1552020a69067e501447bd852ed5517d58c6a9df"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-043640-a411acc7:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-043640-a411acc7:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-043640-a411acc7:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-043640-a411acc7:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:93c9e87ff6d8",
+          "category": "critical_issue",
+          "description": "Direct contradiction between Hypothesis 1 (nonlinearity bypasses limit) and Evidence EV-Q069-e9fbe460ae6d73ab0980eef0 (nonlinear microscopy is limited by Abbe limit).",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:e983e9accd81b9fb,change:4c139e329a6be730; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:799f8bfbd185",
+          "category": "critical_issue",
+          "description": "Misattribution of evidence: EV-Q069-9885e2d068a40e85f0b8ca55 supports 'customized speckles' but is cited to support general 'nonlinear optical responses' as a bypass mechanism.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ec8119f439cf6788; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:3558fd39832e",
+          "category": "critical_issue",
+          "description": "Lack of empirical validation: Experiment design uses only synthetic data for a hypothesis claiming physical circumvention of a fundamental limit, increasing risk of simulation-reality gap.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f5e6a91347d004e4; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:6d9e5f66d8eb",
+          "category": "required_revision",
+          "description": "Revise Hypothesis 1 to explicitly distinguish between 'general nonlinear microscopy' (which EV-Q069-e9fbe460ae6d73ab0980eef0 states is limited) and specific nonlinear super-resolution techniques (e.g., STED/SATURATED SIM) that require additional conditions not mentioned in the current evidence. Alternatively, restrict the hypothesis to 'structured illumination with customized speckles' which is directly supported by EV-Q069-9885e2d068a40e85f0b8ca55.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:6852459e619a",
+          "category": "required_revision",
+          "description": "Update the Mechanism section to accurately reflect the content of EV-Q069-9885e2d068a40e85f0b8ca55 (speckles) and treat general nonlinearity as a knowledge_gap or separate hypothesis requiring external verification.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:74d8546b6356",
+          "category": "required_revision",
+          "description": "Incorporate a validation step using real experimental super-resolution data (or explicitly define the synthetic validation as a 'theoretical feasibility study' rather than a physical verification) to address the risk of simulation artifacts.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cf04654d0358713c; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:cc494d5a5e9f",
+          "category": "required_revision",
+          "description": "Add EV-Q069-e9fbe460ae6d73ab0980eef0 to 'contradicted_by_evidence_ids' or refine the hypothesis to resolve the contradiction regarding nonlinear microscopy limits.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:72ca83df7962052b; evidence=EV-Q069-9885e2d068a40e85f0b8ca55,EV-Q069-c69a3b088b10f4da838d65a4,EV-Q069-e9fbe460ae6d73ab0980eef0; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:197d42329e07",
+          "category": "required_revision",
+          "description": "Ensure the 'Reality Check' validation protocol explicitly defines quantitative acceptance criteria for the linear PSF calibration (e.g., FWHM deviation < 5% from theoretical Abbe limit) to prevent subjective baseline fitting.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:6c4ed3d3d45b",
+          "category": "required_revision",
+          "description": "In the reproducibility checklist, specify the exact version or DOI of the public benchmark dataset (e.g., BBBC0xx) to be used, as 'public repositories' is too vague for strict replication.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:a42eef8459b8",
+          "category": "required_revision",
+          "description": "Clarify in the methods whether the 'customized speckles' are optimized via feedback or pre-computed, as this distinction affects the physical interpretation of 'circumventing' vs 'reconstructing' the limit.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "a585a57ab755ff06b3de15dc2cc02bc19fea72b47f56a6f31cb2190c885067ef"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-043640-a411acc7:wave-b-two-round",
+      "run_id": "20260822-043640-a411acc7",
+      "v1_version_id": "20260822-043640-a411acc7:v1",
+      "v2_version_id": "20260822-043640-a411acc7:v2",
+      "input_fingerprints": {
+        "v1": "d0c3aeab4a92cf79aa69e4ed574694fd1c172540f2d97f0e5b6a8b31207c40a3",
+        "v2": "23b4fd7127a38e09e220327359f342882791cb7c62d05d0d4920da4001b50890"
+      },
+      "responded_issue_count": 5,
+      "issue_ids": [
+        "critical_issue:93c9e87ff6d8",
+        "critical_issue:799f8bfbd185",
+        "critical_issue:3558fd39832e",
+        "required_revision:74d8546b6356",
+        "required_revision:cc494d5a5e9f"
+      ],
+      "change_ids": [
+        "change:e983e9accd81b9fb",
+        "change:4c139e329a6be730",
+        "change:ec8119f439cf6788",
+        "change:f5e6a91347d004e4",
+        "change:cf04654d0358713c",
+        "change:72ca83df7962052b"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.85,
+          "delta": 0.15000000000000002
+        },
+        "reference_reliability_score": {
+          "before": 0.5,
+          "after": 1.0,
+          "delta": 0.5
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "The Abbe diffraction limit is a valid constraint for standard linear and conventional nonlinear optical microscopy, but can be specifically circumvented in far-field imaging through the use of customized speckle illumination patterns that encode high-frequency spatial information into the detectable passband.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The 'diffraction limit' functions as a fundamental barrier in traditional optical microscopy but serves as a performance benchmark (rather than a barrier) in X-ray astronomy, where achieving it requires precise optical path matching rather than bypass mechanisms.",
+          "overall_score": 0.65,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "2ebe2a9f2a61",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T04:39:22.259301+00:00",
+    "ended_at": "2026-08-22T04:40:09.797289+00:00",
+    "duration_ms": 47537,
+    "input_summary": "{\"question_item\": {\"id\": \"Q069\", \"domain\": \"Physics\", \"question\": \"Is there a diffraction limit?\", \"source_page\": 25, \"booklet_excerpt\": \"The 2014 Nobel Prize in Physics recognized the development of techniques that bypass the diffraction limit, which is the physical limit for maximum resolution of traditional optical microscopy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Physics\", \"core_question\": \"What constitutes the diffraction limit in optical microscopy, and what physical principles define ",
+    "output_summary": "{\"input_question\": \"Is there a diffraction limit?\", \"domain\": \"Physics\", \"problem_statement\": \"The diffraction limit is widely recognized as a physical constraint on the maximum resolution of traditional optical microscopy, originally defined by Abbe. However, recent advancements, such as those recognized by the 2014 Nobel Prize in Physics, suggest techniques exist to bypass this limit. The core scientific problem is to define the precise physical boundaries of the diffraction limit in conventional versus advanced optical systems and to validate specific mechanisms, such as customized speckle ",
+    "evidence_ids": [
+      "EV-Q069-9885e2d068a40e85f0b8ca55",
+      "EV-Q069-c69a3b088b10f4da838d65a4",
+      "EV-Q069-e9fbe460ae6d73ab0980eef0",
+      "EV-Q069-eb73ba4622ab3b68452370fd"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "879bc3a40310",
+    "mock": false
+  },
+  {
+    "event_id": "7ed7c4258b9c",
+    "run_id": "20260822-043640-a411acc7",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T04:40:09.800249+00:00",
+    "ended_at": "2026-08-22T04:40:12.219384+00:00",
+    "duration_ms": 2419,
+    "input_summary": "{\"question_item\": {\"id\": \"Q069\", \"domain\": \"Physics\", \"question\": \"Is there a diffraction limit?\", \"source_page\": 25, \"booklet_excerpt\": \"The 2014 Nobel Prize in Physics recognized the development of techniques that bypass the diffraction limit, which is the physical limit for maximum resolution of traditional optical microscopy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not the required ResearchPlan/EvidenceCards/AgentTrace structure.\", \"MissingEvidenceCard: No EvidenceCards provided to validate factual claims against.\", \"MissingExecutionMetadata: Cannot determine validation_status without execution_metadata.\"], \"warnings\": [\"InsufficientInput: Cannot perform schema validation or evidence tracing without the full context of a generated ResearchPlan and its supporting EvidenceCards.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_check\": \"failed\", \"eviden",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9467558a8d60",
+    "mock": false
+  }
+]

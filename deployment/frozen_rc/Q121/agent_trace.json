@@ -1,0 +1,1997 @@
+[
+  {
+    "event_id": "642a3c61619d",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:04.706318+00:00",
+    "ended_at": "2026-08-22T09:16:04.706318+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "fc58f91fd5f4",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:04.706318+00:00",
+    "ended_at": "2026-08-22T09:16:08.571722+00:00",
+    "duration_ms": 3865,
+    "input_summary": "{\"question_item\": {\"id\": \"Q121\", \"domain\": \"Artificial Intelligence\", \"question\": \"Will artificial intelligence replace humans?\", \"source_page\": 41, \"booklet_excerpt\": \"While AI can perform tasks at speeds beyond human ability, its power is limited by its inability to use intuitive, holistic approaches to deal with uncertainty and equivocality problems.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Artificial Intelligence\", \"core_question\": \"Does the limitation of AI in handling uncertainty and equivocality via intuitive, holistic approaches imply that AI will replace humans?\", \"keywords\": [\"artificial intelligence\", \"replace humans\", \"intuitive approaches\", \"holistic approaches\", \"uncertainty\", \"equivocality\"], \"entities\": [\"AI\", \"humans\", \"uncertainty\", \"equivocality\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"The provided excerpt establishes a functional difference: AI excels at speed but lacks intuitive/holistic capabilities for uncertain/equ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "07eeac34dbc1",
+    "mock": false
+  },
+  {
+    "event_id": "b82a5f6e3547",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:08.577162+00:00",
+    "ended_at": "2026-08-22T09:16:30.915140+00:00",
+    "duration_ms": 22337,
+    "input_summary": "{\"question_item\": {\"id\": \"Q121\", \"domain\": \"Artificial Intelligence\", \"question\": \"Will artificial intelligence replace humans?\", \"source_page\": 41, \"booklet_excerpt\": \"While AI can perform tasks at speeds beyond human ability, its power is limited by its inability to use intuitive, holistic approaches to deal with uncertainty and equivocality problems.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Artificial Intelligence\", \"core_question\": \"Does the limitation of AI in handling uncert",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify local RAG evidence regarding the specific limitations of AI in handling uncertainty and equivocality as described in the source material.\", \"query\": \"AI limitations intuitive holistic approaches uncertainty equivocality\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text segments from the booklet discussing the boundary between AI capabilities (speed) and human capabilities (intuition/holistic processing).\", \"priority\": \"high\"}, {\"purpose\": \"Retrieve local context defining the scope of 'replacement' or 'augmentation' within the provided document to",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5132a2429006",
+    "mock": false
+  },
+  {
+    "event_id": "bb546116180e",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:30.931862+00:00",
+    "ended_at": "2026-08-22T09:16:52.146219+00:00",
+    "duration_ms": 21214,
+    "input_summary": "{\"question_item\": {\"id\": \"Q121\", \"domain\": \"Artificial Intelligence\", \"question\": \"Will artificial intelligence replace humans?\", \"source_page\": 41, \"booklet_excerpt\": \"While AI can perform tasks at speeds beyond human ability, its power is limited by its inability to use intuitive, holistic approaches to deal with uncertainty and equivocality problems.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q121-56d39b0cc5e8454b7c6b1218\", \"title\": \"arXiv:2110.01831\", \"source_type\": \"arxiv\", \"d",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"AI models are increasingly applied in fields such as medicine, raising concerns about the explainability of their decisions.\", \"evidence_ids\": [\"EV-Q121-0debf3fe850eb4735a3cb609\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": null}, {\"fact\": \"Current work in Computational Creativity within AI primarily focuses on the generation of creative artifacts, such as paintings and poems.\", \"evidence_ids\": [\"EV-Q121-718e2bd9e8b12f3b65f90ffc\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": null}, {\"fact\": \"Research exists exploring Logicist, Eme",
+    "evidence_ids": [
+      "EV-Q121-0debf3fe850eb4735a3cb609",
+      "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+      "EV-Q121-56d39b0cc5e8454b7c6b1218"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "81269e3c98d5",
+    "mock": false
+  },
+  {
+    "event_id": "7f46c1173566",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:52.146219+00:00",
+    "ended_at": "2026-08-22T09:17:18.829998+00:00",
+    "duration_ms": 26683,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q121\", \"domain\": \"Artificial Intelligence\", \"question\": \"Will artificial intelligence replace humans?\", \"source_page\": 41, \"booklet_excerpt\": \"While AI can perform tasks at speeds beyond human ability, its power is limited by its inability to use intuitive, holistic approaches to deal with uncertainty and equivocality problems.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q121-56d39b0cc5e8454b7c6b1218\", \"title\": \"arXiv:2110.01831\", \"",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"AI will not fully replace humans in high-stakes domains because current architectures lack the explainability required for autonomous accountability, necessitating human oversight as a permanent structural component.\", \"mechanism\": \"According to EV-Q121-0debf3fe850eb4735a3cb609, AI models in critical fields like medicine face significant concerns regarding decision explainability. This technical limitation creates a functional barrier to full replacement: without interpretable reasoning, AI cannot satisfy legal/ethical liability standards, forcing organizations ",
+    "evidence_ids": [
+      "EV-Q121-0debf3fe850eb4735a3cb609",
+      "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+      "EV-Q121-56d39b0cc5e8454b7c6b1218",
+      "EV-Q121-906d1928c874b168fdea57f4"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b3c23855f6f6",
+    "mock": false
+  },
+  {
+    "event_id": "75bd1e037f84",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:17:18.829998+00:00",
+    "ended_at": "2026-08-22T09:17:38.349577+00:00",
+    "duration_ms": 19519,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q121\", \"domain\": \"Artificial Intelligence\", \"question\": \"Will artificial intelligence replace humans?\", \"source_page\": 41, \"booklet_excerpt\": \"While AI can perform tasks at speeds beyond human ability, its power is limited by its inability to use intuitive, holistic approaches to deal with uncertainty and equivocality problems.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"general_scientific_unknown\", \"recommended_hypothesis\": {\"hypothesis\": \"AI wi",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that explainability deficits in AI prevent full autonomous replacement in high-stakes domains (specifically medicine) by necessitating human oversight for accountability. The study operationalizes 'explainability' as the fidelity of post-hoc explanation methods (e.g., SHAP, LIME) to the model's actual decision logic, and 'replacement barrier' as the regulatory or institutional mandate for human-in-the-loop (HITL) validation. We will simulate a clinical decision support system (CDSS) using a deep learning model on medical imaging data.",
+    "evidence_ids": [
+      "EV-Q121-0debf3fe850eb4735a3cb609"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "caba90a11416",
+    "mock": false
+  },
+  {
+    "event_id": "b182bfb10190",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:17:38.349577+00:00",
+    "ended_at": "2026-08-22T09:17:53.283764+00:00",
+    "duration_ms": 14934,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q121\", \"domain\": \"Artificial Intelligence\", \"question\": \"Will artificial intelligence replace humans?\", \"source_page\": 41, \"booklet_excerpt\": \"While AI can perform tasks at speeds beyond human ability, its power is limited by its inability to use intuitive, holistic approaches to deal with uncertainty and equivocality problems.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"AI will not fully replace humans in high-stakes doma",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis posits a causal link between 'technical explainability' and 'regulatory/structural necessity of human oversight'. However, the only supporting evidence (EV-Q121-0debf3fe850eb4735a3cb609) merely states that 'concerns have been raised' about explainability; it does not establish that these concerns legally or structurally mandate human oversight, nor does it define the threshold for 'autonomous accountability'.\", \"The experiment design attempts to validate a socio-legal hypothesis ('necessitating human oversight as a permanent structural co",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c9dc6fe2bc2f",
+    "mock": false
+  },
+  {
+    "event_id": "ec3942451b0b",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:17:53.290123+00:00",
+    "ended_at": "2026-08-22T09:18:24.685995+00:00",
+    "duration_ms": 31395,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis posits a causal link between 'technical explainability' and 'regulatory/structural necessity of human oversight'. However, the only supporting evidence (EV-Q121-0debf3fe850eb4735a3cb609) merely states that 'concerns have been raised' about explainability; it does not establish that these concerns legally or structurally mandate human oversight, nor does it define the threshold for 'autonomous accountability'.\", \"The experiment design attempts to validate a socio-legal hypothesis ('necessitating h",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Current medical AI systems exhibit a persistent technical deficit in post-hoc explainability fidelity, such that state-of-the-art explanation methods fail to accurately reflect the internal decision logic of high-performance diagnostic models on standard benchmarks.\", \"mechanism\": \"EV-Q121-0debf3fe850eb4735a3cb609 confirms that concerns have been raised regarding the explainability of AI decisions in medicine. This hypothesis posits that these concerns stem from a fundamental technical misalignment: current post-hoc explanation methods (e.g., SHAP, LIME) approxi",
+    "evidence_ids": [
+      "EV-Q121-0debf3fe850eb4735a3cb609",
+      "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+      "EV-Q121-56d39b0cc5e8454b7c6b1218",
+      "EV-Q121-906d1928c874b168fdea57f4"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c54631587aff",
+    "mock": false
+  },
+  {
+    "event_id": "c54ff715ca04",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:18:24.690202+00:00",
+    "ended_at": "2026-08-22T09:18:44.995439+00:00",
+    "duration_ms": 20305,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis posits a causal link between 'technical explainability' and 'regulatory/structural necessity of human oversight'. However, the only supporting evidence (EV-Q121-0debf3fe850eb4735a3cb609) merely states that 'concerns have been raised' about explainability; it does not establish that these concerns legally or structurally mandate human oversight, nor does it define the threshold for 'autonomous accountability'.\", \"The experiment design attempts to validate a socio-legal hypothesis ('necessitating h",
+    "output_summary": "{\"technical_details\": \"This experiment validates the technical hypothesis that current post-hoc explainability methods (SHAP, LIME) exhibit low fidelity to the internal decision logic of high-performance medical AI models. The study focuses strictly on the technical metric of 'faithfulness' as a proxy for the 'explainability concerns' cited in EV-Q121-0debf3fe850eb4735a3cb609. We train a ResNet-50 model on the CheXpert dataset for chest X-ray classification. We then apply SHAP and LIME to generate attribution maps. Faithfulness is quantified using the Insertion/Deletion AUC metric, which measu",
+    "evidence_ids": [
+      "EV-Q121-0debf3fe850eb4735a3cb609"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8dfae231eb95",
+    "mock": false
+  },
+  {
+    "event_id": "44d626316415",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:18:44.995439+00:00",
+    "ended_at": "2026-08-22T09:18:51.565286+00:00",
+    "duration_ms": 6569,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis posits a causal link between 'technical explainability' and 'regulatory/structural necessity of human oversight'. However, the only supporting evidence (EV-Q121-0debf3fe850eb4735a3cb609) merely states that 'concerns have been raised' about explainability; it does not establish that these concerns legally or structurally mandate human oversight, nor does it define the threshold for 'autonomous accountability'.\", \"The experiment design attempts to validate a socio-legal hypothesis ('necessitating h",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly pivots from an unverified socio-legal claim to a strictly technical deficit in explainability fidelity, fully addressing the 'Causal Gap' and 'Overclaiming Mechanism' critical issues from the previous review.\", \"The experiment design now uses valid, reproducible technical metrics (Insertion/Deletion AUC, Stability) on a standard dataset (CheXpert), resolving the 'Invalid Operationalization' and 'Dataset Mismatch' issues. The removal of the 'Synthetic Regulatory Audit Log' eliminates the fictitious target variable.\", \"Evid",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8fd6402328ef",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:e9490e642d44e5fe",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "AI will not fully replace humans in high-stakes domains because current architectures lack the explainability required for autonomous accountability, necessitating human oversight as a permanent structural component.",
+              "mechanism": "According to EV-Q121-0debf3fe850eb4735a3cb609, AI models in critical fields like medicine face significant concerns regarding decision explainability. This technical limitation creates a functional barrier to full replacement: without interpretable reasoning, AI cannot satisfy legal/ethical liability standards, forcing organizations to retain humans for validation and responsibility attribution regardless of AI speed or accuracy.",
+              "falsifiable_prediction": "If AI achieves full replacement in high-stakes sectors, then there must exist validated AI systems operating autonomously without human oversight that have resolved explainability concerns to the satisfaction of regulatory bodies. Conversely, if explainability remains an unsolved concern in deployed systems, full replacement will not occur.",
+              "required_observations": [
+                "Audit of regulatory approvals for autonomous AI in medicine/law to check for mandatory human-in-the-loop requirements",
+                "Analysis of liability case law involving AI errors to determine if 'black box' nature prevents full delegation",
+                "Technical benchmarks on post-hoc explainability fidelity vs. ground truth reasoning in medical AI"
+              ],
+              "risk_of_being_wrong": "Future AGI architectures (e.g., Logicist or Universalist approaches mentioned in EV-Q121-56d39b0cc5e8454b7c6b1218) might solve explainability natively, or society might lower liability standards to accept opaque AI, rendering the explainability barrier temporary rather than fundamental.",
+              "supporting_evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "AI displacement is bounded to artifact generation tasks and will not extend to holistic problem-solving roles because current Computational Creativity research focuses exclusively on output generation rather than adaptive intuition.",
+              "mechanism": "EV-Q121-718e2bd9e8b12f3b65f90ffc establishes that current AI creativity work is primarily limited to generating artifacts (paintings, poems). This suggests a capability gap: AI optimizes for product creation but lacks the process-oriented, intuitive adaptation needed for equivocal problems. Therefore, AI replaces humans only in production niches, not in strategic or ambiguous decision-making roles.",
+              "falsifiable_prediction": "If AI begins to replace humans in holistic/strategic roles, then Computational Creativity literature must demonstrate a shift from artifact generation to process-level adaptive reasoning in uncertain environments. If literature remains focused solely on artifacts after 5 years, the hypothesis of bounded displacement is strengthened.",
+              "required_observations": [
+                "Longitudinal bibliometric analysis of Computational Creativity papers to track shift from 'artifact' to 'process/intuition' keywords",
+                "Benchmarking AI performance on ill-defined, equivocal tasks vs. well-defined generation tasks",
+                "Case studies of AI deployment in strategic planning vs. content creation"
+              ],
+              "risk_of_being_wrong": "Artifact generation might be a sufficient proxy for general intelligence (Emergentist view in EV-Q121-56d39b0cc5e8454b7c6b1218), or 'intuition' might be reducible to compression/pattern matching (EV-Q121-906d1928c874b168fdea57f4), making the distinction between artifact and holistic processing artificial.",
+              "supporting_evidence_ids": [
+                "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+                "EV-Q121-56d39b0cc5e8454b7c6b1218"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "Theoretical frameworks for AGI (Logicist/Emergentist/Universalist) currently lack empirical validation regarding uncertainty handling, making predictions of human replacement scientifically premature.",
+              "mechanism": "While EV-Q121-56d39b0cc5e8454b7c6b1218 and EV-Q121-906d1928c874b168fdea57f4 outline theoretical approaches to AGI and super-intelligence, the provided evidence consists only of abstracts/titles without experimental results. Without empirical proof that these theories can replicate human intuition in uncertainty, claims of replacement remain speculative philosophy rather than verified science.",
+              "falsifiable_prediction": "If any of the cited AGI frameworks demonstrates statistically significant superiority over humans in standardized uncertainty/equivocality benchmarks within peer-reviewed experiments, this hypothesis is falsified. Until such data exists, replacement claims are unsupported.",
+              "required_observations": [
+                "Full-text extraction and meta-analysis of experimental results from Bennett & Maruyama papers",
+                "Identification of standardized benchmarks for 'intuitive/holistic' reasoning in AGI literature",
+                "Replication studies comparing Logicist/Emergentist agents vs. human baselines on ambiguous tasks"
+              ],
+              "risk_of_being_wrong": "Relevant empirical data may exist in the full text of the cited papers (which are currently only partially extracted) or in newer publications not in the allowed list, making this hypothesis a reflection of current extraction limits rather than true scientific absence.",
+              "supporting_evidence_ids": [
+                "EV-Q121-56d39b0cc5e8454b7c6b1218",
+                "EV-Q121-906d1928c874b168fdea57f4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.6
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected as the best candidate because it directly links a verified factual constraint (explainability concerns in medicine, EV-Q121-0debf3fe850eb4735a3cb609) to the core question of replacement with a clear, testable mechanism. It avoids speculating beyond the evidence while providing a concrete falsification criterion (regulatory approval of autonomous opaque AI). Hypothesis 2 is strong but relies more heavily on interpreting the scope of 'Computational Creativity' literature, which may be narrower than the full field. Hypothesis 3 is essentially a meta-statement about evidence insufficiency rather than a scientific hypothesis about AI capabilities.",
+          "rejected_directions": [
+            "Directly testing whether AI possesses 'intuition' as defined in the booklet excerpt, because no allowed evidence_id validates this specific definition or provides a measurement instrument.",
+            "Economic modeling of job displacement rates, as no allowed evidence contains labor market data or socioeconomic impact studies.",
+            "Claiming AI will definitely replace humans based on speed/efficiency, as this contradicts the knowledge gap regarding task substitutability and lacks causal evidence in the allowed set."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that explainability deficits in AI prevent full autonomous replacement in high-stakes domains (specifically medicine) by necessitating human oversight for accountability. The study operationalizes 'explainability' as the fidelity of post-hoc explanation methods (e.g., SHAP, LIME) to the model's actual decision logic, and 'replacement barrier' as the regulatory or institutional mandate for human-in-the-loop (HITL) validation. We will simulate a clinical decision support system (CDSS) using a deep learning model on medical imaging data. We will measure the correlation between explanation fidelity and the rate of mandatory human override in a simulated regulatory audit framework. If high-fidelity explanations do not reduce the need for human oversight to near-zero, or if current state-of-the-art models fail to achieve sufficient fidelity to meet hypothetical 'autonomous' standards, the hypothesis is supported.",
+          "datasets": {
+            "source": {
+              "name": "MIMIC-III / CheXpert",
+              "description": "Publicly available medical imaging datasets (Chest X-Rays) with labeled pathologies. Used to train and evaluate the black-box AI model.",
+              "access_type": "public_restricted",
+              "evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ]
+            },
+            "target": {
+              "name": "Synthetic Regulatory Audit Log",
+              "description": "A constructed dataset simulating regulatory review outcomes based on explanation fidelity scores and model confidence. Since real-world regulatory rejection logs are proprietary, we simulate the 'barrier' by defining a threshold of explanation fidelity required for 'autonomous approval' based on literature-derived safety standards.",
+              "access_type": "synthetic",
+              "evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ]
+            }
+          },
+          "methods": "1. Model Training: Train a ResNet-50 model on CheXpert for pneumonia detection. 2. Explainability Application: Apply SHAP (Shapley Additive Explanations) and LIME to generate feature importance maps for each prediction. 3. Fidelity Measurement: Use the 'Faithfulness' metric (correlation between perturbed input features and output change) to quantify how well the explanation reflects the model's true reasoning. 4. Oversight Simulation: Define a 'Safety Threshold' for faithfulness. Cases below this threshold are flagged for 'Human Review'. 5. Analysis: Calculate the percentage of cases requiring human review. If this percentage remains significant (>5%) even with state-of-the-art explainability, it supports the claim that technical limitations necessitate permanent oversight.",
+          "experiments": {
+            "baselines": [
+              "Random Explanation Baseline: Explanations generated randomly to establish lower bound of faithfulness.",
+              "Gradient-based Saliency Maps: Standard vanilla backpropagation saliency as a common but often criticized explainability method."
+            ],
+            "metrics": [
+              "Faithfulness Score (Correlation coefficient between explanation weights and model sensitivity)",
+              "Human Review Rate (Percentage of predictions falling below the safety threshold)",
+              "Explanation Stability (Jaccard similarity of explanations under minor input perturbations)"
+            ],
+            "ablation": "Remove the explainability module entirely to measure the 'Black Box' risk profile; Compare SHAP vs. LIME performance in high-stakes vs. low-stakes diagnostic categories.",
+            "validation_protocol": "5-fold cross-validation on the CheXpert test set. Statistical significance of differences in Human Review Rate between baselines and proposed methods tested via paired t-test."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code repository with PyTorch implementation of ResNet-50 and SHAP/LIME integration",
+            "Pre-processing scripts for CheXpert/MIMIC-III data normalization",
+            "Definition of 'Safety Threshold' for faithfulness based on cited literature constraints",
+            "Random seed fixation for all stochastic processes",
+            "Detailed log of hyperparameter tuning for the explainability models"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources_required": "Single GPU (NVIDIA A100 or equivalent) for model training and explanation generation",
+            "estimated_runtime": "48 hours for full cross-validation and explanation generation",
+            "data_privacy_compliance": "Uses de-identified public datasets (CheXpert); no patient PII involved"
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-091604-30cb4066",
+        "version_number": 1,
+        "version_id": "20260822-091604-30cb4066:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "AI will not fully replace humans in high-stakes domains because current architectures lack the explainability required for autonomous accountability, necessitating human oversight as a permanent structural component.",
+              "mechanism": "According to EV-Q121-0debf3fe850eb4735a3cb609, AI models in critical fields like medicine face significant concerns regarding decision explainability. This technical limitation creates a functional barrier to full replacement: without interpretable reasoning, AI cannot satisfy legal/ethical liability standards, forcing organizations to retain humans for validation and responsibility attribution regardless of AI speed or accuracy.",
+              "falsifiable_prediction": "If AI achieves full replacement in high-stakes sectors, then there must exist validated AI systems operating autonomously without human oversight that have resolved explainability concerns to the satisfaction of regulatory bodies. Conversely, if explainability remains an unsolved concern in deployed systems, full replacement will not occur.",
+              "required_observations": [
+                "Audit of regulatory approvals for autonomous AI in medicine/law to check for mandatory human-in-the-loop requirements",
+                "Analysis of liability case law involving AI errors to determine if 'black box' nature prevents full delegation",
+                "Technical benchmarks on post-hoc explainability fidelity vs. ground truth reasoning in medical AI"
+              ],
+              "risk_of_being_wrong": "Future AGI architectures (e.g., Logicist or Universalist approaches mentioned in EV-Q121-56d39b0cc5e8454b7c6b1218) might solve explainability natively, or society might lower liability standards to accept opaque AI, rendering the explainability barrier temporary rather than fundamental.",
+              "supporting_evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "AI displacement is bounded to artifact generation tasks and will not extend to holistic problem-solving roles because current Computational Creativity research focuses exclusively on output generation rather than adaptive intuition.",
+              "mechanism": "EV-Q121-718e2bd9e8b12f3b65f90ffc establishes that current AI creativity work is primarily limited to generating artifacts (paintings, poems). This suggests a capability gap: AI optimizes for product creation but lacks the process-oriented, intuitive adaptation needed for equivocal problems. Therefore, AI replaces humans only in production niches, not in strategic or ambiguous decision-making roles.",
+              "falsifiable_prediction": "If AI begins to replace humans in holistic/strategic roles, then Computational Creativity literature must demonstrate a shift from artifact generation to process-level adaptive reasoning in uncertain environments. If literature remains focused solely on artifacts after 5 years, the hypothesis of bounded displacement is strengthened.",
+              "required_observations": [
+                "Longitudinal bibliometric analysis of Computational Creativity papers to track shift from 'artifact' to 'process/intuition' keywords",
+                "Benchmarking AI performance on ill-defined, equivocal tasks vs. well-defined generation tasks",
+                "Case studies of AI deployment in strategic planning vs. content creation"
+              ],
+              "risk_of_being_wrong": "Artifact generation might be a sufficient proxy for general intelligence (Emergentist view in EV-Q121-56d39b0cc5e8454b7c6b1218), or 'intuition' might be reducible to compression/pattern matching (EV-Q121-906d1928c874b168fdea57f4), making the distinction between artifact and holistic processing artificial.",
+              "supporting_evidence_ids": [
+                "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+                "EV-Q121-56d39b0cc5e8454b7c6b1218"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "Theoretical frameworks for AGI (Logicist/Emergentist/Universalist) currently lack empirical validation regarding uncertainty handling, making predictions of human replacement scientifically premature.",
+              "mechanism": "While EV-Q121-56d39b0cc5e8454b7c6b1218 and EV-Q121-906d1928c874b168fdea57f4 outline theoretical approaches to AGI and super-intelligence, the provided evidence consists only of abstracts/titles without experimental results. Without empirical proof that these theories can replicate human intuition in uncertainty, claims of replacement remain speculative philosophy rather than verified science.",
+              "falsifiable_prediction": "If any of the cited AGI frameworks demonstrates statistically significant superiority over humans in standardized uncertainty/equivocality benchmarks within peer-reviewed experiments, this hypothesis is falsified. Until such data exists, replacement claims are unsupported.",
+              "required_observations": [
+                "Full-text extraction and meta-analysis of experimental results from Bennett & Maruyama papers",
+                "Identification of standardized benchmarks for 'intuitive/holistic' reasoning in AGI literature",
+                "Replication studies comparing Logicist/Emergentist agents vs. human baselines on ambiguous tasks"
+              ],
+              "risk_of_being_wrong": "Relevant empirical data may exist in the full text of the cited papers (which are currently only partially extracted) or in newer publications not in the allowed list, making this hypothesis a reflection of current extraction limits rather than true scientific absence.",
+              "supporting_evidence_ids": [
+                "EV-Q121-56d39b0cc5e8454b7c6b1218",
+                "EV-Q121-906d1928c874b168fdea57f4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.6
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected as the best candidate because it directly links a verified factual constraint (explainability concerns in medicine, EV-Q121-0debf3fe850eb4735a3cb609) to the core question of replacement with a clear, testable mechanism. It avoids speculating beyond the evidence while providing a concrete falsification criterion (regulatory approval of autonomous opaque AI). Hypothesis 2 is strong but relies more heavily on interpreting the scope of 'Computational Creativity' literature, which may be narrower than the full field. Hypothesis 3 is essentially a meta-statement about evidence insufficiency rather than a scientific hypothesis about AI capabilities.",
+          "rejected_directions": [
+            "Directly testing whether AI possesses 'intuition' as defined in the booklet excerpt, because no allowed evidence_id validates this specific definition or provides a measurement instrument.",
+            "Economic modeling of job displacement rates, as no allowed evidence contains labor market data or socioeconomic impact studies.",
+            "Claiming AI will definitely replace humans based on speed/efficiency, as this contradicts the knowledge gap regarding task substitutability and lacks causal evidence in the allowed set."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that explainability deficits in AI prevent full autonomous replacement in high-stakes domains (specifically medicine) by necessitating human oversight for accountability. The study operationalizes 'explainability' as the fidelity of post-hoc explanation methods (e.g., SHAP, LIME) to the model's actual decision logic, and 'replacement barrier' as the regulatory or institutional mandate for human-in-the-loop (HITL) validation. We will simulate a clinical decision support system (CDSS) using a deep learning model on medical imaging data. We will measure the correlation between explanation fidelity and the rate of mandatory human override in a simulated regulatory audit framework. If high-fidelity explanations do not reduce the need for human oversight to near-zero, or if current state-of-the-art models fail to achieve sufficient fidelity to meet hypothetical 'autonomous' standards, the hypothesis is supported.",
+          "datasets": {
+            "source": {
+              "name": "MIMIC-III / CheXpert",
+              "description": "Publicly available medical imaging datasets (Chest X-Rays) with labeled pathologies. Used to train and evaluate the black-box AI model.",
+              "access_type": "public_restricted",
+              "evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ]
+            },
+            "target": {
+              "name": "Synthetic Regulatory Audit Log",
+              "description": "A constructed dataset simulating regulatory review outcomes based on explanation fidelity scores and model confidence. Since real-world regulatory rejection logs are proprietary, we simulate the 'barrier' by defining a threshold of explanation fidelity required for 'autonomous approval' based on literature-derived safety standards.",
+              "access_type": "synthetic",
+              "evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ]
+            }
+          },
+          "methods": "1. Model Training: Train a ResNet-50 model on CheXpert for pneumonia detection. 2. Explainability Application: Apply SHAP (Shapley Additive Explanations) and LIME to generate feature importance maps for each prediction. 3. Fidelity Measurement: Use the 'Faithfulness' metric (correlation between perturbed input features and output change) to quantify how well the explanation reflects the model's true reasoning. 4. Oversight Simulation: Define a 'Safety Threshold' for faithfulness. Cases below this threshold are flagged for 'Human Review'. 5. Analysis: Calculate the percentage of cases requiring human review. If this percentage remains significant (>5%) even with state-of-the-art explainability, it supports the claim that technical limitations necessitate permanent oversight.",
+          "experiments": {
+            "baselines": [
+              "Random Explanation Baseline: Explanations generated randomly to establish lower bound of faithfulness.",
+              "Gradient-based Saliency Maps: Standard vanilla backpropagation saliency as a common but often criticized explainability method."
+            ],
+            "metrics": [
+              "Faithfulness Score (Correlation coefficient between explanation weights and model sensitivity)",
+              "Human Review Rate (Percentage of predictions falling below the safety threshold)",
+              "Explanation Stability (Jaccard similarity of explanations under minor input perturbations)"
+            ],
+            "ablation": "Remove the explainability module entirely to measure the 'Black Box' risk profile; Compare SHAP vs. LIME performance in high-stakes vs. low-stakes diagnostic categories.",
+            "validation_protocol": "5-fold cross-validation on the CheXpert test set. Statistical significance of differences in Human Review Rate between baselines and proposed methods tested via paired t-test."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code repository with PyTorch implementation of ResNet-50 and SHAP/LIME integration",
+            "Pre-processing scripts for CheXpert/MIMIC-III data normalization",
+            "Definition of 'Safety Threshold' for faithfulness based on cited literature constraints",
+            "Random seed fixation for all stochastic processes",
+            "Detailed log of hyperparameter tuning for the explainability models"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources_required": "Single GPU (NVIDIA A100 or equivalent) for model training and explanation generation",
+            "estimated_runtime": "48 hours for full cross-validation and explanation generation",
+            "data_privacy_compliance": "Uses de-identified public datasets (CheXpert); no patient PII involved"
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis posits a causal link between 'technical explainability' and 'regulatory/structural necessity of human oversight'. However, the only supporting evidence (EV-Q121-0debf3fe850eb4735a3cb609) merely states that 'concerns have been raised' about explainability; it does not establish that these concerns legally or structurally mandate human oversight, nor does it define the threshold for 'autonomous accountability'.",
+            "The experiment design attempts to validate a socio-legal hypothesis ('necessitating human oversight as a permanent structural component') using purely technical metrics (SHAP/LIME faithfulness on CheXpert). There is no validated mapping function in the provided evidence that translates a 'faithfulness score' into a 'regulatory approval decision'. The 'Synthetic Regulatory Audit Log' is an arbitrary construct, making the experimental results scientifically meaningless regarding the actual hypothesis.",
+            "The mechanism claims explainability is a 'functional barrier' forcing organizations to retain humans. This is a normative/legal claim presented as a technical fact. Without evidence linking specific explainability metrics to liability standards or regulatory codes, this remains a knowledge gap.",
+            "Hypothesis 2 and 3 correctly identify knowledge gaps regarding intuition and AGI validation but were rejected in favor of Hypothesis 1 which overclaims based on weak evidence. The review recommends pivoting to a hypothesis strictly bounded by the available technical evidence or explicitly framing the regulatory link as a variable to be studied via legal/policy analysis rather than simulated via image classification."
+          ],
+          "critical_issues": [
+            "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+            "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+            "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+            "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence."
+          ],
+          "required_revisions": [
+            "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+            "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+            "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+            "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.3,
+          "falsifiability_score": 0.4,
+          "reproducibility_score": 0.8,
+          "reference_reliability_score": 0.9
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:044d971333f4",
+            "category": "critical_issue",
+            "description": "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:a66b89cb0731",
+            "category": "critical_issue",
+            "description": "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:ec284aa9cd16",
+            "category": "critical_issue",
+            "description": "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:c8a5ef02e6d9",
+            "category": "critical_issue",
+            "description": "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:ba467924831a",
+            "category": "required_revision",
+            "description": "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:29fe337fe040",
+            "category": "required_revision",
+            "description": "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:8667a932a6a5",
+            "category": "required_revision",
+            "description": "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7bc410c6d74e",
+            "category": "required_revision",
+            "description": "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "04f7067d7b841912257228a3f0bbc6a169a3f06a16916b92a139e5dbc9dd9b5e",
+          "experiment_designer": "df0dbe7a326c59e766ac9b1818a093307e5f63cb8150d2e9f29c3af252ae29ea",
+          "scientific_reviewer": "6415bdf70e73e12ebebb685643d1f8ac34fead5c3fd59b26ce865d0402841c2c"
+        }
+      },
+      "parent_version_id": "20260822-091604-30cb4066:v1",
+      "lineage": [
+        "20260822-091604-30cb4066:v1",
+        "20260822-091604-30cb4066:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis posits a causal link between 'technical explainability' and 'regulatory/structural necessity of human oversight'. However, the only supporting evidence (EV-Q121-0debf3fe850eb4735a3cb609) merely states that 'concerns have been raised' about explainability; it does not establish that these concerns legally or structurally mandate human oversight, nor does it define the threshold for 'autonomous accountability'.",
+          "The experiment design attempts to validate a socio-legal hypothesis ('necessitating human oversight as a permanent structural component') using purely technical metrics (SHAP/LIME faithfulness on CheXpert). There is no validated mapping function in the provided evidence that translates a 'faithfulness score' into a 'regulatory approval decision'. The 'Synthetic Regulatory Audit Log' is an arbitrary construct, making the experimental results scientifically meaningless regarding the actual hypothesis.",
+          "The mechanism claims explainability is a 'functional barrier' forcing organizations to retain humans. This is a normative/legal claim presented as a technical fact. Without evidence linking specific explainability metrics to liability standards or regulatory codes, this remains a knowledge gap.",
+          "Hypothesis 2 and 3 correctly identify knowledge gaps regarding intuition and AGI validation but were rejected in favor of Hypothesis 1 which overclaims based on weak evidence. The review recommends pivoting to a hypothesis strictly bounded by the available technical evidence or explicitly framing the regulatory link as a variable to be studied via legal/policy analysis rather than simulated via image classification."
+        ],
+        "critical_issues": [
+          "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+          "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+          "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+          "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence."
+        ],
+        "required_revisions": [
+          "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+          "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+          "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+          "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.3,
+        "falsifiability_score": 0.4,
+        "reproducibility_score": 0.8,
+        "reference_reliability_score": 0.9
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly pivots from an unverified socio-legal claim to a strictly technical deficit in explainability fidelity, fully addressing the 'Causal Gap' and 'Overclaiming Mechanism' critical issues from the previous review.",
+          "The experiment design now uses valid, reproducible technical metrics (Insertion/Deletion AUC, Stability) on a standard dataset (CheXpert), resolving the 'Invalid Operationalization' and 'Dataset Mismatch' issues. The removal of the 'Synthetic Regulatory Audit Log' eliminates the fictitious target variable.",
+          "Evidence grounding is now robust: the hypothesis is directly supported by EV-Q121-0debf3fe850eb4735a3cb609 regarding 'concerns about explainability', without extrapolating to regulatory mandates.",
+          "Results are correctly marked as pending, and the reproducibility checklist is comprehensive. The plan is now scientifically sound within the bounds of the allowed evidence."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:87e70d072d29b7e0",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+          "issue_id": "critical_issue:044d971333f4"
+        },
+        {
+          "failure_id": "failure:83fef6ff9e48a33b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+          "issue_id": "critical_issue:a66b89cb0731"
+        },
+        {
+          "failure_id": "failure:0f4ce55ce0f34d0e",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+          "issue_id": "critical_issue:ec284aa9cd16"
+        },
+        {
+          "failure_id": "failure:0f5532c404b87faf",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence.",
+          "issue_id": "critical_issue:c8a5ef02e6d9"
+        },
+        {
+          "failure_id": "failure:211ad779c820e4ec",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+          "issue_id": "required_revision:ba467924831a"
+        },
+        {
+          "failure_id": "failure:2e65bfd46310436e",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+          "issue_id": "required_revision:29fe337fe040"
+        },
+        {
+          "failure_id": "failure:1472a5fdc33cc6f9",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+          "issue_id": "required_revision:8667a932a6a5"
+        },
+        {
+          "failure_id": "failure:11d1dd95bca792fe",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only.",
+          "issue_id": "required_revision:7bc410c6d74e"
+        }
+      ],
+      "changes": [],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:044d971333f4",
+          "category": "critical_issue",
+          "description": "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:a66b89cb0731",
+          "category": "critical_issue",
+          "description": "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:ec284aa9cd16",
+          "category": "critical_issue",
+          "description": "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:c8a5ef02e6d9",
+          "category": "critical_issue",
+          "description": "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:ba467924831a",
+          "category": "required_revision",
+          "description": "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:29fe337fe040",
+          "category": "required_revision",
+          "description": "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:8667a932a6a5",
+          "category": "required_revision",
+          "description": "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:7bc410c6d74e",
+          "category": "required_revision",
+          "description": "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.3,
+          "after": 0.95,
+          "delta": 0.6499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "reference_reliability_score": {
+          "before": 0.9,
+          "after": 1.0,
+          "delta": 0.09999999999999998
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Current medical AI systems exhibit a persistent technical deficit in post-hoc explainability fidelity, such that state-of-the-art explanation methods fail to accurately reflect the internal decision logic of high-performance diagnostic models on standard benchmarks.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Current Computational Creativity AI is functionally bounded to artifact generation and lacks demonstrated capability in holistic uncertainty handling, limiting its potential to replace humans in equivocal problem-solving roles.",
+          "overall_score": 0.79,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Theoretical AGI frameworks (Logicist, Emergentist, Universalist) currently lack sufficient empirical grounding to validate claims of human replacement in uncertainty-rich environments.",
+          "overall_score": 0.63,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 0,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:044d971333f4",
+        "required_revision_without_change:critical_issue:a66b89cb0731",
+        "required_revision_without_change:critical_issue:ec284aa9cd16",
+        "required_revision_without_change:critical_issue:c8a5ef02e6d9",
+        "required_revision_without_change:required_revision:ba467924831a",
+        "required_revision_without_change:required_revision:29fe337fe040",
+        "required_revision_without_change:required_revision:8667a932a6a5",
+        "required_revision_without_change:required_revision:7bc410c6d74e",
+        "unresolved_issue:critical_issue:044d971333f4",
+        "unresolved_issue:critical_issue:a66b89cb0731",
+        "unresolved_issue:critical_issue:ec284aa9cd16",
+        "unresolved_issue:critical_issue:c8a5ef02e6d9",
+        "unresolved_issue:required_revision:ba467924831a",
+        "unresolved_issue:required_revision:29fe337fe040",
+        "unresolved_issue:required_revision:8667a932a6a5",
+        "unresolved_issue:required_revision:7bc410c6d74e"
+      ],
+      "remaining_blockers": [
+        "critical_issue:044d971333f4: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:a66b89cb0731: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:ec284aa9cd16: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:c8a5ef02e6d9: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:ba467924831a: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:29fe337fe040: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:8667a932a6a5: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:7bc410c6d74e: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-091604-30cb4066",
+        "version_number": 1,
+        "version_id": "20260822-091604-30cb4066:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "AI will not fully replace humans in high-stakes domains because current architectures lack the explainability required for autonomous accountability, necessitating human oversight as a permanent structural component.",
+              "mechanism": "According to EV-Q121-0debf3fe850eb4735a3cb609, AI models in critical fields like medicine face significant concerns regarding decision explainability. This technical limitation creates a functional barrier to full replacement: without interpretable reasoning, AI cannot satisfy legal/ethical liability standards, forcing organizations to retain humans for validation and responsibility attribution regardless of AI speed or accuracy.",
+              "falsifiable_prediction": "If AI achieves full replacement in high-stakes sectors, then there must exist validated AI systems operating autonomously without human oversight that have resolved explainability concerns to the satisfaction of regulatory bodies. Conversely, if explainability remains an unsolved concern in deployed systems, full replacement will not occur.",
+              "required_observations": [
+                "Audit of regulatory approvals for autonomous AI in medicine/law to check for mandatory human-in-the-loop requirements",
+                "Analysis of liability case law involving AI errors to determine if 'black box' nature prevents full delegation",
+                "Technical benchmarks on post-hoc explainability fidelity vs. ground truth reasoning in medical AI"
+              ],
+              "risk_of_being_wrong": "Future AGI architectures (e.g., Logicist or Universalist approaches mentioned in EV-Q121-56d39b0cc5e8454b7c6b1218) might solve explainability natively, or society might lower liability standards to accept opaque AI, rendering the explainability barrier temporary rather than fundamental.",
+              "supporting_evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "AI displacement is bounded to artifact generation tasks and will not extend to holistic problem-solving roles because current Computational Creativity research focuses exclusively on output generation rather than adaptive intuition.",
+              "mechanism": "EV-Q121-718e2bd9e8b12f3b65f90ffc establishes that current AI creativity work is primarily limited to generating artifacts (paintings, poems). This suggests a capability gap: AI optimizes for product creation but lacks the process-oriented, intuitive adaptation needed for equivocal problems. Therefore, AI replaces humans only in production niches, not in strategic or ambiguous decision-making roles.",
+              "falsifiable_prediction": "If AI begins to replace humans in holistic/strategic roles, then Computational Creativity literature must demonstrate a shift from artifact generation to process-level adaptive reasoning in uncertain environments. If literature remains focused solely on artifacts after 5 years, the hypothesis of bounded displacement is strengthened.",
+              "required_observations": [
+                "Longitudinal bibliometric analysis of Computational Creativity papers to track shift from 'artifact' to 'process/intuition' keywords",
+                "Benchmarking AI performance on ill-defined, equivocal tasks vs. well-defined generation tasks",
+                "Case studies of AI deployment in strategic planning vs. content creation"
+              ],
+              "risk_of_being_wrong": "Artifact generation might be a sufficient proxy for general intelligence (Emergentist view in EV-Q121-56d39b0cc5e8454b7c6b1218), or 'intuition' might be reducible to compression/pattern matching (EV-Q121-906d1928c874b168fdea57f4), making the distinction between artifact and holistic processing artificial.",
+              "supporting_evidence_ids": [
+                "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+                "EV-Q121-56d39b0cc5e8454b7c6b1218"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "Theoretical frameworks for AGI (Logicist/Emergentist/Universalist) currently lack empirical validation regarding uncertainty handling, making predictions of human replacement scientifically premature.",
+              "mechanism": "While EV-Q121-56d39b0cc5e8454b7c6b1218 and EV-Q121-906d1928c874b168fdea57f4 outline theoretical approaches to AGI and super-intelligence, the provided evidence consists only of abstracts/titles without experimental results. Without empirical proof that these theories can replicate human intuition in uncertainty, claims of replacement remain speculative philosophy rather than verified science.",
+              "falsifiable_prediction": "If any of the cited AGI frameworks demonstrates statistically significant superiority over humans in standardized uncertainty/equivocality benchmarks within peer-reviewed experiments, this hypothesis is falsified. Until such data exists, replacement claims are unsupported.",
+              "required_observations": [
+                "Full-text extraction and meta-analysis of experimental results from Bennett & Maruyama papers",
+                "Identification of standardized benchmarks for 'intuitive/holistic' reasoning in AGI literature",
+                "Replication studies comparing Logicist/Emergentist agents vs. human baselines on ambiguous tasks"
+              ],
+              "risk_of_being_wrong": "Relevant empirical data may exist in the full text of the cited papers (which are currently only partially extracted) or in newer publications not in the allowed list, making this hypothesis a reflection of current extraction limits rather than true scientific absence.",
+              "supporting_evidence_ids": [
+                "EV-Q121-56d39b0cc5e8454b7c6b1218",
+                "EV-Q121-906d1928c874b168fdea57f4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.6
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected as the best candidate because it directly links a verified factual constraint (explainability concerns in medicine, EV-Q121-0debf3fe850eb4735a3cb609) to the core question of replacement with a clear, testable mechanism. It avoids speculating beyond the evidence while providing a concrete falsification criterion (regulatory approval of autonomous opaque AI). Hypothesis 2 is strong but relies more heavily on interpreting the scope of 'Computational Creativity' literature, which may be narrower than the full field. Hypothesis 3 is essentially a meta-statement about evidence insufficiency rather than a scientific hypothesis about AI capabilities.",
+          "rejected_directions": [
+            "Directly testing whether AI possesses 'intuition' as defined in the booklet excerpt, because no allowed evidence_id validates this specific definition or provides a measurement instrument.",
+            "Economic modeling of job displacement rates, as no allowed evidence contains labor market data or socioeconomic impact studies.",
+            "Claiming AI will definitely replace humans based on speed/efficiency, as this contradicts the knowledge gap regarding task substitutability and lacks causal evidence in the allowed set."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that explainability deficits in AI prevent full autonomous replacement in high-stakes domains (specifically medicine) by necessitating human oversight for accountability. The study operationalizes 'explainability' as the fidelity of post-hoc explanation methods (e.g., SHAP, LIME) to the model's actual decision logic, and 'replacement barrier' as the regulatory or institutional mandate for human-in-the-loop (HITL) validation. We will simulate a clinical decision support system (CDSS) using a deep learning model on medical imaging data. We will measure the correlation between explanation fidelity and the rate of mandatory human override in a simulated regulatory audit framework. If high-fidelity explanations do not reduce the need for human oversight to near-zero, or if current state-of-the-art models fail to achieve sufficient fidelity to meet hypothetical 'autonomous' standards, the hypothesis is supported.",
+          "datasets": {
+            "source": {
+              "name": "MIMIC-III / CheXpert",
+              "description": "Publicly available medical imaging datasets (Chest X-Rays) with labeled pathologies. Used to train and evaluate the black-box AI model.",
+              "access_type": "public_restricted",
+              "evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ]
+            },
+            "target": {
+              "name": "Synthetic Regulatory Audit Log",
+              "description": "A constructed dataset simulating regulatory review outcomes based on explanation fidelity scores and model confidence. Since real-world regulatory rejection logs are proprietary, we simulate the 'barrier' by defining a threshold of explanation fidelity required for 'autonomous approval' based on literature-derived safety standards.",
+              "access_type": "synthetic",
+              "evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ]
+            }
+          },
+          "methods": "1. Model Training: Train a ResNet-50 model on CheXpert for pneumonia detection. 2. Explainability Application: Apply SHAP (Shapley Additive Explanations) and LIME to generate feature importance maps for each prediction. 3. Fidelity Measurement: Use the 'Faithfulness' metric (correlation between perturbed input features and output change) to quantify how well the explanation reflects the model's true reasoning. 4. Oversight Simulation: Define a 'Safety Threshold' for faithfulness. Cases below this threshold are flagged for 'Human Review'. 5. Analysis: Calculate the percentage of cases requiring human review. If this percentage remains significant (>5%) even with state-of-the-art explainability, it supports the claim that technical limitations necessitate permanent oversight.",
+          "experiments": {
+            "baselines": [
+              "Random Explanation Baseline: Explanations generated randomly to establish lower bound of faithfulness.",
+              "Gradient-based Saliency Maps: Standard vanilla backpropagation saliency as a common but often criticized explainability method."
+            ],
+            "metrics": [
+              "Faithfulness Score (Correlation coefficient between explanation weights and model sensitivity)",
+              "Human Review Rate (Percentage of predictions falling below the safety threshold)",
+              "Explanation Stability (Jaccard similarity of explanations under minor input perturbations)"
+            ],
+            "ablation": "Remove the explainability module entirely to measure the 'Black Box' risk profile; Compare SHAP vs. LIME performance in high-stakes vs. low-stakes diagnostic categories.",
+            "validation_protocol": "5-fold cross-validation on the CheXpert test set. Statistical significance of differences in Human Review Rate between baselines and proposed methods tested via paired t-test."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code repository with PyTorch implementation of ResNet-50 and SHAP/LIME integration",
+            "Pre-processing scripts for CheXpert/MIMIC-III data normalization",
+            "Definition of 'Safety Threshold' for faithfulness based on cited literature constraints",
+            "Random seed fixation for all stochastic processes",
+            "Detailed log of hyperparameter tuning for the explainability models"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources_required": "Single GPU (NVIDIA A100 or equivalent) for model training and explanation generation",
+            "estimated_runtime": "48 hours for full cross-validation and explanation generation",
+            "data_privacy_compliance": "Uses de-identified public datasets (CheXpert); no patient PII involved"
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis posits a causal link between 'technical explainability' and 'regulatory/structural necessity of human oversight'. However, the only supporting evidence (EV-Q121-0debf3fe850eb4735a3cb609) merely states that 'concerns have been raised' about explainability; it does not establish that these concerns legally or structurally mandate human oversight, nor does it define the threshold for 'autonomous accountability'.",
+            "The experiment design attempts to validate a socio-legal hypothesis ('necessitating human oversight as a permanent structural component') using purely technical metrics (SHAP/LIME faithfulness on CheXpert). There is no validated mapping function in the provided evidence that translates a 'faithfulness score' into a 'regulatory approval decision'. The 'Synthetic Regulatory Audit Log' is an arbitrary construct, making the experimental results scientifically meaningless regarding the actual hypothesis.",
+            "The mechanism claims explainability is a 'functional barrier' forcing organizations to retain humans. This is a normative/legal claim presented as a technical fact. Without evidence linking specific explainability metrics to liability standards or regulatory codes, this remains a knowledge gap.",
+            "Hypothesis 2 and 3 correctly identify knowledge gaps regarding intuition and AGI validation but were rejected in favor of Hypothesis 1 which overclaims based on weak evidence. The review recommends pivoting to a hypothesis strictly bounded by the available technical evidence or explicitly framing the regulatory link as a variable to be studied via legal/policy analysis rather than simulated via image classification."
+          ],
+          "critical_issues": [
+            "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+            "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+            "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+            "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence."
+          ],
+          "required_revisions": [
+            "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+            "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+            "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+            "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.3,
+          "falsifiability_score": 0.4,
+          "reproducibility_score": 0.8,
+          "reference_reliability_score": 0.9
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:044d971333f4",
+            "category": "critical_issue",
+            "description": "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:a66b89cb0731",
+            "category": "critical_issue",
+            "description": "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:ec284aa9cd16",
+            "category": "critical_issue",
+            "description": "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:c8a5ef02e6d9",
+            "category": "critical_issue",
+            "description": "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:ba467924831a",
+            "category": "required_revision",
+            "description": "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:29fe337fe040",
+            "category": "required_revision",
+            "description": "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:8667a932a6a5",
+            "category": "required_revision",
+            "description": "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7bc410c6d74e",
+            "category": "required_revision",
+            "description": "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "04f7067d7b841912257228a3f0bbc6a169a3f06a16916b92a139e5dbc9dd9b5e",
+          "experiment_designer": "df0dbe7a326c59e766ac9b1818a093307e5f63cb8150d2e9f29c3af252ae29ea",
+          "scientific_reviewer": "6415bdf70e73e12ebebb685643d1f8ac34fead5c3fd59b26ce865d0402841c2c"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-091604-30cb4066",
+        "version_number": 2,
+        "version_id": "20260822-091604-30cb4066:v2",
+        "parent_version_id": "20260822-091604-30cb4066:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current medical AI systems exhibit a persistent technical deficit in post-hoc explainability fidelity, such that state-of-the-art explanation methods fail to accurately reflect the internal decision logic of high-performance diagnostic models on standard benchmarks.",
+              "mechanism": "EV-Q121-0debf3fe850eb4735a3cb609 confirms that concerns have been raised regarding the explainability of AI decisions in medicine. This hypothesis posits that these concerns stem from a fundamental technical misalignment: current post-hoc explanation methods (e.g., SHAP, LIME) approximate model behavior but lack sufficient faithfulness to the actual learned representations in complex deep learning architectures. Consequently, even if model accuracy is high, the 'explanation' remains an unreliable proxy for the true decision process, validating the technical basis of the cited concerns without asserting unverified regulatory consequences.",
+              "falsifiable_prediction": "If current medical AI possesses sufficient technical explainability to address established concerns, then state-of-the-art post-hoc explanation methods should achieve high faithfulness scores (e.g., >0.9 correlation with ground-truth perturbation effects) and high stability across standard medical imaging benchmarks (e.g., CheXpert). If faithfulness remains significantly below this threshold or degrades in high-confidence predictions, the hypothesis of a persistent technical deficit is supported.",
+              "required_observations": [
+                "Quantitative measurement of explanation faithfulness (e.g., insertion/deletion AUC) for SOTA models on CheXpert/MIMIC-CXR",
+                "Comparison of explanation consistency under input perturbation for correct vs. incorrect predictions",
+                "Correlation analysis between model confidence/accuracy and explanation fidelity metrics"
+              ],
+              "risk_of_being_wrong": "Newer explanation methods not covered in current literature might already achieve high fidelity, or the 'concerns' cited in EV-Q121-0debf3fe850eb4735a3cb609 might refer to user-interface issues rather than algorithmic faithfulness, making technical fidelity metrics irrelevant to the actual concern.",
+              "supporting_evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Current Computational Creativity AI is functionally bounded to artifact generation and lacks demonstrated capability in holistic uncertainty handling, limiting its potential to replace humans in equivocal problem-solving roles.",
+              "mechanism": "EV-Q121-718e2bd9e8b12f3b65f90ffc establishes that current work in Computational Creativity focuses primarily on generating creative artifacts (paintings, poems). This suggests a functional specialization where AI optimizes for output synthesis rather than the adaptive, intuitive reasoning required for equivocality. Combined with the theoretical diversity of AGI approaches (EV-Q121-56d39b0cc5e8454b7c6b1218) which lack empirical validation for intuition, this hypothesis asserts that replacement is currently technically constrained to well-defined generative tasks, leaving holistic/uncertain domains as a verified knowledge gap.",
+              "falsifiable_prediction": "If AI has moved beyond artifact generation to holistic problem solving, then recent Computational Creativity literature must demonstrate validated frameworks for adaptive reasoning in uncertain/equivocal contexts (not just artifact quality). If bibliometric analysis shows >90% of papers still focus exclusively on artifact generation metrics without process-level adaptation benchmarks, the hypothesis of bounded capability is strengthened.",
+              "required_observations": [
+                "Bibliometric analysis of Computational Creativity papers (last 5 years) categorizing focus on 'artifact generation' vs. 'adaptive/holistic reasoning'",
+                "Identification of standardized benchmarks for 'intuition' or 'equivocality handling' in current AI creativity research",
+                "Review of AGI framework papers (Logicist/Emergentist) for empirical results on uncertainty handling"
+              ],
+              "risk_of_being_wrong": "Artifact generation might be an emergent substrate for general intelligence (as suggested by Emergentist views in EV-Q121-56d39b0cc5e8454b7c6b1218), meaning the distinction between 'artifact' and 'holistic' processing is artificial and replacement could occur via scaling artifact generators.",
+              "supporting_evidence_ids": [
+                "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+                "EV-Q121-56d39b0cc5e8454b7c6b1218"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.79
+            },
+            {
+              "hypothesis": "Theoretical AGI frameworks (Logicist, Emergentist, Universalist) currently lack sufficient empirical grounding to validate claims of human replacement in uncertainty-rich environments.",
+              "mechanism": "EV-Q121-56d39b0cc5e8454b7c6b1218 and EV-Q121-906d1928c874b168fdea57f4 outline theoretical approaches to AGI and super-intelligence but exist primarily as abstract concepts in the provided evidence. Without experimental validation linking these theories to measurable performance on uncertainty/equivocality tasks, any claim that they enable human replacement remains speculative. This hypothesis frames the 'replacement' question as currently scientifically undecidable due to the gap between theory and empirical demonstration.",
+              "falsifiable_prediction": "If AGI theories are empirically grounded for replacement, then full-text analysis of cited works must contain reproducible experiments demonstrating superior performance on standardized uncertainty benchmarks compared to human baselines. If full-text extraction reveals only theoretical arguments without such empirical validation, the hypothesis of 'premature replacement claims' is supported.",
+              "required_observations": [
+                "Full-text content extraction and coding of EV-Q121-56d39b0cc5e8454b7c6b1218 and EV-Q121-906d1928c874b168fdea57f4 for empirical results vs. theoretical propositions",
+                "Cross-referencing cited AGI frameworks against established uncertainty-handling benchmarks",
+                "Meta-analysis of citation networks to identify if empirical validations exist in downstream literature"
+              ],
+              "risk_of_being_wrong": "Relevant empirical validation may exist in the full text of the papers (which are currently only partially extracted as abstracts/titles) or in newer publications outside the allowed evidence set, making this hypothesis a reflection of extraction limitations rather than true scientific absence.",
+              "supporting_evidence_ids": [
+                "EV-Q121-56d39b0cc5e8454b7c6b1218",
+                "EV-Q121-906d1928c874b168fdea57f4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.63
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected because it directly addresses the critical reviewer feedback by removing the unverified socio-legal causal link ('explainability causes mandatory oversight') and replacing it with a strictly technical hypothesis grounded solely in EV-Q121-0debf3fe850eb4735a3cb609. It replaces the invalid 'Synthetic Regulatory Audit Log' with standard, reproducible technical metrics (faithfulness/stability) that can be tested on public datasets (CheXpert) without simulating regulatory outcomes. This closes the 'Invalid Operationalization' and 'Causal Gap' issues while maintaining relevance to the core question of AI limitations. Hypothesis 2 is a strong alternative but relies more heavily on bibliometric interpretation; Hypothesis 1 offers a more direct technical validation path using available evidence.",
+          "rejected_directions": [
+            "Retaining any hypothesis that claims 'lack of explainability causes mandatory human oversight' without new legal/regulatory evidence IDs.",
+            "Using 'regulatory approval' or 'liability standards' as experimental variables without corresponding evidence in the allowed set.",
+            "Simulating socio-legal outcomes (e.g., audit logs, trust scores) using purely technical datasets like CheXpert.",
+            "Asserting that AI cannot handle 'intuition' as a proven fact, since the booklet excerpt defining this limitation lacks a corresponding evidence_id in the allowed list."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment validates the technical hypothesis that current post-hoc explainability methods (SHAP, LIME) exhibit low fidelity to the internal decision logic of high-performance medical AI models. The study focuses strictly on the technical metric of 'faithfulness' as a proxy for the 'explainability concerns' cited in EV-Q121-0debf3fe850eb4735a3cb609. We train a ResNet-50 model on the CheXpert dataset for chest X-ray classification. We then apply SHAP and LIME to generate attribution maps. Faithfulness is quantified using the Insertion/Deletion AUC metric, which measures the correlation between the importance assigned by the explanation method and the actual change in model output when features are perturbed. Low faithfulness scores would technically substantiate the basis for the concerns raised in the literature, without making unverified claims about regulatory mandates.",
+          "datasets": {
+            "source": {
+              "name": "CheXpert",
+              "description": "A large dataset of chest radiographs with labeled pathologies, used for training and evaluating the diagnostic model.",
+              "access_type": "public_restricted",
+              "evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ]
+            },
+            "target": {
+              "name": "Explanation Fidelity Metrics",
+              "description": "Quantitative metrics (Insertion/Deletion AUC, Stability Score) derived from applying explainability algorithms to the model's predictions. This replaces the invalid 'Synthetic Regulatory Audit Log' with direct technical measurements.",
+              "access_type": "derived",
+              "evidence_ids": [
+                "EV-Q121-0debf3fe850eb4735a3cb609"
+              ]
+            }
+          },
+          "methods": "1. Model Training: Train a ResNet-50 convolutional neural network on the CheXpert training set for multi-label classification of chest pathologies. 2. Explanation Generation: Apply SHAP (DeepExplainer) and LIME to a held-out test set to generate pixel-level attribution maps. 3. Faithfulness Evaluation: Compute Insertion and Deletion AUC curves. For Insertion, pixels are added in order of importance; for Deletion, they are removed. The area under these curves indicates how well the explanation captures the model's reliance on specific features. 4. Stability Analysis: Measure the Jaccard similarity of explanations for original images vs. slightly perturbed versions (Gaussian noise) to assess robustness. 5. Statistical Analysis: Compare mean faithfulness scores against a random baseline to determine if current methods provide statistically significant insight into model logic.",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: Attribution maps generated with random weights to establish the lower bound of faithfulness.",
+              "Gradient-based Saliency: Vanilla backpropagation gradients as a standard, non-perturbation-based explanation method."
+            ],
+            "metrics": [
+              "Insertion AUC: Area under the curve for the insertion of top-k important pixels.",
+              "Deletion AUC: Area under the curve for the deletion of top-k important pixels.",
+              "Explanation Stability: Jaccard index of top-10% important pixels between original and perturbed inputs."
+            ],
+            "ablation": "Compare performance of SHAP vs. LIME across different pathology classes (e.g., Pneumonia vs. Cardiomegaly) to identify if fidelity varies by disease complexity.",
+            "validation_protocol": "5-fold cross-validation on the CheXpert test split. Significance of differences in AUC scores between baselines and proposed methods tested using paired t-tests (p < 0.05)."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "PyTorch code for ResNet-50 training with fixed random seeds.",
+            "Implementation of SHAP DeepExplainer and LIME for image data.",
+            "Scripts for computing Insertion/Deletion AUC metrics.",
+            "Pre-processing pipeline for CheXpert images (resizing, normalization).",
+            "Detailed log of hyperparameters for model training and explanation generation."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources_required": "Single NVIDIA A100 GPU for model training and explanation computation.",
+            "estimated_runtime": "24-48 hours for full cross-validation and metric calculation.",
+            "data_privacy_compliance": "Uses de-identified public dataset (CheXpert); no patient PII involved."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly pivots from an unverified socio-legal claim to a strictly technical deficit in explainability fidelity, fully addressing the 'Causal Gap' and 'Overclaiming Mechanism' critical issues from the previous review.",
+            "The experiment design now uses valid, reproducible technical metrics (Insertion/Deletion AUC, Stability) on a standard dataset (CheXpert), resolving the 'Invalid Operationalization' and 'Dataset Mismatch' issues. The removal of the 'Synthetic Regulatory Audit Log' eliminates the fictitious target variable.",
+            "Evidence grounding is now robust: the hypothesis is directly supported by EV-Q121-0debf3fe850eb4735a3cb609 regarding 'concerns about explainability', without extrapolating to regulatory mandates.",
+            "Results are correctly marked as pending, and the reproducibility checklist is comprehensive. The plan is now scientifically sound within the bounds of the allowed evidence."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:044d971333f4",
+            "category": "critical_issue",
+            "description": "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:a66b89cb0731",
+            "category": "critical_issue",
+            "description": "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:ec284aa9cd16",
+            "category": "critical_issue",
+            "description": "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:c8a5ef02e6d9",
+            "category": "critical_issue",
+            "description": "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:ba467924831a",
+            "category": "required_revision",
+            "description": "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:29fe337fe040",
+            "category": "required_revision",
+            "description": "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:8667a932a6a5",
+            "category": "required_revision",
+            "description": "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:7bc410c6d74e",
+            "category": "required_revision",
+            "description": "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "e469ccfd060407b5e4a83b3bda193c63a4396a0b2b8627557352616619a76fa4",
+          "experiment_designer": "1fbd345ca1398a967e41106ae568b8a12b51342839ed0d73827b849e6a217997",
+          "scientific_reviewer": "5768ab3d8a4dd2a7397d96172720a349fff303dd960786d5e7823896f1dc3d5e"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-091604-30cb4066",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-091604-30cb4066:review:v1",
+        "20260822-091604-30cb4066:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-091604-30cb4066:v1",
+        "20260822-091604-30cb4066:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-091604-30cb4066",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-091604-30cb4066:review:v1",
+          "20260822-091604-30cb4066:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-091604-30cb4066:v1",
+          "20260822-091604-30cb4066:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-091604-30cb4066",
+          "version_number": 1,
+          "version_id": "20260822-091604-30cb4066:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "AI will not fully replace humans in high-stakes domains because current architectures lack the explainability required for autonomous accountability, necessitating human oversight as a permanent structural component.",
+                "mechanism": "According to EV-Q121-0debf3fe850eb4735a3cb609, AI models in critical fields like medicine face significant concerns regarding decision explainability. This technical limitation creates a functional barrier to full replacement: without interpretable reasoning, AI cannot satisfy legal/ethical liability standards, forcing organizations to retain humans for validation and responsibility attribution regardless of AI speed or accuracy.",
+                "falsifiable_prediction": "If AI achieves full replacement in high-stakes sectors, then there must exist validated AI systems operating autonomously without human oversight that have resolved explainability concerns to the satisfaction of regulatory bodies. Conversely, if explainability remains an unsolved concern in deployed systems, full replacement will not occur.",
+                "required_observations": [
+                  "Audit of regulatory approvals for autonomous AI in medicine/law to check for mandatory human-in-the-loop requirements",
+                  "Analysis of liability case law involving AI errors to determine if 'black box' nature prevents full delegation",
+                  "Technical benchmarks on post-hoc explainability fidelity vs. ground truth reasoning in medical AI"
+                ],
+                "risk_of_being_wrong": "Future AGI architectures (e.g., Logicist or Universalist approaches mentioned in EV-Q121-56d39b0cc5e8454b7c6b1218) might solve explainability natively, or society might lower liability standards to accept opaque AI, rendering the explainability barrier temporary rather than fundamental.",
+                "supporting_evidence_ids": [
+                  "EV-Q121-0debf3fe850eb4735a3cb609"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.78
+              },
+              {
+                "hypothesis": "AI displacement is bounded to artifact generation tasks and will not extend to holistic problem-solving roles because current Computational Creativity research focuses exclusively on output generation rather than adaptive intuition.",
+                "mechanism": "EV-Q121-718e2bd9e8b12f3b65f90ffc establishes that current AI creativity work is primarily limited to generating artifacts (paintings, poems). This suggests a capability gap: AI optimizes for product creation but lacks the process-oriented, intuitive adaptation needed for equivocal problems. Therefore, AI replaces humans only in production niches, not in strategic or ambiguous decision-making roles.",
+                "falsifiable_prediction": "If AI begins to replace humans in holistic/strategic roles, then Computational Creativity literature must demonstrate a shift from artifact generation to process-level adaptive reasoning in uncertain environments. If literature remains focused solely on artifacts after 5 years, the hypothesis of bounded displacement is strengthened.",
+                "required_observations": [
+                  "Longitudinal bibliometric analysis of Computational Creativity papers to track shift from 'artifact' to 'process/intuition' keywords",
+                  "Benchmarking AI performance on ill-defined, equivocal tasks vs. well-defined generation tasks",
+                  "Case studies of AI deployment in strategic planning vs. content creation"
+                ],
+                "risk_of_being_wrong": "Artifact generation might be a sufficient proxy for general intelligence (Emergentist view in EV-Q121-56d39b0cc5e8454b7c6b1218), or 'intuition' might be reducible to compression/pattern matching (EV-Q121-906d1928c874b168fdea57f4), making the distinction between artifact and holistic processing artificial.",
+                "supporting_evidence_ids": [
+                  "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+                  "EV-Q121-56d39b0cc5e8454b7c6b1218"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.78
+              },
+              {
+                "hypothesis": "Theoretical frameworks for AGI (Logicist/Emergentist/Universalist) currently lack empirical validation regarding uncertainty handling, making predictions of human replacement scientifically premature.",
+                "mechanism": "While EV-Q121-56d39b0cc5e8454b7c6b1218 and EV-Q121-906d1928c874b168fdea57f4 outline theoretical approaches to AGI and super-intelligence, the provided evidence consists only of abstracts/titles without experimental results. Without empirical proof that these theories can replicate human intuition in uncertainty, claims of replacement remain speculative philosophy rather than verified science.",
+                "falsifiable_prediction": "If any of the cited AGI frameworks demonstrates statistically significant superiority over humans in standardized uncertainty/equivocality benchmarks within peer-reviewed experiments, this hypothesis is falsified. Until such data exists, replacement claims are unsupported.",
+                "required_observations": [
+                  "Full-text extraction and meta-analysis of experimental results from Bennett & Maruyama papers",
+                  "Identification of standardized benchmarks for 'intuitive/holistic' reasoning in AGI literature",
+                  "Replication studies comparing Logicist/Emergentist agents vs. human baselines on ambiguous tasks"
+                ],
+                "risk_of_being_wrong": "Relevant empirical data may exist in the full text of the cited papers (which are currently only partially extracted) or in newer publications not in the allowed list, making this hypothesis a reflection of current extraction limits rather than true scientific absence.",
+                "supporting_evidence_ids": [
+                  "EV-Q121-56d39b0cc5e8454b7c6b1218",
+                  "EV-Q121-906d1928c874b168fdea57f4"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.6
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 is selected as the best candidate because it directly links a verified factual constraint (explainability concerns in medicine, EV-Q121-0debf3fe850eb4735a3cb609) to the core question of replacement with a clear, testable mechanism. It avoids speculating beyond the evidence while providing a concrete falsification criterion (regulatory approval of autonomous opaque AI). Hypothesis 2 is strong but relies more heavily on interpreting the scope of 'Computational Creativity' literature, which may be narrower than the full field. Hypothesis 3 is essentially a meta-statement about evidence insufficiency rather than a scientific hypothesis about AI capabilities.",
+            "rejected_directions": [
+              "Directly testing whether AI possesses 'intuition' as defined in the booklet excerpt, because no allowed evidence_id validates this specific definition or provides a measurement instrument.",
+              "Economic modeling of job displacement rates, as no allowed evidence contains labor market data or socioeconomic impact studies.",
+              "Claiming AI will definitely replace humans based on speed/efficiency, as this contradicts the knowledge gap regarding task substitutability and lacks causal evidence in the allowed set."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that explainability deficits in AI prevent full autonomous replacement in high-stakes domains (specifically medicine) by necessitating human oversight for accountability. The study operationalizes 'explainability' as the fidelity of post-hoc explanation methods (e.g., SHAP, LIME) to the model's actual decision logic, and 'replacement barrier' as the regulatory or institutional mandate for human-in-the-loop (HITL) validation. We will simulate a clinical decision support system (CDSS) using a deep learning model on medical imaging data. We will measure the correlation between explanation fidelity and the rate of mandatory human override in a simulated regulatory audit framework. If high-fidelity explanations do not reduce the need for human oversight to near-zero, or if current state-of-the-art models fail to achieve sufficient fidelity to meet hypothetical 'autonomous' standards, the hypothesis is supported.",
+            "datasets": {
+              "source": {
+                "name": "MIMIC-III / CheXpert",
+                "description": "Publicly available medical imaging datasets (Chest X-Rays) with labeled pathologies. Used to train and evaluate the black-box AI model.",
+                "access_type": "public_restricted",
+                "evidence_ids": [
+                  "EV-Q121-0debf3fe850eb4735a3cb609"
+                ]
+              },
+              "target": {
+                "name": "Synthetic Regulatory Audit Log",
+                "description": "A constructed dataset simulating regulatory review outcomes based on explanation fidelity scores and model confidence. Since real-world regulatory rejection logs are proprietary, we simulate the 'barrier' by defining a threshold of explanation fidelity required for 'autonomous approval' based on literature-derived safety standards.",
+                "access_type": "synthetic",
+                "evidence_ids": [
+                  "EV-Q121-0debf3fe850eb4735a3cb609"
+                ]
+              }
+            },
+            "methods": "1. Model Training: Train a ResNet-50 model on CheXpert for pneumonia detection. 2. Explainability Application: Apply SHAP (Shapley Additive Explanations) and LIME to generate feature importance maps for each prediction. 3. Fidelity Measurement: Use the 'Faithfulness' metric (correlation between perturbed input features and output change) to quantify how well the explanation reflects the model's true reasoning. 4. Oversight Simulation: Define a 'Safety Threshold' for faithfulness. Cases below this threshold are flagged for 'Human Review'. 5. Analysis: Calculate the percentage of cases requiring human review. If this percentage remains significant (>5%) even with state-of-the-art explainability, it supports the claim that technical limitations necessitate permanent oversight.",
+            "experiments": {
+              "baselines": [
+                "Random Explanation Baseline: Explanations generated randomly to establish lower bound of faithfulness.",
+                "Gradient-based Saliency Maps: Standard vanilla backpropagation saliency as a common but often criticized explainability method."
+              ],
+              "metrics": [
+                "Faithfulness Score (Correlation coefficient between explanation weights and model sensitivity)",
+                "Human Review Rate (Percentage of predictions falling below the safety threshold)",
+                "Explanation Stability (Jaccard similarity of explanations under minor input perturbations)"
+              ],
+              "ablation": "Remove the explainability module entirely to measure the 'Black Box' risk profile; Compare SHAP vs. LIME performance in high-stakes vs. low-stakes diagnostic categories.",
+              "validation_protocol": "5-fold cross-validation on the CheXpert test set. Statistical significance of differences in Human Review Rate between baselines and proposed methods tested via paired t-test."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code repository with PyTorch implementation of ResNet-50 and SHAP/LIME integration",
+              "Pre-processing scripts for CheXpert/MIMIC-III data normalization",
+              "Definition of 'Safety Threshold' for faithfulness based on cited literature constraints",
+              "Random seed fixation for all stochastic processes",
+              "Detailed log of hyperparameter tuning for the explainability models"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "compute_resources_required": "Single GPU (NVIDIA A100 or equivalent) for model training and explanation generation",
+              "estimated_runtime": "48 hours for full cross-validation and explanation generation",
+              "data_privacy_compliance": "Uses de-identified public datasets (CheXpert); no patient PII involved"
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis posits a causal link between 'technical explainability' and 'regulatory/structural necessity of human oversight'. However, the only supporting evidence (EV-Q121-0debf3fe850eb4735a3cb609) merely states that 'concerns have been raised' about explainability; it does not establish that these concerns legally or structurally mandate human oversight, nor does it define the threshold for 'autonomous accountability'.",
+              "The experiment design attempts to validate a socio-legal hypothesis ('necessitating human oversight as a permanent structural component') using purely technical metrics (SHAP/LIME faithfulness on CheXpert). There is no validated mapping function in the provided evidence that translates a 'faithfulness score' into a 'regulatory approval decision'. The 'Synthetic Regulatory Audit Log' is an arbitrary construct, making the experimental results scientifically meaningless regarding the actual hypothesis.",
+              "The mechanism claims explainability is a 'functional barrier' forcing organizations to retain humans. This is a normative/legal claim presented as a technical fact. Without evidence linking specific explainability metrics to liability standards or regulatory codes, this remains a knowledge gap.",
+              "Hypothesis 2 and 3 correctly identify knowledge gaps regarding intuition and AGI validation but were rejected in favor of Hypothesis 1 which overclaims based on weak evidence. The review recommends pivoting to a hypothesis strictly bounded by the available technical evidence or explicitly framing the regulatory link as a variable to be studied via legal/policy analysis rather than simulated via image classification."
+            ],
+            "critical_issues": [
+              "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+              "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+              "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+              "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence."
+            ],
+            "required_revisions": [
+              "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+              "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+              "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+              "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.3,
+            "falsifiability_score": 0.4,
+            "reproducibility_score": 0.8,
+            "reference_reliability_score": 0.9
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:044d971333f4",
+              "category": "critical_issue",
+              "description": "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:a66b89cb0731",
+              "category": "critical_issue",
+              "description": "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:ec284aa9cd16",
+              "category": "critical_issue",
+              "description": "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:c8a5ef02e6d9",
+              "category": "critical_issue",
+              "description": "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:ba467924831a",
+              "category": "required_revision",
+              "description": "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:29fe337fe040",
+              "category": "required_revision",
+              "description": "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:8667a932a6a5",
+              "category": "required_revision",
+              "description": "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:7bc410c6d74e",
+              "category": "required_revision",
+              "description": "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "04f7067d7b841912257228a3f0bbc6a169a3f06a16916b92a139e5dbc9dd9b5e",
+            "experiment_designer": "df0dbe7a326c59e766ac9b1818a093307e5f63cb8150d2e9f29c3af252ae29ea",
+            "scientific_reviewer": "6415bdf70e73e12ebebb685643d1f8ac34fead5c3fd59b26ce865d0402841c2c"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-091604-30cb4066",
+          "version_number": 2,
+          "version_id": "20260822-091604-30cb4066:v2",
+          "parent_version_id": "20260822-091604-30cb4066:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Current medical AI systems exhibit a persistent technical deficit in post-hoc explainability fidelity, such that state-of-the-art explanation methods fail to accurately reflect the internal decision logic of high-performance diagnostic models on standard benchmarks.",
+                "mechanism": "EV-Q121-0debf3fe850eb4735a3cb609 confirms that concerns have been raised regarding the explainability of AI decisions in medicine. This hypothesis posits that these concerns stem from a fundamental technical misalignment: current post-hoc explanation methods (e.g., SHAP, LIME) approximate model behavior but lack sufficient faithfulness to the actual learned representations in complex deep learning architectures. Consequently, even if model accuracy is high, the 'explanation' remains an unreliable proxy for the true decision process, validating the technical basis of the cited concerns without asserting unverified regulatory consequences.",
+                "falsifiable_prediction": "If current medical AI possesses sufficient technical explainability to address established concerns, then state-of-the-art post-hoc explanation methods should achieve high faithfulness scores (e.g., >0.9 correlation with ground-truth perturbation effects) and high stability across standard medical imaging benchmarks (e.g., CheXpert). If faithfulness remains significantly below this threshold or degrades in high-confidence predictions, the hypothesis of a persistent technical deficit is supported.",
+                "required_observations": [
+                  "Quantitative measurement of explanation faithfulness (e.g., insertion/deletion AUC) for SOTA models on CheXpert/MIMIC-CXR",
+                  "Comparison of explanation consistency under input perturbation for correct vs. incorrect predictions",
+                  "Correlation analysis between model confidence/accuracy and explanation fidelity metrics"
+                ],
+                "risk_of_being_wrong": "Newer explanation methods not covered in current literature might already achieve high fidelity, or the 'concerns' cited in EV-Q121-0debf3fe850eb4735a3cb609 might refer to user-interface issues rather than algorithmic faithfulness, making technical fidelity metrics irrelevant to the actual concern.",
+                "supporting_evidence_ids": [
+                  "EV-Q121-0debf3fe850eb4735a3cb609"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.95,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "Current Computational Creativity AI is functionally bounded to artifact generation and lacks demonstrated capability in holistic uncertainty handling, limiting its potential to replace humans in equivocal problem-solving roles.",
+                "mechanism": "EV-Q121-718e2bd9e8b12f3b65f90ffc establishes that current work in Computational Creativity focuses primarily on generating creative artifacts (paintings, poems). This suggests a functional specialization where AI optimizes for output synthesis rather than the adaptive, intuitive reasoning required for equivocality. Combined with the theoretical diversity of AGI approaches (EV-Q121-56d39b0cc5e8454b7c6b1218) which lack empirical validation for intuition, this hypothesis asserts that replacement is currently technically constrained to well-defined generative tasks, leaving holistic/uncertain domains as a verified knowledge gap.",
+                "falsifiable_prediction": "If AI has moved beyond artifact generation to holistic problem solving, then recent Computational Creativity literature must demonstrate validated frameworks for adaptive reasoning in uncertain/equivocal contexts (not just artifact quality). If bibliometric analysis shows >90% of papers still focus exclusively on artifact generation metrics without process-level adaptation benchmarks, the hypothesis of bounded capability is strengthened.",
+                "required_observations": [
+                  "Bibliometric analysis of Computational Creativity papers (last 5 years) categorizing focus on 'artifact generation' vs. 'adaptive/holistic reasoning'",
+                  "Identification of standardized benchmarks for 'intuition' or 'equivocality handling' in current AI creativity research",
+                  "Review of AGI framework papers (Logicist/Emergentist) for empirical results on uncertainty handling"
+                ],
+                "risk_of_being_wrong": "Artifact generation might be an emergent substrate for general intelligence (as suggested by Emergentist views in EV-Q121-56d39b0cc5e8454b7c6b1218), meaning the distinction between 'artifact' and 'holistic' processing is artificial and replacement could occur via scaling artifact generators.",
+                "supporting_evidence_ids": [
+                  "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+                  "EV-Q121-56d39b0cc5e8454b7c6b1218"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.79
+              },
+              {
+                "hypothesis": "Theoretical AGI frameworks (Logicist, Emergentist, Universalist) currently lack sufficient empirical grounding to validate claims of human replacement in uncertainty-rich environments.",
+                "mechanism": "EV-Q121-56d39b0cc5e8454b7c6b1218 and EV-Q121-906d1928c874b168fdea57f4 outline theoretical approaches to AGI and super-intelligence but exist primarily as abstract concepts in the provided evidence. Without experimental validation linking these theories to measurable performance on uncertainty/equivocality tasks, any claim that they enable human replacement remains speculative. This hypothesis frames the 'replacement' question as currently scientifically undecidable due to the gap between theory and empirical demonstration.",
+                "falsifiable_prediction": "If AGI theories are empirically grounded for replacement, then full-text analysis of cited works must contain reproducible experiments demonstrating superior performance on standardized uncertainty benchmarks compared to human baselines. If full-text extraction reveals only theoretical arguments without such empirical validation, the hypothesis of 'premature replacement claims' is supported.",
+                "required_observations": [
+                  "Full-text content extraction and coding of EV-Q121-56d39b0cc5e8454b7c6b1218 and EV-Q121-906d1928c874b168fdea57f4 for empirical results vs. theoretical propositions",
+                  "Cross-referencing cited AGI frameworks against established uncertainty-handling benchmarks",
+                  "Meta-analysis of citation networks to identify if empirical validations exist in downstream literature"
+                ],
+                "risk_of_being_wrong": "Relevant empirical validation may exist in the full text of the papers (which are currently only partially extracted as abstracts/titles) or in newer publications outside the allowed evidence set, making this hypothesis a reflection of extraction limitations rather than true scientific absence.",
+                "supporting_evidence_ids": [
+                  "EV-Q121-56d39b0cc5e8454b7c6b1218",
+                  "EV-Q121-906d1928c874b168fdea57f4"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.63
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 is selected because it directly addresses the critical reviewer feedback by removing the unverified socio-legal causal link ('explainability causes mandatory oversight') and replacing it with a strictly technical hypothesis grounded solely in EV-Q121-0debf3fe850eb4735a3cb609. It replaces the invalid 'Synthetic Regulatory Audit Log' with standard, reproducible technical metrics (faithfulness/stability) that can be tested on public datasets (CheXpert) without simulating regulatory outcomes. This closes the 'Invalid Operationalization' and 'Causal Gap' issues while maintaining relevance to the core question of AI limitations. Hypothesis 2 is a strong alternative but relies more heavily on bibliometric interpretation; Hypothesis 1 offers a more direct technical validation path using available evidence.",
+            "rejected_directions": [
+              "Retaining any hypothesis that claims 'lack of explainability causes mandatory human oversight' without new legal/regulatory evidence IDs.",
+              "Using 'regulatory approval' or 'liability standards' as experimental variables without corresponding evidence in the allowed set.",
+              "Simulating socio-legal outcomes (e.g., audit logs, trust scores) using purely technical datasets like CheXpert.",
+              "Asserting that AI cannot handle 'intuition' as a proven fact, since the booklet excerpt defining this limitation lacks a corresponding evidence_id in the allowed list."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment validates the technical hypothesis that current post-hoc explainability methods (SHAP, LIME) exhibit low fidelity to the internal decision logic of high-performance medical AI models. The study focuses strictly on the technical metric of 'faithfulness' as a proxy for the 'explainability concerns' cited in EV-Q121-0debf3fe850eb4735a3cb609. We train a ResNet-50 model on the CheXpert dataset for chest X-ray classification. We then apply SHAP and LIME to generate attribution maps. Faithfulness is quantified using the Insertion/Deletion AUC metric, which measures the correlation between the importance assigned by the explanation method and the actual change in model output when features are perturbed. Low faithfulness scores would technically substantiate the basis for the concerns raised in the literature, without making unverified claims about regulatory mandates.",
+            "datasets": {
+              "source": {
+                "name": "CheXpert",
+                "description": "A large dataset of chest radiographs with labeled pathologies, used for training and evaluating the diagnostic model.",
+                "access_type": "public_restricted",
+                "evidence_ids": [
+                  "EV-Q121-0debf3fe850eb4735a3cb609"
+                ]
+              },
+              "target": {
+                "name": "Explanation Fidelity Metrics",
+                "description": "Quantitative metrics (Insertion/Deletion AUC, Stability Score) derived from applying explainability algorithms to the model's predictions. This replaces the invalid 'Synthetic Regulatory Audit Log' with direct technical measurements.",
+                "access_type": "derived",
+                "evidence_ids": [
+                  "EV-Q121-0debf3fe850eb4735a3cb609"
+                ]
+              }
+            },
+            "methods": "1. Model Training: Train a ResNet-50 convolutional neural network on the CheXpert training set for multi-label classification of chest pathologies. 2. Explanation Generation: Apply SHAP (DeepExplainer) and LIME to a held-out test set to generate pixel-level attribution maps. 3. Faithfulness Evaluation: Compute Insertion and Deletion AUC curves. For Insertion, pixels are added in order of importance; for Deletion, they are removed. The area under these curves indicates how well the explanation captures the model's reliance on specific features. 4. Stability Analysis: Measure the Jaccard similarity of explanations for original images vs. slightly perturbed versions (Gaussian noise) to assess robustness. 5. Statistical Analysis: Compare mean faithfulness scores against a random baseline to determine if current methods provide statistically significant insight into model logic.",
+            "experiments": {
+              "baselines": [
+                "Random Baseline: Attribution maps generated with random weights to establish the lower bound of faithfulness.",
+                "Gradient-based Saliency: Vanilla backpropagation gradients as a standard, non-perturbation-based explanation method."
+              ],
+              "metrics": [
+                "Insertion AUC: Area under the curve for the insertion of top-k important pixels.",
+                "Deletion AUC: Area under the curve for the deletion of top-k important pixels.",
+                "Explanation Stability: Jaccard index of top-10% important pixels between original and perturbed inputs."
+              ],
+              "ablation": "Compare performance of SHAP vs. LIME across different pathology classes (e.g., Pneumonia vs. Cardiomegaly) to identify if fidelity varies by disease complexity.",
+              "validation_protocol": "5-fold cross-validation on the CheXpert test split. Significance of differences in AUC scores between baselines and proposed methods tested using paired t-tests (p < 0.05)."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "PyTorch code for ResNet-50 training with fixed random seeds.",
+              "Implementation of SHAP DeepExplainer and LIME for image data.",
+              "Scripts for computing Insertion/Deletion AUC metrics.",
+              "Pre-processing pipeline for CheXpert images (resizing, normalization).",
+              "Detailed log of hyperparameters for model training and explanation generation."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "compute_resources_required": "Single NVIDIA A100 GPU for model training and explanation computation.",
+              "estimated_runtime": "24-48 hours for full cross-validation and metric calculation.",
+              "data_privacy_compliance": "Uses de-identified public dataset (CheXpert); no patient PII involved."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly pivots from an unverified socio-legal claim to a strictly technical deficit in explainability fidelity, fully addressing the 'Causal Gap' and 'Overclaiming Mechanism' critical issues from the previous review.",
+              "The experiment design now uses valid, reproducible technical metrics (Insertion/Deletion AUC, Stability) on a standard dataset (CheXpert), resolving the 'Invalid Operationalization' and 'Dataset Mismatch' issues. The removal of the 'Synthetic Regulatory Audit Log' eliminates the fictitious target variable.",
+              "Evidence grounding is now robust: the hypothesis is directly supported by EV-Q121-0debf3fe850eb4735a3cb609 regarding 'concerns about explainability', without extrapolating to regulatory mandates.",
+              "Results are correctly marked as pending, and the reproducibility checklist is comprehensive. The plan is now scientifically sound within the bounds of the allowed evidence."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:044d971333f4",
+              "category": "critical_issue",
+              "description": "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:a66b89cb0731",
+              "category": "critical_issue",
+              "description": "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:ec284aa9cd16",
+              "category": "critical_issue",
+              "description": "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:c8a5ef02e6d9",
+              "category": "critical_issue",
+              "description": "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:ba467924831a",
+              "category": "required_revision",
+              "description": "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:29fe337fe040",
+              "category": "required_revision",
+              "description": "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:8667a932a6a5",
+              "category": "required_revision",
+              "description": "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:7bc410c6d74e",
+              "category": "required_revision",
+              "description": "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "e469ccfd060407b5e4a83b3bda193c63a4396a0b2b8627557352616619a76fa4",
+            "experiment_designer": "1fbd345ca1398a967e41106ae568b8a12b51342839ed0d73827b849e6a217997",
+            "scientific_reviewer": "5768ab3d8a4dd2a7397d96172720a349fff303dd960786d5e7823896f1dc3d5e"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-091604-30cb4066:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-091604-30cb4066:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-091604-30cb4066:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-091604-30cb4066:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:044d971333f4",
+          "category": "critical_issue",
+          "description": "Causal Gap: No evidence supports the claim that 'lack of explainability' CAUSES 'mandatory human oversight'. EV-Q121-0debf3fe850eb4735a3cb609 only confirms the existence of concerns, not their regulatory consequences.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:a66b89cb0731",
+          "category": "critical_issue",
+          "description": "Invalid Operationalization: The experiment uses 'explanation fidelity' as a proxy for 'regulatory compliance'. Without a cited standard or evidence linking these two constructs, the synthetic target dataset is fictitious and cannot validate the hypothesis.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:ec284aa9cd16",
+          "category": "critical_issue",
+          "description": "Overclaiming Mechanism: The mechanism asserts a 'permanent structural component' based on a single abstract mentioning 'concerns'. This ignores the possibility of alternative accountability frameworks (e.g., insurance, strict liability) not mentioned in the evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:c8a5ef02e6d9",
+          "category": "critical_issue",
+          "description": "Dataset Mismatch: CheXpert/MIMIC-III are clinical datasets, not regulatory or legal datasets. They cannot answer questions about 'accountability standards' or 'replacement barriers' without external grounding not present in the allowed evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:ba467924831a",
+          "category": "required_revision",
+          "description": "Revise the hypothesis to focus strictly on the technical limitation confirmed by EV-Q121-0debf3fe850eb4735a3cb609 (e.g., 'Current medical AI lacks sufficient explainability to meet defined technical safety benchmarks'), removing the unverified socio-legal claim about 'permanent human oversight' unless new legal/regulatory evidence is added.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:29fe337fe040",
+          "category": "required_revision",
+          "description": "Replace the 'Synthetic Regulatory Audit Log' with a technically grounded target metric derived directly from the evidence, such as 'clinician trust scores' or 'error detection rates', OR explicitly frame the regulatory threshold as a 'knowledge_gap' to be investigated via policy review rather than simulated.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:8667a932a6a5",
+          "category": "required_revision",
+          "description": "Add a specific 'knowledge_gap' entry acknowledging that the link between 'explainability metrics' and 'liability/replacement' is currently unsupported by the allowed evidence set.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:7bc410c6d74e",
+          "category": "required_revision",
+          "description": "If retaining the regulatory angle, the experiment must include a qualitative analysis of actual regulatory guidelines (as a data source) rather than simulating them synthetically. Since no such evidence ID exists, the hypothesis must be narrowed to technical feasibility only.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "checkpoint_hash": "c1f42c554113163cf0a1ce2ac9a6949276045ac10962110227d364adf5a74554"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-091604-30cb4066:wave-b-two-round",
+      "run_id": "20260822-091604-30cb4066",
+      "v1_version_id": "20260822-091604-30cb4066:v1",
+      "v2_version_id": "20260822-091604-30cb4066:v2",
+      "input_fingerprints": {
+        "v1": "df0dbe7a326c59e766ac9b1818a093307e5f63cb8150d2e9f29c3af252ae29ea",
+        "v2": "1fbd345ca1398a967e41106ae568b8a12b51342839ed0d73827b849e6a217997"
+      },
+      "responded_issue_count": 0,
+      "issue_ids": [],
+      "change_ids": [],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.3,
+          "after": 0.95,
+          "delta": 0.6499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "reference_reliability_score": {
+          "before": 0.9,
+          "after": 1.0,
+          "delta": 0.09999999999999998
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Current medical AI systems exhibit a persistent technical deficit in post-hoc explainability fidelity, such that state-of-the-art explanation methods fail to accurately reflect the internal decision logic of high-performance diagnostic models on standard benchmarks.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Current Computational Creativity AI is functionally bounded to artifact generation and lacks demonstrated capability in holistic uncertainty handling, limiting its potential to replace humans in equivocal problem-solving roles.",
+          "overall_score": 0.79,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Theoretical AGI frameworks (Logicist, Emergentist, Universalist) currently lack sufficient empirical grounding to validate claims of human replacement in uncertainty-rich environments.",
+          "overall_score": 0.63,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "8e2185a38747",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:18:51.608272+00:00",
+    "ended_at": "2026-08-22T09:19:30.360991+00:00",
+    "duration_ms": 38752,
+    "input_summary": "{\"question_item\": {\"id\": \"Q121\", \"domain\": \"Artificial Intelligence\", \"question\": \"Will artificial intelligence replace humans?\", \"source_page\": 41, \"booklet_excerpt\": \"While AI can perform tasks at speeds beyond human ability, its power is limited by its inability to use intuitive, holistic approaches to deal with uncertainty and equivocality problems.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Artificial Intelligence\", \"core_question\": \"Does the limitation of AI in handling uncert",
+    "output_summary": "{\"input_question\": \"Will artificial intelligence replace humans?\", \"domain\": \"Artificial Intelligence\", \"problem_statement\": \"The question of whether AI will replace humans hinges on the technical capabilities of current AI systems, particularly regarding explainability and handling uncertainty. While AI excels in speed and specific tasks like artifact generation, concerns persist about its ability to provide transparent, faithful explanations for decisions in critical domains like medicine, and its limitation in holistic, intuitive reasoning.\", \"rationale\": \"Evidence indicates that AI applica",
+    "evidence_ids": [
+      "EV-Q121-0debf3fe850eb4735a3cb609",
+      "EV-Q121-718e2bd9e8b12f3b65f90ffc",
+      "EV-Q121-56d39b0cc5e8454b7c6b1218"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ca51119c6e1d",
+    "mock": false
+  },
+  {
+    "event_id": "5423ca848f84",
+    "run_id": "20260822-091604-30cb4066",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:19:30.362996+00:00",
+    "ended_at": "2026-08-22T09:19:32.917523+00:00",
+    "duration_ms": 2554,
+    "input_summary": "{\"question_item\": {\"id\": \"Q121\", \"domain\": \"Artificial Intelligence\", \"question\": \"Will artificial intelligence replace humans?\", \"source_page\": 41, \"booklet_excerpt\": \"While AI can perform tasks at speeds beyond human ability, its power is limited by its inability to use intuitive, holistic approaches to deal with uncertainty and equivocality problems.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required input fields: ResearchPlan, EvidenceCards, AgentTrace, execution_metadata.\", \"Cannot perform validation without a target ResearchPlan to validate against.\", \"Input provided is only the question item (Q121), which lacks the necessary context for schema validation.\"], \"warnings\": [\"The booklet excerpt mentions AI's limitations in handling uncertainty, but this cannot be used as evidence without an associated EvidenceCard and evidence_id.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6ba0b779d11a",
+    "mock": false
+  }
+]

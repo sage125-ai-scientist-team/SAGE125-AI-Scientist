@@ -1,0 +1,2156 @@
+[
+  {
+    "event_id": "8d78e2c86abf",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:11:04.206048+00:00",
+    "ended_at": "2026-08-22T08:11:04.207048+00:00",
+    "duration_ms": 1,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "05a0ca2316b8",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:11:04.207048+00:00",
+    "ended_at": "2026-08-22T08:11:08.066055+00:00",
+    "duration_ms": 3859,
+    "input_summary": "{\"question_item\": {\"id\": \"Q017\", \"domain\": \"Medicine & Health\", \"question\": \"How is immune homeostasis maintained and regulated?\", \"source_page\": 11, \"booklet_excerpt\": \"Immune homeostasis is a state of internal equilibrium. Without homeostasis, the immune system cannot function correctly, leading to disease and infection. Knowing how this balance is maintained can provide a fuller picture of how the body works and may help us in calibrating medical interventions. For instance, instead of nonselectively boosting or suppressing the whole immune system as we currently do, in the future we may be",
+    "output_summary": "{\"domain\": \"Medicine & Health\", \"core_question\": \"What are the specific molecular, cellular, and systemic mechanisms that maintain immune homeostasis, and how can these mechanisms be leveraged to rebalance dysregulated immune systems?\", \"keywords\": [\"immune homeostasis\", \"internal equilibrium\", \"immune regulation\", \"dysregulated immune system\", \"medical interventions\", \"omics data\"], \"entities\": [\"immune system\", \"immune cell populations\", \"genomic data\", \"proteomic data\", \"animal models\", \"humans\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The scope is limited to the bi",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "346520b313e9",
+    "mock": false
+  },
+  {
+    "event_id": "a5969d08b391",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:11:08.066055+00:00",
+    "ended_at": "2026-08-22T08:11:30.132216+00:00",
+    "duration_ms": 22066,
+    "input_summary": "{\"question_item\": {\"id\": \"Q017\", \"domain\": \"Medicine & Health\", \"question\": \"How is immune homeostasis maintained and regulated?\", \"source_page\": 11, \"booklet_excerpt\": \"Immune homeostasis is a state of internal equilibrium. Without homeostasis, the immune system cannot function correctly, leading to disease and infection. Knowing how this balance is maintained can provide a fuller picture of how the body works and may help us in calibrating medical interventions. For instance, instead of nonselectively boosting or suppressing the whole immune system as we currently do, in the future we may be",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify foundational definitions and general mechanisms of immune homeostasis mentioned in local resources to establish a baseline understanding.\", \"query\": \"immune homeostasis definition internal equilibrium regulatory mechanisms\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"General descriptions of immune balance, key cell types involved, and the concept of equilibrium from the provided booklet or related local documents.\", \"priority\": \"high\"}, {\"purpose\": \"Extract specific details on how genomic and proteomic data are utilized to study immune regulation",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7d9f68475cb1",
+    "mock": false
+  },
+  {
+    "event_id": "aaf20991728d",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:11:30.144678+00:00",
+    "ended_at": "2026-08-22T08:11:48.410767+00:00",
+    "duration_ms": 18266,
+    "input_summary": "{\"question_item\": {\"id\": \"Q017\", \"domain\": \"Medicine & Health\", \"question\": \"How is immune homeostasis maintained and regulated?\", \"source_page\": 11, \"booklet_excerpt\": \"Immune homeostasis is a state of internal equilibrium. Without homeostasis, the immune system cannot function correctly, leading to disease and infection. Knowing how this balance is maintained can provide a fuller picture of how the body works and may help us in calibrating medical interventions. For instance, instead of nonselectively boosting or suppressing the whole immune system as we currently do, in the future we may be",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"The immune system is modeled as a homeostatic, open system that regulates its internal environment to maintain dynamic equilibrium despite environmental changes.\", \"evidence_ids\": [\"EV-Q017-cda47db20e5fccdf54335c31\"], \"confidence\": \"high\", \"fact_type\": \"mechanism\", \"caveat\": \"This description originates from computational modeling literature (arXiv) rather than direct clinical experimental validation in this context.\"}, {\"fact\": \"Dendritic cells (DCs) of the innate immune system are central to generating peripheral tolerance by continually uptaking apoptotic an",
+    "evidence_ids": [
+      "EV-Q017-cda47db20e5fccdf54335c31",
+      "EV-Q017-e8902c2ed1e91a4556a94716",
+      "EV-Q017-7dbf72dc5a92b5f0330756fd"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2547162feca8",
+    "mock": false
+  },
+  {
+    "event_id": "89e952660c7c",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:11:48.410767+00:00",
+    "ended_at": "2026-08-22T08:12:14.593701+00:00",
+    "duration_ms": 26182,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q017\", \"domain\": \"Medicine & Health\", \"question\": \"How is immune homeostasis maintained and regulated?\", \"source_page\": 11, \"booklet_excerpt\": \"Immune homeostasis is a state of internal equilibrium. Without homeostasis, the immune system cannot function correctly, leading to disease and infection. Knowing how this balance is maintained can provide a fuller picture of how the body works and may help us in calibrating medical interventions. For instance, instead of nonselectively boosting or suppressing the whole immune system as we currently do",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Immune homeostasis is maintained as a dynamic equilibrium through continuous dendritic cell (DC) uptake of apoptotic material in steady-state conditions, acting as a primary negative feedback regulator.\", \"mechanism\": \"Based on theoretical models viewing the immune system as an open homeostatic system (EV-Q017-cda47db20e5fccdf54335c31), DCs function as the central sensor-effector node. Under non-pathogenic conditions, continuous uptake of apoptotic debris by DCs (EV-Q017-e8902c2ed1e91a4556a94716) generates tolerogenic signals that actively suppress effector resp",
+    "evidence_ids": [
+      "EV-Q017-cda47db20e5fccdf54335c31",
+      "EV-Q017-e8902c2ed1e91a4556a94716",
+      "EV-Q017-7dbf72dc5a92b5f0330756fd"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b9d344cd7cb8",
+    "mock": false
+  },
+  {
+    "event_id": "6b952599f81c",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:12:14.594589+00:00",
+    "ended_at": "2026-08-22T08:12:37.460209+00:00",
+    "duration_ms": 22865,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q017\", \"domain\": \"Medicine & Health\", \"question\": \"How is immune homeostasis maintained and regulated?\", \"source_page\": 11, \"booklet_excerpt\": \"Immune homeostasis is a state of internal equilibrium. Without homeostasis, the immune system cannot function correctly, leading to disease and infection. Knowing how this balance is maintained can provide a fuller picture of how the body works and may help us in calibrating medical interventions. For instance, instead of nonselectively boosting or suppressing the whole immune system as we currently do",
+    "output_summary": "{\"technical_details\": \"This experimental design tests the hypothesis that dendritic cell (DC) uptake of apoptotic material is a primary negative feedback regulator maintaining immune homeostasis. The study utilizes a murine model with conditional knockout of key phagocytic receptors (e.g., MerTK or Axl) specifically in CD11c+ DCs to block apoptotic cargo uptake without inducing general inflammation. We will employ flow cytometry and confocal microscopy to quantify apoptotic cargo uptake rates in steady-state vs. perturbed conditions. Longitudinal profiling of serum cytokines (IL-6, TNF-alpha, ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5248adecf84e",
+    "mock": false
+  },
+  {
+    "event_id": "b4a8b50dc0fe",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:12:37.460209+00:00",
+    "ended_at": "2026-08-22T08:12:50.519845+00:00",
+    "duration_ms": 13059,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q017\", \"domain\": \"Medicine & Health\", \"question\": \"How is immune homeostasis maintained and regulated?\", \"source_page\": 11, \"booklet_excerpt\": \"Immune homeostasis is a state of internal equilibrium. Without homeostasis, the immune system cannot function correctly, leading to disease and infection. Knowing how this balance is maintained can provide a fuller picture of how the body works and may help us in calibrating medical interventions. For instance, instead of nonselectively boosting or suppressing the whole immune system as we currently do",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis asserts DC uptake is a 'primary negative feedback regulator' based solely on theoretical models (EV-Q017-cda47db20e5fccdf54335c31) and general statements about DC tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The provided evidence does not contain experimental data validating this specific causal regulatory role in homeostasis; it only supports the existence of the phenomenon as a model proposal.\", \"Evidence grounding is weak for a mechanistic hypothesis. Both supporting evidence cards are arXiv preprints focusing on computational/artific",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "005997414a80",
+    "mock": false
+  },
+  {
+    "event_id": "eb688484bbd3",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:12:50.522853+00:00",
+    "ended_at": "2026-08-22T08:13:23.416642+00:00",
+    "duration_ms": 32893,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis asserts DC uptake is a 'primary negative feedback regulator' based solely on theoretical models (EV-Q017-cda47db20e5fccdf54335c31) and general statements about DC tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The provided evidence does not contain experimental data validating this specific causal regulatory role in homeostasis; it only supports the existence of the phenomenon as a model proposal.\", \"Evidence grounding is weak for a mechanistic hypothesis. Both supporting evidence cards are arXiv ",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Theoretical models propose that steady-state dendritic cell (DC) uptake of apoptotic material functions as a putative homeostatic mechanism contributing to dynamic equilibrium, though specific molecular mediators remain unverified in the provided evidence.\", \"mechanism\": \"This hypothesis synthesizes two theoretical propositions from the allowed evidence: (1) the immune system is modeled as an open system maintaining dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31), and (2) DCs are proposed to continually uptake apoptotic material under steady-state conditi",
+    "evidence_ids": [
+      "EV-Q017-cda47db20e5fccdf54335c31",
+      "EV-Q017-e8902c2ed1e91a4556a94716",
+      "EV-Q017-7dbf72dc5a92b5f0330756fd"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "f0fad5dbe41d",
+    "mock": false
+  },
+  {
+    "event_id": "1dd5e537ae4f",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:13:23.417650+00:00",
+    "ended_at": "2026-08-22T08:13:50.371815+00:00",
+    "duration_ms": 26954,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis asserts DC uptake is a 'primary negative feedback regulator' based solely on theoretical models (EV-Q017-cda47db20e5fccdf54335c31) and general statements about DC tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The provided evidence does not contain experimental data validating this specific causal regulatory role in homeostasis; it only supports the existence of the phenomenon as a model proposal.\", \"Evidence grounding is weak for a mechanistic hypothesis. Both supporting evidence cards are arXiv ",
+    "output_summary": "{\"technical_details\": \"This research plan addresses the reviewer's critique by shifting from a direct wet-lab validation of specific molecular mechanisms (which lack evidence support) to a two-phase approach: (1) Computational Validation and (2) Preliminary Literature Synthesis. Phase 1 utilizes the Artificial Immune System (AIS) framework described in EV-Q017-7dbf72dc5a92b5f0330756fd to test if 'DC-like uptake rules' are necessary for maintaining the 'dynamic equilibrium' defined in EV-Q017-cda47db20e5fccdf54335c31. Phase 2 involves a systematic review to identify if primary biological litera",
+    "evidence_ids": [
+      "EV-Q017-7dbf72dc5a92b5f0330756fd",
+      "EV-Q017-cda47db20e5fccdf54335c31"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "85db8a4663c8",
+    "mock": false
+  },
+  {
+    "event_id": "aed33dbab050",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:13:50.372815+00:00",
+    "ended_at": "2026-08-22T08:13:56.325356+00:00",
+    "duration_ms": 5952,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis asserts DC uptake is a 'primary negative feedback regulator' based solely on theoretical models (EV-Q017-cda47db20e5fccdf54335c31) and general statements about DC tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The provided evidence does not contain experimental data validating this specific causal regulatory role in homeostasis; it only supports the existence of the phenomenon as a model proposal.\", \"Evidence grounding is weak for a mechanistic hypothesis. Both supporting evidence cards are arXiv ",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly downgrades the causal claim to 'putative homeostatic mechanism proposed in theoretical models', directly addressing the previous critical issue of causal overreach.\", \"Experiment design has been successfully pivoted from unsupported wet-lab validation (MerTK/Axl knockouts) to computational simulation and literature synthesis, aligning strictly with the allowed evidence cards (EV-Q017-7dbf72dc5a92b5f0330756fd, EV-Q017-cda47db20e5fccdf54335c31).\", \"Molecular targets (MerTK, Axl) are now explicitly categorized as knowledge g",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7cc9fa73e4ce",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:f92f0225373eb9d6",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Immune homeostasis is maintained as a dynamic equilibrium through continuous dendritic cell (DC) uptake of apoptotic material in steady-state conditions, acting as a primary negative feedback regulator.",
+              "mechanism": "Based on theoretical models viewing the immune system as an open homeostatic system (EV-Q017-cda47db20e5fccdf54335c31), DCs function as the central sensor-effector node. Under non-pathogenic conditions, continuous uptake of apoptotic debris by DCs (EV-Q017-e8902c2ed1e91a4556a94716) generates tolerogenic signals that actively suppress effector responses, thereby maintaining the internal environment within physiological bounds despite external fluctuations.",
+              "falsifiable_prediction": "If DC-mediated uptake of apoptotic material is the critical homeostatic regulator, then experimentally blocking this specific uptake pathway under steady-state conditions should result in measurable loss of dynamic equilibrium (e.g., spontaneous auto-reactivity or cytokine dysregulation) even in the absence of exogenous pathogens.",
+              "required_observations": [
+                "Quantitative measurement of DC apoptotic cargo uptake rates in steady-state vs. perturbed states",
+                "Longitudinal profiling of immune activation markers following specific inhibition of DC uptake mechanisms",
+                "Validation that observed dysregulation is reversible upon restoration of uptake function"
+              ],
+              "risk_of_being_wrong": "The hypothesis relies heavily on computational and theoretical models (EV-Q017-cda47db20e5fccdf54335c31, EV-Q017-e8902c2ed1e91a4556a94716) rather than direct clinical validation; other redundant homeostatic mechanisms (e.g., Treg-mediated suppression not mentioned in evidence) may compensate for DC uptake blockade, leading to false negatives.",
+              "supporting_evidence_ids": [
+                "EV-Q017-cda47db20e5fccdf54335c31",
+                "EV-Q017-e8902c2ed1e91a4556a94716"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.73
+            },
+            {
+              "hypothesis": "Innate immunity regulatory logic can be formalized into computational frameworks that accurately predict homeostatic set-points, implying that biological homeostasis follows definable algorithmic rules analogous to artificial immune systems.",
+              "mechanism": "Drawing from frameworks incorporating innate immunity concepts into artificial systems (EV-Q017-7dbf72dc5a92b5f0330756fd) and modeling immunity as a regulated open system (EV-Q017-cda47db20e5fccdf54335c31), this hypothesis posits that homeostasis is not merely an emergent property but a computable state defined by specific interaction rules between innate sensors and environmental inputs.",
+              "falsifiable_prediction": "A computational model parameterized solely with innate immune rules derived from EV-Q017-7dbf72dc5a92b5f0330756fd should fail to maintain simulated homeostasis if key biological variables (identified via omics gap analysis) are omitted, demonstrating that current theoretical frameworks are insufficient without empirical calibration.",
+              "required_observations": [
+                "Comparison of simulated homeostatic trajectories against longitudinal human omics data",
+                "Identification of specific model parameters that diverge from biological reality",
+                "Demonstration of predictive failure when innate-only rules are applied to adaptive-dominant scenarios"
+              ],
+              "risk_of_being_wrong": "Artificial immune system frameworks (EV-Q017-7dbf72dc5a92b5f0330756fd) may be metaphorical rather than mechanistically accurate; biological complexity may exceed current computational abstractions, making the hypothesis unfalsifiable due to perpetual model refinement.",
+              "supporting_evidence_ids": [
+                "EV-Q017-7dbf72dc5a92b5f0330756fd",
+                "EV-Q017-cda47db20e5fccdf54335c31"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.65,
+              "overall_score": 0.68
+            },
+            {
+              "hypothesis": "Immune homeostasis exhibits quantifiable 'dynamic equilibrium' signatures in high-dimensional omics space that distinguish steady-state from pre-dysregulated states before clinical symptoms manifest.",
+              "mechanism": "Integrating the concept of the immune system as an open system maintaining dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31) with the need for omics data to define regulatory networks (knowledge gap), this hypothesis proposes that homeostasis corresponds to a specific attractor state in proteomic/genomic feature space, deviations from which predict loss of tolerance.",
+              "falsifiable_prediction": "If dynamic equilibrium has a distinct omics signature, then unsupervised clustering of steady-state human samples should consistently identify a stable core cluster separate from dysregulated samples; failure to identify such separation would refute the existence of a universal homeostatic attractor.",
+              "required_observations": [
+                "High-dimensional genomic/proteomic datasets from verified healthy steady-state humans",
+                "Comparable datasets from early-stage dysregulated patients",
+                "Statistical validation of cluster stability across independent cohorts"
+              ],
+              "risk_of_being_wrong": "Current evidence lacks specific validated omics datasets (knowledge gap); 'dynamic equilibrium' may be context-dependent rather than universal, leading to inconsistent signatures across populations or tissues.",
+              "supporting_evidence_ids": [
+                "EV-Q017-cda47db20e5fccdf54335c31"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.75,
+              "feasibility_score": 0.5,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.61
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly bridges the two most relevant biological evidence cards (EV-Q017-cda47db20e5fccdf54335c31 and EV-Q017-e8902c2ed1e91a4556a94716) into a concrete, mechanistic, and falsifiable prediction. Unlike Hypothesis 1 (which risks being purely computational/metaphorical) or Hypothesis 2 (which suffers from lack of identified datasets), Hypothesis 0 targets a specific cellular mechanism (DC uptake) explicitly cited as central to peripheral tolerance in the provided evidence, offering the highest feasibility for experimental validation while addressing the core question of homeostatic maintenance.",
+          "rejected_directions": [
+            "Purely computational modeling without biological grounding (risk of irrelevance to human physiology)",
+            "Omics signature discovery without prior mechanistic anchoring (high risk of spurious correlations given current data gaps)",
+            "Non-specific hypotheses about 'future research needs' or general immune boosting/suppression (violates prohibition on empty/non-falsifiable claims)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experimental design tests the hypothesis that dendritic cell (DC) uptake of apoptotic material is a primary negative feedback regulator maintaining immune homeostasis. The study utilizes a murine model with conditional knockout of key phagocytic receptors (e.g., MerTK or Axl) specifically in CD11c+ DCs to block apoptotic cargo uptake without inducing general inflammation. We will employ flow cytometry and confocal microscopy to quantify apoptotic cargo uptake rates in steady-state vs. perturbed conditions. Longitudinal profiling of serum cytokines (IL-6, TNF-alpha, IL-10) and autoantibody titers (ANA) will assess loss of dynamic equilibrium. Reversibility will be tested by administering apoptotic cell infusions to restore uptake capacity. The protocol adheres to strict sterile techniques and blinded analysis to minimize bias.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Murine Bone Marrow-Derived Dendritic Cells (BMDCs)",
+                "description": "Primary cells isolated from C57BL/6 mice for in vitro uptake assays.",
+                "access_type": "experimental_generation",
+                "is_public_candidate": false,
+                "is_already_downloaded": false
+              },
+              {
+                "name": "Conditional Knockout Mouse Strains (MerTK-fl/fl; CD11c-Cre)",
+                "description": "Genetically modified mice allowing specific blockade of apoptotic uptake in DCs.",
+                "access_type": "experimental_generation",
+                "is_public_candidate": false,
+                "is_already_downloaded": false
+              }
+            ],
+            "target": [
+              {
+                "name": "Longitudinal Immune Profile Dataset",
+                "description": "Time-series data of cytokine levels, autoantibody titers, and DC phenotypic markers from experimental and control groups.",
+                "format": "CSV/JSON",
+                "variables": [
+                  "time_point",
+                  "group_id",
+                  "il6_concentration",
+                  "tnf_alpha_concentration",
+                  "ana_titer",
+                  "dc_apoptotic_cargo_load"
+                ]
+              }
+            ]
+          },
+          "methods": "1. **Model Generation**: Generate MerTK-floxed mice crossed with CD11c-Cre transgenics to achieve DC-specific deletion of the apoptotic sensor MerTK. Controls include littermate MerTK-fl/fl mice without Cre. 2. **In Vitro Uptake Assay**: Isolate BMDCs and incubate with pHrodo-labeled apoptotic thymocytes. Quantify uptake via flow cytometry to validate blockade efficiency. 3. **In Vivo Homeostasis Challenge**: Monitor cohorts (n=10 per group) over 12 weeks under steady-state conditions. Collect blood samples bi-weekly. 4. **Perturbation & Reversal**: At week 6, administer a controlled dose of apoptotic cells intravenously to a subset of KO mice to test if restoring cargo availability rescues homeostatic markers. 5. **Omics Profiling**: Perform RNA-seq on splenic DCs at baseline and week 12 to identify downstream tolerogenic signaling pathways (e.g., IDO1, TGF-beta expression).",
+          "experiments": {
+            "baselines": [
+              "Wild-type C57BL/6 mice (normal DC uptake function)",
+              "MerTK-fl/fl mice without Cre (genetic control for floxed allele)",
+              "CD11c-Cre mice without floxed MerTK (control for Cre toxicity)"
+            ],
+            "metrics": [
+              "Mean Fluorescence Intensity (MFI) of pHrodo-labeled apoptotic cargo in DCs",
+              "Serum concentration of pro-inflammatory cytokines (IL-6, TNF-alpha) via ELISA",
+              "Anti-nuclear antibody (ANA) titer as a marker of auto-reactivity",
+              "Frequency of FoxP3+ regulatory T cells in spleen and lymph nodes"
+            ],
+            "ablation": "Compare MerTK-KO DCs vs. Axl-KO DCs to determine if redundancy exists between phosphatidylserine receptors. If Axl-KO shows no phenotype while MerTK-KO does, it suggests MerTK is the dominant sensor for this homeostatic loop.",
+            "validation_protocol": "Blinded analysis of flow cytometry data by two independent researchers. Statistical significance determined by two-way ANOVA with Tukey’s post-hoc test for multiple comparisons. Power analysis conducted to ensure n=10 provides 80% power to detect a 20% change in cytokine levels."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify genotype of all mouse strains via PCR before experiment start",
+            "Standardize apoptotic cell preparation protocol (UV irradiation dose and duration)",
+            "Calibrate flow cytometer daily using standard beads",
+            "Store serum samples at -80°C immediately after collection to prevent degradation",
+            "Use identical lot numbers for ELISA kits across all time points",
+            "Deposit raw RNA-seq data and flow cytometry FCS files in public repository upon completion"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_duration_weeks": 24,
+            "required_resources": [
+              "Animal facility housing for 40 mice",
+              "Flow cytometer with 5-laser configuration",
+              "ELISA plate reader",
+              "Next-generation sequencing access"
+            ],
+            "ethical_approval_status": "pending_iacuc_review",
+            "data_availability_plan": "Raw data will be deposited in GEO and FlowRepository upon publication"
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-081104-dfcd19d2",
+        "version_number": 1,
+        "version_id": "20260822-081104-dfcd19d2:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Immune homeostasis is maintained as a dynamic equilibrium through continuous dendritic cell (DC) uptake of apoptotic material in steady-state conditions, acting as a primary negative feedback regulator.",
+              "mechanism": "Based on theoretical models viewing the immune system as an open homeostatic system (EV-Q017-cda47db20e5fccdf54335c31), DCs function as the central sensor-effector node. Under non-pathogenic conditions, continuous uptake of apoptotic debris by DCs (EV-Q017-e8902c2ed1e91a4556a94716) generates tolerogenic signals that actively suppress effector responses, thereby maintaining the internal environment within physiological bounds despite external fluctuations.",
+              "falsifiable_prediction": "If DC-mediated uptake of apoptotic material is the critical homeostatic regulator, then experimentally blocking this specific uptake pathway under steady-state conditions should result in measurable loss of dynamic equilibrium (e.g., spontaneous auto-reactivity or cytokine dysregulation) even in the absence of exogenous pathogens.",
+              "required_observations": [
+                "Quantitative measurement of DC apoptotic cargo uptake rates in steady-state vs. perturbed states",
+                "Longitudinal profiling of immune activation markers following specific inhibition of DC uptake mechanisms",
+                "Validation that observed dysregulation is reversible upon restoration of uptake function"
+              ],
+              "risk_of_being_wrong": "The hypothesis relies heavily on computational and theoretical models (EV-Q017-cda47db20e5fccdf54335c31, EV-Q017-e8902c2ed1e91a4556a94716) rather than direct clinical validation; other redundant homeostatic mechanisms (e.g., Treg-mediated suppression not mentioned in evidence) may compensate for DC uptake blockade, leading to false negatives.",
+              "supporting_evidence_ids": [
+                "EV-Q017-cda47db20e5fccdf54335c31",
+                "EV-Q017-e8902c2ed1e91a4556a94716"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.73
+            },
+            {
+              "hypothesis": "Innate immunity regulatory logic can be formalized into computational frameworks that accurately predict homeostatic set-points, implying that biological homeostasis follows definable algorithmic rules analogous to artificial immune systems.",
+              "mechanism": "Drawing from frameworks incorporating innate immunity concepts into artificial systems (EV-Q017-7dbf72dc5a92b5f0330756fd) and modeling immunity as a regulated open system (EV-Q017-cda47db20e5fccdf54335c31), this hypothesis posits that homeostasis is not merely an emergent property but a computable state defined by specific interaction rules between innate sensors and environmental inputs.",
+              "falsifiable_prediction": "A computational model parameterized solely with innate immune rules derived from EV-Q017-7dbf72dc5a92b5f0330756fd should fail to maintain simulated homeostasis if key biological variables (identified via omics gap analysis) are omitted, demonstrating that current theoretical frameworks are insufficient without empirical calibration.",
+              "required_observations": [
+                "Comparison of simulated homeostatic trajectories against longitudinal human omics data",
+                "Identification of specific model parameters that diverge from biological reality",
+                "Demonstration of predictive failure when innate-only rules are applied to adaptive-dominant scenarios"
+              ],
+              "risk_of_being_wrong": "Artificial immune system frameworks (EV-Q017-7dbf72dc5a92b5f0330756fd) may be metaphorical rather than mechanistically accurate; biological complexity may exceed current computational abstractions, making the hypothesis unfalsifiable due to perpetual model refinement.",
+              "supporting_evidence_ids": [
+                "EV-Q017-7dbf72dc5a92b5f0330756fd",
+                "EV-Q017-cda47db20e5fccdf54335c31"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.65,
+              "overall_score": 0.68
+            },
+            {
+              "hypothesis": "Immune homeostasis exhibits quantifiable 'dynamic equilibrium' signatures in high-dimensional omics space that distinguish steady-state from pre-dysregulated states before clinical symptoms manifest.",
+              "mechanism": "Integrating the concept of the immune system as an open system maintaining dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31) with the need for omics data to define regulatory networks (knowledge gap), this hypothesis proposes that homeostasis corresponds to a specific attractor state in proteomic/genomic feature space, deviations from which predict loss of tolerance.",
+              "falsifiable_prediction": "If dynamic equilibrium has a distinct omics signature, then unsupervised clustering of steady-state human samples should consistently identify a stable core cluster separate from dysregulated samples; failure to identify such separation would refute the existence of a universal homeostatic attractor.",
+              "required_observations": [
+                "High-dimensional genomic/proteomic datasets from verified healthy steady-state humans",
+                "Comparable datasets from early-stage dysregulated patients",
+                "Statistical validation of cluster stability across independent cohorts"
+              ],
+              "risk_of_being_wrong": "Current evidence lacks specific validated omics datasets (knowledge gap); 'dynamic equilibrium' may be context-dependent rather than universal, leading to inconsistent signatures across populations or tissues.",
+              "supporting_evidence_ids": [
+                "EV-Q017-cda47db20e5fccdf54335c31"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.75,
+              "feasibility_score": 0.5,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.61
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly bridges the two most relevant biological evidence cards (EV-Q017-cda47db20e5fccdf54335c31 and EV-Q017-e8902c2ed1e91a4556a94716) into a concrete, mechanistic, and falsifiable prediction. Unlike Hypothesis 1 (which risks being purely computational/metaphorical) or Hypothesis 2 (which suffers from lack of identified datasets), Hypothesis 0 targets a specific cellular mechanism (DC uptake) explicitly cited as central to peripheral tolerance in the provided evidence, offering the highest feasibility for experimental validation while addressing the core question of homeostatic maintenance.",
+          "rejected_directions": [
+            "Purely computational modeling without biological grounding (risk of irrelevance to human physiology)",
+            "Omics signature discovery without prior mechanistic anchoring (high risk of spurious correlations given current data gaps)",
+            "Non-specific hypotheses about 'future research needs' or general immune boosting/suppression (violates prohibition on empty/non-falsifiable claims)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experimental design tests the hypothesis that dendritic cell (DC) uptake of apoptotic material is a primary negative feedback regulator maintaining immune homeostasis. The study utilizes a murine model with conditional knockout of key phagocytic receptors (e.g., MerTK or Axl) specifically in CD11c+ DCs to block apoptotic cargo uptake without inducing general inflammation. We will employ flow cytometry and confocal microscopy to quantify apoptotic cargo uptake rates in steady-state vs. perturbed conditions. Longitudinal profiling of serum cytokines (IL-6, TNF-alpha, IL-10) and autoantibody titers (ANA) will assess loss of dynamic equilibrium. Reversibility will be tested by administering apoptotic cell infusions to restore uptake capacity. The protocol adheres to strict sterile techniques and blinded analysis to minimize bias.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Murine Bone Marrow-Derived Dendritic Cells (BMDCs)",
+                "description": "Primary cells isolated from C57BL/6 mice for in vitro uptake assays.",
+                "access_type": "experimental_generation",
+                "is_public_candidate": false,
+                "is_already_downloaded": false
+              },
+              {
+                "name": "Conditional Knockout Mouse Strains (MerTK-fl/fl; CD11c-Cre)",
+                "description": "Genetically modified mice allowing specific blockade of apoptotic uptake in DCs.",
+                "access_type": "experimental_generation",
+                "is_public_candidate": false,
+                "is_already_downloaded": false
+              }
+            ],
+            "target": [
+              {
+                "name": "Longitudinal Immune Profile Dataset",
+                "description": "Time-series data of cytokine levels, autoantibody titers, and DC phenotypic markers from experimental and control groups.",
+                "format": "CSV/JSON",
+                "variables": [
+                  "time_point",
+                  "group_id",
+                  "il6_concentration",
+                  "tnf_alpha_concentration",
+                  "ana_titer",
+                  "dc_apoptotic_cargo_load"
+                ]
+              }
+            ]
+          },
+          "methods": "1. **Model Generation**: Generate MerTK-floxed mice crossed with CD11c-Cre transgenics to achieve DC-specific deletion of the apoptotic sensor MerTK. Controls include littermate MerTK-fl/fl mice without Cre. 2. **In Vitro Uptake Assay**: Isolate BMDCs and incubate with pHrodo-labeled apoptotic thymocytes. Quantify uptake via flow cytometry to validate blockade efficiency. 3. **In Vivo Homeostasis Challenge**: Monitor cohorts (n=10 per group) over 12 weeks under steady-state conditions. Collect blood samples bi-weekly. 4. **Perturbation & Reversal**: At week 6, administer a controlled dose of apoptotic cells intravenously to a subset of KO mice to test if restoring cargo availability rescues homeostatic markers. 5. **Omics Profiling**: Perform RNA-seq on splenic DCs at baseline and week 12 to identify downstream tolerogenic signaling pathways (e.g., IDO1, TGF-beta expression).",
+          "experiments": {
+            "baselines": [
+              "Wild-type C57BL/6 mice (normal DC uptake function)",
+              "MerTK-fl/fl mice without Cre (genetic control for floxed allele)",
+              "CD11c-Cre mice without floxed MerTK (control for Cre toxicity)"
+            ],
+            "metrics": [
+              "Mean Fluorescence Intensity (MFI) of pHrodo-labeled apoptotic cargo in DCs",
+              "Serum concentration of pro-inflammatory cytokines (IL-6, TNF-alpha) via ELISA",
+              "Anti-nuclear antibody (ANA) titer as a marker of auto-reactivity",
+              "Frequency of FoxP3+ regulatory T cells in spleen and lymph nodes"
+            ],
+            "ablation": "Compare MerTK-KO DCs vs. Axl-KO DCs to determine if redundancy exists between phosphatidylserine receptors. If Axl-KO shows no phenotype while MerTK-KO does, it suggests MerTK is the dominant sensor for this homeostatic loop.",
+            "validation_protocol": "Blinded analysis of flow cytometry data by two independent researchers. Statistical significance determined by two-way ANOVA with Tukey’s post-hoc test for multiple comparisons. Power analysis conducted to ensure n=10 provides 80% power to detect a 20% change in cytokine levels."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify genotype of all mouse strains via PCR before experiment start",
+            "Standardize apoptotic cell preparation protocol (UV irradiation dose and duration)",
+            "Calibrate flow cytometer daily using standard beads",
+            "Store serum samples at -80°C immediately after collection to prevent degradation",
+            "Use identical lot numbers for ELISA kits across all time points",
+            "Deposit raw RNA-seq data and flow cytometry FCS files in public repository upon completion"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_duration_weeks": 24,
+            "required_resources": [
+              "Animal facility housing for 40 mice",
+              "Flow cytometer with 5-laser configuration",
+              "ELISA plate reader",
+              "Next-generation sequencing access"
+            ],
+            "ethical_approval_status": "pending_iacuc_review",
+            "data_availability_plan": "Raw data will be deposited in GEO and FlowRepository upon publication"
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis asserts DC uptake is a 'primary negative feedback regulator' based solely on theoretical models (EV-Q017-cda47db20e5fccdf54335c31) and general statements about DC tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The provided evidence does not contain experimental data validating this specific causal regulatory role in homeostasis; it only supports the existence of the phenomenon as a model proposal.",
+            "Evidence grounding is weak for a mechanistic hypothesis. Both supporting evidence cards are arXiv preprints focusing on computational/artificial immune systems or theoretical reviews. There is no primary biological literature (e.g., peer-reviewed immunology journals) in the allowed evidence list to substantiate the specific molecular mechanism (MerTK/Axl) proposed in the experiment design.",
+            "The experiment design introduces specific biological entities (MerTK, Axl, CD11c-Cre, pHrodo) that are completely absent from the provided EvidenceCards. While these are standard in the field, strictly adhering to the protocol requires flagging that the experimental rationale cannot be traced back to the allowed evidence IDs.",
+            "The 'Results' field correctly states 'pending', avoiding fabrication. However, the risk_level must be elevated to 'high' because the entire research plan rests on translating computational metaphors into wet-lab biology without intermediate validation evidence in the input context.",
+            "Reproducibility checklist is adequate, but the lack of specific dataset references (source/target are generic descriptions) makes the computational validation component of the hypothesis unfalsifiable within the current evidence scope."
+          ],
+          "critical_issues": [
+            "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+            "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+            "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters."
+          ],
+          "required_revisions": [
+            "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+            "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+            "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+            "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.4,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.5
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:f161df3dce53",
+            "category": "critical_issue",
+            "description": "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:de7ff160e14e",
+            "category": "critical_issue",
+            "description": "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:0475b0a97979",
+            "category": "critical_issue",
+            "description": "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2ba28d8b3d8b",
+            "category": "required_revision",
+            "description": "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a029c1c4b378",
+            "category": "required_revision",
+            "description": "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:baaa5c5d3d57",
+            "category": "required_revision",
+            "description": "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:fc55a5a62e0b",
+            "category": "required_revision",
+            "description": "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "de2d05c93e42f7cc3a4502685d989de7ff9e887431d008e568bb0dddd6b12710",
+          "experiment_designer": "d5d2f8ed2c7d0cbf64d89f6a313a19d322e486c92da777489a8dd9117632ec69",
+          "scientific_reviewer": "351a056944d7a1e788f27dc2b1fd82033a76e1194633344fc857e0e3f0ebb57d"
+        }
+      },
+      "parent_version_id": "20260822-081104-dfcd19d2:v1",
+      "lineage": [
+        "20260822-081104-dfcd19d2:v1",
+        "20260822-081104-dfcd19d2:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis asserts DC uptake is a 'primary negative feedback regulator' based solely on theoretical models (EV-Q017-cda47db20e5fccdf54335c31) and general statements about DC tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The provided evidence does not contain experimental data validating this specific causal regulatory role in homeostasis; it only supports the existence of the phenomenon as a model proposal.",
+          "Evidence grounding is weak for a mechanistic hypothesis. Both supporting evidence cards are arXiv preprints focusing on computational/artificial immune systems or theoretical reviews. There is no primary biological literature (e.g., peer-reviewed immunology journals) in the allowed evidence list to substantiate the specific molecular mechanism (MerTK/Axl) proposed in the experiment design.",
+          "The experiment design introduces specific biological entities (MerTK, Axl, CD11c-Cre, pHrodo) that are completely absent from the provided EvidenceCards. While these are standard in the field, strictly adhering to the protocol requires flagging that the experimental rationale cannot be traced back to the allowed evidence IDs.",
+          "The 'Results' field correctly states 'pending', avoiding fabrication. However, the risk_level must be elevated to 'high' because the entire research plan rests on translating computational metaphors into wet-lab biology without intermediate validation evidence in the input context.",
+          "Reproducibility checklist is adequate, but the lack of specific dataset references (source/target are generic descriptions) makes the computational validation component of the hypothesis unfalsifiable within the current evidence scope."
+        ],
+        "critical_issues": [
+          "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+          "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+          "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters."
+        ],
+        "required_revisions": [
+          "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+          "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+          "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+          "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.4,
+        "falsifiability_score": 0.8,
+        "reproducibility_score": 0.7,
+        "reference_reliability_score": 0.5
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly downgrades the causal claim to 'putative homeostatic mechanism proposed in theoretical models', directly addressing the previous critical issue of causal overreach.",
+          "Experiment design has been successfully pivoted from unsupported wet-lab validation (MerTK/Axl knockouts) to computational simulation and literature synthesis, aligning strictly with the allowed evidence cards (EV-Q017-7dbf72dc5a92b5f0330756fd, EV-Q017-cda47db20e5fccdf54335c31).",
+          "Molecular targets (MerTK, Axl) are now explicitly categorized as knowledge gaps/external assumptions rather than established facts derived from the evidence base.",
+          "Datasets now correctly reference specific evidence-derived parameters and theoretical definitions as source data, resolving the previous issue of generic dataset descriptions.",
+          "Results field remains 'pending' with no fabrication; risk level is appropriately maintained at 'high' due to the reliance on theoretical frameworks rather than empirical biological validation."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.9,
+        "falsifiability_score": 0.85,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:c30edd1b67453338",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+          "issue_id": "critical_issue:f161df3dce53"
+        },
+        {
+          "failure_id": "failure:ed03fa3e58ceedb6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+          "issue_id": "critical_issue:de7ff160e14e"
+        },
+        {
+          "failure_id": "failure:116a378e864156c9",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters.",
+          "issue_id": "critical_issue:0475b0a97979"
+        },
+        {
+          "failure_id": "failure:6049dbf78735e1e9",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+          "issue_id": "required_revision:2ba28d8b3d8b"
+        },
+        {
+          "failure_id": "failure:0babb403981fc861",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+          "issue_id": "required_revision:a029c1c4b378"
+        },
+        {
+          "failure_id": "failure:eeceae908b2e9675",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+          "issue_id": "required_revision:baaa5c5d3d57"
+        },
+        {
+          "failure_id": "failure:125b79fcbf852dd7",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.",
+          "issue_id": "required_revision:fc55a5a62e0b"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:b3eb18e69b051889",
+          "issue_id": "required_revision:a029c1c4b378",
+          "reason": "Reviewer item required_revision:a029c1c4b378 requested 'Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['assumption', 'evidence', 'explicitly', 'external', 'mer', 'molecular', 'target', 'tk'], coverage=0.421.",
+          "before": [
+            "Verify genotype of all mouse strains via PCR before experiment start",
+            "Standardize apoptotic cell preparation protocol (UV irradiation dose and duration)",
+            "Calibrate flow cytometer daily using standard beads",
+            "Store serum samples at -80°C immediately after collection to prevent degradation",
+            "Use identical lot numbers for ELISA kits across all time points",
+            "Deposit raw RNA-seq data and flow cytometry FCS files in public repository upon completion"
+          ],
+          "after": [
+            "Publish source code for the AIS simulation with version control",
+            "Document all parameter values used in the computational model",
+            "Provide the exact search strings and databases used for the preliminary literature validation",
+            "Archive raw simulation output logs for independent re-analysis",
+            "Explicitly label any molecular targets (e.g., MerTK) as 'external assumptions' in all reports until validated by Phase 2"
+          ],
+          "evidence_refs": [
+            "EV-Q017-7dbf72dc5a92b5f0330756fd",
+            "EV-Q017-cda47db20e5fccdf54335c31"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:9996b28b8846629b",
+          "issue_id": "required_revision:baaa5c5d3d57",
+          "reason": "Reviewer item required_revision:baaa5c5d3d57 requested 'Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.'. V2 changes methods; deterministic correlation evidence tokens=['axl', 'dc', 'evidence', 'literature', 'mer', 'model', 'preliminary', 'primary', 'search', 'state', 'steady', 'step', 'tk', 'tolerance', 'validate'], coverage=0.682.",
+          "before": "1. **Model Generation**: Generate MerTK-floxed mice crossed with CD11c-Cre transgenics to achieve DC-specific deletion of the apoptotic sensor MerTK. Controls include littermate MerTK-fl/fl mice without Cre. 2. **In Vitro Uptake Assay**: Isolate BMDCs and incubate with pHrodo-labeled apoptotic thymocytes. Quantify uptake via flow cytometry to validate blockade efficiency. 3. **In Vivo Homeostasis Challenge**: Monitor cohorts (n=10 per group) over 12 weeks under steady-state conditions. Collect blood samples bi-weekly. 4. **Perturbation & Reversal**: At week 6, administer a controlled dose of apoptotic cells intravenously to a subset of KO mice to test if restoring cargo availability rescues homeostatic markers. 5. **Omics Profiling**: Perform RNA-seq on splenic DCs at baseline and week 12 to identify downstream tolerogenic signaling pathways (e.g., IDO1, TGF-beta expression).",
+          "after": "1. **Computational Model Reconstruction**: Implement a simplified agent-based model based on the framework in EV-Q017-7dbf72dc5a92b5f0330756fd. Define 'homeostasis' using the dynamic equilibrium criteria from EV-Q017-cda47db20e5fccdf54335c31. 2. **Ablation Study**: Run two sets of simulations: (A) Full model including 'DC-like' agents that continuously uptake 'apoptotic' signals and generate tolerance; (B) Control model where this uptake/tolerance loop is disabled. 3. **Stability Analysis**: Compare the ability of both models to maintain internal state variables within bounded limits under environmental perturbations. 4. **Preliminary Literature Validation**: Conduct a targeted search for primary immunology literature linking steady-state DC uptake to specific receptors (e.g., MerTK, Axl) to determine if the computational metaphor has biological grounding. This step explicitly addresses the knowledge gap regarding molecular mechanisms.",
+          "evidence_refs": [
+            "EV-Q017-7dbf72dc5a92b5f0330756fd",
+            "EV-Q017-cda47db20e5fccdf54335c31"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:bfc5cd20cfe7a59e",
+          "issue_id": "required_revision:fc55a5a62e0b",
+          "reason": "Reviewer item required_revision:fc55a5a62e0b requested 'Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.'. V2 changes technical_details; deterministic correlation evidence tokens=['between', 'cda47db20e5fccdf54335c31', 'dc', 'dynamic', 'equilibrium', 'ev', 'fact', 'inference', 'link', 'mechanism', 'not', 'q017', 'specific', 'synthetic', 'system', 'uptake'], coverage=0.727.",
+          "before": "This experimental design tests the hypothesis that dendritic cell (DC) uptake of apoptotic material is a primary negative feedback regulator maintaining immune homeostasis. The study utilizes a murine model with conditional knockout of key phagocytic receptors (e.g., MerTK or Axl) specifically in CD11c+ DCs to block apoptotic cargo uptake without inducing general inflammation. We will employ flow cytometry and confocal microscopy to quantify apoptotic cargo uptake rates in steady-state vs. perturbed conditions. Longitudinal profiling of serum cytokines (IL-6, TNF-alpha, IL-10) and autoantibody titers (ANA) will assess loss of dynamic equilibrium. Reversibility will be tested by administering apoptotic cell infusions to restore uptake capacity. The protocol adheres to strict sterile techniques and blinded analysis to minimize bias.",
+          "after": "This research plan addresses the reviewer's critique by shifting from a direct wet-lab validation of specific molecular mechanisms (which lack evidence support) to a two-phase approach: (1) Computational Validation and (2) Preliminary Literature Synthesis. Phase 1 utilizes the Artificial Immune System (AIS) framework described in EV-Q017-7dbf72dc5a92b5f0330756fd to test if 'DC-like uptake rules' are necessary for maintaining the 'dynamic equilibrium' defined in EV-Q017-cda47db20e5fccdf54335c31. Phase 2 involves a systematic review to identify if primary biological literature supports the translation of these computational metaphors into specific molecular targets (e.g., MerTK/Axl), explicitly marking such targets as knowledge gaps until validated. The experiment design avoids asserting causal biological facts not present in the evidence, instead treating the link between DC uptake and homeostasis as a synthetic inference requiring further grounding.",
+          "evidence_refs": [
+            "EV-Q017-7dbf72dc5a92b5f0330756fd",
+            "EV-Q017-cda47db20e5fccdf54335c31"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:f161df3dce53",
+          "category": "critical_issue",
+          "description": "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:de7ff160e14e",
+          "category": "critical_issue",
+          "description": "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:0475b0a97979",
+          "category": "critical_issue",
+          "description": "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:2ba28d8b3d8b",
+          "category": "required_revision",
+          "description": "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a029c1c4b378",
+          "category": "required_revision",
+          "description": "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:b3eb18e69b051889; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:baaa5c5d3d57",
+          "category": "required_revision",
+          "description": "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:9996b28b8846629b; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:fc55a5a62e0b",
+          "category": "required_revision",
+          "description": "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:bfc5cd20cfe7a59e; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist",
+        "evidence_references"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.4,
+          "after": 0.9,
+          "delta": 0.5
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.85,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.9,
+          "delta": 0.20000000000000007
+        },
+        "reference_reliability_score": {
+          "before": 0.5,
+          "after": 1.0,
+          "delta": 0.5
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 2,
+          "hypothesis": "Immune homeostasis cannot be adequately defined solely by 'dynamic equilibrium' in open systems (EV-Q017-cda47db20e5fccdf54335c31) without specifying the distinct tolerogenic signals generated by DC uptake (EV-Q017-e8902c2ed1e91a4556a94716), rendering current theoretical descriptions incomplete.",
+          "overall_score": 0.78,
+          "recommended": false
+        },
+        {
+          "rank": 2,
+          "original_index": 0,
+          "hypothesis": "Theoretical models propose that steady-state dendritic cell (DC) uptake of apoptotic material functions as a putative homeostatic mechanism contributing to dynamic equilibrium, though specific molecular mediators remain unverified in the provided evidence.",
+          "overall_score": 0.68,
+          "recommended": true
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "Current computational frameworks for innate immunity (EV-Q017-7dbf72dc5a92b5f0330756fd) are insufficient to fully capture biological immune homeostasis because they lack integration of specific molecular regulatory networks identified as knowledge gaps in the evidence base.",
+          "overall_score": 0.62,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 3,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:f161df3dce53",
+        "required_revision_without_change:critical_issue:de7ff160e14e",
+        "required_revision_without_change:critical_issue:0475b0a97979",
+        "required_revision_without_change:required_revision:2ba28d8b3d8b",
+        "unresolved_issue:critical_issue:f161df3dce53",
+        "unresolved_issue:critical_issue:de7ff160e14e",
+        "unresolved_issue:critical_issue:0475b0a97979",
+        "unresolved_issue:required_revision:2ba28d8b3d8b"
+      ],
+      "remaining_blockers": [
+        "critical_issue:f161df3dce53: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:de7ff160e14e: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:0475b0a97979: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:2ba28d8b3d8b: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-081104-dfcd19d2",
+        "version_number": 1,
+        "version_id": "20260822-081104-dfcd19d2:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Immune homeostasis is maintained as a dynamic equilibrium through continuous dendritic cell (DC) uptake of apoptotic material in steady-state conditions, acting as a primary negative feedback regulator.",
+              "mechanism": "Based on theoretical models viewing the immune system as an open homeostatic system (EV-Q017-cda47db20e5fccdf54335c31), DCs function as the central sensor-effector node. Under non-pathogenic conditions, continuous uptake of apoptotic debris by DCs (EV-Q017-e8902c2ed1e91a4556a94716) generates tolerogenic signals that actively suppress effector responses, thereby maintaining the internal environment within physiological bounds despite external fluctuations.",
+              "falsifiable_prediction": "If DC-mediated uptake of apoptotic material is the critical homeostatic regulator, then experimentally blocking this specific uptake pathway under steady-state conditions should result in measurable loss of dynamic equilibrium (e.g., spontaneous auto-reactivity or cytokine dysregulation) even in the absence of exogenous pathogens.",
+              "required_observations": [
+                "Quantitative measurement of DC apoptotic cargo uptake rates in steady-state vs. perturbed states",
+                "Longitudinal profiling of immune activation markers following specific inhibition of DC uptake mechanisms",
+                "Validation that observed dysregulation is reversible upon restoration of uptake function"
+              ],
+              "risk_of_being_wrong": "The hypothesis relies heavily on computational and theoretical models (EV-Q017-cda47db20e5fccdf54335c31, EV-Q017-e8902c2ed1e91a4556a94716) rather than direct clinical validation; other redundant homeostatic mechanisms (e.g., Treg-mediated suppression not mentioned in evidence) may compensate for DC uptake blockade, leading to false negatives.",
+              "supporting_evidence_ids": [
+                "EV-Q017-cda47db20e5fccdf54335c31",
+                "EV-Q017-e8902c2ed1e91a4556a94716"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.73
+            },
+            {
+              "hypothesis": "Innate immunity regulatory logic can be formalized into computational frameworks that accurately predict homeostatic set-points, implying that biological homeostasis follows definable algorithmic rules analogous to artificial immune systems.",
+              "mechanism": "Drawing from frameworks incorporating innate immunity concepts into artificial systems (EV-Q017-7dbf72dc5a92b5f0330756fd) and modeling immunity as a regulated open system (EV-Q017-cda47db20e5fccdf54335c31), this hypothesis posits that homeostasis is not merely an emergent property but a computable state defined by specific interaction rules between innate sensors and environmental inputs.",
+              "falsifiable_prediction": "A computational model parameterized solely with innate immune rules derived from EV-Q017-7dbf72dc5a92b5f0330756fd should fail to maintain simulated homeostasis if key biological variables (identified via omics gap analysis) are omitted, demonstrating that current theoretical frameworks are insufficient without empirical calibration.",
+              "required_observations": [
+                "Comparison of simulated homeostatic trajectories against longitudinal human omics data",
+                "Identification of specific model parameters that diverge from biological reality",
+                "Demonstration of predictive failure when innate-only rules are applied to adaptive-dominant scenarios"
+              ],
+              "risk_of_being_wrong": "Artificial immune system frameworks (EV-Q017-7dbf72dc5a92b5f0330756fd) may be metaphorical rather than mechanistically accurate; biological complexity may exceed current computational abstractions, making the hypothesis unfalsifiable due to perpetual model refinement.",
+              "supporting_evidence_ids": [
+                "EV-Q017-7dbf72dc5a92b5f0330756fd",
+                "EV-Q017-cda47db20e5fccdf54335c31"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.65,
+              "overall_score": 0.68
+            },
+            {
+              "hypothesis": "Immune homeostasis exhibits quantifiable 'dynamic equilibrium' signatures in high-dimensional omics space that distinguish steady-state from pre-dysregulated states before clinical symptoms manifest.",
+              "mechanism": "Integrating the concept of the immune system as an open system maintaining dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31) with the need for omics data to define regulatory networks (knowledge gap), this hypothesis proposes that homeostasis corresponds to a specific attractor state in proteomic/genomic feature space, deviations from which predict loss of tolerance.",
+              "falsifiable_prediction": "If dynamic equilibrium has a distinct omics signature, then unsupervised clustering of steady-state human samples should consistently identify a stable core cluster separate from dysregulated samples; failure to identify such separation would refute the existence of a universal homeostatic attractor.",
+              "required_observations": [
+                "High-dimensional genomic/proteomic datasets from verified healthy steady-state humans",
+                "Comparable datasets from early-stage dysregulated patients",
+                "Statistical validation of cluster stability across independent cohorts"
+              ],
+              "risk_of_being_wrong": "Current evidence lacks specific validated omics datasets (knowledge gap); 'dynamic equilibrium' may be context-dependent rather than universal, leading to inconsistent signatures across populations or tissues.",
+              "supporting_evidence_ids": [
+                "EV-Q017-cda47db20e5fccdf54335c31"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.75,
+              "feasibility_score": 0.5,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.61
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly bridges the two most relevant biological evidence cards (EV-Q017-cda47db20e5fccdf54335c31 and EV-Q017-e8902c2ed1e91a4556a94716) into a concrete, mechanistic, and falsifiable prediction. Unlike Hypothesis 1 (which risks being purely computational/metaphorical) or Hypothesis 2 (which suffers from lack of identified datasets), Hypothesis 0 targets a specific cellular mechanism (DC uptake) explicitly cited as central to peripheral tolerance in the provided evidence, offering the highest feasibility for experimental validation while addressing the core question of homeostatic maintenance.",
+          "rejected_directions": [
+            "Purely computational modeling without biological grounding (risk of irrelevance to human physiology)",
+            "Omics signature discovery without prior mechanistic anchoring (high risk of spurious correlations given current data gaps)",
+            "Non-specific hypotheses about 'future research needs' or general immune boosting/suppression (violates prohibition on empty/non-falsifiable claims)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experimental design tests the hypothesis that dendritic cell (DC) uptake of apoptotic material is a primary negative feedback regulator maintaining immune homeostasis. The study utilizes a murine model with conditional knockout of key phagocytic receptors (e.g., MerTK or Axl) specifically in CD11c+ DCs to block apoptotic cargo uptake without inducing general inflammation. We will employ flow cytometry and confocal microscopy to quantify apoptotic cargo uptake rates in steady-state vs. perturbed conditions. Longitudinal profiling of serum cytokines (IL-6, TNF-alpha, IL-10) and autoantibody titers (ANA) will assess loss of dynamic equilibrium. Reversibility will be tested by administering apoptotic cell infusions to restore uptake capacity. The protocol adheres to strict sterile techniques and blinded analysis to minimize bias.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Murine Bone Marrow-Derived Dendritic Cells (BMDCs)",
+                "description": "Primary cells isolated from C57BL/6 mice for in vitro uptake assays.",
+                "access_type": "experimental_generation",
+                "is_public_candidate": false,
+                "is_already_downloaded": false
+              },
+              {
+                "name": "Conditional Knockout Mouse Strains (MerTK-fl/fl; CD11c-Cre)",
+                "description": "Genetically modified mice allowing specific blockade of apoptotic uptake in DCs.",
+                "access_type": "experimental_generation",
+                "is_public_candidate": false,
+                "is_already_downloaded": false
+              }
+            ],
+            "target": [
+              {
+                "name": "Longitudinal Immune Profile Dataset",
+                "description": "Time-series data of cytokine levels, autoantibody titers, and DC phenotypic markers from experimental and control groups.",
+                "format": "CSV/JSON",
+                "variables": [
+                  "time_point",
+                  "group_id",
+                  "il6_concentration",
+                  "tnf_alpha_concentration",
+                  "ana_titer",
+                  "dc_apoptotic_cargo_load"
+                ]
+              }
+            ]
+          },
+          "methods": "1. **Model Generation**: Generate MerTK-floxed mice crossed with CD11c-Cre transgenics to achieve DC-specific deletion of the apoptotic sensor MerTK. Controls include littermate MerTK-fl/fl mice without Cre. 2. **In Vitro Uptake Assay**: Isolate BMDCs and incubate with pHrodo-labeled apoptotic thymocytes. Quantify uptake via flow cytometry to validate blockade efficiency. 3. **In Vivo Homeostasis Challenge**: Monitor cohorts (n=10 per group) over 12 weeks under steady-state conditions. Collect blood samples bi-weekly. 4. **Perturbation & Reversal**: At week 6, administer a controlled dose of apoptotic cells intravenously to a subset of KO mice to test if restoring cargo availability rescues homeostatic markers. 5. **Omics Profiling**: Perform RNA-seq on splenic DCs at baseline and week 12 to identify downstream tolerogenic signaling pathways (e.g., IDO1, TGF-beta expression).",
+          "experiments": {
+            "baselines": [
+              "Wild-type C57BL/6 mice (normal DC uptake function)",
+              "MerTK-fl/fl mice without Cre (genetic control for floxed allele)",
+              "CD11c-Cre mice without floxed MerTK (control for Cre toxicity)"
+            ],
+            "metrics": [
+              "Mean Fluorescence Intensity (MFI) of pHrodo-labeled apoptotic cargo in DCs",
+              "Serum concentration of pro-inflammatory cytokines (IL-6, TNF-alpha) via ELISA",
+              "Anti-nuclear antibody (ANA) titer as a marker of auto-reactivity",
+              "Frequency of FoxP3+ regulatory T cells in spleen and lymph nodes"
+            ],
+            "ablation": "Compare MerTK-KO DCs vs. Axl-KO DCs to determine if redundancy exists between phosphatidylserine receptors. If Axl-KO shows no phenotype while MerTK-KO does, it suggests MerTK is the dominant sensor for this homeostatic loop.",
+            "validation_protocol": "Blinded analysis of flow cytometry data by two independent researchers. Statistical significance determined by two-way ANOVA with Tukey’s post-hoc test for multiple comparisons. Power analysis conducted to ensure n=10 provides 80% power to detect a 20% change in cytokine levels."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify genotype of all mouse strains via PCR before experiment start",
+            "Standardize apoptotic cell preparation protocol (UV irradiation dose and duration)",
+            "Calibrate flow cytometer daily using standard beads",
+            "Store serum samples at -80°C immediately after collection to prevent degradation",
+            "Use identical lot numbers for ELISA kits across all time points",
+            "Deposit raw RNA-seq data and flow cytometry FCS files in public repository upon completion"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_duration_weeks": 24,
+            "required_resources": [
+              "Animal facility housing for 40 mice",
+              "Flow cytometer with 5-laser configuration",
+              "ELISA plate reader",
+              "Next-generation sequencing access"
+            ],
+            "ethical_approval_status": "pending_iacuc_review",
+            "data_availability_plan": "Raw data will be deposited in GEO and FlowRepository upon publication"
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis asserts DC uptake is a 'primary negative feedback regulator' based solely on theoretical models (EV-Q017-cda47db20e5fccdf54335c31) and general statements about DC tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The provided evidence does not contain experimental data validating this specific causal regulatory role in homeostasis; it only supports the existence of the phenomenon as a model proposal.",
+            "Evidence grounding is weak for a mechanistic hypothesis. Both supporting evidence cards are arXiv preprints focusing on computational/artificial immune systems or theoretical reviews. There is no primary biological literature (e.g., peer-reviewed immunology journals) in the allowed evidence list to substantiate the specific molecular mechanism (MerTK/Axl) proposed in the experiment design.",
+            "The experiment design introduces specific biological entities (MerTK, Axl, CD11c-Cre, pHrodo) that are completely absent from the provided EvidenceCards. While these are standard in the field, strictly adhering to the protocol requires flagging that the experimental rationale cannot be traced back to the allowed evidence IDs.",
+            "The 'Results' field correctly states 'pending', avoiding fabrication. However, the risk_level must be elevated to 'high' because the entire research plan rests on translating computational metaphors into wet-lab biology without intermediate validation evidence in the input context.",
+            "Reproducibility checklist is adequate, but the lack of specific dataset references (source/target are generic descriptions) makes the computational validation component of the hypothesis unfalsifiable within the current evidence scope."
+          ],
+          "critical_issues": [
+            "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+            "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+            "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters."
+          ],
+          "required_revisions": [
+            "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+            "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+            "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+            "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.4,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.5
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:f161df3dce53",
+            "category": "critical_issue",
+            "description": "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:de7ff160e14e",
+            "category": "critical_issue",
+            "description": "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:0475b0a97979",
+            "category": "critical_issue",
+            "description": "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2ba28d8b3d8b",
+            "category": "required_revision",
+            "description": "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a029c1c4b378",
+            "category": "required_revision",
+            "description": "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:baaa5c5d3d57",
+            "category": "required_revision",
+            "description": "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:fc55a5a62e0b",
+            "category": "required_revision",
+            "description": "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "de2d05c93e42f7cc3a4502685d989de7ff9e887431d008e568bb0dddd6b12710",
+          "experiment_designer": "d5d2f8ed2c7d0cbf64d89f6a313a19d322e486c92da777489a8dd9117632ec69",
+          "scientific_reviewer": "351a056944d7a1e788f27dc2b1fd82033a76e1194633344fc857e0e3f0ebb57d"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-081104-dfcd19d2",
+        "version_number": 2,
+        "version_id": "20260822-081104-dfcd19d2:v2",
+        "parent_version_id": "20260822-081104-dfcd19d2:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Theoretical models propose that steady-state dendritic cell (DC) uptake of apoptotic material functions as a putative homeostatic mechanism contributing to dynamic equilibrium, though specific molecular mediators remain unverified in the provided evidence.",
+              "mechanism": "This hypothesis synthesizes two theoretical propositions from the allowed evidence: (1) the immune system is modeled as an open system maintaining dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31), and (2) DCs are proposed to continually uptake apoptotic material under steady-state conditions to generate peripheral tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The causal link between these two concepts is a synthetic inference derived from computational frameworks (EV-Q017-7dbf72dc5a92b5f0330756fd) rather than direct biological validation. Specific molecular targets (e.g., MerTK, Axl) are explicitly categorized as external knowledge assumptions/knowledge gaps not supported by current evidence cards.",
+              "falsifiable_prediction": "If DC uptake is indeed a necessary component of the theorized homeostatic equilibrium, then computational simulations incorporating this rule should demonstrate greater stability in maintaining 'dynamic equilibrium' metrics compared to simulations lacking this rule. Conversely, if empirical literature search reveals no primary biological evidence linking DC uptake to homeostatic regulation in vivo, the theoretical model's biological relevance is weakened.",
+              "required_observations": [
+                "Comparative stability analysis of artificial immune system models with vs. without DC uptake rules (based on EV-Q017-7dbf72dc5a92b5f0330756fd)",
+                "Systematic literature review confirming or refuting the existence of primary immunological evidence for DC uptake-mediated homeostasis (addressing knowledge gap)",
+                "Quantitative correlation between simulated homeostatic states and theoretical definitions of dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31)"
+              ],
+              "risk_of_being_wrong": "High risk due to reliance on theoretical/computational sources (arXiv preprints) rather than wet-lab validation. The proposed mechanism may be a computational metaphor rather than a biological reality. Specific molecular mechanisms are assumed based on external knowledge and may not apply to the specific homeostatic context described in the theoretical models.",
+              "supporting_evidence_ids": [
+                "EV-Q017-cda47db20e5fccdf54335c31",
+                "EV-Q017-e8902c2ed1e91a4556a94716",
+                "EV-Q017-7dbf72dc5a92b5f0330756fd"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.68
+            },
+            {
+              "hypothesis": "Current computational frameworks for innate immunity (EV-Q017-7dbf72dc5a92b5f0330756fd) are insufficient to fully capture biological immune homeostasis because they lack integration of specific molecular regulatory networks identified as knowledge gaps in the evidence base.",
+              "mechanism": "Based on the framework for implementing innate immunity in artificial systems (EV-Q017-7dbf72dc5a92b5f0330756fd) and the identification of missing molecular details in knowledge gaps, this hypothesis posits that current models treat homeostasis as an abstract emergent property (EV-Q017-cda47db20e5fccdf54335c31) without grounding in specific biological feedback loops. The discrepancy between 'open system dynamic equilibrium' theory and the lack of specified molecular mediators in the evidence suggests a fundamental limitation in translating these computational metaphors to biological reality.",
+              "falsifiable_prediction": "A systematic mapping of current AIS model parameters (from EV-Q017-7dbf72dc5a92b5f0330756fd) against required biological variables for homeostasis will reveal significant unparameterized gaps. If models can be shown to maintain 'homeostasis' using arbitrary non-biological parameters, it would weaken the claim that they represent true immune regulatory logic.",
+              "required_observations": [
+                "Parameter audit of existing innate immunity computational models (EV-Q017-7dbf72dc5a92b5f0330756fd)",
+                "Gap analysis comparing model variables against known biological homeostatic requirements (derived from knowledge gaps)",
+                "Sensitivity analysis demonstrating model dependence on non-biological abstractions"
+              ],
+              "risk_of_being_wrong": "Moderate risk. While the gap is evident from the evidence provided, proving 'insufficiency' requires defining a gold standard of biological sufficiency which is itself absent from the evidence. The hypothesis might be trivially true but scientifically unproductive if no better alternative exists.",
+              "supporting_evidence_ids": [
+                "EV-Q017-7dbf72dc5a92b5f0330756fd",
+                "EV-Q017-cda47db20e5fccdf54335c31"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.62
+            },
+            {
+              "hypothesis": "Immune homeostasis cannot be adequately defined solely by 'dynamic equilibrium' in open systems (EV-Q017-cda47db20e5fccdf54335c31) without specifying the distinct tolerogenic signals generated by DC uptake (EV-Q017-e8902c2ed1e91a4556a94716), rendering current theoretical descriptions incomplete.",
+              "mechanism": "This hypothesis challenges the sufficiency of the high-level theoretical description. While EV-Q017-cda47db20e5fccdf54335c31 defines homeostasis as dynamic equilibrium and EV-Q017-e8902c2ed1e91a4556a94716 describes DC uptake, neither specifies the signal transduction connecting them. The hypothesis asserts that without this missing link (identified as a knowledge gap), the two concepts remain disjointed theoretical constructs rather than a unified mechanistic explanation.",
+              "falsifiable_prediction": "Text mining and conceptual analysis of the provided evidence corpus will fail to identify any explicit statement linking 'dynamic equilibrium' parameters directly to 'DC uptake' molecular outcomes. If such a link were found in the allowed evidence, the hypothesis of incompleteness would be refuted.",
+              "required_observations": [
+                "Semantic analysis of evidence texts for causal connectors between homeostasis and DC function",
+                "Verification that no allowed evidence card contains molecular pathway data bridging the two concepts",
+                "Demonstration that 'dynamic equilibrium' is used as a descriptive label rather than a mechanistically defined variable in the source texts"
+              ],
+              "risk_of_being_wrong": "Low risk of being factually wrong given the evidence constraints, but high risk of being a semantic critique rather than a scientific hypothesis. It accurately reflects the evidence state but offers limited predictive power for biological experimentation.",
+              "supporting_evidence_ids": [
+                "EV-Q017-cda47db20e5fccdf54335c31",
+                "EV-Q017-e8902c2ed1e91a4556a94716"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.78
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best compromise between addressing the reviewer's critical issues and maintaining scientific utility. It explicitly downgrades the causal claim to 'putative mechanism proposed in theoretical models' (addressing causal overreach), clearly flags molecular targets as external knowledge/gaps (addressing evidence-experiment mismatch), and grounds the mechanism strictly in the synthesis of allowed evidence cards while acknowledging the synthetic nature of the link. Unlike Hypothesis 2 (which is purely semantic) or Hypothesis 1 (which focuses only on model insufficiency), Hypothesis 0 preserves the core biological question while adhering to strict evidence constraints, making it the most appropriate foundation for a revised research plan that includes mandatory preliminary validation steps.",
+          "rejected_directions": [
+            "Asserting DC uptake as a proven primary regulator without qualifying language (violates evidence strength)",
+            "Proposing wet-lab experiments targeting specific molecules (MerTK/Axl) without first establishing them via external literature search (violates evidence grounding)",
+            "Purely computational hypotheses that ignore the biological context of the original question (fails to address user intent)",
+            "Hypotheses relying on datasets or evidence not present in the allowed_evidence_ids list"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This research plan addresses the reviewer's critique by shifting from a direct wet-lab validation of specific molecular mechanisms (which lack evidence support) to a two-phase approach: (1) Computational Validation and (2) Preliminary Literature Synthesis. Phase 1 utilizes the Artificial Immune System (AIS) framework described in EV-Q017-7dbf72dc5a92b5f0330756fd to test if 'DC-like uptake rules' are necessary for maintaining the 'dynamic equilibrium' defined in EV-Q017-cda47db20e5fccdf54335c31. Phase 2 involves a systematic review to identify if primary biological literature supports the translation of these computational metaphors into specific molecular targets (e.g., MerTK/Axl), explicitly marking such targets as knowledge gaps until validated. The experiment design avoids asserting causal biological facts not present in the evidence, instead treating the link between DC uptake and homeostasis as a synthetic inference requiring further grounding.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Computational Model Parameters from EV-Q017-7dbf72dc5a92b5f0330756fd",
+                "description": "Parameter sets and rule definitions for innate immunity implementation in artificial systems, specifically those related to sensor-effector loops.",
+                "access_type": "extracted_from_evidence",
+                "is_public_candidate": true,
+                "is_already_downloaded": false,
+                "evidence_ids": [
+                  "EV-Q017-7dbf72dc5a92b5f0330756fd"
+                ]
+              },
+              {
+                "name": "Theoretical Definitions of Dynamic Equilibrium",
+                "description": "Conceptual metrics and state definitions for immune homeostasis as an open system, derived from EV-Q017-cda47db20e5fccdf54335c31.",
+                "access_type": "extracted_from_evidence",
+                "is_public_candidate": true,
+                "is_already_downloaded": false,
+                "evidence_ids": [
+                  "EV-Q017-cda47db20e5fccdf54335c31"
+                ]
+              }
+            ],
+            "target": [
+              {
+                "name": "Simulation Stability Metrics",
+                "description": "Time-series data of system stability indices (e.g., variance of internal state variables) from AIS simulations with and without DC uptake rules.",
+                "format": "CSV/JSON",
+                "variables": [
+                  "simulation_id",
+                  "uptake_rule_enabled",
+                  "time_step",
+                  "state_variance",
+                  "equilibrium_deviation"
+                ]
+              },
+              {
+                "name": "Literature Mapping Matrix",
+                "description": "Structured output from preliminary literature search mapping theoretical DC roles to specific molecular evidence (or lack thereof).",
+                "format": "JSON",
+                "variables": [
+                  "theoretical_concept",
+                  "proposed_molecular_target",
+                  "primary_evidence_found",
+                  "evidence_quality_score"
+                ]
+              }
+            ]
+          },
+          "methods": "1. **Computational Model Reconstruction**: Implement a simplified agent-based model based on the framework in EV-Q017-7dbf72dc5a92b5f0330756fd. Define 'homeostasis' using the dynamic equilibrium criteria from EV-Q017-cda47db20e5fccdf54335c31. 2. **Ablation Study**: Run two sets of simulations: (A) Full model including 'DC-like' agents that continuously uptake 'apoptotic' signals and generate tolerance; (B) Control model where this uptake/tolerance loop is disabled. 3. **Stability Analysis**: Compare the ability of both models to maintain internal state variables within bounded limits under environmental perturbations. 4. **Preliminary Literature Validation**: Conduct a targeted search for primary immunology literature linking steady-state DC uptake to specific receptors (e.g., MerTK, Axl) to determine if the computational metaphor has biological grounding. This step explicitly addresses the knowledge gap regarding molecular mechanisms.",
+          "experiments": {
+            "baselines": [
+              "AIS Model without DC uptake/tolerance rules (Null Hypothesis: Uptake is not required for equilibrium)",
+              "Randomized Agent Interaction Model (Control for emergent stability without specific immune logic)",
+              "Standard AIS Model from EV-Q017-7dbf72dc5a92b5f0330756fd (if available as reference implementation)"
+            ],
+            "metrics": [
+              "Mean Time to Failure (MTTF): Duration before system state exits equilibrium bounds",
+              "State Variance: Standard deviation of key internal system variables over time",
+              "Recovery Rate: Speed at which the system returns to equilibrium after a perturbation",
+              "Literature Coverage Score: Percentage of proposed theoretical links supported by primary peer-reviewed evidence"
+            ],
+            "ablation": "Systematically remove the 'tolerance generation' component from the DC uptake rule while keeping uptake active, to distinguish between the mechanical act of clearance and the signaling consequence of tolerance.",
+            "validation_protocol": "Simulations will be run for 1000 independent trials per condition to ensure statistical robustness. Sensitivity analysis will be performed on key parameters (uptake rate, tolerance decay rate) to ensure results are not artifacts of specific tuning. Literature search will follow PRISMA guidelines for scoping reviews."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Publish source code for the AIS simulation with version control",
+            "Document all parameter values used in the computational model",
+            "Provide the exact search strings and databases used for the preliminary literature validation",
+            "Archive raw simulation output logs for independent re-analysis",
+            "Explicitly label any molecular targets (e.g., MerTK) as 'external assumptions' in all reports until validated by Phase 2"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_duration_weeks": 8,
+            "required_resources": [
+              "High-performance computing cluster for agent-based simulations",
+              "Access to academic databases (PubMed, Web of Science) for literature review",
+              "Python/R environment for data analysis"
+            ],
+            "ethical_approval_status": "not_required_computational",
+            "data_availability_plan": "Simulation code and results will be deposited in GitHub and Zenodo. Literature mapping matrix will be included in supplementary materials."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly downgrades the causal claim to 'putative homeostatic mechanism proposed in theoretical models', directly addressing the previous critical issue of causal overreach.",
+            "Experiment design has been successfully pivoted from unsupported wet-lab validation (MerTK/Axl knockouts) to computational simulation and literature synthesis, aligning strictly with the allowed evidence cards (EV-Q017-7dbf72dc5a92b5f0330756fd, EV-Q017-cda47db20e5fccdf54335c31).",
+            "Molecular targets (MerTK, Axl) are now explicitly categorized as knowledge gaps/external assumptions rather than established facts derived from the evidence base.",
+            "Datasets now correctly reference specific evidence-derived parameters and theoretical definitions as source data, resolving the previous issue of generic dataset descriptions.",
+            "Results field remains 'pending' with no fabrication; risk level is appropriately maintained at 'high' due to the reliance on theoretical frameworks rather than empirical biological validation."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.9,
+          "falsifiability_score": 0.85,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:f161df3dce53",
+            "category": "critical_issue",
+            "description": "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:de7ff160e14e",
+            "category": "critical_issue",
+            "description": "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:0475b0a97979",
+            "category": "critical_issue",
+            "description": "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:2ba28d8b3d8b",
+            "category": "required_revision",
+            "description": "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:a029c1c4b378",
+            "category": "required_revision",
+            "description": "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:b3eb18e69b051889; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:baaa5c5d3d57",
+            "category": "required_revision",
+            "description": "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:9996b28b8846629b; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:fc55a5a62e0b",
+            "category": "required_revision",
+            "description": "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:bfc5cd20cfe7a59e; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "6cbcad67af0652fc99a9ea6b455cb0b44e00bec0f2f5330930f2f2dc47296812",
+          "experiment_designer": "04f2a2288de4181497368398951eb79f1c2ffa7ba57fa32f3c9cd347efd695d5",
+          "scientific_reviewer": "ef2d258545a260d203387b47873ec2d50f812ff07f12fc1344a264bfea625008"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-081104-dfcd19d2",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-081104-dfcd19d2:review:v1",
+        "20260822-081104-dfcd19d2:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-081104-dfcd19d2:v1",
+        "20260822-081104-dfcd19d2:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-081104-dfcd19d2",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-081104-dfcd19d2:review:v1",
+          "20260822-081104-dfcd19d2:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-081104-dfcd19d2:v1",
+          "20260822-081104-dfcd19d2:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-081104-dfcd19d2",
+          "version_number": 1,
+          "version_id": "20260822-081104-dfcd19d2:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Immune homeostasis is maintained as a dynamic equilibrium through continuous dendritic cell (DC) uptake of apoptotic material in steady-state conditions, acting as a primary negative feedback regulator.",
+                "mechanism": "Based on theoretical models viewing the immune system as an open homeostatic system (EV-Q017-cda47db20e5fccdf54335c31), DCs function as the central sensor-effector node. Under non-pathogenic conditions, continuous uptake of apoptotic debris by DCs (EV-Q017-e8902c2ed1e91a4556a94716) generates tolerogenic signals that actively suppress effector responses, thereby maintaining the internal environment within physiological bounds despite external fluctuations.",
+                "falsifiable_prediction": "If DC-mediated uptake of apoptotic material is the critical homeostatic regulator, then experimentally blocking this specific uptake pathway under steady-state conditions should result in measurable loss of dynamic equilibrium (e.g., spontaneous auto-reactivity or cytokine dysregulation) even in the absence of exogenous pathogens.",
+                "required_observations": [
+                  "Quantitative measurement of DC apoptotic cargo uptake rates in steady-state vs. perturbed states",
+                  "Longitudinal profiling of immune activation markers following specific inhibition of DC uptake mechanisms",
+                  "Validation that observed dysregulation is reversible upon restoration of uptake function"
+                ],
+                "risk_of_being_wrong": "The hypothesis relies heavily on computational and theoretical models (EV-Q017-cda47db20e5fccdf54335c31, EV-Q017-e8902c2ed1e91a4556a94716) rather than direct clinical validation; other redundant homeostatic mechanisms (e.g., Treg-mediated suppression not mentioned in evidence) may compensate for DC uptake blockade, leading to false negatives.",
+                "supporting_evidence_ids": [
+                  "EV-Q017-cda47db20e5fccdf54335c31",
+                  "EV-Q017-e8902c2ed1e91a4556a94716"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.75,
+                "overall_score": 0.73
+              },
+              {
+                "hypothesis": "Innate immunity regulatory logic can be formalized into computational frameworks that accurately predict homeostatic set-points, implying that biological homeostasis follows definable algorithmic rules analogous to artificial immune systems.",
+                "mechanism": "Drawing from frameworks incorporating innate immunity concepts into artificial systems (EV-Q017-7dbf72dc5a92b5f0330756fd) and modeling immunity as a regulated open system (EV-Q017-cda47db20e5fccdf54335c31), this hypothesis posits that homeostasis is not merely an emergent property but a computable state defined by specific interaction rules between innate sensors and environmental inputs.",
+                "falsifiable_prediction": "A computational model parameterized solely with innate immune rules derived from EV-Q017-7dbf72dc5a92b5f0330756fd should fail to maintain simulated homeostasis if key biological variables (identified via omics gap analysis) are omitted, demonstrating that current theoretical frameworks are insufficient without empirical calibration.",
+                "required_observations": [
+                  "Comparison of simulated homeostatic trajectories against longitudinal human omics data",
+                  "Identification of specific model parameters that diverge from biological reality",
+                  "Demonstration of predictive failure when innate-only rules are applied to adaptive-dominant scenarios"
+                ],
+                "risk_of_being_wrong": "Artificial immune system frameworks (EV-Q017-7dbf72dc5a92b5f0330756fd) may be metaphorical rather than mechanistically accurate; biological complexity may exceed current computational abstractions, making the hypothesis unfalsifiable due to perpetual model refinement.",
+                "supporting_evidence_ids": [
+                  "EV-Q017-7dbf72dc5a92b5f0330756fd",
+                  "EV-Q017-cda47db20e5fccdf54335c31"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.65,
+                "overall_score": 0.68
+              },
+              {
+                "hypothesis": "Immune homeostasis exhibits quantifiable 'dynamic equilibrium' signatures in high-dimensional omics space that distinguish steady-state from pre-dysregulated states before clinical symptoms manifest.",
+                "mechanism": "Integrating the concept of the immune system as an open system maintaining dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31) with the need for omics data to define regulatory networks (knowledge gap), this hypothesis proposes that homeostasis corresponds to a specific attractor state in proteomic/genomic feature space, deviations from which predict loss of tolerance.",
+                "falsifiable_prediction": "If dynamic equilibrium has a distinct omics signature, then unsupervised clustering of steady-state human samples should consistently identify a stable core cluster separate from dysregulated samples; failure to identify such separation would refute the existence of a universal homeostatic attractor.",
+                "required_observations": [
+                  "High-dimensional genomic/proteomic datasets from verified healthy steady-state humans",
+                  "Comparable datasets from early-stage dysregulated patients",
+                  "Statistical validation of cluster stability across independent cohorts"
+                ],
+                "risk_of_being_wrong": "Current evidence lacks specific validated omics datasets (knowledge gap); 'dynamic equilibrium' may be context-dependent rather than universal, leading to inconsistent signatures across populations or tissues.",
+                "supporting_evidence_ids": [
+                  "EV-Q017-cda47db20e5fccdf54335c31"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.75,
+                "feasibility_score": 0.5,
+                "evidence_support_score": 0.4,
+                "overall_score": 0.61
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it directly bridges the two most relevant biological evidence cards (EV-Q017-cda47db20e5fccdf54335c31 and EV-Q017-e8902c2ed1e91a4556a94716) into a concrete, mechanistic, and falsifiable prediction. Unlike Hypothesis 1 (which risks being purely computational/metaphorical) or Hypothesis 2 (which suffers from lack of identified datasets), Hypothesis 0 targets a specific cellular mechanism (DC uptake) explicitly cited as central to peripheral tolerance in the provided evidence, offering the highest feasibility for experimental validation while addressing the core question of homeostatic maintenance.",
+            "rejected_directions": [
+              "Purely computational modeling without biological grounding (risk of irrelevance to human physiology)",
+              "Omics signature discovery without prior mechanistic anchoring (high risk of spurious correlations given current data gaps)",
+              "Non-specific hypotheses about 'future research needs' or general immune boosting/suppression (violates prohibition on empty/non-falsifiable claims)"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experimental design tests the hypothesis that dendritic cell (DC) uptake of apoptotic material is a primary negative feedback regulator maintaining immune homeostasis. The study utilizes a murine model with conditional knockout of key phagocytic receptors (e.g., MerTK or Axl) specifically in CD11c+ DCs to block apoptotic cargo uptake without inducing general inflammation. We will employ flow cytometry and confocal microscopy to quantify apoptotic cargo uptake rates in steady-state vs. perturbed conditions. Longitudinal profiling of serum cytokines (IL-6, TNF-alpha, IL-10) and autoantibody titers (ANA) will assess loss of dynamic equilibrium. Reversibility will be tested by administering apoptotic cell infusions to restore uptake capacity. The protocol adheres to strict sterile techniques and blinded analysis to minimize bias.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Murine Bone Marrow-Derived Dendritic Cells (BMDCs)",
+                  "description": "Primary cells isolated from C57BL/6 mice for in vitro uptake assays.",
+                  "access_type": "experimental_generation",
+                  "is_public_candidate": false,
+                  "is_already_downloaded": false
+                },
+                {
+                  "name": "Conditional Knockout Mouse Strains (MerTK-fl/fl; CD11c-Cre)",
+                  "description": "Genetically modified mice allowing specific blockade of apoptotic uptake in DCs.",
+                  "access_type": "experimental_generation",
+                  "is_public_candidate": false,
+                  "is_already_downloaded": false
+                }
+              ],
+              "target": [
+                {
+                  "name": "Longitudinal Immune Profile Dataset",
+                  "description": "Time-series data of cytokine levels, autoantibody titers, and DC phenotypic markers from experimental and control groups.",
+                  "format": "CSV/JSON",
+                  "variables": [
+                    "time_point",
+                    "group_id",
+                    "il6_concentration",
+                    "tnf_alpha_concentration",
+                    "ana_titer",
+                    "dc_apoptotic_cargo_load"
+                  ]
+                }
+              ]
+            },
+            "methods": "1. **Model Generation**: Generate MerTK-floxed mice crossed with CD11c-Cre transgenics to achieve DC-specific deletion of the apoptotic sensor MerTK. Controls include littermate MerTK-fl/fl mice without Cre. 2. **In Vitro Uptake Assay**: Isolate BMDCs and incubate with pHrodo-labeled apoptotic thymocytes. Quantify uptake via flow cytometry to validate blockade efficiency. 3. **In Vivo Homeostasis Challenge**: Monitor cohorts (n=10 per group) over 12 weeks under steady-state conditions. Collect blood samples bi-weekly. 4. **Perturbation & Reversal**: At week 6, administer a controlled dose of apoptotic cells intravenously to a subset of KO mice to test if restoring cargo availability rescues homeostatic markers. 5. **Omics Profiling**: Perform RNA-seq on splenic DCs at baseline and week 12 to identify downstream tolerogenic signaling pathways (e.g., IDO1, TGF-beta expression).",
+            "experiments": {
+              "baselines": [
+                "Wild-type C57BL/6 mice (normal DC uptake function)",
+                "MerTK-fl/fl mice without Cre (genetic control for floxed allele)",
+                "CD11c-Cre mice without floxed MerTK (control for Cre toxicity)"
+              ],
+              "metrics": [
+                "Mean Fluorescence Intensity (MFI) of pHrodo-labeled apoptotic cargo in DCs",
+                "Serum concentration of pro-inflammatory cytokines (IL-6, TNF-alpha) via ELISA",
+                "Anti-nuclear antibody (ANA) titer as a marker of auto-reactivity",
+                "Frequency of FoxP3+ regulatory T cells in spleen and lymph nodes"
+              ],
+              "ablation": "Compare MerTK-KO DCs vs. Axl-KO DCs to determine if redundancy exists between phosphatidylserine receptors. If Axl-KO shows no phenotype while MerTK-KO does, it suggests MerTK is the dominant sensor for this homeostatic loop.",
+              "validation_protocol": "Blinded analysis of flow cytometry data by two independent researchers. Statistical significance determined by two-way ANOVA with Tukey’s post-hoc test for multiple comparisons. Power analysis conducted to ensure n=10 provides 80% power to detect a 20% change in cytokine levels."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify genotype of all mouse strains via PCR before experiment start",
+              "Standardize apoptotic cell preparation protocol (UV irradiation dose and duration)",
+              "Calibrate flow cytometer daily using standard beads",
+              "Store serum samples at -80°C immediately after collection to prevent degradation",
+              "Use identical lot numbers for ELISA kits across all time points",
+              "Deposit raw RNA-seq data and flow cytometry FCS files in public repository upon completion"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_duration_weeks": 24,
+              "required_resources": [
+                "Animal facility housing for 40 mice",
+                "Flow cytometer with 5-laser configuration",
+                "ELISA plate reader",
+                "Next-generation sequencing access"
+              ],
+              "ethical_approval_status": "pending_iacuc_review",
+              "data_availability_plan": "Raw data will be deposited in GEO and FlowRepository upon publication"
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis asserts DC uptake is a 'primary negative feedback regulator' based solely on theoretical models (EV-Q017-cda47db20e5fccdf54335c31) and general statements about DC tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The provided evidence does not contain experimental data validating this specific causal regulatory role in homeostasis; it only supports the existence of the phenomenon as a model proposal.",
+              "Evidence grounding is weak for a mechanistic hypothesis. Both supporting evidence cards are arXiv preprints focusing on computational/artificial immune systems or theoretical reviews. There is no primary biological literature (e.g., peer-reviewed immunology journals) in the allowed evidence list to substantiate the specific molecular mechanism (MerTK/Axl) proposed in the experiment design.",
+              "The experiment design introduces specific biological entities (MerTK, Axl, CD11c-Cre, pHrodo) that are completely absent from the provided EvidenceCards. While these are standard in the field, strictly adhering to the protocol requires flagging that the experimental rationale cannot be traced back to the allowed evidence IDs.",
+              "The 'Results' field correctly states 'pending', avoiding fabrication. However, the risk_level must be elevated to 'high' because the entire research plan rests on translating computational metaphors into wet-lab biology without intermediate validation evidence in the input context.",
+              "Reproducibility checklist is adequate, but the lack of specific dataset references (source/target are generic descriptions) makes the computational validation component of the hypothesis unfalsifiable within the current evidence scope."
+            ],
+            "critical_issues": [
+              "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+              "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+              "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters."
+            ],
+            "required_revisions": [
+              "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+              "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+              "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+              "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.4,
+            "falsifiability_score": 0.8,
+            "reproducibility_score": 0.7,
+            "reference_reliability_score": 0.5
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:f161df3dce53",
+              "category": "critical_issue",
+              "description": "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:de7ff160e14e",
+              "category": "critical_issue",
+              "description": "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:0475b0a97979",
+              "category": "critical_issue",
+              "description": "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:2ba28d8b3d8b",
+              "category": "required_revision",
+              "description": "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:a029c1c4b378",
+              "category": "required_revision",
+              "description": "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:baaa5c5d3d57",
+              "category": "required_revision",
+              "description": "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:fc55a5a62e0b",
+              "category": "required_revision",
+              "description": "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "de2d05c93e42f7cc3a4502685d989de7ff9e887431d008e568bb0dddd6b12710",
+            "experiment_designer": "d5d2f8ed2c7d0cbf64d89f6a313a19d322e486c92da777489a8dd9117632ec69",
+            "scientific_reviewer": "351a056944d7a1e788f27dc2b1fd82033a76e1194633344fc857e0e3f0ebb57d"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-081104-dfcd19d2",
+          "version_number": 2,
+          "version_id": "20260822-081104-dfcd19d2:v2",
+          "parent_version_id": "20260822-081104-dfcd19d2:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Theoretical models propose that steady-state dendritic cell (DC) uptake of apoptotic material functions as a putative homeostatic mechanism contributing to dynamic equilibrium, though specific molecular mediators remain unverified in the provided evidence.",
+                "mechanism": "This hypothesis synthesizes two theoretical propositions from the allowed evidence: (1) the immune system is modeled as an open system maintaining dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31), and (2) DCs are proposed to continually uptake apoptotic material under steady-state conditions to generate peripheral tolerance (EV-Q017-e8902c2ed1e91a4556a94716). The causal link between these two concepts is a synthetic inference derived from computational frameworks (EV-Q017-7dbf72dc5a92b5f0330756fd) rather than direct biological validation. Specific molecular targets (e.g., MerTK, Axl) are explicitly categorized as external knowledge assumptions/knowledge gaps not supported by current evidence cards.",
+                "falsifiable_prediction": "If DC uptake is indeed a necessary component of the theorized homeostatic equilibrium, then computational simulations incorporating this rule should demonstrate greater stability in maintaining 'dynamic equilibrium' metrics compared to simulations lacking this rule. Conversely, if empirical literature search reveals no primary biological evidence linking DC uptake to homeostatic regulation in vivo, the theoretical model's biological relevance is weakened.",
+                "required_observations": [
+                  "Comparative stability analysis of artificial immune system models with vs. without DC uptake rules (based on EV-Q017-7dbf72dc5a92b5f0330756fd)",
+                  "Systematic literature review confirming or refuting the existence of primary immunological evidence for DC uptake-mediated homeostasis (addressing knowledge gap)",
+                  "Quantitative correlation between simulated homeostatic states and theoretical definitions of dynamic equilibrium (EV-Q017-cda47db20e5fccdf54335c31)"
+                ],
+                "risk_of_being_wrong": "High risk due to reliance on theoretical/computational sources (arXiv preprints) rather than wet-lab validation. The proposed mechanism may be a computational metaphor rather than a biological reality. Specific molecular mechanisms are assumed based on external knowledge and may not apply to the specific homeostatic context described in the theoretical models.",
+                "supporting_evidence_ids": [
+                  "EV-Q017-cda47db20e5fccdf54335c31",
+                  "EV-Q017-e8902c2ed1e91a4556a94716",
+                  "EV-Q017-7dbf72dc5a92b5f0330756fd"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.68
+              },
+              {
+                "hypothesis": "Current computational frameworks for innate immunity (EV-Q017-7dbf72dc5a92b5f0330756fd) are insufficient to fully capture biological immune homeostasis because they lack integration of specific molecular regulatory networks identified as knowledge gaps in the evidence base.",
+                "mechanism": "Based on the framework for implementing innate immunity in artificial systems (EV-Q017-7dbf72dc5a92b5f0330756fd) and the identification of missing molecular details in knowledge gaps, this hypothesis posits that current models treat homeostasis as an abstract emergent property (EV-Q017-cda47db20e5fccdf54335c31) without grounding in specific biological feedback loops. The discrepancy between 'open system dynamic equilibrium' theory and the lack of specified molecular mediators in the evidence suggests a fundamental limitation in translating these computational metaphors to biological reality.",
+                "falsifiable_prediction": "A systematic mapping of current AIS model parameters (from EV-Q017-7dbf72dc5a92b5f0330756fd) against required biological variables for homeostasis will reveal significant unparameterized gaps. If models can be shown to maintain 'homeostasis' using arbitrary non-biological parameters, it would weaken the claim that they represent true immune regulatory logic.",
+                "required_observations": [
+                  "Parameter audit of existing innate immunity computational models (EV-Q017-7dbf72dc5a92b5f0330756fd)",
+                  "Gap analysis comparing model variables against known biological homeostatic requirements (derived from knowledge gaps)",
+                  "Sensitivity analysis demonstrating model dependence on non-biological abstractions"
+                ],
+                "risk_of_being_wrong": "Moderate risk. While the gap is evident from the evidence provided, proving 'insufficiency' requires defining a gold standard of biological sufficiency which is itself absent from the evidence. The hypothesis might be trivially true but scientifically unproductive if no better alternative exists.",
+                "supporting_evidence_ids": [
+                  "EV-Q017-7dbf72dc5a92b5f0330756fd",
+                  "EV-Q017-cda47db20e5fccdf54335c31"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.62
+              },
+              {
+                "hypothesis": "Immune homeostasis cannot be adequately defined solely by 'dynamic equilibrium' in open systems (EV-Q017-cda47db20e5fccdf54335c31) without specifying the distinct tolerogenic signals generated by DC uptake (EV-Q017-e8902c2ed1e91a4556a94716), rendering current theoretical descriptions incomplete.",
+                "mechanism": "This hypothesis challenges the sufficiency of the high-level theoretical description. While EV-Q017-cda47db20e5fccdf54335c31 defines homeostasis as dynamic equilibrium and EV-Q017-e8902c2ed1e91a4556a94716 describes DC uptake, neither specifies the signal transduction connecting them. The hypothesis asserts that without this missing link (identified as a knowledge gap), the two concepts remain disjointed theoretical constructs rather than a unified mechanistic explanation.",
+                "falsifiable_prediction": "Text mining and conceptual analysis of the provided evidence corpus will fail to identify any explicit statement linking 'dynamic equilibrium' parameters directly to 'DC uptake' molecular outcomes. If such a link were found in the allowed evidence, the hypothesis of incompleteness would be refuted.",
+                "required_observations": [
+                  "Semantic analysis of evidence texts for causal connectors between homeostasis and DC function",
+                  "Verification that no allowed evidence card contains molecular pathway data bridging the two concepts",
+                  "Demonstration that 'dynamic equilibrium' is used as a descriptive label rather than a mechanistically defined variable in the source texts"
+                ],
+                "risk_of_being_wrong": "Low risk of being factually wrong given the evidence constraints, but high risk of being a semantic critique rather than a scientific hypothesis. It accurately reflects the evidence state but offers limited predictive power for biological experimentation.",
+                "supporting_evidence_ids": [
+                  "EV-Q017-cda47db20e5fccdf54335c31",
+                  "EV-Q017-e8902c2ed1e91a4556a94716"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.78
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected as the best compromise between addressing the reviewer's critical issues and maintaining scientific utility. It explicitly downgrades the causal claim to 'putative mechanism proposed in theoretical models' (addressing causal overreach), clearly flags molecular targets as external knowledge/gaps (addressing evidence-experiment mismatch), and grounds the mechanism strictly in the synthesis of allowed evidence cards while acknowledging the synthetic nature of the link. Unlike Hypothesis 2 (which is purely semantic) or Hypothesis 1 (which focuses only on model insufficiency), Hypothesis 0 preserves the core biological question while adhering to strict evidence constraints, making it the most appropriate foundation for a revised research plan that includes mandatory preliminary validation steps.",
+            "rejected_directions": [
+              "Asserting DC uptake as a proven primary regulator without qualifying language (violates evidence strength)",
+              "Proposing wet-lab experiments targeting specific molecules (MerTK/Axl) without first establishing them via external literature search (violates evidence grounding)",
+              "Purely computational hypotheses that ignore the biological context of the original question (fails to address user intent)",
+              "Hypotheses relying on datasets or evidence not present in the allowed_evidence_ids list"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This research plan addresses the reviewer's critique by shifting from a direct wet-lab validation of specific molecular mechanisms (which lack evidence support) to a two-phase approach: (1) Computational Validation and (2) Preliminary Literature Synthesis. Phase 1 utilizes the Artificial Immune System (AIS) framework described in EV-Q017-7dbf72dc5a92b5f0330756fd to test if 'DC-like uptake rules' are necessary for maintaining the 'dynamic equilibrium' defined in EV-Q017-cda47db20e5fccdf54335c31. Phase 2 involves a systematic review to identify if primary biological literature supports the translation of these computational metaphors into specific molecular targets (e.g., MerTK/Axl), explicitly marking such targets as knowledge gaps until validated. The experiment design avoids asserting causal biological facts not present in the evidence, instead treating the link between DC uptake and homeostasis as a synthetic inference requiring further grounding.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Computational Model Parameters from EV-Q017-7dbf72dc5a92b5f0330756fd",
+                  "description": "Parameter sets and rule definitions for innate immunity implementation in artificial systems, specifically those related to sensor-effector loops.",
+                  "access_type": "extracted_from_evidence",
+                  "is_public_candidate": true,
+                  "is_already_downloaded": false,
+                  "evidence_ids": [
+                    "EV-Q017-7dbf72dc5a92b5f0330756fd"
+                  ]
+                },
+                {
+                  "name": "Theoretical Definitions of Dynamic Equilibrium",
+                  "description": "Conceptual metrics and state definitions for immune homeostasis as an open system, derived from EV-Q017-cda47db20e5fccdf54335c31.",
+                  "access_type": "extracted_from_evidence",
+                  "is_public_candidate": true,
+                  "is_already_downloaded": false,
+                  "evidence_ids": [
+                    "EV-Q017-cda47db20e5fccdf54335c31"
+                  ]
+                }
+              ],
+              "target": [
+                {
+                  "name": "Simulation Stability Metrics",
+                  "description": "Time-series data of system stability indices (e.g., variance of internal state variables) from AIS simulations with and without DC uptake rules.",
+                  "format": "CSV/JSON",
+                  "variables": [
+                    "simulation_id",
+                    "uptake_rule_enabled",
+                    "time_step",
+                    "state_variance",
+                    "equilibrium_deviation"
+                  ]
+                },
+                {
+                  "name": "Literature Mapping Matrix",
+                  "description": "Structured output from preliminary literature search mapping theoretical DC roles to specific molecular evidence (or lack thereof).",
+                  "format": "JSON",
+                  "variables": [
+                    "theoretical_concept",
+                    "proposed_molecular_target",
+                    "primary_evidence_found",
+                    "evidence_quality_score"
+                  ]
+                }
+              ]
+            },
+            "methods": "1. **Computational Model Reconstruction**: Implement a simplified agent-based model based on the framework in EV-Q017-7dbf72dc5a92b5f0330756fd. Define 'homeostasis' using the dynamic equilibrium criteria from EV-Q017-cda47db20e5fccdf54335c31. 2. **Ablation Study**: Run two sets of simulations: (A) Full model including 'DC-like' agents that continuously uptake 'apoptotic' signals and generate tolerance; (B) Control model where this uptake/tolerance loop is disabled. 3. **Stability Analysis**: Compare the ability of both models to maintain internal state variables within bounded limits under environmental perturbations. 4. **Preliminary Literature Validation**: Conduct a targeted search for primary immunology literature linking steady-state DC uptake to specific receptors (e.g., MerTK, Axl) to determine if the computational metaphor has biological grounding. This step explicitly addresses the knowledge gap regarding molecular mechanisms.",
+            "experiments": {
+              "baselines": [
+                "AIS Model without DC uptake/tolerance rules (Null Hypothesis: Uptake is not required for equilibrium)",
+                "Randomized Agent Interaction Model (Control for emergent stability without specific immune logic)",
+                "Standard AIS Model from EV-Q017-7dbf72dc5a92b5f0330756fd (if available as reference implementation)"
+              ],
+              "metrics": [
+                "Mean Time to Failure (MTTF): Duration before system state exits equilibrium bounds",
+                "State Variance: Standard deviation of key internal system variables over time",
+                "Recovery Rate: Speed at which the system returns to equilibrium after a perturbation",
+                "Literature Coverage Score: Percentage of proposed theoretical links supported by primary peer-reviewed evidence"
+              ],
+              "ablation": "Systematically remove the 'tolerance generation' component from the DC uptake rule while keeping uptake active, to distinguish between the mechanical act of clearance and the signaling consequence of tolerance.",
+              "validation_protocol": "Simulations will be run for 1000 independent trials per condition to ensure statistical robustness. Sensitivity analysis will be performed on key parameters (uptake rate, tolerance decay rate) to ensure results are not artifacts of specific tuning. Literature search will follow PRISMA guidelines for scoping reviews."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Publish source code for the AIS simulation with version control",
+              "Document all parameter values used in the computational model",
+              "Provide the exact search strings and databases used for the preliminary literature validation",
+              "Archive raw simulation output logs for independent re-analysis",
+              "Explicitly label any molecular targets (e.g., MerTK) as 'external assumptions' in all reports until validated by Phase 2"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_duration_weeks": 8,
+              "required_resources": [
+                "High-performance computing cluster for agent-based simulations",
+                "Access to academic databases (PubMed, Web of Science) for literature review",
+                "Python/R environment for data analysis"
+              ],
+              "ethical_approval_status": "not_required_computational",
+              "data_availability_plan": "Simulation code and results will be deposited in GitHub and Zenodo. Literature mapping matrix will be included in supplementary materials."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly downgrades the causal claim to 'putative homeostatic mechanism proposed in theoretical models', directly addressing the previous critical issue of causal overreach.",
+              "Experiment design has been successfully pivoted from unsupported wet-lab validation (MerTK/Axl knockouts) to computational simulation and literature synthesis, aligning strictly with the allowed evidence cards (EV-Q017-7dbf72dc5a92b5f0330756fd, EV-Q017-cda47db20e5fccdf54335c31).",
+              "Molecular targets (MerTK, Axl) are now explicitly categorized as knowledge gaps/external assumptions rather than established facts derived from the evidence base.",
+              "Datasets now correctly reference specific evidence-derived parameters and theoretical definitions as source data, resolving the previous issue of generic dataset descriptions.",
+              "Results field remains 'pending' with no fabrication; risk level is appropriately maintained at 'high' due to the reliance on theoretical frameworks rather than empirical biological validation."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.9,
+            "falsifiability_score": 0.85,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:f161df3dce53",
+              "category": "critical_issue",
+              "description": "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:de7ff160e14e",
+              "category": "critical_issue",
+              "description": "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:0475b0a97979",
+              "category": "critical_issue",
+              "description": "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:2ba28d8b3d8b",
+              "category": "required_revision",
+              "description": "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:a029c1c4b378",
+              "category": "required_revision",
+              "description": "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:b3eb18e69b051889; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:baaa5c5d3d57",
+              "category": "required_revision",
+              "description": "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:9996b28b8846629b; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:fc55a5a62e0b",
+              "category": "required_revision",
+              "description": "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:bfc5cd20cfe7a59e; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "6cbcad67af0652fc99a9ea6b455cb0b44e00bec0f2f5330930f2f2dc47296812",
+            "experiment_designer": "04f2a2288de4181497368398951eb79f1c2ffa7ba57fa32f3c9cd347efd695d5",
+            "scientific_reviewer": "ef2d258545a260d203387b47873ec2d50f812ff07f12fc1344a264bfea625008"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-081104-dfcd19d2:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-081104-dfcd19d2:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-081104-dfcd19d2:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-081104-dfcd19d2:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:f161df3dce53",
+          "category": "critical_issue",
+          "description": "Causal overreach: Hypothesis claims DC uptake is the 'primary' regulator based on evidence that only describes it as a component of theoretical models.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:de7ff160e14e",
+          "category": "critical_issue",
+          "description": "Evidence-Experiment Mismatch: Experimental design relies on specific murine genetic tools and receptors (MerTK, Axl) not mentioned or validated in any of the provided EvidenceCards.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:0475b0a97979",
+          "category": "critical_issue",
+          "description": "Insufficient Biological Grounding: All supporting evidence is derived from computational science/arXiv preprints; no direct immunological experimental evidence is available in the allowed set to justify the specific wet-lab parameters.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:2ba28d8b3d8b",
+          "category": "required_revision",
+          "description": "Downgrade hypothesis language from 'primary negative feedback regulator' to 'putative homeostatic mechanism proposed in theoretical models' to accurately reflect the evidence strength.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a029c1c4b378",
+          "category": "required_revision",
+          "description": "Explicitly categorize the specific molecular targets (MerTK, Axl) as 'knowledge_gap' or 'external_knowledge_assumption' since they are not supported by the provided EvidenceCards.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:b3eb18e69b051889; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:baaa5c5d3d57",
+          "category": "required_revision",
+          "description": "Add a mandatory preliminary validation step: 'Literature search for primary immunological evidence confirming MerTK/Axl role in steady-state DC tolerance' before proceeding to animal model generation.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:9996b28b8846629b; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:fc55a5a62e0b",
+          "category": "required_revision",
+          "description": "Clarify in the mechanism section that the link between 'open system dynamic equilibrium' (EV-Q017-cda47db20e5fccdf54335c31) and specific DC uptake (EV-Q017-e8902c2ed1e91a4556a94716) is a synthetic inference, not a directly evidenced fact.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:bfc5cd20cfe7a59e; evidence=EV-Q017-7dbf72dc5a92b5f0330756fd,EV-Q017-cda47db20e5fccdf54335c31; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "checkpoint_hash": "f21e86863e2e795447be9b181ba5e787abb61fad74f561c7bd620cd443bd3235"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-081104-dfcd19d2:wave-b-two-round",
+      "run_id": "20260822-081104-dfcd19d2",
+      "v1_version_id": "20260822-081104-dfcd19d2:v1",
+      "v2_version_id": "20260822-081104-dfcd19d2:v2",
+      "input_fingerprints": {
+        "v1": "d5d2f8ed2c7d0cbf64d89f6a313a19d322e486c92da777489a8dd9117632ec69",
+        "v2": "04f2a2288de4181497368398951eb79f1c2ffa7ba57fa32f3c9cd347efd695d5"
+      },
+      "responded_issue_count": 3,
+      "issue_ids": [
+        "required_revision:a029c1c4b378",
+        "required_revision:baaa5c5d3d57",
+        "required_revision:fc55a5a62e0b"
+      ],
+      "change_ids": [
+        "change:b3eb18e69b051889",
+        "change:9996b28b8846629b",
+        "change:bfc5cd20cfe7a59e"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.4,
+          "after": 0.9,
+          "delta": 0.5
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.85,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.9,
+          "delta": 0.20000000000000007
+        },
+        "reference_reliability_score": {
+          "before": 0.5,
+          "after": 1.0,
+          "delta": 0.5
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 2,
+          "hypothesis": "Immune homeostasis cannot be adequately defined solely by 'dynamic equilibrium' in open systems (EV-Q017-cda47db20e5fccdf54335c31) without specifying the distinct tolerogenic signals generated by DC uptake (EV-Q017-e8902c2ed1e91a4556a94716), rendering current theoretical descriptions incomplete.",
+          "overall_score": 0.78,
+          "recommended": false
+        },
+        {
+          "rank": 2,
+          "original_index": 0,
+          "hypothesis": "Theoretical models propose that steady-state dendritic cell (DC) uptake of apoptotic material functions as a putative homeostatic mechanism contributing to dynamic equilibrium, though specific molecular mediators remain unverified in the provided evidence.",
+          "overall_score": 0.68,
+          "recommended": true
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "Current computational frameworks for innate immunity (EV-Q017-7dbf72dc5a92b5f0330756fd) are insufficient to fully capture biological immune homeostasis because they lack integration of specific molecular regulatory networks identified as knowledge gaps in the evidence base.",
+          "overall_score": 0.62,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "92456f293094",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:13:56.334360+00:00",
+    "ended_at": "2026-08-22T08:14:32.959457+00:00",
+    "duration_ms": 36625,
+    "input_summary": "{\"question_item\": {\"id\": \"Q017\", \"domain\": \"Medicine & Health\", \"question\": \"How is immune homeostasis maintained and regulated?\", \"source_page\": 11, \"booklet_excerpt\": \"Immune homeostasis is a state of internal equilibrium. Without homeostasis, the immune system cannot function correctly, leading to disease and infection. Knowing how this balance is maintained can provide a fuller picture of how the body works and may help us in calibrating medical interventions. For instance, instead of nonselectively boosting or suppressing the whole immune system as we currently do, in the future we may be",
+    "output_summary": "{\"input_question\": \"How is immune homeostasis maintained and regulated?\", \"domain\": \"Medicine & Health\", \"problem_statement\": \"Immune homeostasis is defined as a state of internal equilibrium essential for correct immune function. While studies have examined many immune cell populations, the specific mechanisms maintaining this dynamic equilibrium remain partially understood, particularly in translating theoretical models to clinical interventions for rebalancing dysregulated systems.\", \"rationale\": \"Understanding the maintenance of immune homeostasis is critical for developing precise medical",
+    "evidence_ids": [
+      "EV-Q017-7dbf72dc5a92b5f0330756fd",
+      "EV-Q017-cda47db20e5fccdf54335c31",
+      "EV-Q017-e8902c2ed1e91a4556a94716"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1a9b2fca33ff",
+    "mock": false
+  },
+  {
+    "event_id": "973578bd9ab9",
+    "run_id": "20260822-081104-dfcd19d2",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:14:32.959457+00:00",
+    "ended_at": "2026-08-22T08:14:34.314114+00:00",
+    "duration_ms": 1354,
+    "input_summary": "{\"question_item\": {\"id\": \"Q017\", \"domain\": \"Medicine & Health\", \"question\": \"How is immune homeostasis maintained and regulated?\", \"source_page\": 11, \"booklet_excerpt\": \"Immune homeostasis is a state of internal equilibrium. Without homeostasis, the immune system cannot function correctly, leading to disease and infection. Knowing how this balance is maintained can provide a fuller picture of how the body works and may help us in calibrating medical interventions. For instance, instead of nonselectively boosting or suppressing the whole immune system as we currently do, in the future we may be",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Input missing required fields: ResearchPlan, EvidenceCards, AgentTrace, execution_metadata.\", \"Cannot perform validation without a ResearchPlan to check against schema and evidence constraints.\"], \"warnings\": [], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "094d3c3c3066",
+    "mock": false
+  }
+]

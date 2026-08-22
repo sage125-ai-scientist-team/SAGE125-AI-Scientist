@@ -1,0 +1,1565 @@
+[
+  {
+    "event_id": "26e2eda1d9e3",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:46:56.707124+00:00",
+    "ended_at": "2026-08-22T05:46:56.707124+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "aa689ec3fd74",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T05:46:56.707124+00:00",
+    "ended_at": "2026-08-22T05:47:01.001757+00:00",
+    "duration_ms": 4294,
+    "input_summary": "{\"question_item\": {\"id\": \"Q109\", \"domain\": \"Ecology\", \"question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"source_page\": 37, \"booklet_excerpt\": \"Earth’s liquid-metal outer core creates electric currents. The planet’s rotation causes these currents to form a dynamic magnetic field. The currents and changes in the ionosphere influence the movement of the magnetic field. and nuclear, we have a fighting chance. Many nations, including China, the United States, and others around the world, are financing advanced research in this realm, although some of the concerns yet to",
+    "output_summary": "{\"domain\": \"Geophysics\", \"core_question\": \"What physical mechanisms generate Earth's magnetic field and drive its temporal/spatial variations?\", \"keywords\": [\"Earth's magnetic field\", \"liquid-metal outer core\", \"electric currents\", \"planet's rotation\", \"dynamic magnetic field\", \"ionosphere\", \"magnetic field movement\"], \"entities\": [\"Earth\", \"liquid-metal outer core\", \"electric currents\", \"planet's rotation\", \"ionosphere\", \"magnetic field\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The provided excerpt identifies the liquid-metal outer core, electric currents, planetary r",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d5d6fd2ee270",
+    "mock": false
+  },
+  {
+    "event_id": "e8adcadc734e",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:47:01.002736+00:00",
+    "ended_at": "2026-08-22T05:47:20.556953+00:00",
+    "duration_ms": 19554,
+    "input_summary": "{\"question_item\": {\"id\": \"Q109\", \"domain\": \"Ecology\", \"question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"source_page\": 37, \"booklet_excerpt\": \"Earth’s liquid-metal outer core creates electric currents. The planet’s rotation causes these currents to form a dynamic magnetic field. The currents and changes in the ionosphere influence the movement of the magnetic field. and nuclear, we have a fighting chance. Many nations, including China, the United States, and others around the world, are financing advanced research in this realm, although some of the concerns yet to",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the primary mechanism of magnetic field generation as stated in the booklet (liquid outer core electric currents).\", \"query\": \"Earth liquid outer core electric currents magnetic field generation mechanism\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming that electric currents in the liquid-metal outer core are the source of Earth's magnetic field.\", \"priority\": \"high\"}, {\"purpose\": \"Confirm the role of planetary rotation in shaping the magnetic field dynamics as mentioned in the excerpt.\", \"query\": \"planet rotation effect on Earth magne",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "91f7ebef565c",
+    "mock": false
+  },
+  {
+    "event_id": "fdc672664541",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:47:20.565459+00:00",
+    "ended_at": "2026-08-22T05:47:39.751697+00:00",
+    "duration_ms": 19186,
+    "input_summary": "{\"question_item\": {\"id\": \"Q109\", \"domain\": \"Ecology\", \"question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"source_page\": 37, \"booklet_excerpt\": \"Earth’s liquid-metal outer core creates electric currents. The planet’s rotation causes these currents to form a dynamic magnetic field. The currents and changes in the ionosphere influence the movement of the magnetic field. and nuclear, we have a fighting chance. Many nations, including China, the United States, and others around the world, are financing advanced research in this realm, although some of the concerns yet to",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"The generation of the Earth's magnetic field is associated with the geomagnetic dynamo process, which involves rotating turbulence and convection.\", \"evidence_ids\": [\"EV-Q109-2a1f3598aee5a8906d4b9fc3\"], \"confidence\": \"high\", \"fact_type\": \"mechanism\", \"caveat\": \"Evidence title links helical distributed chaos in rotating turbulence/convection to geomagnetic dynamo applications.\"}, {\"fact\": \"Parker’s dynamo equations and general mean-field dynamo equations are used to model magnetic field generation, including fluctuations of the alpha-effect.\", \"evidence_ids\": [\"",
+    "evidence_ids": [
+      "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+      "EV-Q109-c2530e74282879f8defb6d85",
+      "EV-Q109-c1c595e9f28715ecd014dfd8",
+      "EV-Q109-7a053b4eadf8259f9ba501f8"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "cadcfef2ad8c",
+    "mock": false
+  },
+  {
+    "event_id": "b03068eb8fc3",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:47:39.751697+00:00",
+    "ended_at": "2026-08-22T05:48:01.773947+00:00",
+    "duration_ms": 22022,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q109\", \"domain\": \"Ecology\", \"question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"source_page\": 37, \"booklet_excerpt\": \"Earth’s liquid-metal outer core creates electric currents. The planet’s rotation causes these currents to form a dynamic magnetic field. The currents and changes in the ionosphere influence the movement of the magnetic field. and nuclear, we have a fighting chance. Many nations, including China, the United States, and others around the world, are financing advanced research in this realm, although so",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.\", \"mechanism\": \"According to mean-field dynamo theory, the generation of the magnetic field relies on the alpha-effect arising from helical turbulence. Fluctuations in this alpha-effect, inherent to rotating convection and distributed chaos, introduce time-dependent variability into the dynamo equations, manifestin",
+    "evidence_ids": [
+      "EV-Q109-c2530e74282879f8defb6d85",
+      "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+      "EV-Q109-7a053b4eadf8259f9ba501f8",
+      "EV-Q109-c1c595e9f28715ecd014dfd8"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "acdda8d4260e",
+    "mock": false
+  },
+  {
+    "event_id": "66e6550fa5aa",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:48:01.773947+00:00",
+    "ended_at": "2026-08-22T05:48:22.666115+00:00",
+    "duration_ms": 20892,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q109\", \"domain\": \"Ecology\", \"question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"source_page\": 37, \"booklet_excerpt\": \"Earth’s liquid-metal outer core creates electric currents. The planet’s rotation causes these currents to form a dynamic magnetic field. The currents and changes in the ionosphere influence the movement of the magnetic field. and nuclear, we have a fighting chance. Many nations, including China, the United States, and others around the world, are financing advanced research in this realm, although so",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that secular variation (SV) of Earth's magnetic field is driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence. We will implement a mean-field dynamo model based on Parker’s equations, incorporating a stochastic term for the alpha-effect ($\\\\alpha = \\\\alpha_0 + \\\\xi(t)$), where $\\\\xi(t)$ represents helical turbulence fluctuations derived from rotating convection theory. The model will be solved numerically to generate synthetic magnetic field time series. These synthetic series will be stati",
+    "evidence_ids": [
+      "EV-Q109-7a053b4eadf8259f9ba501f8",
+      "EV-Q109-c2530e74282879f8defb6d85",
+      "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8c8a2694139d",
+    "mock": false
+  },
+  {
+    "event_id": "08b06479cbeb",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:48:22.666115+00:00",
+    "ended_at": "2026-08-22T05:48:29.794263+00:00",
+    "duration_ms": 7128,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q109\", \"domain\": \"Ecology\", \"question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"source_page\": 37, \"booklet_excerpt\": \"Earth’s liquid-metal outer core creates electric currents. The planet’s rotation causes these currents to form a dynamic magnetic field. The currents and changes in the ionosphere influence the movement of the magnetic field. and nuclear, we have a fighting chance. Many nations, including China, the United States, and others around the world, are financing advanced research in this realm, although so",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The hypothesis correctly identifies a knowledge gap regarding the specific mechanism of secular variation in the provided evidence and formulates a testable prediction based on allowed theoretical frameworks (mean-field dynamo with stochastic alpha-effect).\", \"Experiment design appropriately distinguishes between source data (paleomagnetic records) and target data (synthetic simulation output), avoiding circular validation.\", \"Results field is correctly marked as pending/unexecuted, adhering to strict anti-hallucination protocols.\", \"Baselines include bo",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d278d20e4bc0",
+    "mock": false
+  },
+  {
+    "event_id": "f83bf5b92c83",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:48:29.794263+00:00",
+    "ended_at": "2026-08-22T05:48:50.212988+00:00",
+    "duration_ms": 20418,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The hypothesis correctly identifies a knowledge gap regarding the specific mechanism of secular variation in the provided evidence and formulates a testable prediction based on allowed theoretical frameworks (mean-field dynamo with stochastic alpha-effect).\", \"Experiment design appropriately distinguishes between source data (paleomagnetic records) and target data (synthetic simulation output), avoiding circular validation.\", \"Results field is correctly marked as pending/unexecuted, adhering to strict anti-hallu",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.\", \"mechanism\": \"According to mean-field dynamo theory, the generation of the magnetic field relies on the alpha-effect arising from helical turbulence. Fluctuations in this alpha-effect, inherent to rotating convection and distributed chaos, introduce time-dependent variability into the dynamo equations, manifestin",
+    "evidence_ids": [
+      "EV-Q109-c2530e74282879f8defb6d85",
+      "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+      "EV-Q109-7a053b4eadf8259f9ba501f8",
+      "EV-Q109-c1c595e9f28715ecd014dfd8"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9bf4f37d2812",
+    "mock": false
+  },
+  {
+    "event_id": "514515d4395c",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:48:50.213988+00:00",
+    "ended_at": "2026-08-22T05:49:13.787664+00:00",
+    "duration_ms": 23573,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The hypothesis correctly identifies a knowledge gap regarding the specific mechanism of secular variation in the provided evidence and formulates a testable prediction based on allowed theoretical frameworks (mean-field dynamo with stochastic alpha-effect).\", \"Experiment design appropriately distinguishes between source data (paleomagnetic records) and target data (synthetic simulation output), avoiding circular validation.\", \"Results field is correctly marked as pending/unexecuted, adhering to strict anti-hallu",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that secular variation (SV) of Earth's magnetic field is driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence. We will implement a mean-field dynamo model based on Parker’s equations, incorporating a stochastic term for the alpha-effect ($\\\\alpha = \\\\alpha_0 + \\\\xi(t)$), where $\\\\xi(t)$ represents helical turbulence fluctuations derived from rotating convection theory [EV-Q109-2a1f3598aee5a8906d4b9fc3]. The model will be solved numerically to generate synthetic magnetic field time series. T",
+    "evidence_ids": [
+      "EV-Q109-7a053b4eadf8259f9ba501f8",
+      "EV-Q109-c2530e74282879f8defb6d85",
+      "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "120a0b483320",
+    "mock": false
+  },
+  {
+    "event_id": "693c99784b6f",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:49:13.788658+00:00",
+    "ended_at": "2026-08-22T05:49:19.390473+00:00",
+    "duration_ms": 5601,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The hypothesis correctly identifies a knowledge gap regarding the specific mechanism of secular variation in the provided evidence and formulates a testable prediction based on allowed theoretical frameworks (mean-field dynamo with stochastic alpha-effect).\", \"Experiment design appropriately distinguishes between source data (paleomagnetic records) and target data (synthetic simulation output), avoiding circular validation.\", \"Results field is correctly marked as pending/unexecuted, adhering to strict anti-hallu",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revision successfully addresses the previous required revisions by explicitly defining statistical thresholds (PSD slope difference < 0.2, autocorrelation within 95% CI) in both the hypothesis prediction and experiment metrics, mitigating p-hacking risks.\", \"The 'External Forcing Null Model' baseline is now correctly defined as a theoretical construct rather than implying reliance on unverified external datasets, adhering to evidence constraints.\", \"All factual claims remain strictly grounded in allowed EvidenceCards (EV-Q109-c2530e74282879f8defb6d85",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "363582a57888",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:b056a835f3e05640",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.",
+              "mechanism": "According to mean-field dynamo theory, the generation of the magnetic field relies on the alpha-effect arising from helical turbulence. Fluctuations in this alpha-effect, inherent to rotating convection and distributed chaos, introduce time-dependent variability into the dynamo equations, manifesting as the observed drift and intensity changes of the geomagnetic field.",
+              "falsifiable_prediction": "If alpha-effect fluctuations are the dominant driver of field movement, then numerical simulations of the geodynamo incorporating stochastic alpha-terms should reproduce the statistical properties (e.g., power spectral density, autocorrelation times) of paleomagnetic secular variation records without requiring time-varying boundary conditions or external current sources.",
+              "required_observations": [
+                "Time-series of paleomagnetic directional and intensity data spanning at least 10^4 years",
+                "Output from 3D magnetohydrodynamic simulations with parameterized stochastic alpha-effects",
+                "Statistical comparison metrics between simulated and observed field variations"
+              ],
+              "risk_of_being_wrong": "The hypothesis may be incorrect if the observed secular variation exhibits coherent periodicities or spatial patterns that cannot be reproduced by stochastic core dynamics alone, implying missing physics such as core-mantle coupling or unmodeled external influences.",
+              "supporting_evidence_ids": [
+                "EV-Q109-c2530e74282879f8defb6d85",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                "EV-Q109-7a053b4eadf8259f9ba501f8"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.84
+            },
+            {
+              "hypothesis": "The 'movement' of Earth's magnetic field can be accurately modeled as a low-dimensional stochastic process derived from the underlying helical distributed chaos in rotating core convection, making explicit resolution of all turbulent scales unnecessary for predicting secular variation statistics.",
+              "mechanism": "Helical distributed chaos in rotating turbulence generates magnetic fields through a dynamo process that, when coarse-grained, behaves like a specific class of stochastic differential equations. The macroscopic field movement is thus an emergent property of this chaotic system, allowing reduced-order modeling to capture essential dynamics.",
+              "falsifiable_prediction": "If the field movement is governed by this specific stochastic reduction, then the probability distribution functions of geomagnetic dipole moment variations in paleomagnetic records will match the stationary distributions predicted by the corresponding stochastic model derived from helical chaos theory.",
+              "required_observations": [
+                "High-resolution paleomagnetic dipole moment reconstructions",
+                "Derived stochastic model parameters from helical chaos theory applied to geodynamo",
+                "Goodness-of-fit tests comparing empirical and theoretical distributions"
+              ],
+              "risk_of_being_wrong": "The hypothesis fails if the empirical distributions show significant deviations (e.g., heavy tails, multimodality) not captured by the proposed stochastic reduction, indicating that higher-order correlations or non-chaotic mechanisms dominate field evolution.",
+              "supporting_evidence_ids": [
+                "EV-Q109-7a053b4eadf8259f9ba501f8",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.83
+            },
+            {
+              "hypothesis": "Ionospheric currents contribute negligibly to the long-term movement (secular variation) of Earth's main magnetic field compared to core dynamo processes, despite being mentioned in some educational summaries.",
+              "mechanism": "While ionospheric currents generate transient magnetic variations, the energy and timescales associated with them are insufficient to drive the multi-decadal to millennial scale secular variation characteristic of the main field, which is sustained by the self-exciting dynamo in the liquid outer core involving rotating turbulence and convection.",
+              "falsifiable_prediction": "If ionospheric influence on secular variation is negligible, then removing ionospheric correction terms from geomagnetic models should not significantly degrade the fit to paleomagnetic secular variation trends over centuries, whereas removing core dynamo terms should cause model failure.",
+              "required_observations": [
+                "Long-term geomagnetic observatory and satellite data with separated internal/external field components",
+                "Paleomagnetic secular variation curves",
+                "Comparative model performance metrics with and without ionospheric coupling terms"
+              ],
+              "risk_of_being_wrong": "This hypothesis would be weakened if robust correlations are found between long-term ionospheric/magnetospheric activity indices and specific features of secular variation that cannot be explained by core dynamics alone.",
+              "supporting_evidence_ids": [
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                "EV-Q109-c1c595e9f28715ecd014dfd8"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses both parts of the question (generation and movement) using mechanisms explicitly supported by the allowed evidence (alpha-effect fluctuations in mean-field dynamo theory and rotating turbulence). It offers a clear, testable pathway using existing paleomagnetic data and simulation frameworks, resolving the knowledge gap regarding field movement while adhering strictly to the provided evidence. Hypothesis 1 is strong but more abstract; Hypothesis 2 addresses a potential misconception but has lower evidence support for the specific negation of ionospheric effects in the context of 'movement'.",
+          "rejected_directions": [
+            "Attributing the primary cause of magnetic field movement to ionospheric currents as suggested in the booklet excerpt, due to lack of supporting evidence in allowed IDs and contradiction with established dynamo theory.",
+            "Proposing hypotheses relying on core-mantle boundary topography or thermal heterogeneity as the main driver of secular variation, as no evidence cards support these specific mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that secular variation (SV) of Earth's magnetic field is driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence. We will implement a mean-field dynamo model based on Parker’s equations, incorporating a stochastic term for the alpha-effect ($\\alpha = \\alpha_0 + \\xi(t)$), where $\\xi(t)$ represents helical turbulence fluctuations derived from rotating convection theory. The model will be solved numerically to generate synthetic magnetic field time series. These synthetic series will be statistically compared against paleomagnetic records to assess if stochastic alpha-fluctuations alone can reproduce observed SV properties (power spectral density, autocorrelation) without external forcing or deterministic laminar flow assumptions.",
+          "datasets": {
+            "source": {
+              "name": "Paleomagnetic Secular Variation Records",
+              "description": "Time-series data of geomagnetic field direction and intensity spanning at least 10^4 years, used as the ground truth for statistical comparison.",
+              "access_method": "Public repositories (e.g., GEOMAGIA50v3 or similar paleomagnetic databases referenced in EV-Q109-7a053b4eadf8259f9ba501f8)",
+              "evidence_ids": [
+                "EV-Q109-7a053b4eadf8259f9ba501f8"
+              ]
+            },
+            "target": {
+              "name": "Synthetic Geomagnetic Field Time Series",
+              "description": "Output from the stochastic mean-field dynamo simulation incorporating fluctuating alpha-effects.",
+              "generation_method": "Numerical integration of modified Parker dynamo equations with stochastic alpha-term",
+              "evidence_ids": [
+                "EV-Q109-c2530e74282879f8defb6d85",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+              ]
+            }
+          },
+          "methods": "1. **Model Formulation**: Implement mean-field dynamo equations (Parker’s model) as described in EV-Q109-c2530e74282879f8defb6d85. Introduce a stochastic component to the alpha-effect parameter, modeled as Gaussian white noise or colored noise consistent with helical distributed chaos in rotating turbulence (EV-Q109-2a1f3598aee5a8906d4b9fc3). \n2. **Simulation**: Run numerical simulations to generate long-time series of magnetic dipole moment and directional variations. Ensure parameters reflect outer core conditions (rotation rate, conductivity).\n3. **Statistical Analysis**: Compute Power Spectral Density (PSD) and autocorrelation functions for both synthetic and paleomagnetic data. \n4. **Comparison**: Use Kolmogorov-Smirnov tests and spectral coherence metrics to quantify the similarity between the stochastic model output and empirical paleomagnetic records (EV-Q109-7a053b4eadf8259f9ba501f8).",
+          "experiments": {
+            "baselines": [
+              "Deterministic Mean-Field Dynamo: Standard Parker equations with constant alpha-effect (no stochastic fluctuations).",
+              "External Forcing Model: A model attributing SV primarily to ionospheric/magnetospheric current variations (to test the null hypothesis that internal stochasticity is negligible, though evidence suggests otherwise)."
+            ],
+            "metrics": [
+              "Power Spectral Density (PSD) Slope and Amplitude Match",
+              "Autocorrelation Time Decay Rate",
+              "Kolmogorov-Smirnov Statistic for Dipole Moment Distribution"
+            ],
+            "ablation": "Vary the amplitude and correlation time of the stochastic alpha-fluctuation term to determine sensitivity of SV statistics to turbulence intensity.",
+            "validation_protocol": "Split paleomagnetic data into training (parameter tuning) and testing (validation) sets. Validate that the stochastic model reproduces key statistical features of the test set without overfitting. Compare performance against baselines using defined metrics."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for stochastic mean-field dynamo solver is version-controlled and documented.",
+            "Paleomagnetic dataset source and preprocessing steps are explicitly recorded.",
+            "Random seeds for stochastic terms are fixed for reproducibility.",
+            "Parameter values for alpha-effect fluctuations are justified by rotating turbulence theory (EV-Q109-2a1f3598aee5a8906d4b9fc3)."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for long-time integration of PDEs.",
+            "estimated_runtime": "48-72 hours for full parameter sweep and statistical analysis.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Custom PDE solver library"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-054656-a4d47577",
+        "version_number": 1,
+        "version_id": "20260822-054656-a4d47577:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.",
+              "mechanism": "According to mean-field dynamo theory, the generation of the magnetic field relies on the alpha-effect arising from helical turbulence. Fluctuations in this alpha-effect, inherent to rotating convection and distributed chaos, introduce time-dependent variability into the dynamo equations, manifesting as the observed drift and intensity changes of the geomagnetic field.",
+              "falsifiable_prediction": "If alpha-effect fluctuations are the dominant driver of field movement, then numerical simulations of the geodynamo incorporating stochastic alpha-terms should reproduce the statistical properties (e.g., power spectral density, autocorrelation times) of paleomagnetic secular variation records without requiring time-varying boundary conditions or external current sources.",
+              "required_observations": [
+                "Time-series of paleomagnetic directional and intensity data spanning at least 10^4 years",
+                "Output from 3D magnetohydrodynamic simulations with parameterized stochastic alpha-effects",
+                "Statistical comparison metrics between simulated and observed field variations"
+              ],
+              "risk_of_being_wrong": "The hypothesis may be incorrect if the observed secular variation exhibits coherent periodicities or spatial patterns that cannot be reproduced by stochastic core dynamics alone, implying missing physics such as core-mantle coupling or unmodeled external influences.",
+              "supporting_evidence_ids": [
+                "EV-Q109-c2530e74282879f8defb6d85",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                "EV-Q109-7a053b4eadf8259f9ba501f8"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.84
+            },
+            {
+              "hypothesis": "The 'movement' of Earth's magnetic field can be accurately modeled as a low-dimensional stochastic process derived from the underlying helical distributed chaos in rotating core convection, making explicit resolution of all turbulent scales unnecessary for predicting secular variation statistics.",
+              "mechanism": "Helical distributed chaos in rotating turbulence generates magnetic fields through a dynamo process that, when coarse-grained, behaves like a specific class of stochastic differential equations. The macroscopic field movement is thus an emergent property of this chaotic system, allowing reduced-order modeling to capture essential dynamics.",
+              "falsifiable_prediction": "If the field movement is governed by this specific stochastic reduction, then the probability distribution functions of geomagnetic dipole moment variations in paleomagnetic records will match the stationary distributions predicted by the corresponding stochastic model derived from helical chaos theory.",
+              "required_observations": [
+                "High-resolution paleomagnetic dipole moment reconstructions",
+                "Derived stochastic model parameters from helical chaos theory applied to geodynamo",
+                "Goodness-of-fit tests comparing empirical and theoretical distributions"
+              ],
+              "risk_of_being_wrong": "The hypothesis fails if the empirical distributions show significant deviations (e.g., heavy tails, multimodality) not captured by the proposed stochastic reduction, indicating that higher-order correlations or non-chaotic mechanisms dominate field evolution.",
+              "supporting_evidence_ids": [
+                "EV-Q109-7a053b4eadf8259f9ba501f8",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.83
+            },
+            {
+              "hypothesis": "Ionospheric currents contribute negligibly to the long-term movement (secular variation) of Earth's main magnetic field compared to core dynamo processes, despite being mentioned in some educational summaries.",
+              "mechanism": "While ionospheric currents generate transient magnetic variations, the energy and timescales associated with them are insufficient to drive the multi-decadal to millennial scale secular variation characteristic of the main field, which is sustained by the self-exciting dynamo in the liquid outer core involving rotating turbulence and convection.",
+              "falsifiable_prediction": "If ionospheric influence on secular variation is negligible, then removing ionospheric correction terms from geomagnetic models should not significantly degrade the fit to paleomagnetic secular variation trends over centuries, whereas removing core dynamo terms should cause model failure.",
+              "required_observations": [
+                "Long-term geomagnetic observatory and satellite data with separated internal/external field components",
+                "Paleomagnetic secular variation curves",
+                "Comparative model performance metrics with and without ionospheric coupling terms"
+              ],
+              "risk_of_being_wrong": "This hypothesis would be weakened if robust correlations are found between long-term ionospheric/magnetospheric activity indices and specific features of secular variation that cannot be explained by core dynamics alone.",
+              "supporting_evidence_ids": [
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                "EV-Q109-c1c595e9f28715ecd014dfd8"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses both parts of the question (generation and movement) using mechanisms explicitly supported by the allowed evidence (alpha-effect fluctuations in mean-field dynamo theory and rotating turbulence). It offers a clear, testable pathway using existing paleomagnetic data and simulation frameworks, resolving the knowledge gap regarding field movement while adhering strictly to the provided evidence. Hypothesis 1 is strong but more abstract; Hypothesis 2 addresses a potential misconception but has lower evidence support for the specific negation of ionospheric effects in the context of 'movement'.",
+          "rejected_directions": [
+            "Attributing the primary cause of magnetic field movement to ionospheric currents as suggested in the booklet excerpt, due to lack of supporting evidence in allowed IDs and contradiction with established dynamo theory.",
+            "Proposing hypotheses relying on core-mantle boundary topography or thermal heterogeneity as the main driver of secular variation, as no evidence cards support these specific mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that secular variation (SV) of Earth's magnetic field is driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence. We will implement a mean-field dynamo model based on Parker’s equations, incorporating a stochastic term for the alpha-effect ($\\alpha = \\alpha_0 + \\xi(t)$), where $\\xi(t)$ represents helical turbulence fluctuations derived from rotating convection theory. The model will be solved numerically to generate synthetic magnetic field time series. These synthetic series will be statistically compared against paleomagnetic records to assess if stochastic alpha-fluctuations alone can reproduce observed SV properties (power spectral density, autocorrelation) without external forcing or deterministic laminar flow assumptions.",
+          "datasets": {
+            "source": {
+              "name": "Paleomagnetic Secular Variation Records",
+              "description": "Time-series data of geomagnetic field direction and intensity spanning at least 10^4 years, used as the ground truth for statistical comparison.",
+              "access_method": "Public repositories (e.g., GEOMAGIA50v3 or similar paleomagnetic databases referenced in EV-Q109-7a053b4eadf8259f9ba501f8)",
+              "evidence_ids": [
+                "EV-Q109-7a053b4eadf8259f9ba501f8"
+              ]
+            },
+            "target": {
+              "name": "Synthetic Geomagnetic Field Time Series",
+              "description": "Output from the stochastic mean-field dynamo simulation incorporating fluctuating alpha-effects.",
+              "generation_method": "Numerical integration of modified Parker dynamo equations with stochastic alpha-term",
+              "evidence_ids": [
+                "EV-Q109-c2530e74282879f8defb6d85",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+              ]
+            }
+          },
+          "methods": "1. **Model Formulation**: Implement mean-field dynamo equations (Parker’s model) as described in EV-Q109-c2530e74282879f8defb6d85. Introduce a stochastic component to the alpha-effect parameter, modeled as Gaussian white noise or colored noise consistent with helical distributed chaos in rotating turbulence (EV-Q109-2a1f3598aee5a8906d4b9fc3). \n2. **Simulation**: Run numerical simulations to generate long-time series of magnetic dipole moment and directional variations. Ensure parameters reflect outer core conditions (rotation rate, conductivity).\n3. **Statistical Analysis**: Compute Power Spectral Density (PSD) and autocorrelation functions for both synthetic and paleomagnetic data. \n4. **Comparison**: Use Kolmogorov-Smirnov tests and spectral coherence metrics to quantify the similarity between the stochastic model output and empirical paleomagnetic records (EV-Q109-7a053b4eadf8259f9ba501f8).",
+          "experiments": {
+            "baselines": [
+              "Deterministic Mean-Field Dynamo: Standard Parker equations with constant alpha-effect (no stochastic fluctuations).",
+              "External Forcing Model: A model attributing SV primarily to ionospheric/magnetospheric current variations (to test the null hypothesis that internal stochasticity is negligible, though evidence suggests otherwise)."
+            ],
+            "metrics": [
+              "Power Spectral Density (PSD) Slope and Amplitude Match",
+              "Autocorrelation Time Decay Rate",
+              "Kolmogorov-Smirnov Statistic for Dipole Moment Distribution"
+            ],
+            "ablation": "Vary the amplitude and correlation time of the stochastic alpha-fluctuation term to determine sensitivity of SV statistics to turbulence intensity.",
+            "validation_protocol": "Split paleomagnetic data into training (parameter tuning) and testing (validation) sets. Validate that the stochastic model reproduces key statistical features of the test set without overfitting. Compare performance against baselines using defined metrics."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for stochastic mean-field dynamo solver is version-controlled and documented.",
+            "Paleomagnetic dataset source and preprocessing steps are explicitly recorded.",
+            "Random seeds for stochastic terms are fixed for reproducibility.",
+            "Parameter values for alpha-effect fluctuations are justified by rotating turbulence theory (EV-Q109-2a1f3598aee5a8906d4b9fc3)."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for long-time integration of PDEs.",
+            "estimated_runtime": "48-72 hours for full parameter sweep and statistical analysis.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Custom PDE solver library"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies a knowledge gap regarding the specific mechanism of secular variation in the provided evidence and formulates a testable prediction based on allowed theoretical frameworks (mean-field dynamo with stochastic alpha-effect).",
+            "Experiment design appropriately distinguishes between source data (paleomagnetic records) and target data (synthetic simulation output), avoiding circular validation.",
+            "Results field is correctly marked as pending/unexecuted, adhering to strict anti-hallucination protocols.",
+            "Baselines include both a deterministic internal model and an external forcing model, providing necessary contrast to validate the 'stochastic internal driver' claim.",
+            "All factual claims in the hypothesis and method sections are traceable to specific EvidenceCards (EV-Q109-c2530e74282879f8defb6d85 for alpha-fluctuations, EV-Q109-7a053b4eadf8259f9ba501f8 for stochastic modeling approach)."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+            "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:32a5b30f1ade",
+            "category": "required_revision",
+            "description": "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7551005710f8",
+            "category": "required_revision",
+            "description": "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "279692425710f1a476c7b81c01e2363699f76109a2d9fae60a0b60f0c0cb3b59",
+          "experiment_designer": "76aad708d0da3bb791785a2ea108678e0a947956cb046ccda2064067873f912b",
+          "scientific_reviewer": "ce42fe9c3211187a4396f556ea3e5e220f5a8be2fdfb3ee998408b1060003325"
+        }
+      },
+      "parent_version_id": "20260822-054656-a4d47577:v1",
+      "lineage": [
+        "20260822-054656-a4d47577:v1",
+        "20260822-054656-a4d47577:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The hypothesis correctly identifies a knowledge gap regarding the specific mechanism of secular variation in the provided evidence and formulates a testable prediction based on allowed theoretical frameworks (mean-field dynamo with stochastic alpha-effect).",
+          "Experiment design appropriately distinguishes between source data (paleomagnetic records) and target data (synthetic simulation output), avoiding circular validation.",
+          "Results field is correctly marked as pending/unexecuted, adhering to strict anti-hallucination protocols.",
+          "Baselines include both a deterministic internal model and an external forcing model, providing necessary contrast to validate the 'stochastic internal driver' claim.",
+          "All factual claims in the hypothesis and method sections are traceable to specific EvidenceCards (EV-Q109-c2530e74282879f8defb6d85 for alpha-fluctuations, EV-Q109-7a053b4eadf8259f9ba501f8 for stochastic modeling approach)."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+          "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revision successfully addresses the previous required revisions by explicitly defining statistical thresholds (PSD slope difference < 0.2, autocorrelation within 95% CI) in both the hypothesis prediction and experiment metrics, mitigating p-hacking risks.",
+          "The 'External Forcing Null Model' baseline is now correctly defined as a theoretical construct rather than implying reliance on unverified external datasets, adhering to evidence constraints.",
+          "All factual claims remain strictly grounded in allowed EvidenceCards (EV-Q109-c2530e74282879f8defb6d85, EV-Q109-2a1f3598aee5a8906d4b9fc3, EV-Q109-7a053b4eadf8259f9ba501f8).",
+          "Results field correctly maintains 'pending' status with no fabricated data.",
+          "Reproducibility checklist has been updated to include enforcement of pre-registered thresholds."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.98,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:00c73a5891283d34",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+          "issue_id": "required_revision:32a5b30f1ade"
+        },
+        {
+          "failure_id": "failure:46f58fcea433ce07",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics.",
+          "issue_id": "required_revision:7551005710f8"
+        }
+      ],
+      "changes": [],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:32a5b30f1ade",
+          "category": "required_revision",
+          "description": "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:7551005710f8",
+          "category": "required_revision",
+          "description": "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "validation_protocol",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.",
+          "overall_score": 0.88,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The 'movement' of Earth's magnetic field can be accurately modeled as a low-dimensional stochastic process derived from the underlying helical distributed chaos in rotating core convection, making explicit resolution of all turbulent scales unnecessary for predicting secular variation statistics.",
+          "overall_score": 0.84,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Ionospheric currents contribute negligibly to the long-term movement (secular variation) of Earth's main magnetic field compared to core dynamo processes, despite being mentioned in some educational summaries.",
+          "overall_score": 0.55,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 0,
+      "blocking_reasons": [
+        "required_revision_without_change:required_revision:32a5b30f1ade",
+        "required_revision_without_change:required_revision:7551005710f8",
+        "unresolved_issue:required_revision:32a5b30f1ade",
+        "unresolved_issue:required_revision:7551005710f8"
+      ],
+      "remaining_blockers": [
+        "required_revision:32a5b30f1ade: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:7551005710f8: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-054656-a4d47577",
+        "version_number": 1,
+        "version_id": "20260822-054656-a4d47577:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.",
+              "mechanism": "According to mean-field dynamo theory, the generation of the magnetic field relies on the alpha-effect arising from helical turbulence. Fluctuations in this alpha-effect, inherent to rotating convection and distributed chaos, introduce time-dependent variability into the dynamo equations, manifesting as the observed drift and intensity changes of the geomagnetic field.",
+              "falsifiable_prediction": "If alpha-effect fluctuations are the dominant driver of field movement, then numerical simulations of the geodynamo incorporating stochastic alpha-terms should reproduce the statistical properties (e.g., power spectral density, autocorrelation times) of paleomagnetic secular variation records without requiring time-varying boundary conditions or external current sources.",
+              "required_observations": [
+                "Time-series of paleomagnetic directional and intensity data spanning at least 10^4 years",
+                "Output from 3D magnetohydrodynamic simulations with parameterized stochastic alpha-effects",
+                "Statistical comparison metrics between simulated and observed field variations"
+              ],
+              "risk_of_being_wrong": "The hypothesis may be incorrect if the observed secular variation exhibits coherent periodicities or spatial patterns that cannot be reproduced by stochastic core dynamics alone, implying missing physics such as core-mantle coupling or unmodeled external influences.",
+              "supporting_evidence_ids": [
+                "EV-Q109-c2530e74282879f8defb6d85",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                "EV-Q109-7a053b4eadf8259f9ba501f8"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.84
+            },
+            {
+              "hypothesis": "The 'movement' of Earth's magnetic field can be accurately modeled as a low-dimensional stochastic process derived from the underlying helical distributed chaos in rotating core convection, making explicit resolution of all turbulent scales unnecessary for predicting secular variation statistics.",
+              "mechanism": "Helical distributed chaos in rotating turbulence generates magnetic fields through a dynamo process that, when coarse-grained, behaves like a specific class of stochastic differential equations. The macroscopic field movement is thus an emergent property of this chaotic system, allowing reduced-order modeling to capture essential dynamics.",
+              "falsifiable_prediction": "If the field movement is governed by this specific stochastic reduction, then the probability distribution functions of geomagnetic dipole moment variations in paleomagnetic records will match the stationary distributions predicted by the corresponding stochastic model derived from helical chaos theory.",
+              "required_observations": [
+                "High-resolution paleomagnetic dipole moment reconstructions",
+                "Derived stochastic model parameters from helical chaos theory applied to geodynamo",
+                "Goodness-of-fit tests comparing empirical and theoretical distributions"
+              ],
+              "risk_of_being_wrong": "The hypothesis fails if the empirical distributions show significant deviations (e.g., heavy tails, multimodality) not captured by the proposed stochastic reduction, indicating that higher-order correlations or non-chaotic mechanisms dominate field evolution.",
+              "supporting_evidence_ids": [
+                "EV-Q109-7a053b4eadf8259f9ba501f8",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.83
+            },
+            {
+              "hypothesis": "Ionospheric currents contribute negligibly to the long-term movement (secular variation) of Earth's main magnetic field compared to core dynamo processes, despite being mentioned in some educational summaries.",
+              "mechanism": "While ionospheric currents generate transient magnetic variations, the energy and timescales associated with them are insufficient to drive the multi-decadal to millennial scale secular variation characteristic of the main field, which is sustained by the self-exciting dynamo in the liquid outer core involving rotating turbulence and convection.",
+              "falsifiable_prediction": "If ionospheric influence on secular variation is negligible, then removing ionospheric correction terms from geomagnetic models should not significantly degrade the fit to paleomagnetic secular variation trends over centuries, whereas removing core dynamo terms should cause model failure.",
+              "required_observations": [
+                "Long-term geomagnetic observatory and satellite data with separated internal/external field components",
+                "Paleomagnetic secular variation curves",
+                "Comparative model performance metrics with and without ionospheric coupling terms"
+              ],
+              "risk_of_being_wrong": "This hypothesis would be weakened if robust correlations are found between long-term ionospheric/magnetospheric activity indices and specific features of secular variation that cannot be explained by core dynamics alone.",
+              "supporting_evidence_ids": [
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                "EV-Q109-c1c595e9f28715ecd014dfd8"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses both parts of the question (generation and movement) using mechanisms explicitly supported by the allowed evidence (alpha-effect fluctuations in mean-field dynamo theory and rotating turbulence). It offers a clear, testable pathway using existing paleomagnetic data and simulation frameworks, resolving the knowledge gap regarding field movement while adhering strictly to the provided evidence. Hypothesis 1 is strong but more abstract; Hypothesis 2 addresses a potential misconception but has lower evidence support for the specific negation of ionospheric effects in the context of 'movement'.",
+          "rejected_directions": [
+            "Attributing the primary cause of magnetic field movement to ionospheric currents as suggested in the booklet excerpt, due to lack of supporting evidence in allowed IDs and contradiction with established dynamo theory.",
+            "Proposing hypotheses relying on core-mantle boundary topography or thermal heterogeneity as the main driver of secular variation, as no evidence cards support these specific mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that secular variation (SV) of Earth's magnetic field is driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence. We will implement a mean-field dynamo model based on Parker’s equations, incorporating a stochastic term for the alpha-effect ($\\alpha = \\alpha_0 + \\xi(t)$), where $\\xi(t)$ represents helical turbulence fluctuations derived from rotating convection theory. The model will be solved numerically to generate synthetic magnetic field time series. These synthetic series will be statistically compared against paleomagnetic records to assess if stochastic alpha-fluctuations alone can reproduce observed SV properties (power spectral density, autocorrelation) without external forcing or deterministic laminar flow assumptions.",
+          "datasets": {
+            "source": {
+              "name": "Paleomagnetic Secular Variation Records",
+              "description": "Time-series data of geomagnetic field direction and intensity spanning at least 10^4 years, used as the ground truth for statistical comparison.",
+              "access_method": "Public repositories (e.g., GEOMAGIA50v3 or similar paleomagnetic databases referenced in EV-Q109-7a053b4eadf8259f9ba501f8)",
+              "evidence_ids": [
+                "EV-Q109-7a053b4eadf8259f9ba501f8"
+              ]
+            },
+            "target": {
+              "name": "Synthetic Geomagnetic Field Time Series",
+              "description": "Output from the stochastic mean-field dynamo simulation incorporating fluctuating alpha-effects.",
+              "generation_method": "Numerical integration of modified Parker dynamo equations with stochastic alpha-term",
+              "evidence_ids": [
+                "EV-Q109-c2530e74282879f8defb6d85",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+              ]
+            }
+          },
+          "methods": "1. **Model Formulation**: Implement mean-field dynamo equations (Parker’s model) as described in EV-Q109-c2530e74282879f8defb6d85. Introduce a stochastic component to the alpha-effect parameter, modeled as Gaussian white noise or colored noise consistent with helical distributed chaos in rotating turbulence (EV-Q109-2a1f3598aee5a8906d4b9fc3). \n2. **Simulation**: Run numerical simulations to generate long-time series of magnetic dipole moment and directional variations. Ensure parameters reflect outer core conditions (rotation rate, conductivity).\n3. **Statistical Analysis**: Compute Power Spectral Density (PSD) and autocorrelation functions for both synthetic and paleomagnetic data. \n4. **Comparison**: Use Kolmogorov-Smirnov tests and spectral coherence metrics to quantify the similarity between the stochastic model output and empirical paleomagnetic records (EV-Q109-7a053b4eadf8259f9ba501f8).",
+          "experiments": {
+            "baselines": [
+              "Deterministic Mean-Field Dynamo: Standard Parker equations with constant alpha-effect (no stochastic fluctuations).",
+              "External Forcing Model: A model attributing SV primarily to ionospheric/magnetospheric current variations (to test the null hypothesis that internal stochasticity is negligible, though evidence suggests otherwise)."
+            ],
+            "metrics": [
+              "Power Spectral Density (PSD) Slope and Amplitude Match",
+              "Autocorrelation Time Decay Rate",
+              "Kolmogorov-Smirnov Statistic for Dipole Moment Distribution"
+            ],
+            "ablation": "Vary the amplitude and correlation time of the stochastic alpha-fluctuation term to determine sensitivity of SV statistics to turbulence intensity.",
+            "validation_protocol": "Split paleomagnetic data into training (parameter tuning) and testing (validation) sets. Validate that the stochastic model reproduces key statistical features of the test set without overfitting. Compare performance against baselines using defined metrics."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for stochastic mean-field dynamo solver is version-controlled and documented.",
+            "Paleomagnetic dataset source and preprocessing steps are explicitly recorded.",
+            "Random seeds for stochastic terms are fixed for reproducibility.",
+            "Parameter values for alpha-effect fluctuations are justified by rotating turbulence theory (EV-Q109-2a1f3598aee5a8906d4b9fc3)."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for long-time integration of PDEs.",
+            "estimated_runtime": "48-72 hours for full parameter sweep and statistical analysis.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Custom PDE solver library"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies a knowledge gap regarding the specific mechanism of secular variation in the provided evidence and formulates a testable prediction based on allowed theoretical frameworks (mean-field dynamo with stochastic alpha-effect).",
+            "Experiment design appropriately distinguishes between source data (paleomagnetic records) and target data (synthetic simulation output), avoiding circular validation.",
+            "Results field is correctly marked as pending/unexecuted, adhering to strict anti-hallucination protocols.",
+            "Baselines include both a deterministic internal model and an external forcing model, providing necessary contrast to validate the 'stochastic internal driver' claim.",
+            "All factual claims in the hypothesis and method sections are traceable to specific EvidenceCards (EV-Q109-c2530e74282879f8defb6d85 for alpha-fluctuations, EV-Q109-7a053b4eadf8259f9ba501f8 for stochastic modeling approach)."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+            "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:32a5b30f1ade",
+            "category": "required_revision",
+            "description": "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7551005710f8",
+            "category": "required_revision",
+            "description": "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "279692425710f1a476c7b81c01e2363699f76109a2d9fae60a0b60f0c0cb3b59",
+          "experiment_designer": "76aad708d0da3bb791785a2ea108678e0a947956cb046ccda2064067873f912b",
+          "scientific_reviewer": "ce42fe9c3211187a4396f556ea3e5e220f5a8be2fdfb3ee998408b1060003325"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-054656-a4d47577",
+        "version_number": 2,
+        "version_id": "20260822-054656-a4d47577:v2",
+        "parent_version_id": "20260822-054656-a4d47577:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.",
+              "mechanism": "According to mean-field dynamo theory, the generation of the magnetic field relies on the alpha-effect arising from helical turbulence. Fluctuations in this alpha-effect, inherent to rotating convection and distributed chaos, introduce time-dependent variability into the dynamo equations, manifesting as the observed drift and intensity changes of the geomagnetic field.",
+              "falsifiable_prediction": "If alpha-effect fluctuations are the dominant driver of field movement, then numerical simulations of the geodynamo incorporating stochastic alpha-terms should reproduce the statistical properties (e.g., power spectral density slope within ±0.2, autocorrelation decay time within 95% CI) of paleomagnetic secular variation records without requiring time-varying boundary conditions or external current sources. Conversely, if the stochastic model fails to match these pre-registered thresholds while a deterministic or external forcing baseline succeeds, the hypothesis is weakened.",
+              "required_observations": [
+                "Time-series of paleomagnetic directional and intensity data spanning at least 10^4 years",
+                "Output from mean-field dynamo simulations with parameterized stochastic alpha-effects derived from rotating turbulence theory",
+                "Pre-registered statistical comparison metrics (PSD slope, autocorrelation) between simulated and observed field variations"
+              ],
+              "risk_of_being_wrong": "The hypothesis may be incorrect if the observed secular variation exhibits coherent periodicities or spatial patterns that cannot be reproduced by stochastic core dynamics alone, implying missing physics such as core-mantle coupling or unmodeled external influences.",
+              "supporting_evidence_ids": [
+                "EV-Q109-c2530e74282879f8defb6d85",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                "EV-Q109-7a053b4eadf8259f9ba501f8"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.95,
+              "overall_score": 0.88
+            },
+            {
+              "hypothesis": "The 'movement' of Earth's magnetic field can be accurately modeled as a low-dimensional stochastic process derived from the underlying helical distributed chaos in rotating core convection, making explicit resolution of all turbulent scales unnecessary for predicting secular variation statistics.",
+              "mechanism": "Helical distributed chaos in rotating turbulence generates magnetic fields through a dynamo process that, when coarse-grained, behaves like a specific class of stochastic differential equations. The macroscopic field movement is thus an emergent property of this chaotic system, allowing reduced-order modeling to capture essential dynamics.",
+              "falsifiable_prediction": "If the field movement is governed by this specific stochastic reduction, then the probability distribution functions of geomagnetic dipole moment variations in paleomagnetic records will match the stationary distributions predicted by the corresponding stochastic model derived from helical chaos theory (p > 0.05 in KS test). Failure to match indicates higher-order correlations dominate.",
+              "required_observations": [
+                "High-resolution paleomagnetic dipole moment reconstructions",
+                "Derived stochastic model parameters from helical chaos theory applied to geodynamo",
+                "Goodness-of-fit tests comparing empirical and theoretical distributions"
+              ],
+              "risk_of_being_wrong": "The hypothesis fails if the empirical distributions show significant deviations (e.g., heavy tails, multimodality) not captured by the proposed stochastic reduction, indicating that higher-order correlations or non-chaotic mechanisms dominate field evolution.",
+              "supporting_evidence_ids": [
+                "EV-Q109-7a053b4eadf8259f9ba501f8",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.84
+            },
+            {
+              "hypothesis": "Ionospheric currents contribute negligibly to the long-term movement (secular variation) of Earth's main magnetic field compared to core dynamo processes, despite being mentioned in some educational summaries.",
+              "mechanism": "While ionospheric currents generate transient magnetic variations, the energy and timescales associated with them are insufficient to drive the multi-decadal to millennial scale secular variation characteristic of the main field, which is sustained by the self-exciting dynamo in the liquid outer core involving rotating turbulence and convection.",
+              "falsifiable_prediction": "If ionospheric influence on secular variation is negligible, then removing ionospheric correction terms from geomagnetic models should not significantly degrade the fit to paleomagnetic secular variation trends over centuries, whereas removing core dynamo terms should cause model failure.",
+              "required_observations": [
+                "Long-term geomagnetic observatory and satellite data with separated internal/external field components",
+                "Paleomagnetic secular variation curves",
+                "Comparative model performance metrics with and without ionospheric coupling terms"
+              ],
+              "risk_of_being_wrong": "This hypothesis would be weakened if robust correlations are found between long-term ionospheric/magnetospheric activity indices and specific features of secular variation that cannot be explained by core dynamics alone.",
+              "supporting_evidence_ids": [
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                "EV-Q109-c1c595e9f28715ecd014dfd8"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as it directly addresses the reviewer's feedback by incorporating explicit pre-registered statistical thresholds (PSD slope ±0.2, 95% CI for autocorrelation) to prevent post-hoc p-hacking. It maintains strong evidence grounding in allowed IDs for both the mechanism (stochastic alpha-effect) and validation data (paleomagnetism), and explicitly defines the External Forcing Model as a theoretical null baseline to avoid unverified external data usage. This version resolves the identified required revisions while preserving high falsifiability and feasibility.",
+          "rejected_directions": [
+            "Attributing the primary cause of magnetic field movement to ionospheric currents as suggested in the booklet excerpt, due to lack of supporting evidence in allowed IDs and contradiction with established dynamo theory.",
+            "Proposing hypotheses relying on core-mantle boundary topography or thermal heterogeneity as the main driver of secular variation, as no evidence cards support these specific mechanisms."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that secular variation (SV) of Earth's magnetic field is driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence. We will implement a mean-field dynamo model based on Parker’s equations, incorporating a stochastic term for the alpha-effect ($\\alpha = \\alpha_0 + \\xi(t)$), where $\\xi(t)$ represents helical turbulence fluctuations derived from rotating convection theory [EV-Q109-2a1f3598aee5a8906d4b9fc3]. The model will be solved numerically to generate synthetic magnetic field time series. These synthetic series will be statistically compared against paleomagnetic records to assess if stochastic alpha-fluctuations alone can reproduce observed SV properties without external forcing or deterministic laminar flow assumptions [EV-Q109-c2530e74282879f8defb6d85].",
+          "datasets": {
+            "source": {
+              "name": "Paleomagnetic Secular Variation Records",
+              "description": "Time-series data of geomagnetic field direction and intensity spanning at least 10^4 years, used as the ground truth for statistical comparison.",
+              "access_method": "Public repositories (e.g., GEOMAGIA50v3 or similar paleomagnetic databases referenced in EV-Q109-7a053b4eadf8259f9ba501f8)",
+              "evidence_ids": [
+                "EV-Q109-7a053b4eadf8259f9ba501f8"
+              ]
+            },
+            "target": {
+              "name": "Synthetic Geomagnetic Field Time Series",
+              "description": "Output from the stochastic mean-field dynamo simulation incorporating fluctuating alpha-effects.",
+              "generation_method": "Numerical integration of modified Parker dynamo equations with stochastic alpha-term",
+              "evidence_ids": [
+                "EV-Q109-c2530e74282879f8defb6d85",
+                "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+              ]
+            }
+          },
+          "methods": "1. **Model Formulation**: Implement mean-field dynamo equations (Parker’s model) as described in EV-Q109-c2530e74282879f8defb6d85. Introduce a stochastic component to the alpha-effect parameter, modeled as Gaussian white noise or colored noise consistent with helical distributed chaos in rotating turbulence (EV-Q109-2a1f3598aee5a8906d4b9fc3). \n2. **Simulation**: Run numerical simulations to generate long-time series of magnetic dipole moment and directional variations. Ensure parameters reflect outer core conditions (rotation rate, conductivity).\n3. **Statistical Analysis**: Compute Power Spectral Density (PSD) and autocorrelation functions for both synthetic and paleomagnetic data. \n4. **Comparison**: Use Kolmogorov-Smirnov tests and spectral coherence metrics to quantify the similarity between the stochastic model output and empirical paleomagnetic records (EV-Q109-7a053b4eadf8259f9ba501f8).",
+          "experiments": {
+            "baselines": [
+              "Deterministic Mean-Field Dynamo: Standard Parker equations with constant alpha-effect (no stochastic fluctuations).",
+              "External Forcing Null Model: A theoretical baseline assuming SV is driven by external ionospheric currents, parameterized as a simple periodic or random walk process without internal dynamo feedback, serving as a null hypothesis to demonstrate the necessity of internal stochastic dynamics."
+            ],
+            "metrics": [
+              "Power Spectral Density (PSD) Slope Match: Absolute difference in spectral slope must be < 0.2.",
+              "Autocorrelation Decay Time: Simulated decay time must fall within the 95% Confidence Interval of the paleomagnetic record's decay time.",
+              "Kolmogorov-Smirnov Statistic: p-value > 0.05 for the distribution of dipole moment variations."
+            ],
+            "ablation": "Vary the amplitude and correlation time of the stochastic alpha-fluctuation term to determine sensitivity of SV statistics to turbulence intensity.",
+            "validation_protocol": "Split paleomagnetic data into training (parameter tuning) and testing (validation) sets. Validate that the stochastic model reproduces key statistical features of the test set without overfitting. Compare performance against baselines using defined metrics. Pre-register thresholds: PSD slope difference < 0.2 and autocorrelation within 95% CI."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for stochastic mean-field dynamo solver is version-controlled and documented.",
+            "Paleomagnetic dataset source and preprocessing steps are explicitly recorded.",
+            "Random seeds for stochastic terms are fixed for reproducibility.",
+            "Parameter values for alpha-effect fluctuations are justified by rotating turbulence theory (EV-Q109-2a1f3598aee5a8906d4b9fc3).",
+            "Pre-registered statistical thresholds (PSD slope ±0.2, 95% CI for autocorrelation) are enforced in analysis scripts."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for long-time integration of PDEs.",
+            "estimated_runtime": "48-72 hours for full parameter sweep and statistical analysis.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Custom PDE solver library"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revision successfully addresses the previous required revisions by explicitly defining statistical thresholds (PSD slope difference < 0.2, autocorrelation within 95% CI) in both the hypothesis prediction and experiment metrics, mitigating p-hacking risks.",
+            "The 'External Forcing Null Model' baseline is now correctly defined as a theoretical construct rather than implying reliance on unverified external datasets, adhering to evidence constraints.",
+            "All factual claims remain strictly grounded in allowed EvidenceCards (EV-Q109-c2530e74282879f8defb6d85, EV-Q109-2a1f3598aee5a8906d4b9fc3, EV-Q109-7a053b4eadf8259f9ba501f8).",
+            "Results field correctly maintains 'pending' status with no fabricated data.",
+            "Reproducibility checklist has been updated to include enforcement of pre-registered thresholds."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.98,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:32a5b30f1ade",
+            "category": "required_revision",
+            "description": "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:7551005710f8",
+            "category": "required_revision",
+            "description": "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "ffd68c1d1019705fe164bc7717f0bcdff16991ff982d5ea88a34061f762eb5e6",
+          "experiment_designer": "ff104c13f462f23b95f943a3416d51e1af4603c0c82fe91c1255b7ecf2cd3020",
+          "scientific_reviewer": "0887e379f0611748a61419f6f16037e65f3bff60e72ad3a48612998feead3828"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-054656-a4d47577",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-054656-a4d47577:review:v1",
+        "20260822-054656-a4d47577:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-054656-a4d47577:v1",
+        "20260822-054656-a4d47577:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-054656-a4d47577",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-054656-a4d47577:review:v1",
+          "20260822-054656-a4d47577:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-054656-a4d47577:v1",
+          "20260822-054656-a4d47577:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-054656-a4d47577",
+          "version_number": 1,
+          "version_id": "20260822-054656-a4d47577:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.",
+                "mechanism": "According to mean-field dynamo theory, the generation of the magnetic field relies on the alpha-effect arising from helical turbulence. Fluctuations in this alpha-effect, inherent to rotating convection and distributed chaos, introduce time-dependent variability into the dynamo equations, manifesting as the observed drift and intensity changes of the geomagnetic field.",
+                "falsifiable_prediction": "If alpha-effect fluctuations are the dominant driver of field movement, then numerical simulations of the geodynamo incorporating stochastic alpha-terms should reproduce the statistical properties (e.g., power spectral density, autocorrelation times) of paleomagnetic secular variation records without requiring time-varying boundary conditions or external current sources.",
+                "required_observations": [
+                  "Time-series of paleomagnetic directional and intensity data spanning at least 10^4 years",
+                  "Output from 3D magnetohydrodynamic simulations with parameterized stochastic alpha-effects",
+                  "Statistical comparison metrics between simulated and observed field variations"
+                ],
+                "risk_of_being_wrong": "The hypothesis may be incorrect if the observed secular variation exhibits coherent periodicities or spatial patterns that cannot be reproduced by stochastic core dynamics alone, implying missing physics such as core-mantle coupling or unmodeled external influences.",
+                "supporting_evidence_ids": [
+                  "EV-Q109-c2530e74282879f8defb6d85",
+                  "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                  "EV-Q109-7a053b4eadf8259f9ba501f8"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.84
+              },
+              {
+                "hypothesis": "The 'movement' of Earth's magnetic field can be accurately modeled as a low-dimensional stochastic process derived from the underlying helical distributed chaos in rotating core convection, making explicit resolution of all turbulent scales unnecessary for predicting secular variation statistics.",
+                "mechanism": "Helical distributed chaos in rotating turbulence generates magnetic fields through a dynamo process that, when coarse-grained, behaves like a specific class of stochastic differential equations. The macroscopic field movement is thus an emergent property of this chaotic system, allowing reduced-order modeling to capture essential dynamics.",
+                "falsifiable_prediction": "If the field movement is governed by this specific stochastic reduction, then the probability distribution functions of geomagnetic dipole moment variations in paleomagnetic records will match the stationary distributions predicted by the corresponding stochastic model derived from helical chaos theory.",
+                "required_observations": [
+                  "High-resolution paleomagnetic dipole moment reconstructions",
+                  "Derived stochastic model parameters from helical chaos theory applied to geodynamo",
+                  "Goodness-of-fit tests comparing empirical and theoretical distributions"
+                ],
+                "risk_of_being_wrong": "The hypothesis fails if the empirical distributions show significant deviations (e.g., heavy tails, multimodality) not captured by the proposed stochastic reduction, indicating that higher-order correlations or non-chaotic mechanisms dominate field evolution.",
+                "supporting_evidence_ids": [
+                  "EV-Q109-7a053b4eadf8259f9ba501f8",
+                  "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.83
+              },
+              {
+                "hypothesis": "Ionospheric currents contribute negligibly to the long-term movement (secular variation) of Earth's main magnetic field compared to core dynamo processes, despite being mentioned in some educational summaries.",
+                "mechanism": "While ionospheric currents generate transient magnetic variations, the energy and timescales associated with them are insufficient to drive the multi-decadal to millennial scale secular variation characteristic of the main field, which is sustained by the self-exciting dynamo in the liquid outer core involving rotating turbulence and convection.",
+                "falsifiable_prediction": "If ionospheric influence on secular variation is negligible, then removing ionospheric correction terms from geomagnetic models should not significantly degrade the fit to paleomagnetic secular variation trends over centuries, whereas removing core dynamo terms should cause model failure.",
+                "required_observations": [
+                  "Long-term geomagnetic observatory and satellite data with separated internal/external field components",
+                  "Paleomagnetic secular variation curves",
+                  "Comparative model performance metrics with and without ionospheric coupling terms"
+                ],
+                "risk_of_being_wrong": "This hypothesis would be weakened if robust correlations are found between long-term ionospheric/magnetospheric activity indices and specific features of secular variation that cannot be explained by core dynamics alone.",
+                "supporting_evidence_ids": [
+                  "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                  "EV-Q109-c1c595e9f28715ecd014dfd8"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.5,
+                "overall_score": 0.55
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses both parts of the question (generation and movement) using mechanisms explicitly supported by the allowed evidence (alpha-effect fluctuations in mean-field dynamo theory and rotating turbulence). It offers a clear, testable pathway using existing paleomagnetic data and simulation frameworks, resolving the knowledge gap regarding field movement while adhering strictly to the provided evidence. Hypothesis 1 is strong but more abstract; Hypothesis 2 addresses a potential misconception but has lower evidence support for the specific negation of ionospheric effects in the context of 'movement'.",
+            "rejected_directions": [
+              "Attributing the primary cause of magnetic field movement to ionospheric currents as suggested in the booklet excerpt, due to lack of supporting evidence in allowed IDs and contradiction with established dynamo theory.",
+              "Proposing hypotheses relying on core-mantle boundary topography or thermal heterogeneity as the main driver of secular variation, as no evidence cards support these specific mechanisms."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that secular variation (SV) of Earth's magnetic field is driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence. We will implement a mean-field dynamo model based on Parker’s equations, incorporating a stochastic term for the alpha-effect ($\\alpha = \\alpha_0 + \\xi(t)$), where $\\xi(t)$ represents helical turbulence fluctuations derived from rotating convection theory. The model will be solved numerically to generate synthetic magnetic field time series. These synthetic series will be statistically compared against paleomagnetic records to assess if stochastic alpha-fluctuations alone can reproduce observed SV properties (power spectral density, autocorrelation) without external forcing or deterministic laminar flow assumptions.",
+            "datasets": {
+              "source": {
+                "name": "Paleomagnetic Secular Variation Records",
+                "description": "Time-series data of geomagnetic field direction and intensity spanning at least 10^4 years, used as the ground truth for statistical comparison.",
+                "access_method": "Public repositories (e.g., GEOMAGIA50v3 or similar paleomagnetic databases referenced in EV-Q109-7a053b4eadf8259f9ba501f8)",
+                "evidence_ids": [
+                  "EV-Q109-7a053b4eadf8259f9ba501f8"
+                ]
+              },
+              "target": {
+                "name": "Synthetic Geomagnetic Field Time Series",
+                "description": "Output from the stochastic mean-field dynamo simulation incorporating fluctuating alpha-effects.",
+                "generation_method": "Numerical integration of modified Parker dynamo equations with stochastic alpha-term",
+                "evidence_ids": [
+                  "EV-Q109-c2530e74282879f8defb6d85",
+                  "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+                ]
+              }
+            },
+            "methods": "1. **Model Formulation**: Implement mean-field dynamo equations (Parker’s model) as described in EV-Q109-c2530e74282879f8defb6d85. Introduce a stochastic component to the alpha-effect parameter, modeled as Gaussian white noise or colored noise consistent with helical distributed chaos in rotating turbulence (EV-Q109-2a1f3598aee5a8906d4b9fc3). \n2. **Simulation**: Run numerical simulations to generate long-time series of magnetic dipole moment and directional variations. Ensure parameters reflect outer core conditions (rotation rate, conductivity).\n3. **Statistical Analysis**: Compute Power Spectral Density (PSD) and autocorrelation functions for both synthetic and paleomagnetic data. \n4. **Comparison**: Use Kolmogorov-Smirnov tests and spectral coherence metrics to quantify the similarity between the stochastic model output and empirical paleomagnetic records (EV-Q109-7a053b4eadf8259f9ba501f8).",
+            "experiments": {
+              "baselines": [
+                "Deterministic Mean-Field Dynamo: Standard Parker equations with constant alpha-effect (no stochastic fluctuations).",
+                "External Forcing Model: A model attributing SV primarily to ionospheric/magnetospheric current variations (to test the null hypothesis that internal stochasticity is negligible, though evidence suggests otherwise)."
+              ],
+              "metrics": [
+                "Power Spectral Density (PSD) Slope and Amplitude Match",
+                "Autocorrelation Time Decay Rate",
+                "Kolmogorov-Smirnov Statistic for Dipole Moment Distribution"
+              ],
+              "ablation": "Vary the amplitude and correlation time of the stochastic alpha-fluctuation term to determine sensitivity of SV statistics to turbulence intensity.",
+              "validation_protocol": "Split paleomagnetic data into training (parameter tuning) and testing (validation) sets. Validate that the stochastic model reproduces key statistical features of the test set without overfitting. Compare performance against baselines using defined metrics."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code for stochastic mean-field dynamo solver is version-controlled and documented.",
+              "Paleomagnetic dataset source and preprocessing steps are explicitly recorded.",
+              "Random seeds for stochastic terms are fixed for reproducibility.",
+              "Parameter values for alpha-effect fluctuations are justified by rotating turbulence theory (EV-Q109-2a1f3598aee5a8906d4b9fc3)."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-performance computing cluster required for long-time integration of PDEs.",
+              "estimated_runtime": "48-72 hours for full parameter sweep and statistical analysis.",
+              "software_dependencies": [
+                "Python",
+                "NumPy/SciPy",
+                "Custom PDE solver library"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The hypothesis correctly identifies a knowledge gap regarding the specific mechanism of secular variation in the provided evidence and formulates a testable prediction based on allowed theoretical frameworks (mean-field dynamo with stochastic alpha-effect).",
+              "Experiment design appropriately distinguishes between source data (paleomagnetic records) and target data (synthetic simulation output), avoiding circular validation.",
+              "Results field is correctly marked as pending/unexecuted, adhering to strict anti-hallucination protocols.",
+              "Baselines include both a deterministic internal model and an external forcing model, providing necessary contrast to validate the 'stochastic internal driver' claim.",
+              "All factual claims in the hypothesis and method sections are traceable to specific EvidenceCards (EV-Q109-c2530e74282879f8defb6d85 for alpha-fluctuations, EV-Q109-7a053b4eadf8259f9ba501f8 for stochastic modeling approach)."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+              "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:32a5b30f1ade",
+              "category": "required_revision",
+              "description": "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:7551005710f8",
+              "category": "required_revision",
+              "description": "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "279692425710f1a476c7b81c01e2363699f76109a2d9fae60a0b60f0c0cb3b59",
+            "experiment_designer": "76aad708d0da3bb791785a2ea108678e0a947956cb046ccda2064067873f912b",
+            "scientific_reviewer": "ce42fe9c3211187a4396f556ea3e5e220f5a8be2fdfb3ee998408b1060003325"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-054656-a4d47577",
+          "version_number": 2,
+          "version_id": "20260822-054656-a4d47577:v2",
+          "parent_version_id": "20260822-054656-a4d47577:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.",
+                "mechanism": "According to mean-field dynamo theory, the generation of the magnetic field relies on the alpha-effect arising from helical turbulence. Fluctuations in this alpha-effect, inherent to rotating convection and distributed chaos, introduce time-dependent variability into the dynamo equations, manifesting as the observed drift and intensity changes of the geomagnetic field.",
+                "falsifiable_prediction": "If alpha-effect fluctuations are the dominant driver of field movement, then numerical simulations of the geodynamo incorporating stochastic alpha-terms should reproduce the statistical properties (e.g., power spectral density slope within ±0.2, autocorrelation decay time within 95% CI) of paleomagnetic secular variation records without requiring time-varying boundary conditions or external current sources. Conversely, if the stochastic model fails to match these pre-registered thresholds while a deterministic or external forcing baseline succeeds, the hypothesis is weakened.",
+                "required_observations": [
+                  "Time-series of paleomagnetic directional and intensity data spanning at least 10^4 years",
+                  "Output from mean-field dynamo simulations with parameterized stochastic alpha-effects derived from rotating turbulence theory",
+                  "Pre-registered statistical comparison metrics (PSD slope, autocorrelation) between simulated and observed field variations"
+                ],
+                "risk_of_being_wrong": "The hypothesis may be incorrect if the observed secular variation exhibits coherent periodicities or spatial patterns that cannot be reproduced by stochastic core dynamics alone, implying missing physics such as core-mantle coupling or unmodeled external influences.",
+                "supporting_evidence_ids": [
+                  "EV-Q109-c2530e74282879f8defb6d85",
+                  "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                  "EV-Q109-7a053b4eadf8259f9ba501f8"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.95,
+                "overall_score": 0.88
+              },
+              {
+                "hypothesis": "The 'movement' of Earth's magnetic field can be accurately modeled as a low-dimensional stochastic process derived from the underlying helical distributed chaos in rotating core convection, making explicit resolution of all turbulent scales unnecessary for predicting secular variation statistics.",
+                "mechanism": "Helical distributed chaos in rotating turbulence generates magnetic fields through a dynamo process that, when coarse-grained, behaves like a specific class of stochastic differential equations. The macroscopic field movement is thus an emergent property of this chaotic system, allowing reduced-order modeling to capture essential dynamics.",
+                "falsifiable_prediction": "If the field movement is governed by this specific stochastic reduction, then the probability distribution functions of geomagnetic dipole moment variations in paleomagnetic records will match the stationary distributions predicted by the corresponding stochastic model derived from helical chaos theory (p > 0.05 in KS test). Failure to match indicates higher-order correlations dominate.",
+                "required_observations": [
+                  "High-resolution paleomagnetic dipole moment reconstructions",
+                  "Derived stochastic model parameters from helical chaos theory applied to geodynamo",
+                  "Goodness-of-fit tests comparing empirical and theoretical distributions"
+                ],
+                "risk_of_being_wrong": "The hypothesis fails if the empirical distributions show significant deviations (e.g., heavy tails, multimodality) not captured by the proposed stochastic reduction, indicating that higher-order correlations or non-chaotic mechanisms dominate field evolution.",
+                "supporting_evidence_ids": [
+                  "EV-Q109-7a053b4eadf8259f9ba501f8",
+                  "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.84
+              },
+              {
+                "hypothesis": "Ionospheric currents contribute negligibly to the long-term movement (secular variation) of Earth's main magnetic field compared to core dynamo processes, despite being mentioned in some educational summaries.",
+                "mechanism": "While ionospheric currents generate transient magnetic variations, the energy and timescales associated with them are insufficient to drive the multi-decadal to millennial scale secular variation characteristic of the main field, which is sustained by the self-exciting dynamo in the liquid outer core involving rotating turbulence and convection.",
+                "falsifiable_prediction": "If ionospheric influence on secular variation is negligible, then removing ionospheric correction terms from geomagnetic models should not significantly degrade the fit to paleomagnetic secular variation trends over centuries, whereas removing core dynamo terms should cause model failure.",
+                "required_observations": [
+                  "Long-term geomagnetic observatory and satellite data with separated internal/external field components",
+                  "Paleomagnetic secular variation curves",
+                  "Comparative model performance metrics with and without ionospheric coupling terms"
+                ],
+                "risk_of_being_wrong": "This hypothesis would be weakened if robust correlations are found between long-term ionospheric/magnetospheric activity indices and specific features of secular variation that cannot be explained by core dynamics alone.",
+                "supporting_evidence_ids": [
+                  "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+                  "EV-Q109-c1c595e9f28715ecd014dfd8"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.5,
+                "overall_score": 0.55
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected as it directly addresses the reviewer's feedback by incorporating explicit pre-registered statistical thresholds (PSD slope ±0.2, 95% CI for autocorrelation) to prevent post-hoc p-hacking. It maintains strong evidence grounding in allowed IDs for both the mechanism (stochastic alpha-effect) and validation data (paleomagnetism), and explicitly defines the External Forcing Model as a theoretical null baseline to avoid unverified external data usage. This version resolves the identified required revisions while preserving high falsifiability and feasibility.",
+            "rejected_directions": [
+              "Attributing the primary cause of magnetic field movement to ionospheric currents as suggested in the booklet excerpt, due to lack of supporting evidence in allowed IDs and contradiction with established dynamo theory.",
+              "Proposing hypotheses relying on core-mantle boundary topography or thermal heterogeneity as the main driver of secular variation, as no evidence cards support these specific mechanisms."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that secular variation (SV) of Earth's magnetic field is driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence. We will implement a mean-field dynamo model based on Parker’s equations, incorporating a stochastic term for the alpha-effect ($\\alpha = \\alpha_0 + \\xi(t)$), where $\\xi(t)$ represents helical turbulence fluctuations derived from rotating convection theory [EV-Q109-2a1f3598aee5a8906d4b9fc3]. The model will be solved numerically to generate synthetic magnetic field time series. These synthetic series will be statistically compared against paleomagnetic records to assess if stochastic alpha-fluctuations alone can reproduce observed SV properties without external forcing or deterministic laminar flow assumptions [EV-Q109-c2530e74282879f8defb6d85].",
+            "datasets": {
+              "source": {
+                "name": "Paleomagnetic Secular Variation Records",
+                "description": "Time-series data of geomagnetic field direction and intensity spanning at least 10^4 years, used as the ground truth for statistical comparison.",
+                "access_method": "Public repositories (e.g., GEOMAGIA50v3 or similar paleomagnetic databases referenced in EV-Q109-7a053b4eadf8259f9ba501f8)",
+                "evidence_ids": [
+                  "EV-Q109-7a053b4eadf8259f9ba501f8"
+                ]
+              },
+              "target": {
+                "name": "Synthetic Geomagnetic Field Time Series",
+                "description": "Output from the stochastic mean-field dynamo simulation incorporating fluctuating alpha-effects.",
+                "generation_method": "Numerical integration of modified Parker dynamo equations with stochastic alpha-term",
+                "evidence_ids": [
+                  "EV-Q109-c2530e74282879f8defb6d85",
+                  "EV-Q109-2a1f3598aee5a8906d4b9fc3"
+                ]
+              }
+            },
+            "methods": "1. **Model Formulation**: Implement mean-field dynamo equations (Parker’s model) as described in EV-Q109-c2530e74282879f8defb6d85. Introduce a stochastic component to the alpha-effect parameter, modeled as Gaussian white noise or colored noise consistent with helical distributed chaos in rotating turbulence (EV-Q109-2a1f3598aee5a8906d4b9fc3). \n2. **Simulation**: Run numerical simulations to generate long-time series of magnetic dipole moment and directional variations. Ensure parameters reflect outer core conditions (rotation rate, conductivity).\n3. **Statistical Analysis**: Compute Power Spectral Density (PSD) and autocorrelation functions for both synthetic and paleomagnetic data. \n4. **Comparison**: Use Kolmogorov-Smirnov tests and spectral coherence metrics to quantify the similarity between the stochastic model output and empirical paleomagnetic records (EV-Q109-7a053b4eadf8259f9ba501f8).",
+            "experiments": {
+              "baselines": [
+                "Deterministic Mean-Field Dynamo: Standard Parker equations with constant alpha-effect (no stochastic fluctuations).",
+                "External Forcing Null Model: A theoretical baseline assuming SV is driven by external ionospheric currents, parameterized as a simple periodic or random walk process without internal dynamo feedback, serving as a null hypothesis to demonstrate the necessity of internal stochastic dynamics."
+              ],
+              "metrics": [
+                "Power Spectral Density (PSD) Slope Match: Absolute difference in spectral slope must be < 0.2.",
+                "Autocorrelation Decay Time: Simulated decay time must fall within the 95% Confidence Interval of the paleomagnetic record's decay time.",
+                "Kolmogorov-Smirnov Statistic: p-value > 0.05 for the distribution of dipole moment variations."
+              ],
+              "ablation": "Vary the amplitude and correlation time of the stochastic alpha-fluctuation term to determine sensitivity of SV statistics to turbulence intensity.",
+              "validation_protocol": "Split paleomagnetic data into training (parameter tuning) and testing (validation) sets. Validate that the stochastic model reproduces key statistical features of the test set without overfitting. Compare performance against baselines using defined metrics. Pre-register thresholds: PSD slope difference < 0.2 and autocorrelation within 95% CI."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code for stochastic mean-field dynamo solver is version-controlled and documented.",
+              "Paleomagnetic dataset source and preprocessing steps are explicitly recorded.",
+              "Random seeds for stochastic terms are fixed for reproducibility.",
+              "Parameter values for alpha-effect fluctuations are justified by rotating turbulence theory (EV-Q109-2a1f3598aee5a8906d4b9fc3).",
+              "Pre-registered statistical thresholds (PSD slope ±0.2, 95% CI for autocorrelation) are enforced in analysis scripts."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-performance computing cluster required for long-time integration of PDEs.",
+              "estimated_runtime": "48-72 hours for full parameter sweep and statistical analysis.",
+              "software_dependencies": [
+                "Python",
+                "NumPy/SciPy",
+                "Custom PDE solver library"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revision successfully addresses the previous required revisions by explicitly defining statistical thresholds (PSD slope difference < 0.2, autocorrelation within 95% CI) in both the hypothesis prediction and experiment metrics, mitigating p-hacking risks.",
+              "The 'External Forcing Null Model' baseline is now correctly defined as a theoretical construct rather than implying reliance on unverified external datasets, adhering to evidence constraints.",
+              "All factual claims remain strictly grounded in allowed EvidenceCards (EV-Q109-c2530e74282879f8defb6d85, EV-Q109-2a1f3598aee5a8906d4b9fc3, EV-Q109-7a053b4eadf8259f9ba501f8).",
+              "Results field correctly maintains 'pending' status with no fabricated data.",
+              "Reproducibility checklist has been updated to include enforcement of pre-registered thresholds."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.98,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:32a5b30f1ade",
+              "category": "required_revision",
+              "description": "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:7551005710f8",
+              "category": "required_revision",
+              "description": "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "ffd68c1d1019705fe164bc7717f0bcdff16991ff982d5ea88a34061f762eb5e6",
+            "experiment_designer": "ff104c13f462f23b95f943a3416d51e1af4603c0c82fe91c1255b7ecf2cd3020",
+            "scientific_reviewer": "0887e379f0611748a61419f6f16037e65f3bff60e72ad3a48612998feead3828"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-054656-a4d47577:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-054656-a4d47577:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-054656-a4d47577:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-054656-a4d47577:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:32a5b30f1ade",
+          "category": "required_revision",
+          "description": "In the final execution report, ensure that the 'External Forcing Model' baseline is explicitly parameterized using available geomagnetic indices or clearly defined as a theoretical null model if no direct ionospheric dataset is available in allowed evidence, to avoid introducing unverified external data during the experiment phase.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:7551005710f8",
+          "category": "required_revision",
+          "description": "Explicitly define the statistical threshold for 'reproducing statistical properties' in the pre-registration of the experiment to prevent post-hoc p-hacking when comparing PSD and autocorrelation metrics.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "checkpoint_hash": "9f23a0538d64627581b245ed7b7c0dea5b246aade454be15e4cfec0a0edfeaa1"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-054656-a4d47577:wave-b-two-round",
+      "run_id": "20260822-054656-a4d47577",
+      "v1_version_id": "20260822-054656-a4d47577:v1",
+      "v2_version_id": "20260822-054656-a4d47577:v2",
+      "input_fingerprints": {
+        "v1": "76aad708d0da3bb791785a2ea108678e0a947956cb046ccda2064067873f912b",
+        "v2": "ff104c13f462f23b95f943a3416d51e1af4603c0c82fe91c1255b7ecf2cd3020"
+      },
+      "responded_issue_count": 0,
+      "issue_ids": [],
+      "change_ids": [],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "The temporal movement (secular variation) of Earth's magnetic field is primarily driven by stochastic fluctuations in the alpha-effect within the outer core's rotating turbulence, rather than deterministic laminar flow or external ionospheric forcing.",
+          "overall_score": 0.88,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The 'movement' of Earth's magnetic field can be accurately modeled as a low-dimensional stochastic process derived from the underlying helical distributed chaos in rotating core convection, making explicit resolution of all turbulent scales unnecessary for predicting secular variation statistics.",
+          "overall_score": 0.84,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Ionospheric currents contribute negligibly to the long-term movement (secular variation) of Earth's main magnetic field compared to core dynamo processes, despite being mentioned in some educational summaries.",
+          "overall_score": 0.55,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "4984547ba706",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:49:19.397486+00:00",
+    "ended_at": "2026-08-22T05:49:54.859070+00:00",
+    "duration_ms": 35461,
+    "input_summary": "{\"question_item\": {\"id\": \"Q109\", \"domain\": \"Ecology\", \"question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"source_page\": 37, \"booklet_excerpt\": \"Earth’s liquid-metal outer core creates electric currents. The planet’s rotation causes these currents to form a dynamic magnetic field. The currents and changes in the ionosphere influence the movement of the magnetic field. and nuclear, we have a fighting chance. Many nations, including China, the United States, and others around the world, are financing advanced research in this realm, although some of the concerns yet to",
+    "output_summary": "{\"input_question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"domain\": \"Geophysics\", \"problem_statement\": \"The generation of Earth's magnetic field is attributed to the geodynamo process in the liquid outer core, involving rotating turbulence and convection. However, the specific physical mechanisms driving the temporal movement (secular variation) of the field, particularly the role of stochastic fluctuations versus deterministic flows or external ionospheric influences, require rigorous validation against paleomagnetic records.\", \"rationale\": \"Understanding the dynam",
+    "evidence_ids": [
+      "EV-Q109-2a1f3598aee5a8906d4b9fc3",
+      "EV-Q109-c2530e74282879f8defb6d85",
+      "EV-Q109-7a053b4eadf8259f9ba501f8",
+      "EV-Q109-c1c595e9f28715ecd014dfd8"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "447b7bbe4912",
+    "mock": false
+  },
+  {
+    "event_id": "e3bc336f38a6",
+    "run_id": "20260822-054656-a4d47577",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T05:49:54.859990+00:00",
+    "ended_at": "2026-08-22T05:49:57.551271+00:00",
+    "duration_ms": 2691,
+    "input_summary": "{\"question_item\": {\"id\": \"Q109\", \"domain\": \"Ecology\", \"question\": \"What creates the Earth’s magnetic field (and why does it move)?\", \"source_page\": 37, \"booklet_excerpt\": \"Earth’s liquid-metal outer core creates electric currents. The planet’s rotation causes these currents to form a dynamic magnetic field. The currents and changes in the ionosphere influence the movement of the magnetic field. and nuclear, we have a fighting chance. Many nations, including China, the United States, and others around the world, are financing advanced research in this realm, although some of the concerns yet to",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not ResearchPlan. SchemaValidator requires a 'ResearchPlan' object to validate structure and evidence traceability.\", \"MissingEvidenceCard: No EvidenceCards provided to verify factual claims regarding Earth's magnetic field generation (geodynamo) or movement mechanisms.\", \"IrrelevantContent: Booklet excerpt discusses energy science, data science, and green energy unpredictability, which is irrelevant to the geological question about Earth's magnetic field.\"], \"warnings\": [\"Cannot determine validation_status wit",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "4002bd6c68b4",
+    "mock": false
+  }
+]

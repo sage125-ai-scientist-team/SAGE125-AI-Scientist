@@ -1,0 +1,2180 @@
+[
+  {
+    "event_id": "69ad7afd9c45",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-21T17:15:11.539760+00:00",
+    "ended_at": "2026-08-21T17:15:11.539760+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "34f26b2582b2",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-21T17:15:11.539760+00:00",
+    "ended_at": "2026-08-21T17:15:14.645363+00:00",
+    "duration_ms": 3105,
+    "input_summary": "{\"question_item\": {\"id\": \"Q050\", \"domain\": \"Astronomy\", \"question\": \"When will the universe die? Will it continue to expand?\", \"source_page\": 21, \"booklet_excerpt\": \"Before the universe dies, which will not happen for at least billion years, expansion could continue. But whether expansion does continue will await a better understanding of astrophysics and the universe in its current and earlier forms.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Astronomy\", \"core_question\": \"What is the ultimate fate of the universe regarding its expansion and eventual end state?\", \"keywords\": [\"universe\", \"expansion\", \"astrophysics\", \"cosmology\", \"ultimate fate\"], \"entities\": [\"Universe\", \"Expansion\", \"Astrophysics\"], \"question_type\": \"extreme_event_prediction\", \"scientific_boundary\": \"The provided text indicates that the 'death' of the universe is not imminent (at least billion years away) and that the continuation of expansion depends on a better understanding of astrophysics and the universe's current and earlier forms. It does not pro",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5de436190d95",
+    "mock": false
+  },
+  {
+    "event_id": "2a1b82ab69e8",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-21T17:15:14.645363+00:00",
+    "ended_at": "2026-08-21T17:15:35.098316+00:00",
+    "duration_ms": 20452,
+    "input_summary": "{\"question_item\": {\"id\": \"Q050\", \"domain\": \"Astronomy\", \"question\": \"When will the universe die? Will it continue to expand?\", \"source_page\": 21, \"booklet_excerpt\": \"Before the universe dies, which will not happen for at least billion years, expansion could continue. But whether expansion does continue will await a better understanding of astrophysics and the universe in its current and earlier forms.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"What is the ultimate fa",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the booklet's claim regarding the minimum timeline for the universe's 'death' and current consensus on expansion continuity.\", \"query\": \"universe heat death timeline billion years expansion continuation consensus\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming or refuting the 'at least billion years' constraint and the dependency of expansion on astrophysical understanding.\", \"priority\": \"high\"}, {\"purpose\": \"Identify specific cosmological models discussed in the source material that relate to the ultimate fate of the universe.\", \"quer",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9dc47f6cd6f7",
+    "mock": false
+  },
+  {
+    "event_id": "7187277f710c",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-21T17:15:35.099224+00:00",
+    "ended_at": "2026-08-21T17:15:48.149383+00:00",
+    "duration_ms": 13050,
+    "input_summary": "{\"question_item\": {\"id\": \"Q050\", \"domain\": \"Astronomy\", \"question\": \"When will the universe die? Will it continue to expand?\", \"source_page\": 21, \"booklet_excerpt\": \"Before the universe dies, which will not happen for at least billion years, expansion could continue. But whether expansion does continue will await a better understanding of astrophysics and the universe in its current and earlier forms.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q050-7547d93c9e27c246ed8fa4f4\", \"title\": \"arXiv:1306",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"The LSST survey is designed to study dark energy, which is associated with the accelerating expansion of the Universe.\", \"evidence_ids\": [\"EV-Q050-bc54ad36646f99e2f84349ca\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": null}], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The exact timeline for the 'death' of the universe or its final state cannot be determined from the provided evidence.\", \"why_it_matters\": \"The question asks for a specific timeframe ('When') and a definitive prediction on expansion continuity, but current evidence only con",
+    "evidence_ids": [
+      "EV-Q050-bc54ad36646f99e2f84349ca"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b36fec49967c",
+    "mock": false
+  },
+  {
+    "event_id": "9f0ad8e396fd",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-21T17:15:48.149383+00:00",
+    "ended_at": "2026-08-21T17:16:05.012624+00:00",
+    "duration_ms": 16863,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q050\", \"domain\": \"Astronomy\", \"question\": \"When will the universe die? Will it continue to expand?\", \"source_page\": 21, \"booklet_excerpt\": \"Before the universe dies, which will not happen for at least billion years, expansion could continue. But whether expansion does continue will await a better understanding of astrophysics and the universe in its current and earlier forms.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q050-7547d93c9e27c246ed8fa4",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"LSST high-redshift galaxy clustering data will constrain the dark energy equation of state parameter w to be consistent with -1 within 2% uncertainty, supporting the hypothesis that universal expansion will continue indefinitely rather than recollapse or rip.\", \"mechanism\": \"Dark energy drives accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca). If LSST stacked images detect galaxies at redshifts well beyond unity with sufficient precision, they can distinguish between a cosmological constant (w=-1, eternal expansion) and dynamic dark energy models (w≠-1) ",
+    "evidence_ids": [
+      "EV-Q050-bc54ad36646f99e2f84349ca"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2b4b66c5113c",
+    "mock": false
+  },
+  {
+    "event_id": "360eccf6e80d",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-21T17:16:05.012624+00:00",
+    "ended_at": "2026-08-21T17:16:31.856243+00:00",
+    "duration_ms": 26843,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q050\", \"domain\": \"Astronomy\", \"question\": \"When will the universe die? Will it continue to expand?\", \"source_page\": 21, \"booklet_excerpt\": \"Before the universe dies, which will not happen for at least billion years, expansion could continue. But whether expansion does continue will await a better understanding of astrophysics and the universe in its current and earlier forms.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"extreme_event_prediction\", \"recommended_h",
+    "output_summary": "{\"technical_details\": \"This experiment designs a cosmological parameter estimation pipeline using simulated LSST Year 10 deep-drilling field data and wide-fast-deep survey mocks. The core technical challenge is constraining the dark energy equation of state parameter $w$ (assuming a constant $w$CDM model) to within 2% uncertainty ($|w+1| < 0.02$) using high-redshift galaxy clustering ($z > 1$). The method employs a joint likelihood analysis of Angular Power Spectra ($C_\\theta(\\theta)$) for galaxy clustering and Weak Lensing shear correlation functions ($\\tau_{\\text{shear}}$). Photometric redsh",
+    "evidence_ids": [
+      "EV-Q050-bc54ad36646f99e2f84349ca"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9153ad8b4027",
+    "mock": false
+  },
+  {
+    "event_id": "056ca050443e",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-21T17:16:31.856243+00:00",
+    "ended_at": "2026-08-21T17:16:44.932030+00:00",
+    "duration_ms": 13075,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q050\", \"domain\": \"Astronomy\", \"question\": \"When will the universe die? Will it continue to expand?\", \"source_page\": 21, \"booklet_excerpt\": \"Before the universe dies, which will not happen for at least billion years, expansion could continue. But whether expansion does continue will await a better understanding of astrophysics and the universe in its current and earlier forms.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"LSST high-redshif",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims LSST will constrain w to 2% uncertainty and support indefinite expansion, but the only provided evidence (EV-Q050-bc54ad36646f99e2f84349ca) merely states LSST is designed to study dark energy; it contains no forecast, precision target, or theoretical link to 'indefinite expansion'.\", \"The mechanism asserts that distinguishing w=-1 from dynamic models determines fate via Friedmann equations, but no evidence card supports this specific causal chain or the sufficiency of w-parameterization for fate determination.\", \"Experiment design ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b636bed6136e",
+    "mock": false
+  },
+  {
+    "event_id": "bca4bdf387e4",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-21T17:16:44.932922+00:00",
+    "ended_at": "2026-08-21T17:17:02.886054+00:00",
+    "duration_ms": 17953,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims LSST will constrain w to 2% uncertainty and support indefinite expansion, but the only provided evidence (EV-Q050-bc54ad36646f99e2f84349ca) merely states LSST is designed to study dark energy; it contains no forecast, precision target, or theoretical link to 'indefinite expansion'.\", \"The mechanism asserts that distinguishing w=-1 from dynamic models determines fate via Friedmann equations, but no evidence card supports this specific causal chain or the sufficiency of w-parameterization fo",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"LSST stacked images detecting galaxies at redshifts well beyond unity will significantly reduce statistical uncertainties on the dark energy equation of state parameter w compared to current baselines, thereby providing necessary (but not sufficient) observational constraints for future theoretical determination of universal expansion fate.\", \"mechanism\": \"EV-Q050-bc54ad36646f99e2f84349ca establishes that LSST is designed to study dark energy and accelerating expansion via stacked images reaching z > 1. Since dark energy properties govern expansion dynamics, imp",
+    "evidence_ids": [
+      "EV-Q050-bc54ad36646f99e2f84349ca"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "cd9319b5843e",
+    "mock": false
+  },
+  {
+    "event_id": "ccf6663e4948",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-21T17:17:02.886054+00:00",
+    "ended_at": "2026-08-21T17:17:26.139224+00:00",
+    "duration_ms": 23253,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims LSST will constrain w to 2% uncertainty and support indefinite expansion, but the only provided evidence (EV-Q050-bc54ad36646f99e2f84349ca) merely states LSST is designed to study dark energy; it contains no forecast, precision target, or theoretical link to 'indefinite expansion'.\", \"The mechanism asserts that distinguishing w=-1 from dynamic models determines fate via Friedmann equations, but no evidence card supports this specific causal chain or the sufficiency of w-parameterization fo",
+    "output_summary": "{\"technical_details\": \"This experiment evaluates the potential of LSST stacked images to constrain the dark energy equation of state parameter w relative to current observational baselines. Per EV-Q050-bc54ad36646f99e2f84349ca, LSST is designed to detect galaxies to redshifts well beyond unity (z > 1) via stacked images. The technical approach involves generating simulated galaxy catalogs consistent with these LSST design specifications (mock data), rather than using specific named simulations not present in the evidence. We employ a joint likelihood analysis of two-point correlation functions",
+    "evidence_ids": [
+      "EV-Q050-bc54ad36646f99e2f84349ca"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5552365b8ccf",
+    "mock": false
+  },
+  {
+    "event_id": "fa7ac386aefc",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-21T17:17:26.140219+00:00",
+    "ended_at": "2026-08-21T17:17:31.387966+00:00",
+    "duration_ms": 5247,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis claims LSST will constrain w to 2% uncertainty and support indefinite expansion, but the only provided evidence (EV-Q050-bc54ad36646f99e2f84349ca) merely states LSST is designed to study dark energy; it contains no forecast, precision target, or theoretical link to 'indefinite expansion'.\", \"The mechanism asserts that distinguishing w=-1 from dynamic models determines fate via Friedmann equations, but no evidence card supports this specific causal chain or the sufficiency of w-parameterization fo",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"Revision successfully addresses all critical issues from the previous iteration. The hypothesis no longer claims specific precision (2%) or definitive cosmological fate, correctly reframing the study as testing constraint improvement relative to baselines.\", \"Dataset source has been corrected to 'LSST Simulated Stacked Image Mocks' grounded in EV-Q050-bc54ad36646f99e2f84349ca, removing unverified references to CosmoDC2/OuterRim.\", \"Baselines now correctly cite Planck and DES Y3, removing the hallucinated 'LSST Forecast Gold sample'.\", \"Technical details ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "79a51a4bd76d",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:ce7860c781c9ed97",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "LSST high-redshift galaxy clustering data will constrain the dark energy equation of state parameter w to be consistent with -1 within 2% uncertainty, supporting the hypothesis that universal expansion will continue indefinitely rather than recollapse or rip.",
+              "mechanism": "Dark energy drives accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca). If LSST stacked images detect galaxies at redshifts well beyond unity with sufficient precision, they can distinguish between a cosmological constant (w=-1, eternal expansion) and dynamic dark energy models (w≠-1) that might lead to future contraction or singularity. The mechanism links observational capability to theoretical fate determination via the Friedmann equations.",
+              "falsifiable_prediction": "If analysis of LSST stacked images yields a dark energy equation of state w significantly different from -1 (e.g., |w+1| > 0.05 at 3σ confidence), then the hypothesis of indefinite expansion driven by a cosmological constant is weakened, suggesting alternative fates.",
+              "required_observations": [
+                "Galaxy number counts and spatial distribution from LSST stacked images at redshift z > 1",
+                "Baryon Acoustic Oscillation (BAO) scale measurements derived from LSST high-z galaxy sample",
+                "Weak lensing shear power spectrum constraints on growth rate fσ8 from LSST"
+              ],
+              "risk_of_being_wrong": "Systematic errors in photometric redshift estimation for faint high-z galaxies in stacked images could bias w constraints; or dark energy may be non-minimally coupled to matter, making standard w-parameterization insufficient to predict fate even with precise data.",
+              "supporting_evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "Current inability to predict the universe's death timeline stems from degeneracy between dark energy dynamics and modified gravity theories, which LSST data alone cannot break without complementary local universe probes.",
+              "mechanism": "While LSST is designed to study dark energy and accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca), the 'death' of the universe depends on the asymptotic behavior of the scale factor a(t). Modified gravity theories can mimic dark energy expansion history at high-z but diverge at late times. Without breaking this degeneracy, expansion continuity remains uncertain as noted in knowledge gaps.",
+              "falsifiable_prediction": "If LSST-derived constraints on the expansion history H(z) and growth rate fσ8 are mutually consistent with General Relativity + ΛCDM at >5σ significance across all redshift bins, then the degeneracy hypothesis is falsified, implying LSST data is sufficient to determine fate.",
+              "required_observations": [
+                "Joint likelihood analysis of LSST BAO and RSD (Redshift Space Distortions)",
+                "Comparison of LSST geometric vs. dynamical dark energy constraints",
+                "Cross-correlation with local distance ladder or CMB lensing data"
+              ],
+              "risk_of_being_wrong": "The assumed modified gravity parameter space may be incomplete; or systematics in LSST may artificially enforce consistency where none exists, leading to false rejection of the degeneracy hypothesis.",
+              "supporting_evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.65
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly testable using the specific dataset identified in the evidence (LSST stacked images for dark energy study, EV-Q050-bc54ad36646f99e2f84349ca). It addresses the core uncertainty about expansion continuity by linking it to a measurable parameter (w) with a clear falsification criterion. Hypothesis 1, while valid, focuses more on methodological limitations than on generating a predictive model of the universe's fate based on available evidence.",
+          "rejected_directions": [
+            "Attempting to derive thermodynamic heat death timelines from EV-Q050-7547d93c9e27c246ed8fa4f4, as the content relates to particle physics temperature expansions unrelated to cosmological evolution.",
+            "Proposing hypotheses about multiverse or quantum gravity scenarios, as no allowed evidence supports these speculative frameworks."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment designs a cosmological parameter estimation pipeline using simulated LSST Year 10 deep-drilling field data and wide-fast-deep survey mocks. The core technical challenge is constraining the dark energy equation of state parameter $w$ (assuming a constant $w$CDM model) to within 2% uncertainty ($|w+1| < 0.02$) using high-redshift galaxy clustering ($z > 1$). The method employs a joint likelihood analysis of Angular Power Spectra ($C_\theta(\theta)$) for galaxy clustering and Weak Lensing shear correlation functions ($\tau_{\text{shear}}$). Photometric redshifts ($z_p$) are modeled with a Gaussian scatter $\frac{\bar{\beta}(1+z)}{1+z}$ to account for systematic biases identified in the risk assessment. The Friedmann equations are integrated numerically to map $(\theta_m, \theta_w, H_0)$ to observable distance measures $D_A(z)$ and $H(z)$. The falsification criterion is strictly defined: if the posterior distribution of $w$ excludes $-1$ at $3\bar{\beta}$ confidence or yields $\bar{\beta}_w > 0.02$, the hypothesis is rejected.",
+          "datasets": {
+            "source": {
+              "name": "LSST Simulated Survey Data (CosmoDC2/OuterRim)",
+              "description": "Synthetic galaxy catalogs matching LSST design specifications as described in EV-Q050-bc54ad36646f99e2f84349ca, including stacked images detecting galaxies to $z > 1$. Since real LSST Year 10 data is not yet available, validated simulation suites (e.g., CosmoDC2) are used as the proxy source.",
+              "access_note": "Publicly available via DESC (Dark Energy Science Collaboration) repositories; requires high-performance computing for mock catalog generation.",
+              "evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "is_public_candidate": true,
+              "is_already_downloaded": false
+            },
+            "target": {
+              "name": "Constrained Dark Energy Equation of State (w)",
+              "description": "Posterior probability distribution function (PDF) for $w$, specifically the mean value $\bar{w}$ and standard deviation $\bar{\beta}_w$. Target metric: $\bar{\beta}_w \bar{\beta} 0.02$ and $|\bar{w} - (-1)| < 0.02$.",
+              "type": "derived_parameter"
+            }
+          },
+          "methods": "1. **Mock Catalog Generation**: Generate lightcone mocks from N-body simulations (e.g., OuterRim) applying LSST selection functions, magnitude limits, and photometric redshift errors. 2. **Two-Point Correlation Analysis**: Compute angular power spectra $C_\theta^{gg}(\theta)$ for galaxy-galaxy clustering and $C_\theta^{\tau\tau}(\theta)$ for shear-shear correlations in tomographic redshift bins ($0.2 < z < 3.0$). 3. **Likelihood Inference**: Use a Monte Carlo Markov Chain (MCMC) sampler (e.g., Cobaya or CosmoMC) to explore the parameter space $\theta = \theta_m, \theta_b, h, n_s, \bar{\beta}_8, w\theta$. The likelihood function $\bar{\beta}(\theta | D)$ combines clustering and weak lensing data vectors. 4. **Systematic Marginalization**: Include nuisance parameters for photometric redshift bias ($\bar{\beta}_z$), shear calibration bias ($m$), and intrinsic alignment ($A_{IA}$) to prevent biased $w$ constraints.",
+          "experiments": {
+            "baselines": [
+              "Planck 2018 CMB-only constraints on $w$ (assuming flat $w$CDM)",
+              "DES Year 3 combined probes (Clustering + Weak Lensing) constraints on $w$",
+              "LSST Forecast 'Gold' sample (optimistic systematics control)"
+            ],
+            "metrics": [
+              "Figure of Merit (FoM) for Dark Energy: $FoM_{DE} = 1 / \bar{\beta}(\theta_w, \theta_{de})$",
+              "Statistical Uncertainty on $w$: $\bar{\beta}_w$ (target $< 0.02$)",
+              "Bias in $w$: $|\bar{w}_{estimated} - w_{true}|$ (target $< 0.01$)",
+              "Goodness-of-fit: Reduced $\bar{\beta}^2$ of the best-fit model to the mock data vector"
+            ],
+            "ablation": [
+              "Remove Weak Lensing data: Assess degradation in $w$ constraint when using only galaxy clustering.",
+              "Remove High-z Bins ($z > 1.5$): Quantify the specific contribution of high-redshift galaxies mentioned in the hypothesis to the precision of $w$.",
+              "Fix Systematics: Run MCMC with fixed photometric redshift biases to isolate statistical vs. systematic error budgets."
+            ],
+            "validation_protocol": "Split-sample validation: Divide the mock catalog into two independent halves. Derive $w$ from each half separately and check for consistency within $1\bar{\beta}$. Additionally, perform a 'blind' analysis where the true input cosmology of the simulation is hidden until the pipeline is finalized to prevent confirmation bias."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code repository containing MCMC configuration files and likelihood modules must be version-controlled.",
+            "Random seeds for mock catalog generation and MCMC initialization must be recorded.",
+            "Prior distributions for all cosmological and nuisance parameters must be explicitly documented.",
+            "The specific version of the Boltzmann solver (e.g., CAMB or CLASS) used for theoretical predictions must be specified.",
+            "Data vector covariance matrices must be stored and shared alongside the results."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-Performance Computing cluster (minimum 64 cores, 256GB RAM) for MCMC convergence.",
+            "estimated_runtime": "72 hours for full chain convergence on 10 tomographic bins.",
+            "software_dependencies": [
+              "CosmoSIS/Cobaya",
+              "CAMB/CLASS",
+              "TreeCorr",
+              "Python 3.9+"
+            ],
+            "data_availability": "Simulated data accessible via DESC DC2 release; real LSST data pending survey completion."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260821-171511-a0faaac2",
+        "version_number": 1,
+        "version_id": "20260821-171511-a0faaac2:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "LSST high-redshift galaxy clustering data will constrain the dark energy equation of state parameter w to be consistent with -1 within 2% uncertainty, supporting the hypothesis that universal expansion will continue indefinitely rather than recollapse or rip.",
+              "mechanism": "Dark energy drives accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca). If LSST stacked images detect galaxies at redshifts well beyond unity with sufficient precision, they can distinguish between a cosmological constant (w=-1, eternal expansion) and dynamic dark energy models (w≠-1) that might lead to future contraction or singularity. The mechanism links observational capability to theoretical fate determination via the Friedmann equations.",
+              "falsifiable_prediction": "If analysis of LSST stacked images yields a dark energy equation of state w significantly different from -1 (e.g., |w+1| > 0.05 at 3σ confidence), then the hypothesis of indefinite expansion driven by a cosmological constant is weakened, suggesting alternative fates.",
+              "required_observations": [
+                "Galaxy number counts and spatial distribution from LSST stacked images at redshift z > 1",
+                "Baryon Acoustic Oscillation (BAO) scale measurements derived from LSST high-z galaxy sample",
+                "Weak lensing shear power spectrum constraints on growth rate fσ8 from LSST"
+              ],
+              "risk_of_being_wrong": "Systematic errors in photometric redshift estimation for faint high-z galaxies in stacked images could bias w constraints; or dark energy may be non-minimally coupled to matter, making standard w-parameterization insufficient to predict fate even with precise data.",
+              "supporting_evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "Current inability to predict the universe's death timeline stems from degeneracy between dark energy dynamics and modified gravity theories, which LSST data alone cannot break without complementary local universe probes.",
+              "mechanism": "While LSST is designed to study dark energy and accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca), the 'death' of the universe depends on the asymptotic behavior of the scale factor a(t). Modified gravity theories can mimic dark energy expansion history at high-z but diverge at late times. Without breaking this degeneracy, expansion continuity remains uncertain as noted in knowledge gaps.",
+              "falsifiable_prediction": "If LSST-derived constraints on the expansion history H(z) and growth rate fσ8 are mutually consistent with General Relativity + ΛCDM at >5σ significance across all redshift bins, then the degeneracy hypothesis is falsified, implying LSST data is sufficient to determine fate.",
+              "required_observations": [
+                "Joint likelihood analysis of LSST BAO and RSD (Redshift Space Distortions)",
+                "Comparison of LSST geometric vs. dynamical dark energy constraints",
+                "Cross-correlation with local distance ladder or CMB lensing data"
+              ],
+              "risk_of_being_wrong": "The assumed modified gravity parameter space may be incomplete; or systematics in LSST may artificially enforce consistency where none exists, leading to false rejection of the degeneracy hypothesis.",
+              "supporting_evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.65
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly testable using the specific dataset identified in the evidence (LSST stacked images for dark energy study, EV-Q050-bc54ad36646f99e2f84349ca). It addresses the core uncertainty about expansion continuity by linking it to a measurable parameter (w) with a clear falsification criterion. Hypothesis 1, while valid, focuses more on methodological limitations than on generating a predictive model of the universe's fate based on available evidence.",
+          "rejected_directions": [
+            "Attempting to derive thermodynamic heat death timelines from EV-Q050-7547d93c9e27c246ed8fa4f4, as the content relates to particle physics temperature expansions unrelated to cosmological evolution.",
+            "Proposing hypotheses about multiverse or quantum gravity scenarios, as no allowed evidence supports these speculative frameworks."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment designs a cosmological parameter estimation pipeline using simulated LSST Year 10 deep-drilling field data and wide-fast-deep survey mocks. The core technical challenge is constraining the dark energy equation of state parameter $w$ (assuming a constant $w$CDM model) to within 2% uncertainty ($|w+1| < 0.02$) using high-redshift galaxy clustering ($z > 1$). The method employs a joint likelihood analysis of Angular Power Spectra ($C_\theta(\theta)$) for galaxy clustering and Weak Lensing shear correlation functions ($\tau_{\text{shear}}$). Photometric redshifts ($z_p$) are modeled with a Gaussian scatter $\frac{\bar{\beta}(1+z)}{1+z}$ to account for systematic biases identified in the risk assessment. The Friedmann equations are integrated numerically to map $(\theta_m, \theta_w, H_0)$ to observable distance measures $D_A(z)$ and $H(z)$. The falsification criterion is strictly defined: if the posterior distribution of $w$ excludes $-1$ at $3\bar{\beta}$ confidence or yields $\bar{\beta}_w > 0.02$, the hypothesis is rejected.",
+          "datasets": {
+            "source": {
+              "name": "LSST Simulated Survey Data (CosmoDC2/OuterRim)",
+              "description": "Synthetic galaxy catalogs matching LSST design specifications as described in EV-Q050-bc54ad36646f99e2f84349ca, including stacked images detecting galaxies to $z > 1$. Since real LSST Year 10 data is not yet available, validated simulation suites (e.g., CosmoDC2) are used as the proxy source.",
+              "access_note": "Publicly available via DESC (Dark Energy Science Collaboration) repositories; requires high-performance computing for mock catalog generation.",
+              "evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "is_public_candidate": true,
+              "is_already_downloaded": false
+            },
+            "target": {
+              "name": "Constrained Dark Energy Equation of State (w)",
+              "description": "Posterior probability distribution function (PDF) for $w$, specifically the mean value $\bar{w}$ and standard deviation $\bar{\beta}_w$. Target metric: $\bar{\beta}_w \bar{\beta} 0.02$ and $|\bar{w} - (-1)| < 0.02$.",
+              "type": "derived_parameter"
+            }
+          },
+          "methods": "1. **Mock Catalog Generation**: Generate lightcone mocks from N-body simulations (e.g., OuterRim) applying LSST selection functions, magnitude limits, and photometric redshift errors. 2. **Two-Point Correlation Analysis**: Compute angular power spectra $C_\theta^{gg}(\theta)$ for galaxy-galaxy clustering and $C_\theta^{\tau\tau}(\theta)$ for shear-shear correlations in tomographic redshift bins ($0.2 < z < 3.0$). 3. **Likelihood Inference**: Use a Monte Carlo Markov Chain (MCMC) sampler (e.g., Cobaya or CosmoMC) to explore the parameter space $\theta = \theta_m, \theta_b, h, n_s, \bar{\beta}_8, w\theta$. The likelihood function $\bar{\beta}(\theta | D)$ combines clustering and weak lensing data vectors. 4. **Systematic Marginalization**: Include nuisance parameters for photometric redshift bias ($\bar{\beta}_z$), shear calibration bias ($m$), and intrinsic alignment ($A_{IA}$) to prevent biased $w$ constraints.",
+          "experiments": {
+            "baselines": [
+              "Planck 2018 CMB-only constraints on $w$ (assuming flat $w$CDM)",
+              "DES Year 3 combined probes (Clustering + Weak Lensing) constraints on $w$",
+              "LSST Forecast 'Gold' sample (optimistic systematics control)"
+            ],
+            "metrics": [
+              "Figure of Merit (FoM) for Dark Energy: $FoM_{DE} = 1 / \bar{\beta}(\theta_w, \theta_{de})$",
+              "Statistical Uncertainty on $w$: $\bar{\beta}_w$ (target $< 0.02$)",
+              "Bias in $w$: $|\bar{w}_{estimated} - w_{true}|$ (target $< 0.01$)",
+              "Goodness-of-fit: Reduced $\bar{\beta}^2$ of the best-fit model to the mock data vector"
+            ],
+            "ablation": [
+              "Remove Weak Lensing data: Assess degradation in $w$ constraint when using only galaxy clustering.",
+              "Remove High-z Bins ($z > 1.5$): Quantify the specific contribution of high-redshift galaxies mentioned in the hypothesis to the precision of $w$.",
+              "Fix Systematics: Run MCMC with fixed photometric redshift biases to isolate statistical vs. systematic error budgets."
+            ],
+            "validation_protocol": "Split-sample validation: Divide the mock catalog into two independent halves. Derive $w$ from each half separately and check for consistency within $1\bar{\beta}$. Additionally, perform a 'blind' analysis where the true input cosmology of the simulation is hidden until the pipeline is finalized to prevent confirmation bias."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code repository containing MCMC configuration files and likelihood modules must be version-controlled.",
+            "Random seeds for mock catalog generation and MCMC initialization must be recorded.",
+            "Prior distributions for all cosmological and nuisance parameters must be explicitly documented.",
+            "The specific version of the Boltzmann solver (e.g., CAMB or CLASS) used for theoretical predictions must be specified.",
+            "Data vector covariance matrices must be stored and shared alongside the results."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-Performance Computing cluster (minimum 64 cores, 256GB RAM) for MCMC convergence.",
+            "estimated_runtime": "72 hours for full chain convergence on 10 tomographic bins.",
+            "software_dependencies": [
+              "CosmoSIS/Cobaya",
+              "CAMB/CLASS",
+              "TreeCorr",
+              "Python 3.9+"
+            ],
+            "data_availability": "Simulated data accessible via DESC DC2 release; real LSST data pending survey completion."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis claims LSST will constrain w to 2% uncertainty and support indefinite expansion, but the only provided evidence (EV-Q050-bc54ad36646f99e2f84349ca) merely states LSST is designed to study dark energy; it contains no forecast, precision target, or theoretical link to 'indefinite expansion'.",
+            "The mechanism asserts that distinguishing w=-1 from dynamic models determines fate via Friedmann equations, but no evidence card supports this specific causal chain or the sufficiency of w-parameterization for fate determination.",
+            "Experiment design uses CosmoDC2/OuterRim as source data, but these specific simulation suites are not mentioned in EV-Q050-bc54ad36646f99e2f84349ca. The evidence only mentions 'stacked images' generally.",
+            "Baselines include 'LSST Forecast Gold sample', which is not present in any allowed evidence ID. This constitutes a hallucinated reference/baseline.",
+            "The knowledge gap explicitly states that the timeline/fate cannot be determined from provided evidence, yet the recommended hypothesis proceeds to make definitive claims about supporting 'indefinite expansion'.",
+            "Technical details contain malformed LaTeX placeholders (e.g., $\\bar{\\beta}$ used where $\\sigma$ or similar should be), indicating unverified or template-based generation rather than grounded methodology."
+          ],
+          "critical_issues": [
+            "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+            "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+            "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+            "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization."
+          ],
+          "required_revisions": [
+            "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+            "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+            "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+            "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+            "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+            "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.3,
+          "falsifiability_score": 0.7,
+          "reproducibility_score": 0.5,
+          "reference_reliability_score": 0.2
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:03251b45cf45",
+            "category": "critical_issue",
+            "description": "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:36cca2fa952f",
+            "category": "critical_issue",
+            "description": "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:a28738e25db1",
+            "category": "critical_issue",
+            "description": "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:34e0416860ea",
+            "category": "critical_issue",
+            "description": "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:40c997d4816f",
+            "category": "required_revision",
+            "description": "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2f5088abfbf1",
+            "category": "required_revision",
+            "description": "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:e63ab359e7de",
+            "category": "required_revision",
+            "description": "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3d1bc6c9de57",
+            "category": "required_revision",
+            "description": "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b6bde3593ef6",
+            "category": "required_revision",
+            "description": "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:34de1969e4d0",
+            "category": "required_revision",
+            "description": "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "48593f0398558939748acef8f0357e12a061aceeaf09024cc64b24988df8e3d5",
+          "experiment_designer": "87cd6dab6e66d81e3c903e3ed33e8738681d20aa31947b46c1e0aa434a8de8b6",
+          "scientific_reviewer": "d357188ddc53fe0e29f447d11aba4ecfda7fb02b630c3e335ec5acd842705c14"
+        }
+      },
+      "parent_version_id": "20260821-171511-a0faaac2:v1",
+      "lineage": [
+        "20260821-171511-a0faaac2:v1",
+        "20260821-171511-a0faaac2:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis claims LSST will constrain w to 2% uncertainty and support indefinite expansion, but the only provided evidence (EV-Q050-bc54ad36646f99e2f84349ca) merely states LSST is designed to study dark energy; it contains no forecast, precision target, or theoretical link to 'indefinite expansion'.",
+          "The mechanism asserts that distinguishing w=-1 from dynamic models determines fate via Friedmann equations, but no evidence card supports this specific causal chain or the sufficiency of w-parameterization for fate determination.",
+          "Experiment design uses CosmoDC2/OuterRim as source data, but these specific simulation suites are not mentioned in EV-Q050-bc54ad36646f99e2f84349ca. The evidence only mentions 'stacked images' generally.",
+          "Baselines include 'LSST Forecast Gold sample', which is not present in any allowed evidence ID. This constitutes a hallucinated reference/baseline.",
+          "The knowledge gap explicitly states that the timeline/fate cannot be determined from provided evidence, yet the recommended hypothesis proceeds to make definitive claims about supporting 'indefinite expansion'.",
+          "Technical details contain malformed LaTeX placeholders (e.g., $\\bar{\\beta}$ used where $\\sigma$ or similar should be), indicating unverified or template-based generation rather than grounded methodology."
+        ],
+        "critical_issues": [
+          "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+          "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+          "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+          "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization."
+        ],
+        "required_revisions": [
+          "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+          "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+          "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+          "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+          "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+          "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.3,
+        "falsifiability_score": 0.7,
+        "reproducibility_score": 0.5,
+        "reference_reliability_score": 0.2
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "Revision successfully addresses all critical issues from the previous iteration. The hypothesis no longer claims specific precision (2%) or definitive cosmological fate, correctly reframing the study as testing constraint improvement relative to baselines.",
+          "Dataset source has been corrected to 'LSST Simulated Stacked Image Mocks' grounded in EV-Q050-bc54ad36646f99e2f84349ca, removing unverified references to CosmoDC2/OuterRim.",
+          "Baselines now correctly cite Planck and DES Y3, removing the hallucinated 'LSST Forecast Gold sample'.",
+          "Technical details have been sanitized of malformed LaTeX placeholders; standard cosmological notation (sigma_w, Omega_m) is now used correctly.",
+          "The causal link between w and universe fate is explicitly treated as a knowledge gap/pending validation step rather than an established mechanism, adhering to evidence limitations.",
+          "Ablation study comparing high-z inclusion vs. exclusion has been added, directly testing the evidentiary claim regarding redshift reach."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:061c94a6e004700f",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+          "issue_id": "critical_issue:03251b45cf45"
+        },
+        {
+          "failure_id": "failure:b2ee8a7aba07827f",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+          "issue_id": "critical_issue:36cca2fa952f"
+        },
+        {
+          "failure_id": "failure:062b4140f2293ee0",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+          "issue_id": "critical_issue:a28738e25db1"
+        },
+        {
+          "failure_id": "failure:fa29a518b5c34377",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization.",
+          "issue_id": "critical_issue:34e0416860ea"
+        },
+        {
+          "failure_id": "failure:8f391d0e65a1c54f",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+          "issue_id": "required_revision:40c997d4816f"
+        },
+        {
+          "failure_id": "failure:96605b03ef278dd3",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+          "issue_id": "required_revision:2f5088abfbf1"
+        },
+        {
+          "failure_id": "failure:b9716a7f99b3a2d4",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+          "issue_id": "required_revision:e63ab359e7de"
+        },
+        {
+          "failure_id": "failure:7feed93fa0e1a08c",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+          "issue_id": "required_revision:3d1bc6c9de57"
+        },
+        {
+          "failure_id": "failure:02a7379e636e13e1",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+          "issue_id": "required_revision:b6bde3593ef6"
+        },
+        {
+          "failure_id": "failure:c861d75abd102cb8",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach.",
+          "issue_id": "required_revision:34de1969e4d0"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:9d4bd9893ae2fc29",
+          "issue_id": "critical_issue:a28738e25db1",
+          "reason": "Reviewer item critical_issue:a28738e25db1 requested 'Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['bc54ad36646f99e2f84349ca', 'cohort', 'ev', 'evidence', 'image', 'lsst', 'not', 'q050', 'stack'], coverage=0.529.",
+          "before": {
+            "name": "LSST Simulated Survey Data (CosmoDC2/OuterRim)",
+            "description": "Synthetic galaxy catalogs matching LSST design specifications as described in EV-Q050-bc54ad36646f99e2f84349ca, including stacked images detecting galaxies to $z > 1$. Since real LSST Year 10 data is not yet available, validated simulation suites (e.g., CosmoDC2) are used as the proxy source.",
+            "access_note": "Publicly available via DESC (Dark Energy Science Collaboration) repositories; requires high-performance computing for mock catalog generation.",
+            "evidence_ids": [
+              "EV-Q050-bc54ad36646f99e2f84349ca"
+            ],
+            "is_public_candidate": true,
+            "is_already_downloaded": false
+          },
+          "after": {
+            "name": "LSST Simulated Stacked Image Mocks",
+            "description": "Synthetic galaxy catalogs generated to match the LSST design specifications described in EV-Q050-bc54ad36646f99e2f84349ca, specifically ensuring coverage of galaxies at redshifts z > 1. These mocks serve as proxies for the planned decade-long survey data.",
+            "access_note": "Generated internally or sourced from public mock challenges consistent with LSST design; not yet real observational data.",
+            "evidence_ids": [
+              "EV-Q050-bc54ad36646f99e2f84349ca"
+            ],
+            "is_public_candidate": true,
+            "is_already_downloaded": false
+          },
+          "evidence_refs": [
+            "EV-Q050-bc54ad36646f99e2f84349ca"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:fc2ffd975f5e2bb1",
+          "issue_id": "required_revision:e63ab359e7de",
+          "reason": "Reviewer item required_revision:e63ab359e7de requested 'Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['bc54ad36646f99e2f84349ca', 'consistent', 'ev', 'external', 'image', 'lsst', 'mock', 'name', 'q050', 'simulat', 'specification', 'stack'], coverage=0.571.",
+          "before": {
+            "name": "LSST Simulated Survey Data (CosmoDC2/OuterRim)",
+            "description": "Synthetic galaxy catalogs matching LSST design specifications as described in EV-Q050-bc54ad36646f99e2f84349ca, including stacked images detecting galaxies to $z > 1$. Since real LSST Year 10 data is not yet available, validated simulation suites (e.g., CosmoDC2) are used as the proxy source.",
+            "access_note": "Publicly available via DESC (Dark Energy Science Collaboration) repositories; requires high-performance computing for mock catalog generation.",
+            "evidence_ids": [
+              "EV-Q050-bc54ad36646f99e2f84349ca"
+            ],
+            "is_public_candidate": true,
+            "is_already_downloaded": false
+          },
+          "after": {
+            "name": "LSST Simulated Stacked Image Mocks",
+            "description": "Synthetic galaxy catalogs generated to match the LSST design specifications described in EV-Q050-bc54ad36646f99e2f84349ca, specifically ensuring coverage of galaxies at redshifts z > 1. These mocks serve as proxies for the planned decade-long survey data.",
+            "access_note": "Generated internally or sourced from public mock challenges consistent with LSST design; not yet real observational data.",
+            "evidence_ids": [
+              "EV-Q050-bc54ad36646f99e2f84349ca"
+            ],
+            "is_public_candidate": true,
+            "is_already_downloaded": false
+          },
+          "evidence_refs": [
+            "EV-Q050-bc54ad36646f99e2f84349ca"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:234dea9672cce1a2",
+          "issue_id": "required_revision:e63ab359e7de",
+          "reason": "Reviewer item required_revision:e63ab359e7de requested 'Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['bc54ad36646f99e2f84349ca', 'consistent', 'ev', 'image', 'lsst', 'mock', 'q050', 'simulat', 'stack'], coverage=0.429.",
+          "before": [
+            "Code repository containing MCMC configuration files and likelihood modules must be version-controlled.",
+            "Random seeds for mock catalog generation and MCMC initialization must be recorded.",
+            "Prior distributions for all cosmological and nuisance parameters must be explicitly documented.",
+            "The specific version of the Boltzmann solver (e.g., CAMB or CLASS) used for theoretical predictions must be specified.",
+            "Data vector covariance matrices must be stored and shared alongside the results."
+          ],
+          "after": [
+            "Document the exact generation parameters for LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca.",
+            "Record random seeds for MCMC chains and mock generation.",
+            "Specify prior distributions for all cosmological and nuisance parameters.",
+            "Version control the code used for likelihood calculation and two-point statistics.",
+            "Archive the covariance matrices used in the likelihood analysis."
+          ],
+          "evidence_refs": [
+            "EV-Q050-bc54ad36646f99e2f84349ca"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:b4f5d97187f9161a",
+          "issue_id": "required_revision:3d1bc6c9de57",
+          "reason": "Reviewer item required_revision:3d1bc6c9de57 requested 'Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.'. V2 changes technical_details; deterministic correlation evidence tokens=['establish', 'explicitly', 'fate', 'gap', 'knowledge', 'map', 'rather', 'requir', 'than', 'theoretical', 'universe', 'validate'], coverage=0.750.",
+          "before": "This experiment designs a cosmological parameter estimation pipeline using simulated LSST Year 10 deep-drilling field data and wide-fast-deep survey mocks. The core technical challenge is constraining the dark energy equation of state parameter $w$ (assuming a constant $w$CDM model) to within 2% uncertainty ($|w+1| < 0.02$) using high-redshift galaxy clustering ($z > 1$). The method employs a joint likelihood analysis of Angular Power Spectra ($C_\theta(\theta)$) for galaxy clustering and Weak Lensing shear correlation functions ($\tau_{\text{shear}}$). Photometric redshifts ($z_p$) are modeled with a Gaussian scatter $\frac{\bar{\beta}(1+z)}{1+z}$ to account for systematic biases identified in the risk assessment. The Friedmann equations are integrated numerically to map $(\theta_m, \theta_w, H_0)$ to observable distance measures $D_A(z)$ and $H(z)$. The falsification criterion is strictly defined: if the posterior distribution of $w$ excludes $-1$ at $3\bar{\beta}$ confidence or yields $\bar{\beta}_w > 0.02$, the hypothesis is rejected.",
+          "after": "This experiment evaluates the potential of LSST stacked images to constrain the dark energy equation of state parameter w relative to current observational baselines. Per EV-Q050-bc54ad36646f99e2f84349ca, LSST is designed to detect galaxies to redshifts well beyond unity (z > 1) via stacked images. The technical approach involves generating simulated galaxy catalogs consistent with these LSST design specifications (mock data), rather than using specific named simulations not present in the evidence. We employ a joint likelihood analysis of two-point correlation functions (galaxy clustering and weak lensing shear) in tomographic redshift bins. The parameter estimation uses standard cosmological notation: sigma_w denotes the statistical uncertainty on w, and Omega_m denotes matter density. The Friedmann equations are used to map cosmological parameters to observable distances, but the mapping from w to the ultimate 'fate' of the universe is explicitly treated as a theoretical knowledge gap requiring future validation, not an established result of this experiment. Systematic errors in photometric redshifts for high-z sources are marginalized over using nuisance parameters.",
+          "evidence_refs": [
+            "EV-Q050-bc54ad36646f99e2f84349ca"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:f7732383436c3aa3",
+          "issue_id": "required_revision:3d1bc6c9de57",
+          "reason": "Reviewer item required_revision:3d1bc6c9de57 requested 'Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.'. V2 changes methods; deterministic correlation evidence tokens=['explicitly', 'fate', 'gap', 'step', 'theoretical', 'universe', 'validate'], coverage=0.438.",
+          "before": "1. **Mock Catalog Generation**: Generate lightcone mocks from N-body simulations (e.g., OuterRim) applying LSST selection functions, magnitude limits, and photometric redshift errors. 2. **Two-Point Correlation Analysis**: Compute angular power spectra $C_\theta^{gg}(\theta)$ for galaxy-galaxy clustering and $C_\theta^{\tau\tau}(\theta)$ for shear-shear correlations in tomographic redshift bins ($0.2 < z < 3.0$). 3. **Likelihood Inference**: Use a Monte Carlo Markov Chain (MCMC) sampler (e.g., Cobaya or CosmoMC) to explore the parameter space $\theta = \theta_m, \theta_b, h, n_s, \bar{\beta}_8, w\theta$. The likelihood function $\bar{\beta}(\theta | D)$ combines clustering and weak lensing data vectors. 4. **Systematic Marginalization**: Include nuisance parameters for photometric redshift bias ($\bar{\beta}_z$), shear calibration bias ($m$), and intrinsic alignment ($A_{IA}$) to prevent biased $w$ constraints.",
+          "after": "1. **Mock Data Generation**: Create lightcone mocks reflecting LSST's capability to detect galaxies at z > 1 as per EV-Q050-bc54ad36646f99e2f84349ca. Apply realistic photometric redshift errors and selection functions. 2. **Statistical Analysis**: Compute angular power spectra for galaxy clustering and weak lensing shear in multiple redshift bins (tomography). 3. **Parameter Inference**: Use Markov Chain Monte Carlo (MCMC) methods to sample the posterior distribution of cosmological parameters, including w, Omega_m, and nuisance parameters for systematics. 4. **Comparative Assessment**: Compare the resulting sigma_w from LSST mocks against constraints from existing surveys (e.g., DES, Planck) to quantify improvement. 5. **Theoretical Gap Acknowledgement**: Explicitly separate the observational constraint on w from the theoretical prediction of universe fate, noting the latter as a pending validation step.",
+          "evidence_refs": [
+            "EV-Q050-bc54ad36646f99e2f84349ca"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:03251b45cf45",
+          "category": "critical_issue",
+          "description": "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:36cca2fa952f",
+          "category": "critical_issue",
+          "description": "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:a28738e25db1",
+          "category": "critical_issue",
+          "description": "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:9d4bd9893ae2fc29; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:34e0416860ea",
+          "category": "critical_issue",
+          "description": "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:40c997d4816f",
+          "category": "required_revision",
+          "description": "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:2f5088abfbf1",
+          "category": "required_revision",
+          "description": "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:e63ab359e7de",
+          "category": "required_revision",
+          "description": "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:fc2ffd975f5e2bb1,change:234dea9672cce1a2; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:3d1bc6c9de57",
+          "category": "required_revision",
+          "description": "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:b4f5d97187f9161a,change:f7732383436c3aa3; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b6bde3593ef6",
+          "category": "required_revision",
+          "description": "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:34de1969e4d0",
+          "category": "required_revision",
+          "description": "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.3,
+          "after": 0.95,
+          "delta": 0.6499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.7,
+          "after": 0.95,
+          "delta": 0.25
+        },
+        "reproducibility_score": {
+          "before": 0.5,
+          "after": 0.9,
+          "delta": 0.4
+        },
+        "reference_reliability_score": {
+          "before": 0.2,
+          "after": 1.0,
+          "delta": 0.8
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 1,
+          "hypothesis": "The high-redshift reach (z > 1) of LSST stacked images is the critical factor enabling improved dark energy constraints, such that excluding this redshift range eliminates any statistical advantage over existing surveys.",
+          "overall_score": 0.81,
+          "recommended": false
+        },
+        {
+          "rank": 2,
+          "original_index": 0,
+          "hypothesis": "LSST stacked images detecting galaxies at redshifts well beyond unity will significantly reduce statistical uncertainties on the dark energy equation of state parameter w compared to current baselines, thereby providing necessary (but not sufficient) observational constraints for future theoretical determination of universal expansion fate.",
+          "overall_score": 0.8,
+          "recommended": true
+        }
+      ],
+      "responded_issue_count": 3,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:03251b45cf45",
+        "required_revision_without_change:critical_issue:36cca2fa952f",
+        "required_revision_without_change:critical_issue:34e0416860ea",
+        "required_revision_without_change:required_revision:40c997d4816f",
+        "required_revision_without_change:required_revision:2f5088abfbf1",
+        "required_revision_without_change:required_revision:b6bde3593ef6",
+        "required_revision_without_change:required_revision:34de1969e4d0",
+        "unresolved_issue:critical_issue:03251b45cf45",
+        "unresolved_issue:critical_issue:36cca2fa952f",
+        "unresolved_issue:critical_issue:34e0416860ea",
+        "unresolved_issue:required_revision:40c997d4816f",
+        "unresolved_issue:required_revision:2f5088abfbf1",
+        "unresolved_issue:required_revision:b6bde3593ef6",
+        "unresolved_issue:required_revision:34de1969e4d0"
+      ],
+      "remaining_blockers": [
+        "critical_issue:03251b45cf45: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:36cca2fa952f: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:34e0416860ea: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:40c997d4816f: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:2f5088abfbf1: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:b6bde3593ef6: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:34de1969e4d0: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260821-171511-a0faaac2",
+        "version_number": 1,
+        "version_id": "20260821-171511-a0faaac2:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "LSST high-redshift galaxy clustering data will constrain the dark energy equation of state parameter w to be consistent with -1 within 2% uncertainty, supporting the hypothesis that universal expansion will continue indefinitely rather than recollapse or rip.",
+              "mechanism": "Dark energy drives accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca). If LSST stacked images detect galaxies at redshifts well beyond unity with sufficient precision, they can distinguish between a cosmological constant (w=-1, eternal expansion) and dynamic dark energy models (w≠-1) that might lead to future contraction or singularity. The mechanism links observational capability to theoretical fate determination via the Friedmann equations.",
+              "falsifiable_prediction": "If analysis of LSST stacked images yields a dark energy equation of state w significantly different from -1 (e.g., |w+1| > 0.05 at 3σ confidence), then the hypothesis of indefinite expansion driven by a cosmological constant is weakened, suggesting alternative fates.",
+              "required_observations": [
+                "Galaxy number counts and spatial distribution from LSST stacked images at redshift z > 1",
+                "Baryon Acoustic Oscillation (BAO) scale measurements derived from LSST high-z galaxy sample",
+                "Weak lensing shear power spectrum constraints on growth rate fσ8 from LSST"
+              ],
+              "risk_of_being_wrong": "Systematic errors in photometric redshift estimation for faint high-z galaxies in stacked images could bias w constraints; or dark energy may be non-minimally coupled to matter, making standard w-parameterization insufficient to predict fate even with precise data.",
+              "supporting_evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "Current inability to predict the universe's death timeline stems from degeneracy between dark energy dynamics and modified gravity theories, which LSST data alone cannot break without complementary local universe probes.",
+              "mechanism": "While LSST is designed to study dark energy and accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca), the 'death' of the universe depends on the asymptotic behavior of the scale factor a(t). Modified gravity theories can mimic dark energy expansion history at high-z but diverge at late times. Without breaking this degeneracy, expansion continuity remains uncertain as noted in knowledge gaps.",
+              "falsifiable_prediction": "If LSST-derived constraints on the expansion history H(z) and growth rate fσ8 are mutually consistent with General Relativity + ΛCDM at >5σ significance across all redshift bins, then the degeneracy hypothesis is falsified, implying LSST data is sufficient to determine fate.",
+              "required_observations": [
+                "Joint likelihood analysis of LSST BAO and RSD (Redshift Space Distortions)",
+                "Comparison of LSST geometric vs. dynamical dark energy constraints",
+                "Cross-correlation with local distance ladder or CMB lensing data"
+              ],
+              "risk_of_being_wrong": "The assumed modified gravity parameter space may be incomplete; or systematics in LSST may artificially enforce consistency where none exists, leading to false rejection of the degeneracy hypothesis.",
+              "supporting_evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.65
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly testable using the specific dataset identified in the evidence (LSST stacked images for dark energy study, EV-Q050-bc54ad36646f99e2f84349ca). It addresses the core uncertainty about expansion continuity by linking it to a measurable parameter (w) with a clear falsification criterion. Hypothesis 1, while valid, focuses more on methodological limitations than on generating a predictive model of the universe's fate based on available evidence.",
+          "rejected_directions": [
+            "Attempting to derive thermodynamic heat death timelines from EV-Q050-7547d93c9e27c246ed8fa4f4, as the content relates to particle physics temperature expansions unrelated to cosmological evolution.",
+            "Proposing hypotheses about multiverse or quantum gravity scenarios, as no allowed evidence supports these speculative frameworks."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment designs a cosmological parameter estimation pipeline using simulated LSST Year 10 deep-drilling field data and wide-fast-deep survey mocks. The core technical challenge is constraining the dark energy equation of state parameter $w$ (assuming a constant $w$CDM model) to within 2% uncertainty ($|w+1| < 0.02$) using high-redshift galaxy clustering ($z > 1$). The method employs a joint likelihood analysis of Angular Power Spectra ($C_\theta(\theta)$) for galaxy clustering and Weak Lensing shear correlation functions ($\tau_{\text{shear}}$). Photometric redshifts ($z_p$) are modeled with a Gaussian scatter $\frac{\bar{\beta}(1+z)}{1+z}$ to account for systematic biases identified in the risk assessment. The Friedmann equations are integrated numerically to map $(\theta_m, \theta_w, H_0)$ to observable distance measures $D_A(z)$ and $H(z)$. The falsification criterion is strictly defined: if the posterior distribution of $w$ excludes $-1$ at $3\bar{\beta}$ confidence or yields $\bar{\beta}_w > 0.02$, the hypothesis is rejected.",
+          "datasets": {
+            "source": {
+              "name": "LSST Simulated Survey Data (CosmoDC2/OuterRim)",
+              "description": "Synthetic galaxy catalogs matching LSST design specifications as described in EV-Q050-bc54ad36646f99e2f84349ca, including stacked images detecting galaxies to $z > 1$. Since real LSST Year 10 data is not yet available, validated simulation suites (e.g., CosmoDC2) are used as the proxy source.",
+              "access_note": "Publicly available via DESC (Dark Energy Science Collaboration) repositories; requires high-performance computing for mock catalog generation.",
+              "evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "is_public_candidate": true,
+              "is_already_downloaded": false
+            },
+            "target": {
+              "name": "Constrained Dark Energy Equation of State (w)",
+              "description": "Posterior probability distribution function (PDF) for $w$, specifically the mean value $\bar{w}$ and standard deviation $\bar{\beta}_w$. Target metric: $\bar{\beta}_w \bar{\beta} 0.02$ and $|\bar{w} - (-1)| < 0.02$.",
+              "type": "derived_parameter"
+            }
+          },
+          "methods": "1. **Mock Catalog Generation**: Generate lightcone mocks from N-body simulations (e.g., OuterRim) applying LSST selection functions, magnitude limits, and photometric redshift errors. 2. **Two-Point Correlation Analysis**: Compute angular power spectra $C_\theta^{gg}(\theta)$ for galaxy-galaxy clustering and $C_\theta^{\tau\tau}(\theta)$ for shear-shear correlations in tomographic redshift bins ($0.2 < z < 3.0$). 3. **Likelihood Inference**: Use a Monte Carlo Markov Chain (MCMC) sampler (e.g., Cobaya or CosmoMC) to explore the parameter space $\theta = \theta_m, \theta_b, h, n_s, \bar{\beta}_8, w\theta$. The likelihood function $\bar{\beta}(\theta | D)$ combines clustering and weak lensing data vectors. 4. **Systematic Marginalization**: Include nuisance parameters for photometric redshift bias ($\bar{\beta}_z$), shear calibration bias ($m$), and intrinsic alignment ($A_{IA}$) to prevent biased $w$ constraints.",
+          "experiments": {
+            "baselines": [
+              "Planck 2018 CMB-only constraints on $w$ (assuming flat $w$CDM)",
+              "DES Year 3 combined probes (Clustering + Weak Lensing) constraints on $w$",
+              "LSST Forecast 'Gold' sample (optimistic systematics control)"
+            ],
+            "metrics": [
+              "Figure of Merit (FoM) for Dark Energy: $FoM_{DE} = 1 / \bar{\beta}(\theta_w, \theta_{de})$",
+              "Statistical Uncertainty on $w$: $\bar{\beta}_w$ (target $< 0.02$)",
+              "Bias in $w$: $|\bar{w}_{estimated} - w_{true}|$ (target $< 0.01$)",
+              "Goodness-of-fit: Reduced $\bar{\beta}^2$ of the best-fit model to the mock data vector"
+            ],
+            "ablation": [
+              "Remove Weak Lensing data: Assess degradation in $w$ constraint when using only galaxy clustering.",
+              "Remove High-z Bins ($z > 1.5$): Quantify the specific contribution of high-redshift galaxies mentioned in the hypothesis to the precision of $w$.",
+              "Fix Systematics: Run MCMC with fixed photometric redshift biases to isolate statistical vs. systematic error budgets."
+            ],
+            "validation_protocol": "Split-sample validation: Divide the mock catalog into two independent halves. Derive $w$ from each half separately and check for consistency within $1\bar{\beta}$. Additionally, perform a 'blind' analysis where the true input cosmology of the simulation is hidden until the pipeline is finalized to prevent confirmation bias."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code repository containing MCMC configuration files and likelihood modules must be version-controlled.",
+            "Random seeds for mock catalog generation and MCMC initialization must be recorded.",
+            "Prior distributions for all cosmological and nuisance parameters must be explicitly documented.",
+            "The specific version of the Boltzmann solver (e.g., CAMB or CLASS) used for theoretical predictions must be specified.",
+            "Data vector covariance matrices must be stored and shared alongside the results."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-Performance Computing cluster (minimum 64 cores, 256GB RAM) for MCMC convergence.",
+            "estimated_runtime": "72 hours for full chain convergence on 10 tomographic bins.",
+            "software_dependencies": [
+              "CosmoSIS/Cobaya",
+              "CAMB/CLASS",
+              "TreeCorr",
+              "Python 3.9+"
+            ],
+            "data_availability": "Simulated data accessible via DESC DC2 release; real LSST data pending survey completion."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis claims LSST will constrain w to 2% uncertainty and support indefinite expansion, but the only provided evidence (EV-Q050-bc54ad36646f99e2f84349ca) merely states LSST is designed to study dark energy; it contains no forecast, precision target, or theoretical link to 'indefinite expansion'.",
+            "The mechanism asserts that distinguishing w=-1 from dynamic models determines fate via Friedmann equations, but no evidence card supports this specific causal chain or the sufficiency of w-parameterization for fate determination.",
+            "Experiment design uses CosmoDC2/OuterRim as source data, but these specific simulation suites are not mentioned in EV-Q050-bc54ad36646f99e2f84349ca. The evidence only mentions 'stacked images' generally.",
+            "Baselines include 'LSST Forecast Gold sample', which is not present in any allowed evidence ID. This constitutes a hallucinated reference/baseline.",
+            "The knowledge gap explicitly states that the timeline/fate cannot be determined from provided evidence, yet the recommended hypothesis proceeds to make definitive claims about supporting 'indefinite expansion'.",
+            "Technical details contain malformed LaTeX placeholders (e.g., $\\bar{\\beta}$ used where $\\sigma$ or similar should be), indicating unverified or template-based generation rather than grounded methodology."
+          ],
+          "critical_issues": [
+            "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+            "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+            "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+            "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization."
+          ],
+          "required_revisions": [
+            "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+            "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+            "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+            "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+            "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+            "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.3,
+          "falsifiability_score": 0.7,
+          "reproducibility_score": 0.5,
+          "reference_reliability_score": 0.2
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:03251b45cf45",
+            "category": "critical_issue",
+            "description": "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:36cca2fa952f",
+            "category": "critical_issue",
+            "description": "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:a28738e25db1",
+            "category": "critical_issue",
+            "description": "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:34e0416860ea",
+            "category": "critical_issue",
+            "description": "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:40c997d4816f",
+            "category": "required_revision",
+            "description": "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2f5088abfbf1",
+            "category": "required_revision",
+            "description": "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:e63ab359e7de",
+            "category": "required_revision",
+            "description": "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3d1bc6c9de57",
+            "category": "required_revision",
+            "description": "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b6bde3593ef6",
+            "category": "required_revision",
+            "description": "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:34de1969e4d0",
+            "category": "required_revision",
+            "description": "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "48593f0398558939748acef8f0357e12a061aceeaf09024cc64b24988df8e3d5",
+          "experiment_designer": "87cd6dab6e66d81e3c903e3ed33e8738681d20aa31947b46c1e0aa434a8de8b6",
+          "scientific_reviewer": "d357188ddc53fe0e29f447d11aba4ecfda7fb02b630c3e335ec5acd842705c14"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260821-171511-a0faaac2",
+        "version_number": 2,
+        "version_id": "20260821-171511-a0faaac2:v2",
+        "parent_version_id": "20260821-171511-a0faaac2:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "LSST stacked images detecting galaxies at redshifts well beyond unity will significantly reduce statistical uncertainties on the dark energy equation of state parameter w compared to current baselines, thereby providing necessary (but not sufficient) observational constraints for future theoretical determination of universal expansion fate.",
+              "mechanism": "EV-Q050-bc54ad36646f99e2f84349ca establishes that LSST is designed to study dark energy and accelerating expansion via stacked images reaching z > 1. Since dark energy properties govern expansion dynamics, improving empirical constraints on w using this specific observational capability is a prerequisite for addressing the knowledge gap regarding expansion continuity. This hypothesis strictly limits the claim to 'improving constraints' as supported by the evidence's design intent, explicitly treating the mapping from w to ultimate fate as a pending theoretical validation step rather than an established mechanism.",
+              "falsifiable_prediction": "If analysis of LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications yields a marginalized constraint on w that is statistically indistinguishable from or wider than current pre-LSST baselines (e.g., DES Y3 or Planck), then the hypothesis that LSST stacked images provide significant improvement is falsified.",
+              "required_observations": [
+                "Galaxy number counts and clustering statistics derived from LSST simulated stacked image mocks at z > 1",
+                "Posterior probability distribution of w derived from joint analysis of LSST mock data",
+                "Comparative Figure of Merit (FoM) or sigma_w values against established pre-LSST baselines"
+              ],
+              "risk_of_being_wrong": "Systematic errors in photometric redshift estimation for faint sources in stacked images may dominate over statistical gains, negating the expected improvement; or the assumed survey depth/duration in mocks may exceed actual operational performance described in EV-Q050-bc54ad36646f99e2f84349ca.",
+              "supporting_evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.8
+            },
+            {
+              "hypothesis": "The high-redshift reach (z > 1) of LSST stacked images is the critical factor enabling improved dark energy constraints, such that excluding this redshift range eliminates any statistical advantage over existing surveys.",
+              "mechanism": "EV-Q050-bc54ad36646f99e2f84349ca specifically highlights the capability to detect galaxies 'to redshifts well beyond unity' as a feature of the stacked images. This hypothesis tests whether this specific evidentiary claim translates into tangible cosmological utility. If the high-z data does not break degeneracies or improve leverage on w, then the specific design feature mentioned in the evidence is not effective for this science goal.",
+              "falsifiable_prediction": "If an ablation study comparing w constraints from full LSST mocks versus mocks truncated at z < 1 shows no statistically significant difference in uncertainty or FoM, then the hypothesis that high-z reach is critical is falsified.",
+              "required_observations": [
+                "w constraints derived from full LSST simulated stacked image mocks",
+                "w constraints derived from identical mocks with z > 1 data removed",
+                "Statistical comparison (e.g., ratio of uncertainties) between the two samples"
+              ],
+              "risk_of_being_wrong": "High-z galaxies may have higher systematic biases that are not properly modeled, leading to apparent but spurious improvements; or low-z data may already saturate the constraint making high-z redundant for constant w models.",
+              "supporting_evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.81
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the reviewer's requirement to reframe the investigation around testing whether LSST stacked images can improve constraints on w relative to current baselines, without making unsupported claims about specific precision targets (2%) or definitive cosmological fate (indefinite expansion). It strictly adheres to the allowed evidence (EV-Q050-bc54ad36646f99e2f84349ca) which supports the design intent for dark energy study but not specific forecast outcomes. Hypothesis 1 is a valuable secondary test (ablation) but Hypothesis 0 represents the primary scientific inquiry grounded in the available evidence.",
+          "rejected_directions": [
+            "Predicting specific numerical precision (e.g., 2% uncertainty) for w, as no allowed evidence contains forecast data.",
+            "Asserting a causal link between w constraints and 'indefinite expansion' or universe death timeline, as this theoretical mapping is identified as a knowledge gap and not supported by provided evidence cards.",
+            "Using specific simulation names (CosmoDC2/OuterRim) or baselines (LSST Forecast Gold sample) not present in the allowed evidence set."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment evaluates the potential of LSST stacked images to constrain the dark energy equation of state parameter w relative to current observational baselines. Per EV-Q050-bc54ad36646f99e2f84349ca, LSST is designed to detect galaxies to redshifts well beyond unity (z > 1) via stacked images. The technical approach involves generating simulated galaxy catalogs consistent with these LSST design specifications (mock data), rather than using specific named simulations not present in the evidence. We employ a joint likelihood analysis of two-point correlation functions (galaxy clustering and weak lensing shear) in tomographic redshift bins. The parameter estimation uses standard cosmological notation: sigma_w denotes the statistical uncertainty on w, and Omega_m denotes matter density. The Friedmann equations are used to map cosmological parameters to observable distances, but the mapping from w to the ultimate 'fate' of the universe is explicitly treated as a theoretical knowledge gap requiring future validation, not an established result of this experiment. Systematic errors in photometric redshifts for high-z sources are marginalized over using nuisance parameters.",
+          "datasets": {
+            "source": {
+              "name": "LSST Simulated Stacked Image Mocks",
+              "description": "Synthetic galaxy catalogs generated to match the LSST design specifications described in EV-Q050-bc54ad36646f99e2f84349ca, specifically ensuring coverage of galaxies at redshifts z > 1. These mocks serve as proxies for the planned decade-long survey data.",
+              "access_note": "Generated internally or sourced from public mock challenges consistent with LSST design; not yet real observational data.",
+              "evidence_ids": [
+                "EV-Q050-bc54ad36646f99e2f84349ca"
+              ],
+              "is_public_candidate": true,
+              "is_already_downloaded": false
+            },
+            "target": {
+              "name": "Constraints on Dark Energy Equation of State (w)",
+              "description": "Posterior distribution of w derived from LSST mocks, compared against pre-LSST baselines. The primary metric is the reduction in sigma_w (uncertainty) relative to current surveys.",
+              "type": "derived_parameter"
+            }
+          },
+          "methods": "1. **Mock Data Generation**: Create lightcone mocks reflecting LSST's capability to detect galaxies at z > 1 as per EV-Q050-bc54ad36646f99e2f84349ca. Apply realistic photometric redshift errors and selection functions. 2. **Statistical Analysis**: Compute angular power spectra for galaxy clustering and weak lensing shear in multiple redshift bins (tomography). 3. **Parameter Inference**: Use Markov Chain Monte Carlo (MCMC) methods to sample the posterior distribution of cosmological parameters, including w, Omega_m, and nuisance parameters for systematics. 4. **Comparative Assessment**: Compare the resulting sigma_w from LSST mocks against constraints from existing surveys (e.g., DES, Planck) to quantify improvement. 5. **Theoretical Gap Acknowledgement**: Explicitly separate the observational constraint on w from the theoretical prediction of universe fate, noting the latter as a pending validation step.",
+          "experiments": {
+            "baselines": [
+              "Planck CMB-only constraints on w (flat wCDM model)",
+              "DES Year 3 combined probes (Clustering + Weak Lensing) constraints on w"
+            ],
+            "metrics": [
+              "Statistical Uncertainty on w (sigma_w)",
+              "Dark Energy Figure of Merit (FoM = 1/sigma(w_p, w_a) or similar inverse covariance metric)",
+              "Bias in w recovery (|w_estimated - w_input| in mocks)"
+            ],
+            "ablation": [
+              "High-z Exclusion: Run analysis excluding galaxies at z > 1 to test if the specific LSST capability mentioned in EV-Q050-bc54ad36646f99e2f84349ca drives the improvement.",
+              "Weak Lensing Only: Assess constraints using only shear data to isolate the contribution of clustering.",
+              "Systematics Fixed: Run with fixed photometric redshift biases to estimate the ideal statistical limit."
+            ],
+            "validation_protocol": "Split the mock catalog into two independent halves for cross-validation. Perform blind analysis where the input cosmology of the mock is hidden until the pipeline is finalized. Check for consistency between clustering-only and lensing-only constraints."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Document the exact generation parameters for LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca.",
+            "Record random seeds for MCMC chains and mock generation.",
+            "Specify prior distributions for all cosmological and nuisance parameters.",
+            "Version control the code used for likelihood calculation and two-point statistics.",
+            "Archive the covariance matrices used in the likelihood analysis."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for MCMC convergence on high-dimensional parameter space.",
+            "estimated_runtime": "48-72 hours for full chain convergence.",
+            "software_dependencies": [
+              "Python 3.9+",
+              "CosmoSIS or Cobaya",
+              "CAMB/CLASS",
+              "TreeCorr"
+            ],
+            "data_availability": "Simulated mocks generated per LSST design specs; real data pending survey completion."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "Revision successfully addresses all critical issues from the previous iteration. The hypothesis no longer claims specific precision (2%) or definitive cosmological fate, correctly reframing the study as testing constraint improvement relative to baselines.",
+            "Dataset source has been corrected to 'LSST Simulated Stacked Image Mocks' grounded in EV-Q050-bc54ad36646f99e2f84349ca, removing unverified references to CosmoDC2/OuterRim.",
+            "Baselines now correctly cite Planck and DES Y3, removing the hallucinated 'LSST Forecast Gold sample'.",
+            "Technical details have been sanitized of malformed LaTeX placeholders; standard cosmological notation (sigma_w, Omega_m) is now used correctly.",
+            "The causal link between w and universe fate is explicitly treated as a knowledge gap/pending validation step rather than an established mechanism, adhering to evidence limitations.",
+            "Ablation study comparing high-z inclusion vs. exclusion has been added, directly testing the evidentiary claim regarding redshift reach."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:03251b45cf45",
+            "category": "critical_issue",
+            "description": "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:36cca2fa952f",
+            "category": "critical_issue",
+            "description": "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:a28738e25db1",
+            "category": "critical_issue",
+            "description": "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:9d4bd9893ae2fc29; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:34e0416860ea",
+            "category": "critical_issue",
+            "description": "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:40c997d4816f",
+            "category": "required_revision",
+            "description": "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:2f5088abfbf1",
+            "category": "required_revision",
+            "description": "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:e63ab359e7de",
+            "category": "required_revision",
+            "description": "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:fc2ffd975f5e2bb1,change:234dea9672cce1a2; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:3d1bc6c9de57",
+            "category": "required_revision",
+            "description": "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:b4f5d97187f9161a,change:f7732383436c3aa3; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:b6bde3593ef6",
+            "category": "required_revision",
+            "description": "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:34de1969e4d0",
+            "category": "required_revision",
+            "description": "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "a8248e1990fd1574d6a53924090ca9afc11e4bd3524a8f92e85d6972bbf33163",
+          "experiment_designer": "8c5cbe52e117e2bd1714bc067ac6c45b085fa8fcbb3324cd4aa9921ed5e11cce",
+          "scientific_reviewer": "51e381fbb9043ae220eff5718f67240c7134166a2e3e9910b56c2b1bd4564918"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260821-171511-a0faaac2",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260821-171511-a0faaac2:review:v1",
+        "20260821-171511-a0faaac2:revision:v2"
+      ],
+      "version_ids": [
+        "20260821-171511-a0faaac2:v1",
+        "20260821-171511-a0faaac2:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260821-171511-a0faaac2",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260821-171511-a0faaac2:review:v1",
+          "20260821-171511-a0faaac2:revision:v2"
+        ],
+        "version_ids": [
+          "20260821-171511-a0faaac2:v1",
+          "20260821-171511-a0faaac2:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260821-171511-a0faaac2",
+          "version_number": 1,
+          "version_id": "20260821-171511-a0faaac2:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "LSST high-redshift galaxy clustering data will constrain the dark energy equation of state parameter w to be consistent with -1 within 2% uncertainty, supporting the hypothesis that universal expansion will continue indefinitely rather than recollapse or rip.",
+                "mechanism": "Dark energy drives accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca). If LSST stacked images detect galaxies at redshifts well beyond unity with sufficient precision, they can distinguish between a cosmological constant (w=-1, eternal expansion) and dynamic dark energy models (w≠-1) that might lead to future contraction or singularity. The mechanism links observational capability to theoretical fate determination via the Friedmann equations.",
+                "falsifiable_prediction": "If analysis of LSST stacked images yields a dark energy equation of state w significantly different from -1 (e.g., |w+1| > 0.05 at 3σ confidence), then the hypothesis of indefinite expansion driven by a cosmological constant is weakened, suggesting alternative fates.",
+                "required_observations": [
+                  "Galaxy number counts and spatial distribution from LSST stacked images at redshift z > 1",
+                  "Baryon Acoustic Oscillation (BAO) scale measurements derived from LSST high-z galaxy sample",
+                  "Weak lensing shear power spectrum constraints on growth rate fσ8 from LSST"
+                ],
+                "risk_of_being_wrong": "Systematic errors in photometric redshift estimation for faint high-z galaxies in stacked images could bias w constraints; or dark energy may be non-minimally coupled to matter, making standard w-parameterization insufficient to predict fate even with precise data.",
+                "supporting_evidence_ids": [
+                  "EV-Q050-bc54ad36646f99e2f84349ca"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.7
+              },
+              {
+                "hypothesis": "Current inability to predict the universe's death timeline stems from degeneracy between dark energy dynamics and modified gravity theories, which LSST data alone cannot break without complementary local universe probes.",
+                "mechanism": "While LSST is designed to study dark energy and accelerating expansion (EV-Q050-bc54ad36646f99e2f84349ca), the 'death' of the universe depends on the asymptotic behavior of the scale factor a(t). Modified gravity theories can mimic dark energy expansion history at high-z but diverge at late times. Without breaking this degeneracy, expansion continuity remains uncertain as noted in knowledge gaps.",
+                "falsifiable_prediction": "If LSST-derived constraints on the expansion history H(z) and growth rate fσ8 are mutually consistent with General Relativity + ΛCDM at >5σ significance across all redshift bins, then the degeneracy hypothesis is falsified, implying LSST data is sufficient to determine fate.",
+                "required_observations": [
+                  "Joint likelihood analysis of LSST BAO and RSD (Redshift Space Distortions)",
+                  "Comparison of LSST geometric vs. dynamical dark energy constraints",
+                  "Cross-correlation with local distance ladder or CMB lensing data"
+                ],
+                "risk_of_being_wrong": "The assumed modified gravity parameter space may be incomplete; or systematics in LSST may artificially enforce consistency where none exists, leading to false rejection of the degeneracy hypothesis.",
+                "supporting_evidence_ids": [
+                  "EV-Q050-bc54ad36646f99e2f84349ca"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.65
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is directly testable using the specific dataset identified in the evidence (LSST stacked images for dark energy study, EV-Q050-bc54ad36646f99e2f84349ca). It addresses the core uncertainty about expansion continuity by linking it to a measurable parameter (w) with a clear falsification criterion. Hypothesis 1, while valid, focuses more on methodological limitations than on generating a predictive model of the universe's fate based on available evidence.",
+            "rejected_directions": [
+              "Attempting to derive thermodynamic heat death timelines from EV-Q050-7547d93c9e27c246ed8fa4f4, as the content relates to particle physics temperature expansions unrelated to cosmological evolution.",
+              "Proposing hypotheses about multiverse or quantum gravity scenarios, as no allowed evidence supports these speculative frameworks."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment designs a cosmological parameter estimation pipeline using simulated LSST Year 10 deep-drilling field data and wide-fast-deep survey mocks. The core technical challenge is constraining the dark energy equation of state parameter $w$ (assuming a constant $w$CDM model) to within 2% uncertainty ($|w+1| < 0.02$) using high-redshift galaxy clustering ($z > 1$). The method employs a joint likelihood analysis of Angular Power Spectra ($C_\theta(\theta)$) for galaxy clustering and Weak Lensing shear correlation functions ($\tau_{\text{shear}}$). Photometric redshifts ($z_p$) are modeled with a Gaussian scatter $\frac{\bar{\beta}(1+z)}{1+z}$ to account for systematic biases identified in the risk assessment. The Friedmann equations are integrated numerically to map $(\theta_m, \theta_w, H_0)$ to observable distance measures $D_A(z)$ and $H(z)$. The falsification criterion is strictly defined: if the posterior distribution of $w$ excludes $-1$ at $3\bar{\beta}$ confidence or yields $\bar{\beta}_w > 0.02$, the hypothesis is rejected.",
+            "datasets": {
+              "source": {
+                "name": "LSST Simulated Survey Data (CosmoDC2/OuterRim)",
+                "description": "Synthetic galaxy catalogs matching LSST design specifications as described in EV-Q050-bc54ad36646f99e2f84349ca, including stacked images detecting galaxies to $z > 1$. Since real LSST Year 10 data is not yet available, validated simulation suites (e.g., CosmoDC2) are used as the proxy source.",
+                "access_note": "Publicly available via DESC (Dark Energy Science Collaboration) repositories; requires high-performance computing for mock catalog generation.",
+                "evidence_ids": [
+                  "EV-Q050-bc54ad36646f99e2f84349ca"
+                ],
+                "is_public_candidate": true,
+                "is_already_downloaded": false
+              },
+              "target": {
+                "name": "Constrained Dark Energy Equation of State (w)",
+                "description": "Posterior probability distribution function (PDF) for $w$, specifically the mean value $\bar{w}$ and standard deviation $\bar{\beta}_w$. Target metric: $\bar{\beta}_w \bar{\beta} 0.02$ and $|\bar{w} - (-1)| < 0.02$.",
+                "type": "derived_parameter"
+              }
+            },
+            "methods": "1. **Mock Catalog Generation**: Generate lightcone mocks from N-body simulations (e.g., OuterRim) applying LSST selection functions, magnitude limits, and photometric redshift errors. 2. **Two-Point Correlation Analysis**: Compute angular power spectra $C_\theta^{gg}(\theta)$ for galaxy-galaxy clustering and $C_\theta^{\tau\tau}(\theta)$ for shear-shear correlations in tomographic redshift bins ($0.2 < z < 3.0$). 3. **Likelihood Inference**: Use a Monte Carlo Markov Chain (MCMC) sampler (e.g., Cobaya or CosmoMC) to explore the parameter space $\theta = \theta_m, \theta_b, h, n_s, \bar{\beta}_8, w\theta$. The likelihood function $\bar{\beta}(\theta | D)$ combines clustering and weak lensing data vectors. 4. **Systematic Marginalization**: Include nuisance parameters for photometric redshift bias ($\bar{\beta}_z$), shear calibration bias ($m$), and intrinsic alignment ($A_{IA}$) to prevent biased $w$ constraints.",
+            "experiments": {
+              "baselines": [
+                "Planck 2018 CMB-only constraints on $w$ (assuming flat $w$CDM)",
+                "DES Year 3 combined probes (Clustering + Weak Lensing) constraints on $w$",
+                "LSST Forecast 'Gold' sample (optimistic systematics control)"
+              ],
+              "metrics": [
+                "Figure of Merit (FoM) for Dark Energy: $FoM_{DE} = 1 / \bar{\beta}(\theta_w, \theta_{de})$",
+                "Statistical Uncertainty on $w$: $\bar{\beta}_w$ (target $< 0.02$)",
+                "Bias in $w$: $|\bar{w}_{estimated} - w_{true}|$ (target $< 0.01$)",
+                "Goodness-of-fit: Reduced $\bar{\beta}^2$ of the best-fit model to the mock data vector"
+              ],
+              "ablation": [
+                "Remove Weak Lensing data: Assess degradation in $w$ constraint when using only galaxy clustering.",
+                "Remove High-z Bins ($z > 1.5$): Quantify the specific contribution of high-redshift galaxies mentioned in the hypothesis to the precision of $w$.",
+                "Fix Systematics: Run MCMC with fixed photometric redshift biases to isolate statistical vs. systematic error budgets."
+              ],
+              "validation_protocol": "Split-sample validation: Divide the mock catalog into two independent halves. Derive $w$ from each half separately and check for consistency within $1\bar{\beta}$. Additionally, perform a 'blind' analysis where the true input cosmology of the simulation is hidden until the pipeline is finalized to prevent confirmation bias."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code repository containing MCMC configuration files and likelihood modules must be version-controlled.",
+              "Random seeds for mock catalog generation and MCMC initialization must be recorded.",
+              "Prior distributions for all cosmological and nuisance parameters must be explicitly documented.",
+              "The specific version of the Boltzmann solver (e.g., CAMB or CLASS) used for theoretical predictions must be specified.",
+              "Data vector covariance matrices must be stored and shared alongside the results."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-Performance Computing cluster (minimum 64 cores, 256GB RAM) for MCMC convergence.",
+              "estimated_runtime": "72 hours for full chain convergence on 10 tomographic bins.",
+              "software_dependencies": [
+                "CosmoSIS/Cobaya",
+                "CAMB/CLASS",
+                "TreeCorr",
+                "Python 3.9+"
+              ],
+              "data_availability": "Simulated data accessible via DESC DC2 release; real LSST data pending survey completion."
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis claims LSST will constrain w to 2% uncertainty and support indefinite expansion, but the only provided evidence (EV-Q050-bc54ad36646f99e2f84349ca) merely states LSST is designed to study dark energy; it contains no forecast, precision target, or theoretical link to 'indefinite expansion'.",
+              "The mechanism asserts that distinguishing w=-1 from dynamic models determines fate via Friedmann equations, but no evidence card supports this specific causal chain or the sufficiency of w-parameterization for fate determination.",
+              "Experiment design uses CosmoDC2/OuterRim as source data, but these specific simulation suites are not mentioned in EV-Q050-bc54ad36646f99e2f84349ca. The evidence only mentions 'stacked images' generally.",
+              "Baselines include 'LSST Forecast Gold sample', which is not present in any allowed evidence ID. This constitutes a hallucinated reference/baseline.",
+              "The knowledge gap explicitly states that the timeline/fate cannot be determined from provided evidence, yet the recommended hypothesis proceeds to make definitive claims about supporting 'indefinite expansion'.",
+              "Technical details contain malformed LaTeX placeholders (e.g., $\\bar{\\beta}$ used where $\\sigma$ or similar should be), indicating unverified or template-based generation rather than grounded methodology."
+            ],
+            "critical_issues": [
+              "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+              "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+              "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+              "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization."
+            ],
+            "required_revisions": [
+              "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+              "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+              "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+              "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+              "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+              "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.3,
+            "falsifiability_score": 0.7,
+            "reproducibility_score": 0.5,
+            "reference_reliability_score": 0.2
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:03251b45cf45",
+              "category": "critical_issue",
+              "description": "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:36cca2fa952f",
+              "category": "critical_issue",
+              "description": "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:a28738e25db1",
+              "category": "critical_issue",
+              "description": "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:34e0416860ea",
+              "category": "critical_issue",
+              "description": "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:40c997d4816f",
+              "category": "required_revision",
+              "description": "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:2f5088abfbf1",
+              "category": "required_revision",
+              "description": "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:e63ab359e7de",
+              "category": "required_revision",
+              "description": "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:3d1bc6c9de57",
+              "category": "required_revision",
+              "description": "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:b6bde3593ef6",
+              "category": "required_revision",
+              "description": "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:34de1969e4d0",
+              "category": "required_revision",
+              "description": "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "48593f0398558939748acef8f0357e12a061aceeaf09024cc64b24988df8e3d5",
+            "experiment_designer": "87cd6dab6e66d81e3c903e3ed33e8738681d20aa31947b46c1e0aa434a8de8b6",
+            "scientific_reviewer": "d357188ddc53fe0e29f447d11aba4ecfda7fb02b630c3e335ec5acd842705c14"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260821-171511-a0faaac2",
+          "version_number": 2,
+          "version_id": "20260821-171511-a0faaac2:v2",
+          "parent_version_id": "20260821-171511-a0faaac2:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "LSST stacked images detecting galaxies at redshifts well beyond unity will significantly reduce statistical uncertainties on the dark energy equation of state parameter w compared to current baselines, thereby providing necessary (but not sufficient) observational constraints for future theoretical determination of universal expansion fate.",
+                "mechanism": "EV-Q050-bc54ad36646f99e2f84349ca establishes that LSST is designed to study dark energy and accelerating expansion via stacked images reaching z > 1. Since dark energy properties govern expansion dynamics, improving empirical constraints on w using this specific observational capability is a prerequisite for addressing the knowledge gap regarding expansion continuity. This hypothesis strictly limits the claim to 'improving constraints' as supported by the evidence's design intent, explicitly treating the mapping from w to ultimate fate as a pending theoretical validation step rather than an established mechanism.",
+                "falsifiable_prediction": "If analysis of LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications yields a marginalized constraint on w that is statistically indistinguishable from or wider than current pre-LSST baselines (e.g., DES Y3 or Planck), then the hypothesis that LSST stacked images provide significant improvement is falsified.",
+                "required_observations": [
+                  "Galaxy number counts and clustering statistics derived from LSST simulated stacked image mocks at z > 1",
+                  "Posterior probability distribution of w derived from joint analysis of LSST mock data",
+                  "Comparative Figure of Merit (FoM) or sigma_w values against established pre-LSST baselines"
+                ],
+                "risk_of_being_wrong": "Systematic errors in photometric redshift estimation for faint sources in stacked images may dominate over statistical gains, negating the expected improvement; or the assumed survey depth/duration in mocks may exceed actual operational performance described in EV-Q050-bc54ad36646f99e2f84349ca.",
+                "supporting_evidence_ids": [
+                  "EV-Q050-bc54ad36646f99e2f84349ca"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.8
+              },
+              {
+                "hypothesis": "The high-redshift reach (z > 1) of LSST stacked images is the critical factor enabling improved dark energy constraints, such that excluding this redshift range eliminates any statistical advantage over existing surveys.",
+                "mechanism": "EV-Q050-bc54ad36646f99e2f84349ca specifically highlights the capability to detect galaxies 'to redshifts well beyond unity' as a feature of the stacked images. This hypothesis tests whether this specific evidentiary claim translates into tangible cosmological utility. If the high-z data does not break degeneracies or improve leverage on w, then the specific design feature mentioned in the evidence is not effective for this science goal.",
+                "falsifiable_prediction": "If an ablation study comparing w constraints from full LSST mocks versus mocks truncated at z < 1 shows no statistically significant difference in uncertainty or FoM, then the hypothesis that high-z reach is critical is falsified.",
+                "required_observations": [
+                  "w constraints derived from full LSST simulated stacked image mocks",
+                  "w constraints derived from identical mocks with z > 1 data removed",
+                  "Statistical comparison (e.g., ratio of uncertainties) between the two samples"
+                ],
+                "risk_of_being_wrong": "High-z galaxies may have higher systematic biases that are not properly modeled, leading to apparent but spurious improvements; or low-z data may already saturate the constraint making high-z redundant for constant w models.",
+                "supporting_evidence_ids": [
+                  "EV-Q050-bc54ad36646f99e2f84349ca"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.85,
+                "overall_score": 0.81
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses the reviewer's requirement to reframe the investigation around testing whether LSST stacked images can improve constraints on w relative to current baselines, without making unsupported claims about specific precision targets (2%) or definitive cosmological fate (indefinite expansion). It strictly adheres to the allowed evidence (EV-Q050-bc54ad36646f99e2f84349ca) which supports the design intent for dark energy study but not specific forecast outcomes. Hypothesis 1 is a valuable secondary test (ablation) but Hypothesis 0 represents the primary scientific inquiry grounded in the available evidence.",
+            "rejected_directions": [
+              "Predicting specific numerical precision (e.g., 2% uncertainty) for w, as no allowed evidence contains forecast data.",
+              "Asserting a causal link between w constraints and 'indefinite expansion' or universe death timeline, as this theoretical mapping is identified as a knowledge gap and not supported by provided evidence cards.",
+              "Using specific simulation names (CosmoDC2/OuterRim) or baselines (LSST Forecast Gold sample) not present in the allowed evidence set."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment evaluates the potential of LSST stacked images to constrain the dark energy equation of state parameter w relative to current observational baselines. Per EV-Q050-bc54ad36646f99e2f84349ca, LSST is designed to detect galaxies to redshifts well beyond unity (z > 1) via stacked images. The technical approach involves generating simulated galaxy catalogs consistent with these LSST design specifications (mock data), rather than using specific named simulations not present in the evidence. We employ a joint likelihood analysis of two-point correlation functions (galaxy clustering and weak lensing shear) in tomographic redshift bins. The parameter estimation uses standard cosmological notation: sigma_w denotes the statistical uncertainty on w, and Omega_m denotes matter density. The Friedmann equations are used to map cosmological parameters to observable distances, but the mapping from w to the ultimate 'fate' of the universe is explicitly treated as a theoretical knowledge gap requiring future validation, not an established result of this experiment. Systematic errors in photometric redshifts for high-z sources are marginalized over using nuisance parameters.",
+            "datasets": {
+              "source": {
+                "name": "LSST Simulated Stacked Image Mocks",
+                "description": "Synthetic galaxy catalogs generated to match the LSST design specifications described in EV-Q050-bc54ad36646f99e2f84349ca, specifically ensuring coverage of galaxies at redshifts z > 1. These mocks serve as proxies for the planned decade-long survey data.",
+                "access_note": "Generated internally or sourced from public mock challenges consistent with LSST design; not yet real observational data.",
+                "evidence_ids": [
+                  "EV-Q050-bc54ad36646f99e2f84349ca"
+                ],
+                "is_public_candidate": true,
+                "is_already_downloaded": false
+              },
+              "target": {
+                "name": "Constraints on Dark Energy Equation of State (w)",
+                "description": "Posterior distribution of w derived from LSST mocks, compared against pre-LSST baselines. The primary metric is the reduction in sigma_w (uncertainty) relative to current surveys.",
+                "type": "derived_parameter"
+              }
+            },
+            "methods": "1. **Mock Data Generation**: Create lightcone mocks reflecting LSST's capability to detect galaxies at z > 1 as per EV-Q050-bc54ad36646f99e2f84349ca. Apply realistic photometric redshift errors and selection functions. 2. **Statistical Analysis**: Compute angular power spectra for galaxy clustering and weak lensing shear in multiple redshift bins (tomography). 3. **Parameter Inference**: Use Markov Chain Monte Carlo (MCMC) methods to sample the posterior distribution of cosmological parameters, including w, Omega_m, and nuisance parameters for systematics. 4. **Comparative Assessment**: Compare the resulting sigma_w from LSST mocks against constraints from existing surveys (e.g., DES, Planck) to quantify improvement. 5. **Theoretical Gap Acknowledgement**: Explicitly separate the observational constraint on w from the theoretical prediction of universe fate, noting the latter as a pending validation step.",
+            "experiments": {
+              "baselines": [
+                "Planck CMB-only constraints on w (flat wCDM model)",
+                "DES Year 3 combined probes (Clustering + Weak Lensing) constraints on w"
+              ],
+              "metrics": [
+                "Statistical Uncertainty on w (sigma_w)",
+                "Dark Energy Figure of Merit (FoM = 1/sigma(w_p, w_a) or similar inverse covariance metric)",
+                "Bias in w recovery (|w_estimated - w_input| in mocks)"
+              ],
+              "ablation": [
+                "High-z Exclusion: Run analysis excluding galaxies at z > 1 to test if the specific LSST capability mentioned in EV-Q050-bc54ad36646f99e2f84349ca drives the improvement.",
+                "Weak Lensing Only: Assess constraints using only shear data to isolate the contribution of clustering.",
+                "Systematics Fixed: Run with fixed photometric redshift biases to estimate the ideal statistical limit."
+              ],
+              "validation_protocol": "Split the mock catalog into two independent halves for cross-validation. Perform blind analysis where the input cosmology of the mock is hidden until the pipeline is finalized. Check for consistency between clustering-only and lensing-only constraints."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Document the exact generation parameters for LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca.",
+              "Record random seeds for MCMC chains and mock generation.",
+              "Specify prior distributions for all cosmological and nuisance parameters.",
+              "Version control the code used for likelihood calculation and two-point statistics.",
+              "Archive the covariance matrices used in the likelihood analysis."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-performance computing cluster required for MCMC convergence on high-dimensional parameter space.",
+              "estimated_runtime": "48-72 hours for full chain convergence.",
+              "software_dependencies": [
+                "Python 3.9+",
+                "CosmoSIS or Cobaya",
+                "CAMB/CLASS",
+                "TreeCorr"
+              ],
+              "data_availability": "Simulated mocks generated per LSST design specs; real data pending survey completion."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "Revision successfully addresses all critical issues from the previous iteration. The hypothesis no longer claims specific precision (2%) or definitive cosmological fate, correctly reframing the study as testing constraint improvement relative to baselines.",
+              "Dataset source has been corrected to 'LSST Simulated Stacked Image Mocks' grounded in EV-Q050-bc54ad36646f99e2f84349ca, removing unverified references to CosmoDC2/OuterRim.",
+              "Baselines now correctly cite Planck and DES Y3, removing the hallucinated 'LSST Forecast Gold sample'.",
+              "Technical details have been sanitized of malformed LaTeX placeholders; standard cosmological notation (sigma_w, Omega_m) is now used correctly.",
+              "The causal link between w and universe fate is explicitly treated as a knowledge gap/pending validation step rather than an established mechanism, adhering to evidence limitations.",
+              "Ablation study comparing high-z inclusion vs. exclusion has been added, directly testing the evidentiary claim regarding redshift reach."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:03251b45cf45",
+              "category": "critical_issue",
+              "description": "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:36cca2fa952f",
+              "category": "critical_issue",
+              "description": "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:a28738e25db1",
+              "category": "critical_issue",
+              "description": "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:9d4bd9893ae2fc29; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:34e0416860ea",
+              "category": "critical_issue",
+              "description": "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:40c997d4816f",
+              "category": "required_revision",
+              "description": "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:2f5088abfbf1",
+              "category": "required_revision",
+              "description": "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:e63ab359e7de",
+              "category": "required_revision",
+              "description": "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:fc2ffd975f5e2bb1,change:234dea9672cce1a2; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:3d1bc6c9de57",
+              "category": "required_revision",
+              "description": "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:b4f5d97187f9161a,change:f7732383436c3aa3; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:b6bde3593ef6",
+              "category": "required_revision",
+              "description": "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:34de1969e4d0",
+              "category": "required_revision",
+              "description": "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "a8248e1990fd1574d6a53924090ca9afc11e4bd3524a8f92e85d6972bbf33163",
+            "experiment_designer": "8c5cbe52e117e2bd1714bc067ac6c45b085fa8fcbb3324cd4aa9921ed5e11cce",
+            "scientific_reviewer": "51e381fbb9043ae220eff5718f67240c7134166a2e3e9910b56c2b1bd4564918"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260821-171511-a0faaac2:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260821-171511-a0faaac2:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260821-171511-a0faaac2:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260821-171511-a0faaac2:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:03251b45cf45",
+          "category": "critical_issue",
+          "description": "Hypothesis overclaims precision (2% uncertainty on w) and cosmological implication (indefinite expansion) without supporting evidence in allowed IDs.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:36cca2fa952f",
+          "category": "critical_issue",
+          "description": "Baseline 'LSST Forecast Gold sample' is fabricated relative to the allowed evidence set.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:a28738e25db1",
+          "category": "critical_issue",
+          "description": "Dataset 'CosmoDC2/OuterRim' is not grounded in EV-Q050-bc54ad36646f99e2f84349ca; evidence only supports generic 'LSST stacked images'.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:9d4bd9893ae2fc29; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:34e0416860ea",
+          "category": "critical_issue",
+          "description": "Causal link between w constraint and universe fate is asserted without evidence backing the theoretical sufficiency of this parameterization.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:40c997d4816f",
+          "category": "required_revision",
+          "description": "Reframe hypothesis to test whether LSST stacked images (per EV-Q050-bc54ad36646f99e2f84349ca) can improve constraints on w relative to current baselines, removing unsupported claims about 2% precision or indefinite expansion.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:2f5088abfbf1",
+          "category": "required_revision",
+          "description": "Remove 'LSST Forecast Gold sample' from baselines; replace with baselines derivable from allowed evidence or mark as pending validation.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:e63ab359e7de",
+          "category": "required_revision",
+          "description": "Replace specific simulation names (CosmoDC2/OuterRim) with 'LSST simulated stacked image mocks consistent with EV-Q050-bc54ad36646f99e2f84349ca specifications' unless external validation is added.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:fc2ffd975f5e2bb1,change:234dea9672cce1a2; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:3d1bc6c9de57",
+          "category": "required_revision",
+          "description": "Explicitly list 'theoretical mapping from w to universe fate' as a knowledge_gap or required theoretical validation step, rather than asserting it as established mechanism.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:b4f5d97187f9161a,change:f7732383436c3aa3; evidence=EV-Q050-bc54ad36646f99e2f84349ca; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b6bde3593ef6",
+          "category": "required_revision",
+          "description": "Correct all mathematical notation in technical_details to standard cosmological parameters; ensure symbols match those defined in evidence or standard literature (pending verification).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:34de1969e4d0",
+          "category": "required_revision",
+          "description": "Add ablation study comparing constraints with vs. without high-z stacked image data to directly test the evidentiary claim about redshift reach.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "checkpoint_hash": "ea07a9916f4f214d5b144b644b923e7fd9915689570e117a7a6013c321768cdb"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260821-171511-a0faaac2:wave-b-two-round",
+      "run_id": "20260821-171511-a0faaac2",
+      "v1_version_id": "20260821-171511-a0faaac2:v1",
+      "v2_version_id": "20260821-171511-a0faaac2:v2",
+      "input_fingerprints": {
+        "v1": "87cd6dab6e66d81e3c903e3ed33e8738681d20aa31947b46c1e0aa434a8de8b6",
+        "v2": "8c5cbe52e117e2bd1714bc067ac6c45b085fa8fcbb3324cd4aa9921ed5e11cce"
+      },
+      "responded_issue_count": 3,
+      "issue_ids": [
+        "critical_issue:a28738e25db1",
+        "required_revision:e63ab359e7de",
+        "required_revision:3d1bc6c9de57"
+      ],
+      "change_ids": [
+        "change:9d4bd9893ae2fc29",
+        "change:fc2ffd975f5e2bb1",
+        "change:234dea9672cce1a2",
+        "change:b4f5d97187f9161a",
+        "change:f7732383436c3aa3"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.3,
+          "after": 0.95,
+          "delta": 0.6499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.7,
+          "after": 0.95,
+          "delta": 0.25
+        },
+        "reproducibility_score": {
+          "before": 0.5,
+          "after": 0.9,
+          "delta": 0.4
+        },
+        "reference_reliability_score": {
+          "before": 0.2,
+          "after": 1.0,
+          "delta": 0.8
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 1,
+          "hypothesis": "The high-redshift reach (z > 1) of LSST stacked images is the critical factor enabling improved dark energy constraints, such that excluding this redshift range eliminates any statistical advantage over existing surveys.",
+          "overall_score": 0.81,
+          "recommended": false
+        },
+        {
+          "rank": 2,
+          "original_index": 0,
+          "hypothesis": "LSST stacked images detecting galaxies at redshifts well beyond unity will significantly reduce statistical uncertainties on the dark energy equation of state parameter w compared to current baselines, thereby providing necessary (but not sufficient) observational constraints for future theoretical determination of universal expansion fate.",
+          "overall_score": 0.8,
+          "recommended": true
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "3be25bcc455e",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-21T17:17:31.398874+00:00",
+    "ended_at": "2026-08-21T17:18:06.185119+00:00",
+    "duration_ms": 34786,
+    "input_summary": "{\"question_item\": {\"id\": \"Q050\", \"domain\": \"Astronomy\", \"question\": \"When will the universe die? Will it continue to expand?\", \"source_page\": 21, \"booklet_excerpt\": \"Before the universe dies, which will not happen for at least billion years, expansion could continue. But whether expansion does continue will await a better understanding of astrophysics and the universe in its current and earlier forms.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"What is the ultimate fa",
+    "output_summary": "{\"input_question\": \"When will the universe die? Will it continue to expand?\", \"domain\": \"Astronomy\", \"problem_statement\": \"The ultimate fate of the universe and the continuity of its expansion depend on the properties of dark energy. Current understanding, as noted in the source material, is insufficient to definitively predict the timeline or final state, requiring better constraints on cosmological parameters derived from high-redshift observations.\", \"rationale\": \"Evidence EV-Q050-bc54ad36646f99e2f84349ca indicates that the LSST survey is designed to study dark energy and the accelerating e",
+    "evidence_ids": [
+      "EV-Q050-bc54ad36646f99e2f84349ca"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "196feb8b242b",
+    "mock": false
+  },
+  {
+    "event_id": "14c4783df2cb",
+    "run_id": "20260821-171511-a0faaac2",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-21T17:18:06.186193+00:00",
+    "ended_at": "2026-08-21T17:18:09.057850+00:00",
+    "duration_ms": 2871,
+    "input_summary": "{\"question_item\": {\"id\": \"Q050\", \"domain\": \"Astronomy\", \"question\": \"When will the universe die? Will it continue to expand?\", \"source_page\": 21, \"booklet_excerpt\": \"Before the universe dies, which will not happen for at least billion years, expansion could continue. But whether expansion does continue will await a better understanding of astrophysics and the universe in its current and earlier forms.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required field: ResearchPlan. The input provided only contains question_item metadata and lacks the core ResearchPlan object containing hypothesis, evidence, datasets, experiments, and references.\", \"Missing required field: EvidenceCards. No evidence cards were provided to validate factual claims or traceability.\", \"Missing required field: AgentTrace. No execution history is available for validation.\"], \"warnings\": [\"The provided booklet excerpt explicitly states that the timing of the universe's death is unknown ('will not happen for at least billion years",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "bba68d33009a",
+    "mock": false
+  }
+]

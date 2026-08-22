@@ -1,0 +1,2131 @@
+[
+  {
+    "event_id": "28be3ae9cc0e",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:35:36.704343+00:00",
+    "ended_at": "2026-08-22T05:35:36.704343+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "02079d49d8a5",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T05:35:36.704343+00:00",
+    "ended_at": "2026-08-22T05:35:42.324782+00:00",
+    "duration_ms": 5620,
+    "input_summary": "{\"question_item\": {\"id\": \"Q003\", \"domain\": \"Chemistry\", \"question\": \"Are there more color pigments to discover?\", \"source_page\": 7, \"booklet_excerpt\": \"It is possible to create new pigments, but not new colors. The first synthetic pigment was made in the early 1700s. In 2009, chemist Mas Subramanian accidently created a new blue pigment called “YInMn Blue.”\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Chemistry\", \"core_question\": \"Is the discovery of new color pigments an ongoing process, and what are the theoretical limits regarding the creation of new colors versus new pigment compounds?\", \"keywords\": [\"pigment\", \"color\", \"synthetic\", \"YInMn Blue\", \"discovery\"], \"entities\": [\"Mas Subramanian\", \"YInMn Blue\", \"1700s\", \"2009\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"The provided text establishes that while new pigments can be created (and have been since the early 1700s), it is stated as a possibility that 'not new colors' can be created. The bound",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3ccc636c5cb0",
+    "mock": false
+  },
+  {
+    "event_id": "0f79c90e0ea3",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:35:42.325779+00:00",
+    "ended_at": "2026-08-22T05:36:03.963860+00:00",
+    "duration_ms": 21638,
+    "input_summary": "{\"question_item\": {\"id\": \"Q003\", \"domain\": \"Chemistry\", \"question\": \"Are there more color pigments to discover?\", \"source_page\": 7, \"booklet_excerpt\": \"It is possible to create new pigments, but not new colors. The first synthetic pigment was made in the early 1700s. In 2009, chemist Mas Subramanian accidently created a new blue pigment called “YInMn Blue.”\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Chemistry\", \"core_question\": \"Is the discovery of new color pigments an ongoing process, and what ",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the specific chemical composition and discovery context of YInMn Blue to establish a baseline for recent pigment discoveries.\", \"query\": \"YInMn Blue pigment Mas Subramanian 2009 chemical structure discovery\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Confirmation of YInMn Blue as a verified new pigment discovered in 2009, including its chemical formula or class.\", \"priority\": \"high\"}, {\"purpose\": \"Search for other examples of synthetic pigments discovered after 2009 to test the hypothesis that pigment discovery is ongoing.\", \"query\": \"new syntheti",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0ee1300624fa",
+    "mock": false
+  },
+  {
+    "event_id": "6eff6823989f",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:36:03.975834+00:00",
+    "ended_at": "2026-08-22T05:36:23.576653+00:00",
+    "duration_ms": 19600,
+    "input_summary": "{\"question_item\": {\"id\": \"Q003\", \"domain\": \"Chemistry\", \"question\": \"Are there more color pigments to discover?\", \"source_page\": 7, \"booklet_excerpt\": \"It is possible to create new pigments, but not new colors. The first synthetic pigment was made in the early 1700s. In 2009, chemist Mas Subramanian accidently created a new blue pigment called “YInMn Blue.”\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q003-9d916206bf2ba25ff6fa8bcb\", \"title\": \"arXiv:2110.00410\", \"source_type\": \"arxiv\", \"doi\": null,",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Research exists on the diversity and detectability of nonphotosynthetic pigments, including lab-based experimental analysis of spectral and broadband color diversity of pigmented organisms.\", \"evidence_ids\": [\"EV-Q003-537954657ba39c98d1b66b51\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": null}, {\"fact\": \"Theoretical models using experimental parameters can calculate the optimal number of photosynthetic pigment molecules for different complex sizes, comparing predictions with naturally occurring complexes.\", \"evidence_ids\": [\"EV-Q003-2bb7a49a6fca",
+    "evidence_ids": [
+      "EV-Q003-537954657ba39c98d1b66b51",
+      "EV-Q003-2bb7a49a6fcacf793cbbd964",
+      "EV-Q003-9d916206bf2ba25ff6fa8bcb"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ca3e07098adb",
+    "mock": false
+  },
+  {
+    "event_id": "b20b06e9ec57",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:36:23.576653+00:00",
+    "ended_at": "2026-08-22T05:36:49.302047+00:00",
+    "duration_ms": 25725,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q003\", \"domain\": \"Chemistry\", \"question\": \"Are there more color pigments to discover?\", \"source_page\": 7, \"booklet_excerpt\": \"It is possible to create new pigments, but not new colors. The first synthetic pigment was made in the early 1700s. In 2009, chemist Mas Subramanian accidently created a new blue pigment called “YInMn Blue.”\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q003-9d916206bf2ba25ff6fa8bcb\", \"title\": \"arXiv:2110.00410\", \"source_typ",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Undiscovered pigment diversity exists in non-photosynthetic biological niches, characterized by spectral signatures distinct from known photosynthetic and structural color mechanisms.\", \"mechanism\": \"Non-photosynthetic organisms utilize pigments for functions such as UV protection, desiccation resistance, or signaling rather than light harvesting. These alternative evolutionary pressures select for chromophores with electronic transitions optimized for specific environmental stressors, resulting in absorption spectra that do not overlap with the 'optimal' photos",
+    "evidence_ids": [
+      "EV-Q003-537954657ba39c98d1b66b51",
+      "EV-Q003-2bb7a49a6fcacf793cbbd964",
+      "EV-Q003-9d916206bf2ba25ff6fa8bcb"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "f857d1bc610d",
+    "mock": false
+  },
+  {
+    "event_id": "9eda2aaf78c1",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:36:49.302047+00:00",
+    "ended_at": "2026-08-22T05:37:11.550980+00:00",
+    "duration_ms": 22248,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q003\", \"domain\": \"Chemistry\", \"question\": \"Are there more color pigments to discover?\", \"source_page\": 7, \"booklet_excerpt\": \"It is possible to create new pigments, but not new colors. The first synthetic pigment was made in the early 1700s. In 2009, chemist Mas Subramanian accidently created a new blue pigment called “YInMn Blue.”\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"general_scientific_unknown\", \"recommended_hypothesis\": {\"hypothesis\": \"Undiscovered pi",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that non-photosynthetic biological niches harbor pigments with spectral signatures distinct from known photosynthetic and structural color mechanisms. The core methodology involves a comparative spectral survey of extremophile non-photosynthetic organisms against a baseline database of known photosynthetic pigments. We will isolate pigments from selected extremophiles (e.g., halophiles, thermophiles) and measure their high-resolution absorption spectra (300-800 nm). To distinguish intrinsic molecular absorption from structural color e",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6acead3333e7",
+    "mock": false
+  },
+  {
+    "event_id": "c8b1e727374f",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:37:11.550980+00:00",
+    "ended_at": "2026-08-22T05:37:23.953866+00:00",
+    "duration_ms": 12402,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q003\", \"domain\": \"Chemistry\", \"question\": \"Are there more color pigments to discover?\", \"source_page\": 7, \"booklet_excerpt\": \"It is possible to create new pigments, but not new colors. The first synthetic pigment was made in the early 1700s. In 2009, chemist Mas Subramanian accidently created a new blue pigment called “YInMn Blue.”\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Undiscovered pigment diversity exists in non-photosynthetic bi",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a single evidence card (EV-Q003-537954657ba39c98d1b66b51) to support the existence of 'undiscovered' diversity, which is a logical overreach; the evidence only supports that non-photosynthetic pigments exist and have been studied, not that significant novel classes remain undiscovered.\", \"The experimental design uses EV-Q003-2bb7a49a6fcacf793cbbd964 (photosynthetic optimization theory) as a baseline for 'known pigment spectra'. This is a category error: theoretical optimization parameters for energy transfer efficiency do not co",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0f4603e220d9",
+    "mock": false
+  },
+  {
+    "event_id": "84fbe564db11",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:37:23.956946+00:00",
+    "ended_at": "2026-08-22T05:38:00.159752+00:00",
+    "duration_ms": 36202,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a single evidence card (EV-Q003-537954657ba39c98d1b66b51) to support the existence of 'undiscovered' diversity, which is a logical overreach; the evidence only supports that non-photosynthetic pigments exist and have been studied, not that significant novel classes remain undiscovered.\", \"The experimental design uses EV-Q003-2bb7a49a6fcacf793cbbd964 (photosynthetic optimization theory) as a baseline for 'known pigment spectra'. This is a category error: theoretical optimization paramete",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Non-photosynthetic pigments documented in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines defined in EV-Q003-2bb7a49a6fcacf793cbbd964, indicating functional divergence rather than absolute chemical novelty.\", \"mechanism\": \"EV-Q003-2bb7a49a6fcacf793cbbd964 establishes that photosynthetic pigment complexes are optimized for energy transfer efficiency with specific parameter constraints. In contrast, EV-Q003-537954657ba39c98d1b66b51 describes non-photosynthetic pigments ser",
+    "evidence_ids": [
+      "EV-Q003-537954657ba39c98d1b66b51",
+      "EV-Q003-2bb7a49a6fcacf793cbbd964",
+      "EV-Q003-9d916206bf2ba25ff6fa8bcb",
+      "EV-Q003-7fd2d22ccea3dce81a7ddc0b"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "fc40fbf431ea",
+    "mock": false
+  },
+  {
+    "event_id": "3c24c91df6ad",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:38:00.160814+00:00",
+    "ended_at": "2026-08-22T05:38:26.561224+00:00",
+    "duration_ms": 26400,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a single evidence card (EV-Q003-537954657ba39c98d1b66b51) to support the existence of 'undiscovered' diversity, which is a logical overreach; the evidence only supports that non-photosynthetic pigments exist and have been studied, not that significant novel classes remain undiscovered.\", \"The experimental design uses EV-Q003-2bb7a49a6fcacf793cbbd964 (photosynthetic optimization theory) as a baseline for 'known pigment spectra'. This is a category error: theoretical optimization paramete",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that non-photosynthetic pigments (EV-Q003-537954657ba39c98d1b66b51) exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines (EV-Q003-2bb7a49a6fcacf793cbbd964). The study reframes 'novelty' as functional spectral divergence rather than absolute chemical discovery. We will extract spectral feature vectors from the non-photosynthetic dataset and compare them against the parameter constraints derived from the photosynthetic optimization model. The core metric is the Spectral Dissimilarit",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8b4ac30d7aa7",
+    "mock": false
+  },
+  {
+    "event_id": "dfdee98eb861",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:38:26.562310+00:00",
+    "ended_at": "2026-08-22T05:38:34.280434+00:00",
+    "duration_ms": 7718,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a single evidence card (EV-Q003-537954657ba39c98d1b66b51) to support the existence of 'undiscovered' diversity, which is a logical overreach; the evidence only supports that non-photosynthetic pigments exist and have been studied, not that significant novel classes remain undiscovered.\", \"The experimental design uses EV-Q003-2bb7a49a6fcacf793cbbd964 (photosynthetic optimization theory) as a baseline for 'known pigment spectra'. This is a category error: theoretical optimization paramete",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis successfully addresses the critical issue of 'unverifiable novelty' by reframing the research question as a test of functional spectral divergence against a specific evidence-based baseline (EV-Q003-2bb7a49a6fcacf793cbbd964) rather than an undefined global database.\", \"The replacement of the external 'Chemical Novelty Score' with the internal 'Spectral Dissimilarity Index (SDI)' strictly adheres to closed-evidence constraints and makes the metric computable solely from allowed EvidenceCards.\", \"The inclusion of an explicit ablation",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "dd675c4f0e42",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:557974457ed785d8",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Undiscovered pigment diversity exists in non-photosynthetic biological niches, characterized by spectral signatures distinct from known photosynthetic and structural color mechanisms.",
+              "mechanism": "Non-photosynthetic organisms utilize pigments for functions such as UV protection, desiccation resistance, or signaling rather than light harvesting. These alternative evolutionary pressures select for chromophores with electronic transitions optimized for specific environmental stressors, resulting in absorption spectra that do not overlap with the 'optimal' photosynthetic configurations modeled in existing literature.",
+              "falsifiable_prediction": "A systematic spectral survey of extremophile non-photosynthetic organisms will identify at least one stable pigment candidate whose peak absorption wavelength falls outside the 95% confidence interval of currently cataloged natural and synthetic pigment databases.",
+              "required_observations": [
+                "High-resolution reflectance and absorption spectra (300-800nm) from diverse non-photosynthetic biological samples",
+                "Chemical extraction and structural characterization (NMR/MS) of candidates exhibiting anomalous spectral features",
+                "Stability testing under ambient conditions to distinguish functional pigments from transient metabolic intermediates"
+              ],
+              "risk_of_being_wrong": "Observed spectral anomalies may be attributable to known degradation products, mixtures of existing pigments, or structural color effects rather than novel chemical chromophores. Additionally, novel compounds may exist but lack the stability required for practical 'pigment' classification.",
+              "supporting_evidence_ids": [
+                "EV-Q003-537954657ba39c98d1b66b51"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.82
+            },
+            {
+              "hypothesis": "The discovery potential for new molecular pigments is constrained by physical optimization limits similar to those governing photosynthetic complexes, making future discoveries reliant on hierarchical structural engineering rather than novel chromophore synthesis.",
+              "mechanism": "Just as photosynthetic pigment numbers are optimized for complex size and energy transfer efficiency without fitting parameters, molecular chromophores may have reached a local maximum in visible-light absorption efficiency due to quantum mechanical constraints. Therefore, 'new colors' are more likely to emerge from angular-independent hierarchical structures (which manipulate light-matter interaction physically) than from discovering chemically distinct absorption bands.",
+              "falsifiable_prediction": "High-throughput computational screening of stable organic/inorganic chromophores will fail to identify candidates with visible-region molar absorptivity significantly exceeding current benchmarks, whereas nanostructured variants of existing pigments will demonstrate tunable color properties unachievable by molecular variation alone.",
+              "required_observations": [
+                "Computational screening results for novel chromophore candidates vs. theoretical absorption limits",
+                "Experimental validation of color tunability in hierarchical coatings using existing pigment bases",
+                "Comparative analysis of spectral gamut coverage between molecular libraries and structurally engineered materials"
+              ],
+              "risk_of_being_wrong": "The optimization model derived from photosynthesis may not generalize to abiotic or non-energy-transducing pigment systems. Novel electronic transitions (e.g., charge-transfer bands) might exist outside current theoretical predictions.",
+              "supporting_evidence_ids": [
+                "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                "EV-Q003-9d916206bf2ba25ff6fa8bcb"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Current pigment classification frameworks conflate perceptual color with spectral signature, obscuring the existence of 'spectrally unique but perceptually redundant' pigments that are chemically distinct yet visually indistinguishable from known colors.",
+              "mechanism": "Human trichromatic vision integrates broad spectral bands. Chemically distinct pigments with different narrow-band absorption features may map to identical CIE coordinates. Discovery efforts focused on 'new colors' (perception) miss 'new pigments' (chemistry) that occupy the same perceptual space but offer superior material properties (stability, toxicity, cost).",
+              "falsifiable_prediction": "Spectral clustering analysis of known pigments will reveal significant gaps in spectral feature space that correspond to regions of high perceptual redundancy, predicting the existence of chemically viable but historically overlooked chromophores.",
+              "required_observations": [
+                "Full spectral curves (not just RGB/CIE values) for a comprehensive library of known pigments",
+                "Mapping of spectral features to perceptual color space to identify many-to-one mappings",
+                "Targeted synthesis/search for compounds filling identified spectral gaps"
+              ],
+              "risk_of_being_wrong": "The gaps in spectral space may correspond to chemically unstable or synthetically inaccessible regions rather than overlooked opportunities. Perceptual redundancy may already be fully exploited by existing industrial pigments.",
+              "supporting_evidence_ids": [
+                "EV-Q003-537954657ba39c98d1b66b51"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.68
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly addresses the core question of undiscovered pigments by leveraging established evidence on non-photosynthetic pigment diversity (EV-Q003-537954657ba39c98d1b66b51). It offers a clear, empirically testable pathway using public or obtainable biological datasets, distinguishing itself from structural color mechanisms. It balances novelty with feasibility, avoiding the theoretical saturation risks of Hypothesis 2 and the semantic focus of Hypothesis 3.",
+          "rejected_directions": [
+            "Focusing exclusively on YInMn Blue-type accidental synthesis: Rejected because no supporting EvidenceCard validates this specific case or its generalizability; would violate evidence grounding rules.",
+            "Defining 'new color' purely through psychophysics: Rejected because the question asks about 'pigments' (material substances), and evidence supports biological/chemical diversity more strongly than perceptual theory.",
+            "Assuming infinite chemical space exploration: Rejected as unfalsifiable and lacking mechanistic constraint; replaced by niche-specific biological search strategy."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that non-photosynthetic biological niches harbor pigments with spectral signatures distinct from known photosynthetic and structural color mechanisms. The core methodology involves a comparative spectral survey of extremophile non-photosynthetic organisms against a baseline database of known photosynthetic pigments. We will isolate pigments from selected extremophiles (e.g., halophiles, thermophiles) and measure their high-resolution absorption spectra (300-800 nm). To distinguish intrinsic molecular absorption from structural color effects, we will perform chemical extraction and verify spectral stability in solution. Anomalous spectra will be identified by calculating the Mahalanobis distance from the centroid of the known pigment spectral distribution, flagging candidates outside the 95% confidence interval for further structural characterization via Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR).",
+          "datasets": {
+            "source": [
+              {
+                "name": "Non-photosynthetic Pigment Diversity Dataset",
+                "description": "Lab-based experimental analysis of spectral and broadband color diversity of pigmented organisms, specifically focusing on non-photosynthetic surfaces as described in EV-Q003-537954657ba39c98d1b66b51.",
+                "evidence_id": "EV-Q003-537954657ba39c98d1b66b51",
+                "type": "experimental_spectra"
+              },
+              {
+                "name": "Photosynthetic Complex Optimization Parameters",
+                "description": "Experimental parameters and theoretical predictions for optimal pigment numbers in photosynthetic complexes, serving as a baseline for 'known' optimized pigment configurations.",
+                "evidence_id": "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                "type": "theoretical_baseline"
+              }
+            ],
+            "target": {
+              "name": "Anomalous Spectral Signature Catalog",
+              "description": "A curated list of pigment candidates from non-photosynthetic extremophiles whose peak absorption wavelengths and spectral shapes fall outside the 95% confidence interval of the combined known pigment database.",
+              "format": "CSV/JSON with spectral arrays and metadata"
+            }
+          },
+          "methods": "1. Sample Collection: Acquire cultures of non-photosynthetic extremophiles (e.g., Deinococcus radiodurans, Halobacterium salinarum) known for pigmentation but lacking photosynthetic apparatus. 2. Spectral Measurement: Perform UV-Vis spectroscopy (300-800 nm) on intact cells and extracted pigment solutions to differentiate structural vs. molecular color. 3. Baseline Construction: Aggregate spectral data from known photosynthetic pigments (chlorophylls, carotenoids in photosynthetic contexts) using parameters from EV-Q003-2bb7a49a6fcacf793cbbd964 and general literature. 4. Statistical Analysis: Compute the principal components of the baseline spectral dataset. Project new samples onto this space and calculate distances. 5. Chemical Validation: For outliers, perform HPLC-MS and NMR to confirm novel chemical structures rather than degradation products.",
+          "experiments": {
+            "baselines": [
+              "Known Photosynthetic Pigment Library: Standard spectra of chlorophyll a, b, bacteriochlorophylls, and common carotenoids as referenced in photosynthetic optimization studies (EV-Q003-2bb7a49a6fcacf793cbbd964).",
+              "Structural Color Control: Synthetic photonic crystals or known structural color organisms (e.g., butterfly wings) to establish the spectral signature of non-pigmentary color mechanisms, ensuring anomalies are not due to physical structure."
+            ],
+            "metrics": [
+              "Spectral Distance Metric: Mahalanobis distance of sample spectra from the mean of the known pigment database.",
+              "Peak Wavelength Deviation: Difference in lambda_max between candidate and nearest known pigment neighbor.",
+              "Chemical Novelty Score: Binary classification based on MS/NMR confirmation of unique molecular formula not present in PubChem/ChEBI."
+            ],
+            "ablation": "Remove structural color controls to verify that spectral anomalies persist in pure chemical extracts; Exclude UV-range data (<400nm) to test if novelty is confined to visible spectrum.",
+            "validation_protocol": "Cross-validation using leave-one-out method on the baseline database to ensure robustness of the 95% confidence interval boundary. Independent replication of spectral measurements for top 5 anomalous candidates."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Raw spectral data (300-800 nm) for all tested organisms must be archived.",
+            "Extraction protocols (solvent, temperature, duration) must be documented for each sample.",
+            "Code for calculating Mahalanobis distance and defining the 95% confidence interval must be version-controlled.",
+            "MS/NMR raw files for any claimed novel pigment must be deposited in public repositories."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_time": "48 hours for spectral analysis pipeline",
+            "required_resources": "UV-Vis spectrophotometer, HPLC-MS access, NMR facility",
+            "data_availability": "Partial (Baseline data from evidence IDs available; new experimental data required)"
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-053536-53a4234a",
+        "version_number": 1,
+        "version_id": "20260822-053536-53a4234a:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Undiscovered pigment diversity exists in non-photosynthetic biological niches, characterized by spectral signatures distinct from known photosynthetic and structural color mechanisms.",
+              "mechanism": "Non-photosynthetic organisms utilize pigments for functions such as UV protection, desiccation resistance, or signaling rather than light harvesting. These alternative evolutionary pressures select for chromophores with electronic transitions optimized for specific environmental stressors, resulting in absorption spectra that do not overlap with the 'optimal' photosynthetic configurations modeled in existing literature.",
+              "falsifiable_prediction": "A systematic spectral survey of extremophile non-photosynthetic organisms will identify at least one stable pigment candidate whose peak absorption wavelength falls outside the 95% confidence interval of currently cataloged natural and synthetic pigment databases.",
+              "required_observations": [
+                "High-resolution reflectance and absorption spectra (300-800nm) from diverse non-photosynthetic biological samples",
+                "Chemical extraction and structural characterization (NMR/MS) of candidates exhibiting anomalous spectral features",
+                "Stability testing under ambient conditions to distinguish functional pigments from transient metabolic intermediates"
+              ],
+              "risk_of_being_wrong": "Observed spectral anomalies may be attributable to known degradation products, mixtures of existing pigments, or structural color effects rather than novel chemical chromophores. Additionally, novel compounds may exist but lack the stability required for practical 'pigment' classification.",
+              "supporting_evidence_ids": [
+                "EV-Q003-537954657ba39c98d1b66b51"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.82
+            },
+            {
+              "hypothesis": "The discovery potential for new molecular pigments is constrained by physical optimization limits similar to those governing photosynthetic complexes, making future discoveries reliant on hierarchical structural engineering rather than novel chromophore synthesis.",
+              "mechanism": "Just as photosynthetic pigment numbers are optimized for complex size and energy transfer efficiency without fitting parameters, molecular chromophores may have reached a local maximum in visible-light absorption efficiency due to quantum mechanical constraints. Therefore, 'new colors' are more likely to emerge from angular-independent hierarchical structures (which manipulate light-matter interaction physically) than from discovering chemically distinct absorption bands.",
+              "falsifiable_prediction": "High-throughput computational screening of stable organic/inorganic chromophores will fail to identify candidates with visible-region molar absorptivity significantly exceeding current benchmarks, whereas nanostructured variants of existing pigments will demonstrate tunable color properties unachievable by molecular variation alone.",
+              "required_observations": [
+                "Computational screening results for novel chromophore candidates vs. theoretical absorption limits",
+                "Experimental validation of color tunability in hierarchical coatings using existing pigment bases",
+                "Comparative analysis of spectral gamut coverage between molecular libraries and structurally engineered materials"
+              ],
+              "risk_of_being_wrong": "The optimization model derived from photosynthesis may not generalize to abiotic or non-energy-transducing pigment systems. Novel electronic transitions (e.g., charge-transfer bands) might exist outside current theoretical predictions.",
+              "supporting_evidence_ids": [
+                "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                "EV-Q003-9d916206bf2ba25ff6fa8bcb"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Current pigment classification frameworks conflate perceptual color with spectral signature, obscuring the existence of 'spectrally unique but perceptually redundant' pigments that are chemically distinct yet visually indistinguishable from known colors.",
+              "mechanism": "Human trichromatic vision integrates broad spectral bands. Chemically distinct pigments with different narrow-band absorption features may map to identical CIE coordinates. Discovery efforts focused on 'new colors' (perception) miss 'new pigments' (chemistry) that occupy the same perceptual space but offer superior material properties (stability, toxicity, cost).",
+              "falsifiable_prediction": "Spectral clustering analysis of known pigments will reveal significant gaps in spectral feature space that correspond to regions of high perceptual redundancy, predicting the existence of chemically viable but historically overlooked chromophores.",
+              "required_observations": [
+                "Full spectral curves (not just RGB/CIE values) for a comprehensive library of known pigments",
+                "Mapping of spectral features to perceptual color space to identify many-to-one mappings",
+                "Targeted synthesis/search for compounds filling identified spectral gaps"
+              ],
+              "risk_of_being_wrong": "The gaps in spectral space may correspond to chemically unstable or synthetically inaccessible regions rather than overlooked opportunities. Perceptual redundancy may already be fully exploited by existing industrial pigments.",
+              "supporting_evidence_ids": [
+                "EV-Q003-537954657ba39c98d1b66b51"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.68
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly addresses the core question of undiscovered pigments by leveraging established evidence on non-photosynthetic pigment diversity (EV-Q003-537954657ba39c98d1b66b51). It offers a clear, empirically testable pathway using public or obtainable biological datasets, distinguishing itself from structural color mechanisms. It balances novelty with feasibility, avoiding the theoretical saturation risks of Hypothesis 2 and the semantic focus of Hypothesis 3.",
+          "rejected_directions": [
+            "Focusing exclusively on YInMn Blue-type accidental synthesis: Rejected because no supporting EvidenceCard validates this specific case or its generalizability; would violate evidence grounding rules.",
+            "Defining 'new color' purely through psychophysics: Rejected because the question asks about 'pigments' (material substances), and evidence supports biological/chemical diversity more strongly than perceptual theory.",
+            "Assuming infinite chemical space exploration: Rejected as unfalsifiable and lacking mechanistic constraint; replaced by niche-specific biological search strategy."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that non-photosynthetic biological niches harbor pigments with spectral signatures distinct from known photosynthetic and structural color mechanisms. The core methodology involves a comparative spectral survey of extremophile non-photosynthetic organisms against a baseline database of known photosynthetic pigments. We will isolate pigments from selected extremophiles (e.g., halophiles, thermophiles) and measure their high-resolution absorption spectra (300-800 nm). To distinguish intrinsic molecular absorption from structural color effects, we will perform chemical extraction and verify spectral stability in solution. Anomalous spectra will be identified by calculating the Mahalanobis distance from the centroid of the known pigment spectral distribution, flagging candidates outside the 95% confidence interval for further structural characterization via Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR).",
+          "datasets": {
+            "source": [
+              {
+                "name": "Non-photosynthetic Pigment Diversity Dataset",
+                "description": "Lab-based experimental analysis of spectral and broadband color diversity of pigmented organisms, specifically focusing on non-photosynthetic surfaces as described in EV-Q003-537954657ba39c98d1b66b51.",
+                "evidence_id": "EV-Q003-537954657ba39c98d1b66b51",
+                "type": "experimental_spectra"
+              },
+              {
+                "name": "Photosynthetic Complex Optimization Parameters",
+                "description": "Experimental parameters and theoretical predictions for optimal pigment numbers in photosynthetic complexes, serving as a baseline for 'known' optimized pigment configurations.",
+                "evidence_id": "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                "type": "theoretical_baseline"
+              }
+            ],
+            "target": {
+              "name": "Anomalous Spectral Signature Catalog",
+              "description": "A curated list of pigment candidates from non-photosynthetic extremophiles whose peak absorption wavelengths and spectral shapes fall outside the 95% confidence interval of the combined known pigment database.",
+              "format": "CSV/JSON with spectral arrays and metadata"
+            }
+          },
+          "methods": "1. Sample Collection: Acquire cultures of non-photosynthetic extremophiles (e.g., Deinococcus radiodurans, Halobacterium salinarum) known for pigmentation but lacking photosynthetic apparatus. 2. Spectral Measurement: Perform UV-Vis spectroscopy (300-800 nm) on intact cells and extracted pigment solutions to differentiate structural vs. molecular color. 3. Baseline Construction: Aggregate spectral data from known photosynthetic pigments (chlorophylls, carotenoids in photosynthetic contexts) using parameters from EV-Q003-2bb7a49a6fcacf793cbbd964 and general literature. 4. Statistical Analysis: Compute the principal components of the baseline spectral dataset. Project new samples onto this space and calculate distances. 5. Chemical Validation: For outliers, perform HPLC-MS and NMR to confirm novel chemical structures rather than degradation products.",
+          "experiments": {
+            "baselines": [
+              "Known Photosynthetic Pigment Library: Standard spectra of chlorophyll a, b, bacteriochlorophylls, and common carotenoids as referenced in photosynthetic optimization studies (EV-Q003-2bb7a49a6fcacf793cbbd964).",
+              "Structural Color Control: Synthetic photonic crystals or known structural color organisms (e.g., butterfly wings) to establish the spectral signature of non-pigmentary color mechanisms, ensuring anomalies are not due to physical structure."
+            ],
+            "metrics": [
+              "Spectral Distance Metric: Mahalanobis distance of sample spectra from the mean of the known pigment database.",
+              "Peak Wavelength Deviation: Difference in lambda_max between candidate and nearest known pigment neighbor.",
+              "Chemical Novelty Score: Binary classification based on MS/NMR confirmation of unique molecular formula not present in PubChem/ChEBI."
+            ],
+            "ablation": "Remove structural color controls to verify that spectral anomalies persist in pure chemical extracts; Exclude UV-range data (<400nm) to test if novelty is confined to visible spectrum.",
+            "validation_protocol": "Cross-validation using leave-one-out method on the baseline database to ensure robustness of the 95% confidence interval boundary. Independent replication of spectral measurements for top 5 anomalous candidates."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Raw spectral data (300-800 nm) for all tested organisms must be archived.",
+            "Extraction protocols (solvent, temperature, duration) must be documented for each sample.",
+            "Code for calculating Mahalanobis distance and defining the 95% confidence interval must be version-controlled.",
+            "MS/NMR raw files for any claimed novel pigment must be deposited in public repositories."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_time": "48 hours for spectral analysis pipeline",
+            "required_resources": "UV-Vis spectrophotometer, HPLC-MS access, NMR facility",
+            "data_availability": "Partial (Baseline data from evidence IDs available; new experimental data required)"
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis relies on a single evidence card (EV-Q003-537954657ba39c98d1b66b51) to support the existence of 'undiscovered' diversity, which is a logical overreach; the evidence only supports that non-photosynthetic pigments exist and have been studied, not that significant novel classes remain undiscovered.",
+            "The experimental design uses EV-Q003-2bb7a49a6fcacf793cbbd964 (photosynthetic optimization theory) as a baseline for 'known pigment spectra'. This is a category error: theoretical optimization parameters for energy transfer efficiency do not constitute a comprehensive spectral library of all known natural/synthetic pigments required to claim novelty.",
+            "The falsifiable prediction references the '95% confidence interval of currently cataloged natural and synthetic pigment databases', but no such comprehensive database is provided in the allowed evidence IDs. The experiment cannot be executed as described without external data not permitted in this closed-evidence environment.",
+            "While Results are correctly marked as pending, the proposed validation metric ('Chemical Novelty Score' via PubChem/ChEBI) implicitly assumes access to external knowledge bases, violating the constraint that factual verification must rely solely on provided EvidenceCards or explicitly declared knowledge gaps."
+          ],
+          "critical_issues": [
+            "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+            "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+            "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms."
+          ],
+          "required_revisions": [
+            "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+            "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+            "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+            "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.4,
+          "falsifiability_score": 0.6,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.5
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:573f0e40fc08",
+            "category": "critical_issue",
+            "description": "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:1766d1a662e7",
+            "category": "critical_issue",
+            "description": "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:fafb1af8f9d6",
+            "category": "critical_issue",
+            "description": "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a8c40789b98b",
+            "category": "required_revision",
+            "description": "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a7c03271b519",
+            "category": "required_revision",
+            "description": "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3524bae71baf",
+            "category": "required_revision",
+            "description": "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f02598b18eee",
+            "category": "required_revision",
+            "description": "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "3b6c1a42be6ba1e096e25c5d29935629971fa72451f8bcd7560e3ebb5854573b",
+          "experiment_designer": "35f2ae12f14e669b2b6b89730eef3e191556df28687f3fac0af47ac6e9cb168f",
+          "scientific_reviewer": "dfca822089f1910c67f3aaca9d0e6b0544587e980f10b76b4c1ccb2394a1dc57"
+        }
+      },
+      "parent_version_id": "20260822-053536-53a4234a:v1",
+      "lineage": [
+        "20260822-053536-53a4234a:v1",
+        "20260822-053536-53a4234a:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis relies on a single evidence card (EV-Q003-537954657ba39c98d1b66b51) to support the existence of 'undiscovered' diversity, which is a logical overreach; the evidence only supports that non-photosynthetic pigments exist and have been studied, not that significant novel classes remain undiscovered.",
+          "The experimental design uses EV-Q003-2bb7a49a6fcacf793cbbd964 (photosynthetic optimization theory) as a baseline for 'known pigment spectra'. This is a category error: theoretical optimization parameters for energy transfer efficiency do not constitute a comprehensive spectral library of all known natural/synthetic pigments required to claim novelty.",
+          "The falsifiable prediction references the '95% confidence interval of currently cataloged natural and synthetic pigment databases', but no such comprehensive database is provided in the allowed evidence IDs. The experiment cannot be executed as described without external data not permitted in this closed-evidence environment.",
+          "While Results are correctly marked as pending, the proposed validation metric ('Chemical Novelty Score' via PubChem/ChEBI) implicitly assumes access to external knowledge bases, violating the constraint that factual verification must rely solely on provided EvidenceCards or explicitly declared knowledge gaps."
+        ],
+        "critical_issues": [
+          "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+          "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+          "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms."
+        ],
+        "required_revisions": [
+          "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+          "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+          "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+          "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.4,
+        "falsifiability_score": 0.6,
+        "reproducibility_score": 0.7,
+        "reference_reliability_score": 0.5
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis successfully addresses the critical issue of 'unverifiable novelty' by reframing the research question as a test of functional spectral divergence against a specific evidence-based baseline (EV-Q003-2bb7a49a6fcacf793cbbd964) rather than an undefined global database.",
+          "The replacement of the external 'Chemical Novelty Score' with the internal 'Spectral Dissimilarity Index (SDI)' strictly adheres to closed-evidence constraints and makes the metric computable solely from allowed EvidenceCards.",
+          "The inclusion of an explicit ablation study (intra-category variance comparison) directly responds to the previous requirement to rule out random variation as novelty, significantly improving falsifiability.",
+          "Results are correctly marked as pending, and no factual claims are made without corresponding evidence_ids; the distinction between theoretical optimization parameters and spectral libraries is now acknowledged as a limitation in the 'risk_of_being_wrong' section rather than ignored."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final execution phase, explicitly document the mapping procedure used to convert 'optimal pigment counts' from EV-Q003-2bb7a49a6fcacf793cbbd964 into spectral feature vectors, as this remains the highest risk point for category error despite the improved framing.",
+          "Ensure the 'knowledge_gap' regarding absolute chemical novelty is prominently displayed in any downstream reporting to prevent misinterpretation of statistical divergence as definitive discovery of new chemical classes."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:5dea87fd74e14cbe",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+          "issue_id": "critical_issue:573f0e40fc08"
+        },
+        {
+          "failure_id": "failure:a65277e2246eef11",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+          "issue_id": "critical_issue:1766d1a662e7"
+        },
+        {
+          "failure_id": "failure:43c87bec4d06b79a",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms.",
+          "issue_id": "critical_issue:fafb1af8f9d6"
+        },
+        {
+          "failure_id": "failure:d313c07d1b9f64b6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+          "issue_id": "required_revision:a8c40789b98b"
+        },
+        {
+          "failure_id": "failure:b74adf83d39bb018",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+          "issue_id": "required_revision:a7c03271b519"
+        },
+        {
+          "failure_id": "failure:7e131a52043e6918",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+          "issue_id": "required_revision:3524bae71baf"
+        },
+        {
+          "failure_id": "failure:72312fed9e1f26fd",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.",
+          "issue_id": "required_revision:f02598b18eee"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:0ea959c30f765977",
+          "issue_id": "critical_issue:573f0e40fc08",
+          "reason": "Reviewer item critical_issue:573f0e40fc08 requested 'Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.'. V2 changes control_groups; deterministic correlation evidence tokens=['2bb7a49a6fcacf793cbbd964', 'baseline', 'cohort', 'ev', 'photosynthetic', 'pigment', 'q003', 'spectral', 'theoretical'], coverage=0.450.",
+          "before": [
+            "Known Photosynthetic Pigment Library: Standard spectra of chlorophyll a, b, bacteriochlorophylls, and common carotenoids as referenced in photosynthetic optimization studies (EV-Q003-2bb7a49a6fcacf793cbbd964).",
+            "Structural Color Control: Synthetic photonic crystals or known structural color organisms (e.g., butterfly wings) to establish the spectral signature of non-pigmentary color mechanisms, ensuring anomalies are not due to physical structure."
+          ],
+          "after": [
+            "Photosynthetic Optimization Model Baseline: Derived from EV-Q003-2bb7a49a6fcacf793cbbd964, representing the theoretical spectral/structural constraints of energy-transfer-optimized pigments.",
+            "Intra-Category Non-Photosynthetic Variance: The distribution of spectral distances within the EV-Q003-537954657ba39c98d1b66b51 dataset itself, serving as the null hypothesis for random variation."
+          ],
+          "evidence_refs": [
+            "EV-Q003-2bb7a49a6fcacf793cbbd964",
+            "EV-Q003-537954657ba39c98d1b66b51"
+          ],
+          "affected_plan_section": "control_groups",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:3e35611c067fd195",
+          "issue_id": "critical_issue:573f0e40fc08",
+          "reason": "Reviewer item critical_issue:573f0e40fc08 requested 'Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['2bb7a49a6fcacf793cbbd964', 'baseline', 'cohort', 'complexe', 'count', 'ev', 'evidence', 'photosynthetic', 'pigment', 'q003', 'spectral', 'theoretical'], coverage=0.600.",
+          "before": [
+            {
+              "name": "Non-photosynthetic Pigment Diversity Dataset",
+              "description": "Lab-based experimental analysis of spectral and broadband color diversity of pigmented organisms, specifically focusing on non-photosynthetic surfaces as described in EV-Q003-537954657ba39c98d1b66b51.",
+              "evidence_id": "EV-Q003-537954657ba39c98d1b66b51",
+              "type": "experimental_spectra"
+            },
+            {
+              "name": "Photosynthetic Complex Optimization Parameters",
+              "description": "Experimental parameters and theoretical predictions for optimal pigment numbers in photosynthetic complexes, serving as a baseline for 'known' optimized pigment configurations.",
+              "evidence_id": "EV-Q003-2bb7a49a6fcacf793cbbd964",
+              "type": "theoretical_baseline"
+            }
+          ],
+          "after": [
+            {
+              "name": "Non-photosynthetic Pigment Spectral Data",
+              "description": "Spectral and broadband color diversity data of pigmented organisms from EV-Q003-537954657ba39c98d1b66b51.",
+              "evidence_id": "EV-Q003-537954657ba39c98d1b66b51",
+              "type": "experimental_spectra"
+            },
+            {
+              "name": "Photosynthetic Optimization Baseline Parameters",
+              "description": "Theoretical parameters and optimal pigment counts for photosynthetic complexes from EV-Q003-2bb7a49a6fcacf793cbbd964, used to define the 'photosynthetic spectral space' constraints.",
+              "evidence_id": "EV-Q003-2bb7a49a6fcacf793cbbd964",
+              "type": "theoretical_baseline"
+            }
+          ],
+          "evidence_refs": [
+            "EV-Q003-2bb7a49a6fcacf793cbbd964",
+            "EV-Q003-537954657ba39c98d1b66b51"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:cba04631659756d0",
+          "issue_id": "critical_issue:573f0e40fc08",
+          "reason": "Reviewer item critical_issue:573f0e40fc08 requested 'Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.'. V2 changes methods; deterministic correlation evidence tokens=['2bb7a49a6fcacf793cbbd964', 'baseline', 'cohort', 'count', 'ev', 'evidence', 'not', 'photosynthetic', 'pigment', 'q003', 'spectral', 'theoretical', 'vs'], coverage=0.650.",
+          "before": "1. Sample Collection: Acquire cultures of non-photosynthetic extremophiles (e.g., Deinococcus radiodurans, Halobacterium salinarum) known for pigmentation but lacking photosynthetic apparatus. 2. Spectral Measurement: Perform UV-Vis spectroscopy (300-800 nm) on intact cells and extracted pigment solutions to differentiate structural vs. molecular color. 3. Baseline Construction: Aggregate spectral data from known photosynthetic pigments (chlorophylls, carotenoids in photosynthetic contexts) using parameters from EV-Q003-2bb7a49a6fcacf793cbbd964 and general literature. 4. Statistical Analysis: Compute the principal components of the baseline spectral dataset. Project new samples onto this space and calculate distances. 5. Chemical Validation: For outliers, perform HPLC-MS and NMR to confirm novel chemical structures rather than degradation products.",
+          "after": "1. Data Extraction: Parse spectral data (wavelength vs. absorbance/reflectance) from EV-Q003-537954657ba39c98d1b66b51. Extract key parameters (optimal pigment count, complex size constraints) from EV-Q003-2bb7a49a6fcacf793cbbd964 to construct a theoretical baseline profile. 2. Feature Engineering: Normalize spectral curves and extract features: peak wavelength (lambda_max), full width at half maximum (FWHM), and spectral skewness. 3. Baseline Definition: Define the 'Photosynthetic Baseline Space' using the parameters from EV-Q003-2bb7a49a6fcacf793cbbd964. If explicit spectra are not provided, use the theoretical optimal absorption profiles implied by the optimization model as the reference centroid. 4. SDI Calculation: Compute the Spectral Dissimilarity Index (SDI) for each non-photosynthetic sample relative to the Photosynthetic Baseline. 5. Statistical Testing: Perform a permutation test to determine if the mean SDI (cross-category) is significantly greater than the mean intra-category distance within the non-photosynthetic dataset.",
+          "evidence_refs": [
+            "EV-Q003-2bb7a49a6fcacf793cbbd964",
+            "EV-Q003-537954657ba39c98d1b66b51"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:04f178eae687d741",
+          "issue_id": "required_revision:a8c40789b98b",
+          "reason": "Reviewer item required_revision:a8c40789b98b requested 'Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.'. V2 changes technical_details; deterministic correlation evidence tokens=['2bb7a49a6fcacf793cbbd964', '537954657ba39c98d1b66b51', 'against', 'baseline', 'database', 'distinct', 'ev', 'exhibit', 'feature', 'hypothesi', 'non', 'novelty', 'photosynthetic', 'pigment', 'q003', 'rather', 'reframe', 'spectral', 'statistically', 'test', 'than'], coverage=0.778.",
+          "before": "This experiment tests the hypothesis that non-photosynthetic biological niches harbor pigments with spectral signatures distinct from known photosynthetic and structural color mechanisms. The core methodology involves a comparative spectral survey of extremophile non-photosynthetic organisms against a baseline database of known photosynthetic pigments. We will isolate pigments from selected extremophiles (e.g., halophiles, thermophiles) and measure their high-resolution absorption spectra (300-800 nm). To distinguish intrinsic molecular absorption from structural color effects, we will perform chemical extraction and verify spectral stability in solution. Anomalous spectra will be identified by calculating the Mahalanobis distance from the centroid of the known pigment spectral distribution, flagging candidates outside the 95% confidence interval for further structural characterization via Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR).",
+          "after": "This experiment tests the hypothesis that non-photosynthetic pigments (EV-Q003-537954657ba39c98d1b66b51) exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines (EV-Q003-2bb7a49a6fcacf793cbbd964). The study reframes 'novelty' as functional spectral divergence rather than absolute chemical discovery. We will extract spectral feature vectors from the non-photosynthetic dataset and compare them against the parameter constraints derived from the photosynthetic optimization model. The core metric is the Spectral Dissimilarity Index (SDI), calculated as the Euclidean distance in a normalized spectral feature space (peak wavelength, bandwidth, asymmetry). To ensure robustness, we perform an ablation study comparing cross-category distances (non-photosynthetic vs. photosynthetic baseline) against intra-category distances (within non-photosynthetic subset) to rule out random variation. This approach strictly adheres to the closed-evidence constraint by avoiding external databases like PubChem.",
+          "evidence_refs": [
+            "EV-Q003-2bb7a49a6fcacf793cbbd964",
+            "EV-Q003-537954657ba39c98d1b66b51"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:0cfef23db4f14158",
+          "issue_id": "required_revision:a7c03271b519",
+          "reason": "Reviewer item required_revision:a7c03271b519 requested 'Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.'. V2 changes technical_details; deterministic correlation evidence tokens=['2bb7a49a6fcacf793cbbd964', 'chemical', 'database', 'dissimilarity', 'ev', 'evidence', 'external', 'index', 'measure', 'novelty', 'parameter', 'q003', 'spectral', 'strictly'], coverage=0.560.",
+          "before": "This experiment tests the hypothesis that non-photosynthetic biological niches harbor pigments with spectral signatures distinct from known photosynthetic and structural color mechanisms. The core methodology involves a comparative spectral survey of extremophile non-photosynthetic organisms against a baseline database of known photosynthetic pigments. We will isolate pigments from selected extremophiles (e.g., halophiles, thermophiles) and measure their high-resolution absorption spectra (300-800 nm). To distinguish intrinsic molecular absorption from structural color effects, we will perform chemical extraction and verify spectral stability in solution. Anomalous spectra will be identified by calculating the Mahalanobis distance from the centroid of the known pigment spectral distribution, flagging candidates outside the 95% confidence interval for further structural characterization via Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR).",
+          "after": "This experiment tests the hypothesis that non-photosynthetic pigments (EV-Q003-537954657ba39c98d1b66b51) exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines (EV-Q003-2bb7a49a6fcacf793cbbd964). The study reframes 'novelty' as functional spectral divergence rather than absolute chemical discovery. We will extract spectral feature vectors from the non-photosynthetic dataset and compare them against the parameter constraints derived from the photosynthetic optimization model. The core metric is the Spectral Dissimilarity Index (SDI), calculated as the Euclidean distance in a normalized spectral feature space (peak wavelength, bandwidth, asymmetry). To ensure robustness, we perform an ablation study comparing cross-category distances (non-photosynthetic vs. photosynthetic baseline) against intra-category distances (within non-photosynthetic subset) to rule out random variation. This approach strictly adheres to the closed-evidence constraint by avoiding external databases like PubChem.",
+          "evidence_refs": [
+            "EV-Q003-2bb7a49a6fcacf793cbbd964",
+            "EV-Q003-537954657ba39c98d1b66b51"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:22aa9a69d141c0d7",
+          "issue_id": "required_revision:f02598b18eee",
+          "reason": "Reviewer item required_revision:f02598b18eee requested 'Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.'. V2 changes technical_details; deterministic correlation evidence tokens=['537954657ba39c98d1b66b51', 'ablation', 'against', 'category', 'compar', 'ev', 'intra', 'non', 'novelty', 'out', 'photosynthetic', 'q003', 'rule', 'spectral', 'subset', 'test', 'variation'], coverage=0.739.",
+          "before": "This experiment tests the hypothesis that non-photosynthetic biological niches harbor pigments with spectral signatures distinct from known photosynthetic and structural color mechanisms. The core methodology involves a comparative spectral survey of extremophile non-photosynthetic organisms against a baseline database of known photosynthetic pigments. We will isolate pigments from selected extremophiles (e.g., halophiles, thermophiles) and measure their high-resolution absorption spectra (300-800 nm). To distinguish intrinsic molecular absorption from structural color effects, we will perform chemical extraction and verify spectral stability in solution. Anomalous spectra will be identified by calculating the Mahalanobis distance from the centroid of the known pigment spectral distribution, flagging candidates outside the 95% confidence interval for further structural characterization via Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR).",
+          "after": "This experiment tests the hypothesis that non-photosynthetic pigments (EV-Q003-537954657ba39c98d1b66b51) exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines (EV-Q003-2bb7a49a6fcacf793cbbd964). The study reframes 'novelty' as functional spectral divergence rather than absolute chemical discovery. We will extract spectral feature vectors from the non-photosynthetic dataset and compare them against the parameter constraints derived from the photosynthetic optimization model. The core metric is the Spectral Dissimilarity Index (SDI), calculated as the Euclidean distance in a normalized spectral feature space (peak wavelength, bandwidth, asymmetry). To ensure robustness, we perform an ablation study comparing cross-category distances (non-photosynthetic vs. photosynthetic baseline) against intra-category distances (within non-photosynthetic subset) to rule out random variation. This approach strictly adheres to the closed-evidence constraint by avoiding external databases like PubChem.",
+          "evidence_refs": [
+            "EV-Q003-2bb7a49a6fcacf793cbbd964",
+            "EV-Q003-537954657ba39c98d1b66b51"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:573f0e40fc08",
+          "category": "critical_issue",
+          "description": "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:0ea959c30f765977,change:3e35611c067fd195,change:cba04631659756d0; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:1766d1a662e7",
+          "category": "critical_issue",
+          "description": "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:fafb1af8f9d6",
+          "category": "critical_issue",
+          "description": "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a8c40789b98b",
+          "category": "required_revision",
+          "description": "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:04f178eae687d741; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:a7c03271b519",
+          "category": "required_revision",
+          "description": "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:0cfef23db4f14158; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:3524bae71baf",
+          "category": "required_revision",
+          "description": "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:f02598b18eee",
+          "category": "required_revision",
+          "description": "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:22aa9a69d141c0d7; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:31a6d8e6fdc7",
+          "category": "required_revision",
+          "description": "In the final execution phase, explicitly document the mapping procedure used to convert 'optimal pigment counts' from EV-Q003-2bb7a49a6fcacf793cbbd964 into spectral feature vectors, as this remains the highest risk point for category error despite the improved framing.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:1f5b1cd92cb9",
+          "category": "required_revision",
+          "description": "Ensure the 'knowledge_gap' regarding absolute chemical novelty is prominently displayed in any downstream reporting to prevent misinterpretation of statistical divergence as definitive discovery of new chemical classes.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.6,
+          "after": 0.9,
+          "delta": 0.30000000000000004
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.9,
+          "delta": 0.20000000000000007
+        },
+        "reference_reliability_score": {
+          "before": 0.5,
+          "after": 1.0,
+          "delta": 0.5
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Non-photosynthetic pigments documented in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines defined in EV-Q003-2bb7a49a6fcacf793cbbd964, indicating functional divergence rather than absolute chemical novelty.",
+          "overall_score": 0.82,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Hierarchical structural organization (EV-Q003-9d916206bf2ba25ff6fa8bcb) generates angular-independent color signatures that are spectrally distinguishable from molecular pigment absorption profiles in both photosynthetic and non-photosynthetic biological datasets.",
+          "overall_score": 0.7,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Current pigment research frameworks (EV-Q003-7fd2d22ccea3dce81a7ddc0b) prioritize biomedical and dermatological contexts over broad spectral discovery, creating a systematic bias that limits the characterization of non-medical pigment diversity.",
+          "overall_score": 0.62,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 4,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:1766d1a662e7",
+        "required_revision_without_change:critical_issue:fafb1af8f9d6",
+        "required_revision_without_change:required_revision:3524bae71baf",
+        "unresolved_issue:critical_issue:1766d1a662e7",
+        "unresolved_issue:critical_issue:fafb1af8f9d6",
+        "unresolved_issue:required_revision:3524bae71baf",
+        "unresolved_issue:required_revision:31a6d8e6fdc7",
+        "unresolved_issue:required_revision:1f5b1cd92cb9",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "critical_issue:1766d1a662e7: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:fafb1af8f9d6: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:3524bae71baf: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:31a6d8e6fdc7: In the final execution phase, explicitly document the mapping procedure used to convert 'optimal pigment counts' from EV-Q003-2bb7a49a6fcacf793cbbd964 into spectral feature vectors, as this remains the highest risk point for category error despite the improved framing.",
+        "required_revision:1f5b1cd92cb9: Ensure the 'knowledge_gap' regarding absolute chemical novelty is prominently displayed in any downstream reporting to prevent misinterpretation of statistical divergence as definitive discovery of new chemical classes."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-053536-53a4234a",
+        "version_number": 1,
+        "version_id": "20260822-053536-53a4234a:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Undiscovered pigment diversity exists in non-photosynthetic biological niches, characterized by spectral signatures distinct from known photosynthetic and structural color mechanisms.",
+              "mechanism": "Non-photosynthetic organisms utilize pigments for functions such as UV protection, desiccation resistance, or signaling rather than light harvesting. These alternative evolutionary pressures select for chromophores with electronic transitions optimized for specific environmental stressors, resulting in absorption spectra that do not overlap with the 'optimal' photosynthetic configurations modeled in existing literature.",
+              "falsifiable_prediction": "A systematic spectral survey of extremophile non-photosynthetic organisms will identify at least one stable pigment candidate whose peak absorption wavelength falls outside the 95% confidence interval of currently cataloged natural and synthetic pigment databases.",
+              "required_observations": [
+                "High-resolution reflectance and absorption spectra (300-800nm) from diverse non-photosynthetic biological samples",
+                "Chemical extraction and structural characterization (NMR/MS) of candidates exhibiting anomalous spectral features",
+                "Stability testing under ambient conditions to distinguish functional pigments from transient metabolic intermediates"
+              ],
+              "risk_of_being_wrong": "Observed spectral anomalies may be attributable to known degradation products, mixtures of existing pigments, or structural color effects rather than novel chemical chromophores. Additionally, novel compounds may exist but lack the stability required for practical 'pigment' classification.",
+              "supporting_evidence_ids": [
+                "EV-Q003-537954657ba39c98d1b66b51"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.75,
+              "overall_score": 0.82
+            },
+            {
+              "hypothesis": "The discovery potential for new molecular pigments is constrained by physical optimization limits similar to those governing photosynthetic complexes, making future discoveries reliant on hierarchical structural engineering rather than novel chromophore synthesis.",
+              "mechanism": "Just as photosynthetic pigment numbers are optimized for complex size and energy transfer efficiency without fitting parameters, molecular chromophores may have reached a local maximum in visible-light absorption efficiency due to quantum mechanical constraints. Therefore, 'new colors' are more likely to emerge from angular-independent hierarchical structures (which manipulate light-matter interaction physically) than from discovering chemically distinct absorption bands.",
+              "falsifiable_prediction": "High-throughput computational screening of stable organic/inorganic chromophores will fail to identify candidates with visible-region molar absorptivity significantly exceeding current benchmarks, whereas nanostructured variants of existing pigments will demonstrate tunable color properties unachievable by molecular variation alone.",
+              "required_observations": [
+                "Computational screening results for novel chromophore candidates vs. theoretical absorption limits",
+                "Experimental validation of color tunability in hierarchical coatings using existing pigment bases",
+                "Comparative analysis of spectral gamut coverage between molecular libraries and structurally engineered materials"
+              ],
+              "risk_of_being_wrong": "The optimization model derived from photosynthesis may not generalize to abiotic or non-energy-transducing pigment systems. Novel electronic transitions (e.g., charge-transfer bands) might exist outside current theoretical predictions.",
+              "supporting_evidence_ids": [
+                "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                "EV-Q003-9d916206bf2ba25ff6fa8bcb"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Current pigment classification frameworks conflate perceptual color with spectral signature, obscuring the existence of 'spectrally unique but perceptually redundant' pigments that are chemically distinct yet visually indistinguishable from known colors.",
+              "mechanism": "Human trichromatic vision integrates broad spectral bands. Chemically distinct pigments with different narrow-band absorption features may map to identical CIE coordinates. Discovery efforts focused on 'new colors' (perception) miss 'new pigments' (chemistry) that occupy the same perceptual space but offer superior material properties (stability, toxicity, cost).",
+              "falsifiable_prediction": "Spectral clustering analysis of known pigments will reveal significant gaps in spectral feature space that correspond to regions of high perceptual redundancy, predicting the existence of chemically viable but historically overlooked chromophores.",
+              "required_observations": [
+                "Full spectral curves (not just RGB/CIE values) for a comprehensive library of known pigments",
+                "Mapping of spectral features to perceptual color space to identify many-to-one mappings",
+                "Targeted synthesis/search for compounds filling identified spectral gaps"
+              ],
+              "risk_of_being_wrong": "The gaps in spectral space may correspond to chemically unstable or synthetically inaccessible regions rather than overlooked opportunities. Perceptual redundancy may already be fully exploited by existing industrial pigments.",
+              "supporting_evidence_ids": [
+                "EV-Q003-537954657ba39c98d1b66b51"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.68
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly addresses the core question of undiscovered pigments by leveraging established evidence on non-photosynthetic pigment diversity (EV-Q003-537954657ba39c98d1b66b51). It offers a clear, empirically testable pathway using public or obtainable biological datasets, distinguishing itself from structural color mechanisms. It balances novelty with feasibility, avoiding the theoretical saturation risks of Hypothesis 2 and the semantic focus of Hypothesis 3.",
+          "rejected_directions": [
+            "Focusing exclusively on YInMn Blue-type accidental synthesis: Rejected because no supporting EvidenceCard validates this specific case or its generalizability; would violate evidence grounding rules.",
+            "Defining 'new color' purely through psychophysics: Rejected because the question asks about 'pigments' (material substances), and evidence supports biological/chemical diversity more strongly than perceptual theory.",
+            "Assuming infinite chemical space exploration: Rejected as unfalsifiable and lacking mechanistic constraint; replaced by niche-specific biological search strategy."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that non-photosynthetic biological niches harbor pigments with spectral signatures distinct from known photosynthetic and structural color mechanisms. The core methodology involves a comparative spectral survey of extremophile non-photosynthetic organisms against a baseline database of known photosynthetic pigments. We will isolate pigments from selected extremophiles (e.g., halophiles, thermophiles) and measure their high-resolution absorption spectra (300-800 nm). To distinguish intrinsic molecular absorption from structural color effects, we will perform chemical extraction and verify spectral stability in solution. Anomalous spectra will be identified by calculating the Mahalanobis distance from the centroid of the known pigment spectral distribution, flagging candidates outside the 95% confidence interval for further structural characterization via Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR).",
+          "datasets": {
+            "source": [
+              {
+                "name": "Non-photosynthetic Pigment Diversity Dataset",
+                "description": "Lab-based experimental analysis of spectral and broadband color diversity of pigmented organisms, specifically focusing on non-photosynthetic surfaces as described in EV-Q003-537954657ba39c98d1b66b51.",
+                "evidence_id": "EV-Q003-537954657ba39c98d1b66b51",
+                "type": "experimental_spectra"
+              },
+              {
+                "name": "Photosynthetic Complex Optimization Parameters",
+                "description": "Experimental parameters and theoretical predictions for optimal pigment numbers in photosynthetic complexes, serving as a baseline for 'known' optimized pigment configurations.",
+                "evidence_id": "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                "type": "theoretical_baseline"
+              }
+            ],
+            "target": {
+              "name": "Anomalous Spectral Signature Catalog",
+              "description": "A curated list of pigment candidates from non-photosynthetic extremophiles whose peak absorption wavelengths and spectral shapes fall outside the 95% confidence interval of the combined known pigment database.",
+              "format": "CSV/JSON with spectral arrays and metadata"
+            }
+          },
+          "methods": "1. Sample Collection: Acquire cultures of non-photosynthetic extremophiles (e.g., Deinococcus radiodurans, Halobacterium salinarum) known for pigmentation but lacking photosynthetic apparatus. 2. Spectral Measurement: Perform UV-Vis spectroscopy (300-800 nm) on intact cells and extracted pigment solutions to differentiate structural vs. molecular color. 3. Baseline Construction: Aggregate spectral data from known photosynthetic pigments (chlorophylls, carotenoids in photosynthetic contexts) using parameters from EV-Q003-2bb7a49a6fcacf793cbbd964 and general literature. 4. Statistical Analysis: Compute the principal components of the baseline spectral dataset. Project new samples onto this space and calculate distances. 5. Chemical Validation: For outliers, perform HPLC-MS and NMR to confirm novel chemical structures rather than degradation products.",
+          "experiments": {
+            "baselines": [
+              "Known Photosynthetic Pigment Library: Standard spectra of chlorophyll a, b, bacteriochlorophylls, and common carotenoids as referenced in photosynthetic optimization studies (EV-Q003-2bb7a49a6fcacf793cbbd964).",
+              "Structural Color Control: Synthetic photonic crystals or known structural color organisms (e.g., butterfly wings) to establish the spectral signature of non-pigmentary color mechanisms, ensuring anomalies are not due to physical structure."
+            ],
+            "metrics": [
+              "Spectral Distance Metric: Mahalanobis distance of sample spectra from the mean of the known pigment database.",
+              "Peak Wavelength Deviation: Difference in lambda_max between candidate and nearest known pigment neighbor.",
+              "Chemical Novelty Score: Binary classification based on MS/NMR confirmation of unique molecular formula not present in PubChem/ChEBI."
+            ],
+            "ablation": "Remove structural color controls to verify that spectral anomalies persist in pure chemical extracts; Exclude UV-range data (<400nm) to test if novelty is confined to visible spectrum.",
+            "validation_protocol": "Cross-validation using leave-one-out method on the baseline database to ensure robustness of the 95% confidence interval boundary. Independent replication of spectral measurements for top 5 anomalous candidates."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Raw spectral data (300-800 nm) for all tested organisms must be archived.",
+            "Extraction protocols (solvent, temperature, duration) must be documented for each sample.",
+            "Code for calculating Mahalanobis distance and defining the 95% confidence interval must be version-controlled.",
+            "MS/NMR raw files for any claimed novel pigment must be deposited in public repositories."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_time": "48 hours for spectral analysis pipeline",
+            "required_resources": "UV-Vis spectrophotometer, HPLC-MS access, NMR facility",
+            "data_availability": "Partial (Baseline data from evidence IDs available; new experimental data required)"
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis relies on a single evidence card (EV-Q003-537954657ba39c98d1b66b51) to support the existence of 'undiscovered' diversity, which is a logical overreach; the evidence only supports that non-photosynthetic pigments exist and have been studied, not that significant novel classes remain undiscovered.",
+            "The experimental design uses EV-Q003-2bb7a49a6fcacf793cbbd964 (photosynthetic optimization theory) as a baseline for 'known pigment spectra'. This is a category error: theoretical optimization parameters for energy transfer efficiency do not constitute a comprehensive spectral library of all known natural/synthetic pigments required to claim novelty.",
+            "The falsifiable prediction references the '95% confidence interval of currently cataloged natural and synthetic pigment databases', but no such comprehensive database is provided in the allowed evidence IDs. The experiment cannot be executed as described without external data not permitted in this closed-evidence environment.",
+            "While Results are correctly marked as pending, the proposed validation metric ('Chemical Novelty Score' via PubChem/ChEBI) implicitly assumes access to external knowledge bases, violating the constraint that factual verification must rely solely on provided EvidenceCards or explicitly declared knowledge gaps."
+          ],
+          "critical_issues": [
+            "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+            "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+            "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms."
+          ],
+          "required_revisions": [
+            "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+            "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+            "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+            "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.4,
+          "falsifiability_score": 0.6,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.5
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:573f0e40fc08",
+            "category": "critical_issue",
+            "description": "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:1766d1a662e7",
+            "category": "critical_issue",
+            "description": "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:fafb1af8f9d6",
+            "category": "critical_issue",
+            "description": "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a8c40789b98b",
+            "category": "required_revision",
+            "description": "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a7c03271b519",
+            "category": "required_revision",
+            "description": "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3524bae71baf",
+            "category": "required_revision",
+            "description": "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f02598b18eee",
+            "category": "required_revision",
+            "description": "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "3b6c1a42be6ba1e096e25c5d29935629971fa72451f8bcd7560e3ebb5854573b",
+          "experiment_designer": "35f2ae12f14e669b2b6b89730eef3e191556df28687f3fac0af47ac6e9cb168f",
+          "scientific_reviewer": "dfca822089f1910c67f3aaca9d0e6b0544587e980f10b76b4c1ccb2394a1dc57"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-053536-53a4234a",
+        "version_number": 2,
+        "version_id": "20260822-053536-53a4234a:v2",
+        "parent_version_id": "20260822-053536-53a4234a:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Non-photosynthetic pigments documented in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines defined in EV-Q003-2bb7a49a6fcacf793cbbd964, indicating functional divergence rather than absolute chemical novelty.",
+              "mechanism": "EV-Q003-2bb7a49a6fcacf793cbbd964 establishes that photosynthetic pigment complexes are optimized for energy transfer efficiency with specific parameter constraints. In contrast, EV-Q003-537954657ba39c98d1b66b51 describes non-photosynthetic pigments serving alternative biological functions (e.g., UV protection, signaling). We hypothesize that these differing selective pressures result in measurable spectral deviations when non-photosynthetic pigment spectra are compared against the photosynthetic optimization model parameters, representing a distinct 'functional spectral space' within the closed evidence set.",
+              "falsifiable_prediction": "If we calculate a Spectral Dissimilarity Index (SDI) between the non-photosynthetic pigment dataset (EV-Q003-537954657ba39c98d1b66b51) and the photosynthetic baseline parameters (EV-Q003-2bb7a49a6fcacf793cbbd964), the mean SDI will be significantly greater than the intra-category variance observed within the non-photosynthetic subset itself. If no such statistical separation exists, the hypothesis of functional spectral divergence is falsified.",
+              "required_observations": [
+                "Extraction of spectral feature vectors from the non-photosynthetic pigment study (EV-Q003-537954657ba39c98d1b66b51)",
+                "Derivation of baseline spectral constraints or representative profiles from the photosynthetic optimization model (EV-Q003-2bb7a49a6fcacf793cbbd964)",
+                "Calculation of pair-wise spectral distances to establish intra-category variance for non-photosynthetic pigments",
+                "Statistical comparison (e.g., t-test or permutation test) of cross-category vs. intra-category dissimilarity"
+              ],
+              "risk_of_being_wrong": "The photosynthetic optimization model (EV-Q003-2bb7a49a6fcacf793cbbd964) may define pigment *counts* or *stoichiometry* without providing sufficient spectral resolution to serve as a valid comparator for absorption features. Additionally, the non-photosynthetic dataset may contain insufficient raw spectral data to compute robust statistics, rendering the test inconclusive rather than definitively negative.",
+              "supporting_evidence_ids": [
+                "EV-Q003-537954657ba39c98d1b66b51",
+                "EV-Q003-2bb7a49a6fcacf793cbbd964"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.82
+            },
+            {
+              "hypothesis": "Hierarchical structural organization (EV-Q003-9d916206bf2ba25ff6fa8bcb) generates angular-independent color signatures that are spectrally distinguishable from molecular pigment absorption profiles in both photosynthetic and non-photosynthetic biological datasets.",
+              "mechanism": "EV-Q003-9d916206bf2ba25ff6fa8bcb demonstrates that hierarchical structures enable angular-independent color. Unlike molecular pigments which have fixed absorption spectra regardless of viewing angle, structurally derived colors should exhibit specific invariance properties. We hypothesize that within the combined evidence set, samples exhibiting structural color mechanisms can be reliably classified apart from pure molecular pigment samples based solely on spectral consistency metrics across viewing geometries, independent of chemical identity.",
+              "falsifiable_prediction": "Samples characterized by hierarchical structure (per EV-Q003-9d916206bf2ba25ff6fa8bcb) will show <5% variance in peak wavelength across 0-60° viewing angles, whereas molecular pigment samples from EV-Q003-537954657ba39c98d1b66b51 will show >5% variance or lack angular data entirely. Failure to observe this dichotomy would weaken the distinction between structural and molecular color mechanisms in this context.",
+              "required_observations": [
+                "Angular-resolved spectral measurements or reported angular independence metrics from EV-Q003-9d916206bf2ba25ff6fa8bcb",
+                "Standard normal-incidence spectra from non-photosynthetic pigments (EV-Q003-537954657ba39c98d1b66b51)",
+                "Quantification of spectral shift magnitude as a function of angle for both categories"
+              ],
+              "risk_of_being_wrong": "EV-Q003-9d916206bf2ba25ff6fa8bcb may describe synthetic coatings rather than biological systems, making direct comparison with biological pigments (EV-Q003-537954657ba39c98d1b66b51) ecologically invalid. Furthermore, many biological pigments are embedded in matrices that may dampen angular effects, leading to false negatives.",
+              "supporting_evidence_ids": [
+                "EV-Q003-9d916206bf2ba25ff6fa8bcb",
+                "EV-Q003-537954657ba39c98d1b66b51"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "Current pigment research frameworks (EV-Q003-7fd2d22ccea3dce81a7ddc0b) prioritize biomedical and dermatological contexts over broad spectral discovery, creating a systematic bias that limits the characterization of non-medical pigment diversity.",
+              "mechanism": "EV-Q003-7fd2d22ccea3dce81a7ddc0b highlights the dominance of melanoma and skin-of-color societies in pigment research discourse. This institutional focus likely directs analytical resources toward specific chromophores (melanins) relevant to pathology, potentially leaving other spectral regions or chemical classes under-characterized compared to the broader diversity suggested in EV-Q003-537954657ba39c98d1b66b51. The hypothesis posits that 'undiscovered' pigments are an artifact of this disciplinary narrowing rather than fundamental chemical limits.",
+              "falsifiable_prediction": "A bibliometric or keyword analysis of the corpus represented by EV-Q003-7fd2d22ccea3dce81a7ddc0b will reveal >80% co-occurrence of pigment terms with medical/pathological keywords, whereas EV-Q003-537954657ba39c98d1b66b51 will show significantly lower medical keyword density. If medical framing is equally prevalent in the biodiversity study, the bias hypothesis is weakened.",
+              "required_observations": [
+                "Keyword frequency and co-occurrence networks from EV-Q003-7fd2d22ccea3dce81a7ddc0b",
+                "Comparative keyword analysis of EV-Q003-537954657ba39c98d1b66b51",
+                "Categorization of mentioned pigment types by application domain"
+              ],
+              "risk_of_being_wrong": "The provided text excerpts may be too brief to support robust bibliometric inference. The medical society perspective (EV-Q003-7fd2d22ccea3dce81a7ddc0b) might explicitly acknowledge non-medical pigments, contradicting the bias assumption. This hypothesis is more meta-scientific and less directly testable via physical experiment.",
+              "supporting_evidence_ids": [
+                "EV-Q003-7fd2d22ccea3dce81a7ddc0b",
+                "EV-Q003-537954657ba39c98d1b66b51"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.62
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly addresses all critical reviewer feedback: it replaces external database dependencies with a closed-evidence comparison between EV-Q003-537954657ba39c98d1b66b51 and EV-Q003-2bb7a49a6fcacf793cbbd964; it redefines 'novelty' as statistical deviation from a specific cited baseline rather than absolute chemical discovery; and it incorporates the required ablation (intra-category variance check) into the falsifiable prediction. It transforms the previous logical overreach into a rigorous, verifiable test of functional spectral divergence using only permitted evidence.",
+          "rejected_directions": [
+            "Claiming existence of 'undiscovered' pigments based solely on EV-Q003-537954657ba39c98d1b66b51: Rejected per reviewer feedback as logical overreach; evidence supports studied diversity, not undiscovered classes.",
+            "Using PubChem/ChEBI or external spectral libraries as validation baselines: Rejected as violating closed-evidence constraints; replaced with internal evidence-based dissimilarity metrics.",
+            "Equating photosynthetic optimization parameters (EV-Q003-2bb7a49a6fcacf793cbbd964) with comprehensive spectral libraries: Acknowledged as category error; reframed as theoretical baseline for functional comparison rather than exhaustive reference.",
+            "Defining novelty via perceptual color space without psychophysical evidence: Rejected due to lack of supporting EvidenceCards for human vision models in allowed set."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that non-photosynthetic pigments (EV-Q003-537954657ba39c98d1b66b51) exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines (EV-Q003-2bb7a49a6fcacf793cbbd964). The study reframes 'novelty' as functional spectral divergence rather than absolute chemical discovery. We will extract spectral feature vectors from the non-photosynthetic dataset and compare them against the parameter constraints derived from the photosynthetic optimization model. The core metric is the Spectral Dissimilarity Index (SDI), calculated as the Euclidean distance in a normalized spectral feature space (peak wavelength, bandwidth, asymmetry). To ensure robustness, we perform an ablation study comparing cross-category distances (non-photosynthetic vs. photosynthetic baseline) against intra-category distances (within non-photosynthetic subset) to rule out random variation. This approach strictly adheres to the closed-evidence constraint by avoiding external databases like PubChem.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Non-photosynthetic Pigment Spectral Data",
+                "description": "Spectral and broadband color diversity data of pigmented organisms from EV-Q003-537954657ba39c98d1b66b51.",
+                "evidence_id": "EV-Q003-537954657ba39c98d1b66b51",
+                "type": "experimental_spectra"
+              },
+              {
+                "name": "Photosynthetic Optimization Baseline Parameters",
+                "description": "Theoretical parameters and optimal pigment counts for photosynthetic complexes from EV-Q003-2bb7a49a6fcacf793cbbd964, used to define the 'photosynthetic spectral space' constraints.",
+                "evidence_id": "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                "type": "theoretical_baseline"
+              }
+            ],
+            "target": {
+              "name": "Spectral Dissimilarity Matrix",
+              "description": "Calculated SDI values between non-photosynthetic samples and photosynthetic baseline parameters, along with intra-category variance metrics.",
+              "format": "CSV/JSON"
+            }
+          },
+          "methods": "1. Data Extraction: Parse spectral data (wavelength vs. absorbance/reflectance) from EV-Q003-537954657ba39c98d1b66b51. Extract key parameters (optimal pigment count, complex size constraints) from EV-Q003-2bb7a49a6fcacf793cbbd964 to construct a theoretical baseline profile. 2. Feature Engineering: Normalize spectral curves and extract features: peak wavelength (lambda_max), full width at half maximum (FWHM), and spectral skewness. 3. Baseline Definition: Define the 'Photosynthetic Baseline Space' using the parameters from EV-Q003-2bb7a49a6fcacf793cbbd964. If explicit spectra are not provided, use the theoretical optimal absorption profiles implied by the optimization model as the reference centroid. 4. SDI Calculation: Compute the Spectral Dissimilarity Index (SDI) for each non-photosynthetic sample relative to the Photosynthetic Baseline. 5. Statistical Testing: Perform a permutation test to determine if the mean SDI (cross-category) is significantly greater than the mean intra-category distance within the non-photosynthetic dataset.",
+          "experiments": {
+            "baselines": [
+              "Photosynthetic Optimization Model Baseline: Derived from EV-Q003-2bb7a49a6fcacf793cbbd964, representing the theoretical spectral/structural constraints of energy-transfer-optimized pigments.",
+              "Intra-Category Non-Photosynthetic Variance: The distribution of spectral distances within the EV-Q003-537954657ba39c98d1b66b51 dataset itself, serving as the null hypothesis for random variation."
+            ],
+            "metrics": [
+              "Spectral Dissimilarity Index (SDI): Euclidean distance in normalized feature space between sample and baseline.",
+              "Mean Cross-Category Distance: Average SDI between non-photosynthetic samples and the photosynthetic baseline.",
+              "Intra-Category Variance Ratio: Ratio of Mean Cross-Category Distance to Mean Intra-Category Distance. A ratio > 1 indicates distinct spectral spaces."
+            ],
+            "ablation": "Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'. Specifically, calculate SDI for random pairs within the non-photosynthetic set to establish the background noise level.",
+            "validation_protocol": "Leave-one-out cross-validation on the non-photosynthetic dataset to ensure the intra-category variance estimate is robust. Permutation testing (n=1000) to assess the statistical significance of the difference between cross-category and intra-category distances."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Raw spectral data extraction scripts for EV-Q003-537954657ba39c98d1b66b51 must be version-controlled.",
+            "Code for deriving the theoretical baseline from EV-Q003-2bb7a49a6fcacf793cbbd964 parameters must be documented.",
+            "SDI calculation algorithm and normalization methods must be explicitly defined.",
+            "Permutation test seeds and parameters must be recorded for exact reproducibility."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_time": "4 hours for data processing and statistical analysis",
+            "required_resources": "Python environment with NumPy/SciPy for spectral analysis and statistical testing",
+            "data_availability": "Data sources are identified in EvidenceCards but require extraction and preprocessing; no external databases are used."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis successfully addresses the critical issue of 'unverifiable novelty' by reframing the research question as a test of functional spectral divergence against a specific evidence-based baseline (EV-Q003-2bb7a49a6fcacf793cbbd964) rather than an undefined global database.",
+            "The replacement of the external 'Chemical Novelty Score' with the internal 'Spectral Dissimilarity Index (SDI)' strictly adheres to closed-evidence constraints and makes the metric computable solely from allowed EvidenceCards.",
+            "The inclusion of an explicit ablation study (intra-category variance comparison) directly responds to the previous requirement to rule out random variation as novelty, significantly improving falsifiability.",
+            "Results are correctly marked as pending, and no factual claims are made without corresponding evidence_ids; the distinction between theoretical optimization parameters and spectral libraries is now acknowledged as a limitation in the 'risk_of_being_wrong' section rather than ignored."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final execution phase, explicitly document the mapping procedure used to convert 'optimal pigment counts' from EV-Q003-2bb7a49a6fcacf793cbbd964 into spectral feature vectors, as this remains the highest risk point for category error despite the improved framing.",
+            "Ensure the 'knowledge_gap' regarding absolute chemical novelty is prominently displayed in any downstream reporting to prevent misinterpretation of statistical divergence as definitive discovery of new chemical classes."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:573f0e40fc08",
+            "category": "critical_issue",
+            "description": "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:0ea959c30f765977,change:3e35611c067fd195,change:cba04631659756d0; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:1766d1a662e7",
+            "category": "critical_issue",
+            "description": "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:fafb1af8f9d6",
+            "category": "critical_issue",
+            "description": "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:a8c40789b98b",
+            "category": "required_revision",
+            "description": "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:04f178eae687d741; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:a7c03271b519",
+            "category": "required_revision",
+            "description": "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:0cfef23db4f14158; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:3524bae71baf",
+            "category": "required_revision",
+            "description": "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:f02598b18eee",
+            "category": "required_revision",
+            "description": "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:22aa9a69d141c0d7; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:31a6d8e6fdc7",
+            "category": "required_revision",
+            "description": "In the final execution phase, explicitly document the mapping procedure used to convert 'optimal pigment counts' from EV-Q003-2bb7a49a6fcacf793cbbd964 into spectral feature vectors, as this remains the highest risk point for category error despite the improved framing.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1f5b1cd92cb9",
+            "category": "required_revision",
+            "description": "Ensure the 'knowledge_gap' regarding absolute chemical novelty is prominently displayed in any downstream reporting to prevent misinterpretation of statistical divergence as definitive discovery of new chemical classes.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "d6385f5e341b2ee7659d05f49a1b3d5328daa9e0f1095cac3b73c466f8187a9b",
+          "experiment_designer": "8b9b9b42db90df8b49730bae93af8e2e61e7bad46616a925877f0d68554e8951",
+          "scientific_reviewer": "4389545ab83d29cde3834389f1bb0a18be8d08bc6c497c6671620502985ca232"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-053536-53a4234a",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-053536-53a4234a:review:v1",
+        "20260822-053536-53a4234a:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-053536-53a4234a:v1",
+        "20260822-053536-53a4234a:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-053536-53a4234a",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-053536-53a4234a:review:v1",
+          "20260822-053536-53a4234a:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-053536-53a4234a:v1",
+          "20260822-053536-53a4234a:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-053536-53a4234a",
+          "version_number": 1,
+          "version_id": "20260822-053536-53a4234a:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Undiscovered pigment diversity exists in non-photosynthetic biological niches, characterized by spectral signatures distinct from known photosynthetic and structural color mechanisms.",
+                "mechanism": "Non-photosynthetic organisms utilize pigments for functions such as UV protection, desiccation resistance, or signaling rather than light harvesting. These alternative evolutionary pressures select for chromophores with electronic transitions optimized for specific environmental stressors, resulting in absorption spectra that do not overlap with the 'optimal' photosynthetic configurations modeled in existing literature.",
+                "falsifiable_prediction": "A systematic spectral survey of extremophile non-photosynthetic organisms will identify at least one stable pigment candidate whose peak absorption wavelength falls outside the 95% confidence interval of currently cataloged natural and synthetic pigment databases.",
+                "required_observations": [
+                  "High-resolution reflectance and absorption spectra (300-800nm) from diverse non-photosynthetic biological samples",
+                  "Chemical extraction and structural characterization (NMR/MS) of candidates exhibiting anomalous spectral features",
+                  "Stability testing under ambient conditions to distinguish functional pigments from transient metabolic intermediates"
+                ],
+                "risk_of_being_wrong": "Observed spectral anomalies may be attributable to known degradation products, mixtures of existing pigments, or structural color effects rather than novel chemical chromophores. Additionally, novel compounds may exist but lack the stability required for practical 'pigment' classification.",
+                "supporting_evidence_ids": [
+                  "EV-Q003-537954657ba39c98d1b66b51"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.75,
+                "overall_score": 0.82
+              },
+              {
+                "hypothesis": "The discovery potential for new molecular pigments is constrained by physical optimization limits similar to those governing photosynthetic complexes, making future discoveries reliant on hierarchical structural engineering rather than novel chromophore synthesis.",
+                "mechanism": "Just as photosynthetic pigment numbers are optimized for complex size and energy transfer efficiency without fitting parameters, molecular chromophores may have reached a local maximum in visible-light absorption efficiency due to quantum mechanical constraints. Therefore, 'new colors' are more likely to emerge from angular-independent hierarchical structures (which manipulate light-matter interaction physically) than from discovering chemically distinct absorption bands.",
+                "falsifiable_prediction": "High-throughput computational screening of stable organic/inorganic chromophores will fail to identify candidates with visible-region molar absorptivity significantly exceeding current benchmarks, whereas nanostructured variants of existing pigments will demonstrate tunable color properties unachievable by molecular variation alone.",
+                "required_observations": [
+                  "Computational screening results for novel chromophore candidates vs. theoretical absorption limits",
+                  "Experimental validation of color tunability in hierarchical coatings using existing pigment bases",
+                  "Comparative analysis of spectral gamut coverage between molecular libraries and structurally engineered materials"
+                ],
+                "risk_of_being_wrong": "The optimization model derived from photosynthesis may not generalize to abiotic or non-energy-transducing pigment systems. Novel electronic transitions (e.g., charge-transfer bands) might exist outside current theoretical predictions.",
+                "supporting_evidence_ids": [
+                  "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                  "EV-Q003-9d916206bf2ba25ff6fa8bcb"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "Current pigment classification frameworks conflate perceptual color with spectral signature, obscuring the existence of 'spectrally unique but perceptually redundant' pigments that are chemically distinct yet visually indistinguishable from known colors.",
+                "mechanism": "Human trichromatic vision integrates broad spectral bands. Chemically distinct pigments with different narrow-band absorption features may map to identical CIE coordinates. Discovery efforts focused on 'new colors' (perception) miss 'new pigments' (chemistry) that occupy the same perceptual space but offer superior material properties (stability, toxicity, cost).",
+                "falsifiable_prediction": "Spectral clustering analysis of known pigments will reveal significant gaps in spectral feature space that correspond to regions of high perceptual redundancy, predicting the existence of chemically viable but historically overlooked chromophores.",
+                "required_observations": [
+                  "Full spectral curves (not just RGB/CIE values) for a comprehensive library of known pigments",
+                  "Mapping of spectral features to perceptual color space to identify many-to-one mappings",
+                  "Targeted synthesis/search for compounds filling identified spectral gaps"
+                ],
+                "risk_of_being_wrong": "The gaps in spectral space may correspond to chemically unstable or synthetically inaccessible regions rather than overlooked opportunities. Perceptual redundancy may already be fully exploited by existing industrial pigments.",
+                "supporting_evidence_ids": [
+                  "EV-Q003-537954657ba39c98d1b66b51"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.68
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 directly addresses the core question of undiscovered pigments by leveraging established evidence on non-photosynthetic pigment diversity (EV-Q003-537954657ba39c98d1b66b51). It offers a clear, empirically testable pathway using public or obtainable biological datasets, distinguishing itself from structural color mechanisms. It balances novelty with feasibility, avoiding the theoretical saturation risks of Hypothesis 2 and the semantic focus of Hypothesis 3.",
+            "rejected_directions": [
+              "Focusing exclusively on YInMn Blue-type accidental synthesis: Rejected because no supporting EvidenceCard validates this specific case or its generalizability; would violate evidence grounding rules.",
+              "Defining 'new color' purely through psychophysics: Rejected because the question asks about 'pigments' (material substances), and evidence supports biological/chemical diversity more strongly than perceptual theory.",
+              "Assuming infinite chemical space exploration: Rejected as unfalsifiable and lacking mechanistic constraint; replaced by niche-specific biological search strategy."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that non-photosynthetic biological niches harbor pigments with spectral signatures distinct from known photosynthetic and structural color mechanisms. The core methodology involves a comparative spectral survey of extremophile non-photosynthetic organisms against a baseline database of known photosynthetic pigments. We will isolate pigments from selected extremophiles (e.g., halophiles, thermophiles) and measure their high-resolution absorption spectra (300-800 nm). To distinguish intrinsic molecular absorption from structural color effects, we will perform chemical extraction and verify spectral stability in solution. Anomalous spectra will be identified by calculating the Mahalanobis distance from the centroid of the known pigment spectral distribution, flagging candidates outside the 95% confidence interval for further structural characterization via Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR).",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Non-photosynthetic Pigment Diversity Dataset",
+                  "description": "Lab-based experimental analysis of spectral and broadband color diversity of pigmented organisms, specifically focusing on non-photosynthetic surfaces as described in EV-Q003-537954657ba39c98d1b66b51.",
+                  "evidence_id": "EV-Q003-537954657ba39c98d1b66b51",
+                  "type": "experimental_spectra"
+                },
+                {
+                  "name": "Photosynthetic Complex Optimization Parameters",
+                  "description": "Experimental parameters and theoretical predictions for optimal pigment numbers in photosynthetic complexes, serving as a baseline for 'known' optimized pigment configurations.",
+                  "evidence_id": "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                  "type": "theoretical_baseline"
+                }
+              ],
+              "target": {
+                "name": "Anomalous Spectral Signature Catalog",
+                "description": "A curated list of pigment candidates from non-photosynthetic extremophiles whose peak absorption wavelengths and spectral shapes fall outside the 95% confidence interval of the combined known pigment database.",
+                "format": "CSV/JSON with spectral arrays and metadata"
+              }
+            },
+            "methods": "1. Sample Collection: Acquire cultures of non-photosynthetic extremophiles (e.g., Deinococcus radiodurans, Halobacterium salinarum) known for pigmentation but lacking photosynthetic apparatus. 2. Spectral Measurement: Perform UV-Vis spectroscopy (300-800 nm) on intact cells and extracted pigment solutions to differentiate structural vs. molecular color. 3. Baseline Construction: Aggregate spectral data from known photosynthetic pigments (chlorophylls, carotenoids in photosynthetic contexts) using parameters from EV-Q003-2bb7a49a6fcacf793cbbd964 and general literature. 4. Statistical Analysis: Compute the principal components of the baseline spectral dataset. Project new samples onto this space and calculate distances. 5. Chemical Validation: For outliers, perform HPLC-MS and NMR to confirm novel chemical structures rather than degradation products.",
+            "experiments": {
+              "baselines": [
+                "Known Photosynthetic Pigment Library: Standard spectra of chlorophyll a, b, bacteriochlorophylls, and common carotenoids as referenced in photosynthetic optimization studies (EV-Q003-2bb7a49a6fcacf793cbbd964).",
+                "Structural Color Control: Synthetic photonic crystals or known structural color organisms (e.g., butterfly wings) to establish the spectral signature of non-pigmentary color mechanisms, ensuring anomalies are not due to physical structure."
+              ],
+              "metrics": [
+                "Spectral Distance Metric: Mahalanobis distance of sample spectra from the mean of the known pigment database.",
+                "Peak Wavelength Deviation: Difference in lambda_max between candidate and nearest known pigment neighbor.",
+                "Chemical Novelty Score: Binary classification based on MS/NMR confirmation of unique molecular formula not present in PubChem/ChEBI."
+              ],
+              "ablation": "Remove structural color controls to verify that spectral anomalies persist in pure chemical extracts; Exclude UV-range data (<400nm) to test if novelty is confined to visible spectrum.",
+              "validation_protocol": "Cross-validation using leave-one-out method on the baseline database to ensure robustness of the 95% confidence interval boundary. Independent replication of spectral measurements for top 5 anomalous candidates."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Raw spectral data (300-800 nm) for all tested organisms must be archived.",
+              "Extraction protocols (solvent, temperature, duration) must be documented for each sample.",
+              "Code for calculating Mahalanobis distance and defining the 95% confidence interval must be version-controlled.",
+              "MS/NMR raw files for any claimed novel pigment must be deposited in public repositories."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_compute_time": "48 hours for spectral analysis pipeline",
+              "required_resources": "UV-Vis spectrophotometer, HPLC-MS access, NMR facility",
+              "data_availability": "Partial (Baseline data from evidence IDs available; new experimental data required)"
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis relies on a single evidence card (EV-Q003-537954657ba39c98d1b66b51) to support the existence of 'undiscovered' diversity, which is a logical overreach; the evidence only supports that non-photosynthetic pigments exist and have been studied, not that significant novel classes remain undiscovered.",
+              "The experimental design uses EV-Q003-2bb7a49a6fcacf793cbbd964 (photosynthetic optimization theory) as a baseline for 'known pigment spectra'. This is a category error: theoretical optimization parameters for energy transfer efficiency do not constitute a comprehensive spectral library of all known natural/synthetic pigments required to claim novelty.",
+              "The falsifiable prediction references the '95% confidence interval of currently cataloged natural and synthetic pigment databases', but no such comprehensive database is provided in the allowed evidence IDs. The experiment cannot be executed as described without external data not permitted in this closed-evidence environment.",
+              "While Results are correctly marked as pending, the proposed validation metric ('Chemical Novelty Score' via PubChem/ChEBI) implicitly assumes access to external knowledge bases, violating the constraint that factual verification must rely solely on provided EvidenceCards or explicitly declared knowledge gaps."
+            ],
+            "critical_issues": [
+              "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+              "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+              "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms."
+            ],
+            "required_revisions": [
+              "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+              "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+              "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+              "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.4,
+            "falsifiability_score": 0.6,
+            "reproducibility_score": 0.7,
+            "reference_reliability_score": 0.5
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:573f0e40fc08",
+              "category": "critical_issue",
+              "description": "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:1766d1a662e7",
+              "category": "critical_issue",
+              "description": "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:fafb1af8f9d6",
+              "category": "critical_issue",
+              "description": "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:a8c40789b98b",
+              "category": "required_revision",
+              "description": "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:a7c03271b519",
+              "category": "required_revision",
+              "description": "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:3524bae71baf",
+              "category": "required_revision",
+              "description": "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:f02598b18eee",
+              "category": "required_revision",
+              "description": "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "3b6c1a42be6ba1e096e25c5d29935629971fa72451f8bcd7560e3ebb5854573b",
+            "experiment_designer": "35f2ae12f14e669b2b6b89730eef3e191556df28687f3fac0af47ac6e9cb168f",
+            "scientific_reviewer": "dfca822089f1910c67f3aaca9d0e6b0544587e980f10b76b4c1ccb2394a1dc57"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-053536-53a4234a",
+          "version_number": 2,
+          "version_id": "20260822-053536-53a4234a:v2",
+          "parent_version_id": "20260822-053536-53a4234a:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Non-photosynthetic pigments documented in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines defined in EV-Q003-2bb7a49a6fcacf793cbbd964, indicating functional divergence rather than absolute chemical novelty.",
+                "mechanism": "EV-Q003-2bb7a49a6fcacf793cbbd964 establishes that photosynthetic pigment complexes are optimized for energy transfer efficiency with specific parameter constraints. In contrast, EV-Q003-537954657ba39c98d1b66b51 describes non-photosynthetic pigments serving alternative biological functions (e.g., UV protection, signaling). We hypothesize that these differing selective pressures result in measurable spectral deviations when non-photosynthetic pigment spectra are compared against the photosynthetic optimization model parameters, representing a distinct 'functional spectral space' within the closed evidence set.",
+                "falsifiable_prediction": "If we calculate a Spectral Dissimilarity Index (SDI) between the non-photosynthetic pigment dataset (EV-Q003-537954657ba39c98d1b66b51) and the photosynthetic baseline parameters (EV-Q003-2bb7a49a6fcacf793cbbd964), the mean SDI will be significantly greater than the intra-category variance observed within the non-photosynthetic subset itself. If no such statistical separation exists, the hypothesis of functional spectral divergence is falsified.",
+                "required_observations": [
+                  "Extraction of spectral feature vectors from the non-photosynthetic pigment study (EV-Q003-537954657ba39c98d1b66b51)",
+                  "Derivation of baseline spectral constraints or representative profiles from the photosynthetic optimization model (EV-Q003-2bb7a49a6fcacf793cbbd964)",
+                  "Calculation of pair-wise spectral distances to establish intra-category variance for non-photosynthetic pigments",
+                  "Statistical comparison (e.g., t-test or permutation test) of cross-category vs. intra-category dissimilarity"
+                ],
+                "risk_of_being_wrong": "The photosynthetic optimization model (EV-Q003-2bb7a49a6fcacf793cbbd964) may define pigment *counts* or *stoichiometry* without providing sufficient spectral resolution to serve as a valid comparator for absorption features. Additionally, the non-photosynthetic dataset may contain insufficient raw spectral data to compute robust statistics, rendering the test inconclusive rather than definitively negative.",
+                "supporting_evidence_ids": [
+                  "EV-Q003-537954657ba39c98d1b66b51",
+                  "EV-Q003-2bb7a49a6fcacf793cbbd964"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.82
+              },
+              {
+                "hypothesis": "Hierarchical structural organization (EV-Q003-9d916206bf2ba25ff6fa8bcb) generates angular-independent color signatures that are spectrally distinguishable from molecular pigment absorption profiles in both photosynthetic and non-photosynthetic biological datasets.",
+                "mechanism": "EV-Q003-9d916206bf2ba25ff6fa8bcb demonstrates that hierarchical structures enable angular-independent color. Unlike molecular pigments which have fixed absorption spectra regardless of viewing angle, structurally derived colors should exhibit specific invariance properties. We hypothesize that within the combined evidence set, samples exhibiting structural color mechanisms can be reliably classified apart from pure molecular pigment samples based solely on spectral consistency metrics across viewing geometries, independent of chemical identity.",
+                "falsifiable_prediction": "Samples characterized by hierarchical structure (per EV-Q003-9d916206bf2ba25ff6fa8bcb) will show <5% variance in peak wavelength across 0-60° viewing angles, whereas molecular pigment samples from EV-Q003-537954657ba39c98d1b66b51 will show >5% variance or lack angular data entirely. Failure to observe this dichotomy would weaken the distinction between structural and molecular color mechanisms in this context.",
+                "required_observations": [
+                  "Angular-resolved spectral measurements or reported angular independence metrics from EV-Q003-9d916206bf2ba25ff6fa8bcb",
+                  "Standard normal-incidence spectra from non-photosynthetic pigments (EV-Q003-537954657ba39c98d1b66b51)",
+                  "Quantification of spectral shift magnitude as a function of angle for both categories"
+                ],
+                "risk_of_being_wrong": "EV-Q003-9d916206bf2ba25ff6fa8bcb may describe synthetic coatings rather than biological systems, making direct comparison with biological pigments (EV-Q003-537954657ba39c98d1b66b51) ecologically invalid. Furthermore, many biological pigments are embedded in matrices that may dampen angular effects, leading to false negatives.",
+                "supporting_evidence_ids": [
+                  "EV-Q003-9d916206bf2ba25ff6fa8bcb",
+                  "EV-Q003-537954657ba39c98d1b66b51"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.7
+              },
+              {
+                "hypothesis": "Current pigment research frameworks (EV-Q003-7fd2d22ccea3dce81a7ddc0b) prioritize biomedical and dermatological contexts over broad spectral discovery, creating a systematic bias that limits the characterization of non-medical pigment diversity.",
+                "mechanism": "EV-Q003-7fd2d22ccea3dce81a7ddc0b highlights the dominance of melanoma and skin-of-color societies in pigment research discourse. This institutional focus likely directs analytical resources toward specific chromophores (melanins) relevant to pathology, potentially leaving other spectral regions or chemical classes under-characterized compared to the broader diversity suggested in EV-Q003-537954657ba39c98d1b66b51. The hypothesis posits that 'undiscovered' pigments are an artifact of this disciplinary narrowing rather than fundamental chemical limits.",
+                "falsifiable_prediction": "A bibliometric or keyword analysis of the corpus represented by EV-Q003-7fd2d22ccea3dce81a7ddc0b will reveal >80% co-occurrence of pigment terms with medical/pathological keywords, whereas EV-Q003-537954657ba39c98d1b66b51 will show significantly lower medical keyword density. If medical framing is equally prevalent in the biodiversity study, the bias hypothesis is weakened.",
+                "required_observations": [
+                  "Keyword frequency and co-occurrence networks from EV-Q003-7fd2d22ccea3dce81a7ddc0b",
+                  "Comparative keyword analysis of EV-Q003-537954657ba39c98d1b66b51",
+                  "Categorization of mentioned pigment types by application domain"
+                ],
+                "risk_of_being_wrong": "The provided text excerpts may be too brief to support robust bibliometric inference. The medical society perspective (EV-Q003-7fd2d22ccea3dce81a7ddc0b) might explicitly acknowledge non-medical pigments, contradicting the bias assumption. This hypothesis is more meta-scientific and less directly testable via physical experiment.",
+                "supporting_evidence_ids": [
+                  "EV-Q003-7fd2d22ccea3dce81a7ddc0b",
+                  "EV-Q003-537954657ba39c98d1b66b51"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.62
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 directly addresses all critical reviewer feedback: it replaces external database dependencies with a closed-evidence comparison between EV-Q003-537954657ba39c98d1b66b51 and EV-Q003-2bb7a49a6fcacf793cbbd964; it redefines 'novelty' as statistical deviation from a specific cited baseline rather than absolute chemical discovery; and it incorporates the required ablation (intra-category variance check) into the falsifiable prediction. It transforms the previous logical overreach into a rigorous, verifiable test of functional spectral divergence using only permitted evidence.",
+            "rejected_directions": [
+              "Claiming existence of 'undiscovered' pigments based solely on EV-Q003-537954657ba39c98d1b66b51: Rejected per reviewer feedback as logical overreach; evidence supports studied diversity, not undiscovered classes.",
+              "Using PubChem/ChEBI or external spectral libraries as validation baselines: Rejected as violating closed-evidence constraints; replaced with internal evidence-based dissimilarity metrics.",
+              "Equating photosynthetic optimization parameters (EV-Q003-2bb7a49a6fcacf793cbbd964) with comprehensive spectral libraries: Acknowledged as category error; reframed as theoretical baseline for functional comparison rather than exhaustive reference.",
+              "Defining novelty via perceptual color space without psychophysical evidence: Rejected due to lack of supporting EvidenceCards for human vision models in allowed set."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that non-photosynthetic pigments (EV-Q003-537954657ba39c98d1b66b51) exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines (EV-Q003-2bb7a49a6fcacf793cbbd964). The study reframes 'novelty' as functional spectral divergence rather than absolute chemical discovery. We will extract spectral feature vectors from the non-photosynthetic dataset and compare them against the parameter constraints derived from the photosynthetic optimization model. The core metric is the Spectral Dissimilarity Index (SDI), calculated as the Euclidean distance in a normalized spectral feature space (peak wavelength, bandwidth, asymmetry). To ensure robustness, we perform an ablation study comparing cross-category distances (non-photosynthetic vs. photosynthetic baseline) against intra-category distances (within non-photosynthetic subset) to rule out random variation. This approach strictly adheres to the closed-evidence constraint by avoiding external databases like PubChem.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Non-photosynthetic Pigment Spectral Data",
+                  "description": "Spectral and broadband color diversity data of pigmented organisms from EV-Q003-537954657ba39c98d1b66b51.",
+                  "evidence_id": "EV-Q003-537954657ba39c98d1b66b51",
+                  "type": "experimental_spectra"
+                },
+                {
+                  "name": "Photosynthetic Optimization Baseline Parameters",
+                  "description": "Theoretical parameters and optimal pigment counts for photosynthetic complexes from EV-Q003-2bb7a49a6fcacf793cbbd964, used to define the 'photosynthetic spectral space' constraints.",
+                  "evidence_id": "EV-Q003-2bb7a49a6fcacf793cbbd964",
+                  "type": "theoretical_baseline"
+                }
+              ],
+              "target": {
+                "name": "Spectral Dissimilarity Matrix",
+                "description": "Calculated SDI values between non-photosynthetic samples and photosynthetic baseline parameters, along with intra-category variance metrics.",
+                "format": "CSV/JSON"
+              }
+            },
+            "methods": "1. Data Extraction: Parse spectral data (wavelength vs. absorbance/reflectance) from EV-Q003-537954657ba39c98d1b66b51. Extract key parameters (optimal pigment count, complex size constraints) from EV-Q003-2bb7a49a6fcacf793cbbd964 to construct a theoretical baseline profile. 2. Feature Engineering: Normalize spectral curves and extract features: peak wavelength (lambda_max), full width at half maximum (FWHM), and spectral skewness. 3. Baseline Definition: Define the 'Photosynthetic Baseline Space' using the parameters from EV-Q003-2bb7a49a6fcacf793cbbd964. If explicit spectra are not provided, use the theoretical optimal absorption profiles implied by the optimization model as the reference centroid. 4. SDI Calculation: Compute the Spectral Dissimilarity Index (SDI) for each non-photosynthetic sample relative to the Photosynthetic Baseline. 5. Statistical Testing: Perform a permutation test to determine if the mean SDI (cross-category) is significantly greater than the mean intra-category distance within the non-photosynthetic dataset.",
+            "experiments": {
+              "baselines": [
+                "Photosynthetic Optimization Model Baseline: Derived from EV-Q003-2bb7a49a6fcacf793cbbd964, representing the theoretical spectral/structural constraints of energy-transfer-optimized pigments.",
+                "Intra-Category Non-Photosynthetic Variance: The distribution of spectral distances within the EV-Q003-537954657ba39c98d1b66b51 dataset itself, serving as the null hypothesis for random variation."
+              ],
+              "metrics": [
+                "Spectral Dissimilarity Index (SDI): Euclidean distance in normalized feature space between sample and baseline.",
+                "Mean Cross-Category Distance: Average SDI between non-photosynthetic samples and the photosynthetic baseline.",
+                "Intra-Category Variance Ratio: Ratio of Mean Cross-Category Distance to Mean Intra-Category Distance. A ratio > 1 indicates distinct spectral spaces."
+              ],
+              "ablation": "Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'. Specifically, calculate SDI for random pairs within the non-photosynthetic set to establish the background noise level.",
+              "validation_protocol": "Leave-one-out cross-validation on the non-photosynthetic dataset to ensure the intra-category variance estimate is robust. Permutation testing (n=1000) to assess the statistical significance of the difference between cross-category and intra-category distances."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Raw spectral data extraction scripts for EV-Q003-537954657ba39c98d1b66b51 must be version-controlled.",
+              "Code for deriving the theoretical baseline from EV-Q003-2bb7a49a6fcacf793cbbd964 parameters must be documented.",
+              "SDI calculation algorithm and normalization methods must be explicitly defined.",
+              "Permutation test seeds and parameters must be recorded for exact reproducibility."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_compute_time": "4 hours for data processing and statistical analysis",
+              "required_resources": "Python environment with NumPy/SciPy for spectral analysis and statistical testing",
+              "data_availability": "Data sources are identified in EvidenceCards but require extraction and preprocessing; no external databases are used."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis successfully addresses the critical issue of 'unverifiable novelty' by reframing the research question as a test of functional spectral divergence against a specific evidence-based baseline (EV-Q003-2bb7a49a6fcacf793cbbd964) rather than an undefined global database.",
+              "The replacement of the external 'Chemical Novelty Score' with the internal 'Spectral Dissimilarity Index (SDI)' strictly adheres to closed-evidence constraints and makes the metric computable solely from allowed EvidenceCards.",
+              "The inclusion of an explicit ablation study (intra-category variance comparison) directly responds to the previous requirement to rule out random variation as novelty, significantly improving falsifiability.",
+              "Results are correctly marked as pending, and no factual claims are made without corresponding evidence_ids; the distinction between theoretical optimization parameters and spectral libraries is now acknowledged as a limitation in the 'risk_of_being_wrong' section rather than ignored."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final execution phase, explicitly document the mapping procedure used to convert 'optimal pigment counts' from EV-Q003-2bb7a49a6fcacf793cbbd964 into spectral feature vectors, as this remains the highest risk point for category error despite the improved framing.",
+              "Ensure the 'knowledge_gap' regarding absolute chemical novelty is prominently displayed in any downstream reporting to prevent misinterpretation of statistical divergence as definitive discovery of new chemical classes."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:573f0e40fc08",
+              "category": "critical_issue",
+              "description": "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:0ea959c30f765977,change:3e35611c067fd195,change:cba04631659756d0; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:1766d1a662e7",
+              "category": "critical_issue",
+              "description": "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:fafb1af8f9d6",
+              "category": "critical_issue",
+              "description": "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:a8c40789b98b",
+              "category": "required_revision",
+              "description": "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:04f178eae687d741; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:a7c03271b519",
+              "category": "required_revision",
+              "description": "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:0cfef23db4f14158; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:3524bae71baf",
+              "category": "required_revision",
+              "description": "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:f02598b18eee",
+              "category": "required_revision",
+              "description": "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:22aa9a69d141c0d7; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:31a6d8e6fdc7",
+              "category": "required_revision",
+              "description": "In the final execution phase, explicitly document the mapping procedure used to convert 'optimal pigment counts' from EV-Q003-2bb7a49a6fcacf793cbbd964 into spectral feature vectors, as this remains the highest risk point for category error despite the improved framing.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:1f5b1cd92cb9",
+              "category": "required_revision",
+              "description": "Ensure the 'knowledge_gap' regarding absolute chemical novelty is prominently displayed in any downstream reporting to prevent misinterpretation of statistical divergence as definitive discovery of new chemical classes.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "d6385f5e341b2ee7659d05f49a1b3d5328daa9e0f1095cac3b73c466f8187a9b",
+            "experiment_designer": "8b9b9b42db90df8b49730bae93af8e2e61e7bad46616a925877f0d68554e8951",
+            "scientific_reviewer": "4389545ab83d29cde3834389f1bb0a18be8d08bc6c497c6671620502985ca232"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-053536-53a4234a:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-053536-53a4234a:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-053536-53a4234a:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-053536-53a4234a:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:573f0e40fc08",
+          "category": "critical_issue",
+          "description": "Baseline dataset mismatch: EV-Q003-2bb7a49a6fcacf793cbbd964 describes theoretical pigment counts for photosynthetic complexes, not a reference spectral library for distinguishing novel vs. known pigments.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:0ea959c30f765977,change:3e35611c067fd195,change:cba04631659756d0; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:1766d1a662e7",
+          "category": "critical_issue",
+          "description": "Unverifiable novelty claim: The definition of 'novel pigment' depends on external databases (PubChem/ChEBI) not present in allowed_evidence_ids, making the hypothesis untestable within the system constraints.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:fafb1af8f9d6",
+          "category": "critical_issue",
+          "description": "Evidence overinterpretation: EV-Q003-537954657ba39c98d1b66b51 confirms study of existing diversity, not the existence of undiscovered spectral signatures distinct from known mechanisms.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a8c40789b98b",
+          "category": "required_revision",
+          "description": "Reframe hypothesis to test whether non-photosynthetic pigments in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the specific photosynthetic baselines in EV-Q003-2bb7a49a6fcacf793cbbd964, rather than claiming 'undiscovered' novelty against an undefined global database.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:04f178eae687d741; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:a7c03271b519",
+          "category": "required_revision",
+          "description": "Replace 'Chemical Novelty Score' with a verifiable metric based strictly on provided evidence, such as 'Spectral Dissimilarity Index relative to EV-Q003-2bb7a49a6fcacf793cbbd964 parameters', and explicitly list external database dependency as a knowledge_gap.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:0cfef23db4f14158; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:3524bae71baf",
+          "category": "required_revision",
+          "description": "Clarify in mechanism that 'distinct spectral signatures' refers to deviation from the specific photosynthetic optimization model cited, not absolute chemical novelty, unless supporting evidence for unexplored chemical space is added.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:f02598b18eee",
+          "category": "required_revision",
+          "description": "Add explicit ablation: Test if spectral anomalies persist when comparing only against the non-photosynthetic subset of EV-Q003-537954657ba39c98d1b66b51 to rule out intra-category variation as 'novelty'.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:22aa9a69d141c0d7; evidence=EV-Q003-2bb7a49a6fcacf793cbbd964,EV-Q003-537954657ba39c98d1b66b51; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:31a6d8e6fdc7",
+          "category": "required_revision",
+          "description": "In the final execution phase, explicitly document the mapping procedure used to convert 'optimal pigment counts' from EV-Q003-2bb7a49a6fcacf793cbbd964 into spectral feature vectors, as this remains the highest risk point for category error despite the improved framing.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:1f5b1cd92cb9",
+          "category": "required_revision",
+          "description": "Ensure the 'knowledge_gap' regarding absolute chemical novelty is prominently displayed in any downstream reporting to prevent misinterpretation of statistical divergence as definitive discovery of new chemical classes.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "36c2bdb53910b64f4e45c1f9f06573d7a7d9a6c8c659642e0c29e143cd10cd26"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-053536-53a4234a:wave-b-two-round",
+      "run_id": "20260822-053536-53a4234a",
+      "v1_version_id": "20260822-053536-53a4234a:v1",
+      "v2_version_id": "20260822-053536-53a4234a:v2",
+      "input_fingerprints": {
+        "v1": "35f2ae12f14e669b2b6b89730eef3e191556df28687f3fac0af47ac6e9cb168f",
+        "v2": "8b9b9b42db90df8b49730bae93af8e2e61e7bad46616a925877f0d68554e8951"
+      },
+      "responded_issue_count": 4,
+      "issue_ids": [
+        "critical_issue:573f0e40fc08",
+        "required_revision:a8c40789b98b",
+        "required_revision:a7c03271b519",
+        "required_revision:f02598b18eee"
+      ],
+      "change_ids": [
+        "change:0ea959c30f765977",
+        "change:3e35611c067fd195",
+        "change:cba04631659756d0",
+        "change:04f178eae687d741",
+        "change:0cfef23db4f14158",
+        "change:22aa9a69d141c0d7"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.6,
+          "after": 0.9,
+          "delta": 0.30000000000000004
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.9,
+          "delta": 0.20000000000000007
+        },
+        "reference_reliability_score": {
+          "before": 0.5,
+          "after": 1.0,
+          "delta": 0.5
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Non-photosynthetic pigments documented in EV-Q003-537954657ba39c98d1b66b51 exhibit spectral features statistically distinct from the theoretical photosynthetic optimization baselines defined in EV-Q003-2bb7a49a6fcacf793cbbd964, indicating functional divergence rather than absolute chemical novelty.",
+          "overall_score": 0.82,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Hierarchical structural organization (EV-Q003-9d916206bf2ba25ff6fa8bcb) generates angular-independent color signatures that are spectrally distinguishable from molecular pigment absorption profiles in both photosynthetic and non-photosynthetic biological datasets.",
+          "overall_score": 0.7,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Current pigment research frameworks (EV-Q003-7fd2d22ccea3dce81a7ddc0b) prioritize biomedical and dermatological contexts over broad spectral discovery, creating a systematic bias that limits the characterization of non-medical pigment diversity.",
+          "overall_score": 0.62,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "0edb7e166e85",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:38:34.291431+00:00",
+    "ended_at": "2026-08-22T05:39:26.311352+00:00",
+    "duration_ms": 52019,
+    "input_summary": "{\"question_item\": {\"id\": \"Q003\", \"domain\": \"Chemistry\", \"question\": \"Are there more color pigments to discover?\", \"source_page\": 7, \"booklet_excerpt\": \"It is possible to create new pigments, but not new colors. The first synthetic pigment was made in the early 1700s. In 2009, chemist Mas Subramanian accidently created a new blue pigment called “YInMn Blue.”\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Chemistry\", \"core_question\": \"Is the discovery of new color pigments an ongoing process, and what ",
+    "output_summary": "{\"input_question\": \"Are there more color pigments to discover?\", \"domain\": \"Chemistry\", \"problem_statement\": \"The question asks whether the discovery of new color pigments is an ongoing process and what the theoretical limits are regarding the creation of new colors versus new pigment compounds. The provided context distinguishes between creating new pigments (chemical substances) and new colors (perceptual/spectral experiences), citing YInMn Blue as a recent example, but lacks direct evidence on the absolute limits of chemical space for chromophores.\", \"rationale\": \"Current evidence highlight",
+    "evidence_ids": [
+      "EV-Q003-537954657ba39c98d1b66b51",
+      "EV-Q003-2bb7a49a6fcacf793cbbd964",
+      "EV-Q003-9d916206bf2ba25ff6fa8bcb",
+      "EV-Q003-7fd2d22ccea3dce81a7ddc0b"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "4a77eac4d802",
+    "mock": false
+  },
+  {
+    "event_id": "2bde706133df",
+    "run_id": "20260822-053536-53a4234a",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T05:39:26.312319+00:00",
+    "ended_at": "2026-08-22T05:39:28.292936+00:00",
+    "duration_ms": 1980,
+    "input_summary": "{\"question_item\": {\"id\": \"Q003\", \"domain\": \"Chemistry\", \"question\": \"Are there more color pigments to discover?\", \"source_page\": 7, \"booklet_excerpt\": \"It is possible to create new pigments, but not new colors. The first synthetic pigment was made in the early 1700s. In 2009, chemist Mas Subramanian accidently created a new blue pigment called “YInMn Blue.”\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"ResearchPlan is missing from input. Cannot validate structure or evidence mapping without a ResearchPlan object.\", \"EvidenceCards are missing from input. Cannot verify factual claims against EvidenceCard evidence_ids.\", \"AgentTrace is missing from input.\", \"execution_metadata is missing from input.\"], \"warnings\": [\"Input provided only contains question_item. Full context (ResearchPlan, EvidenceCards, AgentTrace, execution_metadata) is required for SchemaValidator to perform validation.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "fd9de21f7e9c",
+    "mock": false
+  }
+]

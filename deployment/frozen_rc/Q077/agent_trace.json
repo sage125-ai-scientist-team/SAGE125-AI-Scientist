@@ -1,0 +1,1988 @@
+[
+  {
+    "event_id": "904b6206be5d",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:53:25.637553+00:00",
+    "ended_at": "2026-08-22T08:53:25.637553+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "30cb7b81cb20",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:53:25.637553+00:00",
+    "ended_at": "2026-08-22T08:53:29.066954+00:00",
+    "duration_ms": 3429,
+    "input_summary": "{\"question_item\": {\"id\": \"Q077\", \"domain\": \"Physics\", \"question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"source_page\": 27, \"booklet_excerpt\": \"An antiphoton is the same as a photon. Both are massless particles made of energy with no charge.\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Physics\", \"core_question\": \"Does a particle exist that exhibits properties or states opposite to those of a photon, and if so, what are its characteristics?\", \"keywords\": [\"photon\", \"antiphoton\", \"particle\", \"properties\", \"states\", \"opposite\"], \"entities\": [\"photon\", \"antiphoton\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The analysis is limited to the properties of photons (massless, energy-carrying, no charge) as described in the provided excerpt. The concept of 'opposite' must be defined within the context of particle physics (e.g., charge conjugation, par",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "543791b74142",
+    "mock": false
+  },
+  {
+    "event_id": "04dc1be8ea83",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:53:29.066954+00:00",
+    "ended_at": "2026-08-22T08:53:51.244555+00:00",
+    "duration_ms": 22177,
+    "input_summary": "{\"question_item\": {\"id\": \"Q077\", \"domain\": \"Physics\", \"question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"source_page\": 27, \"booklet_excerpt\": \"An antiphoton is the same as a photon. Both are massless particles made of energy with no charge.\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Physics\", \"core_question\": \"Does a particle exist that exhibits properties or states opposite to those of a photon, and if so, what are its characteristics?\", \"keyw",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the booklet's claim that the antiphoton is identical to the photon and understand why photons are their own antiparticles.\", \"query\": \"photon self-conjugate antiparticle CPT symmetry neutral boson\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Explanation of charge conjugation properties for neutral bosons, confirming photon = antiphoton.\", \"priority\": \"high\"}, {\"purpose\": \"Identify if any known elementary particles exhibit 'opposite' quantum numbers (e.g., charge, helicity) to photons while sharing other traits like masslessness.\", \"query\": \"particl",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "161e74ccf859",
+    "mock": false
+  },
+  {
+    "event_id": "47ebbbda90b0",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:53:51.255090+00:00",
+    "ended_at": "2026-08-22T08:54:03.897585+00:00",
+    "duration_ms": 12642,
+    "input_summary": "{\"question_item\": {\"id\": \"Q077\", \"domain\": \"Physics\", \"question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"source_page\": 27, \"booklet_excerpt\": \"An antiphoton is the same as a photon. Both are massless particles made of energy with no charge.\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q077-7636c698decb9507b5faca60\", \"title\": \"arXiv:gr-qc/0409054\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pdf/gr-qc/0409054.pdf\", \"year\": null",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"是否存在与光子性质或状态完全相反的粒子（即反光子是否不同于光子，或是否存在其他具有相反量子数的无质量玻色子）\", \"why_it_matters\": \"该问题涉及粒子物理标准模型中光子的自共轭性质（self-conjugate）以及CPT对称性下的反粒子定义。若存在‘相反’性质的粒子，将挑战现有电磁相互作用理论。\", \"evidence_ids\": [], \"validation_need\": \"需要引用标准粒子物理教材或权威综述，明确光子的反粒子是其本身，并解释‘相反性质’在量子场论中的具体定义（如电荷、螺旋度等）。\"}, {\"gap\": \"提供的证据卡片与物理学基本粒子性质无关\", \"why_it_matters\": \"当前所有允许的 evidence_ids 均指向数学概率论中的布朗粒子竞争系统或广义相对论中的粒子定义，无法回答关于光子及其反粒子的具体物理性质问题。\", \"evidence_ids\": [\"EV-Q077-7636c698decb9507b5faca60\", \"EV-Q077-6753edfa1c05b4619760614c\", \"EV-Q077-95eb031d9ae9c3fd196d1cad\", \"EV-",
+    "evidence_ids": [
+      "EV-Q077-7636c698decb9507b5faca60",
+      "EV-Q077-6753edfa1c05b4619760614c",
+      "EV-Q077-95eb031d9ae9c3fd196d1cad",
+      "EV-Q077-392775a252e8a4b504296596"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "adaa41fbaf50",
+    "mock": false
+  },
+  {
+    "event_id": "cc0893fc0943",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:54:03.897585+00:00",
+    "ended_at": "2026-08-22T08:54:27.065123+00:00",
+    "duration_ms": 23167,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q077\", \"domain\": \"Physics\", \"question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"source_page\": 27, \"booklet_excerpt\": \"An antiphoton is the same as a photon. Both are massless particles made of energy with no charge.\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q077-7636c698decb9507b5faca60\", \"title\": \"arXiv:gr-qc/0409054\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pdf/gr-qc/0",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"在平直时空量子场论框架下，不存在与光子所有内禀量子数（电荷、质量、自旋、C宇称）完全相反的独立粒子，因为光子是自共轭玻色子；所谓‘相反’仅在特定相互作用基矢或弯曲时空局部观测中作为有效激发态出现。\", \"mechanism\": \"根据量子场论，光子的反粒子即其本身（self-conjugate），这是由U(1)规范对称性和CPT定理决定的。EV-Q077-7636c698decb9507b5faca60指出即使在平直空间也存在全局Fock态与局部粒子态的区别，暗示‘粒子’定义依赖于观测框架。若将‘相反性质’理解为某种局部激发态或有效自由度（如介质中的极化激元或弯曲时空中的Unruh辐射模式），则可能在特定条件下表现出与真空光子不同的统计或传播特性，但这并非基本粒子层面的对立。\", \"falsifiable_prediction\": \"若在高精度实验室真空环境中探测到一种无质量、电中性、自旋1但具有与光子相反C宇称或螺旋度选择定则的独立粒子信号，则该假设被证伪。\", \"required_observations\": [\"在真空中对无质量中性矢量玻色子进行全量子数测量（包括C宇称、螺旋度关联）\", \"对比全局Fock态与局部探测器响应在相同电磁场构型下的差异\", \"排除介质效应或引力背景导致的准粒子误判\"], \"risk_",
+    "evidence_ids": [
+      "EV-Q077-7636c698decb9507b5faca60",
+      "EV-Q077-6753edfa1c05b4619760614c",
+      "EV-Q077-95eb031d9ae9c3fd196d1cad",
+      "EV-Q077-392775a252e8a4b504296596"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a8bc923c7ee9",
+    "mock": false
+  },
+  {
+    "event_id": "28598a5ce01f",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:54:27.065123+00:00",
+    "ended_at": "2026-08-22T08:54:53.049346+00:00",
+    "duration_ms": 25984,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q077\", \"domain\": \"Physics\", \"question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"source_page\": 27, \"booklet_excerpt\": \"An antiphoton is the same as a photon. Both are massless particles made of energy with no charge.\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery\", \"recommended_hypothesis\": {\"hypothesis\": \"在平直时空量子场论框架下，不存在与光子所有内禀量子数（电荷、质量、自旋、C宇称）完全相反的独立粒子，因为光子是自共轭玻色子；所谓‘相反’仅在特定相互作用基矢或弯曲时空局部观测中",
+    "output_summary": "{\"technical_details\": \"本实验设计旨在验证假设：在平直时空量子场论（QFT）框架下，不存在与光子所有内禀量子数完全相反的独立粒子。核心机制基于光子的自共轭性（self-conjugate nature），即光子是其自身的反粒子。实验将利用高精度量子光学测量技术，重点检验C宇称守恒及螺旋度选择定则。通过构建高纯度单光子态并测量其在特定相互作用下的响应，排除任何具有‘相反’量子数（如负C宇称但其他性质相同）的独立激发态存在的可能性。同时，结合EV-Q077-7636c698decb9507b5faca60中关于全局Fock态与局部粒子态区别的理论背景，设计对照实验以区分真空中的基本粒子效应与局部观测框架下的有效激发态（如介质极化激元或探测器噪声）。\", \"datasets\": {\"source\": [{\"id\": \"DS-SIM-QED-VACUUM-01\", \"name\": \"QED Vacuum Fluctuation Simulation Dataset\", \"description\": \"基于标准模型QED拉格朗日量的数值模拟数据，生成平直时空中光子场的关联函数及C宇称算符期望值。\", \"type\": \"simulation\"}, {\"id\": \"DS-EXP-OPTICAL-POL-02\", \"name\": \"High-Precision Optical",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "532c108848e3",
+    "mock": false
+  },
+  {
+    "event_id": "4f19fd59cfdc",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:54:53.049346+00:00",
+    "ended_at": "2026-08-22T08:55:07.209928+00:00",
+    "duration_ms": 14160,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q077\", \"domain\": \"Physics\", \"question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"source_page\": 27, \"booklet_excerpt\": \"An antiphoton is the same as a photon. Both are massless particles made of energy with no charge.\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"在平直时空量子场论框架下，不存在与光子所有内禀量子数（电荷、质量、自旋、C宇称）完全相反的独立粒子，因为光子是自共轭玻色子；所谓‘相反’仅在特定相互作用基矢或弯曲时空局部观测中作为有效激发态出现。\", \"mechanism\": \"根据量子场论，光子的反粒子",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"假设的核心物理机制（光子自共轭性、U(1)规范对称性、CPT定理）在提供的 EvidenceCards 中完全缺失。EV-Q077-7636c698decb9507b5faca60 仅讨论了弯曲时空与平直时空中‘粒子’定义的数学区别，并未证实光子的具体内禀量子数性质或反粒子关系。\", \"Mechanism 字段中将 EV-Q077-7636c698decb9507b5faca60 的内容过度解读为支持‘光子自共轭’的证据，实际上该文献仅提供了粒子定义依赖观测框架的理论背景，不能作为标准模型光子性质的直接证据。\", \"EvidenceExtractionResult 已明确标记 ‘needs_data’ 和 ‘knowledge_gap’，指出当前证据与问题核心不相关，但 Hypothesis Generation 仍强行构建了依赖外部常识而非给定证据的物理假设，违反了 evidence_grounding 原则。\", \"虽然实验设计在逻辑上自洽且 Results 正确标记为 pending，但由于缺乏支撑假设前提的合格证据，该研究计划目前属于‘基于未验证前提的推演’，而非‘基于证据的科学探究’。\"], \"critical_issues\": [\"核心假设（光子是自共轭玻色子）缺乏 allowed_evi",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "81a04be0589f",
+    "mock": false
+  },
+  {
+    "event_id": "93374b5afadb",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:55:07.210927+00:00",
+    "ended_at": "2026-08-22T08:55:39.957213+00:00",
+    "duration_ms": 32746,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"假设的核心物理机制（光子自共轭性、U(1)规范对称性、CPT定理）在提供的 EvidenceCards 中完全缺失。EV-Q077-7636c698decb9507b5faca60 仅讨论了弯曲时空与平直时空中‘粒子’定义的数学区别，并未证实光子的具体内禀量子数性质或反粒子关系。\", \"Mechanism 字段中将 EV-Q077-7636c698decb9507b5faca60 的内容过度解读为支持‘光子自共轭’的证据，实际上该文献仅提供了粒子定义依赖观测框架的理论背景，不能作为标准模型光子性质的直接证据。\", \"EvidenceExtractionResult 已明确标记 ‘needs_data’ 和 ‘knowledge_gap’，指出当前证据与问题核心不相关，但 Hypothesis Generation 仍强行构建了依赖外部常识而非给定证据的物理假设，违反了 evidence_grounding 原则。\", \"虽然实验设计在逻辑上自洽且 Results 正确标记为 pending，但由于缺乏支撑假设前提的合格证据，该研究计划目前属于‘基于未验证前提的推演’，而非‘基于证据的科学探究’。\"], \"critic",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"若依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态的区别）的论述，则在非惯性系或特定局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’；但这些模式是否构成物理上‘性质相反’的独立反粒子，在当前证据集中属于未验证的知识缺口（knowledge_gap）。\", \"mechanism\": \"EV-Q077-7636c698decb9507b5faca60 明确指出即使在平直时空中也存在两种截然不同的粒子概念：全局定义的 n-粒子 Fock 态和局部粒子态。该机制仅描述了粒子定义的数学/语义歧义性，并未涉及光子的内禀量子数（如电荷、C宇称）或其自共轭性质。因此，本假设将‘相反行为’严格限定为观测框架依赖的表象差异，而非基本粒子层面的对立。任何关于光子自共轭性或 U(1) 对称性的物理断言均被视为待验证的外部背景假设（unverified_by_current_evidence），不作为本假设成立的必要前提。\", \"falsifiable_prediction\": \"若在严格定义的惯性系全局 Fock 态基准下，通过局部探测器仍能稳定分辨出一种与全局光子态正交、且具有可重复‘相反’响应特征（如完全相消干涉或反关联",
+    "evidence_ids": [
+      "EV-Q077-7636c698decb9507b5faca60",
+      "EV-Q077-6753edfa1c05b4619760614c",
+      "EV-Q077-95eb031d9ae9c3fd196d1cad",
+      "EV-Q077-392775a252e8a4b504296596"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e7132766a36c",
+    "mock": false
+  },
+  {
+    "event_id": "e620b9d7ff5c",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:55:39.957213+00:00",
+    "ended_at": "2026-08-22T08:56:07.257255+00:00",
+    "duration_ms": 27300,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"假设的核心物理机制（光子自共轭性、U(1)规范对称性、CPT定理）在提供的 EvidenceCards 中完全缺失。EV-Q077-7636c698decb9507b5faca60 仅讨论了弯曲时空与平直时空中‘粒子’定义的数学区别，并未证实光子的具体内禀量子数性质或反粒子关系。\", \"Mechanism 字段中将 EV-Q077-7636c698decb9507b5faca60 的内容过度解读为支持‘光子自共轭’的证据，实际上该文献仅提供了粒子定义依赖观测框架的理论背景，不能作为标准模型光子性质的直接证据。\", \"EvidenceExtractionResult 已明确标记 ‘needs_data’ 和 ‘knowledge_gap’，指出当前证据与问题核心不相关，但 Hypothesis Generation 仍强行构建了依赖外部常识而非给定证据的物理假设，违反了 evidence_grounding 原则。\", \"虽然实验设计在逻辑上自洽且 Results 正确标记为 pending，但由于缺乏支撑假设前提的合格证据，该研究计划目前属于‘基于未验证前提的推演’，而非‘基于证据的科学探究’。\"], \"critic",
+    "output_summary": "{\"technical_details\": \"本实验设计旨在验证一个条件式假设：依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态）的论述，在特定非惯性或局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’。关键约束是：严禁将此类模式直接等同于物理上的‘反粒子’，且必须明确‘光子自共轭性’为当前证据集未覆盖的知识缺口（knowledge_gap）。实验核心在于区分‘数学定义的粒子差异’与‘物理实体的对立性质’。首先执行前置文献调研实验以确立标准模型基准，随后通过数值模拟对比全局与局部粒子算符在弯曲时空背景下的期望值差异，最后设计思想实验或类比系统（如声学黑洞模拟）来检验局部探测器响应是否表现出‘相反’特征（如负能量密度涨落或反关联），并严格排除坐标变换伪影。\", \"datasets\": {\"source\": [{\"id\": \"DS-LIT-SURVEY-PHOTON-01\", \"name\": \"Standard Model Photon Properties Literature Corpus\", \"description\": \"从权威粒子物理教材和综述中提取的光子量子数（电荷、质量、自旋、C宇称）及反粒子定义的标准陈述，用于填补 knowledge_gap 并建立基准",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5d80a1e068b8",
+    "mock": false
+  },
+  {
+    "event_id": "9696108bdd9c",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:56:07.258246+00:00",
+    "ended_at": "2026-08-22T08:56:13.744849+00:00",
+    "duration_ms": 6486,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"假设的核心物理机制（光子自共轭性、U(1)规范对称性、CPT定理）在提供的 EvidenceCards 中完全缺失。EV-Q077-7636c698decb9507b5faca60 仅讨论了弯曲时空与平直时空中‘粒子’定义的数学区别，并未证实光子的具体内禀量子数性质或反粒子关系。\", \"Mechanism 字段中将 EV-Q077-7636c698decb9507b5faca60 的内容过度解读为支持‘光子自共轭’的证据，实际上该文献仅提供了粒子定义依赖观测框架的理论背景，不能作为标准模型光子性质的直接证据。\", \"EvidenceExtractionResult 已明确标记 ‘needs_data’ 和 ‘knowledge_gap’，指出当前证据与问题核心不相关，但 Hypothesis Generation 仍强行构建了依赖外部常识而非给定证据的物理假设，违反了 evidence_grounding 原则。\", \"虽然实验设计在逻辑上自洽且 Results 正确标记为 pending，但由于缺乏支撑假设前提的合格证据，该研究计划目前属于‘基于未验证前提的推演’，而非‘基于证据的科学探究’。\"], \"critic",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"修订版假设已成功重构为条件式表述，严格依据 EV-Q077-7636c698decb9507b5faca60 中关于‘全局 Fock 态与局部粒子态区别’的论述，不再断言光子自共轭性为既定事实。\", \"Mechanism 字段已移除所有无证据支持的物理断言（U(1)、CPT等），并将‘光子自共轭性’明确标记为待验证的外部知识缺口（knowledge_gap），符合 evidence_grounding 原则。\", \"实验设计新增了前置文献调研步骤（DS-LIT-SURVEY-PHOTON-01）作为填补 knowledge_gap 的必要环节，避免了在未验证前提下直接进行物理推断的方法论错误。\", \"evidence_support_score 已修正为 0.1，selection_reason 诚实反映了当前证据集的局限性，不再过度宣称假设对核心物理问题的解释力。\", \"Results 字段保持为 pending 状态，未伪造任何实验结果；数据集定义包含明确的 source/target 结构，且 baselines/metrics 能够有效验证修订后的条件式假设。\"], \"critical_issues\": [], \"required_revisions\": [], \"risk_level\": \"m",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c9ad87a2c08c",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:c337a24c078ee40f",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "在平直时空量子场论框架下，不存在与光子所有内禀量子数（电荷、质量、自旋、C宇称）完全相反的独立粒子，因为光子是自共轭玻色子；所谓‘相反’仅在特定相互作用基矢或弯曲时空局部观测中作为有效激发态出现。",
+              "mechanism": "根据量子场论，光子的反粒子即其本身（self-conjugate），这是由U(1)规范对称性和CPT定理决定的。EV-Q077-7636c698decb9507b5faca60指出即使在平直空间也存在全局Fock态与局部粒子态的区别，暗示‘粒子’定义依赖于观测框架。若将‘相反性质’理解为某种局部激发态或有效自由度（如介质中的极化激元或弯曲时空中的Unruh辐射模式），则可能在特定条件下表现出与真空光子不同的统计或传播特性，但这并非基本粒子层面的对立。",
+              "falsifiable_prediction": "若在高精度实验室真空环境中探测到一种无质量、电中性、自旋1但具有与光子相反C宇称或螺旋度选择定则的独立粒子信号，则该假设被证伪。",
+              "required_observations": [
+                "在真空中对无质量中性矢量玻色子进行全量子数测量（包括C宇称、螺旋度关联）",
+                "对比全局Fock态与局部探测器响应在相同电磁场构型下的差异",
+                "排除介质效应或引力背景导致的准粒子误判"
+              ],
+              "risk_of_being_wrong": "若未来实验发现超出标准模型的新无质量规范玻色子（如暗光子混合态）且具有严格相反量子数，则当前基于标准模型的自共轭结论不成立；此外，若局部粒子态在平直空间中可稳定携带‘相反’量子信息并被远距离观测，则挑战现有QFT粒子诠释。",
+              "supporting_evidence_ids": [
+                "EV-Q077-7636c698decb9507b5faca60"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.58
+            },
+            {
+              "hypothesis": "竞争布朗粒子系统中的‘排名依赖动力学’可作为类比模型，用于形式化定义‘性质相反’的数学结构，但该结构不能直接映射到真实光子或其反粒子的物理属性上。",
+              "mechanism": "EV-Q077-6753edfa1c05b4619760614c、EV-Q077-95eb031d9ae9c3fd196d1cad 和 EV-Q077-392775a252e8a4b504296596 描述了具有秩依赖相互作用的随机粒子系统，其中粒子行为由其相对位置决定。这种系统中可构造出‘反向响应’的数学对象（如负秩梯度驱动），但其‘粒子’仅为概率测度载体，不具备量子场论中的内禀量子数。因此，该模型仅能提供‘相反行为’的形式语言，无法支撑关于真实光子对立粒子的物理断言。",
+              "falsifiable_prediction": "若能从竞争布朗粒子模型中推导出一个满足洛伦兹协变、具有整数自旋、且与麦克斯韦方程耦合的场算符，并预测可观测的散射截面，则该假设被削弱；否则，该类比仅限于数学启发，无物理实体对应。",
+              "required_observations": [
+                "验证该随机模型是否可重整化为量子场论",
+                "检查其激发谱是否包含无质量自旋1态",
+                "确认是否存在与电磁流守恒相容的对称性结构"
+              ],
+              "risk_of_being_wrong": "若后续研究发现此类随机系统与某些非厄米PT对称量子理论存在精确对偶，则可能意外提供新物理视角；但目前无任何证据支持此路径通向真实粒子物理。",
+              "supporting_evidence_ids": [
+                "EV-Q077-6753edfa1c05b4619760614c",
+                "EV-Q077-95eb031d9ae9c3fd196d1cad",
+                "EV-Q077-392775a252e8a4b504296596"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.63
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "尽管证据支持薄弱，但假设0直接回应了问题的核心物理内涵（光子自共轭性与粒子定义依赖性），且其可证伪预测明确指向可执行的实验检验（如高精度量子数测量）。相比之下，假设2虽可行性高，但本质是方法论澄清而非科学假设，无法推进对‘相反粒子’的物理理解。在当前证据严重不足的情况下，优先保留与问题域一致、可被未来数据修正的物理假设更为合理。",
+          "rejected_directions": [
+            "声称‘反光子就是光子’作为已证实事实（缺乏合格物理证据支持，booklet_excerpt不可作为事实源）",
+            "利用竞争布朗粒子模型直接推断真实粒子性质（违反methodological_constraints，混淆数学抽象与物理实在）",
+            "提出存在未知‘反光子’粒子但无法给出可观测特征或证伪条件（不可证伪，违反生成原则）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本实验设计旨在验证假设：在平直时空量子场论（QFT）框架下，不存在与光子所有内禀量子数完全相反的独立粒子。核心机制基于光子的自共轭性（self-conjugate nature），即光子是其自身的反粒子。实验将利用高精度量子光学测量技术，重点检验C宇称守恒及螺旋度选择定则。通过构建高纯度单光子态并测量其在特定相互作用下的响应，排除任何具有‘相反’量子数（如负C宇称但其他性质相同）的独立激发态存在的可能性。同时，结合EV-Q077-7636c698decb9507b5faca60中关于全局Fock态与局部粒子态区别的理论背景，设计对照实验以区分真空中的基本粒子效应与局部观测框架下的有效激发态（如介质极化激元或探测器噪声）。",
+          "datasets": {
+            "source": [
+              {
+                "id": "DS-SIM-QED-VACUUM-01",
+                "name": "QED Vacuum Fluctuation Simulation Dataset",
+                "description": "基于标准模型QED拉格朗日量的数值模拟数据，生成平直时空中光子场的关联函数及C宇称算符期望值。",
+                "type": "simulation"
+              },
+              {
+                "id": "DS-EXP-OPTICAL-POL-02",
+                "name": "High-Precision Optical Polarization Measurement Data",
+                "description": "来自高精度偏振干涉仪的实验数据，用于校准探测器对光子螺旋度和C宇称相关效应的敏感度。",
+                "type": "experimental_calibration"
+              }
+            ],
+            "target": {
+              "id": "DS-TARGET-PHOTON-SELFCONJ-01",
+              "name": "Photon Self-Conjugacy Verification Dataset",
+              "description": "包含单光子态在C宇称变换下的响应数据，以及排除‘反光子’信号的背景噪声谱。",
+              "type": "derived"
+            }
+          },
+          "methods": "1. **理论建模**：基于U(1)规范对称性和CPT定理，构建光子场的量子态演化模型，明确自共轭条件 $\\hat{C}|\\gamma\\rangle = |\\gamma\\rangle$。引用EV-Q077-7636c698decb9507b5faca60中关于局部粒子态定义的讨论，界定‘独立粒子’的操作型定义。\n2. **数值模拟**：使用格点QED或微扰论方法计算光子-光子散射振幅及C宇称破缺项的上限。\n3. **实验验证协议**：设计基于Hong-Ou-Mandel干涉仪的变体实验，通过双光子干涉可见度来检验光子的玻色统计性质及自共轭性。若存在‘反光子’，其费米子-like或不同统计行为将导致干涉可见度显著偏离理论预测。\n4. **背景排除**：严格屏蔽介质效应，确保实验环境为高真空，以排除极化激元等准粒子的干扰。",
+          "experiments": {
+            "baselines": [
+              "Standard QED Prediction (Self-Conjugate Photon): 假设光子严格自共轭，预测干涉可见度为100%（理想情况下），C宇称算符期望值为+1。",
+              "Hypothetical Anti-Photon Model: 假设存在具有相反C宇称的独立粒子，预测在特定螺旋度配置下出现干涉相消或额外的散射通道。",
+              "Noise-Only Background: 仅包含探测器暗计数和环境热辐射的背景模型，用于设定检测下限。"
+            ],
+            "metrics": [
+              "Interference Visibility (V): 衡量双光子干涉条纹的对比度，直接反映统计性质和全同性。",
+              "C-Parity Violation Upper Bound ($\\epsilon_C$): C宇称破缺参数的实验上限。",
+              "Signal-to-Noise Ratio (SNR) for Exotic States: 针对假设的‘反光子’信号的信噪比。",
+              "Chi-Squared Goodness-of-Fit ($\\chi^2$): 实验数据与标准QED预测的拟合优度。"
+            ],
+            "ablation": [
+              "Remove Vacuum Shielding: 测试介质效应对‘假性’相反性质信号的贡献。",
+              "Vary Photon Energy: 检查不同能区下自共轭性质的稳定性，排除高能标下的新物理混合。",
+              "Detector Efficiency Correction: 评估探测器非理想效率对C宇称测量的系统误差影响。"
+            ],
+            "validation_protocol": "采用双盲数据分析流程。首先使用DS-SIM-QED-VACUUM-01生成理论基准。然后采集DS-EXP-OPTICAL-POL-02校准数据。最后运行主实验，收集DS-TARGET-PHOTON-SELFCONJ-01。通过比较实验测得的干涉可见度与标准QED预测的偏差，若偏差在统计误差范围内（<3σ），则支持假设；若发现显著的C宇称破缺或额外粒子信号，则证伪假设。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "提供完整的QED模拟代码及参数设置（耦合常数、截断能标）。",
+            "公开光学实验装置的详细蓝图，包括真空度指标、探测器型号及校准程序。",
+            "提供原始干涉条纹数据及背景噪声谱。",
+            "明确定义‘局部粒子态’与‘全局Fock态’在数据处理中的区分算法，依据EV-Q077-7636c698decb9507b5faca60。",
+            "记录所有系统误差来源及修正方法。"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "generated_by": "SAGE125 ExperimentDesigner Agent",
+            "model_version": "Qwen-Max",
+            "timestamp": "2023-10-27T10:00:00Z",
+            "computational_resources_required": "High-performance computing cluster for QED simulations; Ultra-high vacuum optical laboratory for experimental validation.",
+            "estimated_time_to_complete": "6-12 months"
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-085325-8376993d",
+        "version_number": 1,
+        "version_id": "20260822-085325-8376993d:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "在平直时空量子场论框架下，不存在与光子所有内禀量子数（电荷、质量、自旋、C宇称）完全相反的独立粒子，因为光子是自共轭玻色子；所谓‘相反’仅在特定相互作用基矢或弯曲时空局部观测中作为有效激发态出现。",
+              "mechanism": "根据量子场论，光子的反粒子即其本身（self-conjugate），这是由U(1)规范对称性和CPT定理决定的。EV-Q077-7636c698decb9507b5faca60指出即使在平直空间也存在全局Fock态与局部粒子态的区别，暗示‘粒子’定义依赖于观测框架。若将‘相反性质’理解为某种局部激发态或有效自由度（如介质中的极化激元或弯曲时空中的Unruh辐射模式），则可能在特定条件下表现出与真空光子不同的统计或传播特性，但这并非基本粒子层面的对立。",
+              "falsifiable_prediction": "若在高精度实验室真空环境中探测到一种无质量、电中性、自旋1但具有与光子相反C宇称或螺旋度选择定则的独立粒子信号，则该假设被证伪。",
+              "required_observations": [
+                "在真空中对无质量中性矢量玻色子进行全量子数测量（包括C宇称、螺旋度关联）",
+                "对比全局Fock态与局部探测器响应在相同电磁场构型下的差异",
+                "排除介质效应或引力背景导致的准粒子误判"
+              ],
+              "risk_of_being_wrong": "若未来实验发现超出标准模型的新无质量规范玻色子（如暗光子混合态）且具有严格相反量子数，则当前基于标准模型的自共轭结论不成立；此外，若局部粒子态在平直空间中可稳定携带‘相反’量子信息并被远距离观测，则挑战现有QFT粒子诠释。",
+              "supporting_evidence_ids": [
+                "EV-Q077-7636c698decb9507b5faca60"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.58
+            },
+            {
+              "hypothesis": "竞争布朗粒子系统中的‘排名依赖动力学’可作为类比模型，用于形式化定义‘性质相反’的数学结构，但该结构不能直接映射到真实光子或其反粒子的物理属性上。",
+              "mechanism": "EV-Q077-6753edfa1c05b4619760614c、EV-Q077-95eb031d9ae9c3fd196d1cad 和 EV-Q077-392775a252e8a4b504296596 描述了具有秩依赖相互作用的随机粒子系统，其中粒子行为由其相对位置决定。这种系统中可构造出‘反向响应’的数学对象（如负秩梯度驱动），但其‘粒子’仅为概率测度载体，不具备量子场论中的内禀量子数。因此，该模型仅能提供‘相反行为’的形式语言，无法支撑关于真实光子对立粒子的物理断言。",
+              "falsifiable_prediction": "若能从竞争布朗粒子模型中推导出一个满足洛伦兹协变、具有整数自旋、且与麦克斯韦方程耦合的场算符，并预测可观测的散射截面，则该假设被削弱；否则，该类比仅限于数学启发，无物理实体对应。",
+              "required_observations": [
+                "验证该随机模型是否可重整化为量子场论",
+                "检查其激发谱是否包含无质量自旋1态",
+                "确认是否存在与电磁流守恒相容的对称性结构"
+              ],
+              "risk_of_being_wrong": "若后续研究发现此类随机系统与某些非厄米PT对称量子理论存在精确对偶，则可能意外提供新物理视角；但目前无任何证据支持此路径通向真实粒子物理。",
+              "supporting_evidence_ids": [
+                "EV-Q077-6753edfa1c05b4619760614c",
+                "EV-Q077-95eb031d9ae9c3fd196d1cad",
+                "EV-Q077-392775a252e8a4b504296596"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.63
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "尽管证据支持薄弱，但假设0直接回应了问题的核心物理内涵（光子自共轭性与粒子定义依赖性），且其可证伪预测明确指向可执行的实验检验（如高精度量子数测量）。相比之下，假设2虽可行性高，但本质是方法论澄清而非科学假设，无法推进对‘相反粒子’的物理理解。在当前证据严重不足的情况下，优先保留与问题域一致、可被未来数据修正的物理假设更为合理。",
+          "rejected_directions": [
+            "声称‘反光子就是光子’作为已证实事实（缺乏合格物理证据支持，booklet_excerpt不可作为事实源）",
+            "利用竞争布朗粒子模型直接推断真实粒子性质（违反methodological_constraints，混淆数学抽象与物理实在）",
+            "提出存在未知‘反光子’粒子但无法给出可观测特征或证伪条件（不可证伪，违反生成原则）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本实验设计旨在验证假设：在平直时空量子场论（QFT）框架下，不存在与光子所有内禀量子数完全相反的独立粒子。核心机制基于光子的自共轭性（self-conjugate nature），即光子是其自身的反粒子。实验将利用高精度量子光学测量技术，重点检验C宇称守恒及螺旋度选择定则。通过构建高纯度单光子态并测量其在特定相互作用下的响应，排除任何具有‘相反’量子数（如负C宇称但其他性质相同）的独立激发态存在的可能性。同时，结合EV-Q077-7636c698decb9507b5faca60中关于全局Fock态与局部粒子态区别的理论背景，设计对照实验以区分真空中的基本粒子效应与局部观测框架下的有效激发态（如介质极化激元或探测器噪声）。",
+          "datasets": {
+            "source": [
+              {
+                "id": "DS-SIM-QED-VACUUM-01",
+                "name": "QED Vacuum Fluctuation Simulation Dataset",
+                "description": "基于标准模型QED拉格朗日量的数值模拟数据，生成平直时空中光子场的关联函数及C宇称算符期望值。",
+                "type": "simulation"
+              },
+              {
+                "id": "DS-EXP-OPTICAL-POL-02",
+                "name": "High-Precision Optical Polarization Measurement Data",
+                "description": "来自高精度偏振干涉仪的实验数据，用于校准探测器对光子螺旋度和C宇称相关效应的敏感度。",
+                "type": "experimental_calibration"
+              }
+            ],
+            "target": {
+              "id": "DS-TARGET-PHOTON-SELFCONJ-01",
+              "name": "Photon Self-Conjugacy Verification Dataset",
+              "description": "包含单光子态在C宇称变换下的响应数据，以及排除‘反光子’信号的背景噪声谱。",
+              "type": "derived"
+            }
+          },
+          "methods": "1. **理论建模**：基于U(1)规范对称性和CPT定理，构建光子场的量子态演化模型，明确自共轭条件 $\\hat{C}|\\gamma\\rangle = |\\gamma\\rangle$。引用EV-Q077-7636c698decb9507b5faca60中关于局部粒子态定义的讨论，界定‘独立粒子’的操作型定义。\n2. **数值模拟**：使用格点QED或微扰论方法计算光子-光子散射振幅及C宇称破缺项的上限。\n3. **实验验证协议**：设计基于Hong-Ou-Mandel干涉仪的变体实验，通过双光子干涉可见度来检验光子的玻色统计性质及自共轭性。若存在‘反光子’，其费米子-like或不同统计行为将导致干涉可见度显著偏离理论预测。\n4. **背景排除**：严格屏蔽介质效应，确保实验环境为高真空，以排除极化激元等准粒子的干扰。",
+          "experiments": {
+            "baselines": [
+              "Standard QED Prediction (Self-Conjugate Photon): 假设光子严格自共轭，预测干涉可见度为100%（理想情况下），C宇称算符期望值为+1。",
+              "Hypothetical Anti-Photon Model: 假设存在具有相反C宇称的独立粒子，预测在特定螺旋度配置下出现干涉相消或额外的散射通道。",
+              "Noise-Only Background: 仅包含探测器暗计数和环境热辐射的背景模型，用于设定检测下限。"
+            ],
+            "metrics": [
+              "Interference Visibility (V): 衡量双光子干涉条纹的对比度，直接反映统计性质和全同性。",
+              "C-Parity Violation Upper Bound ($\\epsilon_C$): C宇称破缺参数的实验上限。",
+              "Signal-to-Noise Ratio (SNR) for Exotic States: 针对假设的‘反光子’信号的信噪比。",
+              "Chi-Squared Goodness-of-Fit ($\\chi^2$): 实验数据与标准QED预测的拟合优度。"
+            ],
+            "ablation": [
+              "Remove Vacuum Shielding: 测试介质效应对‘假性’相反性质信号的贡献。",
+              "Vary Photon Energy: 检查不同能区下自共轭性质的稳定性，排除高能标下的新物理混合。",
+              "Detector Efficiency Correction: 评估探测器非理想效率对C宇称测量的系统误差影响。"
+            ],
+            "validation_protocol": "采用双盲数据分析流程。首先使用DS-SIM-QED-VACUUM-01生成理论基准。然后采集DS-EXP-OPTICAL-POL-02校准数据。最后运行主实验，收集DS-TARGET-PHOTON-SELFCONJ-01。通过比较实验测得的干涉可见度与标准QED预测的偏差，若偏差在统计误差范围内（<3σ），则支持假设；若发现显著的C宇称破缺或额外粒子信号，则证伪假设。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "提供完整的QED模拟代码及参数设置（耦合常数、截断能标）。",
+            "公开光学实验装置的详细蓝图，包括真空度指标、探测器型号及校准程序。",
+            "提供原始干涉条纹数据及背景噪声谱。",
+            "明确定义‘局部粒子态’与‘全局Fock态’在数据处理中的区分算法，依据EV-Q077-7636c698decb9507b5faca60。",
+            "记录所有系统误差来源及修正方法。"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "generated_by": "SAGE125 ExperimentDesigner Agent",
+            "model_version": "Qwen-Max",
+            "timestamp": "2023-10-27T10:00:00Z",
+            "computational_resources_required": "High-performance computing cluster for QED simulations; Ultra-high vacuum optical laboratory for experimental validation.",
+            "estimated_time_to_complete": "6-12 months"
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "假设的核心物理机制（光子自共轭性、U(1)规范对称性、CPT定理）在提供的 EvidenceCards 中完全缺失。EV-Q077-7636c698decb9507b5faca60 仅讨论了弯曲时空与平直时空中‘粒子’定义的数学区别，并未证实光子的具体内禀量子数性质或反粒子关系。",
+            "Mechanism 字段中将 EV-Q077-7636c698decb9507b5faca60 的内容过度解读为支持‘光子自共轭’的证据，实际上该文献仅提供了粒子定义依赖观测框架的理论背景，不能作为标准模型光子性质的直接证据。",
+            "EvidenceExtractionResult 已明确标记 ‘needs_data’ 和 ‘knowledge_gap’，指出当前证据与问题核心不相关，但 Hypothesis Generation 仍强行构建了依赖外部常识而非给定证据的物理假设，违反了 evidence_grounding 原则。",
+            "虽然实验设计在逻辑上自洽且 Results 正确标记为 pending，但由于缺乏支撑假设前提的合格证据，该研究计划目前属于‘基于未验证前提的推演’，而非‘基于证据的科学探究’。"
+          ],
+          "critical_issues": [
+            "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+            "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+            "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。"
+          ],
+          "required_revisions": [
+            "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+            "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+            "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+            "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。"
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.1,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.2
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:bc8bbf58db22",
+            "category": "critical_issue",
+            "description": "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:eb13dc619fff",
+            "category": "critical_issue",
+            "description": "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:456d321e7666",
+            "category": "critical_issue",
+            "description": "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f7a0ff2e4930",
+            "category": "required_revision",
+            "description": "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:5966c04bdb55",
+            "category": "required_revision",
+            "description": "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b225db1ad615",
+            "category": "required_revision",
+            "description": "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f0a3ee9bfc32",
+            "category": "required_revision",
+            "description": "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "165f1ed40229a6100d663fbb60ee6e7f569a853577cde329d731ead7cfa4b94f",
+          "experiment_designer": "51d868d0ffa12a93c503db59af5e52147270bf3f200f97765b865e5c962200e6",
+          "scientific_reviewer": "5906482a807584a77cdcd930351255757b16ed4a8b0ae800844ce0d05baa57c2"
+        }
+      },
+      "parent_version_id": "20260822-085325-8376993d:v1",
+      "lineage": [
+        "20260822-085325-8376993d:v1",
+        "20260822-085325-8376993d:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "假设的核心物理机制（光子自共轭性、U(1)规范对称性、CPT定理）在提供的 EvidenceCards 中完全缺失。EV-Q077-7636c698decb9507b5faca60 仅讨论了弯曲时空与平直时空中‘粒子’定义的数学区别，并未证实光子的具体内禀量子数性质或反粒子关系。",
+          "Mechanism 字段中将 EV-Q077-7636c698decb9507b5faca60 的内容过度解读为支持‘光子自共轭’的证据，实际上该文献仅提供了粒子定义依赖观测框架的理论背景，不能作为标准模型光子性质的直接证据。",
+          "EvidenceExtractionResult 已明确标记 ‘needs_data’ 和 ‘knowledge_gap’，指出当前证据与问题核心不相关，但 Hypothesis Generation 仍强行构建了依赖外部常识而非给定证据的物理假设，违反了 evidence_grounding 原则。",
+          "虽然实验设计在逻辑上自洽且 Results 正确标记为 pending，但由于缺乏支撑假设前提的合格证据，该研究计划目前属于‘基于未验证前提的推演’，而非‘基于证据的科学探究’。"
+        ],
+        "critical_issues": [
+          "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+          "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+          "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。"
+        ],
+        "required_revisions": [
+          "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+          "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+          "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+          "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。"
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.1,
+        "falsifiability_score": 0.8,
+        "reproducibility_score": 0.7,
+        "reference_reliability_score": 0.2
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "修订版假设已成功重构为条件式表述，严格依据 EV-Q077-7636c698decb9507b5faca60 中关于‘全局 Fock 态与局部粒子态区别’的论述，不再断言光子自共轭性为既定事实。",
+          "Mechanism 字段已移除所有无证据支持的物理断言（U(1)、CPT等），并将‘光子自共轭性’明确标记为待验证的外部知识缺口（knowledge_gap），符合 evidence_grounding 原则。",
+          "实验设计新增了前置文献调研步骤（DS-LIT-SURVEY-PHOTON-01）作为填补 knowledge_gap 的必要环节，避免了在未验证前提下直接进行物理推断的方法论错误。",
+          "evidence_support_score 已修正为 0.1，selection_reason 诚实反映了当前证据集的局限性，不再过度宣称假设对核心物理问题的解释力。",
+          "Results 字段保持为 pending 状态，未伪造任何实验结果；数据集定义包含明确的 source/target 结构，且 baselines/metrics 能够有效验证修订后的条件式假设。"
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.9,
+        "falsifiability_score": 0.85,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:d1ac9f46b136a98e",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+          "issue_id": "critical_issue:bc8bbf58db22"
+        },
+        {
+          "failure_id": "failure:57c2b414f18e00d4",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+          "issue_id": "critical_issue:eb13dc619fff"
+        },
+        {
+          "failure_id": "failure:a5de6e957f3e46f0",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。",
+          "issue_id": "critical_issue:456d321e7666"
+        },
+        {
+          "failure_id": "failure:7946ce5f3642bcec",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+          "issue_id": "required_revision:f7a0ff2e4930"
+        },
+        {
+          "failure_id": "failure:b5c73165da8b8722",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+          "issue_id": "required_revision:5966c04bdb55"
+        },
+        {
+          "failure_id": "failure:77dcd18e6af91c47",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+          "issue_id": "required_revision:b225db1ad615"
+        },
+        {
+          "failure_id": "failure:79d7e6f36775e215",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。",
+          "issue_id": "required_revision:f0a3ee9bfc32"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:d52e85984d450a68",
+          "issue_id": "critical_issue:456d321e7666",
+          "reason": "Reviewer item critical_issue:456d321e7666 requested '将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。'. V2 changes methods; deterministic correlation evidence tokens=['7636c698decb9507b5faca60', 'ev', 'q077'], coverage=0.750.",
+          "before": "1. **理论建模**：基于U(1)规范对称性和CPT定理，构建光子场的量子态演化模型，明确自共轭条件 $\\hat{C}|\\gamma\\rangle = |\\gamma\\rangle$。引用EV-Q077-7636c698decb9507b5faca60中关于局部粒子态定义的讨论，界定‘独立粒子’的操作型定义。\n2. **数值模拟**：使用格点QED或微扰论方法计算光子-光子散射振幅及C宇称破缺项的上限。\n3. **实验验证协议**：设计基于Hong-Ou-Mandel干涉仪的变体实验，通过双光子干涉可见度来检验光子的玻色统计性质及自共轭性。若存在‘反光子’，其费米子-like或不同统计行为将导致干涉可见度显著偏离理论预测。\n4. **背景排除**：严格屏蔽介质效应，确保实验环境为高真空，以排除极化激元等准粒子的干扰。",
+          "after": "1. **前置知识缺口填补**：执行结构化文献调研，确认标准模型中光子自共轭性的理论地位，明确‘反粒子’在 QFT 中的严格定义，以此作为区分‘表观差异’与‘本质对立’的外部参照。\n2. **理论建模与数值模拟**：基于 EV-Q077-7636c698decb9507b5faca60 提供的数学框架，构建标量场或矢量场在非惯性系中的量子态演化模型。计算全局真空态在局部探测器基矢下的粒子数期望值，识别是否存在非零激发（即 Unruh 效应类现象）。\n3. **类比系统验证**：由于直接进行高能物理实验超出当前资源且缺乏直接证据支持，采用流体力学或光学类比系统（如光纤中的等效视界）模拟局部粒子态探测过程，测量其‘有效粒子’谱是否与全局基矢下的真空谱存在显著差异。\n4. **伪影排除分析**：通过坐标变换不变性检验，确保观测到的‘相反’或‘差异’信号并非源于探测器运动或坐标系选择的数学伪影。",
+          "evidence_refs": [
+            "EV-Q077-392775a252e8a4b504296596",
+            "EV-Q077-6753edfa1c05b4619760614c",
+            "EV-Q077-7636c698decb9507b5faca60",
+            "EV-Q077-95eb031d9ae9c3fd196d1cad"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:7a912d8f0503dc4b",
+          "issue_id": "critical_issue:456d321e7666",
+          "reason": "Reviewer item critical_issue:456d321e7666 requested '将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['7636c698decb9507b5faca60', 'ev', 'q077'], coverage=0.750.",
+          "before": [
+            "提供完整的QED模拟代码及参数设置（耦合常数、截断能标）。",
+            "公开光学实验装置的详细蓝图，包括真空度指标、探测器型号及校准程序。",
+            "提供原始干涉条纹数据及背景噪声谱。",
+            "明确定义‘局部粒子态’与‘全局Fock态’在数据处理中的区分算法，依据EV-Q077-7636c698decb9507b5faca60。",
+            "记录所有系统误差来源及修正方法。"
+          ],
+          "after": [
+            "提供文献调研的详细来源列表及提取的光子性质标准定义。",
+            "公开基于 EV-Q077-7636c698decb9507b5faca60 的数值模拟代码，包括度规张量设置及粒子算符定义。",
+            "提供类比实验装置的详细参数及原始数据。",
+            "明确记录‘局部粒子态’与‘全局 Fock 态’的数学转换公式。",
+            "提供坐标变换伪影排除的计算过程及中间结果。"
+          ],
+          "evidence_refs": [
+            "EV-Q077-392775a252e8a4b504296596",
+            "EV-Q077-6753edfa1c05b4619760614c",
+            "EV-Q077-7636c698decb9507b5faca60",
+            "EV-Q077-95eb031d9ae9c3fd196d1cad"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:dcc9ca2289ea282f",
+          "issue_id": "required_revision:f7a0ff2e4930",
+          "reason": "Reviewer item required_revision:f7a0ff2e4930 requested '将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。'. V2 changes dataset_sources; deterministic correlation evidence tokens=['7636c698decb9507b5faca60', 'ev', 'fock', 'gap', 'knowledge', 'q077'], coverage=0.857.",
+          "before": [
+            {
+              "id": "DS-SIM-QED-VACUUM-01",
+              "name": "QED Vacuum Fluctuation Simulation Dataset",
+              "description": "基于标准模型QED拉格朗日量的数值模拟数据，生成平直时空中光子场的关联函数及C宇称算符期望值。",
+              "type": "simulation"
+            },
+            {
+              "id": "DS-EXP-OPTICAL-POL-02",
+              "name": "High-Precision Optical Polarization Measurement Data",
+              "description": "来自高精度偏振干涉仪的实验数据，用于校准探测器对光子螺旋度和C宇称相关效应的敏感度。",
+              "type": "experimental_calibration"
+            }
+          ],
+          "after": [
+            {
+              "id": "DS-LIT-SURVEY-PHOTON-01",
+              "name": "Standard Model Photon Properties Literature Corpus",
+              "description": "从权威粒子物理教材和综述中提取的光子量子数（电荷、质量、自旋、C宇称）及反粒子定义的标准陈述，用于填补 knowledge_gap 并建立基准。",
+              "type": "literature_survey"
+            },
+            {
+              "id": "DS-SIM-CURVED-SPACETIME-02",
+              "name": "Curved Spacetime QFT Simulation Dataset",
+              "description": "基于 EV-Q077-7636c698decb9507b5faca60 理论框架，模拟平直与时空弯曲背景下全局 Fock 态与局部粒子态算符的关联函数差异。",
+              "type": "simulation"
+            }
+          ],
+          "evidence_refs": [
+            "EV-Q077-392775a252e8a4b504296596",
+            "EV-Q077-6753edfa1c05b4619760614c",
+            "EV-Q077-7636c698decb9507b5faca60",
+            "EV-Q077-95eb031d9ae9c3fd196d1cad"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:da015f397c1b357e",
+          "issue_id": "required_revision:f7a0ff2e4930",
+          "reason": "Reviewer item required_revision:f7a0ff2e4930 requested '将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。'. V2 changes technical_details; deterministic correlation evidence tokens=['7636c698decb9507b5faca60', 'ev', 'fock', 'gap', 'knowledge', 'observation', 'q077'], coverage=1.000.",
+          "before": "本实验设计旨在验证假设：在平直时空量子场论（QFT）框架下，不存在与光子所有内禀量子数完全相反的独立粒子。核心机制基于光子的自共轭性（self-conjugate nature），即光子是其自身的反粒子。实验将利用高精度量子光学测量技术，重点检验C宇称守恒及螺旋度选择定则。通过构建高纯度单光子态并测量其在特定相互作用下的响应，排除任何具有‘相反’量子数（如负C宇称但其他性质相同）的独立激发态存在的可能性。同时，结合EV-Q077-7636c698decb9507b5faca60中关于全局Fock态与局部粒子态区别的理论背景，设计对照实验以区分真空中的基本粒子效应与局部观测框架下的有效激发态（如介质极化激元或探测器噪声）。",
+          "after": "本实验设计旨在验证一个条件式假设：依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态）的论述，在特定非惯性或局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’。关键约束是：严禁将此类模式直接等同于物理上的‘反粒子’，且必须明确‘光子自共轭性’为当前证据集未覆盖的知识缺口（knowledge_gap）。实验核心在于区分‘数学定义的粒子差异’与‘物理实体的对立性质’。首先执行前置文献调研实验以确立标准模型基准，随后通过数值模拟对比全局与局部粒子算符在弯曲时空背景下的期望值差异，最后设计思想实验或类比系统（如声学黑洞模拟）来检验局部探测器响应是否表现出‘相反’特征（如负能量密度涨落或反关联），并严格排除坐标变换伪影。",
+          "evidence_refs": [
+            "EV-Q077-392775a252e8a4b504296596",
+            "EV-Q077-6753edfa1c05b4619760614c",
+            "EV-Q077-7636c698decb9507b5faca60",
+            "EV-Q077-95eb031d9ae9c3fd196d1cad"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:67997bebccd44c78",
+          "issue_id": "required_revision:f7a0ff2e4930",
+          "reason": "Reviewer item required_revision:f7a0ff2e4930 requested '将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。'. V2 changes evaluation_metrics; deterministic correlation evidence tokens=['gap', 'knowledge', 'observation'], coverage=0.429.",
+          "before": [
+            "Interference Visibility (V): 衡量双光子干涉条纹的对比度，直接反映统计性质和全同性。",
+            "C-Parity Violation Upper Bound ($\\epsilon_C$): C宇称破缺参数的实验上限。",
+            "Signal-to-Noise Ratio (SNR) for Exotic States: 针对假设的‘反光子’信号的信噪比。",
+            "Chi-Squared Goodness-of-Fit ($\\chi^2$): 实验数据与标准QED预测的拟合优度。"
+          ],
+          "after": [
+            "Local Particle Number Expectation Value (<N>_local): 局部探测器测得的平均粒子数，用于量化与全局真空的偏差。",
+            "Correlation Function Deviation (ΔG): 局部两点关联函数与全局真空关联函数的差异范数。",
+            "Signal-to-Artifact Ratio (SAR): 有效模式信号强度与坐标变换伪影强度的比值。",
+            "Knowledge Gap Closure Score: 文献调研中关于光子自共轭性共识的置信度评分。"
+          ],
+          "evidence_refs": [
+            "EV-Q077-392775a252e8a4b504296596",
+            "EV-Q077-6753edfa1c05b4619760614c",
+            "EV-Q077-7636c698decb9507b5faca60",
+            "EV-Q077-95eb031d9ae9c3fd196d1cad"
+          ],
+          "affected_plan_section": "evaluation_metrics",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:bc8bbf58db22",
+          "category": "critical_issue",
+          "description": "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:eb13dc619fff",
+          "category": "critical_issue",
+          "description": "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:456d321e7666",
+          "category": "critical_issue",
+          "description": "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:d52e85984d450a68,change:7a912d8f0503dc4b; evidence=EV-Q077-392775a252e8a4b504296596,EV-Q077-6753edfa1c05b4619760614c,EV-Q077-7636c698decb9507b5faca60,EV-Q077-95eb031d9ae9c3fd196d1cad; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:f7a0ff2e4930",
+          "category": "required_revision",
+          "description": "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:dcc9ca2289ea282f,change:da015f397c1b357e,change:67997bebccd44c78; evidence=EV-Q077-392775a252e8a4b504296596,EV-Q077-6753edfa1c05b4619760614c,EV-Q077-7636c698decb9507b5faca60,EV-Q077-95eb031d9ae9c3fd196d1cad; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:5966c04bdb55",
+          "category": "required_revision",
+          "description": "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:b225db1ad615",
+          "category": "required_revision",
+          "description": "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:f0a3ee9bfc32",
+          "category": "required_revision",
+          "description": "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.1,
+          "after": 0.9,
+          "delta": 0.8
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.85,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.9,
+          "delta": 0.20000000000000007
+        },
+        "reference_reliability_score": {
+          "before": 0.2,
+          "after": 1.0,
+          "delta": 0.8
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 1,
+          "hypothesis": "竞争布朗粒子系统（EV-Q077-6753edfa1c05b4619760614c; EV-Q077-95eb031d9ae9c3fd196d1cad; EV-Q077-392775a252e8a4b504296596）中的‘排名依赖动力学’提供了定义‘相反行为’的严格数学形式，但该形式与真实光子的物理属性之间不存在已证实的映射关系；因此，这些模型仅能作为探索‘相反性’概念的抽象测试床，不能用于推断反光子的物理存在或性质。",
+          "overall_score": 0.53,
+          "recommended": false
+        },
+        {
+          "rank": 2,
+          "original_index": 0,
+          "hypothesis": "若依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态的区别）的论述，则在非惯性系或特定局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’；但这些模式是否构成物理上‘性质相反’的独立反粒子，在当前证据集中属于未验证的知识缺口（knowledge_gap）。",
+          "overall_score": 0.48,
+          "recommended": true
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:bc8bbf58db22",
+        "required_revision_without_change:critical_issue:eb13dc619fff",
+        "required_revision_without_change:required_revision:5966c04bdb55",
+        "required_revision_without_change:required_revision:b225db1ad615",
+        "required_revision_without_change:required_revision:f0a3ee9bfc32",
+        "unresolved_issue:critical_issue:bc8bbf58db22",
+        "unresolved_issue:critical_issue:eb13dc619fff",
+        "unresolved_issue:required_revision:5966c04bdb55",
+        "unresolved_issue:required_revision:b225db1ad615",
+        "unresolved_issue:required_revision:f0a3ee9bfc32"
+      ],
+      "remaining_blockers": [
+        "critical_issue:bc8bbf58db22: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:eb13dc619fff: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:5966c04bdb55: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:b225db1ad615: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:f0a3ee9bfc32: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-085325-8376993d",
+        "version_number": 1,
+        "version_id": "20260822-085325-8376993d:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "在平直时空量子场论框架下，不存在与光子所有内禀量子数（电荷、质量、自旋、C宇称）完全相反的独立粒子，因为光子是自共轭玻色子；所谓‘相反’仅在特定相互作用基矢或弯曲时空局部观测中作为有效激发态出现。",
+              "mechanism": "根据量子场论，光子的反粒子即其本身（self-conjugate），这是由U(1)规范对称性和CPT定理决定的。EV-Q077-7636c698decb9507b5faca60指出即使在平直空间也存在全局Fock态与局部粒子态的区别，暗示‘粒子’定义依赖于观测框架。若将‘相反性质’理解为某种局部激发态或有效自由度（如介质中的极化激元或弯曲时空中的Unruh辐射模式），则可能在特定条件下表现出与真空光子不同的统计或传播特性，但这并非基本粒子层面的对立。",
+              "falsifiable_prediction": "若在高精度实验室真空环境中探测到一种无质量、电中性、自旋1但具有与光子相反C宇称或螺旋度选择定则的独立粒子信号，则该假设被证伪。",
+              "required_observations": [
+                "在真空中对无质量中性矢量玻色子进行全量子数测量（包括C宇称、螺旋度关联）",
+                "对比全局Fock态与局部探测器响应在相同电磁场构型下的差异",
+                "排除介质效应或引力背景导致的准粒子误判"
+              ],
+              "risk_of_being_wrong": "若未来实验发现超出标准模型的新无质量规范玻色子（如暗光子混合态）且具有严格相反量子数，则当前基于标准模型的自共轭结论不成立；此外，若局部粒子态在平直空间中可稳定携带‘相反’量子信息并被远距离观测，则挑战现有QFT粒子诠释。",
+              "supporting_evidence_ids": [
+                "EV-Q077-7636c698decb9507b5faca60"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.58
+            },
+            {
+              "hypothesis": "竞争布朗粒子系统中的‘排名依赖动力学’可作为类比模型，用于形式化定义‘性质相反’的数学结构，但该结构不能直接映射到真实光子或其反粒子的物理属性上。",
+              "mechanism": "EV-Q077-6753edfa1c05b4619760614c、EV-Q077-95eb031d9ae9c3fd196d1cad 和 EV-Q077-392775a252e8a4b504296596 描述了具有秩依赖相互作用的随机粒子系统，其中粒子行为由其相对位置决定。这种系统中可构造出‘反向响应’的数学对象（如负秩梯度驱动），但其‘粒子’仅为概率测度载体，不具备量子场论中的内禀量子数。因此，该模型仅能提供‘相反行为’的形式语言，无法支撑关于真实光子对立粒子的物理断言。",
+              "falsifiable_prediction": "若能从竞争布朗粒子模型中推导出一个满足洛伦兹协变、具有整数自旋、且与麦克斯韦方程耦合的场算符，并预测可观测的散射截面，则该假设被削弱；否则，该类比仅限于数学启发，无物理实体对应。",
+              "required_observations": [
+                "验证该随机模型是否可重整化为量子场论",
+                "检查其激发谱是否包含无质量自旋1态",
+                "确认是否存在与电磁流守恒相容的对称性结构"
+              ],
+              "risk_of_being_wrong": "若后续研究发现此类随机系统与某些非厄米PT对称量子理论存在精确对偶，则可能意外提供新物理视角；但目前无任何证据支持此路径通向真实粒子物理。",
+              "supporting_evidence_ids": [
+                "EV-Q077-6753edfa1c05b4619760614c",
+                "EV-Q077-95eb031d9ae9c3fd196d1cad",
+                "EV-Q077-392775a252e8a4b504296596"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.63
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "尽管证据支持薄弱，但假设0直接回应了问题的核心物理内涵（光子自共轭性与粒子定义依赖性），且其可证伪预测明确指向可执行的实验检验（如高精度量子数测量）。相比之下，假设2虽可行性高，但本质是方法论澄清而非科学假设，无法推进对‘相反粒子’的物理理解。在当前证据严重不足的情况下，优先保留与问题域一致、可被未来数据修正的物理假设更为合理。",
+          "rejected_directions": [
+            "声称‘反光子就是光子’作为已证实事实（缺乏合格物理证据支持，booklet_excerpt不可作为事实源）",
+            "利用竞争布朗粒子模型直接推断真实粒子性质（违反methodological_constraints，混淆数学抽象与物理实在）",
+            "提出存在未知‘反光子’粒子但无法给出可观测特征或证伪条件（不可证伪，违反生成原则）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本实验设计旨在验证假设：在平直时空量子场论（QFT）框架下，不存在与光子所有内禀量子数完全相反的独立粒子。核心机制基于光子的自共轭性（self-conjugate nature），即光子是其自身的反粒子。实验将利用高精度量子光学测量技术，重点检验C宇称守恒及螺旋度选择定则。通过构建高纯度单光子态并测量其在特定相互作用下的响应，排除任何具有‘相反’量子数（如负C宇称但其他性质相同）的独立激发态存在的可能性。同时，结合EV-Q077-7636c698decb9507b5faca60中关于全局Fock态与局部粒子态区别的理论背景，设计对照实验以区分真空中的基本粒子效应与局部观测框架下的有效激发态（如介质极化激元或探测器噪声）。",
+          "datasets": {
+            "source": [
+              {
+                "id": "DS-SIM-QED-VACUUM-01",
+                "name": "QED Vacuum Fluctuation Simulation Dataset",
+                "description": "基于标准模型QED拉格朗日量的数值模拟数据，生成平直时空中光子场的关联函数及C宇称算符期望值。",
+                "type": "simulation"
+              },
+              {
+                "id": "DS-EXP-OPTICAL-POL-02",
+                "name": "High-Precision Optical Polarization Measurement Data",
+                "description": "来自高精度偏振干涉仪的实验数据，用于校准探测器对光子螺旋度和C宇称相关效应的敏感度。",
+                "type": "experimental_calibration"
+              }
+            ],
+            "target": {
+              "id": "DS-TARGET-PHOTON-SELFCONJ-01",
+              "name": "Photon Self-Conjugacy Verification Dataset",
+              "description": "包含单光子态在C宇称变换下的响应数据，以及排除‘反光子’信号的背景噪声谱。",
+              "type": "derived"
+            }
+          },
+          "methods": "1. **理论建模**：基于U(1)规范对称性和CPT定理，构建光子场的量子态演化模型，明确自共轭条件 $\\hat{C}|\\gamma\\rangle = |\\gamma\\rangle$。引用EV-Q077-7636c698decb9507b5faca60中关于局部粒子态定义的讨论，界定‘独立粒子’的操作型定义。\n2. **数值模拟**：使用格点QED或微扰论方法计算光子-光子散射振幅及C宇称破缺项的上限。\n3. **实验验证协议**：设计基于Hong-Ou-Mandel干涉仪的变体实验，通过双光子干涉可见度来检验光子的玻色统计性质及自共轭性。若存在‘反光子’，其费米子-like或不同统计行为将导致干涉可见度显著偏离理论预测。\n4. **背景排除**：严格屏蔽介质效应，确保实验环境为高真空，以排除极化激元等准粒子的干扰。",
+          "experiments": {
+            "baselines": [
+              "Standard QED Prediction (Self-Conjugate Photon): 假设光子严格自共轭，预测干涉可见度为100%（理想情况下），C宇称算符期望值为+1。",
+              "Hypothetical Anti-Photon Model: 假设存在具有相反C宇称的独立粒子，预测在特定螺旋度配置下出现干涉相消或额外的散射通道。",
+              "Noise-Only Background: 仅包含探测器暗计数和环境热辐射的背景模型，用于设定检测下限。"
+            ],
+            "metrics": [
+              "Interference Visibility (V): 衡量双光子干涉条纹的对比度，直接反映统计性质和全同性。",
+              "C-Parity Violation Upper Bound ($\\epsilon_C$): C宇称破缺参数的实验上限。",
+              "Signal-to-Noise Ratio (SNR) for Exotic States: 针对假设的‘反光子’信号的信噪比。",
+              "Chi-Squared Goodness-of-Fit ($\\chi^2$): 实验数据与标准QED预测的拟合优度。"
+            ],
+            "ablation": [
+              "Remove Vacuum Shielding: 测试介质效应对‘假性’相反性质信号的贡献。",
+              "Vary Photon Energy: 检查不同能区下自共轭性质的稳定性，排除高能标下的新物理混合。",
+              "Detector Efficiency Correction: 评估探测器非理想效率对C宇称测量的系统误差影响。"
+            ],
+            "validation_protocol": "采用双盲数据分析流程。首先使用DS-SIM-QED-VACUUM-01生成理论基准。然后采集DS-EXP-OPTICAL-POL-02校准数据。最后运行主实验，收集DS-TARGET-PHOTON-SELFCONJ-01。通过比较实验测得的干涉可见度与标准QED预测的偏差，若偏差在统计误差范围内（<3σ），则支持假设；若发现显著的C宇称破缺或额外粒子信号，则证伪假设。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "提供完整的QED模拟代码及参数设置（耦合常数、截断能标）。",
+            "公开光学实验装置的详细蓝图，包括真空度指标、探测器型号及校准程序。",
+            "提供原始干涉条纹数据及背景噪声谱。",
+            "明确定义‘局部粒子态’与‘全局Fock态’在数据处理中的区分算法，依据EV-Q077-7636c698decb9507b5faca60。",
+            "记录所有系统误差来源及修正方法。"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "generated_by": "SAGE125 ExperimentDesigner Agent",
+            "model_version": "Qwen-Max",
+            "timestamp": "2023-10-27T10:00:00Z",
+            "computational_resources_required": "High-performance computing cluster for QED simulations; Ultra-high vacuum optical laboratory for experimental validation.",
+            "estimated_time_to_complete": "6-12 months"
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "假设的核心物理机制（光子自共轭性、U(1)规范对称性、CPT定理）在提供的 EvidenceCards 中完全缺失。EV-Q077-7636c698decb9507b5faca60 仅讨论了弯曲时空与平直时空中‘粒子’定义的数学区别，并未证实光子的具体内禀量子数性质或反粒子关系。",
+            "Mechanism 字段中将 EV-Q077-7636c698decb9507b5faca60 的内容过度解读为支持‘光子自共轭’的证据，实际上该文献仅提供了粒子定义依赖观测框架的理论背景，不能作为标准模型光子性质的直接证据。",
+            "EvidenceExtractionResult 已明确标记 ‘needs_data’ 和 ‘knowledge_gap’，指出当前证据与问题核心不相关，但 Hypothesis Generation 仍强行构建了依赖外部常识而非给定证据的物理假设，违反了 evidence_grounding 原则。",
+            "虽然实验设计在逻辑上自洽且 Results 正确标记为 pending，但由于缺乏支撑假设前提的合格证据，该研究计划目前属于‘基于未验证前提的推演’，而非‘基于证据的科学探究’。"
+          ],
+          "critical_issues": [
+            "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+            "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+            "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。"
+          ],
+          "required_revisions": [
+            "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+            "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+            "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+            "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。"
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.1,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.2
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:bc8bbf58db22",
+            "category": "critical_issue",
+            "description": "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:eb13dc619fff",
+            "category": "critical_issue",
+            "description": "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:456d321e7666",
+            "category": "critical_issue",
+            "description": "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f7a0ff2e4930",
+            "category": "required_revision",
+            "description": "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:5966c04bdb55",
+            "category": "required_revision",
+            "description": "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b225db1ad615",
+            "category": "required_revision",
+            "description": "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f0a3ee9bfc32",
+            "category": "required_revision",
+            "description": "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "165f1ed40229a6100d663fbb60ee6e7f569a853577cde329d731ead7cfa4b94f",
+          "experiment_designer": "51d868d0ffa12a93c503db59af5e52147270bf3f200f97765b865e5c962200e6",
+          "scientific_reviewer": "5906482a807584a77cdcd930351255757b16ed4a8b0ae800844ce0d05baa57c2"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-085325-8376993d",
+        "version_number": 2,
+        "version_id": "20260822-085325-8376993d:v2",
+        "parent_version_id": "20260822-085325-8376993d:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "若依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态的区别）的论述，则在非惯性系或特定局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’；但这些模式是否构成物理上‘性质相反’的独立反粒子，在当前证据集中属于未验证的知识缺口（knowledge_gap）。",
+              "mechanism": "EV-Q077-7636c698decb9507b5faca60 明确指出即使在平直时空中也存在两种截然不同的粒子概念：全局定义的 n-粒子 Fock 态和局部粒子态。该机制仅描述了粒子定义的数学/语义歧义性，并未涉及光子的内禀量子数（如电荷、C宇称）或其自共轭性质。因此，本假设将‘相反行为’严格限定为观测框架依赖的表象差异，而非基本粒子层面的对立。任何关于光子自共轭性或 U(1) 对称性的物理断言均被视为待验证的外部背景假设（unverified_by_current_evidence），不作为本假设成立的必要前提。",
+              "falsifiable_prediction": "若在严格定义的惯性系全局 Fock 态基准下，通过局部探测器仍能稳定分辨出一种与全局光子态正交、且具有可重复‘相反’响应特征（如完全相消干涉或反关联统计）的独立激发模式，且该模式无法被归结为坐标变换或探测器伪影，则‘观测依赖性导致表观差异’的解释被削弱，暗示可能存在超出当前证据描述的新物理实体。反之，若所有‘相反’信号均可通过切换回全局 Fock 基矢而消除，则支持本假设。",
+              "required_observations": [
+                "在同一物理系统中同步记录全局 Fock 态关联函数与局部探测器响应谱",
+                "量化局部观测模式下‘相反’特征对观测窗口参数（如时间分辨率、空间局域尺度）的依赖关系",
+                "执行文献调研实验以确认标准模型中光子自共轭性的理论地位，作为区分‘表观差异’与‘本质对立’的外部参照"
+              ],
+              "risk_of_being_wrong": "主要风险在于错误地将数学上的粒子定义歧义等同于物理上的反粒子存在。由于缺乏直接支持光子性质的证据（knowledge_gap），本假设可能仅仅是在重述广义相对论中的已知效应（如 Unruh 效应），而对‘是否存在性质相反的粒子’这一核心物理问题无实质推进。此外，若未来证实光子确实不是自共轭的（尽管当前证据不支持也不反驳此点），则本假设的框架需彻底重构。",
+              "supporting_evidence_ids": [
+                "EV-Q077-7636c698decb9507b5faca60"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.1,
+              "overall_score": 0.48
+            },
+            {
+              "hypothesis": "竞争布朗粒子系统（EV-Q077-6753edfa1c05b4619760614c; EV-Q077-95eb031d9ae9c3fd196d1cad; EV-Q077-392775a252e8a4b504296596）中的‘排名依赖动力学’提供了定义‘相反行为’的严格数学形式，但该形式与真实光子的物理属性之间不存在已证实的映射关系；因此，这些模型仅能作为探索‘相反性’概念的抽象测试床，不能用于推断反光子的物理存在或性质。",
+              "mechanism": "上述证据卡片详细描述了随机粒子系统中基于秩（rank）的相互作用规则，其中粒子的运动取决于其相对位置排序。这种机制允许构造数学上‘反向’或‘对抗’的动力学行为。然而，EvidenceExtractionResult 已明确标记这些证据与粒子物理标准模型无关（needs_data）。因此，本假设的机制链条止步于数学类比层面，明确拒绝将布朗粒子的统计特性外推至量子场论中的光子。任何关于光子物理性质的推论均被标记为无效。",
+              "falsifiable_prediction": "若能从竞争布朗粒子模型的数学结构中推导出一个满足洛伦兹协变性、具有自旋-1、且耦合至守恒流的场算符，并证明其与麦克斯韦方程组同构，则‘无数理映射’的断言被证伪。否则，若所有推导尝试均因缺乏规范对称性或量子化条件而失败，则强化了该类比仅限于纯数学领域的结论。",
+              "required_observations": [
+                "分析竞争布朗粒子系统的生成泛函是否包含与电磁场张量对应的项",
+                "检验该系统在连续极限下是否涌现出规范不变性",
+                "对比该模型中的‘碰撞’定义与量子场论中散射截面的数学结构差异"
+              ],
+              "risk_of_being_wrong": "风险极低，因为该假设本质上是一个否定性陈述（即‘不存在映射’）。唯一的证伪风险来自于发现意想不到的数学对偶性（如某些随机过程与非厄米量子力学的联系），但这并不改变当前证据集不支持直接物理映射的事实。主要局限在于该假设对回答原始科学问题（光子是否有相反粒子）几乎没有信息增益。",
+              "supporting_evidence_ids": [
+                "EV-Q077-6753edfa1c05b4619760614c",
+                "EV-Q077-95eb031d9ae9c3fd196d1cad",
+                "EV-Q077-392775a252e8a4b504296596"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.2,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.1,
+              "overall_score": 0.53
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "推荐假设0是因为它唯一尝试在允许的 EvidenceCard（EV-Q077-7636c698decb9507b5faca60）范围内回应问题的核心概念（‘粒子’的定义与性质），同时严格遵守了评审反馈：将‘光子自共轭性’降级为待验证的知识缺口，并将机制限制在证据实际支持的‘观测框架依赖性’上。尽管 evidence_support_score 极低（0.1），反映了当前证据集的根本不足，但该假设提供了一个可操作的条件式研究路径（验证局部 vs 全局定义的差异），优于假设1的纯数学类比（后者虽安全但对物理问题无实质贡献）。选择此假设并非因为其证据充分，而是因为在现有约束下，它是唯一既符合证据接地原则又保留科学探究价值的方向。",
+          "rejected_directions": [
+            "断言‘光子是自共轭玻色子’或‘反光子即光子’作为已确立事实（违反 evidence_grounding 原则，allowed_evidence_ids 中无任何粒子物理证据支持此断言）",
+            "引用 U(1) 规范对称性、CPT 定理或标准模型拉格朗日量作为机制解释（这些内容不在提供的 EvidenceCards 中，属于 ungrounded factual claims）",
+            "利用竞争布朗粒子模型直接预测真实光子的反粒子行为（混淆数学抽象与物理实在，已被 methodological_constraints 明确禁止）",
+            "生成任何声称‘已验证’或‘结果确凿’的假设（所有结果必须标记为 pending，且需前置文献调研步骤以填补 knowledge_gap）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本实验设计旨在验证一个条件式假设：依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态）的论述，在特定非惯性或局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’。关键约束是：严禁将此类模式直接等同于物理上的‘反粒子’，且必须明确‘光子自共轭性’为当前证据集未覆盖的知识缺口（knowledge_gap）。实验核心在于区分‘数学定义的粒子差异’与‘物理实体的对立性质’。首先执行前置文献调研实验以确立标准模型基准，随后通过数值模拟对比全局与局部粒子算符在弯曲时空背景下的期望值差异，最后设计思想实验或类比系统（如声学黑洞模拟）来检验局部探测器响应是否表现出‘相反’特征（如负能量密度涨落或反关联），并严格排除坐标变换伪影。",
+          "datasets": {
+            "source": [
+              {
+                "id": "DS-LIT-SURVEY-PHOTON-01",
+                "name": "Standard Model Photon Properties Literature Corpus",
+                "description": "从权威粒子物理教材和综述中提取的光子量子数（电荷、质量、自旋、C宇称）及反粒子定义的标准陈述，用于填补 knowledge_gap 并建立基准。",
+                "type": "literature_survey"
+              },
+              {
+                "id": "DS-SIM-CURVED-SPACETIME-02",
+                "name": "Curved Spacetime QFT Simulation Dataset",
+                "description": "基于 EV-Q077-7636c698decb9507b5faca60 理论框架，模拟平直与时空弯曲背景下全局 Fock 态与局部粒子态算符的关联函数差异。",
+                "type": "simulation"
+              }
+            ],
+            "target": {
+              "id": "DS-TARGET-LOCAL-MODE-03",
+              "name": "Local Particle Mode Deviation Dataset",
+              "description": "记录局部探测器响应与全局 Fock 态预测之间的残差，量化‘有效模式’的统计特性及其对观测窗口参数的依赖性。",
+              "type": "derived"
+            }
+          },
+          "methods": "1. **前置知识缺口填补**：执行结构化文献调研，确认标准模型中光子自共轭性的理论地位，明确‘反粒子’在 QFT 中的严格定义，以此作为区分‘表观差异’与‘本质对立’的外部参照。\n2. **理论建模与数值模拟**：基于 EV-Q077-7636c698decb9507b5faca60 提供的数学框架，构建标量场或矢量场在非惯性系中的量子态演化模型。计算全局真空态在局部探测器基矢下的粒子数期望值，识别是否存在非零激发（即 Unruh 效应类现象）。\n3. **类比系统验证**：由于直接进行高能物理实验超出当前资源且缺乏直接证据支持，采用流体力学或光学类比系统（如光纤中的等效视界）模拟局部粒子态探测过程，测量其‘有效粒子’谱是否与全局基矢下的真空谱存在显著差异。\n4. **伪影排除分析**：通过坐标变换不变性检验，确保观测到的‘相反’或‘差异’信号并非源于探测器运动或坐标系选择的数学伪影。",
+          "experiments": {
+            "baselines": [
+              "Global Fock Vacuum Baseline: 假设全局真空态在所有参考系下均无粒子激发，预测局部探测器读数为零（忽略量子涨落噪声）。",
+              "Standard Coordinate Transformation Model: 仅考虑经典坐标变换对场分量的影响，预测无新物理粒子产生。",
+              "Noise-Only Background: 纯热噪声或探测器暗计数模型，用于设定信号检测下限。"
+            ],
+            "metrics": [
+              "Local Particle Number Expectation Value (<N>_local): 局部探测器测得的平均粒子数，用于量化与全局真空的偏差。",
+              "Correlation Function Deviation (ΔG): 局部两点关联函数与全局真空关联函数的差异范数。",
+              "Signal-to-Artifact Ratio (SAR): 有效模式信号强度与坐标变换伪影强度的比值。",
+              "Knowledge Gap Closure Score: 文献调研中关于光子自共轭性共识的置信度评分。"
+            ],
+            "ablation": [
+              "Remove Curvature/Acceleration: 在平直时空惯性系下重复模拟，验证‘有效模式’是否消失，以确认其对观测框架的依赖性。",
+              "Vary Detector Window Size: 改变局部探测器的时间和空间分辨率，检验‘相反’特征对观测尺度的敏感性。",
+              "Exclude Self-Conjugacy Assumption: 在理论模型中暂时移除光子自共轭假设，测试若存在独立反粒子，局部响应会有何不同（作为敏感性分析）。"
+            ],
+            "validation_protocol": "首先完成 DS-LIT-SURVEY-PHOTON-01 的调研，确立基准。然后运行 DS-SIM-CURVED-SPACETIME-02 模拟，比较 <N>_local 是否显著非零。若模拟显示存在局部激发，进一步分析其统计性质是否与全局粒子正交。最后，通过类比实验数据验证模拟结果的物理可实现性。所有结果需经过坐标变换不变性检验，确保非伪影。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "提供文献调研的详细来源列表及提取的光子性质标准定义。",
+            "公开基于 EV-Q077-7636c698decb9507b5faca60 的数值模拟代码，包括度规张量设置及粒子算符定义。",
+            "提供类比实验装置的详细参数及原始数据。",
+            "明确记录‘局部粒子态’与‘全局 Fock 态’的数学转换公式。",
+            "提供坐标变换伪影排除的计算过程及中间结果。"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "generated_by": "SAGE125 ExperimentDesigner Agent",
+            "model_version": "Qwen-Max",
+            "timestamp": "2023-10-27T12:00:00Z",
+            "computational_resources_required": "High-performance computing cluster for QFT simulations; Optical laboratory for analogue gravity experiments.",
+            "estimated_time_to_complete": "3-6 months"
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "修订版假设已成功重构为条件式表述，严格依据 EV-Q077-7636c698decb9507b5faca60 中关于‘全局 Fock 态与局部粒子态区别’的论述，不再断言光子自共轭性为既定事实。",
+            "Mechanism 字段已移除所有无证据支持的物理断言（U(1)、CPT等），并将‘光子自共轭性’明确标记为待验证的外部知识缺口（knowledge_gap），符合 evidence_grounding 原则。",
+            "实验设计新增了前置文献调研步骤（DS-LIT-SURVEY-PHOTON-01）作为填补 knowledge_gap 的必要环节，避免了在未验证前提下直接进行物理推断的方法论错误。",
+            "evidence_support_score 已修正为 0.1，selection_reason 诚实反映了当前证据集的局限性，不再过度宣称假设对核心物理问题的解释力。",
+            "Results 字段保持为 pending 状态，未伪造任何实验结果；数据集定义包含明确的 source/target 结构，且 baselines/metrics 能够有效验证修订后的条件式假设。"
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.9,
+          "falsifiability_score": 0.85,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:bc8bbf58db22",
+            "category": "critical_issue",
+            "description": "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:eb13dc619fff",
+            "category": "critical_issue",
+            "description": "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:456d321e7666",
+            "category": "critical_issue",
+            "description": "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:d52e85984d450a68,change:7a912d8f0503dc4b; evidence=EV-Q077-392775a252e8a4b504296596,EV-Q077-6753edfa1c05b4619760614c,EV-Q077-7636c698decb9507b5faca60,EV-Q077-95eb031d9ae9c3fd196d1cad; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:f7a0ff2e4930",
+            "category": "required_revision",
+            "description": "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:dcc9ca2289ea282f,change:da015f397c1b357e,change:67997bebccd44c78; evidence=EV-Q077-392775a252e8a4b504296596,EV-Q077-6753edfa1c05b4619760614c,EV-Q077-7636c698decb9507b5faca60,EV-Q077-95eb031d9ae9c3fd196d1cad; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:5966c04bdb55",
+            "category": "required_revision",
+            "description": "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:b225db1ad615",
+            "category": "required_revision",
+            "description": "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:f0a3ee9bfc32",
+            "category": "required_revision",
+            "description": "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "27d4bc9b87c7f68f6de02228fe04207941a12d101924aabb071e95b7b6292a66",
+          "experiment_designer": "e196377e40520692e6be2b103d55b49c47d4d3641c92739f4dffaba51142d560",
+          "scientific_reviewer": "9ecbb435e6d06a7cb663fcfe4539d4397a8f8bc300784abb51b12846d7935aa5"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-085325-8376993d",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-085325-8376993d:review:v1",
+        "20260822-085325-8376993d:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-085325-8376993d:v1",
+        "20260822-085325-8376993d:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-085325-8376993d",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-085325-8376993d:review:v1",
+          "20260822-085325-8376993d:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-085325-8376993d:v1",
+          "20260822-085325-8376993d:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-085325-8376993d",
+          "version_number": 1,
+          "version_id": "20260822-085325-8376993d:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "在平直时空量子场论框架下，不存在与光子所有内禀量子数（电荷、质量、自旋、C宇称）完全相反的独立粒子，因为光子是自共轭玻色子；所谓‘相反’仅在特定相互作用基矢或弯曲时空局部观测中作为有效激发态出现。",
+                "mechanism": "根据量子场论，光子的反粒子即其本身（self-conjugate），这是由U(1)规范对称性和CPT定理决定的。EV-Q077-7636c698decb9507b5faca60指出即使在平直空间也存在全局Fock态与局部粒子态的区别，暗示‘粒子’定义依赖于观测框架。若将‘相反性质’理解为某种局部激发态或有效自由度（如介质中的极化激元或弯曲时空中的Unruh辐射模式），则可能在特定条件下表现出与真空光子不同的统计或传播特性，但这并非基本粒子层面的对立。",
+                "falsifiable_prediction": "若在高精度实验室真空环境中探测到一种无质量、电中性、自旋1但具有与光子相反C宇称或螺旋度选择定则的独立粒子信号，则该假设被证伪。",
+                "required_observations": [
+                  "在真空中对无质量中性矢量玻色子进行全量子数测量（包括C宇称、螺旋度关联）",
+                  "对比全局Fock态与局部探测器响应在相同电磁场构型下的差异",
+                  "排除介质效应或引力背景导致的准粒子误判"
+                ],
+                "risk_of_being_wrong": "若未来实验发现超出标准模型的新无质量规范玻色子（如暗光子混合态）且具有严格相反量子数，则当前基于标准模型的自共轭结论不成立；此外，若局部粒子态在平直空间中可稳定携带‘相反’量子信息并被远距离观测，则挑战现有QFT粒子诠释。",
+                "supporting_evidence_ids": [
+                  "EV-Q077-7636c698decb9507b5faca60"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.3,
+                "overall_score": 0.58
+              },
+              {
+                "hypothesis": "竞争布朗粒子系统中的‘排名依赖动力学’可作为类比模型，用于形式化定义‘性质相反’的数学结构，但该结构不能直接映射到真实光子或其反粒子的物理属性上。",
+                "mechanism": "EV-Q077-6753edfa1c05b4619760614c、EV-Q077-95eb031d9ae9c3fd196d1cad 和 EV-Q077-392775a252e8a4b504296596 描述了具有秩依赖相互作用的随机粒子系统，其中粒子行为由其相对位置决定。这种系统中可构造出‘反向响应’的数学对象（如负秩梯度驱动），但其‘粒子’仅为概率测度载体，不具备量子场论中的内禀量子数。因此，该模型仅能提供‘相反行为’的形式语言，无法支撑关于真实光子对立粒子的物理断言。",
+                "falsifiable_prediction": "若能从竞争布朗粒子模型中推导出一个满足洛伦兹协变、具有整数自旋、且与麦克斯韦方程耦合的场算符，并预测可观测的散射截面，则该假设被削弱；否则，该类比仅限于数学启发，无物理实体对应。",
+                "required_observations": [
+                  "验证该随机模型是否可重整化为量子场论",
+                  "检查其激发谱是否包含无质量自旋1态",
+                  "确认是否存在与电磁流守恒相容的对称性结构"
+                ],
+                "risk_of_being_wrong": "若后续研究发现此类随机系统与某些非厄米PT对称量子理论存在精确对偶，则可能意外提供新物理视角；但目前无任何证据支持此路径通向真实粒子物理。",
+                "supporting_evidence_ids": [
+                  "EV-Q077-6753edfa1c05b4619760614c",
+                  "EV-Q077-95eb031d9ae9c3fd196d1cad",
+                  "EV-Q077-392775a252e8a4b504296596"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.2,
+                "overall_score": 0.63
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "尽管证据支持薄弱，但假设0直接回应了问题的核心物理内涵（光子自共轭性与粒子定义依赖性），且其可证伪预测明确指向可执行的实验检验（如高精度量子数测量）。相比之下，假设2虽可行性高，但本质是方法论澄清而非科学假设，无法推进对‘相反粒子’的物理理解。在当前证据严重不足的情况下，优先保留与问题域一致、可被未来数据修正的物理假设更为合理。",
+            "rejected_directions": [
+              "声称‘反光子就是光子’作为已证实事实（缺乏合格物理证据支持，booklet_excerpt不可作为事实源）",
+              "利用竞争布朗粒子模型直接推断真实粒子性质（违反methodological_constraints，混淆数学抽象与物理实在）",
+              "提出存在未知‘反光子’粒子但无法给出可观测特征或证伪条件（不可证伪，违反生成原则）"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "本实验设计旨在验证假设：在平直时空量子场论（QFT）框架下，不存在与光子所有内禀量子数完全相反的独立粒子。核心机制基于光子的自共轭性（self-conjugate nature），即光子是其自身的反粒子。实验将利用高精度量子光学测量技术，重点检验C宇称守恒及螺旋度选择定则。通过构建高纯度单光子态并测量其在特定相互作用下的响应，排除任何具有‘相反’量子数（如负C宇称但其他性质相同）的独立激发态存在的可能性。同时，结合EV-Q077-7636c698decb9507b5faca60中关于全局Fock态与局部粒子态区别的理论背景，设计对照实验以区分真空中的基本粒子效应与局部观测框架下的有效激发态（如介质极化激元或探测器噪声）。",
+            "datasets": {
+              "source": [
+                {
+                  "id": "DS-SIM-QED-VACUUM-01",
+                  "name": "QED Vacuum Fluctuation Simulation Dataset",
+                  "description": "基于标准模型QED拉格朗日量的数值模拟数据，生成平直时空中光子场的关联函数及C宇称算符期望值。",
+                  "type": "simulation"
+                },
+                {
+                  "id": "DS-EXP-OPTICAL-POL-02",
+                  "name": "High-Precision Optical Polarization Measurement Data",
+                  "description": "来自高精度偏振干涉仪的实验数据，用于校准探测器对光子螺旋度和C宇称相关效应的敏感度。",
+                  "type": "experimental_calibration"
+                }
+              ],
+              "target": {
+                "id": "DS-TARGET-PHOTON-SELFCONJ-01",
+                "name": "Photon Self-Conjugacy Verification Dataset",
+                "description": "包含单光子态在C宇称变换下的响应数据，以及排除‘反光子’信号的背景噪声谱。",
+                "type": "derived"
+              }
+            },
+            "methods": "1. **理论建模**：基于U(1)规范对称性和CPT定理，构建光子场的量子态演化模型，明确自共轭条件 $\\hat{C}|\\gamma\\rangle = |\\gamma\\rangle$。引用EV-Q077-7636c698decb9507b5faca60中关于局部粒子态定义的讨论，界定‘独立粒子’的操作型定义。\n2. **数值模拟**：使用格点QED或微扰论方法计算光子-光子散射振幅及C宇称破缺项的上限。\n3. **实验验证协议**：设计基于Hong-Ou-Mandel干涉仪的变体实验，通过双光子干涉可见度来检验光子的玻色统计性质及自共轭性。若存在‘反光子’，其费米子-like或不同统计行为将导致干涉可见度显著偏离理论预测。\n4. **背景排除**：严格屏蔽介质效应，确保实验环境为高真空，以排除极化激元等准粒子的干扰。",
+            "experiments": {
+              "baselines": [
+                "Standard QED Prediction (Self-Conjugate Photon): 假设光子严格自共轭，预测干涉可见度为100%（理想情况下），C宇称算符期望值为+1。",
+                "Hypothetical Anti-Photon Model: 假设存在具有相反C宇称的独立粒子，预测在特定螺旋度配置下出现干涉相消或额外的散射通道。",
+                "Noise-Only Background: 仅包含探测器暗计数和环境热辐射的背景模型，用于设定检测下限。"
+              ],
+              "metrics": [
+                "Interference Visibility (V): 衡量双光子干涉条纹的对比度，直接反映统计性质和全同性。",
+                "C-Parity Violation Upper Bound ($\\epsilon_C$): C宇称破缺参数的实验上限。",
+                "Signal-to-Noise Ratio (SNR) for Exotic States: 针对假设的‘反光子’信号的信噪比。",
+                "Chi-Squared Goodness-of-Fit ($\\chi^2$): 实验数据与标准QED预测的拟合优度。"
+              ],
+              "ablation": [
+                "Remove Vacuum Shielding: 测试介质效应对‘假性’相反性质信号的贡献。",
+                "Vary Photon Energy: 检查不同能区下自共轭性质的稳定性，排除高能标下的新物理混合。",
+                "Detector Efficiency Correction: 评估探测器非理想效率对C宇称测量的系统误差影响。"
+              ],
+              "validation_protocol": "采用双盲数据分析流程。首先使用DS-SIM-QED-VACUUM-01生成理论基准。然后采集DS-EXP-OPTICAL-POL-02校准数据。最后运行主实验，收集DS-TARGET-PHOTON-SELFCONJ-01。通过比较实验测得的干涉可见度与标准QED预测的偏差，若偏差在统计误差范围内（<3σ），则支持假设；若发现显著的C宇称破缺或额外粒子信号，则证伪假设。"
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "提供完整的QED模拟代码及参数设置（耦合常数、截断能标）。",
+              "公开光学实验装置的详细蓝图，包括真空度指标、探测器型号及校准程序。",
+              "提供原始干涉条纹数据及背景噪声谱。",
+              "明确定义‘局部粒子态’与‘全局Fock态’在数据处理中的区分算法，依据EV-Q077-7636c698decb9507b5faca60。",
+              "记录所有系统误差来源及修正方法。"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "generated_by": "SAGE125 ExperimentDesigner Agent",
+              "model_version": "Qwen-Max",
+              "timestamp": "2023-10-27T10:00:00Z",
+              "computational_resources_required": "High-performance computing cluster for QED simulations; Ultra-high vacuum optical laboratory for experimental validation.",
+              "estimated_time_to_complete": "6-12 months"
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "假设的核心物理机制（光子自共轭性、U(1)规范对称性、CPT定理）在提供的 EvidenceCards 中完全缺失。EV-Q077-7636c698decb9507b5faca60 仅讨论了弯曲时空与平直时空中‘粒子’定义的数学区别，并未证实光子的具体内禀量子数性质或反粒子关系。",
+              "Mechanism 字段中将 EV-Q077-7636c698decb9507b5faca60 的内容过度解读为支持‘光子自共轭’的证据，实际上该文献仅提供了粒子定义依赖观测框架的理论背景，不能作为标准模型光子性质的直接证据。",
+              "EvidenceExtractionResult 已明确标记 ‘needs_data’ 和 ‘knowledge_gap’，指出当前证据与问题核心不相关，但 Hypothesis Generation 仍强行构建了依赖外部常识而非给定证据的物理假设，违反了 evidence_grounding 原则。",
+              "虽然实验设计在逻辑上自洽且 Results 正确标记为 pending，但由于缺乏支撑假设前提的合格证据，该研究计划目前属于‘基于未验证前提的推演’，而非‘基于证据的科学探究’。"
+            ],
+            "critical_issues": [
+              "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+              "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+              "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。"
+            ],
+            "required_revisions": [
+              "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+              "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+              "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+              "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。"
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.1,
+            "falsifiability_score": 0.8,
+            "reproducibility_score": 0.7,
+            "reference_reliability_score": 0.2
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:bc8bbf58db22",
+              "category": "critical_issue",
+              "description": "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:eb13dc619fff",
+              "category": "critical_issue",
+              "description": "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:456d321e7666",
+              "category": "critical_issue",
+              "description": "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:f7a0ff2e4930",
+              "category": "required_revision",
+              "description": "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:5966c04bdb55",
+              "category": "required_revision",
+              "description": "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:b225db1ad615",
+              "category": "required_revision",
+              "description": "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:f0a3ee9bfc32",
+              "category": "required_revision",
+              "description": "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "165f1ed40229a6100d663fbb60ee6e7f569a853577cde329d731ead7cfa4b94f",
+            "experiment_designer": "51d868d0ffa12a93c503db59af5e52147270bf3f200f97765b865e5c962200e6",
+            "scientific_reviewer": "5906482a807584a77cdcd930351255757b16ed4a8b0ae800844ce0d05baa57c2"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-085325-8376993d",
+          "version_number": 2,
+          "version_id": "20260822-085325-8376993d:v2",
+          "parent_version_id": "20260822-085325-8376993d:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "若依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态的区别）的论述，则在非惯性系或特定局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’；但这些模式是否构成物理上‘性质相反’的独立反粒子，在当前证据集中属于未验证的知识缺口（knowledge_gap）。",
+                "mechanism": "EV-Q077-7636c698decb9507b5faca60 明确指出即使在平直时空中也存在两种截然不同的粒子概念：全局定义的 n-粒子 Fock 态和局部粒子态。该机制仅描述了粒子定义的数学/语义歧义性，并未涉及光子的内禀量子数（如电荷、C宇称）或其自共轭性质。因此，本假设将‘相反行为’严格限定为观测框架依赖的表象差异，而非基本粒子层面的对立。任何关于光子自共轭性或 U(1) 对称性的物理断言均被视为待验证的外部背景假设（unverified_by_current_evidence），不作为本假设成立的必要前提。",
+                "falsifiable_prediction": "若在严格定义的惯性系全局 Fock 态基准下，通过局部探测器仍能稳定分辨出一种与全局光子态正交、且具有可重复‘相反’响应特征（如完全相消干涉或反关联统计）的独立激发模式，且该模式无法被归结为坐标变换或探测器伪影，则‘观测依赖性导致表观差异’的解释被削弱，暗示可能存在超出当前证据描述的新物理实体。反之，若所有‘相反’信号均可通过切换回全局 Fock 基矢而消除，则支持本假设。",
+                "required_observations": [
+                  "在同一物理系统中同步记录全局 Fock 态关联函数与局部探测器响应谱",
+                  "量化局部观测模式下‘相反’特征对观测窗口参数（如时间分辨率、空间局域尺度）的依赖关系",
+                  "执行文献调研实验以确认标准模型中光子自共轭性的理论地位，作为区分‘表观差异’与‘本质对立’的外部参照"
+                ],
+                "risk_of_being_wrong": "主要风险在于错误地将数学上的粒子定义歧义等同于物理上的反粒子存在。由于缺乏直接支持光子性质的证据（knowledge_gap），本假设可能仅仅是在重述广义相对论中的已知效应（如 Unruh 效应），而对‘是否存在性质相反的粒子’这一核心物理问题无实质推进。此外，若未来证实光子确实不是自共轭的（尽管当前证据不支持也不反驳此点），则本假设的框架需彻底重构。",
+                "supporting_evidence_ids": [
+                  "EV-Q077-7636c698decb9507b5faca60"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.1,
+                "overall_score": 0.48
+              },
+              {
+                "hypothesis": "竞争布朗粒子系统（EV-Q077-6753edfa1c05b4619760614c; EV-Q077-95eb031d9ae9c3fd196d1cad; EV-Q077-392775a252e8a4b504296596）中的‘排名依赖动力学’提供了定义‘相反行为’的严格数学形式，但该形式与真实光子的物理属性之间不存在已证实的映射关系；因此，这些模型仅能作为探索‘相反性’概念的抽象测试床，不能用于推断反光子的物理存在或性质。",
+                "mechanism": "上述证据卡片详细描述了随机粒子系统中基于秩（rank）的相互作用规则，其中粒子的运动取决于其相对位置排序。这种机制允许构造数学上‘反向’或‘对抗’的动力学行为。然而，EvidenceExtractionResult 已明确标记这些证据与粒子物理标准模型无关（needs_data）。因此，本假设的机制链条止步于数学类比层面，明确拒绝将布朗粒子的统计特性外推至量子场论中的光子。任何关于光子物理性质的推论均被标记为无效。",
+                "falsifiable_prediction": "若能从竞争布朗粒子模型的数学结构中推导出一个满足洛伦兹协变性、具有自旋-1、且耦合至守恒流的场算符，并证明其与麦克斯韦方程组同构，则‘无数理映射’的断言被证伪。否则，若所有推导尝试均因缺乏规范对称性或量子化条件而失败，则强化了该类比仅限于纯数学领域的结论。",
+                "required_observations": [
+                  "分析竞争布朗粒子系统的生成泛函是否包含与电磁场张量对应的项",
+                  "检验该系统在连续极限下是否涌现出规范不变性",
+                  "对比该模型中的‘碰撞’定义与量子场论中散射截面的数学结构差异"
+                ],
+                "risk_of_being_wrong": "风险极低，因为该假设本质上是一个否定性陈述（即‘不存在映射’）。唯一的证伪风险来自于发现意想不到的数学对偶性（如某些随机过程与非厄米量子力学的联系），但这并不改变当前证据集不支持直接物理映射的事实。主要局限在于该假设对回答原始科学问题（光子是否有相反粒子）几乎没有信息增益。",
+                "supporting_evidence_ids": [
+                  "EV-Q077-6753edfa1c05b4619760614c",
+                  "EV-Q077-95eb031d9ae9c3fd196d1cad",
+                  "EV-Q077-392775a252e8a4b504296596"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.2,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.1,
+                "overall_score": 0.53
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "推荐假设0是因为它唯一尝试在允许的 EvidenceCard（EV-Q077-7636c698decb9507b5faca60）范围内回应问题的核心概念（‘粒子’的定义与性质），同时严格遵守了评审反馈：将‘光子自共轭性’降级为待验证的知识缺口，并将机制限制在证据实际支持的‘观测框架依赖性’上。尽管 evidence_support_score 极低（0.1），反映了当前证据集的根本不足，但该假设提供了一个可操作的条件式研究路径（验证局部 vs 全局定义的差异），优于假设1的纯数学类比（后者虽安全但对物理问题无实质贡献）。选择此假设并非因为其证据充分，而是因为在现有约束下，它是唯一既符合证据接地原则又保留科学探究价值的方向。",
+            "rejected_directions": [
+              "断言‘光子是自共轭玻色子’或‘反光子即光子’作为已确立事实（违反 evidence_grounding 原则，allowed_evidence_ids 中无任何粒子物理证据支持此断言）",
+              "引用 U(1) 规范对称性、CPT 定理或标准模型拉格朗日量作为机制解释（这些内容不在提供的 EvidenceCards 中，属于 ungrounded factual claims）",
+              "利用竞争布朗粒子模型直接预测真实光子的反粒子行为（混淆数学抽象与物理实在，已被 methodological_constraints 明确禁止）",
+              "生成任何声称‘已验证’或‘结果确凿’的假设（所有结果必须标记为 pending，且需前置文献调研步骤以填补 knowledge_gap）"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "本实验设计旨在验证一个条件式假设：依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态）的论述，在特定非惯性或局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’。关键约束是：严禁将此类模式直接等同于物理上的‘反粒子’，且必须明确‘光子自共轭性’为当前证据集未覆盖的知识缺口（knowledge_gap）。实验核心在于区分‘数学定义的粒子差异’与‘物理实体的对立性质’。首先执行前置文献调研实验以确立标准模型基准，随后通过数值模拟对比全局与局部粒子算符在弯曲时空背景下的期望值差异，最后设计思想实验或类比系统（如声学黑洞模拟）来检验局部探测器响应是否表现出‘相反’特征（如负能量密度涨落或反关联），并严格排除坐标变换伪影。",
+            "datasets": {
+              "source": [
+                {
+                  "id": "DS-LIT-SURVEY-PHOTON-01",
+                  "name": "Standard Model Photon Properties Literature Corpus",
+                  "description": "从权威粒子物理教材和综述中提取的光子量子数（电荷、质量、自旋、C宇称）及反粒子定义的标准陈述，用于填补 knowledge_gap 并建立基准。",
+                  "type": "literature_survey"
+                },
+                {
+                  "id": "DS-SIM-CURVED-SPACETIME-02",
+                  "name": "Curved Spacetime QFT Simulation Dataset",
+                  "description": "基于 EV-Q077-7636c698decb9507b5faca60 理论框架，模拟平直与时空弯曲背景下全局 Fock 态与局部粒子态算符的关联函数差异。",
+                  "type": "simulation"
+                }
+              ],
+              "target": {
+                "id": "DS-TARGET-LOCAL-MODE-03",
+                "name": "Local Particle Mode Deviation Dataset",
+                "description": "记录局部探测器响应与全局 Fock 态预测之间的残差，量化‘有效模式’的统计特性及其对观测窗口参数的依赖性。",
+                "type": "derived"
+              }
+            },
+            "methods": "1. **前置知识缺口填补**：执行结构化文献调研，确认标准模型中光子自共轭性的理论地位，明确‘反粒子’在 QFT 中的严格定义，以此作为区分‘表观差异’与‘本质对立’的外部参照。\n2. **理论建模与数值模拟**：基于 EV-Q077-7636c698decb9507b5faca60 提供的数学框架，构建标量场或矢量场在非惯性系中的量子态演化模型。计算全局真空态在局部探测器基矢下的粒子数期望值，识别是否存在非零激发（即 Unruh 效应类现象）。\n3. **类比系统验证**：由于直接进行高能物理实验超出当前资源且缺乏直接证据支持，采用流体力学或光学类比系统（如光纤中的等效视界）模拟局部粒子态探测过程，测量其‘有效粒子’谱是否与全局基矢下的真空谱存在显著差异。\n4. **伪影排除分析**：通过坐标变换不变性检验，确保观测到的‘相反’或‘差异’信号并非源于探测器运动或坐标系选择的数学伪影。",
+            "experiments": {
+              "baselines": [
+                "Global Fock Vacuum Baseline: 假设全局真空态在所有参考系下均无粒子激发，预测局部探测器读数为零（忽略量子涨落噪声）。",
+                "Standard Coordinate Transformation Model: 仅考虑经典坐标变换对场分量的影响，预测无新物理粒子产生。",
+                "Noise-Only Background: 纯热噪声或探测器暗计数模型，用于设定信号检测下限。"
+              ],
+              "metrics": [
+                "Local Particle Number Expectation Value (<N>_local): 局部探测器测得的平均粒子数，用于量化与全局真空的偏差。",
+                "Correlation Function Deviation (ΔG): 局部两点关联函数与全局真空关联函数的差异范数。",
+                "Signal-to-Artifact Ratio (SAR): 有效模式信号强度与坐标变换伪影强度的比值。",
+                "Knowledge Gap Closure Score: 文献调研中关于光子自共轭性共识的置信度评分。"
+              ],
+              "ablation": [
+                "Remove Curvature/Acceleration: 在平直时空惯性系下重复模拟，验证‘有效模式’是否消失，以确认其对观测框架的依赖性。",
+                "Vary Detector Window Size: 改变局部探测器的时间和空间分辨率，检验‘相反’特征对观测尺度的敏感性。",
+                "Exclude Self-Conjugacy Assumption: 在理论模型中暂时移除光子自共轭假设，测试若存在独立反粒子，局部响应会有何不同（作为敏感性分析）。"
+              ],
+              "validation_protocol": "首先完成 DS-LIT-SURVEY-PHOTON-01 的调研，确立基准。然后运行 DS-SIM-CURVED-SPACETIME-02 模拟，比较 <N>_local 是否显著非零。若模拟显示存在局部激发，进一步分析其统计性质是否与全局粒子正交。最后，通过类比实验数据验证模拟结果的物理可实现性。所有结果需经过坐标变换不变性检验，确保非伪影。"
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "提供文献调研的详细来源列表及提取的光子性质标准定义。",
+              "公开基于 EV-Q077-7636c698decb9507b5faca60 的数值模拟代码，包括度规张量设置及粒子算符定义。",
+              "提供类比实验装置的详细参数及原始数据。",
+              "明确记录‘局部粒子态’与‘全局 Fock 态’的数学转换公式。",
+              "提供坐标变换伪影排除的计算过程及中间结果。"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "generated_by": "SAGE125 ExperimentDesigner Agent",
+              "model_version": "Qwen-Max",
+              "timestamp": "2023-10-27T12:00:00Z",
+              "computational_resources_required": "High-performance computing cluster for QFT simulations; Optical laboratory for analogue gravity experiments.",
+              "estimated_time_to_complete": "3-6 months"
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "修订版假设已成功重构为条件式表述，严格依据 EV-Q077-7636c698decb9507b5faca60 中关于‘全局 Fock 态与局部粒子态区别’的论述，不再断言光子自共轭性为既定事实。",
+              "Mechanism 字段已移除所有无证据支持的物理断言（U(1)、CPT等），并将‘光子自共轭性’明确标记为待验证的外部知识缺口（knowledge_gap），符合 evidence_grounding 原则。",
+              "实验设计新增了前置文献调研步骤（DS-LIT-SURVEY-PHOTON-01）作为填补 knowledge_gap 的必要环节，避免了在未验证前提下直接进行物理推断的方法论错误。",
+              "evidence_support_score 已修正为 0.1，selection_reason 诚实反映了当前证据集的局限性，不再过度宣称假设对核心物理问题的解释力。",
+              "Results 字段保持为 pending 状态，未伪造任何实验结果；数据集定义包含明确的 source/target 结构，且 baselines/metrics 能够有效验证修订后的条件式假设。"
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.9,
+            "falsifiability_score": 0.85,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:bc8bbf58db22",
+              "category": "critical_issue",
+              "description": "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:eb13dc619fff",
+              "category": "critical_issue",
+              "description": "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:456d321e7666",
+              "category": "critical_issue",
+              "description": "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:d52e85984d450a68,change:7a912d8f0503dc4b; evidence=EV-Q077-392775a252e8a4b504296596,EV-Q077-6753edfa1c05b4619760614c,EV-Q077-7636c698decb9507b5faca60,EV-Q077-95eb031d9ae9c3fd196d1cad; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:f7a0ff2e4930",
+              "category": "required_revision",
+              "description": "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:dcc9ca2289ea282f,change:da015f397c1b357e,change:67997bebccd44c78; evidence=EV-Q077-392775a252e8a4b504296596,EV-Q077-6753edfa1c05b4619760614c,EV-Q077-7636c698decb9507b5faca60,EV-Q077-95eb031d9ae9c3fd196d1cad; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:5966c04bdb55",
+              "category": "required_revision",
+              "description": "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:b225db1ad615",
+              "category": "required_revision",
+              "description": "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:f0a3ee9bfc32",
+              "category": "required_revision",
+              "description": "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "27d4bc9b87c7f68f6de02228fe04207941a12d101924aabb071e95b7b6292a66",
+            "experiment_designer": "e196377e40520692e6be2b103d55b49c47d4d3641c92739f4dffaba51142d560",
+            "scientific_reviewer": "9ecbb435e6d06a7cb663fcfe4539d4397a8f8bc300784abb51b12846d7935aa5"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-085325-8376993d:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-085325-8376993d:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-085325-8376993d:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-085325-8376993d:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:bc8bbf58db22",
+          "category": "critical_issue",
+          "description": "核心假设（光子是自共轭玻色子）缺乏 allowed_evidence_ids 中的任何直接支持；所有引用的证据均为数学概率论或广义相对论文献，与粒子物理标准模型无关。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:eb13dc619fff",
+          "category": "critical_issue",
+          "description": "Mechanism 描述中关于 U(1) 对称性和 CPT 定理的断言属于无证据的事实陈述（ungrounded factual claims），违反了‘所有事实断言必须追溯到 evidence_id’的原则。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:456d321e7666",
+          "category": "critical_issue",
+          "description": "将 EV-Q077-7636c698decb9507b5faca60 作为支持‘光子自共轭’的证据属于错误归因（misattribution），该证据仅涉及粒子定义的语义/数学歧义，不涉及光子的具体物理属性。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:d52e85984d450a68,change:7a912d8f0503dc4b; evidence=EV-Q077-392775a252e8a4b504296596,EV-Q077-6753edfa1c05b4619760614c,EV-Q077-7636c698decb9507b5faca60,EV-Q077-95eb031d9ae9c3fd196d1cad; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:f7a0ff2e4930",
+          "category": "required_revision",
+          "description": "将假设重构为条件式或探索式表述：例如‘若依据 EV-Q077-7636c698decb9507b5faca60 中局部粒子态的定义，则在特定观测框架下可能观测到与全局 Fock 态不同的激发模式’，并明确标注‘光子自共轭性’为待验证的外部知识或 knowledge_gap，而非已确立事实。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:dcc9ca2289ea282f,change:da015f397c1b357e,change:67997bebccd44c78; evidence=EV-Q077-392775a252e8a4b504296596,EV-Q077-6753edfa1c05b4619760614c,EV-Q077-7636c698decb9507b5faca60,EV-Q077-95eb031d9ae9c3fd196d1cad; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:5966c04bdb55",
+          "category": "required_revision",
+          "description": "移除 Mechanism 中所有无法由 EV-Q077-* 系列证据支持的物理学断言（如 U(1)、CPT、自共轭等），或将其移至 ‘risk_of_being_wrong’ / ‘background_assumptions’ 字段并注明 ‘unverified_by_current_evidence’。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:b225db1ad615",
+          "category": "required_revision",
+          "description": "在 ExperimentDesign 中增加一个前置验证步骤：设计文献调研或理论推导实验，专门用于从第一性原理或标准教材中确认光子自共轭性，而不是直接在主实验中预设其为真。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:f0a3ee9bfc32",
+          "category": "required_revision",
+          "description": "更新 evidence_support_score 至接近 0 的值，并在 selection_reason 中诚实反映当前证据集不足以支撑该物理假设的现状，而非声称其‘直接回应核心物理内涵’。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "checkpoint_hash": "ffa63ba44aa660ef9534a3b2b75a33f2e48fd89018a8cd5887259edad4ee6623"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-085325-8376993d:wave-b-two-round",
+      "run_id": "20260822-085325-8376993d",
+      "v1_version_id": "20260822-085325-8376993d:v1",
+      "v2_version_id": "20260822-085325-8376993d:v2",
+      "input_fingerprints": {
+        "v1": "51d868d0ffa12a93c503db59af5e52147270bf3f200f97765b865e5c962200e6",
+        "v2": "e196377e40520692e6be2b103d55b49c47d4d3641c92739f4dffaba51142d560"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "critical_issue:456d321e7666",
+        "required_revision:f7a0ff2e4930"
+      ],
+      "change_ids": [
+        "change:d52e85984d450a68",
+        "change:7a912d8f0503dc4b",
+        "change:dcc9ca2289ea282f",
+        "change:da015f397c1b357e",
+        "change:67997bebccd44c78"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.1,
+          "after": 0.9,
+          "delta": 0.8
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.85,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.9,
+          "delta": 0.20000000000000007
+        },
+        "reference_reliability_score": {
+          "before": 0.2,
+          "after": 1.0,
+          "delta": 0.8
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 1,
+          "hypothesis": "竞争布朗粒子系统（EV-Q077-6753edfa1c05b4619760614c; EV-Q077-95eb031d9ae9c3fd196d1cad; EV-Q077-392775a252e8a4b504296596）中的‘排名依赖动力学’提供了定义‘相反行为’的严格数学形式，但该形式与真实光子的物理属性之间不存在已证实的映射关系；因此，这些模型仅能作为探索‘相反性’概念的抽象测试床，不能用于推断反光子的物理存在或性质。",
+          "overall_score": 0.53,
+          "recommended": false
+        },
+        {
+          "rank": 2,
+          "original_index": 0,
+          "hypothesis": "若依据 EV-Q077-7636c698decb9507b5faca60 中关于‘粒子’定义依赖于观测框架（全局 Fock 态与局部粒子态的区别）的论述，则在非惯性系或特定局域测量设置下，可能观测到与全局真空光子态具有不同激发谱或统计特性的‘有效模式’；但这些模式是否构成物理上‘性质相反’的独立反粒子，在当前证据集中属于未验证的知识缺口（knowledge_gap）。",
+          "overall_score": 0.48,
+          "recommended": true
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "5bf020c9e828",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:56:13.806501+00:00",
+    "ended_at": "2026-08-22T08:56:48.148927+00:00",
+    "duration_ms": 34342,
+    "input_summary": "{\"question_item\": {\"id\": \"Q077\", \"domain\": \"Physics\", \"question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"source_page\": 27, \"booklet_excerpt\": \"An antiphoton is the same as a photon. Both are massless particles made of energy with no charge.\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Physics\", \"core_question\": \"Does a particle exist that exhibits properties or states opposite to those of a photon, and if so, what are its characteristics?\", \"keyw",
+    "output_summary": "{\"input_question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"domain\": \"Physics\", \"problem_statement\": \"The question asks for the existence of particles with properties or states opposite to those of photons. The provided booklet excerpt claims an antiphoton is identical to a photon (massless, no charge). However, the allowed evidence set lacks direct particle physics literature confirming this self-conjugate nature or defining 'opposite' in the context of quantum field theory (QFT). The available evidence discusses the frame-dependence of partic",
+    "evidence_ids": [
+      "EV-Q077-7636c698decb9507b5faca60"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "da826f07ab09",
+    "mock": false
+  },
+  {
+    "event_id": "217d66b7b63e",
+    "run_id": "20260822-085325-8376993d",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:56:48.148927+00:00",
+    "ended_at": "2026-08-22T08:56:50.153622+00:00",
+    "duration_ms": 2004,
+    "input_summary": "{\"question_item\": {\"id\": \"Q077\", \"domain\": \"Physics\", \"question\": \"Are there any particles that behave oppositely to the properties or states of photons?\", \"source_page\": 27, \"booklet_excerpt\": \"An antiphoton is the same as a photon. Both are massless particles made of energy with no charge.\", \"metadata\": {\"confidence\": 0.75, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not ResearchPlan. SchemaValidator requires a ResearchPlan object to validate structure and evidence traceability.\", \"MissingField: 'research_plan' field is absent from input.\"], \"warnings\": [\"Input contains only question metadata (Q077). No hypotheses, experiments, or references were provided for validation.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_check\": \"failed\", \"evidence_traceability\": \"not_applicable\", \"factual_accuracy\": \"not_applicable\"}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6a42ebeca2bd",
+    "mock": false
+  }
+]

@@ -1,0 +1,1691 @@
+[
+  {
+    "event_id": "645c14084e55",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:28.018593+00:00",
+    "ended_at": "2026-08-22T08:17:28.018593+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "2ffade84292d",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:28.018593+00:00",
+    "ended_at": "2026-08-22T08:17:31.666100+00:00",
+    "duration_ms": 3647,
+    "input_summary": "{\"question_item\": {\"id\": \"Q020\", \"domain\": \"Medicine & Health\", \"question\": \"What is the etiology of autism?\", \"source_page\": 12, \"booklet_excerpt\": \"scientific examinations exploring the Meridian System and the use of acupuncture for treatment of disorders, Autism spectrum disorder (ASD) is a and some studies suggest that acupuncture may help neurodevelopmental condition that affects an ease chronic pain and prevent migraine headaches. individual’s ability to perceive and process information Other investigations suggest that acupuncture impacts and socialize with others. It can lead to issues",
+    "output_summary": "{\"domain\": \"Medicine & Health\", \"core_question\": \"What is the etiology of autism?\", \"keywords\": [\"autism\", \"etiology\", \"Autism spectrum disorder\", \"ASD\", \"neurodevelopmental condition\"], \"entities\": [\"Autism spectrum disorder (ASD)\", \"Meridian System\", \"acupuncture\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"The provided booklet excerpt defines Autism Spectrum Disorder (ASD) as a neurodevelopmental condition affecting perception, information processing, social interaction, communication, and behavior. It mentions scientific examinations of the Meridian System and ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "27e9c3ac58b8",
+    "mock": false
+  },
+  {
+    "event_id": "59f2b0bc53ab",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:31.666100+00:00",
+    "ended_at": "2026-08-22T08:17:53.077646+00:00",
+    "duration_ms": 21411,
+    "input_summary": "{\"question_item\": {\"id\": \"Q020\", \"domain\": \"Medicine & Health\", \"question\": \"What is the etiology of autism?\", \"source_page\": 12, \"booklet_excerpt\": \"scientific examinations exploring the Meridian System and the use of acupuncture for treatment of disorders, Autism spectrum disorder (ASD) is a and some studies suggest that acupuncture may help neurodevelopmental condition that affects an ease chronic pain and prevent migraine headaches. individual’s ability to perceive and process information Other investigations suggest that acupuncture impacts and socialize with others. It can lead to issues",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify established genetic risk factors and heritability estimates for ASD from high-quality reviews.\", \"query\": \"autism spectrum disorder etiology genetic risk factors heritability twin studies review\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Quantitative data on heritability percentages and specific gene categories (e.g., synaptic function, chromatin remodeling) associated with ASD.\", \"priority\": \"high\"}, {\"purpose\": \"Determine the role of de novo mutations versus inherited variants in ASD pathogenesis.\", \"query\": \"de novo mutations vs inherited va",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1ae22c702eff",
+    "mock": false
+  },
+  {
+    "event_id": "2aeaa42fbe3b",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:53.087651+00:00",
+    "ended_at": "2026-08-22T08:18:05.769298+00:00",
+    "duration_ms": 12681,
+    "input_summary": "{\"question_item\": {\"id\": \"Q020\", \"domain\": \"Medicine & Health\", \"question\": \"What is the etiology of autism?\", \"source_page\": 12, \"booklet_excerpt\": \"scientific examinations exploring the Meridian System and the use of acupuncture for treatment of disorders, Autism spectrum disorder (ASD) is a and some studies suggest that acupuncture may help neurodevelopmental condition that affects an ease chronic pain and prevent migraine headaches. individual’s ability to perceive and process information Other investigations suggest that acupuncture impacts and socialize with others. It can lead to issues",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The specific etiology (causal mechanisms) of Autism Spectrum Disorder (ASD) is not established by the provided evidence.\", \"why_it_matters\": \"Understanding etiology is critical for developing targeted interventions and preventive strategies for ASD. The provided documents discuss methodological frameworks for etiology estimation in general or for other conditions (CKD, Dementia), but do not provide factual data on ASD causes.\", \"evidence_ids\": [], \"validation_need\": \"Comprehensive review of genetic, environmental, and",
+    "evidence_ids": [
+      "EV-Q020-0e5bc9dca13ffe4bb77bc641",
+      "EV-Q020-7eb7d68f9e4dae67f4b3fcc6",
+      "EV-Q020-2ce475b12c2a97ed8512e37a",
+      "EV-Q020-b1d992517b213627b333b611"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "af22e2f616a5",
+    "mock": false
+  },
+  {
+    "event_id": "d94e4fc5ce5e",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:18:05.769298+00:00",
+    "ended_at": "2026-08-22T08:18:21.853366+00:00",
+    "duration_ms": 16084,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q020\", \"domain\": \"Medicine & Health\", \"question\": \"What is the etiology of autism?\", \"source_page\": 12, \"booklet_excerpt\": \"scientific examinations exploring the Meridian System and the use of acupuncture for treatment of disorders, Autism spectrum disorder (ASD) is a and some studies suggest that acupuncture may help neurodevelopmental condition that affects an ease chronic pain and prevent migraine headaches. individual’s ability to perceive and process information Other investigations suggest that acupuncture impacts and socialize with othe",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Current evidence is insufficient to propose a biological etiology for Autism Spectrum Disorder (ASD); the only testable proposition supported by allowed evidence is that ASD etiology can be estimated using nested partially-latent class models (npLCMs) integrating case-control data and explanatory variables.\", \"mechanism\": \"The mechanism is statistical rather than biological: npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities in case-control studies, as described in methodological literatur",
+    "evidence_ids": [
+      "EV-Q020-2ce475b12c2a97ed8512e37a",
+      "EV-Q020-b1d992517b213627b333b611"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "888d27c99df8",
+    "mock": false
+  },
+  {
+    "event_id": "f217162ed278",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:18:21.853366+00:00",
+    "ended_at": "2026-08-22T08:18:42.046423+00:00",
+    "duration_ms": 20193,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q020\", \"domain\": \"Medicine & Health\", \"question\": \"What is the etiology of autism?\", \"source_page\": 12, \"booklet_excerpt\": \"scientific examinations exploring the Meridian System and the use of acupuncture for treatment of disorders, Autism spectrum disorder (ASD) is a and some studies suggest that acupuncture may help neurodevelopmental condition that affects an ease chronic pain and prevent migraine headaches. individual’s ability to perceive and process information Other investigations suggest that acupuncture impacts and socialize with othe",
+    "output_summary": "{\"technical_details\": \"This study proposes to validate the applicability of Nested Partially-Latent Class Models (npLCMs) for estimating etiological fractions in Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes (e.g., genetic, environmental, idiopathic) without assuming prior biological truth; 2) Modeling ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "dbdef4da64de",
+    "mock": false
+  },
+  {
+    "event_id": "c2d8f2a4d481",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:18:42.046423+00:00",
+    "ended_at": "2026-08-22T08:18:51.699565+00:00",
+    "duration_ms": 9653,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q020\", \"domain\": \"Medicine & Health\", \"question\": \"What is the etiology of autism?\", \"source_page\": 12, \"booklet_excerpt\": \"scientific examinations exploring the Meridian System and the use of acupuncture for treatment of disorders, Autism spectrum disorder (ASD) is a and some studies suggest that acupuncture may help neurodevelopmental condition that affects an ease chronic pain and prevent migraine headaches. individual’s ability to perceive and process information Other investigations suggest that acupuncture impacts and socialize with othe",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the lack of biological evidence for ASD etiology in the allowed evidence cards and pivots to a methodological validation study, which is the only scientifically valid path given the constraints.\", \"The experiment design appropriately uses simulated data as the 'source' dataset because no real ASD case-control data exists in the allowed evidence catalog; this avoids hallucinating external datasets.\", \"The Results field correctly states 'pending' (in Chinese) and explicitly notes that no real experiments have ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7521e7e2a79d",
+    "mock": false
+  },
+  {
+    "event_id": "92bbb10f0821",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:18:51.701078+00:00",
+    "ended_at": "2026-08-22T08:19:10.846421+00:00",
+    "duration_ms": 19145,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the lack of biological evidence for ASD etiology in the allowed evidence cards and pivots to a methodological validation study, which is the only scientifically valid path given the constraints.\", \"The experiment design appropriately uses simulated data as the 'source' dataset because no real ASD case-control data exists in the allowed evidence catalog; this avoids hallucinating external datasets.\", \"The Results field correctly states 'pending' (in Chinese) and expl",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Evaluate the statistical identifiability and convergence of nested partially-latent class models (npLCMs) applied to simulated ASD-like case-control data structures, rather than asserting biological etiology estimation.\", \"mechanism\": \"The npLCM framework integrates multiple imperfect diagnostic measurements and covariates to estimate latent class probabilities via regression, as described in EV-Q020-2ce475b12c2a97ed8512e37a. In this methodological validation, the mechanism is purely statistical: assessing whether model parameters are recoverable and posteriors ",
+    "evidence_ids": [
+      "EV-Q020-2ce475b12c2a97ed8512e37a",
+      "EV-Q020-7eb7d68f9e4dae67f4b3fcc6"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c0942f5469ed",
+    "mock": false
+  },
+  {
+    "event_id": "c59d0ea0a398",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:19:10.846421+00:00",
+    "ended_at": "2026-08-22T08:19:28.592208+00:00",
+    "duration_ms": 17745,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the lack of biological evidence for ASD etiology in the allowed evidence cards and pivots to a methodological validation study, which is the only scientifically valid path given the constraints.\", \"The experiment design appropriately uses simulated data as the 'source' dataset because no real ASD case-control data exists in the allowed evidence catalog; this avoids hallucinating external datasets.\", \"The Results field correctly states 'pending' (in Chinese) and expl",
+    "output_summary": "{\"technical_details\": \"This study evaluates the statistical identifiability and convergence of Nested Partially-Latent Class Models (npLCMs) when applied to simulated data structures mimicking Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent class probabilities via regression. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes without assuming prior biological truth; 2) Modeling the cond",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a205c3f752d0",
+    "mock": false
+  },
+  {
+    "event_id": "ef32a8bc4c0e",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:19:28.593198+00:00",
+    "ended_at": "2026-08-22T08:19:37.244532+00:00",
+    "duration_ms": 8651,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the lack of biological evidence for ASD etiology in the allowed evidence cards and pivots to a methodological validation study, which is the only scientifically valid path given the constraints.\", \"The experiment design appropriately uses simulated data as the 'source' dataset because no real ASD case-control data exists in the allowed evidence catalog; this avoids hallucinating external datasets.\", \"The Results field correctly states 'pending' (in Chinese) and expl",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis has been correctly revised to focus on methodological validation ('statistical identifiability and convergence') rather than biological etiology estimation, addressing critical issue #96f80691cc4b.\", \"The 'Limitations' subsection has been successfully added to technical_details, explicitly stating that simulated findings cannot be generalized to clinical ASD etiology, addressing required revision #f698ec0a9ee9.\", \"Reference reliability remains high with strict adherence to EV-Q020-2ce475b12c2a97ed8512e37a for the npLCM framework",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7c35cab43db6",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:943a5437c25dd516",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current evidence is insufficient to propose a biological etiology for Autism Spectrum Disorder (ASD); the only testable proposition supported by allowed evidence is that ASD etiology can be estimated using nested partially-latent class models (npLCMs) integrating case-control data and explanatory variables.",
+              "mechanism": "The mechanism is statistical rather than biological: npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities in case-control studies, as described in methodological literature for general etiology regression.",
+              "falsifiable_prediction": "If npLCMs are applied to a valid ASD case-control dataset with appropriate biomarkers/covariates, they will produce stable etiology fraction estimates with narrower confidence intervals than standard logistic regression; if not, the model will fail to converge or show non-identifiability.",
+              "required_observations": [
+                "Availability of ASD case-control datasets with multiple diagnostic indicators and covariates",
+                "Model convergence diagnostics and parameter identifiability assessments",
+                "Comparison of etiology estimates between npLCM and standard regression approaches"
+              ],
+              "risk_of_being_wrong": "High risk that npLCMs may not be appropriate for ASD due to heterogeneity and lack of validated biomarkers; the method may be theoretically sound but practically inapplicable to ASD without domain-specific validation.",
+              "supporting_evidence_ids": [
+                "EV-Q020-2ce475b12c2a97ed8512e37a"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.6
+            },
+            {
+              "hypothesis": "Collaborative meta-knowledge enhancement frameworks originally developed for dementia etiology diagnosis can be adapted to identify ASD etiological subtypes through multi-modal data integration.",
+              "mechanism": "Transfer learning from dementia etiology AI models to ASD by leveraging shared neuroimaging or clinical feature spaces, assuming overlapping pathophysiological patterns between neurodevelopmental and neurodegenerative conditions.",
+              "falsifiable_prediction": "If such transfer is valid, ASD subtype classification accuracy using dementia-pretrained models will significantly exceed chance level (>70%); if not, performance will remain at baseline levels indistinguishable from random assignment.",
+              "required_observations": [
+                "Multi-modal ASD datasets compatible with dementia model input formats",
+                "Cross-domain transfer learning performance metrics",
+                "Statistical comparison against ASD-specific baseline models"
+              ],
+              "risk_of_being_wrong": "Very high risk due to fundamental differences between neurodevelopmental (ASD) and neurodegenerative (dementia) conditions; assumed overlap may not exist, making this hypothesis likely unfounded despite methodological plausibility.",
+              "supporting_evidence_ids": [
+                "EV-Q020-b1d992517b213627b333b611"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.5
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is recommended because it directly addresses the knowledge gap identified in evidence extraction: no biological etiology facts for ASD exist in allowed evidence. Instead of fabricating biological claims, it proposes a methodologically grounded, falsifiable research direction using EV-Q020-2ce475b12c2a97ed8512e37a which explicitly discusses etiology regression frameworks applicable to case-control studies. This hypothesis acknowledges current evidence limitations while providing a concrete, testable pathway toward future etiology estimation. Hypothesis 1 was rejected due to weak cross-domain validity and higher risk of being fundamentally misguided.",
+          "rejected_directions": [
+            "Proposing specific genetic or environmental causes of ASD without supporting evidence IDs",
+            "Claiming acupuncture or meridian system involvement in ASD etiology based solely on booklet excerpt without evidence cards",
+            "Asserting causal mechanisms derived from correlation-based statistical methods mentioned in EV-Q020-7eb7d68f9e4dae67f4b3fcc6",
+            "Using Chronic Kidney Disease etiology findings (EV-Q020-0e5bc9dca13ffe4bb77bc641) as analogies for ASD without validated translational evidence"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes to validate the applicability of Nested Partially-Latent Class Models (npLCMs) for estimating etiological fractions in Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes (e.g., genetic, environmental, idiopathic) without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities (etiology regression); 4) Using Bayesian inference with MCMC or variational inference to estimate posterior distributions of etiological fractions. The key technical challenge is ensuring model identifiability given the high heterogeneity of ASD and the lack of gold-standard biomarkers, which will be addressed through sensitivity analyses on prior specifications and constraint structures.",
+          "datasets": {
+            "source": "Simulated ASD Case-Control Dataset generated based on parameters derived from general epidemiological literature (not from allowed evidence, as no specific ASD dataset is provided in evidence cards). The simulation will mimic the structure described in EV-Q020-2ce475b12c2a97ed8512e37a: multiple binary/continuous diagnostic indicators with known sensitivity/specificity profiles, and covariates (e.g., age, sex, prenatal exposure proxies).",
+            "target": "Estimated Etiological Fractions (PEFs) for defined latent classes, along with their 95% credible intervals. Secondary target: Model convergence diagnostics (R-hat statistics, effective sample size) and parameter recovery accuracy against ground-truth simulation parameters."
+          },
+          "methods": "1. **Model Specification**: Implement npLCM as described in EV-Q020-2ce475b12c2a97ed8512e37a. Let $Y_i$ be the vector of observed measurements for subject $i$, $Z_i$ be the latent etiology class, and $X_i$ be covariates. Model $P(Z_i|X_i)$ using a multinomial logistic regression and $P(Y_i|Z_i)$ using class-specific measurement models (e.g., Bernoulli for binary tests, Gaussian for continuous biomarkers). 2. **Inference**: Use Stan or PyMC3 for Bayesian estimation. 3. **Comparison Baseline**: Standard Multinomial Logistic Regression treating observed composite diagnosis as ground truth (ignoring measurement error). 4. **Validation**: Posterior predictive checks to assess model fit.",
+          "experiments": {
+            "baselines": [
+              "Standard Multinomial Logistic Regression (ignoring latent structure and measurement error)",
+              "Naive Latent Class Analysis (LCA) without covariate integration (no etiology regression)"
+            ],
+            "metrics": [
+              "Root Mean Squared Error (RMSE) of estimated etiological fractions vs. true simulation parameters",
+              "Coverage Probability of 95% Credible Intervals (proportion of times true parameter falls within CI)",
+              "Widest Confidence Interval Width (to assess precision gain over baselines)",
+              "Model Convergence Rate (percentage of chains converging with R-hat < 1.01)"
+            ],
+            "ablation": "1. Varying the number of latent classes (K=2, 3, 4) to test robustness to model misspecification. 2. Removing covariates from the etiology regression component to assess the value of explanatory variable integration. 3. Varying measurement error rates (sensitivity/specificity) to test model resilience to noisy data.",
+            "validation_protocol": "Split simulated data into 80% training and 20% testing. Perform 5-fold cross-validation on hyperparameters (e.g., prior variance). Evaluate metrics on the held-out test set. Conduct a simulation study with N=1000 replications to assess average performance."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Provide full Stan/PyMC3 code for npLCM implementation",
+            "Publish simulation script with fixed random seeds for data generation",
+            "Document all prior distributions and hyperparameter choices",
+            "Include convergence diagnostics plots (trace plots, R-hat values) in supplementary material",
+            "Make simulated datasets available in CSV/JSON format"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation for MCMC sampling",
+            "estimated_runtime": "4-6 hours for 1000 simulation replications",
+            "software_dependencies": [
+              "Python 3.9+",
+              "PyMC3 or Stan",
+              "NumPy, Pandas, ArviZ"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-081728-aae8340d",
+        "version_number": 1,
+        "version_id": "20260822-081728-aae8340d:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current evidence is insufficient to propose a biological etiology for Autism Spectrum Disorder (ASD); the only testable proposition supported by allowed evidence is that ASD etiology can be estimated using nested partially-latent class models (npLCMs) integrating case-control data and explanatory variables.",
+              "mechanism": "The mechanism is statistical rather than biological: npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities in case-control studies, as described in methodological literature for general etiology regression.",
+              "falsifiable_prediction": "If npLCMs are applied to a valid ASD case-control dataset with appropriate biomarkers/covariates, they will produce stable etiology fraction estimates with narrower confidence intervals than standard logistic regression; if not, the model will fail to converge or show non-identifiability.",
+              "required_observations": [
+                "Availability of ASD case-control datasets with multiple diagnostic indicators and covariates",
+                "Model convergence diagnostics and parameter identifiability assessments",
+                "Comparison of etiology estimates between npLCM and standard regression approaches"
+              ],
+              "risk_of_being_wrong": "High risk that npLCMs may not be appropriate for ASD due to heterogeneity and lack of validated biomarkers; the method may be theoretically sound but practically inapplicable to ASD without domain-specific validation.",
+              "supporting_evidence_ids": [
+                "EV-Q020-2ce475b12c2a97ed8512e37a"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.6
+            },
+            {
+              "hypothesis": "Collaborative meta-knowledge enhancement frameworks originally developed for dementia etiology diagnosis can be adapted to identify ASD etiological subtypes through multi-modal data integration.",
+              "mechanism": "Transfer learning from dementia etiology AI models to ASD by leveraging shared neuroimaging or clinical feature spaces, assuming overlapping pathophysiological patterns between neurodevelopmental and neurodegenerative conditions.",
+              "falsifiable_prediction": "If such transfer is valid, ASD subtype classification accuracy using dementia-pretrained models will significantly exceed chance level (>70%); if not, performance will remain at baseline levels indistinguishable from random assignment.",
+              "required_observations": [
+                "Multi-modal ASD datasets compatible with dementia model input formats",
+                "Cross-domain transfer learning performance metrics",
+                "Statistical comparison against ASD-specific baseline models"
+              ],
+              "risk_of_being_wrong": "Very high risk due to fundamental differences between neurodevelopmental (ASD) and neurodegenerative (dementia) conditions; assumed overlap may not exist, making this hypothesis likely unfounded despite methodological plausibility.",
+              "supporting_evidence_ids": [
+                "EV-Q020-b1d992517b213627b333b611"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.5
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is recommended because it directly addresses the knowledge gap identified in evidence extraction: no biological etiology facts for ASD exist in allowed evidence. Instead of fabricating biological claims, it proposes a methodologically grounded, falsifiable research direction using EV-Q020-2ce475b12c2a97ed8512e37a which explicitly discusses etiology regression frameworks applicable to case-control studies. This hypothesis acknowledges current evidence limitations while providing a concrete, testable pathway toward future etiology estimation. Hypothesis 1 was rejected due to weak cross-domain validity and higher risk of being fundamentally misguided.",
+          "rejected_directions": [
+            "Proposing specific genetic or environmental causes of ASD without supporting evidence IDs",
+            "Claiming acupuncture or meridian system involvement in ASD etiology based solely on booklet excerpt without evidence cards",
+            "Asserting causal mechanisms derived from correlation-based statistical methods mentioned in EV-Q020-7eb7d68f9e4dae67f4b3fcc6",
+            "Using Chronic Kidney Disease etiology findings (EV-Q020-0e5bc9dca13ffe4bb77bc641) as analogies for ASD without validated translational evidence"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes to validate the applicability of Nested Partially-Latent Class Models (npLCMs) for estimating etiological fractions in Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes (e.g., genetic, environmental, idiopathic) without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities (etiology regression); 4) Using Bayesian inference with MCMC or variational inference to estimate posterior distributions of etiological fractions. The key technical challenge is ensuring model identifiability given the high heterogeneity of ASD and the lack of gold-standard biomarkers, which will be addressed through sensitivity analyses on prior specifications and constraint structures.",
+          "datasets": {
+            "source": "Simulated ASD Case-Control Dataset generated based on parameters derived from general epidemiological literature (not from allowed evidence, as no specific ASD dataset is provided in evidence cards). The simulation will mimic the structure described in EV-Q020-2ce475b12c2a97ed8512e37a: multiple binary/continuous diagnostic indicators with known sensitivity/specificity profiles, and covariates (e.g., age, sex, prenatal exposure proxies).",
+            "target": "Estimated Etiological Fractions (PEFs) for defined latent classes, along with their 95% credible intervals. Secondary target: Model convergence diagnostics (R-hat statistics, effective sample size) and parameter recovery accuracy against ground-truth simulation parameters."
+          },
+          "methods": "1. **Model Specification**: Implement npLCM as described in EV-Q020-2ce475b12c2a97ed8512e37a. Let $Y_i$ be the vector of observed measurements for subject $i$, $Z_i$ be the latent etiology class, and $X_i$ be covariates. Model $P(Z_i|X_i)$ using a multinomial logistic regression and $P(Y_i|Z_i)$ using class-specific measurement models (e.g., Bernoulli for binary tests, Gaussian for continuous biomarkers). 2. **Inference**: Use Stan or PyMC3 for Bayesian estimation. 3. **Comparison Baseline**: Standard Multinomial Logistic Regression treating observed composite diagnosis as ground truth (ignoring measurement error). 4. **Validation**: Posterior predictive checks to assess model fit.",
+          "experiments": {
+            "baselines": [
+              "Standard Multinomial Logistic Regression (ignoring latent structure and measurement error)",
+              "Naive Latent Class Analysis (LCA) without covariate integration (no etiology regression)"
+            ],
+            "metrics": [
+              "Root Mean Squared Error (RMSE) of estimated etiological fractions vs. true simulation parameters",
+              "Coverage Probability of 95% Credible Intervals (proportion of times true parameter falls within CI)",
+              "Widest Confidence Interval Width (to assess precision gain over baselines)",
+              "Model Convergence Rate (percentage of chains converging with R-hat < 1.01)"
+            ],
+            "ablation": "1. Varying the number of latent classes (K=2, 3, 4) to test robustness to model misspecification. 2. Removing covariates from the etiology regression component to assess the value of explanatory variable integration. 3. Varying measurement error rates (sensitivity/specificity) to test model resilience to noisy data.",
+            "validation_protocol": "Split simulated data into 80% training and 20% testing. Perform 5-fold cross-validation on hyperparameters (e.g., prior variance). Evaluate metrics on the held-out test set. Conduct a simulation study with N=1000 replications to assess average performance."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Provide full Stan/PyMC3 code for npLCM implementation",
+            "Publish simulation script with fixed random seeds for data generation",
+            "Document all prior distributions and hyperparameter choices",
+            "Include convergence diagnostics plots (trace plots, R-hat values) in supplementary material",
+            "Make simulated datasets available in CSV/JSON format"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation for MCMC sampling",
+            "estimated_runtime": "4-6 hours for 1000 simulation replications",
+            "software_dependencies": [
+              "Python 3.9+",
+              "PyMC3 or Stan",
+              "NumPy, Pandas, ArviZ"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies the lack of biological evidence for ASD etiology in the allowed evidence cards and pivots to a methodological validation study, which is the only scientifically valid path given the constraints.",
+            "The experiment design appropriately uses simulated data as the 'source' dataset because no real ASD case-control data exists in the allowed evidence catalog; this avoids hallucinating external datasets.",
+            "The Results field correctly states 'pending' (in Chinese) and explicitly notes that no real experiments have been executed, adhering to the prohibition against fabricating results.",
+            "Reference reliability is high as the proposed method (npLCM) is directly grounded in EV-Q020-2ce475b12c2a97ed8512e37a, and irrelevant evidence (CKD, Dementia) was correctly excluded from the primary hypothesis support.",
+            "Reproducibility is strong due to the inclusion of specific software dependencies (Stan/PyMC3), convergence diagnostics, and simulation parameters, despite the absence of real-world data."
+          ],
+          "critical_issues": [
+            "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+            "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence."
+          ],
+          "required_revisions": [
+            "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+            "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+            "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:d8d2ca00a800",
+            "category": "critical_issue",
+            "description": "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:96f80691cc4b",
+            "category": "critical_issue",
+            "description": "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:4fa5099a8a1d",
+            "category": "required_revision",
+            "description": "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f3b24a5da835",
+            "category": "required_revision",
+            "description": "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f698ec0a9ee9",
+            "category": "required_revision",
+            "description": "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5bef6fc666aa6fbea0fdf9ceec3d2133512add462e872d306fc1b3d06ba82c4a",
+          "experiment_designer": "03cf50aba018ae6663eb6a344ffc2e29c1a8648f5e94a241c4b2b6db39f15ed8",
+          "scientific_reviewer": "e12cb05777f3f2059cfb57e7549cf4b7fb4c4591f429fe404e8bbcf93c84a410"
+        }
+      },
+      "parent_version_id": "20260822-081728-aae8340d:v1",
+      "lineage": [
+        "20260822-081728-aae8340d:v1",
+        "20260822-081728-aae8340d:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The candidate hypothesis correctly identifies the lack of biological evidence for ASD etiology in the allowed evidence cards and pivots to a methodological validation study, which is the only scientifically valid path given the constraints.",
+          "The experiment design appropriately uses simulated data as the 'source' dataset because no real ASD case-control data exists in the allowed evidence catalog; this avoids hallucinating external datasets.",
+          "The Results field correctly states 'pending' (in Chinese) and explicitly notes that no real experiments have been executed, adhering to the prohibition against fabricating results.",
+          "Reference reliability is high as the proposed method (npLCM) is directly grounded in EV-Q020-2ce475b12c2a97ed8512e37a, and irrelevant evidence (CKD, Dementia) was correctly excluded from the primary hypothesis support.",
+          "Reproducibility is strong due to the inclusion of specific software dependencies (Stan/PyMC3), convergence diagnostics, and simulation parameters, despite the absence of real-world data."
+        ],
+        "critical_issues": [
+          "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+          "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence."
+        ],
+        "required_revisions": [
+          "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+          "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+          "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.85,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The candidate hypothesis has been correctly revised to focus on methodological validation ('statistical identifiability and convergence') rather than biological etiology estimation, addressing critical issue #96f80691cc4b.",
+          "The 'Limitations' subsection has been successfully added to technical_details, explicitly stating that simulated findings cannot be generalized to clinical ASD etiology, addressing required revision #f698ec0a9ee9.",
+          "Reference reliability remains high with strict adherence to EV-Q020-2ce475b12c2a97ed8512e37a for the npLCM framework.",
+          "The Results field still contains non-English text ('当前状态：待执行验证实验...'), violating the system interoperability requirement and failing to address critical issue #d8d2ca00a800 and required revision #4fa5099a8a1d.",
+          "Experiment design is robust with appropriate baselines and metrics for a simulation study, but the language barrier in the results field prevents full automated validation."
+        ],
+        "critical_issues": [
+          "The 'results' field still contains non-English text ('当前状态：待执行验证实验...'). All output fields must be in English to ensure system interoperability and consistent parsing. This was previously flagged as critical_issue:d8d2ca00a800 and remains unresolved."
+        ],
+        "required_revisions": [
+          "Immediately translate the 'results' field content to English. Suggested text: 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.' This is mandatory for passing review."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.85,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:7dd236b385512ec3",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+          "issue_id": "critical_issue:d8d2ca00a800"
+        },
+        {
+          "failure_id": "failure:1e501d065cf92e10",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence.",
+          "issue_id": "critical_issue:96f80691cc4b"
+        },
+        {
+          "failure_id": "failure:9846b3d5d91a0764",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+          "issue_id": "required_revision:4fa5099a8a1d"
+        },
+        {
+          "failure_id": "failure:c7f760afc8a350fd",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+          "issue_id": "required_revision:f3b24a5da835"
+        },
+        {
+          "failure_id": "failure:21f1ea68c4ca6b5e",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.",
+          "issue_id": "required_revision:f698ec0a9ee9"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:12a40aced976c005",
+          "issue_id": "required_revision:f3b24a5da835",
+          "reason": "Reviewer item required_revision:f3b24a5da835 requested 'Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.'. V2 changes technical_details; deterministic correlation evidence tokens=['appli', 'asd', 'baseline', 'case', 'convergence', 'data', 'etiology', 'evaluate', 'identifiability', 'lcms', 'methodological', 'np', 'simulat', 'statistical', 'validate'], coverage=0.536.",
+          "before": "This study proposes to validate the applicability of Nested Partially-Latent Class Models (npLCMs) for estimating etiological fractions in Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes (e.g., genetic, environmental, idiopathic) without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities (etiology regression); 4) Using Bayesian inference with MCMC or variational inference to estimate posterior distributions of etiological fractions. The key technical challenge is ensuring model identifiability given the high heterogeneity of ASD and the lack of gold-standard biomarkers, which will be addressed through sensitivity analyses on prior specifications and constraint structures.",
+          "after": "This study evaluates the statistical identifiability and convergence of Nested Partially-Latent Class Models (npLCMs) when applied to simulated data structures mimicking Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent class probabilities via regression. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities; 4) Using Bayesian inference with MCMC to estimate posterior distributions. \n\nLimitations: Findings from this simulated data study are strictly methodological and cannot be generalized to clinical ASD etiology without external biological validation. The simulation assumes specific data generating processes that may not fully capture the complexity of real-world ASD heterogeneity.",
+          "evidence_refs": [
+            "EV-Q020-0e5bc9dca13ffe4bb77bc641",
+            "EV-Q020-2ce475b12c2a97ed8512e37a",
+            "EV-Q020-7eb7d68f9e4dae67f4b3fcc6",
+            "EV-Q020-b1d992517b213627b333b611"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:8cea8e5c76101f41",
+          "issue_id": "required_revision:f698ec0a9ee9",
+          "reason": "Reviewer item required_revision:f698ec0a9ee9 requested 'Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.'. V2 changes technical_details; deterministic correlation evidence tokens=['asd', 'biological', 'cannot', 'clinical', 'data', 'detail', 'etiology', 'external', 'finding', 'generaliz', 'limitation', 'simulat', 'technical', 'validate', 'without'], coverage=0.789.",
+          "before": "This study proposes to validate the applicability of Nested Partially-Latent Class Models (npLCMs) for estimating etiological fractions in Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes (e.g., genetic, environmental, idiopathic) without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities (etiology regression); 4) Using Bayesian inference with MCMC or variational inference to estimate posterior distributions of etiological fractions. The key technical challenge is ensuring model identifiability given the high heterogeneity of ASD and the lack of gold-standard biomarkers, which will be addressed through sensitivity analyses on prior specifications and constraint structures.",
+          "after": "This study evaluates the statistical identifiability and convergence of Nested Partially-Latent Class Models (npLCMs) when applied to simulated data structures mimicking Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent class probabilities via regression. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities; 4) Using Bayesian inference with MCMC to estimate posterior distributions. \n\nLimitations: Findings from this simulated data study are strictly methodological and cannot be generalized to clinical ASD etiology without external biological validation. The simulation assumes specific data generating processes that may not fully capture the complexity of real-world ASD heterogeneity.",
+          "evidence_refs": [
+            "EV-Q020-0e5bc9dca13ffe4bb77bc641",
+            "EV-Q020-2ce475b12c2a97ed8512e37a",
+            "EV-Q020-7eb7d68f9e4dae67f4b3fcc6",
+            "EV-Q020-b1d992517b213627b333b611"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:d8d2ca00a800",
+          "category": "critical_issue",
+          "description": "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:96f80691cc4b",
+          "category": "critical_issue",
+          "description": "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:4fa5099a8a1d",
+          "category": "required_revision",
+          "description": "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:3709822966c6."
+        },
+        {
+          "issue_id": "required_revision:f3b24a5da835",
+          "category": "required_revision",
+          "description": "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:12a40aced976c005; evidence=EV-Q020-0e5bc9dca13ffe4bb77bc641,EV-Q020-2ce475b12c2a97ed8512e37a,EV-Q020-7eb7d68f9e4dae67f4b3fcc6,EV-Q020-b1d992517b213627b333b611; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:f698ec0a9ee9",
+          "category": "required_revision",
+          "description": "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:8cea8e5c76101f41; evidence=EV-Q020-0e5bc9dca13ffe4bb77bc641,EV-Q020-2ce475b12c2a97ed8512e37a,EV-Q020-7eb7d68f9e4dae67f4b3fcc6,EV-Q020-b1d992517b213627b333b611; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:b104529dc350",
+          "category": "critical_issue",
+          "description": "The 'results' field still contains non-English text ('当前状态：待执行验证实验...'). All output fields must be in English to ensure system interoperability and consistent parsing. This was previously flagged as critical_issue:d8d2ca00a800 and remains unresolved.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:3709822966c6",
+          "category": "required_revision",
+          "description": "Immediately translate the 'results' field content to English. Suggested text: 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.' This is mandatory for passing review.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": "semantic_continuation_of:required_revision:4fa5099a8a1d"
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.95,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.85,
+          "delta": 0.0
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Evaluate the statistical identifiability and convergence of nested partially-latent class models (npLCMs) applied to simulated ASD-like case-control data structures, rather than asserting biological etiology estimation.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Graphical displays integrating data, model assumptions, and results can improve investigator understanding of etiology estimation uncertainty in ASD-like case-control studies, as proposed for general etiology analysis.",
+          "overall_score": 0.55,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:d8d2ca00a800",
+        "required_revision_without_change:critical_issue:96f80691cc4b",
+        "required_revision_without_change:required_revision:4fa5099a8a1d",
+        "unresolved_issue:critical_issue:d8d2ca00a800",
+        "unresolved_issue:critical_issue:96f80691cc4b",
+        "unresolved_issue:required_revision:4fa5099a8a1d",
+        "unresolved_issue:critical_issue:b104529dc350",
+        "unresolved_issue:required_revision:3709822966c6",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "critical_issue:d8d2ca00a800: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:96f80691cc4b: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:4fa5099a8a1d: V2 Reviewer reports semantic_continuation:required_revision:3709822966c6.",
+        "critical_issue:b104529dc350: The 'results' field still contains non-English text ('当前状态：待执行验证实验...'). All output fields must be in English to ensure system interoperability and consistent parsing. This was previously flagged as critical_issue:d8d2ca00a800 and remains unresolved.",
+        "required_revision:3709822966c6: semantic_continuation_of:required_revision:4fa5099a8a1d"
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-081728-aae8340d",
+        "version_number": 1,
+        "version_id": "20260822-081728-aae8340d:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current evidence is insufficient to propose a biological etiology for Autism Spectrum Disorder (ASD); the only testable proposition supported by allowed evidence is that ASD etiology can be estimated using nested partially-latent class models (npLCMs) integrating case-control data and explanatory variables.",
+              "mechanism": "The mechanism is statistical rather than biological: npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities in case-control studies, as described in methodological literature for general etiology regression.",
+              "falsifiable_prediction": "If npLCMs are applied to a valid ASD case-control dataset with appropriate biomarkers/covariates, they will produce stable etiology fraction estimates with narrower confidence intervals than standard logistic regression; if not, the model will fail to converge or show non-identifiability.",
+              "required_observations": [
+                "Availability of ASD case-control datasets with multiple diagnostic indicators and covariates",
+                "Model convergence diagnostics and parameter identifiability assessments",
+                "Comparison of etiology estimates between npLCM and standard regression approaches"
+              ],
+              "risk_of_being_wrong": "High risk that npLCMs may not be appropriate for ASD due to heterogeneity and lack of validated biomarkers; the method may be theoretically sound but practically inapplicable to ASD without domain-specific validation.",
+              "supporting_evidence_ids": [
+                "EV-Q020-2ce475b12c2a97ed8512e37a"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.6
+            },
+            {
+              "hypothesis": "Collaborative meta-knowledge enhancement frameworks originally developed for dementia etiology diagnosis can be adapted to identify ASD etiological subtypes through multi-modal data integration.",
+              "mechanism": "Transfer learning from dementia etiology AI models to ASD by leveraging shared neuroimaging or clinical feature spaces, assuming overlapping pathophysiological patterns between neurodevelopmental and neurodegenerative conditions.",
+              "falsifiable_prediction": "If such transfer is valid, ASD subtype classification accuracy using dementia-pretrained models will significantly exceed chance level (>70%); if not, performance will remain at baseline levels indistinguishable from random assignment.",
+              "required_observations": [
+                "Multi-modal ASD datasets compatible with dementia model input formats",
+                "Cross-domain transfer learning performance metrics",
+                "Statistical comparison against ASD-specific baseline models"
+              ],
+              "risk_of_being_wrong": "Very high risk due to fundamental differences between neurodevelopmental (ASD) and neurodegenerative (dementia) conditions; assumed overlap may not exist, making this hypothesis likely unfounded despite methodological plausibility.",
+              "supporting_evidence_ids": [
+                "EV-Q020-b1d992517b213627b333b611"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.5
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is recommended because it directly addresses the knowledge gap identified in evidence extraction: no biological etiology facts for ASD exist in allowed evidence. Instead of fabricating biological claims, it proposes a methodologically grounded, falsifiable research direction using EV-Q020-2ce475b12c2a97ed8512e37a which explicitly discusses etiology regression frameworks applicable to case-control studies. This hypothesis acknowledges current evidence limitations while providing a concrete, testable pathway toward future etiology estimation. Hypothesis 1 was rejected due to weak cross-domain validity and higher risk of being fundamentally misguided.",
+          "rejected_directions": [
+            "Proposing specific genetic or environmental causes of ASD without supporting evidence IDs",
+            "Claiming acupuncture or meridian system involvement in ASD etiology based solely on booklet excerpt without evidence cards",
+            "Asserting causal mechanisms derived from correlation-based statistical methods mentioned in EV-Q020-7eb7d68f9e4dae67f4b3fcc6",
+            "Using Chronic Kidney Disease etiology findings (EV-Q020-0e5bc9dca13ffe4bb77bc641) as analogies for ASD without validated translational evidence"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes to validate the applicability of Nested Partially-Latent Class Models (npLCMs) for estimating etiological fractions in Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes (e.g., genetic, environmental, idiopathic) without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities (etiology regression); 4) Using Bayesian inference with MCMC or variational inference to estimate posterior distributions of etiological fractions. The key technical challenge is ensuring model identifiability given the high heterogeneity of ASD and the lack of gold-standard biomarkers, which will be addressed through sensitivity analyses on prior specifications and constraint structures.",
+          "datasets": {
+            "source": "Simulated ASD Case-Control Dataset generated based on parameters derived from general epidemiological literature (not from allowed evidence, as no specific ASD dataset is provided in evidence cards). The simulation will mimic the structure described in EV-Q020-2ce475b12c2a97ed8512e37a: multiple binary/continuous diagnostic indicators with known sensitivity/specificity profiles, and covariates (e.g., age, sex, prenatal exposure proxies).",
+            "target": "Estimated Etiological Fractions (PEFs) for defined latent classes, along with their 95% credible intervals. Secondary target: Model convergence diagnostics (R-hat statistics, effective sample size) and parameter recovery accuracy against ground-truth simulation parameters."
+          },
+          "methods": "1. **Model Specification**: Implement npLCM as described in EV-Q020-2ce475b12c2a97ed8512e37a. Let $Y_i$ be the vector of observed measurements for subject $i$, $Z_i$ be the latent etiology class, and $X_i$ be covariates. Model $P(Z_i|X_i)$ using a multinomial logistic regression and $P(Y_i|Z_i)$ using class-specific measurement models (e.g., Bernoulli for binary tests, Gaussian for continuous biomarkers). 2. **Inference**: Use Stan or PyMC3 for Bayesian estimation. 3. **Comparison Baseline**: Standard Multinomial Logistic Regression treating observed composite diagnosis as ground truth (ignoring measurement error). 4. **Validation**: Posterior predictive checks to assess model fit.",
+          "experiments": {
+            "baselines": [
+              "Standard Multinomial Logistic Regression (ignoring latent structure and measurement error)",
+              "Naive Latent Class Analysis (LCA) without covariate integration (no etiology regression)"
+            ],
+            "metrics": [
+              "Root Mean Squared Error (RMSE) of estimated etiological fractions vs. true simulation parameters",
+              "Coverage Probability of 95% Credible Intervals (proportion of times true parameter falls within CI)",
+              "Widest Confidence Interval Width (to assess precision gain over baselines)",
+              "Model Convergence Rate (percentage of chains converging with R-hat < 1.01)"
+            ],
+            "ablation": "1. Varying the number of latent classes (K=2, 3, 4) to test robustness to model misspecification. 2. Removing covariates from the etiology regression component to assess the value of explanatory variable integration. 3. Varying measurement error rates (sensitivity/specificity) to test model resilience to noisy data.",
+            "validation_protocol": "Split simulated data into 80% training and 20% testing. Perform 5-fold cross-validation on hyperparameters (e.g., prior variance). Evaluate metrics on the held-out test set. Conduct a simulation study with N=1000 replications to assess average performance."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Provide full Stan/PyMC3 code for npLCM implementation",
+            "Publish simulation script with fixed random seeds for data generation",
+            "Document all prior distributions and hyperparameter choices",
+            "Include convergence diagnostics plots (trace plots, R-hat values) in supplementary material",
+            "Make simulated datasets available in CSV/JSON format"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation for MCMC sampling",
+            "estimated_runtime": "4-6 hours for 1000 simulation replications",
+            "software_dependencies": [
+              "Python 3.9+",
+              "PyMC3 or Stan",
+              "NumPy, Pandas, ArviZ"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies the lack of biological evidence for ASD etiology in the allowed evidence cards and pivots to a methodological validation study, which is the only scientifically valid path given the constraints.",
+            "The experiment design appropriately uses simulated data as the 'source' dataset because no real ASD case-control data exists in the allowed evidence catalog; this avoids hallucinating external datasets.",
+            "The Results field correctly states 'pending' (in Chinese) and explicitly notes that no real experiments have been executed, adhering to the prohibition against fabricating results.",
+            "Reference reliability is high as the proposed method (npLCM) is directly grounded in EV-Q020-2ce475b12c2a97ed8512e37a, and irrelevant evidence (CKD, Dementia) was correctly excluded from the primary hypothesis support.",
+            "Reproducibility is strong due to the inclusion of specific software dependencies (Stan/PyMC3), convergence diagnostics, and simulation parameters, despite the absence of real-world data."
+          ],
+          "critical_issues": [
+            "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+            "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence."
+          ],
+          "required_revisions": [
+            "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+            "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+            "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:d8d2ca00a800",
+            "category": "critical_issue",
+            "description": "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:96f80691cc4b",
+            "category": "critical_issue",
+            "description": "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:4fa5099a8a1d",
+            "category": "required_revision",
+            "description": "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f3b24a5da835",
+            "category": "required_revision",
+            "description": "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f698ec0a9ee9",
+            "category": "required_revision",
+            "description": "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5bef6fc666aa6fbea0fdf9ceec3d2133512add462e872d306fc1b3d06ba82c4a",
+          "experiment_designer": "03cf50aba018ae6663eb6a344ffc2e29c1a8648f5e94a241c4b2b6db39f15ed8",
+          "scientific_reviewer": "e12cb05777f3f2059cfb57e7549cf4b7fb4c4591f429fe404e8bbcf93c84a410"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-081728-aae8340d",
+        "version_number": 2,
+        "version_id": "20260822-081728-aae8340d:v2",
+        "parent_version_id": "20260822-081728-aae8340d:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Evaluate the statistical identifiability and convergence of nested partially-latent class models (npLCMs) applied to simulated ASD-like case-control data structures, rather than asserting biological etiology estimation.",
+              "mechanism": "The npLCM framework integrates multiple imperfect diagnostic measurements and covariates to estimate latent class probabilities via regression, as described in EV-Q020-2ce475b12c2a97ed8512e37a. In this methodological validation, the mechanism is purely statistical: assessing whether model parameters are recoverable and posteriors converge when applied to synthetic data mimicking ASD heterogeneity, without claiming biological validity.",
+              "falsifiable_prediction": "If npLCMs are statistically identifiable for ASD-like data structures, then >90% of simulation replications will achieve MCMC convergence (R-hat < 1.01) and parameter recovery RMSE < 0.1; if not identifiable, convergence rates will drop below 50% or RMSE will exceed 0.2 regardless of sample size.",
+              "required_observations": [
+                "MCMC convergence diagnostics (R-hat, effective sample size) across 1000 simulation replications",
+                "Root Mean Squared Error (RMSE) between estimated and true latent class fractions in simulated data",
+                "Coverage probability of 95% credible intervals for etiological fraction parameters",
+                "Sensitivity analysis results varying number of latent classes and measurement error rates"
+              ],
+              "risk_of_being_wrong": "Moderate risk that npLCMs may fail to achieve identifiability even in simulated ASD-like structures due to high dimensionality or weak signal-to-noise ratios; however, this would be a valid methodological finding rather than a biological claim failure.",
+              "supporting_evidence_ids": [
+                "EV-Q020-2ce475b12c2a97ed8512e37a"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.95,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Graphical displays integrating data, model assumptions, and results can improve investigator understanding of etiology estimation uncertainty in ASD-like case-control studies, as proposed for general etiology analysis.",
+              "mechanism": "Based on EV-Q020-7eb7d68f9e4dae67f4b3fcc6, graphical displays facilitate communication by visualizing how different evidence sources contribute to final etiology estimates. This hypothesis tests whether such visualization improves human interpretation accuracy in simulated ASD contexts, independent of biological truth.",
+              "falsifiable_prediction": "If graphical displays improve understanding, then investigators using integrated visualizations will estimate etiological fractions with significantly lower absolute error (p<0.05) compared to those using tabular output alone; if not, no significant difference will be observed.",
+              "required_observations": [
+                "Human subject experiment comparing etiology estimation accuracy between visualization and tabular groups",
+                "Statistical test of difference in absolute estimation errors",
+                "Qualitative feedback on interpretability of npLCM outputs in ASD-like scenarios"
+              ],
+              "risk_of_being_wrong": "High risk that graphical displays designed for general etiology may not translate effectively to ASD's unique heterogeneity patterns, or that human factors may dominate over visualization design effects.",
+              "supporting_evidence_ids": [
+                "EV-Q020-7eb7d68f9e4dae67f4b3fcc6"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.5,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.55
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses reviewer critical issues by explicitly reframing the scope to methodological validation of statistical identifiability and convergence in simulated ASD-like data, avoiding any biological etiology claims. It is fully grounded in EV-Q020-2ce475b12c2a97ed8512e37a, uses only allowed evidence, and provides clear falsifiable predictions based on simulation metrics. Hypothesis 1 was retained as an alternative but scored lower due to dependence on human subject experiments and weaker direct relevance to the core knowledge gap about ASD etiology methodology.",
+          "rejected_directions": [
+            "Proposing specific genetic, environmental, or neurobiological causes of ASD without supporting evidence IDs",
+            "Claiming acupuncture or meridian system involvement in ASD etiology based solely on booklet excerpt without evidence cards",
+            "Asserting that dementia etiology AI frameworks (EV-Q020-b1d992517b213627b333b611) can be directly transferred to ASD without cross-domain validation evidence",
+            "Using Chronic Kidney Disease etiology findings (EV-Q020-0e5bc9dca13ffe4bb77bc641) as analogies for ASD without validated translational evidence",
+            "Treating correlation-based statistical methods (EV-Q020-7eb7d68f9e4dae67f4b3fcc6) as sufficient for causal etiology determination without explicit causal inference framework"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study evaluates the statistical identifiability and convergence of Nested Partially-Latent Class Models (npLCMs) when applied to simulated data structures mimicking Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent class probabilities via regression. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities; 4) Using Bayesian inference with MCMC to estimate posterior distributions. \n\nLimitations: Findings from this simulated data study are strictly methodological and cannot be generalized to clinical ASD etiology without external biological validation. The simulation assumes specific data generating processes that may not fully capture the complexity of real-world ASD heterogeneity.",
+          "datasets": {
+            "source": "Simulated ASD-like Case-Control Dataset. Generated synthetically to mimic the structure described in EV-Q020-2ce475b12c2a97ed8512e37a, including multiple binary/continuous diagnostic indicators with known sensitivity/specificity profiles, and covariates (e.g., age, sex). No real-world patient data is used.",
+            "target": "Statistical performance metrics: MCMC convergence diagnostics (R-hat, effective sample size), parameter recovery accuracy (RMSE between estimated and true latent class fractions), and coverage probability of credible intervals."
+          },
+          "methods": "1. Model Specification: Implement npLCM as described in EV-Q020-2ce475b12c2a97ed8512e37a. Let Y_i be the vector of observed measurements, Z_i be the latent etiology class, and X_i be covariates. Model P(Z_i|X_i) using multinomial logistic regression and P(Y_i|Z_i) using class-specific measurement models. 2. Inference: Use Stan or PyMC3 for Bayesian estimation. 3. Simulation Study: Generate 1000 replicated datasets with varying sample sizes and noise levels to assess robustness.",
+          "experiments": {
+            "baselines": [
+              "Standard Multinomial Logistic Regression (ignoring latent structure and measurement error)",
+              "Naive Latent Class Analysis (LCA) without covariate integration"
+            ],
+            "metrics": [
+              "Root Mean Squared Error (RMSE) of estimated etiological fractions vs. true simulation parameters",
+              "Coverage Probability of 95% Credible Intervals",
+              "Model Convergence Rate (percentage of chains with R-hat < 1.01)"
+            ],
+            "ablation": "1. Varying the number of latent classes (K=2, 3, 4) to test robustness to model misspecification. 2. Removing covariates from the etiology regression component. 3. Varying measurement error rates (sensitivity/specificity).",
+            "validation_protocol": "Perform 1000 simulation replications. Evaluate metrics on each replication. Report mean RMSE, mean coverage probability, and convergence rate across all replications."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Provide full Stan/PyMC3 code for npLCM implementation",
+            "Publish simulation script with fixed random seeds for data generation",
+            "Document all prior distributions and hyperparameter choices",
+            "Include convergence diagnostics plots (trace plots, R-hat values) in supplementary material",
+            "Make simulated datasets available in CSV/JSON format"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation for MCMC sampling",
+            "estimated_runtime": "4-6 hours for 1000 simulation replications",
+            "software_dependencies": [
+              "Python 3.9+",
+              "PyMC3 or Stan",
+              "NumPy, Pandas, ArviZ"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The candidate hypothesis has been correctly revised to focus on methodological validation ('statistical identifiability and convergence') rather than biological etiology estimation, addressing critical issue #96f80691cc4b.",
+            "The 'Limitations' subsection has been successfully added to technical_details, explicitly stating that simulated findings cannot be generalized to clinical ASD etiology, addressing required revision #f698ec0a9ee9.",
+            "Reference reliability remains high with strict adherence to EV-Q020-2ce475b12c2a97ed8512e37a for the npLCM framework.",
+            "The Results field still contains non-English text ('当前状态：待执行验证实验...'), violating the system interoperability requirement and failing to address critical issue #d8d2ca00a800 and required revision #4fa5099a8a1d.",
+            "Experiment design is robust with appropriate baselines and metrics for a simulation study, but the language barrier in the results field prevents full automated validation."
+          ],
+          "critical_issues": [
+            "The 'results' field still contains non-English text ('当前状态：待执行验证实验...'). All output fields must be in English to ensure system interoperability and consistent parsing. This was previously flagged as critical_issue:d8d2ca00a800 and remains unresolved."
+          ],
+          "required_revisions": [
+            "Immediately translate the 'results' field content to English. Suggested text: 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.' This is mandatory for passing review."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:d8d2ca00a800",
+            "category": "critical_issue",
+            "description": "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:96f80691cc4b",
+            "category": "critical_issue",
+            "description": "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:4fa5099a8a1d",
+            "category": "required_revision",
+            "description": "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:3709822966c6."
+          },
+          {
+            "issue_id": "required_revision:f3b24a5da835",
+            "category": "required_revision",
+            "description": "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:12a40aced976c005; evidence=EV-Q020-0e5bc9dca13ffe4bb77bc641,EV-Q020-2ce475b12c2a97ed8512e37a,EV-Q020-7eb7d68f9e4dae67f4b3fcc6,EV-Q020-b1d992517b213627b333b611; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:f698ec0a9ee9",
+            "category": "required_revision",
+            "description": "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:8cea8e5c76101f41; evidence=EV-Q020-0e5bc9dca13ffe4bb77bc641,EV-Q020-2ce475b12c2a97ed8512e37a,EV-Q020-7eb7d68f9e4dae67f4b3fcc6,EV-Q020-b1d992517b213627b333b611; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:b104529dc350",
+            "category": "critical_issue",
+            "description": "The 'results' field still contains non-English text ('当前状态：待执行验证实验...'). All output fields must be in English to ensure system interoperability and consistent parsing. This was previously flagged as critical_issue:d8d2ca00a800 and remains unresolved.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3709822966c6",
+            "category": "required_revision",
+            "description": "Immediately translate the 'results' field content to English. Suggested text: 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.' This is mandatory for passing review.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": "semantic_continuation_of:required_revision:4fa5099a8a1d"
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "d72ff3d7b7f437bef9895652c391b98b6ebe47bf18bfdd625efb825e5aad2b40",
+          "experiment_designer": "e58768b1ca8d9129196917b9cb12a1db6bb680f460a3ad980d7a5d0c7df84239",
+          "scientific_reviewer": "46c37f7a90e362dac891a6091199fca36908d79bcb05700c73e42da6c506a295"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-081728-aae8340d",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-081728-aae8340d:review:v1",
+        "20260822-081728-aae8340d:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-081728-aae8340d:v1",
+        "20260822-081728-aae8340d:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-081728-aae8340d",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-081728-aae8340d:review:v1",
+          "20260822-081728-aae8340d:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-081728-aae8340d:v1",
+          "20260822-081728-aae8340d:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-081728-aae8340d",
+          "version_number": 1,
+          "version_id": "20260822-081728-aae8340d:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Current evidence is insufficient to propose a biological etiology for Autism Spectrum Disorder (ASD); the only testable proposition supported by allowed evidence is that ASD etiology can be estimated using nested partially-latent class models (npLCMs) integrating case-control data and explanatory variables.",
+                "mechanism": "The mechanism is statistical rather than biological: npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities in case-control studies, as described in methodological literature for general etiology regression.",
+                "falsifiable_prediction": "If npLCMs are applied to a valid ASD case-control dataset with appropriate biomarkers/covariates, they will produce stable etiology fraction estimates with narrower confidence intervals than standard logistic regression; if not, the model will fail to converge or show non-identifiability.",
+                "required_observations": [
+                  "Availability of ASD case-control datasets with multiple diagnostic indicators and covariates",
+                  "Model convergence diagnostics and parameter identifiability assessments",
+                  "Comparison of etiology estimates between npLCM and standard regression approaches"
+                ],
+                "risk_of_being_wrong": "High risk that npLCMs may not be appropriate for ASD due to heterogeneity and lack of validated biomarkers; the method may be theoretically sound but practically inapplicable to ASD without domain-specific validation.",
+                "supporting_evidence_ids": [
+                  "EV-Q020-2ce475b12c2a97ed8512e37a"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.6
+              },
+              {
+                "hypothesis": "Collaborative meta-knowledge enhancement frameworks originally developed for dementia etiology diagnosis can be adapted to identify ASD etiological subtypes through multi-modal data integration.",
+                "mechanism": "Transfer learning from dementia etiology AI models to ASD by leveraging shared neuroimaging or clinical feature spaces, assuming overlapping pathophysiological patterns between neurodevelopmental and neurodegenerative conditions.",
+                "falsifiable_prediction": "If such transfer is valid, ASD subtype classification accuracy using dementia-pretrained models will significantly exceed chance level (>70%); if not, performance will remain at baseline levels indistinguishable from random assignment.",
+                "required_observations": [
+                  "Multi-modal ASD datasets compatible with dementia model input formats",
+                  "Cross-domain transfer learning performance metrics",
+                  "Statistical comparison against ASD-specific baseline models"
+                ],
+                "risk_of_being_wrong": "Very high risk due to fundamental differences between neurodevelopmental (ASD) and neurodegenerative (dementia) conditions; assumed overlap may not exist, making this hypothesis likely unfounded despite methodological plausibility.",
+                "supporting_evidence_ids": [
+                  "EV-Q020-b1d992517b213627b333b611"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.4,
+                "evidence_support_score": 0.3,
+                "overall_score": 0.5
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is recommended because it directly addresses the knowledge gap identified in evidence extraction: no biological etiology facts for ASD exist in allowed evidence. Instead of fabricating biological claims, it proposes a methodologically grounded, falsifiable research direction using EV-Q020-2ce475b12c2a97ed8512e37a which explicitly discusses etiology regression frameworks applicable to case-control studies. This hypothesis acknowledges current evidence limitations while providing a concrete, testable pathway toward future etiology estimation. Hypothesis 1 was rejected due to weak cross-domain validity and higher risk of being fundamentally misguided.",
+            "rejected_directions": [
+              "Proposing specific genetic or environmental causes of ASD without supporting evidence IDs",
+              "Claiming acupuncture or meridian system involvement in ASD etiology based solely on booklet excerpt without evidence cards",
+              "Asserting causal mechanisms derived from correlation-based statistical methods mentioned in EV-Q020-7eb7d68f9e4dae67f4b3fcc6",
+              "Using Chronic Kidney Disease etiology findings (EV-Q020-0e5bc9dca13ffe4bb77bc641) as analogies for ASD without validated translational evidence"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study proposes to validate the applicability of Nested Partially-Latent Class Models (npLCMs) for estimating etiological fractions in Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent disease etiology probabilities. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes (e.g., genetic, environmental, idiopathic) without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities (etiology regression); 4) Using Bayesian inference with MCMC or variational inference to estimate posterior distributions of etiological fractions. The key technical challenge is ensuring model identifiability given the high heterogeneity of ASD and the lack of gold-standard biomarkers, which will be addressed through sensitivity analyses on prior specifications and constraint structures.",
+            "datasets": {
+              "source": "Simulated ASD Case-Control Dataset generated based on parameters derived from general epidemiological literature (not from allowed evidence, as no specific ASD dataset is provided in evidence cards). The simulation will mimic the structure described in EV-Q020-2ce475b12c2a97ed8512e37a: multiple binary/continuous diagnostic indicators with known sensitivity/specificity profiles, and covariates (e.g., age, sex, prenatal exposure proxies).",
+              "target": "Estimated Etiological Fractions (PEFs) for defined latent classes, along with their 95% credible intervals. Secondary target: Model convergence diagnostics (R-hat statistics, effective sample size) and parameter recovery accuracy against ground-truth simulation parameters."
+            },
+            "methods": "1. **Model Specification**: Implement npLCM as described in EV-Q020-2ce475b12c2a97ed8512e37a. Let $Y_i$ be the vector of observed measurements for subject $i$, $Z_i$ be the latent etiology class, and $X_i$ be covariates. Model $P(Z_i|X_i)$ using a multinomial logistic regression and $P(Y_i|Z_i)$ using class-specific measurement models (e.g., Bernoulli for binary tests, Gaussian for continuous biomarkers). 2. **Inference**: Use Stan or PyMC3 for Bayesian estimation. 3. **Comparison Baseline**: Standard Multinomial Logistic Regression treating observed composite diagnosis as ground truth (ignoring measurement error). 4. **Validation**: Posterior predictive checks to assess model fit.",
+            "experiments": {
+              "baselines": [
+                "Standard Multinomial Logistic Regression (ignoring latent structure and measurement error)",
+                "Naive Latent Class Analysis (LCA) without covariate integration (no etiology regression)"
+              ],
+              "metrics": [
+                "Root Mean Squared Error (RMSE) of estimated etiological fractions vs. true simulation parameters",
+                "Coverage Probability of 95% Credible Intervals (proportion of times true parameter falls within CI)",
+                "Widest Confidence Interval Width (to assess precision gain over baselines)",
+                "Model Convergence Rate (percentage of chains converging with R-hat < 1.01)"
+              ],
+              "ablation": "1. Varying the number of latent classes (K=2, 3, 4) to test robustness to model misspecification. 2. Removing covariates from the etiology regression component to assess the value of explanatory variable integration. 3. Varying measurement error rates (sensitivity/specificity) to test model resilience to noisy data.",
+              "validation_protocol": "Split simulated data into 80% training and 20% testing. Perform 5-fold cross-validation on hyperparameters (e.g., prior variance). Evaluate metrics on the held-out test set. Conduct a simulation study with N=1000 replications to assess average performance."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Provide full Stan/PyMC3 code for npLCM implementation",
+              "Publish simulation script with fixed random seeds for data generation",
+              "Document all prior distributions and hyperparameter choices",
+              "Include convergence diagnostics plots (trace plots, R-hat values) in supplementary material",
+              "Make simulated datasets available in CSV/JSON format"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU/GPU workstation for MCMC sampling",
+              "estimated_runtime": "4-6 hours for 1000 simulation replications",
+              "software_dependencies": [
+                "Python 3.9+",
+                "PyMC3 or Stan",
+                "NumPy, Pandas, ArviZ"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The candidate hypothesis correctly identifies the lack of biological evidence for ASD etiology in the allowed evidence cards and pivots to a methodological validation study, which is the only scientifically valid path given the constraints.",
+              "The experiment design appropriately uses simulated data as the 'source' dataset because no real ASD case-control data exists in the allowed evidence catalog; this avoids hallucinating external datasets.",
+              "The Results field correctly states 'pending' (in Chinese) and explicitly notes that no real experiments have been executed, adhering to the prohibition against fabricating results.",
+              "Reference reliability is high as the proposed method (npLCM) is directly grounded in EV-Q020-2ce475b12c2a97ed8512e37a, and irrelevant evidence (CKD, Dementia) was correctly excluded from the primary hypothesis support.",
+              "Reproducibility is strong due to the inclusion of specific software dependencies (Stan/PyMC3), convergence diagnostics, and simulation parameters, despite the absence of real-world data."
+            ],
+            "critical_issues": [
+              "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+              "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence."
+            ],
+            "required_revisions": [
+              "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+              "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+              "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.85,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:d8d2ca00a800",
+              "category": "critical_issue",
+              "description": "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:96f80691cc4b",
+              "category": "critical_issue",
+              "description": "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:4fa5099a8a1d",
+              "category": "required_revision",
+              "description": "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:f3b24a5da835",
+              "category": "required_revision",
+              "description": "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:f698ec0a9ee9",
+              "category": "required_revision",
+              "description": "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "5bef6fc666aa6fbea0fdf9ceec3d2133512add462e872d306fc1b3d06ba82c4a",
+            "experiment_designer": "03cf50aba018ae6663eb6a344ffc2e29c1a8648f5e94a241c4b2b6db39f15ed8",
+            "scientific_reviewer": "e12cb05777f3f2059cfb57e7549cf4b7fb4c4591f429fe404e8bbcf93c84a410"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-081728-aae8340d",
+          "version_number": 2,
+          "version_id": "20260822-081728-aae8340d:v2",
+          "parent_version_id": "20260822-081728-aae8340d:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Evaluate the statistical identifiability and convergence of nested partially-latent class models (npLCMs) applied to simulated ASD-like case-control data structures, rather than asserting biological etiology estimation.",
+                "mechanism": "The npLCM framework integrates multiple imperfect diagnostic measurements and covariates to estimate latent class probabilities via regression, as described in EV-Q020-2ce475b12c2a97ed8512e37a. In this methodological validation, the mechanism is purely statistical: assessing whether model parameters are recoverable and posteriors converge when applied to synthetic data mimicking ASD heterogeneity, without claiming biological validity.",
+                "falsifiable_prediction": "If npLCMs are statistically identifiable for ASD-like data structures, then >90% of simulation replications will achieve MCMC convergence (R-hat < 1.01) and parameter recovery RMSE < 0.1; if not identifiable, convergence rates will drop below 50% or RMSE will exceed 0.2 regardless of sample size.",
+                "required_observations": [
+                  "MCMC convergence diagnostics (R-hat, effective sample size) across 1000 simulation replications",
+                  "Root Mean Squared Error (RMSE) between estimated and true latent class fractions in simulated data",
+                  "Coverage probability of 95% credible intervals for etiological fraction parameters",
+                  "Sensitivity analysis results varying number of latent classes and measurement error rates"
+                ],
+                "risk_of_being_wrong": "Moderate risk that npLCMs may fail to achieve identifiability even in simulated ASD-like structures due to high dimensionality or weak signal-to-noise ratios; however, this would be a valid methodological finding rather than a biological claim failure.",
+                "supporting_evidence_ids": [
+                  "EV-Q020-2ce475b12c2a97ed8512e37a"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.95,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "Graphical displays integrating data, model assumptions, and results can improve investigator understanding of etiology estimation uncertainty in ASD-like case-control studies, as proposed for general etiology analysis.",
+                "mechanism": "Based on EV-Q020-7eb7d68f9e4dae67f4b3fcc6, graphical displays facilitate communication by visualizing how different evidence sources contribute to final etiology estimates. This hypothesis tests whether such visualization improves human interpretation accuracy in simulated ASD contexts, independent of biological truth.",
+                "falsifiable_prediction": "If graphical displays improve understanding, then investigators using integrated visualizations will estimate etiological fractions with significantly lower absolute error (p<0.05) compared to those using tabular output alone; if not, no significant difference will be observed.",
+                "required_observations": [
+                  "Human subject experiment comparing etiology estimation accuracy between visualization and tabular groups",
+                  "Statistical test of difference in absolute estimation errors",
+                  "Qualitative feedback on interpretability of npLCM outputs in ASD-like scenarios"
+                ],
+                "risk_of_being_wrong": "High risk that graphical displays designed for general etiology may not translate effectively to ASD's unique heterogeneity patterns, or that human factors may dominate over visualization design effects.",
+                "supporting_evidence_ids": [
+                  "EV-Q020-7eb7d68f9e4dae67f4b3fcc6"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.5,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.55
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses reviewer critical issues by explicitly reframing the scope to methodological validation of statistical identifiability and convergence in simulated ASD-like data, avoiding any biological etiology claims. It is fully grounded in EV-Q020-2ce475b12c2a97ed8512e37a, uses only allowed evidence, and provides clear falsifiable predictions based on simulation metrics. Hypothesis 1 was retained as an alternative but scored lower due to dependence on human subject experiments and weaker direct relevance to the core knowledge gap about ASD etiology methodology.",
+            "rejected_directions": [
+              "Proposing specific genetic, environmental, or neurobiological causes of ASD without supporting evidence IDs",
+              "Claiming acupuncture or meridian system involvement in ASD etiology based solely on booklet excerpt without evidence cards",
+              "Asserting that dementia etiology AI frameworks (EV-Q020-b1d992517b213627b333b611) can be directly transferred to ASD without cross-domain validation evidence",
+              "Using Chronic Kidney Disease etiology findings (EV-Q020-0e5bc9dca13ffe4bb77bc641) as analogies for ASD without validated translational evidence",
+              "Treating correlation-based statistical methods (EV-Q020-7eb7d68f9e4dae67f4b3fcc6) as sufficient for causal etiology determination without explicit causal inference framework"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study evaluates the statistical identifiability and convergence of Nested Partially-Latent Class Models (npLCMs) when applied to simulated data structures mimicking Autism Spectrum Disorder (ASD) case-control studies. Based on EV-Q020-2ce475b12c2a97ed8512e37a, npLCMs integrate multiple imperfect diagnostic measurements and covariates to estimate latent class probabilities via regression. The technical implementation involves: 1) Defining a latent class structure representing potential etiological subtypes without assuming prior biological truth; 2) Modeling the conditional probability of observed biomarkers/clinical indicators given latent classes, accounting for measurement error; 3) Incorporating explanatory variables (covariates) via a regression framework on the latent class probabilities; 4) Using Bayesian inference with MCMC to estimate posterior distributions. \n\nLimitations: Findings from this simulated data study are strictly methodological and cannot be generalized to clinical ASD etiology without external biological validation. The simulation assumes specific data generating processes that may not fully capture the complexity of real-world ASD heterogeneity.",
+            "datasets": {
+              "source": "Simulated ASD-like Case-Control Dataset. Generated synthetically to mimic the structure described in EV-Q020-2ce475b12c2a97ed8512e37a, including multiple binary/continuous diagnostic indicators with known sensitivity/specificity profiles, and covariates (e.g., age, sex). No real-world patient data is used.",
+              "target": "Statistical performance metrics: MCMC convergence diagnostics (R-hat, effective sample size), parameter recovery accuracy (RMSE between estimated and true latent class fractions), and coverage probability of credible intervals."
+            },
+            "methods": "1. Model Specification: Implement npLCM as described in EV-Q020-2ce475b12c2a97ed8512e37a. Let Y_i be the vector of observed measurements, Z_i be the latent etiology class, and X_i be covariates. Model P(Z_i|X_i) using multinomial logistic regression and P(Y_i|Z_i) using class-specific measurement models. 2. Inference: Use Stan or PyMC3 for Bayesian estimation. 3. Simulation Study: Generate 1000 replicated datasets with varying sample sizes and noise levels to assess robustness.",
+            "experiments": {
+              "baselines": [
+                "Standard Multinomial Logistic Regression (ignoring latent structure and measurement error)",
+                "Naive Latent Class Analysis (LCA) without covariate integration"
+              ],
+              "metrics": [
+                "Root Mean Squared Error (RMSE) of estimated etiological fractions vs. true simulation parameters",
+                "Coverage Probability of 95% Credible Intervals",
+                "Model Convergence Rate (percentage of chains with R-hat < 1.01)"
+              ],
+              "ablation": "1. Varying the number of latent classes (K=2, 3, 4) to test robustness to model misspecification. 2. Removing covariates from the etiology regression component. 3. Varying measurement error rates (sensitivity/specificity).",
+              "validation_protocol": "Perform 1000 simulation replications. Evaluate metrics on each replication. Report mean RMSE, mean coverage probability, and convergence rate across all replications."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Provide full Stan/PyMC3 code for npLCM implementation",
+              "Publish simulation script with fixed random seeds for data generation",
+              "Document all prior distributions and hyperparameter choices",
+              "Include convergence diagnostics plots (trace plots, R-hat values) in supplementary material",
+              "Make simulated datasets available in CSV/JSON format"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU/GPU workstation for MCMC sampling",
+              "estimated_runtime": "4-6 hours for 1000 simulation replications",
+              "software_dependencies": [
+                "Python 3.9+",
+                "PyMC3 or Stan",
+                "NumPy, Pandas, ArviZ"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The candidate hypothesis has been correctly revised to focus on methodological validation ('statistical identifiability and convergence') rather than biological etiology estimation, addressing critical issue #96f80691cc4b.",
+              "The 'Limitations' subsection has been successfully added to technical_details, explicitly stating that simulated findings cannot be generalized to clinical ASD etiology, addressing required revision #f698ec0a9ee9.",
+              "Reference reliability remains high with strict adherence to EV-Q020-2ce475b12c2a97ed8512e37a for the npLCM framework.",
+              "The Results field still contains non-English text ('当前状态：待执行验证实验...'), violating the system interoperability requirement and failing to address critical issue #d8d2ca00a800 and required revision #4fa5099a8a1d.",
+              "Experiment design is robust with appropriate baselines and metrics for a simulation study, but the language barrier in the results field prevents full automated validation."
+            ],
+            "critical_issues": [
+              "The 'results' field still contains non-English text ('当前状态：待执行验证实验...'). All output fields must be in English to ensure system interoperability and consistent parsing. This was previously flagged as critical_issue:d8d2ca00a800 and remains unresolved."
+            ],
+            "required_revisions": [
+              "Immediately translate the 'results' field content to English. Suggested text: 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.' This is mandatory for passing review."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.85,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:d8d2ca00a800",
+              "category": "critical_issue",
+              "description": "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:96f80691cc4b",
+              "category": "critical_issue",
+              "description": "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:4fa5099a8a1d",
+              "category": "required_revision",
+              "description": "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:3709822966c6."
+            },
+            {
+              "issue_id": "required_revision:f3b24a5da835",
+              "category": "required_revision",
+              "description": "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:12a40aced976c005; evidence=EV-Q020-0e5bc9dca13ffe4bb77bc641,EV-Q020-2ce475b12c2a97ed8512e37a,EV-Q020-7eb7d68f9e4dae67f4b3fcc6,EV-Q020-b1d992517b213627b333b611; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:f698ec0a9ee9",
+              "category": "required_revision",
+              "description": "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:8cea8e5c76101f41; evidence=EV-Q020-0e5bc9dca13ffe4bb77bc641,EV-Q020-2ce475b12c2a97ed8512e37a,EV-Q020-7eb7d68f9e4dae67f4b3fcc6,EV-Q020-b1d992517b213627b333b611; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:b104529dc350",
+              "category": "critical_issue",
+              "description": "The 'results' field still contains non-English text ('当前状态：待执行验证实验...'). All output fields must be in English to ensure system interoperability and consistent parsing. This was previously flagged as critical_issue:d8d2ca00a800 and remains unresolved.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:3709822966c6",
+              "category": "required_revision",
+              "description": "Immediately translate the 'results' field content to English. Suggested text: 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.' This is mandatory for passing review.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": "semantic_continuation_of:required_revision:4fa5099a8a1d"
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "d72ff3d7b7f437bef9895652c391b98b6ebe47bf18bfdd625efb825e5aad2b40",
+            "experiment_designer": "e58768b1ca8d9129196917b9cb12a1db6bb680f460a3ad980d7a5d0c7df84239",
+            "scientific_reviewer": "46c37f7a90e362dac891a6091199fca36908d79bcb05700c73e42da6c506a295"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-081728-aae8340d:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-081728-aae8340d:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-081728-aae8340d:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-081728-aae8340d:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:d8d2ca00a800",
+          "category": "critical_issue",
+          "description": "The 'results' field contains non-English text ('当前状态：待执行验证实验...'). While factually correct regarding execution status, all output fields must be in English to ensure system interoperability and consistent parsing.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:96f80691cc4b",
+          "category": "critical_issue",
+          "description": "The hypothesis framing 'ASD etiology can be estimated...' risks being misinterpreted as a biological claim. It must be explicitly reframed as 'Methodological feasibility of npLCMs for latent class estimation in ASD-like data structures' to prevent overclaiming biological validity based solely on statistical evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:4fa5099a8a1d",
+          "category": "required_revision",
+          "description": "Translate the content of the 'results' field into English (e.g., 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.').",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:3709822966c6."
+        },
+        {
+          "issue_id": "required_revision:f3b24a5da835",
+          "category": "required_revision",
+          "description": "Revise the hypothesis statement to explicitly limit the scope to methodological validation (e.g., 'Evaluate the statistical identifiability and convergence of npLCMs applied to simulated ASD case-control data') rather than asserting that ASD etiology itself can be estimated.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:12a40aced976c005; evidence=EV-Q020-0e5bc9dca13ffe4bb77bc641,EV-Q020-2ce475b12c2a97ed8512e37a,EV-Q020-7eb7d68f9e4dae67f4b3fcc6,EV-Q020-b1d992517b213627b333b611; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:f698ec0a9ee9",
+          "category": "required_revision",
+          "description": "Add a mandatory 'Limitations' subsection in the technical_details explicitly stating that findings from simulated data cannot be generalized to clinical ASD etiology without external biological validation.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:8cea8e5c76101f41; evidence=EV-Q020-0e5bc9dca13ffe4bb77bc641,EV-Q020-2ce475b12c2a97ed8512e37a,EV-Q020-7eb7d68f9e4dae67f4b3fcc6,EV-Q020-b1d992517b213627b333b611; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:b104529dc350",
+          "category": "critical_issue",
+          "description": "The 'results' field still contains non-English text ('当前状态：待执行验证实验...'). All output fields must be in English to ensure system interoperability and consistent parsing. This was previously flagged as critical_issue:d8d2ca00a800 and remains unresolved.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:3709822966c6",
+          "category": "required_revision",
+          "description": "Immediately translate the 'results' field content to English. Suggested text: 'Status: Pending verification experiments. Reproducible scripts generated; no real-world execution performed yet.' This is mandatory for passing review.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": "semantic_continuation_of:required_revision:4fa5099a8a1d"
+        }
+      ],
+      "checkpoint_hash": "52ab3019cebc378685f2eb1e26e912894c676cd02ab06bbef09b59af9df86d77"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-081728-aae8340d:wave-b-two-round",
+      "run_id": "20260822-081728-aae8340d",
+      "v1_version_id": "20260822-081728-aae8340d:v1",
+      "v2_version_id": "20260822-081728-aae8340d:v2",
+      "input_fingerprints": {
+        "v1": "03cf50aba018ae6663eb6a344ffc2e29c1a8648f5e94a241c4b2b6db39f15ed8",
+        "v2": "e58768b1ca8d9129196917b9cb12a1db6bb680f460a3ad980d7a5d0c7df84239"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "required_revision:f3b24a5da835",
+        "required_revision:f698ec0a9ee9"
+      ],
+      "change_ids": [
+        "change:12a40aced976c005",
+        "change:8cea8e5c76101f41"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.95,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.85,
+          "delta": 0.0
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Evaluate the statistical identifiability and convergence of nested partially-latent class models (npLCMs) applied to simulated ASD-like case-control data structures, rather than asserting biological etiology estimation.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Graphical displays integrating data, model assumptions, and results can improve investigator understanding of etiology estimation uncertainty in ASD-like case-control studies, as proposed for general etiology analysis.",
+          "overall_score": 0.55,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "b6efb0fd9544",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:19:37.251532+00:00",
+    "ended_at": "2026-08-22T08:20:11.511011+00:00",
+    "duration_ms": 34259,
+    "input_summary": "{\"question_item\": {\"id\": \"Q020\", \"domain\": \"Medicine & Health\", \"question\": \"What is the etiology of autism?\", \"source_page\": 12, \"booklet_excerpt\": \"scientific examinations exploring the Meridian System and the use of acupuncture for treatment of disorders, Autism spectrum disorder (ASD) is a and some studies suggest that acupuncture may help neurodevelopmental condition that affects an ease chronic pain and prevent migraine headaches. individual’s ability to perceive and process information Other investigations suggest that acupuncture impacts and socialize with others. It can lead to issues",
+    "output_summary": "{\"input_question\": \"What is the etiology of autism?\", \"domain\": \"Medicine & Health\", \"problem_statement\": \"The specific biological and environmental causal mechanisms (etiology) underlying Autism Spectrum Disorder (ASD) remain complex and not fully elucidated by the provided evidence. While ASD is defined as a neurodevelopmental condition affecting social interaction and communication, the available literature does not provide direct factual claims regarding its origin. Instead, methodological frameworks for estimating etiology in case-control studies exist but require validation for applicabi",
+    "evidence_ids": [
+      "EV-Q020-2ce475b12c2a97ed8512e37a"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "df0de2880e4d",
+    "mock": false
+  },
+  {
+    "event_id": "20a49b0e0ae2",
+    "run_id": "20260822-081728-aae8340d",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:20:11.511011+00:00",
+    "ended_at": "2026-08-22T08:20:13.091749+00:00",
+    "duration_ms": 1580,
+    "input_summary": "{\"question_item\": {\"id\": \"Q020\", \"domain\": \"Medicine & Health\", \"question\": \"What is the etiology of autism?\", \"source_page\": 12, \"booklet_excerpt\": \"scientific examinations exploring the Meridian System and the use of acupuncture for treatment of disorders, Autism spectrum disorder (ASD) is a and some studies suggest that acupuncture may help neurodevelopmental condition that affects an ease chronic pain and prevent migraine headaches. individual’s ability to perceive and process information Other investigations suggest that acupuncture impacts and socialize with others. It can lead to issues",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required field 'ResearchPlan' in input.\", \"Missing required field 'EvidenceCards' in input.\", \"Missing required field 'AgentTrace' in input.\", \"Missing required field 'execution_metadata' in input.\"], \"warnings\": [\"Input contains only question_item; cannot perform validation without ResearchPlan and EvidenceCards.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2d91b8fc6abc",
+    "mock": false
+  }
+]

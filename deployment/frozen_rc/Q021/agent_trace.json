@@ -1,0 +1,1922 @@
+[
+  {
+    "event_id": "73385732245f",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:18.327941+00:00",
+    "ended_at": "2026-08-22T08:17:18.327941+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "608bb98ae1ba",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:18.327941+00:00",
+    "ended_at": "2026-08-22T08:17:22.360170+00:00",
+    "duration_ms": 4032,
+    "input_summary": "{\"question_item\": {\"id\": \"Q021\", \"domain\": \"Medicine & Health\", \"question\": \"Can we ever overcome antibiotic resistance?\", \"source_page\": 12, \"booklet_excerpt\": \"Antibiotic resistance significantly threatens global health and food security. It can be addressed through contributions by those in policy, health care, research, and agriculture, and through prudent use of antibiotics by individuals.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Medicine & Health\", \"core_question\": \"Is it possible to overcome antibiotic resistance, and what are the required multi-sectoral interventions?\", \"keywords\": [\"antibiotic resistance\", \"global health\", \"food security\", \"policy\", \"health care\", \"research\", \"agriculture\", \"prudent use\"], \"entities\": [\"antibiotic resistance\", \"global health\", \"food security\", \"policy makers\", \"health care providers\", \"researchers\", \"agricultural sector\", \"individuals\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"The scope is limited to the feasibility of overcoming antibioti",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e89fe74d8f0b",
+    "mock": false
+  },
+  {
+    "event_id": "845ff5cfdb34",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:22.360170+00:00",
+    "ended_at": "2026-08-22T08:17:43.400972+00:00",
+    "duration_ms": 21040,
+    "input_summary": "{\"question_item\": {\"id\": \"Q021\", \"domain\": \"Medicine & Health\", \"question\": \"Can we ever overcome antibiotic resistance?\", \"source_page\": 12, \"booklet_excerpt\": \"Antibiotic resistance significantly threatens global health and food security. It can be addressed through contributions by those in policy, health care, research, and agriculture, and through prudent use of antibiotics by individuals.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Medicine & Health\", \"core_question\": \"Is it possible to over",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify specific policy frameworks and regulatory interventions cited in local documents that address antibiotic stewardship in healthcare and agriculture.\", \"query\": \"antibiotic resistance policy interventions healthcare agriculture stewardship guidelines\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Descriptions of policy measures, regulatory frameworks, or stewardship programs mentioned in the source materials that aim to mitigate antibiotic resistance.\", \"priority\": \"high\"}, {\"purpose\": \"Extract evidence regarding the role of prudent antibiotic use by",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "039c345d86ae",
+    "mock": false
+  },
+  {
+    "event_id": "8d96af8ddd47",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:43.410977+00:00",
+    "ended_at": "2026-08-22T08:17:57.784280+00:00",
+    "duration_ms": 14373,
+    "input_summary": "{\"question_item\": {\"id\": \"Q021\", \"domain\": \"Medicine & Health\", \"question\": \"Can we ever overcome antibiotic resistance?\", \"source_page\": 12, \"booklet_excerpt\": \"Antibiotic resistance significantly threatens global health and food security. It can be addressed through contributions by those in policy, health care, research, and agriculture, and through prudent use of antibiotics by individuals.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q021-d5f0694a2f1ae3b8676b11f0\", \"title\": \"arXiv:1706.02274\"",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Antibiotic resistance is a significant threat to global health and food security.\", \"evidence_ids\": [], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": \"Derived from booklet excerpt which is not an allowed evidence ID; treated as context only.\"}, {\"fact\": \"New capabilities exist to study biosystems and processes, including antibiotic response.\", \"evidence_ids\": [\"EV-Q021-8467846663ee76fc520513be\"], \"confidence\": \"medium\", \"fact_type\": \"method\", \"caveat\": \"The evidence confirms the ability to study antibiotic response, but does not specify if this lea",
+    "evidence_ids": [
+      "EV-Q021-8467846663ee76fc520513be"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0f120fffb919",
+    "mock": false
+  },
+  {
+    "event_id": "71be0586c4e8",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:57.784280+00:00",
+    "ended_at": "2026-08-22T08:18:15.062945+00:00",
+    "duration_ms": 17278,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q021\", \"domain\": \"Medicine & Health\", \"question\": \"Can we ever overcome antibiotic resistance?\", \"source_page\": 12, \"booklet_excerpt\": \"Antibiotic resistance significantly threatens global health and food security. It can be addressed through contributions by those in policy, health care, research, and agriculture, and through prudent use of antibiotics by individuals.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q021-d5f0694a2f1ae3b8676b11f0\", \"t",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Advanced biosystem monitoring capabilities enable the identification of transient metabolic vulnerabilities in resistant bacteria, allowing for targeted interventions that overcome resistance through precision timing rather than novel drug discovery.\", \"mechanism\": \"New observational technologies (EV-Q021-8467846663ee76fc520513be) provide high-resolution temporal data on antibiotic response and metabolic processes. This data reveals dynamic susceptibility windows where resistant strains are metabolically compromised, enabling existing antibiotics to be effective",
+    "evidence_ids": [
+      "EV-Q021-8467846663ee76fc520513be"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "33d63de2354b",
+    "mock": false
+  },
+  {
+    "event_id": "b37a92df951f",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:18:15.062945+00:00",
+    "ended_at": "2026-08-22T08:18:38.101620+00:00",
+    "duration_ms": 23038,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q021\", \"domain\": \"Medicine & Health\", \"question\": \"Can we ever overcome antibiotic resistance?\", \"source_page\": 12, \"booklet_excerpt\": \"Antibiotic resistance significantly threatens global health and food security. It can be addressed through contributions by those in policy, health care, research, and agriculture, and through prudent use of antibiotics by individuals.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"general_scientific_unknown\", \"recommended_hypoth",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that high-resolution temporal monitoring of bacterial metabolic states can identify transient windows of susceptibility in multidrug-resistant (MDR) strains. The core technical challenge is synchronizing real-time metabolic flux data (e.g., NADH/NAD+ ratios, ATP levels, membrane potential) with antibiotic exposure timing. We will employ microfluidic biosensors capable of sub-minute resolution metabolic profiling, coupled with automated drug delivery systems. The study focuses on correlating specific metabolic 'signatures' (defined as ",
+    "evidence_ids": [
+      "EV-Q021-8467846663ee76fc520513be"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7e5490e6814b",
+    "mock": false
+  },
+  {
+    "event_id": "7ee6d7f9bc40",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:18:38.103004+00:00",
+    "ended_at": "2026-08-22T08:18:52.759070+00:00",
+    "duration_ms": 14656,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q021\", \"domain\": \"Medicine & Health\", \"question\": \"Can we ever overcome antibiotic resistance?\", \"source_page\": 12, \"booklet_excerpt\": \"Antibiotic resistance significantly threatens global health and food security. It can be addressed through contributions by those in policy, health care, research, and agriculture, and through prudent use of antibiotics by individuals.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Advanced biosystem monit",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) and avoids citing irrelevant AI/philosophy cards.\", \"The Results field correctly states 'pending' and does not fabricate experimental outcomes.\", \"The experiment design includes appropriate baselines (Standard MIC, Random Timing) and metrics (AUPRC, Fold-Change) to test the specific claim of temporal vulnerability.\", \"However, the mechanism description overstates the evidence: EV-Q021-8467846663ee76fc520513be only confirms 'capabilities to study antibi",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ae6461bac023",
+    "mock": false
+  },
+  {
+    "event_id": "cb76c9ee2b14",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:18:52.761069+00:00",
+    "ended_at": "2026-08-22T08:19:13.578699+00:00",
+    "duration_ms": 20817,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) and avoids citing irrelevant AI/philosophy cards.\", \"The Results field correctly states 'pending' and does not fabricate experimental outcomes.\", \"The experiment design includes appropriate baselines (Standard MIC, Random Timing) and metrics (AUPRC, Fold-Change) to test the specific claim of temporal vulnerability.\", \"However, the mechanism description overstates the evidence: EV-Q021-8467846663ee76fc520513be ",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Advanced biosystem monitoring capabilities enable the empirical testing of whether transient metabolic vulnerabilities exist in antibiotic-resistant bacteria, serving as a necessary methodological prerequisite for determining if temporal targeting can overcome resistance.\", \"mechanism\": \"Evidence EV-Q021-8467846663ee76fc520513be establishes new capabilities to study antibiotic response and metabolic processes. This observational capacity is treated here strictly as an enabling tool to investigate the unverified knowledge gap: whether resistant phenotypes exhibit",
+    "evidence_ids": [
+      "EV-Q021-8467846663ee76fc520513be"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1bb370b8f27c",
+    "mock": false
+  },
+  {
+    "event_id": "a2ca6968dac1",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:19:13.579700+00:00",
+    "ended_at": "2026-08-22T08:19:36.172770+00:00",
+    "duration_ms": 22593,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) and avoids citing irrelevant AI/philosophy cards.\", \"The Results field correctly states 'pending' and does not fabricate experimental outcomes.\", \"The experiment design includes appropriate baselines (Standard MIC, Random Timing) and metrics (AUPRC, Fold-Change) to test the specific claim of temporal vulnerability.\", \"However, the mechanism description overstates the evidence: EV-Q021-8467846663ee76fc520513be ",
+    "output_summary": "{\"technical_details\": \"This experiment is designed to test the hypothesis that advanced biosystem monitoring capabilities (as established in EV-Q021-8467846663ee76fc520513be) can empirically validate the existence of transient metabolic vulnerabilities in antibiotic-resistant bacteria. The technical approach involves using high-resolution biosensors to monitor metabolic markers (e.g., NADH autofluorescence, membrane potential) in real-time during antibiotic exposure. Crucially, this design treats the 'transient vulnerability' as a knowledge gap to be tested, not an established fact. The eviden",
+    "evidence_ids": [
+      "EV-Q021-8467846663ee76fc520513be"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6519648358ca",
+    "mock": false
+  },
+  {
+    "event_id": "e86290bd3cf1",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:19:36.172770+00:00",
+    "ended_at": "2026-08-22T08:19:41.343032+00:00",
+    "duration_ms": 5170,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) and avoids citing irrelevant AI/philosophy cards.\", \"The Results field correctly states 'pending' and does not fabricate experimental outcomes.\", \"The experiment design includes appropriate baselines (Standard MIC, Random Timing) and metrics (AUPRC, Fold-Change) to test the specific claim of temporal vulnerability.\", \"However, the mechanism description overstates the evidence: EV-Q021-8467846663ee76fc520513be ",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly reframes EV-Q021-8467846663ee76fc520513be as establishing an observational capability rather than confirming the biological existence of transient vulnerabilities, resolving the previous mechanism overclaim.\", \"The falsifiable prediction has been appropriately revised to use statistical significance (p < 0.05 with correction) instead of the arbitrary >80% threshold, aligning with standard scientific validation criteria.\", \"Dataset descriptions now explicitly clarify that the evidence ID supports the methodological approac",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c20637eb02bd",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:1427a6e1e6164d8c",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Advanced biosystem monitoring capabilities enable the identification of transient metabolic vulnerabilities in resistant bacteria, allowing for targeted interventions that overcome resistance through precision timing rather than novel drug discovery.",
+              "mechanism": "New observational technologies (EV-Q021-8467846663ee76fc520513be) provide high-resolution temporal data on antibiotic response and metabolic processes. This data reveals dynamic susceptibility windows where resistant strains are metabolically compromised, enabling existing antibiotics to be effective when administered at precise physiological states.",
+              "falsifiable_prediction": "If high-resolution biosystem monitoring is applied to a panel of multidrug-resistant strains, specific temporal metabolic signatures correlating with transient antibiotic susceptibility will be identified in >80% of tested strains within 6 months.",
+              "required_observations": [
+                "Time-series metabolic profiling of resistant bacterial cultures under antibiotic exposure using advanced biosensors",
+                "Correlation analysis between metabolic state markers and bacterial survival rates post-treatment",
+                "Validation of predicted susceptibility windows in vitro"
+              ],
+              "risk_of_being_wrong": "Resistance mechanisms may be constitutive rather than dynamically regulated, rendering temporal targeting ineffective; or current biosensor resolution may be insufficient to detect relevant metabolic fluctuations in real-time clinical settings.",
+              "supporting_evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.65
+            },
+            {
+              "hypothesis": "Current technological capabilities for studying antibiotic response are necessary but insufficient to overcome resistance without concurrent validation of policy and agricultural interventions, making 'overcoming' contingent on socio-technical integration rather than scientific capability alone.",
+              "mechanism": "While new study capabilities exist (EV-Q021-8467846663ee76fc520513be), the booklet context suggests resistance is a systemic issue involving policy, healthcare, and agriculture. Scientific tools can characterize resistance but cannot reduce selection pressure without external interventions; thus, overcoming resistance requires coupling technical insight with verified non-technical controls.",
+              "falsifiable_prediction": "In regions with advanced biosystem monitoring but no coordinated policy/agricultural restrictions, resistance prevalence will not decrease significantly (>10%) over 5 years compared to regions with both technical and policy interventions.",
+              "required_observations": [
+                "Longitudinal resistance surveillance data correlated with policy implementation timelines",
+                "Comparative analysis of resistance trends across jurisdictions with varying intervention bundles",
+                "Quantification of antibiotic usage in agriculture vs. clinical settings"
+              ],
+              "risk_of_being_wrong": "Technological breakthroughs (e.g., phage therapy, CRISPR-based antimicrobials) might independently overcome resistance regardless of policy; or policy effects may be too slow to measure against natural resistance evolution.",
+              "supporting_evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.48
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly leverages the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) regarding new capabilities to study antibiotic response, transforming a methodological fact into a testable mechanistic hypothesis. It is highly falsifiable via laboratory experiments and does not rely on unverified policy claims absent from the evidence catalog. Hypothesis 1, while contextually reasonable based on the booklet, lacks direct evidentiary support for the efficacy of non-technical interventions within the allowed evidence IDs.",
+          "rejected_directions": [
+            "Hypotheses claiming AI/neural network quantization methods (EV-Q021-4a86933ac857213f6b093ff4, EV-Q021-e92577fceae7d9f624bcbae4) can solve biological antibiotic resistance, as these cards refer to computational model optimization, not biomedical applications.",
+            "Hypotheses asserting that conscious machines or cognitive interference (EV-Q021-d5f0694a2f1ae3b8676b11f0) affect antibiotic resistance, as this evidence is philosophically oriented and unrelated to microbiological mechanisms.",
+            "Definitive claims that resistance 'can' or 'cannot' ever be overcome, as no provided evidence supports an absolute existential conclusion."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that high-resolution temporal monitoring of bacterial metabolic states can identify transient windows of susceptibility in multidrug-resistant (MDR) strains. The core technical challenge is synchronizing real-time metabolic flux data (e.g., NADH/NAD+ ratios, ATP levels, membrane potential) with antibiotic exposure timing. We will employ microfluidic biosensors capable of sub-minute resolution metabolic profiling, coupled with automated drug delivery systems. The study focuses on correlating specific metabolic 'signatures' (defined as deviations from homeostatic baseline >2 SD) with subsequent bacterial survival rates upon antibiotic challenge. The mechanism posits that resistance is not always constitutive but may have dynamic metabolic costs that create temporary vulnerabilities.",
+          "datasets": {
+            "source": {
+              "name": "High-Resolution Metabolic Time-Series of MDR Bacteria",
+              "description": "Synthetic/Experimental dataset generated during this study. It includes time-stamped metabolic markers (fluorescence/intensity readings from biosensors) for E. coli and S. aureus MDR strains under controlled growth conditions.",
+              "access_note": "Data will be generated de novo using the experimental setup described in methods. No pre-existing public dataset fully matches the required temporal resolution and specific metabolic markers linked to antibiotic response as per EV-Q021-8467846663ee76fc520513be context.",
+              "evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ]
+            },
+            "target": {
+              "name": "Susceptibility Window Mapping",
+              "description": "A labeled dataset mapping specific temporal metabolic states to binary outcomes (Survival/Death) post-antibiotic administration. This target variable will be used to train a classifier to predict optimal intervention timing.",
+              "access_note": "Derived from parallel viability assays (CFU counting) synchronized with metabolic monitoring.",
+              "evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ]
+            }
+          },
+          "methods": "1. Strain Selection: Use 5 clinically relevant MDR strains (e.g., ESBL-producing E. coli, MRSA). 2. Biosensor Setup: Implement microfluidic chips with integrated optical sensors for real-time monitoring of metabolic indicators (NADH autofluorescence, membrane potential dyes). 3. Dynamic Exposure Protocol: Expose cultures to sub-lethal and lethal doses of standard antibiotics (e.g., ciprofloxacin, vancomycin) at randomized time points relative to metabolic cycles. 4. Data Acquisition: Record metabolic data at 10-second intervals. 5. Viability Assay: Perform colony-forming unit (CFU) counts at T+0, T+1h, T+4h, T+24h post-exposure to determine survival. 6. Correlation Analysis: Use time-lagged cross-correlation and machine learning (Random Forest/LSTM) to identify metabolic features preceding susceptibility windows.",
+          "experiments": {
+            "baselines": [
+              "Standard MIC Testing: Conventional broth microdilution to establish baseline static resistance profiles.",
+              "Random Timing Control: Antibiotic administration at random time points without metabolic guidance to establish average efficacy.",
+              "Constitutive Resistance Model: A null model assuming no temporal variation in susceptibility, predicting constant survival rates regardless of metabolic state."
+            ],
+            "metrics": [
+              "Area Under the Precision-Recall Curve (AUPRC): To evaluate the classifier's ability to identify rare susceptibility windows.",
+              "Brier Score: To assess the calibration of predicted probability of bacterial death against observed outcomes.",
+              "Fold-Change in Efficacy: Ratio of kill rate in 'predicted vulnerability window' vs. 'random timing' control.",
+              "Temporal Resolution Accuracy: Mean absolute error (in minutes) between predicted optimal intervention time and actual observed maximum susceptibility."
+            ],
+            "ablation": [
+              "Sensor Resolution Ablation: Downsample metabolic data to 1-min, 5-min, and 15-min intervals to test the necessity of high-resolution monitoring.",
+              "Metabolic Marker Ablation: Remove specific markers (e.g., exclude membrane potential) to determine which metabolic dimensions are most predictive of vulnerability.",
+              "Strain-Specific Ablation: Test if models trained on one species generalize to another, testing the universality of the metabolic vulnerability mechanism."
+            ],
+            "validation_protocol": "5-fold cross-validation across different bacterial strains and experimental batches. External validation will be performed on a held-out set of 2 additional MDR strains not used in model training. Statistical significance of efficacy improvement will be tested using paired t-tests against the Random Timing Control."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Provide detailed protocol for microfluidic chip fabrication and sensor calibration.",
+            "Share raw time-series metabolic data and synchronized CFU count logs.",
+            "Publish code for feature extraction and machine learning models (Python/PyTorch).",
+            "Specify exact antibiotic concentrations and batch numbers.",
+            "Document environmental controls (temperature, pH, media composition) to ensure metabolic consistency."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_duration_weeks": 24,
+            "required_resources": [
+              "Microfluidic biosensor platform",
+              "MDR bacterial strains (BSL-2 facility)",
+              "High-performance computing for time-series analysis"
+            ],
+            "risk_mitigation": "If high-resolution sensors fail to detect fluctuations, fallback to bulk metabolomics at higher frequency (every 5 mins) though with lower temporal precision."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-081718-64b59ff3",
+        "version_number": 1,
+        "version_id": "20260822-081718-64b59ff3:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Advanced biosystem monitoring capabilities enable the identification of transient metabolic vulnerabilities in resistant bacteria, allowing for targeted interventions that overcome resistance through precision timing rather than novel drug discovery.",
+              "mechanism": "New observational technologies (EV-Q021-8467846663ee76fc520513be) provide high-resolution temporal data on antibiotic response and metabolic processes. This data reveals dynamic susceptibility windows where resistant strains are metabolically compromised, enabling existing antibiotics to be effective when administered at precise physiological states.",
+              "falsifiable_prediction": "If high-resolution biosystem monitoring is applied to a panel of multidrug-resistant strains, specific temporal metabolic signatures correlating with transient antibiotic susceptibility will be identified in >80% of tested strains within 6 months.",
+              "required_observations": [
+                "Time-series metabolic profiling of resistant bacterial cultures under antibiotic exposure using advanced biosensors",
+                "Correlation analysis between metabolic state markers and bacterial survival rates post-treatment",
+                "Validation of predicted susceptibility windows in vitro"
+              ],
+              "risk_of_being_wrong": "Resistance mechanisms may be constitutive rather than dynamically regulated, rendering temporal targeting ineffective; or current biosensor resolution may be insufficient to detect relevant metabolic fluctuations in real-time clinical settings.",
+              "supporting_evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.65
+            },
+            {
+              "hypothesis": "Current technological capabilities for studying antibiotic response are necessary but insufficient to overcome resistance without concurrent validation of policy and agricultural interventions, making 'overcoming' contingent on socio-technical integration rather than scientific capability alone.",
+              "mechanism": "While new study capabilities exist (EV-Q021-8467846663ee76fc520513be), the booklet context suggests resistance is a systemic issue involving policy, healthcare, and agriculture. Scientific tools can characterize resistance but cannot reduce selection pressure without external interventions; thus, overcoming resistance requires coupling technical insight with verified non-technical controls.",
+              "falsifiable_prediction": "In regions with advanced biosystem monitoring but no coordinated policy/agricultural restrictions, resistance prevalence will not decrease significantly (>10%) over 5 years compared to regions with both technical and policy interventions.",
+              "required_observations": [
+                "Longitudinal resistance surveillance data correlated with policy implementation timelines",
+                "Comparative analysis of resistance trends across jurisdictions with varying intervention bundles",
+                "Quantification of antibiotic usage in agriculture vs. clinical settings"
+              ],
+              "risk_of_being_wrong": "Technological breakthroughs (e.g., phage therapy, CRISPR-based antimicrobials) might independently overcome resistance regardless of policy; or policy effects may be too slow to measure against natural resistance evolution.",
+              "supporting_evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.48
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly leverages the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) regarding new capabilities to study antibiotic response, transforming a methodological fact into a testable mechanistic hypothesis. It is highly falsifiable via laboratory experiments and does not rely on unverified policy claims absent from the evidence catalog. Hypothesis 1, while contextually reasonable based on the booklet, lacks direct evidentiary support for the efficacy of non-technical interventions within the allowed evidence IDs.",
+          "rejected_directions": [
+            "Hypotheses claiming AI/neural network quantization methods (EV-Q021-4a86933ac857213f6b093ff4, EV-Q021-e92577fceae7d9f624bcbae4) can solve biological antibiotic resistance, as these cards refer to computational model optimization, not biomedical applications.",
+            "Hypotheses asserting that conscious machines or cognitive interference (EV-Q021-d5f0694a2f1ae3b8676b11f0) affect antibiotic resistance, as this evidence is philosophically oriented and unrelated to microbiological mechanisms.",
+            "Definitive claims that resistance 'can' or 'cannot' ever be overcome, as no provided evidence supports an absolute existential conclusion."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that high-resolution temporal monitoring of bacterial metabolic states can identify transient windows of susceptibility in multidrug-resistant (MDR) strains. The core technical challenge is synchronizing real-time metabolic flux data (e.g., NADH/NAD+ ratios, ATP levels, membrane potential) with antibiotic exposure timing. We will employ microfluidic biosensors capable of sub-minute resolution metabolic profiling, coupled with automated drug delivery systems. The study focuses on correlating specific metabolic 'signatures' (defined as deviations from homeostatic baseline >2 SD) with subsequent bacterial survival rates upon antibiotic challenge. The mechanism posits that resistance is not always constitutive but may have dynamic metabolic costs that create temporary vulnerabilities.",
+          "datasets": {
+            "source": {
+              "name": "High-Resolution Metabolic Time-Series of MDR Bacteria",
+              "description": "Synthetic/Experimental dataset generated during this study. It includes time-stamped metabolic markers (fluorescence/intensity readings from biosensors) for E. coli and S. aureus MDR strains under controlled growth conditions.",
+              "access_note": "Data will be generated de novo using the experimental setup described in methods. No pre-existing public dataset fully matches the required temporal resolution and specific metabolic markers linked to antibiotic response as per EV-Q021-8467846663ee76fc520513be context.",
+              "evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ]
+            },
+            "target": {
+              "name": "Susceptibility Window Mapping",
+              "description": "A labeled dataset mapping specific temporal metabolic states to binary outcomes (Survival/Death) post-antibiotic administration. This target variable will be used to train a classifier to predict optimal intervention timing.",
+              "access_note": "Derived from parallel viability assays (CFU counting) synchronized with metabolic monitoring.",
+              "evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ]
+            }
+          },
+          "methods": "1. Strain Selection: Use 5 clinically relevant MDR strains (e.g., ESBL-producing E. coli, MRSA). 2. Biosensor Setup: Implement microfluidic chips with integrated optical sensors for real-time monitoring of metabolic indicators (NADH autofluorescence, membrane potential dyes). 3. Dynamic Exposure Protocol: Expose cultures to sub-lethal and lethal doses of standard antibiotics (e.g., ciprofloxacin, vancomycin) at randomized time points relative to metabolic cycles. 4. Data Acquisition: Record metabolic data at 10-second intervals. 5. Viability Assay: Perform colony-forming unit (CFU) counts at T+0, T+1h, T+4h, T+24h post-exposure to determine survival. 6. Correlation Analysis: Use time-lagged cross-correlation and machine learning (Random Forest/LSTM) to identify metabolic features preceding susceptibility windows.",
+          "experiments": {
+            "baselines": [
+              "Standard MIC Testing: Conventional broth microdilution to establish baseline static resistance profiles.",
+              "Random Timing Control: Antibiotic administration at random time points without metabolic guidance to establish average efficacy.",
+              "Constitutive Resistance Model: A null model assuming no temporal variation in susceptibility, predicting constant survival rates regardless of metabolic state."
+            ],
+            "metrics": [
+              "Area Under the Precision-Recall Curve (AUPRC): To evaluate the classifier's ability to identify rare susceptibility windows.",
+              "Brier Score: To assess the calibration of predicted probability of bacterial death against observed outcomes.",
+              "Fold-Change in Efficacy: Ratio of kill rate in 'predicted vulnerability window' vs. 'random timing' control.",
+              "Temporal Resolution Accuracy: Mean absolute error (in minutes) between predicted optimal intervention time and actual observed maximum susceptibility."
+            ],
+            "ablation": [
+              "Sensor Resolution Ablation: Downsample metabolic data to 1-min, 5-min, and 15-min intervals to test the necessity of high-resolution monitoring.",
+              "Metabolic Marker Ablation: Remove specific markers (e.g., exclude membrane potential) to determine which metabolic dimensions are most predictive of vulnerability.",
+              "Strain-Specific Ablation: Test if models trained on one species generalize to another, testing the universality of the metabolic vulnerability mechanism."
+            ],
+            "validation_protocol": "5-fold cross-validation across different bacterial strains and experimental batches. External validation will be performed on a held-out set of 2 additional MDR strains not used in model training. Statistical significance of efficacy improvement will be tested using paired t-tests against the Random Timing Control."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Provide detailed protocol for microfluidic chip fabrication and sensor calibration.",
+            "Share raw time-series metabolic data and synchronized CFU count logs.",
+            "Publish code for feature extraction and machine learning models (Python/PyTorch).",
+            "Specify exact antibiotic concentrations and batch numbers.",
+            "Document environmental controls (temperature, pH, media composition) to ensure metabolic consistency."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_duration_weeks": 24,
+            "required_resources": [
+              "Microfluidic biosensor platform",
+              "MDR bacterial strains (BSL-2 facility)",
+              "High-performance computing for time-series analysis"
+            ],
+            "risk_mitigation": "If high-resolution sensors fail to detect fluctuations, fallback to bulk metabolomics at higher frequency (every 5 mins) though with lower temporal precision."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) and avoids citing irrelevant AI/philosophy cards.",
+            "The Results field correctly states 'pending' and does not fabricate experimental outcomes.",
+            "The experiment design includes appropriate baselines (Standard MIC, Random Timing) and metrics (AUPRC, Fold-Change) to test the specific claim of temporal vulnerability.",
+            "However, the mechanism description overstates the evidence: EV-Q021-8467846663ee76fc520513be only confirms 'capabilities to study antibiotic response', not specifically 'high-resolution temporal data' or 'metabolic processes' in the context of resistance dynamics. The link between 'studying response' and 'identifying transient metabolic vulnerabilities' is a knowledge gap, not an established fact.",
+            "The falsifiable prediction threshold (>80% of strains) is arbitrary and lacks evidentiary justification; this should be framed as an exploratory parameter rather than a hard scientific cutoff derived from evidence.",
+            "Dataset 'source' is described as synthetic/experimental to be generated, which is valid for a proposal, but the evidence_id attached implies the evidence card validates this specific dataset structure, which it does not."
+          ],
+          "critical_issues": [
+            "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+            "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+            "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards."
+          ],
+          "required_revisions": [
+            "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+            "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+            "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+            "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.6,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:4d905628b340",
+            "category": "critical_issue",
+            "description": "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:f5c97c044314",
+            "category": "critical_issue",
+            "description": "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:40834218535b",
+            "category": "critical_issue",
+            "description": "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:ce456b271f57",
+            "category": "required_revision",
+            "description": "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:28056035b282",
+            "category": "required_revision",
+            "description": "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f5818707431c",
+            "category": "required_revision",
+            "description": "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:d6d91d5451f3",
+            "category": "required_revision",
+            "description": "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5b0896e801d2bcb8c841cc113e4c6e3fd5989d7bde8341f79e3eb6cee09f6582",
+          "experiment_designer": "69bdb2f0179d1d8c3de22f010caf26043d04689d4bea439f84d55fa8a7627d9a",
+          "scientific_reviewer": "1dea33764cc12496c83ee312ed75cadc9de0fca0485210053ae2a7e34b8f382b"
+        }
+      },
+      "parent_version_id": "20260822-081718-64b59ff3:v1",
+      "lineage": [
+        "20260822-081718-64b59ff3:v1",
+        "20260822-081718-64b59ff3:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis correctly identifies the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) and avoids citing irrelevant AI/philosophy cards.",
+          "The Results field correctly states 'pending' and does not fabricate experimental outcomes.",
+          "The experiment design includes appropriate baselines (Standard MIC, Random Timing) and metrics (AUPRC, Fold-Change) to test the specific claim of temporal vulnerability.",
+          "However, the mechanism description overstates the evidence: EV-Q021-8467846663ee76fc520513be only confirms 'capabilities to study antibiotic response', not specifically 'high-resolution temporal data' or 'metabolic processes' in the context of resistance dynamics. The link between 'studying response' and 'identifying transient metabolic vulnerabilities' is a knowledge gap, not an established fact.",
+          "The falsifiable prediction threshold (>80% of strains) is arbitrary and lacks evidentiary justification; this should be framed as an exploratory parameter rather than a hard scientific cutoff derived from evidence.",
+          "Dataset 'source' is described as synthetic/experimental to be generated, which is valid for a proposal, but the evidence_id attached implies the evidence card validates this specific dataset structure, which it does not."
+        ],
+        "critical_issues": [
+          "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+          "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+          "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards."
+        ],
+        "required_revisions": [
+          "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+          "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+          "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+          "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.6,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.85,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly reframes EV-Q021-8467846663ee76fc520513be as establishing an observational capability rather than confirming the biological existence of transient vulnerabilities, resolving the previous mechanism overclaim.",
+          "The falsifiable prediction has been appropriately revised to use statistical significance (p < 0.05 with correction) instead of the arbitrary >80% threshold, aligning with standard scientific validation criteria.",
+          "Dataset descriptions now explicitly clarify that the evidence ID supports the methodological approach (biosensing) but does not validate specific dataset content or ground truth labels, correcting the evidence-dataset mismatch.",
+          "Knowledge gaps are properly acknowledged regarding the unverified application of biosystem monitoring to temporal resistance windows, distinguishing between established tools and hypothesized phenomena.",
+          "Results field remains correctly marked as pending without fabrication, and experimental design includes appropriate baselines and metrics for testing the refined hypothesis."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:dfda2459fc2e1976",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+          "issue_id": "critical_issue:4d905628b340"
+        },
+        {
+          "failure_id": "failure:cd7fc7d0fe65047a",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+          "issue_id": "critical_issue:f5c97c044314"
+        },
+        {
+          "failure_id": "failure:dc51e9c544f4b108",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards.",
+          "issue_id": "critical_issue:40834218535b"
+        },
+        {
+          "failure_id": "failure:f4885e1082bc1d79",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+          "issue_id": "required_revision:ce456b271f57"
+        },
+        {
+          "failure_id": "failure:bc0b7a9b7fe07ce4",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+          "issue_id": "required_revision:28056035b282"
+        },
+        {
+          "failure_id": "failure:3a842446d69586cf",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+          "issue_id": "required_revision:f5818707431c"
+        },
+        {
+          "failure_id": "failure:7760baee6aa15b23",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.",
+          "issue_id": "required_revision:d6d91d5451f3"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:8cec291234b3191a",
+          "issue_id": "critical_issue:4d905628b340",
+          "reason": "Reviewer item critical_issue:4d905628b340 requested 'Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.'. V2 changes technical_details; deterministic correlation evidence tokens=['8467846663ee76fc520513be', 'antibiotic', 'biological', 'capability', 'ev', 'evidence', 'high', 'metabolic', 'not', 'phenomenon', 'processe', 'q021', 'resolution', 'response', 'specific', 'study', 'support', 'temporal', 'transient', 'vulnerability'], coverage=0.625.",
+          "before": "This experiment tests the hypothesis that high-resolution temporal monitoring of bacterial metabolic states can identify transient windows of susceptibility in multidrug-resistant (MDR) strains. The core technical challenge is synchronizing real-time metabolic flux data (e.g., NADH/NAD+ ratios, ATP levels, membrane potential) with antibiotic exposure timing. We will employ microfluidic biosensors capable of sub-minute resolution metabolic profiling, coupled with automated drug delivery systems. The study focuses on correlating specific metabolic 'signatures' (defined as deviations from homeostatic baseline >2 SD) with subsequent bacterial survival rates upon antibiotic challenge. The mechanism posits that resistance is not always constitutive but may have dynamic metabolic costs that create temporary vulnerabilities.",
+          "after": "This experiment is designed to test the hypothesis that advanced biosystem monitoring capabilities (as established in EV-Q021-8467846663ee76fc520513be) can empirically validate the existence of transient metabolic vulnerabilities in antibiotic-resistant bacteria. The technical approach involves using high-resolution biosensors to monitor metabolic markers (e.g., NADH autofluorescence, membrane potential) in real-time during antibiotic exposure. Crucially, this design treats the 'transient vulnerability' as a knowledge gap to be tested, not an established fact. The evidence card supports the methodological capability to study antibiotic response and metabolic processes, but does not confirm the specific biological phenomenon of temporal susceptibility windows. Therefore, the experiment focuses on correlating observed metabolic dynamics with survival outcomes to determine if such windows exist and are detectable.",
+          "evidence_refs": [
+            "EV-Q021-8467846663ee76fc520513be"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:105773e7e0b2a64c",
+          "issue_id": "critical_issue:f5c97c044314",
+          "reason": "Reviewer item critical_issue:f5c97c044314 requested 'Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['8467846663ee76fc520513be', 'atp', 'but', 'capability', 'card', 'cohort', 'does', 'ev', 'evidence', 'high', 'metabolic', 'nadh', 'not', 'q021', 'sery', 'specific', 'structure', 'support', 'time', 'validate', 'variable'], coverage=0.724.",
+          "before": {
+            "name": "High-Resolution Metabolic Time-Series of MDR Bacteria",
+            "description": "Synthetic/Experimental dataset generated during this study. It includes time-stamped metabolic markers (fluorescence/intensity readings from biosensors) for E. coli and S. aureus MDR strains under controlled growth conditions.",
+            "access_note": "Data will be generated de novo using the experimental setup described in methods. No pre-existing public dataset fully matches the required temporal resolution and specific metabolic markers linked to antibiotic response as per EV-Q021-8467846663ee76fc520513be context.",
+            "evidence_ids": [
+              "EV-Q021-8467846663ee76fc520513be"
+            ]
+          },
+          "after": {
+            "name": "Experimental Metabolic Time-Series Data",
+            "description": "De novo generated dataset comprising high-frequency time-series data of metabolic markers from multidrug-resistant bacterial strains under antibiotic stress. This dataset is created using the biosensing methodologies enabled by the capabilities described in EV-Q021-8467846663ee76fc520513be. Note: The evidence card validates the general capability to study these processes, not the specific structure or content of this generated dataset.",
+            "access_note": "Data will be generated during the experiment. EV-Q021-8467846663ee76fc520513be supports the methodological approach (biosensing) but does not provide pre-existing data or validate specific variables like NADH/ATP in this context.",
+            "evidence_ids": [
+              "EV-Q021-8467846663ee76fc520513be"
+            ]
+          },
+          "evidence_refs": [
+            "EV-Q021-8467846663ee76fc520513be"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:071607bf7626f68f",
+          "issue_id": "required_revision:ce456b271f57",
+          "reason": "Reviewer item required_revision:ce456b271f57 requested 'Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.'. V2 changes methods; deterministic correlation evidence tokens=['8467846663ee76fc520513be', 'capability', 'ev', 'existence', 'explicitly', 'hypothesi', 'metabolic', 'observational', 'q021', 'state', 'test', 'vulnerability'], coverage=0.571.",
+          "before": "1. Strain Selection: Use 5 clinically relevant MDR strains (e.g., ESBL-producing E. coli, MRSA). 2. Biosensor Setup: Implement microfluidic chips with integrated optical sensors for real-time monitoring of metabolic indicators (NADH autofluorescence, membrane potential dyes). 3. Dynamic Exposure Protocol: Expose cultures to sub-lethal and lethal doses of standard antibiotics (e.g., ciprofloxacin, vancomycin) at randomized time points relative to metabolic cycles. 4. Data Acquisition: Record metabolic data at 10-second intervals. 5. Viability Assay: Perform colony-forming unit (CFU) counts at T+0, T+1h, T+4h, T+24h post-exposure to determine survival. 6. Correlation Analysis: Use time-lagged cross-correlation and machine learning (Random Forest/LSTM) to identify metabolic features preceding susceptibility windows.",
+          "after": "1. Strain Preparation: Culture multidrug-resistant bacterial strains (e.g., MRSA, ESBL-E. coli) in controlled microfluidic environments. 2. Biosensor Integration: Utilize optical biosensors to monitor metabolic indicators (NADH, membrane potential) at sub-minute resolution, leveraging the observational capabilities cited in EV-Q021-8467846663ee76fc520513be. 3. Dynamic Antibiotic Exposure: Administer antibiotics at varying time points relative to metabolic cycles. 4. Data Synchronization: Align metabolic time-series with viability measurements (CFU counts) at multiple time points post-exposure. 5. Statistical Analysis: Perform time-lagged cross-correlation and machine learning classification to identify if specific metabolic states predict susceptibility. The analysis explicitly tests for the presence of temporal vulnerabilities as a hypothesis, acknowledging the knowledge gap regarding their existence.",
+          "evidence_refs": [
+            "EV-Q021-8467846663ee76fc520513be"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:7eb917e48ec3d041",
+          "issue_id": "required_revision:f5818707431c",
+          "reason": "Reviewer item required_revision:f5818707431c requested 'Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['8467846663ee76fc520513be', 'approach', 'biosens', 'cohort', 'content', 'ev', 'methodological', 'not', 'q021', 'specific', 'support'], coverage=0.688.",
+          "before": {
+            "name": "High-Resolution Metabolic Time-Series of MDR Bacteria",
+            "description": "Synthetic/Experimental dataset generated during this study. It includes time-stamped metabolic markers (fluorescence/intensity readings from biosensors) for E. coli and S. aureus MDR strains under controlled growth conditions.",
+            "access_note": "Data will be generated de novo using the experimental setup described in methods. No pre-existing public dataset fully matches the required temporal resolution and specific metabolic markers linked to antibiotic response as per EV-Q021-8467846663ee76fc520513be context.",
+            "evidence_ids": [
+              "EV-Q021-8467846663ee76fc520513be"
+            ]
+          },
+          "after": {
+            "name": "Experimental Metabolic Time-Series Data",
+            "description": "De novo generated dataset comprising high-frequency time-series data of metabolic markers from multidrug-resistant bacterial strains under antibiotic stress. This dataset is created using the biosensing methodologies enabled by the capabilities described in EV-Q021-8467846663ee76fc520513be. Note: The evidence card validates the general capability to study these processes, not the specific structure or content of this generated dataset.",
+            "access_note": "Data will be generated during the experiment. EV-Q021-8467846663ee76fc520513be supports the methodological approach (biosensing) but does not provide pre-existing data or validate specific variables like NADH/ATP in this context.",
+            "evidence_ids": [
+              "EV-Q021-8467846663ee76fc520513be"
+            ]
+          },
+          "evidence_refs": [
+            "EV-Q021-8467846663ee76fc520513be"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:08dd06ca9b1c6836",
+          "issue_id": "required_revision:d6d91d5451f3",
+          "reason": "Reviewer item required_revision:d6d91d5451f3 requested 'Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.'. V2 changes technical_details; deterministic correlation evidence tokens=['biosystem', 'evidence', 'exist', 'gap', 'knowledge', 'monitor', 'specific', 'temporal', 'window'], coverage=0.500.",
+          "before": "This experiment tests the hypothesis that high-resolution temporal monitoring of bacterial metabolic states can identify transient windows of susceptibility in multidrug-resistant (MDR) strains. The core technical challenge is synchronizing real-time metabolic flux data (e.g., NADH/NAD+ ratios, ATP levels, membrane potential) with antibiotic exposure timing. We will employ microfluidic biosensors capable of sub-minute resolution metabolic profiling, coupled with automated drug delivery systems. The study focuses on correlating specific metabolic 'signatures' (defined as deviations from homeostatic baseline >2 SD) with subsequent bacterial survival rates upon antibiotic challenge. The mechanism posits that resistance is not always constitutive but may have dynamic metabolic costs that create temporary vulnerabilities.",
+          "after": "This experiment is designed to test the hypothesis that advanced biosystem monitoring capabilities (as established in EV-Q021-8467846663ee76fc520513be) can empirically validate the existence of transient metabolic vulnerabilities in antibiotic-resistant bacteria. The technical approach involves using high-resolution biosensors to monitor metabolic markers (e.g., NADH autofluorescence, membrane potential) in real-time during antibiotic exposure. Crucially, this design treats the 'transient vulnerability' as a knowledge gap to be tested, not an established fact. The evidence card supports the methodological capability to study antibiotic response and metabolic processes, but does not confirm the specific biological phenomenon of temporal susceptibility windows. Therefore, the experiment focuses on correlating observed metabolic dynamics with survival outcomes to determine if such windows exist and are detectable.",
+          "evidence_refs": [
+            "EV-Q021-8467846663ee76fc520513be"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:4d905628b340",
+          "category": "critical_issue",
+          "description": "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:8cec291234b3191a; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:f5c97c044314",
+          "category": "critical_issue",
+          "description": "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:105773e7e0b2a64c; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:40834218535b",
+          "category": "critical_issue",
+          "description": "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:ce456b271f57",
+          "category": "required_revision",
+          "description": "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:071607bf7626f68f; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:28056035b282",
+          "category": "required_revision",
+          "description": "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:f5818707431c",
+          "category": "required_revision",
+          "description": "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:7eb917e48ec3d041; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:d6d91d5451f3",
+          "category": "required_revision",
+          "description": "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:08dd06ca9b1c6836; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.6,
+          "after": 0.95,
+          "delta": 0.35
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.9,
+          "delta": 0.050000000000000044
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Advanced biosystem monitoring capabilities enable the empirical testing of whether transient metabolic vulnerabilities exist in antibiotic-resistant bacteria, serving as a necessary methodological prerequisite for determining if temporal targeting can overcome resistance.",
+          "overall_score": 0.81,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Current biosystem monitoring capabilities for studying antibiotic response are methodologically necessary but biologically insufficient to overcome resistance without parallel validation of non-technical interventions, implying that 'overcoming' is contingent on socio-technical integration beyond observational science alone.",
+          "overall_score": 0.5,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 5,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:40834218535b",
+        "required_revision_without_change:required_revision:28056035b282",
+        "unresolved_issue:critical_issue:40834218535b",
+        "unresolved_issue:required_revision:28056035b282"
+      ],
+      "remaining_blockers": [
+        "critical_issue:40834218535b: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:28056035b282: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-081718-64b59ff3",
+        "version_number": 1,
+        "version_id": "20260822-081718-64b59ff3:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Advanced biosystem monitoring capabilities enable the identification of transient metabolic vulnerabilities in resistant bacteria, allowing for targeted interventions that overcome resistance through precision timing rather than novel drug discovery.",
+              "mechanism": "New observational technologies (EV-Q021-8467846663ee76fc520513be) provide high-resolution temporal data on antibiotic response and metabolic processes. This data reveals dynamic susceptibility windows where resistant strains are metabolically compromised, enabling existing antibiotics to be effective when administered at precise physiological states.",
+              "falsifiable_prediction": "If high-resolution biosystem monitoring is applied to a panel of multidrug-resistant strains, specific temporal metabolic signatures correlating with transient antibiotic susceptibility will be identified in >80% of tested strains within 6 months.",
+              "required_observations": [
+                "Time-series metabolic profiling of resistant bacterial cultures under antibiotic exposure using advanced biosensors",
+                "Correlation analysis between metabolic state markers and bacterial survival rates post-treatment",
+                "Validation of predicted susceptibility windows in vitro"
+              ],
+              "risk_of_being_wrong": "Resistance mechanisms may be constitutive rather than dynamically regulated, rendering temporal targeting ineffective; or current biosensor resolution may be insufficient to detect relevant metabolic fluctuations in real-time clinical settings.",
+              "supporting_evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.65
+            },
+            {
+              "hypothesis": "Current technological capabilities for studying antibiotic response are necessary but insufficient to overcome resistance without concurrent validation of policy and agricultural interventions, making 'overcoming' contingent on socio-technical integration rather than scientific capability alone.",
+              "mechanism": "While new study capabilities exist (EV-Q021-8467846663ee76fc520513be), the booklet context suggests resistance is a systemic issue involving policy, healthcare, and agriculture. Scientific tools can characterize resistance but cannot reduce selection pressure without external interventions; thus, overcoming resistance requires coupling technical insight with verified non-technical controls.",
+              "falsifiable_prediction": "In regions with advanced biosystem monitoring but no coordinated policy/agricultural restrictions, resistance prevalence will not decrease significantly (>10%) over 5 years compared to regions with both technical and policy interventions.",
+              "required_observations": [
+                "Longitudinal resistance surveillance data correlated with policy implementation timelines",
+                "Comparative analysis of resistance trends across jurisdictions with varying intervention bundles",
+                "Quantification of antibiotic usage in agriculture vs. clinical settings"
+              ],
+              "risk_of_being_wrong": "Technological breakthroughs (e.g., phage therapy, CRISPR-based antimicrobials) might independently overcome resistance regardless of policy; or policy effects may be too slow to measure against natural resistance evolution.",
+              "supporting_evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.48
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly leverages the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) regarding new capabilities to study antibiotic response, transforming a methodological fact into a testable mechanistic hypothesis. It is highly falsifiable via laboratory experiments and does not rely on unverified policy claims absent from the evidence catalog. Hypothesis 1, while contextually reasonable based on the booklet, lacks direct evidentiary support for the efficacy of non-technical interventions within the allowed evidence IDs.",
+          "rejected_directions": [
+            "Hypotheses claiming AI/neural network quantization methods (EV-Q021-4a86933ac857213f6b093ff4, EV-Q021-e92577fceae7d9f624bcbae4) can solve biological antibiotic resistance, as these cards refer to computational model optimization, not biomedical applications.",
+            "Hypotheses asserting that conscious machines or cognitive interference (EV-Q021-d5f0694a2f1ae3b8676b11f0) affect antibiotic resistance, as this evidence is philosophically oriented and unrelated to microbiological mechanisms.",
+            "Definitive claims that resistance 'can' or 'cannot' ever be overcome, as no provided evidence supports an absolute existential conclusion."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that high-resolution temporal monitoring of bacterial metabolic states can identify transient windows of susceptibility in multidrug-resistant (MDR) strains. The core technical challenge is synchronizing real-time metabolic flux data (e.g., NADH/NAD+ ratios, ATP levels, membrane potential) with antibiotic exposure timing. We will employ microfluidic biosensors capable of sub-minute resolution metabolic profiling, coupled with automated drug delivery systems. The study focuses on correlating specific metabolic 'signatures' (defined as deviations from homeostatic baseline >2 SD) with subsequent bacterial survival rates upon antibiotic challenge. The mechanism posits that resistance is not always constitutive but may have dynamic metabolic costs that create temporary vulnerabilities.",
+          "datasets": {
+            "source": {
+              "name": "High-Resolution Metabolic Time-Series of MDR Bacteria",
+              "description": "Synthetic/Experimental dataset generated during this study. It includes time-stamped metabolic markers (fluorescence/intensity readings from biosensors) for E. coli and S. aureus MDR strains under controlled growth conditions.",
+              "access_note": "Data will be generated de novo using the experimental setup described in methods. No pre-existing public dataset fully matches the required temporal resolution and specific metabolic markers linked to antibiotic response as per EV-Q021-8467846663ee76fc520513be context.",
+              "evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ]
+            },
+            "target": {
+              "name": "Susceptibility Window Mapping",
+              "description": "A labeled dataset mapping specific temporal metabolic states to binary outcomes (Survival/Death) post-antibiotic administration. This target variable will be used to train a classifier to predict optimal intervention timing.",
+              "access_note": "Derived from parallel viability assays (CFU counting) synchronized with metabolic monitoring.",
+              "evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ]
+            }
+          },
+          "methods": "1. Strain Selection: Use 5 clinically relevant MDR strains (e.g., ESBL-producing E. coli, MRSA). 2. Biosensor Setup: Implement microfluidic chips with integrated optical sensors for real-time monitoring of metabolic indicators (NADH autofluorescence, membrane potential dyes). 3. Dynamic Exposure Protocol: Expose cultures to sub-lethal and lethal doses of standard antibiotics (e.g., ciprofloxacin, vancomycin) at randomized time points relative to metabolic cycles. 4. Data Acquisition: Record metabolic data at 10-second intervals. 5. Viability Assay: Perform colony-forming unit (CFU) counts at T+0, T+1h, T+4h, T+24h post-exposure to determine survival. 6. Correlation Analysis: Use time-lagged cross-correlation and machine learning (Random Forest/LSTM) to identify metabolic features preceding susceptibility windows.",
+          "experiments": {
+            "baselines": [
+              "Standard MIC Testing: Conventional broth microdilution to establish baseline static resistance profiles.",
+              "Random Timing Control: Antibiotic administration at random time points without metabolic guidance to establish average efficacy.",
+              "Constitutive Resistance Model: A null model assuming no temporal variation in susceptibility, predicting constant survival rates regardless of metabolic state."
+            ],
+            "metrics": [
+              "Area Under the Precision-Recall Curve (AUPRC): To evaluate the classifier's ability to identify rare susceptibility windows.",
+              "Brier Score: To assess the calibration of predicted probability of bacterial death against observed outcomes.",
+              "Fold-Change in Efficacy: Ratio of kill rate in 'predicted vulnerability window' vs. 'random timing' control.",
+              "Temporal Resolution Accuracy: Mean absolute error (in minutes) between predicted optimal intervention time and actual observed maximum susceptibility."
+            ],
+            "ablation": [
+              "Sensor Resolution Ablation: Downsample metabolic data to 1-min, 5-min, and 15-min intervals to test the necessity of high-resolution monitoring.",
+              "Metabolic Marker Ablation: Remove specific markers (e.g., exclude membrane potential) to determine which metabolic dimensions are most predictive of vulnerability.",
+              "Strain-Specific Ablation: Test if models trained on one species generalize to another, testing the universality of the metabolic vulnerability mechanism."
+            ],
+            "validation_protocol": "5-fold cross-validation across different bacterial strains and experimental batches. External validation will be performed on a held-out set of 2 additional MDR strains not used in model training. Statistical significance of efficacy improvement will be tested using paired t-tests against the Random Timing Control."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Provide detailed protocol for microfluidic chip fabrication and sensor calibration.",
+            "Share raw time-series metabolic data and synchronized CFU count logs.",
+            "Publish code for feature extraction and machine learning models (Python/PyTorch).",
+            "Specify exact antibiotic concentrations and batch numbers.",
+            "Document environmental controls (temperature, pH, media composition) to ensure metabolic consistency."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_duration_weeks": 24,
+            "required_resources": [
+              "Microfluidic biosensor platform",
+              "MDR bacterial strains (BSL-2 facility)",
+              "High-performance computing for time-series analysis"
+            ],
+            "risk_mitigation": "If high-resolution sensors fail to detect fluctuations, fallback to bulk metabolomics at higher frequency (every 5 mins) though with lower temporal precision."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) and avoids citing irrelevant AI/philosophy cards.",
+            "The Results field correctly states 'pending' and does not fabricate experimental outcomes.",
+            "The experiment design includes appropriate baselines (Standard MIC, Random Timing) and metrics (AUPRC, Fold-Change) to test the specific claim of temporal vulnerability.",
+            "However, the mechanism description overstates the evidence: EV-Q021-8467846663ee76fc520513be only confirms 'capabilities to study antibiotic response', not specifically 'high-resolution temporal data' or 'metabolic processes' in the context of resistance dynamics. The link between 'studying response' and 'identifying transient metabolic vulnerabilities' is a knowledge gap, not an established fact.",
+            "The falsifiable prediction threshold (>80% of strains) is arbitrary and lacks evidentiary justification; this should be framed as an exploratory parameter rather than a hard scientific cutoff derived from evidence.",
+            "Dataset 'source' is described as synthetic/experimental to be generated, which is valid for a proposal, but the evidence_id attached implies the evidence card validates this specific dataset structure, which it does not."
+          ],
+          "critical_issues": [
+            "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+            "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+            "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards."
+          ],
+          "required_revisions": [
+            "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+            "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+            "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+            "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.6,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:4d905628b340",
+            "category": "critical_issue",
+            "description": "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:f5c97c044314",
+            "category": "critical_issue",
+            "description": "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:40834218535b",
+            "category": "critical_issue",
+            "description": "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:ce456b271f57",
+            "category": "required_revision",
+            "description": "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:28056035b282",
+            "category": "required_revision",
+            "description": "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f5818707431c",
+            "category": "required_revision",
+            "description": "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:d6d91d5451f3",
+            "category": "required_revision",
+            "description": "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5b0896e801d2bcb8c841cc113e4c6e3fd5989d7bde8341f79e3eb6cee09f6582",
+          "experiment_designer": "69bdb2f0179d1d8c3de22f010caf26043d04689d4bea439f84d55fa8a7627d9a",
+          "scientific_reviewer": "1dea33764cc12496c83ee312ed75cadc9de0fca0485210053ae2a7e34b8f382b"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-081718-64b59ff3",
+        "version_number": 2,
+        "version_id": "20260822-081718-64b59ff3:v2",
+        "parent_version_id": "20260822-081718-64b59ff3:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Advanced biosystem monitoring capabilities enable the empirical testing of whether transient metabolic vulnerabilities exist in antibiotic-resistant bacteria, serving as a necessary methodological prerequisite for determining if temporal targeting can overcome resistance.",
+              "mechanism": "Evidence EV-Q021-8467846663ee76fc520513be establishes new capabilities to study antibiotic response and metabolic processes. This observational capacity is treated here strictly as an enabling tool to investigate the unverified knowledge gap: whether resistant phenotypes exhibit dynamic metabolic states that correlate with transient susceptibility. The mechanism does not assume these vulnerabilities exist but posits that only through this specific high-resolution monitoring can their existence be rigorously validated or refuted.",
+              "falsifiable_prediction": "Application of advanced biosystem monitoring to multidrug-resistant strains will yield statistically significant temporal correlations (p < 0.05 after multiple testing correction) between specific metabolic markers and antibiotic survival outcomes; failure to detect such correlations across diverse strains would indicate that temporal metabolic vulnerability is not a generalizable phenomenon accessible via current sensing modalities.",
+              "required_observations": [
+                "High-temporal-resolution time-series data of metabolic markers during antibiotic exposure using biosensors described in EV-Q021-8467846663ee76fc520513be",
+                "Synchronized viability measurements to establish ground-truth survival outcomes",
+                "Statistical validation of temporal coupling between metabolic states and efficacy windows"
+              ],
+              "risk_of_being_wrong": "The biosystem monitoring capability may be insufficient to resolve relevant metabolic dynamics at the required spatiotemporal scale; or transient vulnerabilities may not exist as a generalizable biological phenomenon, rendering the observational approach futile regardless of technical fidelity.",
+              "supporting_evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.75,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.85,
+              "overall_score": 0.81
+            },
+            {
+              "hypothesis": "Current biosystem monitoring capabilities for studying antibiotic response are methodologically necessary but biologically insufficient to overcome resistance without parallel validation of non-technical interventions, implying that 'overcoming' is contingent on socio-technical integration beyond observational science alone.",
+              "mechanism": "While EV-Q021-8467846663ee76fc520513be confirms new capabilities to study antibiotic response, this evidence only addresses observational methodology, not intervention efficacy. The hypothesis posits that even perfect characterization of resistance dynamics cannot reduce selection pressure or reverse resistance prevalence without external policy/agricultural controls—factors absent from allowed evidence. Thus, technological capability is a necessary but insufficient condition for overcoming resistance.",
+              "falsifiable_prediction": "In controlled comparative studies, enhanced biosystem monitoring alone (without concurrent policy/intervention changes) will fail to produce statistically significant reductions in resistance prevalence compared to baseline surveillance over equivalent timeframes.",
+              "required_observations": [
+                "Longitudinal resistance prevalence data in settings with vs. without advanced monitoring deployment",
+                "Quantification of confounding variables (antibiotic usage, infection control practices)",
+                "Time-lagged analysis of resistance trends relative to monitoring implementation"
+              ],
+              "risk_of_being_wrong": "Unforeseen technological breakthroughs (e.g., phage therapy, CRISPR antimicrobials) might independently overcome resistance regardless of policy context; or monitoring itself might indirectly drive behavioral changes that reduce resistance, confounding the sufficiency claim.",
+              "supporting_evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.5
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses reviewer feedback by reframing EV-Q021-8467846663ee76fc520513be as establishing observational capability rather than confirming biological phenomena. It removes the arbitrary >80% threshold, replaces it with statistically grounded falsifiability criteria, and explicitly acknowledges the knowledge gap regarding transient vulnerabilities. This hypothesis is testable via laboratory experiments using the cited biosensing methods, avoids overclaiming evidence, and maintains high falsifiability while respecting evidentiary boundaries. Hypothesis 1, while conceptually valid, relies on socio-technical factors unsupported by allowed evidence IDs and has lower feasibility for immediate experimental validation.",
+          "rejected_directions": [
+            "Claims that AI/neural network quantization methods (EV-Q021-4a86933ac857213f6b093ff4, EV-Q021-e92577fceae7d9f624bcbae4) can solve biological antibiotic resistance, as these cards refer to computational model optimization unrelated to microbiology.",
+            "Assertions that conscious machines or cognitive interference (EV-Q021-d5f0694a2f1ae3b8676b11f0) affect antibiotic resistance, as this evidence is philosophically oriented and lacks biomedical grounding.",
+            "Definitive existential claims about whether resistance 'can' or 'cannot' ever be overcome, as no provided evidence supports absolute conclusions.",
+            "Mechanistic claims treating transient metabolic vulnerabilities as established facts rather than hypotheses to be tested via the observational capabilities cited in EV-Q021-8467846663ee76fc520513be."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to test the hypothesis that advanced biosystem monitoring capabilities (as established in EV-Q021-8467846663ee76fc520513be) can empirically validate the existence of transient metabolic vulnerabilities in antibiotic-resistant bacteria. The technical approach involves using high-resolution biosensors to monitor metabolic markers (e.g., NADH autofluorescence, membrane potential) in real-time during antibiotic exposure. Crucially, this design treats the 'transient vulnerability' as a knowledge gap to be tested, not an established fact. The evidence card supports the methodological capability to study antibiotic response and metabolic processes, but does not confirm the specific biological phenomenon of temporal susceptibility windows. Therefore, the experiment focuses on correlating observed metabolic dynamics with survival outcomes to determine if such windows exist and are detectable.",
+          "datasets": {
+            "source": {
+              "name": "Experimental Metabolic Time-Series Data",
+              "description": "De novo generated dataset comprising high-frequency time-series data of metabolic markers from multidrug-resistant bacterial strains under antibiotic stress. This dataset is created using the biosensing methodologies enabled by the capabilities described in EV-Q021-8467846663ee76fc520513be. Note: The evidence card validates the general capability to study these processes, not the specific structure or content of this generated dataset.",
+              "access_note": "Data will be generated during the experiment. EV-Q021-8467846663ee76fc520513be supports the methodological approach (biosensing) but does not provide pre-existing data or validate specific variables like NADH/ATP in this context.",
+              "evidence_ids": [
+                "EV-Q021-8467846663ee76fc520513be"
+              ]
+            },
+            "target": {
+              "name": "Viability Outcome Labels",
+              "description": "Binary and continuous survival metrics (CFU counts, optical density) synchronized with metabolic time-points. These labels serve as the ground truth to test for correlations with metabolic states.",
+              "access_note": "Generated via parallel viability assays. No evidence ID supports the specific label structure; this is a standard microbiological measurement.",
+              "evidence_ids": []
+            }
+          },
+          "methods": "1. Strain Preparation: Culture multidrug-resistant bacterial strains (e.g., MRSA, ESBL-E. coli) in controlled microfluidic environments. 2. Biosensor Integration: Utilize optical biosensors to monitor metabolic indicators (NADH, membrane potential) at sub-minute resolution, leveraging the observational capabilities cited in EV-Q021-8467846663ee76fc520513be. 3. Dynamic Antibiotic Exposure: Administer antibiotics at varying time points relative to metabolic cycles. 4. Data Synchronization: Align metabolic time-series with viability measurements (CFU counts) at multiple time points post-exposure. 5. Statistical Analysis: Perform time-lagged cross-correlation and machine learning classification to identify if specific metabolic states predict susceptibility. The analysis explicitly tests for the presence of temporal vulnerabilities as a hypothesis, acknowledging the knowledge gap regarding their existence.",
+          "experiments": {
+            "baselines": [
+              "Standard MIC Testing: Conventional static resistance profiling to establish baseline susceptibility.",
+              "Random Timing Control: Antibiotic administration at random intervals without metabolic guidance to determine average efficacy.",
+              "Null Model of Constitutive Resistance: A statistical model assuming no temporal variation in susceptibility, serving as a negative control for dynamic vulnerability."
+            ],
+            "metrics": [
+              "Area Under the Precision-Recall Curve (AUPRC): To evaluate the detection of rare susceptibility events.",
+              "Brier Score: To assess the calibration of probabilistic predictions of bacterial death.",
+              "Fold-Change in Kill Rate: Comparison of efficacy in predicted vulnerability windows vs. random timing.",
+              "Statistical Significance (p-value): Corrected for multiple testing to determine if observed correlations are non-random."
+            ],
+            "ablation": [
+              "Temporal Resolution Ablation: Downsample data to test the minimum resolution required for detecting vulnerabilities.",
+              "Marker Ablation: Exclude specific metabolic markers to identify which dimensions drive predictive power.",
+              "Strain Generalization: Test models trained on one strain against others to assess generalizability."
+            ],
+            "validation_protocol": "5-fold cross-validation across experimental batches. External validation on held-out strains. Statistical significance determined via permutation testing against the Null Model."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Publish detailed protocol for biosensor calibration and microfluidic setup.",
+            "Share raw time-series data and synchronized viability logs.",
+            "Provide code for statistical analysis and machine learning models.",
+            "Document all environmental controls (temperature, pH, media) to ensure metabolic consistency.",
+            "Explicitly state that EV-Q021-8467846663ee76fc520513be supports the methodological capability, not the biological findings."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_duration_weeks": 24,
+            "required_resources": [
+              "Microfluidic biosensor platform",
+              "Multidrug-resistant bacterial strains",
+              "High-performance computing for time-series analysis"
+            ],
+            "risk_mitigation": "If high-resolution sensors fail to detect fluctuations, fallback to bulk metabolomics at higher frequency, acknowledging reduced temporal precision."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly reframes EV-Q021-8467846663ee76fc520513be as establishing an observational capability rather than confirming the biological existence of transient vulnerabilities, resolving the previous mechanism overclaim.",
+            "The falsifiable prediction has been appropriately revised to use statistical significance (p < 0.05 with correction) instead of the arbitrary >80% threshold, aligning with standard scientific validation criteria.",
+            "Dataset descriptions now explicitly clarify that the evidence ID supports the methodological approach (biosensing) but does not validate specific dataset content or ground truth labels, correcting the evidence-dataset mismatch.",
+            "Knowledge gaps are properly acknowledged regarding the unverified application of biosystem monitoring to temporal resistance windows, distinguishing between established tools and hypothesized phenomena.",
+            "Results field remains correctly marked as pending without fabrication, and experimental design includes appropriate baselines and metrics for testing the refined hypothesis."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:4d905628b340",
+            "category": "critical_issue",
+            "description": "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:8cec291234b3191a; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:f5c97c044314",
+            "category": "critical_issue",
+            "description": "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:105773e7e0b2a64c; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:40834218535b",
+            "category": "critical_issue",
+            "description": "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:ce456b271f57",
+            "category": "required_revision",
+            "description": "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:071607bf7626f68f; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:28056035b282",
+            "category": "required_revision",
+            "description": "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:f5818707431c",
+            "category": "required_revision",
+            "description": "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:7eb917e48ec3d041; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:d6d91d5451f3",
+            "category": "required_revision",
+            "description": "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:08dd06ca9b1c6836; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "dfee95318bf783f1149c2df009dfb6ed6689bdd6911492fe14f2ddafd03943b3",
+          "experiment_designer": "73706a2758617703483a1b83fee81838e94a3e9c20b51c109b9cc230b2e04611",
+          "scientific_reviewer": "90f747cbef8737ff9c3fc7161a734e54046c025810dc5f466da6c4cc1b898ce4"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-081718-64b59ff3",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-081718-64b59ff3:review:v1",
+        "20260822-081718-64b59ff3:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-081718-64b59ff3:v1",
+        "20260822-081718-64b59ff3:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-081718-64b59ff3",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-081718-64b59ff3:review:v1",
+          "20260822-081718-64b59ff3:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-081718-64b59ff3:v1",
+          "20260822-081718-64b59ff3:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-081718-64b59ff3",
+          "version_number": 1,
+          "version_id": "20260822-081718-64b59ff3:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Advanced biosystem monitoring capabilities enable the identification of transient metabolic vulnerabilities in resistant bacteria, allowing for targeted interventions that overcome resistance through precision timing rather than novel drug discovery.",
+                "mechanism": "New observational technologies (EV-Q021-8467846663ee76fc520513be) provide high-resolution temporal data on antibiotic response and metabolic processes. This data reveals dynamic susceptibility windows where resistant strains are metabolically compromised, enabling existing antibiotics to be effective when administered at precise physiological states.",
+                "falsifiable_prediction": "If high-resolution biosystem monitoring is applied to a panel of multidrug-resistant strains, specific temporal metabolic signatures correlating with transient antibiotic susceptibility will be identified in >80% of tested strains within 6 months.",
+                "required_observations": [
+                  "Time-series metabolic profiling of resistant bacterial cultures under antibiotic exposure using advanced biosensors",
+                  "Correlation analysis between metabolic state markers and bacterial survival rates post-treatment",
+                  "Validation of predicted susceptibility windows in vitro"
+                ],
+                "risk_of_being_wrong": "Resistance mechanisms may be constitutive rather than dynamically regulated, rendering temporal targeting ineffective; or current biosensor resolution may be insufficient to detect relevant metabolic fluctuations in real-time clinical settings.",
+                "supporting_evidence_ids": [
+                  "EV-Q021-8467846663ee76fc520513be"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.4,
+                "overall_score": 0.65
+              },
+              {
+                "hypothesis": "Current technological capabilities for studying antibiotic response are necessary but insufficient to overcome resistance without concurrent validation of policy and agricultural interventions, making 'overcoming' contingent on socio-technical integration rather than scientific capability alone.",
+                "mechanism": "While new study capabilities exist (EV-Q021-8467846663ee76fc520513be), the booklet context suggests resistance is a systemic issue involving policy, healthcare, and agriculture. Scientific tools can characterize resistance but cannot reduce selection pressure without external interventions; thus, overcoming resistance requires coupling technical insight with verified non-technical controls.",
+                "falsifiable_prediction": "In regions with advanced biosystem monitoring but no coordinated policy/agricultural restrictions, resistance prevalence will not decrease significantly (>10%) over 5 years compared to regions with both technical and policy interventions.",
+                "required_observations": [
+                  "Longitudinal resistance surveillance data correlated with policy implementation timelines",
+                  "Comparative analysis of resistance trends across jurisdictions with varying intervention bundles",
+                  "Quantification of antibiotic usage in agriculture vs. clinical settings"
+                ],
+                "risk_of_being_wrong": "Technological breakthroughs (e.g., phage therapy, CRISPR-based antimicrobials) might independently overcome resistance regardless of policy; or policy effects may be too slow to measure against natural resistance evolution.",
+                "supporting_evidence_ids": [
+                  "EV-Q021-8467846663ee76fc520513be"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.4,
+                "evidence_support_score": 0.3,
+                "overall_score": 0.48
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it directly leverages the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) regarding new capabilities to study antibiotic response, transforming a methodological fact into a testable mechanistic hypothesis. It is highly falsifiable via laboratory experiments and does not rely on unverified policy claims absent from the evidence catalog. Hypothesis 1, while contextually reasonable based on the booklet, lacks direct evidentiary support for the efficacy of non-technical interventions within the allowed evidence IDs.",
+            "rejected_directions": [
+              "Hypotheses claiming AI/neural network quantization methods (EV-Q021-4a86933ac857213f6b093ff4, EV-Q021-e92577fceae7d9f624bcbae4) can solve biological antibiotic resistance, as these cards refer to computational model optimization, not biomedical applications.",
+              "Hypotheses asserting that conscious machines or cognitive interference (EV-Q021-d5f0694a2f1ae3b8676b11f0) affect antibiotic resistance, as this evidence is philosophically oriented and unrelated to microbiological mechanisms.",
+              "Definitive claims that resistance 'can' or 'cannot' ever be overcome, as no provided evidence supports an absolute existential conclusion."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that high-resolution temporal monitoring of bacterial metabolic states can identify transient windows of susceptibility in multidrug-resistant (MDR) strains. The core technical challenge is synchronizing real-time metabolic flux data (e.g., NADH/NAD+ ratios, ATP levels, membrane potential) with antibiotic exposure timing. We will employ microfluidic biosensors capable of sub-minute resolution metabolic profiling, coupled with automated drug delivery systems. The study focuses on correlating specific metabolic 'signatures' (defined as deviations from homeostatic baseline >2 SD) with subsequent bacterial survival rates upon antibiotic challenge. The mechanism posits that resistance is not always constitutive but may have dynamic metabolic costs that create temporary vulnerabilities.",
+            "datasets": {
+              "source": {
+                "name": "High-Resolution Metabolic Time-Series of MDR Bacteria",
+                "description": "Synthetic/Experimental dataset generated during this study. It includes time-stamped metabolic markers (fluorescence/intensity readings from biosensors) for E. coli and S. aureus MDR strains under controlled growth conditions.",
+                "access_note": "Data will be generated de novo using the experimental setup described in methods. No pre-existing public dataset fully matches the required temporal resolution and specific metabolic markers linked to antibiotic response as per EV-Q021-8467846663ee76fc520513be context.",
+                "evidence_ids": [
+                  "EV-Q021-8467846663ee76fc520513be"
+                ]
+              },
+              "target": {
+                "name": "Susceptibility Window Mapping",
+                "description": "A labeled dataset mapping specific temporal metabolic states to binary outcomes (Survival/Death) post-antibiotic administration. This target variable will be used to train a classifier to predict optimal intervention timing.",
+                "access_note": "Derived from parallel viability assays (CFU counting) synchronized with metabolic monitoring.",
+                "evidence_ids": [
+                  "EV-Q021-8467846663ee76fc520513be"
+                ]
+              }
+            },
+            "methods": "1. Strain Selection: Use 5 clinically relevant MDR strains (e.g., ESBL-producing E. coli, MRSA). 2. Biosensor Setup: Implement microfluidic chips with integrated optical sensors for real-time monitoring of metabolic indicators (NADH autofluorescence, membrane potential dyes). 3. Dynamic Exposure Protocol: Expose cultures to sub-lethal and lethal doses of standard antibiotics (e.g., ciprofloxacin, vancomycin) at randomized time points relative to metabolic cycles. 4. Data Acquisition: Record metabolic data at 10-second intervals. 5. Viability Assay: Perform colony-forming unit (CFU) counts at T+0, T+1h, T+4h, T+24h post-exposure to determine survival. 6. Correlation Analysis: Use time-lagged cross-correlation and machine learning (Random Forest/LSTM) to identify metabolic features preceding susceptibility windows.",
+            "experiments": {
+              "baselines": [
+                "Standard MIC Testing: Conventional broth microdilution to establish baseline static resistance profiles.",
+                "Random Timing Control: Antibiotic administration at random time points without metabolic guidance to establish average efficacy.",
+                "Constitutive Resistance Model: A null model assuming no temporal variation in susceptibility, predicting constant survival rates regardless of metabolic state."
+              ],
+              "metrics": [
+                "Area Under the Precision-Recall Curve (AUPRC): To evaluate the classifier's ability to identify rare susceptibility windows.",
+                "Brier Score: To assess the calibration of predicted probability of bacterial death against observed outcomes.",
+                "Fold-Change in Efficacy: Ratio of kill rate in 'predicted vulnerability window' vs. 'random timing' control.",
+                "Temporal Resolution Accuracy: Mean absolute error (in minutes) between predicted optimal intervention time and actual observed maximum susceptibility."
+              ],
+              "ablation": [
+                "Sensor Resolution Ablation: Downsample metabolic data to 1-min, 5-min, and 15-min intervals to test the necessity of high-resolution monitoring.",
+                "Metabolic Marker Ablation: Remove specific markers (e.g., exclude membrane potential) to determine which metabolic dimensions are most predictive of vulnerability.",
+                "Strain-Specific Ablation: Test if models trained on one species generalize to another, testing the universality of the metabolic vulnerability mechanism."
+              ],
+              "validation_protocol": "5-fold cross-validation across different bacterial strains and experimental batches. External validation will be performed on a held-out set of 2 additional MDR strains not used in model training. Statistical significance of efficacy improvement will be tested using paired t-tests against the Random Timing Control."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Provide detailed protocol for microfluidic chip fabrication and sensor calibration.",
+              "Share raw time-series metabolic data and synchronized CFU count logs.",
+              "Publish code for feature extraction and machine learning models (Python/PyTorch).",
+              "Specify exact antibiotic concentrations and batch numbers.",
+              "Document environmental controls (temperature, pH, media composition) to ensure metabolic consistency."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_duration_weeks": 24,
+              "required_resources": [
+                "Microfluidic biosensor platform",
+                "MDR bacterial strains (BSL-2 facility)",
+                "High-performance computing for time-series analysis"
+              ],
+              "risk_mitigation": "If high-resolution sensors fail to detect fluctuations, fallback to bulk metabolomics at higher frequency (every 5 mins) though with lower temporal precision."
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis correctly identifies the only relevant evidence card (EV-Q021-8467846663ee76fc520513be) and avoids citing irrelevant AI/philosophy cards.",
+              "The Results field correctly states 'pending' and does not fabricate experimental outcomes.",
+              "The experiment design includes appropriate baselines (Standard MIC, Random Timing) and metrics (AUPRC, Fold-Change) to test the specific claim of temporal vulnerability.",
+              "However, the mechanism description overstates the evidence: EV-Q021-8467846663ee76fc520513be only confirms 'capabilities to study antibiotic response', not specifically 'high-resolution temporal data' or 'metabolic processes' in the context of resistance dynamics. The link between 'studying response' and 'identifying transient metabolic vulnerabilities' is a knowledge gap, not an established fact.",
+              "The falsifiable prediction threshold (>80% of strains) is arbitrary and lacks evidentiary justification; this should be framed as an exploratory parameter rather than a hard scientific cutoff derived from evidence.",
+              "Dataset 'source' is described as synthetic/experimental to be generated, which is valid for a proposal, but the evidence_id attached implies the evidence card validates this specific dataset structure, which it does not."
+            ],
+            "critical_issues": [
+              "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+              "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+              "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards."
+            ],
+            "required_revisions": [
+              "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+              "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+              "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+              "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.6,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.85,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:4d905628b340",
+              "category": "critical_issue",
+              "description": "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:f5c97c044314",
+              "category": "critical_issue",
+              "description": "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:40834218535b",
+              "category": "critical_issue",
+              "description": "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:ce456b271f57",
+              "category": "required_revision",
+              "description": "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:28056035b282",
+              "category": "required_revision",
+              "description": "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:f5818707431c",
+              "category": "required_revision",
+              "description": "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:d6d91d5451f3",
+              "category": "required_revision",
+              "description": "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "5b0896e801d2bcb8c841cc113e4c6e3fd5989d7bde8341f79e3eb6cee09f6582",
+            "experiment_designer": "69bdb2f0179d1d8c3de22f010caf26043d04689d4bea439f84d55fa8a7627d9a",
+            "scientific_reviewer": "1dea33764cc12496c83ee312ed75cadc9de0fca0485210053ae2a7e34b8f382b"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-081718-64b59ff3",
+          "version_number": 2,
+          "version_id": "20260822-081718-64b59ff3:v2",
+          "parent_version_id": "20260822-081718-64b59ff3:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Advanced biosystem monitoring capabilities enable the empirical testing of whether transient metabolic vulnerabilities exist in antibiotic-resistant bacteria, serving as a necessary methodological prerequisite for determining if temporal targeting can overcome resistance.",
+                "mechanism": "Evidence EV-Q021-8467846663ee76fc520513be establishes new capabilities to study antibiotic response and metabolic processes. This observational capacity is treated here strictly as an enabling tool to investigate the unverified knowledge gap: whether resistant phenotypes exhibit dynamic metabolic states that correlate with transient susceptibility. The mechanism does not assume these vulnerabilities exist but posits that only through this specific high-resolution monitoring can their existence be rigorously validated or refuted.",
+                "falsifiable_prediction": "Application of advanced biosystem monitoring to multidrug-resistant strains will yield statistically significant temporal correlations (p < 0.05 after multiple testing correction) between specific metabolic markers and antibiotic survival outcomes; failure to detect such correlations across diverse strains would indicate that temporal metabolic vulnerability is not a generalizable phenomenon accessible via current sensing modalities.",
+                "required_observations": [
+                  "High-temporal-resolution time-series data of metabolic markers during antibiotic exposure using biosensors described in EV-Q021-8467846663ee76fc520513be",
+                  "Synchronized viability measurements to establish ground-truth survival outcomes",
+                  "Statistical validation of temporal coupling between metabolic states and efficacy windows"
+                ],
+                "risk_of_being_wrong": "The biosystem monitoring capability may be insufficient to resolve relevant metabolic dynamics at the required spatiotemporal scale; or transient vulnerabilities may not exist as a generalizable biological phenomenon, rendering the observational approach futile regardless of technical fidelity.",
+                "supporting_evidence_ids": [
+                  "EV-Q021-8467846663ee76fc520513be"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.75,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.85,
+                "overall_score": 0.81
+              },
+              {
+                "hypothesis": "Current biosystem monitoring capabilities for studying antibiotic response are methodologically necessary but biologically insufficient to overcome resistance without parallel validation of non-technical interventions, implying that 'overcoming' is contingent on socio-technical integration beyond observational science alone.",
+                "mechanism": "While EV-Q021-8467846663ee76fc520513be confirms new capabilities to study antibiotic response, this evidence only addresses observational methodology, not intervention efficacy. The hypothesis posits that even perfect characterization of resistance dynamics cannot reduce selection pressure or reverse resistance prevalence without external policy/agricultural controls—factors absent from allowed evidence. Thus, technological capability is a necessary but insufficient condition for overcoming resistance.",
+                "falsifiable_prediction": "In controlled comparative studies, enhanced biosystem monitoring alone (without concurrent policy/intervention changes) will fail to produce statistically significant reductions in resistance prevalence compared to baseline surveillance over equivalent timeframes.",
+                "required_observations": [
+                  "Longitudinal resistance prevalence data in settings with vs. without advanced monitoring deployment",
+                  "Quantification of confounding variables (antibiotic usage, infection control practices)",
+                  "Time-lagged analysis of resistance trends relative to monitoring implementation"
+                ],
+                "risk_of_being_wrong": "Unforeseen technological breakthroughs (e.g., phage therapy, CRISPR antimicrobials) might independently overcome resistance regardless of policy context; or monitoring itself might indirectly drive behavioral changes that reduce resistance, confounding the sufficiency claim.",
+                "supporting_evidence_ids": [
+                  "EV-Q021-8467846663ee76fc520513be"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.4,
+                "evidence_support_score": 0.5,
+                "overall_score": 0.5
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses reviewer feedback by reframing EV-Q021-8467846663ee76fc520513be as establishing observational capability rather than confirming biological phenomena. It removes the arbitrary >80% threshold, replaces it with statistically grounded falsifiability criteria, and explicitly acknowledges the knowledge gap regarding transient vulnerabilities. This hypothesis is testable via laboratory experiments using the cited biosensing methods, avoids overclaiming evidence, and maintains high falsifiability while respecting evidentiary boundaries. Hypothesis 1, while conceptually valid, relies on socio-technical factors unsupported by allowed evidence IDs and has lower feasibility for immediate experimental validation.",
+            "rejected_directions": [
+              "Claims that AI/neural network quantization methods (EV-Q021-4a86933ac857213f6b093ff4, EV-Q021-e92577fceae7d9f624bcbae4) can solve biological antibiotic resistance, as these cards refer to computational model optimization unrelated to microbiology.",
+              "Assertions that conscious machines or cognitive interference (EV-Q021-d5f0694a2f1ae3b8676b11f0) affect antibiotic resistance, as this evidence is philosophically oriented and lacks biomedical grounding.",
+              "Definitive existential claims about whether resistance 'can' or 'cannot' ever be overcome, as no provided evidence supports absolute conclusions.",
+              "Mechanistic claims treating transient metabolic vulnerabilities as established facts rather than hypotheses to be tested via the observational capabilities cited in EV-Q021-8467846663ee76fc520513be."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment is designed to test the hypothesis that advanced biosystem monitoring capabilities (as established in EV-Q021-8467846663ee76fc520513be) can empirically validate the existence of transient metabolic vulnerabilities in antibiotic-resistant bacteria. The technical approach involves using high-resolution biosensors to monitor metabolic markers (e.g., NADH autofluorescence, membrane potential) in real-time during antibiotic exposure. Crucially, this design treats the 'transient vulnerability' as a knowledge gap to be tested, not an established fact. The evidence card supports the methodological capability to study antibiotic response and metabolic processes, but does not confirm the specific biological phenomenon of temporal susceptibility windows. Therefore, the experiment focuses on correlating observed metabolic dynamics with survival outcomes to determine if such windows exist and are detectable.",
+            "datasets": {
+              "source": {
+                "name": "Experimental Metabolic Time-Series Data",
+                "description": "De novo generated dataset comprising high-frequency time-series data of metabolic markers from multidrug-resistant bacterial strains under antibiotic stress. This dataset is created using the biosensing methodologies enabled by the capabilities described in EV-Q021-8467846663ee76fc520513be. Note: The evidence card validates the general capability to study these processes, not the specific structure or content of this generated dataset.",
+                "access_note": "Data will be generated during the experiment. EV-Q021-8467846663ee76fc520513be supports the methodological approach (biosensing) but does not provide pre-existing data or validate specific variables like NADH/ATP in this context.",
+                "evidence_ids": [
+                  "EV-Q021-8467846663ee76fc520513be"
+                ]
+              },
+              "target": {
+                "name": "Viability Outcome Labels",
+                "description": "Binary and continuous survival metrics (CFU counts, optical density) synchronized with metabolic time-points. These labels serve as the ground truth to test for correlations with metabolic states.",
+                "access_note": "Generated via parallel viability assays. No evidence ID supports the specific label structure; this is a standard microbiological measurement.",
+                "evidence_ids": []
+              }
+            },
+            "methods": "1. Strain Preparation: Culture multidrug-resistant bacterial strains (e.g., MRSA, ESBL-E. coli) in controlled microfluidic environments. 2. Biosensor Integration: Utilize optical biosensors to monitor metabolic indicators (NADH, membrane potential) at sub-minute resolution, leveraging the observational capabilities cited in EV-Q021-8467846663ee76fc520513be. 3. Dynamic Antibiotic Exposure: Administer antibiotics at varying time points relative to metabolic cycles. 4. Data Synchronization: Align metabolic time-series with viability measurements (CFU counts) at multiple time points post-exposure. 5. Statistical Analysis: Perform time-lagged cross-correlation and machine learning classification to identify if specific metabolic states predict susceptibility. The analysis explicitly tests for the presence of temporal vulnerabilities as a hypothesis, acknowledging the knowledge gap regarding their existence.",
+            "experiments": {
+              "baselines": [
+                "Standard MIC Testing: Conventional static resistance profiling to establish baseline susceptibility.",
+                "Random Timing Control: Antibiotic administration at random intervals without metabolic guidance to determine average efficacy.",
+                "Null Model of Constitutive Resistance: A statistical model assuming no temporal variation in susceptibility, serving as a negative control for dynamic vulnerability."
+              ],
+              "metrics": [
+                "Area Under the Precision-Recall Curve (AUPRC): To evaluate the detection of rare susceptibility events.",
+                "Brier Score: To assess the calibration of probabilistic predictions of bacterial death.",
+                "Fold-Change in Kill Rate: Comparison of efficacy in predicted vulnerability windows vs. random timing.",
+                "Statistical Significance (p-value): Corrected for multiple testing to determine if observed correlations are non-random."
+              ],
+              "ablation": [
+                "Temporal Resolution Ablation: Downsample data to test the minimum resolution required for detecting vulnerabilities.",
+                "Marker Ablation: Exclude specific metabolic markers to identify which dimensions drive predictive power.",
+                "Strain Generalization: Test models trained on one strain against others to assess generalizability."
+              ],
+              "validation_protocol": "5-fold cross-validation across experimental batches. External validation on held-out strains. Statistical significance determined via permutation testing against the Null Model."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Publish detailed protocol for biosensor calibration and microfluidic setup.",
+              "Share raw time-series data and synchronized viability logs.",
+              "Provide code for statistical analysis and machine learning models.",
+              "Document all environmental controls (temperature, pH, media) to ensure metabolic consistency.",
+              "Explicitly state that EV-Q021-8467846663ee76fc520513be supports the methodological capability, not the biological findings."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_duration_weeks": 24,
+              "required_resources": [
+                "Microfluidic biosensor platform",
+                "Multidrug-resistant bacterial strains",
+                "High-performance computing for time-series analysis"
+              ],
+              "risk_mitigation": "If high-resolution sensors fail to detect fluctuations, fallback to bulk metabolomics at higher frequency, acknowledging reduced temporal precision."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly reframes EV-Q021-8467846663ee76fc520513be as establishing an observational capability rather than confirming the biological existence of transient vulnerabilities, resolving the previous mechanism overclaim.",
+              "The falsifiable prediction has been appropriately revised to use statistical significance (p < 0.05 with correction) instead of the arbitrary >80% threshold, aligning with standard scientific validation criteria.",
+              "Dataset descriptions now explicitly clarify that the evidence ID supports the methodological approach (biosensing) but does not validate specific dataset content or ground truth labels, correcting the evidence-dataset mismatch.",
+              "Knowledge gaps are properly acknowledged regarding the unverified application of biosystem monitoring to temporal resistance windows, distinguishing between established tools and hypothesized phenomena.",
+              "Results field remains correctly marked as pending without fabrication, and experimental design includes appropriate baselines and metrics for testing the refined hypothesis."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:4d905628b340",
+              "category": "critical_issue",
+              "description": "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:8cec291234b3191a; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:f5c97c044314",
+              "category": "critical_issue",
+              "description": "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:105773e7e0b2a64c; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:40834218535b",
+              "category": "critical_issue",
+              "description": "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:ce456b271f57",
+              "category": "required_revision",
+              "description": "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:071607bf7626f68f; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:28056035b282",
+              "category": "required_revision",
+              "description": "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:f5818707431c",
+              "category": "required_revision",
+              "description": "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:7eb917e48ec3d041; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:d6d91d5451f3",
+              "category": "required_revision",
+              "description": "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:08dd06ca9b1c6836; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "dfee95318bf783f1149c2df009dfb6ed6689bdd6911492fe14f2ddafd03943b3",
+            "experiment_designer": "73706a2758617703483a1b83fee81838e94a3e9c20b51c109b9cc230b2e04611",
+            "scientific_reviewer": "90f747cbef8737ff9c3fc7161a734e54046c025810dc5f466da6c4cc1b898ce4"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-081718-64b59ff3:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-081718-64b59ff3:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-081718-64b59ff3:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-081718-64b59ff3:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:4d905628b340",
+          "category": "critical_issue",
+          "description": "Mechanism Overclaim: The assertion that EV-Q021-8467846663ee76fc520513be provides 'high-resolution temporal data on metabolic processes' specifically for identifying resistance vulnerabilities exceeds the quoted text ('new capabilities to study... antibiotic response'). The evidence supports the *tool*, not the specific *biological phenomenon* of transient metabolic vulnerability.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:8cec291234b3191a; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:f5c97c044314",
+          "category": "critical_issue",
+          "description": "Evidence-Dataset Mismatch: The dataset definition cites EV-Q021-8467846663ee76fc520513be as supporting the 'High-Resolution Metabolic Time-Series' dataset structure. The evidence card mentions the capability generally but does not validate the specific variables (NADH, ATP) or temporal resolution proposed.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:105773e7e0b2a64c; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:40834218535b",
+          "category": "critical_issue",
+          "description": "Arbitrary Prediction Threshold: The '>80% of tested strains' metric in the falsifiable prediction appears hallucinated/subjective without grounding in prior literature or evidence cards.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:ce456b271f57",
+          "category": "required_revision",
+          "description": "Rephrase the mechanism to explicitly state that EV-Q021-8467846663ee76fc520513be establishes the *observational capability*, while the existence of 'transient metabolic vulnerabilities' is the *hypothesis to be tested*, not a fact derived from the evidence.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:071607bf7626f68f; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:28056035b282",
+          "category": "required_revision",
+          "description": "Remove or justify the '>80%' threshold in the falsifiable prediction. If no evidence supports this prevalence, reframe as 'statistically significant identification of signatures' or define it as an arbitrary success criterion for the pilot study rather than a biological fact.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:f5818707431c",
+          "category": "required_revision",
+          "description": "Clarify in the Dataset section that EV-Q021-8467846663ee76fc520513be supports the *methodological approach* (biosensing), not the specific dataset content or ground truth labels.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:7eb917e48ec3d041; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:d6d91d5451f3",
+          "category": "required_revision",
+          "description": "Add a specific 'knowledge_gap' entry acknowledging that while biosystem monitoring exists, its application to finding *temporal* resistance windows is unverified by current evidence.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:08dd06ca9b1c6836; evidence=EV-Q021-8467846663ee76fc520513be; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "checkpoint_hash": "80f1517016949eb3d635333f15c4be26886c0162ad0d1ffcee97d0e37c5ca48b"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-081718-64b59ff3:wave-b-two-round",
+      "run_id": "20260822-081718-64b59ff3",
+      "v1_version_id": "20260822-081718-64b59ff3:v1",
+      "v2_version_id": "20260822-081718-64b59ff3:v2",
+      "input_fingerprints": {
+        "v1": "69bdb2f0179d1d8c3de22f010caf26043d04689d4bea439f84d55fa8a7627d9a",
+        "v2": "73706a2758617703483a1b83fee81838e94a3e9c20b51c109b9cc230b2e04611"
+      },
+      "responded_issue_count": 5,
+      "issue_ids": [
+        "critical_issue:4d905628b340",
+        "critical_issue:f5c97c044314",
+        "required_revision:ce456b271f57",
+        "required_revision:f5818707431c",
+        "required_revision:d6d91d5451f3"
+      ],
+      "change_ids": [
+        "change:8cec291234b3191a",
+        "change:105773e7e0b2a64c",
+        "change:071607bf7626f68f",
+        "change:7eb917e48ec3d041",
+        "change:08dd06ca9b1c6836"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.6,
+          "after": 0.95,
+          "delta": 0.35
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.9,
+          "delta": 0.050000000000000044
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Advanced biosystem monitoring capabilities enable the empirical testing of whether transient metabolic vulnerabilities exist in antibiotic-resistant bacteria, serving as a necessary methodological prerequisite for determining if temporal targeting can overcome resistance.",
+          "overall_score": 0.81,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Current biosystem monitoring capabilities for studying antibiotic response are methodologically necessary but biologically insufficient to overcome resistance without parallel validation of non-technical interventions, implying that 'overcoming' is contingent on socio-technical integration beyond observational science alone.",
+          "overall_score": 0.5,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "12974b5c1e71",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:19:41.352549+00:00",
+    "ended_at": "2026-08-22T08:20:24.782312+00:00",
+    "duration_ms": 43429,
+    "input_summary": "{\"question_item\": {\"id\": \"Q021\", \"domain\": \"Medicine & Health\", \"question\": \"Can we ever overcome antibiotic resistance?\", \"source_page\": 12, \"booklet_excerpt\": \"Antibiotic resistance significantly threatens global health and food security. It can be addressed through contributions by those in policy, health care, research, and agriculture, and through prudent use of antibiotics by individuals.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Medicine & Health\", \"core_question\": \"Is it possible to over",
+    "output_summary": "{\"input_question\": \"Can we ever overcome antibiotic resistance?\", \"domain\": \"Medicine & Health\", \"problem_statement\": \"Antibiotic resistance poses a significant threat to global health and food security. While the provided context suggests a multi-sectoral approach (policy, healthcare, research, agriculture) is required, there is a critical knowledge gap regarding whether current or emerging technological capabilities can empirically validate mechanisms to overcome resistance, specifically through high-resolution monitoring of bacterial responses.\", \"rationale\": \"The available evidence is limi",
+    "evidence_ids": [
+      "EV-Q021-8467846663ee76fc520513be"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "eacb831c0020",
+    "mock": false
+  },
+  {
+    "event_id": "7bb0bc02c8d7",
+    "run_id": "20260822-081718-64b59ff3",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:20:24.783313+00:00",
+    "ended_at": "2026-08-22T08:20:26.220329+00:00",
+    "duration_ms": 1437,
+    "input_summary": "{\"question_item\": {\"id\": \"Q021\", \"domain\": \"Medicine & Health\", \"question\": \"Can we ever overcome antibiotic resistance?\", \"source_page\": 12, \"booklet_excerpt\": \"Antibiotic resistance significantly threatens global health and food security. It can be addressed through contributions by those in policy, health care, research, and agriculture, and through prudent use of antibiotics by individuals.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required field: ResearchPlan\", \"Missing required field: EvidenceCards\", \"Missing required field: AgentTrace\", \"Missing required field: execution_metadata\"], \"warnings\": [\"Input does not contain the necessary components for schema validation.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1cae9d313965",
+    "mock": false
+  }
+]

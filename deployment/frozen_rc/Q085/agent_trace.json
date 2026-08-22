@@ -1,0 +1,1911 @@
+[
+  {
+    "event_id": "294fa4c8b6d0",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:58:49.000635+00:00",
+    "ended_at": "2026-08-22T08:58:49.000635+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "bb68ae10e482",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:58:49.000635+00:00",
+    "ended_at": "2026-08-22T08:58:52.731411+00:00",
+    "duration_ms": 3730,
+    "input_summary": "{\"question_item\": {\"id\": \"Q085\", \"domain\": \"Physics\", \"question\": \"What is dark matter?\", \"source_page\": 29, \"booklet_excerpt\": \"Approximately 95% of the constitution of the universe is unknown to us. That 95% seemingly has to account for the acceleration of the expansion of the universe, which has been proven thanks to data obtained by astronomers with modern instruments, starting with the Hubble Space Telescope. If the universe consisted only of observable matter, the accelerated expansion would not be happening—gravity would take hold. So, something unknown is causing this phenomenon. But w",
+    "output_summary": "{\"domain\": \"Physics\", \"core_question\": \"What is the physical nature and composition of dark matter?\", \"keywords\": [\"dark matter\", \"universe constitution\", \"accelerated expansion\", \"gravity\", \"observable matter\"], \"entities\": [\"dark matter\", \"dark energy\", \"universe\", \"Hubble Space Telescope\", \"astronomers\", \"gravity\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The provided text defines dark matter as an unknown component accounting for approximately 25%-27% of the universe, distinguished from dark energy (68%) which is associated with accelerated expansion. The boundary i",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a6595f84a286",
+    "mock": false
+  },
+  {
+    "event_id": "49679fe6179c",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:58:52.731411+00:00",
+    "ended_at": "2026-08-22T08:59:13.686427+00:00",
+    "duration_ms": 20955,
+    "input_summary": "{\"question_item\": {\"id\": \"Q085\", \"domain\": \"Physics\", \"question\": \"What is dark matter?\", \"source_page\": 29, \"booklet_excerpt\": \"Approximately 95% of the constitution of the universe is unknown to us. That 95% seemingly has to account for the acceleration of the expansion of the universe, which has been proven thanks to data obtained by astronomers with modern instruments, starting with the Hubble Space Telescope. If the universe consisted only of observable matter, the accelerated expansion would not be happening—gravity would take hold. So, something unknown is causing this phenomenon. But w",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the specific percentage contributions of dark matter and dark energy to the universe's total energy density as stated in the booklet excerpt.\", \"query\": \"dark matter dark energy percentage composition universe Planck mission results\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Precise numerical values for Omega_m (matter) and Omega_Lambda (dark energy) from recent cosmological surveys.\", \"priority\": \"high\"}, {\"purpose\": \"Clarify the distinction between dark matter and dark energy regarding their effects on cosmic expansion, correcting the potential",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6d42932c97c7",
+    "mock": false
+  },
+  {
+    "event_id": "44c92b7ca837",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:59:13.698437+00:00",
+    "ended_at": "2026-08-22T08:59:35.970815+00:00",
+    "duration_ms": 22272,
+    "input_summary": "{\"question_item\": {\"id\": \"Q085\", \"domain\": \"Physics\", \"question\": \"What is dark matter?\", \"source_page\": 29, \"booklet_excerpt\": \"Approximately 95% of the constitution of the universe is unknown to us. That 95% seemingly has to account for the acceleration of the expansion of the universe, which has been proven thanks to data obtained by astronomers with modern instruments, starting with the Hubble Space Telescope. If the universe consisted only of observable matter, the accelerated expansion would not be happening—gravity would take hold. So, something unknown is causing this phenomenon. But w",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Cosmological models used to analyze observational data (such as WMAP, Planck, and cluster abundance) assume the existence of cold dark matter.\", \"evidence_ids\": [\"EV-Q085-cf7202fe39de431d579231e6\"], \"confidence\": \"high\", \"fact_type\": \"method\", \"caveat\": \"This reflects the standard assumption in cosmological parameter estimation, not a direct detection of the particle nature.\"}, {\"fact\": \"Large-scale survey instruments like LSST are designed to study dark energy and the accelerating expansion of the universe, which is linked to the overall mass-energy budget inc",
+    "evidence_ids": [
+      "EV-Q085-cf7202fe39de431d579231e6",
+      "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+      "EV-Q085-9d1e8e6835c81b1929462f11"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8520a878ba6b",
+    "mock": false
+  },
+  {
+    "event_id": "6bff43a7a690",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:59:35.971815+00:00",
+    "ended_at": "2026-08-22T09:00:03.517308+00:00",
+    "duration_ms": 27545,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q085\", \"domain\": \"Physics\", \"question\": \"What is dark matter?\", \"source_page\": 29, \"booklet_excerpt\": \"Approximately 95% of the constitution of the universe is unknown to us. That 95% seemingly has to account for the acceleration of the expansion of the universe, which has been proven thanks to data obtained by astronomers with modern instruments, starting with the Hubble Space Telescope. If the universe consisted only of observable matter, the accelerated expansion would not be happening—gravity would take hold. So, something unknown is causi",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range that annihilate into standard model particles, producing observable radio continuum emission in galaxy clusters.\", \"mechanism\": \"If dark matter particles are Weakly Interacting Massive Particles (WIMPs) in the 48-67 GeV mass range, their self-annihilation in high-density regions like the Ophiuchus cluster would produce charged secondary particles. These particles interact with intracluster magnetic fields to generate synchrotron radiation, manifesting as a specific radio cont",
+    "evidence_ids": [
+      "EV-Q085-9d1e8e6835c81b1929462f11",
+      "EV-Q085-cf7202fe39de431d579231e6",
+      "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+      "EV-Q085-f2eb2997fdb878c0db37eee4"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c76b8a520494",
+    "mock": false
+  },
+  {
+    "event_id": "6d1843a48f91",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:00:03.517308+00:00",
+    "ended_at": "2026-08-22T09:00:27.590029+00:00",
+    "duration_ms": 24072,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q085\", \"domain\": \"Physics\", \"question\": \"What is dark matter?\", \"source_page\": 29, \"booklet_excerpt\": \"Approximately 95% of the constitution of the universe is unknown to us. That 95% seemingly has to account for the acceleration of the expansion of the universe, which has been proven thanks to data obtained by astronomers with modern instruments, starting with the Hubble Space Telescope. If the universe consisted only of observable matter, the accelerated expansion would not be happening—gravity would take hold. So, something unknown is causi",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that dark matter consists of WIMPs with mass 48–67 GeV by analyzing radio continuum spectral data from the Ophiuchus cluster. The core mechanism posits that WIMP self-annihilation produces charged secondary particles (e+/e-) which generate synchrotron radiation in intracluster magnetic fields. The experimental design involves fitting the observed radio spectrum with a composite model: S_total = S_DM(m_chi, <sigma v>) + S_CR(electron_population) + S_AGN(point_sources). The key discriminant is a spectral cutoff or bump feature in the 10",
+    "evidence_ids": [
+      "EV-Q085-9d1e8e6835c81b1929462f11"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "79897f3aab53",
+    "mock": false
+  },
+  {
+    "event_id": "bbd312499203",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:00:27.590029+00:00",
+    "ended_at": "2026-08-22T09:00:35.350820+00:00",
+    "duration_ms": 7760,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q085\", \"domain\": \"Physics\", \"question\": \"What is dark matter?\", \"source_page\": 29, \"booklet_excerpt\": \"Approximately 95% of the constitution of the universe is unknown to us. That 95% seemingly has to account for the acceleration of the expansion of the universe, which has been proven thanks to data obtained by astronomers with modern instruments, starting with the Hubble Space Telescope. If the universe consisted only of observable matter, the accelerated expansion would not be happening—gravity would take hold. So, something unknown is causi",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis correctly frames the 48-67 GeV mass range as a testable prediction derived from specific indirect detection literature (EV-Q085-9d1e8e6835c81b1929462f11) rather than an established fact.\", \"Experiment design appropriately identifies astrophysical backgrounds (cosmic rays, AGN) as the primary null hypothesis and includes turbulent re-acceleration as a critical baseline to avoid false positives.\", \"Results field is correctly marked as pending/not executed, adhering to safety guidelines against fabricating experimental outcomes.\",",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "75635cd20c34",
+    "mock": false
+  },
+  {
+    "event_id": "f15157051cee",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:00:35.352820+00:00",
+    "ended_at": "2026-08-22T09:01:04.844245+00:00",
+    "duration_ms": 29491,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis correctly frames the 48-67 GeV mass range as a testable prediction derived from specific indirect detection literature (EV-Q085-9d1e8e6835c81b1929462f11) rather than an established fact.\", \"Experiment design appropriately identifies astrophysical backgrounds (cosmic rays, AGN) as the primary null hypothesis and includes turbulent re-acceleration as a critical baseline to avoid false positives.\", \"Results field is correctly marked as pending/not executed, adhering to safety guidelines a",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range whose annihilation into Standard Model particles produces secondary electrons generating synchrotron radio emission in galaxy clusters, distinguishable from astrophysical backgrounds only when turbulent re-acceleration is explicitly modeled as a null hypothesis.\", \"mechanism\": \"If dark matter particles are WIMPs in the 48-67 GeV mass range (EV-Q085-9d1e8e6835c81b1929462f11), their self-annihilation in high-density cluster environments produces charged secondaries that emit sy",
+    "evidence_ids": [
+      "EV-Q085-9d1e8e6835c81b1929462f11",
+      "EV-Q085-cf7202fe39de431d579231e6",
+      "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+      "EV-Q085-f2eb2997fdb878c0db37eee4"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "96a92e3283da",
+    "mock": false
+  },
+  {
+    "event_id": "b7775a9f157f",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:01:04.845240+00:00",
+    "ended_at": "2026-08-22T09:01:30.830792+00:00",
+    "duration_ms": 25985,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis correctly frames the 48-67 GeV mass range as a testable prediction derived from specific indirect detection literature (EV-Q085-9d1e8e6835c81b1929462f11) rather than an established fact.\", \"Experiment design appropriately identifies astrophysical backgrounds (cosmic rays, AGN) as the primary null hypothesis and includes turbulent re-acceleration as a critical baseline to avoid false positives.\", \"Results field is correctly marked as pending/not executed, adhering to safety guidelines a",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that dark matter consists of WIMPs with mass 48–67 GeV by analyzing radio continuum spectral data from the Ophiuchus cluster. The core mechanism posits that WIMP self-annihilation produces charged secondary particles (e+/e-) which generate synchrotron radiation in intracluster magnetic fields. The experimental design involves fitting the observed radio spectrum with a composite model: S_total = S_DM(m_chi, <sigma v>) + S_CR(electron_population) + S_AGN(point_sources). The key discriminant is a spectral cutoff or bump feature in the 10",
+    "evidence_ids": [
+      "EV-Q085-9d1e8e6835c81b1929462f11"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e2d9a44adbb7",
+    "mock": false
+  },
+  {
+    "event_id": "8f325ddd83d4",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:01:30.831792+00:00",
+    "ended_at": "2026-08-22T09:01:39.772278+00:00",
+    "duration_ms": 8940,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis correctly frames the 48-67 GeV mass range as a testable prediction derived from specific indirect detection literature (EV-Q085-9d1e8e6835c81b1929462f11) rather than an established fact.\", \"Experiment design appropriately identifies astrophysical backgrounds (cosmic rays, AGN) as the primary null hypothesis and includes turbulent re-acceleration as a critical baseline to avoid false positives.\", \"Results field is correctly marked as pending/not executed, adhering to safety guidelines a",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revision successfully incorporates all three required revisions from the previous review cycle without introducing new errors.\", \"The 'Astrophysical Background Models' dataset description now explicitly mandates citable simulation codes or empirical templates traceable to peer-reviewed literature, addressing the lack of evidence-grounded background parameters (Issue 5de701aa011a).\", \"The reproducibility checklist has been updated to explicitly require documentation of prior probability distributions for magnetic field strength and cosmic-ray injectio",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0ccda546ec76",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:812c55147a370a87",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range that annihilate into standard model particles, producing observable radio continuum emission in galaxy clusters.",
+              "mechanism": "If dark matter particles are Weakly Interacting Massive Particles (WIMPs) in the 48-67 GeV mass range, their self-annihilation in high-density regions like the Ophiuchus cluster would produce charged secondary particles. These particles interact with intracluster magnetic fields to generate synchrotron radiation, manifesting as a specific radio continuum spectral signature distinct from astrophysical backgrounds.",
+              "falsifiable_prediction": "High-resolution radio continuum spectra of the Ophiuchus cluster will exhibit a spectral cutoff or feature consistent with 48-67 GeV annihilation models that cannot be explained by standard cosmic-ray electron populations or active galactic nucleus (AGN) feedback mechanisms alone.",
+              "required_observations": [
+                "Multi-frequency radio continuum spectral data of the Ophiuchus cluster with sufficient sensitivity to distinguish synchrotron components",
+                "Independent gamma-ray or anti-proton flux measurements from the same region to cross-validate the annihilation interpretation",
+                "Astrophysical background modeling of cosmic-ray electrons and AGN activity in the Ophiuchus cluster"
+              ],
+              "risk_of_being_wrong": "The radio signal may be entirely attributable to unmodeled astrophysical processes (e.g., turbulent re-acceleration of cosmic rays), rendering the dark matter mass fit spurious. Additionally, the assumption of cold dark matter in cosmological fits does not uniquely predict this specific mass range.",
+              "supporting_evidence_ids": [
+                "EV-Q085-9d1e8e6835c81b1929462f11",
+                "EV-Q085-cf7202fe39de431d579231e6"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The gravitational effects attributed to dark matter are fully consistent with a cold, collisionless fluid in ΛCDM cosmology, but current indirect detection anomalies (e.g., Ophiuchus radio data) are insufficient to identify its particle nature without next-generation weak lensing and clustering surveys.",
+              "mechanism": "Cosmological parameter estimation relies on assuming cold dark matter as a pressureless fluid component. While this assumption successfully fits WMAP/Planck and cluster abundance data, it is degenerate with respect to microphysical particle properties. Therefore, confirming 'what dark matter is' requires breaking this degeneracy via precision large-scale structure measurements that constrain interaction cross-sections or substructure, rather than relying solely on current indirect signals.",
+              "falsifiable_prediction": "If future LSST-era weak lensing and galaxy clustering data remain consistent with pure ΛCDM predictions at sub-percent precision without revealing deviations indicative of self-interactions or warm dark matter free-streaming, then current indirect detection claims (like the 48-67 GeV fit) are likely astrophysical artifacts rather than particle identification.",
+              "required_observations": [
+                "Precision weak lensing shear-shear and galaxy-shear correlation functions from LSST or equivalent Stage IV surveys",
+                "Galaxy angular clustering power spectra at redshifts z > 1",
+                "Joint analysis combining CMB priors with large-scale structure to test for deviations from collisionless CDM"
+              ],
+              "risk_of_being_wrong": "Dark matter may have non-standard properties (e.g., self-interactions, warmth) that are subtle enough to evade detection even in Stage IV surveys, leaving the particle identity unresolved despite improved gravitational constraints. Alternatively, a definitive indirect signal could emerge before LSST completes its survey.",
+              "supporting_evidence_ids": [
+                "EV-Q085-cf7202fe39de431d579231e6",
+                "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+                "EV-Q085-f2eb2997fdb878c0db37eee4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Dark matter is not a single particle species but a composite sector where the dominant mass component is cold and collisionless (as assumed in WMAP/Planck analyses), while sub-dominant components may produce anomalous indirect signals like those observed in Ophiuchus.",
+              "mechanism": "Standard cosmological fits assume a single cold dark matter component. However, if dark matter comprises multiple species, the dominant component governs large-scale structure formation (consistent with EV-Q085-cf7202fe39de431d579231e6), while a sub-dominant annihilating component could explain localized anomalies (EV-Q085-9d1e8e6835c81b1929462f11) without conflicting with global CDM constraints.",
+              "falsifiable_prediction": "Cross-correlation of radio continuum anomalies across multiple galaxy clusters will show inconsistent mass fits or spectral shapes if they arise from a sub-dominant component with varying density profiles, whereas a single dominant WIMP explanation would predict universal scaling with cluster mass.",
+              "required_observations": [
+                "Radio continuum spectral data from a sample of galaxy clusters spanning different masses and dynamical states",
+                "Cluster mass calibration via weak lensing to establish scaling relations",
+                "Multi-wavelength follow-up to characterize astrophysical backgrounds uniformly across the sample"
+              ],
+              "risk_of_being_wrong": "The apparent need for multiple components may simply reflect inadequate astrophysical modeling rather than new physics. Current evidence does not independently support the existence of sub-dominant dark matter sectors beyond the anomalous fits themselves.",
+              "supporting_evidence_ids": [
+                "EV-Q085-cf7202fe39de431d579231e6",
+                "EV-Q085-9d1e8e6835c81b1929462f11"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.65
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the knowledge gap regarding dark matter's particle identity by proposing a specific, testable mass range derived from existing indirect detection evidence (EV-Q085-9d1e8e6835c81b1929462f11). It is highly falsifiable through publicly available or obtainable radio and multi-messenger data, and explicitly links the cosmological CDM assumption (EV-Q085-cf7202fe39de431d579231e6) to a concrete particle physics prediction. While Hypothesis 1 has stronger evidential support for the gravitational role, it defers particle identification to future surveys and thus does not actively resolve the core question 'What is dark matter?' in the near term. Hypothesis 0 offers the most actionable path toward answering the question with current data.",
+          "rejected_directions": [
+            "Modified gravity theories as an alternative to dark matter: No supporting evidence IDs in the allowed set address modifications to general relativity; all evidence assumes CDM within ΛCDM.",
+            "Axion or ultra-light dark matter models: The provided evidence only references GeV-scale mass fits and CDM assumptions; no evidence supports wave-like or fuzzy dark matter scenarios.",
+            "Direct detection experimental results: No allowed evidence IDs contain data from underground direct detection experiments; all references are cosmological or indirect."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that dark matter consists of WIMPs with mass 48–67 GeV by analyzing radio continuum spectral data from the Ophiuchus cluster. The core mechanism posits that WIMP self-annihilation produces charged secondary particles (e+/e-) which generate synchrotron radiation in intracluster magnetic fields. The experimental design involves fitting the observed radio spectrum with a composite model: S_total = S_DM(m_chi, <sigma v>) + S_CR(electron_population) + S_AGN(point_sources). The key discriminant is a spectral cutoff or bump feature in the 100 MHz – 10 GHz range corresponding to the injected electron energy spectrum from 48–67 GeV annihilation, distinct from the power-law spectrum of astrophysical cosmic rays. We will use Bayesian inference to constrain m_chi and <sigma v>, penalizing models that require fine-tuned astrophysical backgrounds.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Ophiuchus Cluster Radio Continuum Data",
+                "description": "Multi-frequency radio flux density measurements of the Ophiuchus cluster, specifically targeting the diffuse halo emission. Derived from observational archives referenced in EV-Q085-9d1e8e6835c81b1929462f11.",
+                "evidence_ids": [
+                  "EV-Q085-9d1e8e6835c81b1929462f11"
+                ],
+                "access_type": "public_archive",
+                "format": "FITS/ASCII spectral tables"
+              },
+              {
+                "name": "Astrophysical Background Models",
+                "description": "Standard models for cosmic-ray electron populations and AGN feedback contributions in galaxy clusters, used to construct the null hypothesis baseline.",
+                "evidence_ids": [],
+                "access_type": "theoretical_model",
+                "format": "Python/MATLAB simulation code"
+              }
+            ],
+            "target": {
+              "name": "Constrained WIMP Parameter Space",
+              "description": "Posterior probability distributions for dark matter mass (m_chi) and annihilation cross-section (<sigma v>), along with Bayes factors comparing the DM+Background model vs. Background-only model.",
+              "evidence_ids": [],
+              "format": "JSON/CSV statistical results"
+            }
+          },
+          "methods": "1. Data Preprocessing: Aggregate multi-frequency radio flux densities from Ophiuchus cluster observations, correcting for instrumental noise and point-source subtraction residuals. 2. Spectral Modeling: Construct two competing models: (A) Null Model: Power-law synchrotron emission from cosmic-ray electrons + AGN contributions; (B) Signal Model: Null Model + Synchrotron emission from secondary electrons produced by WIMP annihilation (mass 48–67 GeV). 3. Parameter Estimation: Use Markov Chain Monte Carlo (MCMC) methods to fit both models to the data, varying m_chi, <sigma v>, magnetic field strength B, and cosmic-ray injection indices. 4. Model Comparison: Compute Bayes Factors and AIC/BIC scores to determine if the inclusion of the DM component significantly improves the fit beyond the penalty for additional parameters.",
+          "experiments": {
+            "baselines": [
+              "Pure Astrophysical Background Model: Fits radio spectrum using only standard cosmic-ray electron power-law distributions and known AGN point sources, assuming no dark matter annihilation contribution.",
+              "Turbulent Re-acceleration Model: Fits spectrum using models of secondary electron production via turbulent re-acceleration of existing cosmic rays, without invoking dark matter annihilation."
+            ],
+            "metrics": [
+              "Bayes Factor (K): Ratio of marginal likelihoods between Signal Model and Null Model.",
+              "Reduced Chi-Squared (chi^2_red): Goodness-of-fit statistic for spectral residuals.",
+              "Akaike Information Criterion (AIC): Penalized likelihood score to compare model complexity vs. fit quality."
+            ],
+            "ablation": "1. Vary Magnetic Field Assumptions: Test sensitivity of m_chi constraint to assumed intracluster magnetic field profiles (uniform vs. radial decline). 2. Exclude Low-Frequency Data: Assess impact of removing frequencies < 300 MHz to test robustness against galactic foreground contamination. 3. Fixed Mass vs. Free Mass: Compare fits where m_chi is fixed to 48–67 GeV range vs. allowed to vary freely across 10–1000 GeV.",
+            "validation_protocol": "1. Cross-Validation: Split frequency bands into training and testing sets to check for overfitting. 2. Synthetic Data Injection: Inject simulated DM signals into real background data to verify recovery of input parameters. 3. Consistency Check: Compare derived <sigma v> limits with independent constraints from Fermi-LAT gamma-ray observations of the same region (if available in extended dataset)."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Source code for MCMC sampler and spectral modeling functions is version-controlled.",
+            "Raw radio flux data and error bars are archived with DOI or permanent URL.",
+            "Prior distributions for all physical parameters (B-field, CR index, m_chi) are explicitly documented.",
+            "Random seeds for MCMC initialization are recorded.",
+            "Configuration files for background astrophysical models are included."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "High-performance computing cluster required for MCMC sampling (estimated 1000 CPU-hours).",
+            "software_dependencies": [
+              "Python 3.9+",
+              "NumPy/SciPy",
+              "Emcee or PyMC3 for MCMC",
+              "Astropy for FITS handling"
+            ],
+            "estimated_runtime": "48-72 hours for full parameter space exploration."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-085848-48f1603f",
+        "version_number": 1,
+        "version_id": "20260822-085848-48f1603f:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range that annihilate into standard model particles, producing observable radio continuum emission in galaxy clusters.",
+              "mechanism": "If dark matter particles are Weakly Interacting Massive Particles (WIMPs) in the 48-67 GeV mass range, their self-annihilation in high-density regions like the Ophiuchus cluster would produce charged secondary particles. These particles interact with intracluster magnetic fields to generate synchrotron radiation, manifesting as a specific radio continuum spectral signature distinct from astrophysical backgrounds.",
+              "falsifiable_prediction": "High-resolution radio continuum spectra of the Ophiuchus cluster will exhibit a spectral cutoff or feature consistent with 48-67 GeV annihilation models that cannot be explained by standard cosmic-ray electron populations or active galactic nucleus (AGN) feedback mechanisms alone.",
+              "required_observations": [
+                "Multi-frequency radio continuum spectral data of the Ophiuchus cluster with sufficient sensitivity to distinguish synchrotron components",
+                "Independent gamma-ray or anti-proton flux measurements from the same region to cross-validate the annihilation interpretation",
+                "Astrophysical background modeling of cosmic-ray electrons and AGN activity in the Ophiuchus cluster"
+              ],
+              "risk_of_being_wrong": "The radio signal may be entirely attributable to unmodeled astrophysical processes (e.g., turbulent re-acceleration of cosmic rays), rendering the dark matter mass fit spurious. Additionally, the assumption of cold dark matter in cosmological fits does not uniquely predict this specific mass range.",
+              "supporting_evidence_ids": [
+                "EV-Q085-9d1e8e6835c81b1929462f11",
+                "EV-Q085-cf7202fe39de431d579231e6"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The gravitational effects attributed to dark matter are fully consistent with a cold, collisionless fluid in ΛCDM cosmology, but current indirect detection anomalies (e.g., Ophiuchus radio data) are insufficient to identify its particle nature without next-generation weak lensing and clustering surveys.",
+              "mechanism": "Cosmological parameter estimation relies on assuming cold dark matter as a pressureless fluid component. While this assumption successfully fits WMAP/Planck and cluster abundance data, it is degenerate with respect to microphysical particle properties. Therefore, confirming 'what dark matter is' requires breaking this degeneracy via precision large-scale structure measurements that constrain interaction cross-sections or substructure, rather than relying solely on current indirect signals.",
+              "falsifiable_prediction": "If future LSST-era weak lensing and galaxy clustering data remain consistent with pure ΛCDM predictions at sub-percent precision without revealing deviations indicative of self-interactions or warm dark matter free-streaming, then current indirect detection claims (like the 48-67 GeV fit) are likely astrophysical artifacts rather than particle identification.",
+              "required_observations": [
+                "Precision weak lensing shear-shear and galaxy-shear correlation functions from LSST or equivalent Stage IV surveys",
+                "Galaxy angular clustering power spectra at redshifts z > 1",
+                "Joint analysis combining CMB priors with large-scale structure to test for deviations from collisionless CDM"
+              ],
+              "risk_of_being_wrong": "Dark matter may have non-standard properties (e.g., self-interactions, warmth) that are subtle enough to evade detection even in Stage IV surveys, leaving the particle identity unresolved despite improved gravitational constraints. Alternatively, a definitive indirect signal could emerge before LSST completes its survey.",
+              "supporting_evidence_ids": [
+                "EV-Q085-cf7202fe39de431d579231e6",
+                "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+                "EV-Q085-f2eb2997fdb878c0db37eee4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Dark matter is not a single particle species but a composite sector where the dominant mass component is cold and collisionless (as assumed in WMAP/Planck analyses), while sub-dominant components may produce anomalous indirect signals like those observed in Ophiuchus.",
+              "mechanism": "Standard cosmological fits assume a single cold dark matter component. However, if dark matter comprises multiple species, the dominant component governs large-scale structure formation (consistent with EV-Q085-cf7202fe39de431d579231e6), while a sub-dominant annihilating component could explain localized anomalies (EV-Q085-9d1e8e6835c81b1929462f11) without conflicting with global CDM constraints.",
+              "falsifiable_prediction": "Cross-correlation of radio continuum anomalies across multiple galaxy clusters will show inconsistent mass fits or spectral shapes if they arise from a sub-dominant component with varying density profiles, whereas a single dominant WIMP explanation would predict universal scaling with cluster mass.",
+              "required_observations": [
+                "Radio continuum spectral data from a sample of galaxy clusters spanning different masses and dynamical states",
+                "Cluster mass calibration via weak lensing to establish scaling relations",
+                "Multi-wavelength follow-up to characterize astrophysical backgrounds uniformly across the sample"
+              ],
+              "risk_of_being_wrong": "The apparent need for multiple components may simply reflect inadequate astrophysical modeling rather than new physics. Current evidence does not independently support the existence of sub-dominant dark matter sectors beyond the anomalous fits themselves.",
+              "supporting_evidence_ids": [
+                "EV-Q085-cf7202fe39de431d579231e6",
+                "EV-Q085-9d1e8e6835c81b1929462f11"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.65
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the knowledge gap regarding dark matter's particle identity by proposing a specific, testable mass range derived from existing indirect detection evidence (EV-Q085-9d1e8e6835c81b1929462f11). It is highly falsifiable through publicly available or obtainable radio and multi-messenger data, and explicitly links the cosmological CDM assumption (EV-Q085-cf7202fe39de431d579231e6) to a concrete particle physics prediction. While Hypothesis 1 has stronger evidential support for the gravitational role, it defers particle identification to future surveys and thus does not actively resolve the core question 'What is dark matter?' in the near term. Hypothesis 0 offers the most actionable path toward answering the question with current data.",
+          "rejected_directions": [
+            "Modified gravity theories as an alternative to dark matter: No supporting evidence IDs in the allowed set address modifications to general relativity; all evidence assumes CDM within ΛCDM.",
+            "Axion or ultra-light dark matter models: The provided evidence only references GeV-scale mass fits and CDM assumptions; no evidence supports wave-like or fuzzy dark matter scenarios.",
+            "Direct detection experimental results: No allowed evidence IDs contain data from underground direct detection experiments; all references are cosmological or indirect."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that dark matter consists of WIMPs with mass 48–67 GeV by analyzing radio continuum spectral data from the Ophiuchus cluster. The core mechanism posits that WIMP self-annihilation produces charged secondary particles (e+/e-) which generate synchrotron radiation in intracluster magnetic fields. The experimental design involves fitting the observed radio spectrum with a composite model: S_total = S_DM(m_chi, <sigma v>) + S_CR(electron_population) + S_AGN(point_sources). The key discriminant is a spectral cutoff or bump feature in the 100 MHz – 10 GHz range corresponding to the injected electron energy spectrum from 48–67 GeV annihilation, distinct from the power-law spectrum of astrophysical cosmic rays. We will use Bayesian inference to constrain m_chi and <sigma v>, penalizing models that require fine-tuned astrophysical backgrounds.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Ophiuchus Cluster Radio Continuum Data",
+                "description": "Multi-frequency radio flux density measurements of the Ophiuchus cluster, specifically targeting the diffuse halo emission. Derived from observational archives referenced in EV-Q085-9d1e8e6835c81b1929462f11.",
+                "evidence_ids": [
+                  "EV-Q085-9d1e8e6835c81b1929462f11"
+                ],
+                "access_type": "public_archive",
+                "format": "FITS/ASCII spectral tables"
+              },
+              {
+                "name": "Astrophysical Background Models",
+                "description": "Standard models for cosmic-ray electron populations and AGN feedback contributions in galaxy clusters, used to construct the null hypothesis baseline.",
+                "evidence_ids": [],
+                "access_type": "theoretical_model",
+                "format": "Python/MATLAB simulation code"
+              }
+            ],
+            "target": {
+              "name": "Constrained WIMP Parameter Space",
+              "description": "Posterior probability distributions for dark matter mass (m_chi) and annihilation cross-section (<sigma v>), along with Bayes factors comparing the DM+Background model vs. Background-only model.",
+              "evidence_ids": [],
+              "format": "JSON/CSV statistical results"
+            }
+          },
+          "methods": "1. Data Preprocessing: Aggregate multi-frequency radio flux densities from Ophiuchus cluster observations, correcting for instrumental noise and point-source subtraction residuals. 2. Spectral Modeling: Construct two competing models: (A) Null Model: Power-law synchrotron emission from cosmic-ray electrons + AGN contributions; (B) Signal Model: Null Model + Synchrotron emission from secondary electrons produced by WIMP annihilation (mass 48–67 GeV). 3. Parameter Estimation: Use Markov Chain Monte Carlo (MCMC) methods to fit both models to the data, varying m_chi, <sigma v>, magnetic field strength B, and cosmic-ray injection indices. 4. Model Comparison: Compute Bayes Factors and AIC/BIC scores to determine if the inclusion of the DM component significantly improves the fit beyond the penalty for additional parameters.",
+          "experiments": {
+            "baselines": [
+              "Pure Astrophysical Background Model: Fits radio spectrum using only standard cosmic-ray electron power-law distributions and known AGN point sources, assuming no dark matter annihilation contribution.",
+              "Turbulent Re-acceleration Model: Fits spectrum using models of secondary electron production via turbulent re-acceleration of existing cosmic rays, without invoking dark matter annihilation."
+            ],
+            "metrics": [
+              "Bayes Factor (K): Ratio of marginal likelihoods between Signal Model and Null Model.",
+              "Reduced Chi-Squared (chi^2_red): Goodness-of-fit statistic for spectral residuals.",
+              "Akaike Information Criterion (AIC): Penalized likelihood score to compare model complexity vs. fit quality."
+            ],
+            "ablation": "1. Vary Magnetic Field Assumptions: Test sensitivity of m_chi constraint to assumed intracluster magnetic field profiles (uniform vs. radial decline). 2. Exclude Low-Frequency Data: Assess impact of removing frequencies < 300 MHz to test robustness against galactic foreground contamination. 3. Fixed Mass vs. Free Mass: Compare fits where m_chi is fixed to 48–67 GeV range vs. allowed to vary freely across 10–1000 GeV.",
+            "validation_protocol": "1. Cross-Validation: Split frequency bands into training and testing sets to check for overfitting. 2. Synthetic Data Injection: Inject simulated DM signals into real background data to verify recovery of input parameters. 3. Consistency Check: Compare derived <sigma v> limits with independent constraints from Fermi-LAT gamma-ray observations of the same region (if available in extended dataset)."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Source code for MCMC sampler and spectral modeling functions is version-controlled.",
+            "Raw radio flux data and error bars are archived with DOI or permanent URL.",
+            "Prior distributions for all physical parameters (B-field, CR index, m_chi) are explicitly documented.",
+            "Random seeds for MCMC initialization are recorded.",
+            "Configuration files for background astrophysical models are included."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "High-performance computing cluster required for MCMC sampling (estimated 1000 CPU-hours).",
+            "software_dependencies": [
+              "Python 3.9+",
+              "NumPy/SciPy",
+              "Emcee or PyMC3 for MCMC",
+              "Astropy for FITS handling"
+            ],
+            "estimated_runtime": "48-72 hours for full parameter space exploration."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The recommended hypothesis correctly frames the 48-67 GeV mass range as a testable prediction derived from specific indirect detection literature (EV-Q085-9d1e8e6835c81b1929462f11) rather than an established fact.",
+            "Experiment design appropriately identifies astrophysical backgrounds (cosmic rays, AGN) as the primary null hypothesis and includes turbulent re-acceleration as a critical baseline to avoid false positives.",
+            "Results field is correctly marked as pending/not executed, adhering to safety guidelines against fabricating experimental outcomes.",
+            "Evidence grounding is strictly limited to the allowed IDs; no external or hallucinated references were introduced.",
+            "Falsifiability is high: the hypothesis explicitly predicts a spectral feature distinguishable from standard power-law synchrotron emission, and the experiment defines quantitative metrics (Bayes Factor, AIC) for rejection."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+            "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+            "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:5de701aa011a",
+            "category": "required_revision",
+            "description": "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:edeb47a725d8",
+            "category": "required_revision",
+            "description": "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b3dff97410f6",
+            "category": "required_revision",
+            "description": "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "eb084f050c628aee95628f594a2176976348c88455b3ff36b2378f6034f24f34",
+          "experiment_designer": "cbb68a65746b56ac26361b2811f8e0e254a1c39d00228f29780b79a1c2e4f55d",
+          "scientific_reviewer": "6294337f9e7a979a1967bef51c17b33b86b4c61f34e24c1ac067236757aa5e4c"
+        }
+      },
+      "parent_version_id": "20260822-085848-48f1603f:v1",
+      "lineage": [
+        "20260822-085848-48f1603f:v1",
+        "20260822-085848-48f1603f:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The recommended hypothesis correctly frames the 48-67 GeV mass range as a testable prediction derived from specific indirect detection literature (EV-Q085-9d1e8e6835c81b1929462f11) rather than an established fact.",
+          "Experiment design appropriately identifies astrophysical backgrounds (cosmic rays, AGN) as the primary null hypothesis and includes turbulent re-acceleration as a critical baseline to avoid false positives.",
+          "Results field is correctly marked as pending/not executed, adhering to safety guidelines against fabricating experimental outcomes.",
+          "Evidence grounding is strictly limited to the allowed IDs; no external or hallucinated references were introduced.",
+          "Falsifiability is high: the hypothesis explicitly predicts a spectral feature distinguishable from standard power-law synchrotron emission, and the experiment defines quantitative metrics (Bayes Factor, AIC) for rejection."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+          "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+          "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.85,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revision successfully incorporates all three required revisions from the previous review cycle without introducing new errors.",
+          "The 'Astrophysical Background Models' dataset description now explicitly mandates citable simulation codes or empirical templates traceable to peer-reviewed literature, addressing the lack of evidence-grounded background parameters (Issue 5de701aa011a).",
+          "The reproducibility checklist has been updated to explicitly require documentation of prior probability distributions for magnetic field strength and cosmic-ray injection indices, correctly identifying these as dominant systematics not constrained by allowed evidence cards (Issue edeb47a725d8).",
+          "The validation protocol now strictly enforces the use of publicly available Fermi-LAT processed data products, ensuring reproducibility without proprietary access (Issue b3dff97410f6).",
+          "Results remain correctly marked as pending/not executed; no fabrication of experimental outcomes is present.",
+          "All supporting evidence IDs (EV-Q085-9d1e8e6835c81b1929462f11, EV-Q085-cf7202fe39de431d579231e6) are valid and appropriately scoped to the hypothesis; no hallucinated references detected."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "During actual execution, maintain a version-controlled log of the specific background model codes/templates selected, including their DOI or permanent URL, to satisfy the 'citable' requirement introduced in this revision.",
+          "If the turbulent re-acceleration baseline model requires parameters outside the scope of allowed evidence cards, explicitly flag these as 'unconstrained priors' in the final results table to prevent overinterpretation of Bayes Factors.",
+          "Ensure that the synthetic data injection tests (ablation step 2) use background models consistent with the newly mandated citable templates, not simplified analytical approximations, to validate recovery fidelity under realistic conditions."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.98,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:d1ee55526b922e37",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+          "issue_id": "required_revision:5de701aa011a"
+        },
+        {
+          "failure_id": "failure:3945c44a35a88652",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+          "issue_id": "required_revision:edeb47a725d8"
+        },
+        {
+          "failure_id": "failure:19bf8060c148f8d7",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+          "issue_id": "required_revision:b3dff97410f6"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:cbaa2f2ed644acd1",
+          "issue_id": "required_revision:5de701aa011a",
+          "reason": "Reviewer item required_revision:5de701aa011a requested 'In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['astrophysical', 'background', 'citable', 'code', 'cohort', 'empirical', 'evidence', 'literature', 'model', 'peer', 'populat', 'review', 'simulation', 'specific', 'template', 'traceable'], coverage=0.640.",
+          "before": [
+            {
+              "name": "Ophiuchus Cluster Radio Continuum Data",
+              "description": "Multi-frequency radio flux density measurements of the Ophiuchus cluster, specifically targeting the diffuse halo emission. Derived from observational archives referenced in EV-Q085-9d1e8e6835c81b1929462f11.",
+              "evidence_ids": [
+                "EV-Q085-9d1e8e6835c81b1929462f11"
+              ],
+              "access_type": "public_archive",
+              "format": "FITS/ASCII spectral tables"
+            },
+            {
+              "name": "Astrophysical Background Models",
+              "description": "Standard models for cosmic-ray electron populations and AGN feedback contributions in galaxy clusters, used to construct the null hypothesis baseline.",
+              "evidence_ids": [],
+              "access_type": "theoretical_model",
+              "format": "Python/MATLAB simulation code"
+            }
+          ],
+          "after": [
+            {
+              "name": "Ophiuchus Cluster Radio Continuum Data",
+              "description": "Multi-frequency radio flux density measurements of the Ophiuchus cluster, specifically targeting the diffuse halo emission. Derived from observational archives referenced in EV-Q085-9d1e8e6835c81b1929462f11.",
+              "evidence_ids": [
+                "EV-Q085-9d1e8e6835c81b1929462f11"
+              ],
+              "access_type": "public_archive",
+              "format": "FITS/ASCII spectral tables"
+            },
+            {
+              "name": "Astrophysical Background Models",
+              "description": "Standard models for cosmic-ray electron populations and AGN feedback contributions in galaxy clusters, used to construct the null hypothesis baseline. Must be populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature as per reviewer revision.",
+              "evidence_ids": [],
+              "access_type": "theoretical_model",
+              "format": "Python/MATLAB simulation code"
+            }
+          ],
+          "evidence_refs": [
+            "EV-Q085-9d1e8e6835c81b1929462f11"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:f8519f7b105f64d2",
+          "issue_id": "required_revision:edeb47a725d8",
+          "reason": "Reviewer item required_revision:edeb47a725d8 requested 'Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['card', 'checklist', 'constrain', 'cosmic', 'distribution', 'document', 'dominant', 'evidence', 'explicitly', 'field', 'indice', 'injection', 'magnetic', 'not', 'prior', 'probability', 'provid', 'radio', 'ray', 'reproducibility', 'strength', 'systematic', 'these', 'uncertainty'], coverage=0.857.",
+          "before": [
+            "Source code for MCMC sampler and spectral modeling functions is version-controlled.",
+            "Raw radio flux data and error bars are archived with DOI or permanent URL.",
+            "Prior distributions for all physical parameters (B-field, CR index, m_chi) are explicitly documented.",
+            "Random seeds for MCMC initialization are recorded.",
+            "Configuration files for background astrophysical models are included."
+          ],
+          "after": [
+            "Source code for MCMC sampler and spectral modeling functions is version-controlled.",
+            "Raw radio flux data and error bars are archived with DOI or permanent URL.",
+            "Prior probability distributions for magnetic field strength and cosmic-ray injection indices are explicitly documented, as these are dominant systematic uncertainties not constrained by provided evidence cards.",
+            "Random seeds for MCMC initialization are recorded.",
+            "Configuration files for background astrophysical models are included, ensuring they are traceable to peer-reviewed literature.",
+            "Validation protocol strictly enforces the use of publicly available Fermi-LAT processed data products for cross-validation."
+          ],
+          "evidence_refs": [
+            "EV-Q085-9d1e8e6835c81b1929462f11"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:f3425ffe506301f0",
+          "issue_id": "required_revision:b3dff97410f6",
+          "reason": "Reviewer item required_revision:b3dff97410f6 requested 'When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.'. V2 changes validation_protocol; deterministic correlation evidence tokens=['access', 'available', 'cross', 'data', 'fermi', 'gamma', 'lat', 'maintain', 'only', 'process', 'product', 'proprietary', 'protocol', 'publicly', 'ray', 'reproducibility', 'requir', 'strictly', 'validate', 'without'], coverage=0.800.",
+          "before": "1. Cross-Validation: Split frequency bands into training and testing sets to check for overfitting. 2. Synthetic Data Injection: Inject simulated DM signals into real background data to verify recovery of input parameters. 3. Consistency Check: Compare derived <sigma v> limits with independent constraints from Fermi-LAT gamma-ray observations of the same region (if available in extended dataset).",
+          "after": "1. Cross-Validation: Split frequency bands into training and testing sets to check for overfitting. 2. Synthetic Data Injection: Inject simulated DM signals into real background data to verify recovery of input parameters. 3. Consistency Check: Compare derived <sigma v> limits with independent constraints from Fermi-LAT gamma-ray observations of the same region, strictly enforcing the use of only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+          "evidence_refs": [
+            "EV-Q085-9d1e8e6835c81b1929462f11"
+          ],
+          "affected_plan_section": "validation_protocol",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:5de701aa011a",
+          "category": "required_revision",
+          "description": "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cbaa2f2ed644acd1; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:edeb47a725d8",
+          "category": "required_revision",
+          "description": "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f8519f7b105f64d2; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b3dff97410f6",
+          "category": "required_revision",
+          "description": "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f3425ffe506301f0; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:f9a70f0fd86a",
+          "category": "required_revision",
+          "description": "During actual execution, maintain a version-controlled log of the specific background model codes/templates selected, including their DOI or permanent URL, to satisfy the 'citable' requirement introduced in this revision.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:fc923570a4a5",
+          "category": "required_revision",
+          "description": "If the turbulent re-acceleration baseline model requires parameters outside the scope of allowed evidence cards, explicitly flag these as 'unconstrained priors' in the final results table to prevent overinterpretation of Bayes Factors.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:3a17e7ca6344",
+          "category": "required_revision",
+          "description": "Ensure that the synthetic data injection tests (ablation step 2) use background models consistent with the newly mandated citable templates, not simplified analytical approximations, to validate recovery fidelity under realistic conditions.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "dataset_sources",
+        "validation_protocol",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.95,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range whose annihilation into Standard Model particles produces secondary electrons generating synchrotron radio emission in galaxy clusters, distinguishable from astrophysical backgrounds only when turbulent re-acceleration is explicitly modeled as a null hypothesis.",
+          "overall_score": 0.78,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The gravitational effects attributed to dark matter are fully consistent with a cold, collisionless fluid in ΛCDM cosmology, but current indirect detection anomalies (e.g., Ophiuchus radio data) are insufficient to identify its particle nature without next-generation weak lensing and clustering surveys that break degeneracies between microphysical properties and astrophysical systematics.",
+          "overall_score": 0.75,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Dark matter is not a single particle species but a composite sector where the dominant mass component is cold and collisionless (as assumed in WMAP/Planck analyses), while sub-dominant components may produce anomalous indirect signals like those observed in Ophiuchus, provided such signals survive rigorous astrophysical background subtraction including turbulent re-acceleration.",
+          "overall_score": 0.66,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 3,
+      "blocking_reasons": [
+        "unresolved_issue:required_revision:f9a70f0fd86a",
+        "unresolved_issue:required_revision:fc923570a4a5",
+        "unresolved_issue:required_revision:3a17e7ca6344",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:f9a70f0fd86a: During actual execution, maintain a version-controlled log of the specific background model codes/templates selected, including their DOI or permanent URL, to satisfy the 'citable' requirement introduced in this revision.",
+        "required_revision:fc923570a4a5: If the turbulent re-acceleration baseline model requires parameters outside the scope of allowed evidence cards, explicitly flag these as 'unconstrained priors' in the final results table to prevent overinterpretation of Bayes Factors.",
+        "required_revision:3a17e7ca6344: Ensure that the synthetic data injection tests (ablation step 2) use background models consistent with the newly mandated citable templates, not simplified analytical approximations, to validate recovery fidelity under realistic conditions."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-085848-48f1603f",
+        "version_number": 1,
+        "version_id": "20260822-085848-48f1603f:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range that annihilate into standard model particles, producing observable radio continuum emission in galaxy clusters.",
+              "mechanism": "If dark matter particles are Weakly Interacting Massive Particles (WIMPs) in the 48-67 GeV mass range, their self-annihilation in high-density regions like the Ophiuchus cluster would produce charged secondary particles. These particles interact with intracluster magnetic fields to generate synchrotron radiation, manifesting as a specific radio continuum spectral signature distinct from astrophysical backgrounds.",
+              "falsifiable_prediction": "High-resolution radio continuum spectra of the Ophiuchus cluster will exhibit a spectral cutoff or feature consistent with 48-67 GeV annihilation models that cannot be explained by standard cosmic-ray electron populations or active galactic nucleus (AGN) feedback mechanisms alone.",
+              "required_observations": [
+                "Multi-frequency radio continuum spectral data of the Ophiuchus cluster with sufficient sensitivity to distinguish synchrotron components",
+                "Independent gamma-ray or anti-proton flux measurements from the same region to cross-validate the annihilation interpretation",
+                "Astrophysical background modeling of cosmic-ray electrons and AGN activity in the Ophiuchus cluster"
+              ],
+              "risk_of_being_wrong": "The radio signal may be entirely attributable to unmodeled astrophysical processes (e.g., turbulent re-acceleration of cosmic rays), rendering the dark matter mass fit spurious. Additionally, the assumption of cold dark matter in cosmological fits does not uniquely predict this specific mass range.",
+              "supporting_evidence_ids": [
+                "EV-Q085-9d1e8e6835c81b1929462f11",
+                "EV-Q085-cf7202fe39de431d579231e6"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The gravitational effects attributed to dark matter are fully consistent with a cold, collisionless fluid in ΛCDM cosmology, but current indirect detection anomalies (e.g., Ophiuchus radio data) are insufficient to identify its particle nature without next-generation weak lensing and clustering surveys.",
+              "mechanism": "Cosmological parameter estimation relies on assuming cold dark matter as a pressureless fluid component. While this assumption successfully fits WMAP/Planck and cluster abundance data, it is degenerate with respect to microphysical particle properties. Therefore, confirming 'what dark matter is' requires breaking this degeneracy via precision large-scale structure measurements that constrain interaction cross-sections or substructure, rather than relying solely on current indirect signals.",
+              "falsifiable_prediction": "If future LSST-era weak lensing and galaxy clustering data remain consistent with pure ΛCDM predictions at sub-percent precision without revealing deviations indicative of self-interactions or warm dark matter free-streaming, then current indirect detection claims (like the 48-67 GeV fit) are likely astrophysical artifacts rather than particle identification.",
+              "required_observations": [
+                "Precision weak lensing shear-shear and galaxy-shear correlation functions from LSST or equivalent Stage IV surveys",
+                "Galaxy angular clustering power spectra at redshifts z > 1",
+                "Joint analysis combining CMB priors with large-scale structure to test for deviations from collisionless CDM"
+              ],
+              "risk_of_being_wrong": "Dark matter may have non-standard properties (e.g., self-interactions, warmth) that are subtle enough to evade detection even in Stage IV surveys, leaving the particle identity unresolved despite improved gravitational constraints. Alternatively, a definitive indirect signal could emerge before LSST completes its survey.",
+              "supporting_evidence_ids": [
+                "EV-Q085-cf7202fe39de431d579231e6",
+                "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+                "EV-Q085-f2eb2997fdb878c0db37eee4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Dark matter is not a single particle species but a composite sector where the dominant mass component is cold and collisionless (as assumed in WMAP/Planck analyses), while sub-dominant components may produce anomalous indirect signals like those observed in Ophiuchus.",
+              "mechanism": "Standard cosmological fits assume a single cold dark matter component. However, if dark matter comprises multiple species, the dominant component governs large-scale structure formation (consistent with EV-Q085-cf7202fe39de431d579231e6), while a sub-dominant annihilating component could explain localized anomalies (EV-Q085-9d1e8e6835c81b1929462f11) without conflicting with global CDM constraints.",
+              "falsifiable_prediction": "Cross-correlation of radio continuum anomalies across multiple galaxy clusters will show inconsistent mass fits or spectral shapes if they arise from a sub-dominant component with varying density profiles, whereas a single dominant WIMP explanation would predict universal scaling with cluster mass.",
+              "required_observations": [
+                "Radio continuum spectral data from a sample of galaxy clusters spanning different masses and dynamical states",
+                "Cluster mass calibration via weak lensing to establish scaling relations",
+                "Multi-wavelength follow-up to characterize astrophysical backgrounds uniformly across the sample"
+              ],
+              "risk_of_being_wrong": "The apparent need for multiple components may simply reflect inadequate astrophysical modeling rather than new physics. Current evidence does not independently support the existence of sub-dominant dark matter sectors beyond the anomalous fits themselves.",
+              "supporting_evidence_ids": [
+                "EV-Q085-cf7202fe39de431d579231e6",
+                "EV-Q085-9d1e8e6835c81b1929462f11"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.65
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the knowledge gap regarding dark matter's particle identity by proposing a specific, testable mass range derived from existing indirect detection evidence (EV-Q085-9d1e8e6835c81b1929462f11). It is highly falsifiable through publicly available or obtainable radio and multi-messenger data, and explicitly links the cosmological CDM assumption (EV-Q085-cf7202fe39de431d579231e6) to a concrete particle physics prediction. While Hypothesis 1 has stronger evidential support for the gravitational role, it defers particle identification to future surveys and thus does not actively resolve the core question 'What is dark matter?' in the near term. Hypothesis 0 offers the most actionable path toward answering the question with current data.",
+          "rejected_directions": [
+            "Modified gravity theories as an alternative to dark matter: No supporting evidence IDs in the allowed set address modifications to general relativity; all evidence assumes CDM within ΛCDM.",
+            "Axion or ultra-light dark matter models: The provided evidence only references GeV-scale mass fits and CDM assumptions; no evidence supports wave-like or fuzzy dark matter scenarios.",
+            "Direct detection experimental results: No allowed evidence IDs contain data from underground direct detection experiments; all references are cosmological or indirect."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that dark matter consists of WIMPs with mass 48–67 GeV by analyzing radio continuum spectral data from the Ophiuchus cluster. The core mechanism posits that WIMP self-annihilation produces charged secondary particles (e+/e-) which generate synchrotron radiation in intracluster magnetic fields. The experimental design involves fitting the observed radio spectrum with a composite model: S_total = S_DM(m_chi, <sigma v>) + S_CR(electron_population) + S_AGN(point_sources). The key discriminant is a spectral cutoff or bump feature in the 100 MHz – 10 GHz range corresponding to the injected electron energy spectrum from 48–67 GeV annihilation, distinct from the power-law spectrum of astrophysical cosmic rays. We will use Bayesian inference to constrain m_chi and <sigma v>, penalizing models that require fine-tuned astrophysical backgrounds.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Ophiuchus Cluster Radio Continuum Data",
+                "description": "Multi-frequency radio flux density measurements of the Ophiuchus cluster, specifically targeting the diffuse halo emission. Derived from observational archives referenced in EV-Q085-9d1e8e6835c81b1929462f11.",
+                "evidence_ids": [
+                  "EV-Q085-9d1e8e6835c81b1929462f11"
+                ],
+                "access_type": "public_archive",
+                "format": "FITS/ASCII spectral tables"
+              },
+              {
+                "name": "Astrophysical Background Models",
+                "description": "Standard models for cosmic-ray electron populations and AGN feedback contributions in galaxy clusters, used to construct the null hypothesis baseline.",
+                "evidence_ids": [],
+                "access_type": "theoretical_model",
+                "format": "Python/MATLAB simulation code"
+              }
+            ],
+            "target": {
+              "name": "Constrained WIMP Parameter Space",
+              "description": "Posterior probability distributions for dark matter mass (m_chi) and annihilation cross-section (<sigma v>), along with Bayes factors comparing the DM+Background model vs. Background-only model.",
+              "evidence_ids": [],
+              "format": "JSON/CSV statistical results"
+            }
+          },
+          "methods": "1. Data Preprocessing: Aggregate multi-frequency radio flux densities from Ophiuchus cluster observations, correcting for instrumental noise and point-source subtraction residuals. 2. Spectral Modeling: Construct two competing models: (A) Null Model: Power-law synchrotron emission from cosmic-ray electrons + AGN contributions; (B) Signal Model: Null Model + Synchrotron emission from secondary electrons produced by WIMP annihilation (mass 48–67 GeV). 3. Parameter Estimation: Use Markov Chain Monte Carlo (MCMC) methods to fit both models to the data, varying m_chi, <sigma v>, magnetic field strength B, and cosmic-ray injection indices. 4. Model Comparison: Compute Bayes Factors and AIC/BIC scores to determine if the inclusion of the DM component significantly improves the fit beyond the penalty for additional parameters.",
+          "experiments": {
+            "baselines": [
+              "Pure Astrophysical Background Model: Fits radio spectrum using only standard cosmic-ray electron power-law distributions and known AGN point sources, assuming no dark matter annihilation contribution.",
+              "Turbulent Re-acceleration Model: Fits spectrum using models of secondary electron production via turbulent re-acceleration of existing cosmic rays, without invoking dark matter annihilation."
+            ],
+            "metrics": [
+              "Bayes Factor (K): Ratio of marginal likelihoods between Signal Model and Null Model.",
+              "Reduced Chi-Squared (chi^2_red): Goodness-of-fit statistic for spectral residuals.",
+              "Akaike Information Criterion (AIC): Penalized likelihood score to compare model complexity vs. fit quality."
+            ],
+            "ablation": "1. Vary Magnetic Field Assumptions: Test sensitivity of m_chi constraint to assumed intracluster magnetic field profiles (uniform vs. radial decline). 2. Exclude Low-Frequency Data: Assess impact of removing frequencies < 300 MHz to test robustness against galactic foreground contamination. 3. Fixed Mass vs. Free Mass: Compare fits where m_chi is fixed to 48–67 GeV range vs. allowed to vary freely across 10–1000 GeV.",
+            "validation_protocol": "1. Cross-Validation: Split frequency bands into training and testing sets to check for overfitting. 2. Synthetic Data Injection: Inject simulated DM signals into real background data to verify recovery of input parameters. 3. Consistency Check: Compare derived <sigma v> limits with independent constraints from Fermi-LAT gamma-ray observations of the same region (if available in extended dataset)."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Source code for MCMC sampler and spectral modeling functions is version-controlled.",
+            "Raw radio flux data and error bars are archived with DOI or permanent URL.",
+            "Prior distributions for all physical parameters (B-field, CR index, m_chi) are explicitly documented.",
+            "Random seeds for MCMC initialization are recorded.",
+            "Configuration files for background astrophysical models are included."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "High-performance computing cluster required for MCMC sampling (estimated 1000 CPU-hours).",
+            "software_dependencies": [
+              "Python 3.9+",
+              "NumPy/SciPy",
+              "Emcee or PyMC3 for MCMC",
+              "Astropy for FITS handling"
+            ],
+            "estimated_runtime": "48-72 hours for full parameter space exploration."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The recommended hypothesis correctly frames the 48-67 GeV mass range as a testable prediction derived from specific indirect detection literature (EV-Q085-9d1e8e6835c81b1929462f11) rather than an established fact.",
+            "Experiment design appropriately identifies astrophysical backgrounds (cosmic rays, AGN) as the primary null hypothesis and includes turbulent re-acceleration as a critical baseline to avoid false positives.",
+            "Results field is correctly marked as pending/not executed, adhering to safety guidelines against fabricating experimental outcomes.",
+            "Evidence grounding is strictly limited to the allowed IDs; no external or hallucinated references were introduced.",
+            "Falsifiability is high: the hypothesis explicitly predicts a spectral feature distinguishable from standard power-law synchrotron emission, and the experiment defines quantitative metrics (Bayes Factor, AIC) for rejection."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+            "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+            "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:5de701aa011a",
+            "category": "required_revision",
+            "description": "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:edeb47a725d8",
+            "category": "required_revision",
+            "description": "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b3dff97410f6",
+            "category": "required_revision",
+            "description": "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "eb084f050c628aee95628f594a2176976348c88455b3ff36b2378f6034f24f34",
+          "experiment_designer": "cbb68a65746b56ac26361b2811f8e0e254a1c39d00228f29780b79a1c2e4f55d",
+          "scientific_reviewer": "6294337f9e7a979a1967bef51c17b33b86b4c61f34e24c1ac067236757aa5e4c"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-085848-48f1603f",
+        "version_number": 2,
+        "version_id": "20260822-085848-48f1603f:v2",
+        "parent_version_id": "20260822-085848-48f1603f:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range whose annihilation into Standard Model particles produces secondary electrons generating synchrotron radio emission in galaxy clusters, distinguishable from astrophysical backgrounds only when turbulent re-acceleration is explicitly modeled as a null hypothesis.",
+              "mechanism": "If dark matter particles are WIMPs in the 48-67 GeV mass range (EV-Q085-9d1e8e6835c81b1929462f11), their self-annihilation in high-density cluster environments produces charged secondaries that emit synchrotron radiation in intracluster magnetic fields. This signal must be disentangled from cosmic-ray electron populations and AGN feedback. Crucially, per reviewer feedback, the null hypothesis must include turbulent re-acceleration of cosmic rays to avoid false positives, as standard power-law models may insufficiently capture background spectral shapes.",
+              "falsifiable_prediction": "High-resolution radio continuum spectra of the Ophiuchus cluster will exhibit a spectral feature consistent with 48-67 GeV annihilation that yields a Bayes Factor > 10 over a composite null model including both standard cosmic-ray power-laws AND turbulent re-acceleration components; if the signal significance drops below threshold when turbulent re-acceleration is included, the DM interpretation is weakened.",
+              "required_observations": [
+                "Multi-frequency radio continuum spectral data of the Ophiuchus cluster with sufficient sensitivity to distinguish synchrotron components",
+                "Independent gamma-ray or anti-proton flux measurements from the same region using only publicly available Fermi-LAT processed data products",
+                "Astrophysical background modeling incorporating specific, citable simulation codes for cosmic-ray electrons, AGN activity, and turbulent re-acceleration traceable to peer-reviewed literature"
+              ],
+              "risk_of_being_wrong": "The radio signal may be entirely attributable to unmodeled or inadequately modeled astrophysical processes (especially turbulent re-acceleration), rendering the dark matter mass fit spurious. Additionally, the assumption of cold dark matter in cosmological fits (EV-Q085-cf7202fe39de431d579231e6) does not uniquely predict this specific mass range, and magnetic field/cosmic-ray injection priors remain dominant systematic uncertainties not constrained by provided evidence.",
+              "supporting_evidence_ids": [
+                "EV-Q085-9d1e8e6835c81b1929462f11",
+                "EV-Q085-cf7202fe39de431d579231e6"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "The gravitational effects attributed to dark matter are fully consistent with a cold, collisionless fluid in ΛCDM cosmology, but current indirect detection anomalies (e.g., Ophiuchus radio data) are insufficient to identify its particle nature without next-generation weak lensing and clustering surveys that break degeneracies between microphysical properties and astrophysical systematics.",
+              "mechanism": "Cosmological parameter estimation relies on assuming cold dark matter as a pressureless fluid component (EV-Q085-cf7202fe39de431d579231e6). While this assumption successfully fits WMAP/Planck and cluster abundance data, it is degenerate with respect to microphysical particle properties. Therefore, confirming 'what dark matter is' requires breaking this degeneracy via precision large-scale structure measurements (EV-Q085-e4ed2d29b063d9aea8db5ae7, EV-Q085-f2eb2997fdb878c0db37eee4) that constrain interaction cross-sections or substructure, rather than relying solely on current indirect signals which suffer from astrophysical background uncertainties.",
+              "falsifiable_prediction": "If future LSST-era weak lensing and galaxy clustering data remain consistent with pure ΛCDM predictions at sub-percent precision without revealing deviations indicative of self-interactions or warm dark matter free-streaming, then current indirect detection claims (like the 48-67 GeV fit) are likely astrophysical artifacts rather than particle identification.",
+              "required_observations": [
+                "Precision weak lensing shear-shear and galaxy-shear correlation functions from LSST or equivalent Stage IV surveys",
+                "Galaxy angular clustering power spectra at redshifts z > 1",
+                "Joint analysis combining CMB priors with large-scale structure to test for deviations from collisionless CDM"
+              ],
+              "risk_of_being_wrong": "Dark matter may have non-standard properties (e.g., self-interactions, warmth) that are subtle enough to evade detection even in Stage IV surveys, leaving the particle identity unresolved despite improved gravitational constraints. Alternatively, a definitive indirect signal could emerge before LSST completes its survey.",
+              "supporting_evidence_ids": [
+                "EV-Q085-cf7202fe39de431d579231e6",
+                "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+                "EV-Q085-f2eb2997fdb878c0db37eee4"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Dark matter is not a single particle species but a composite sector where the dominant mass component is cold and collisionless (as assumed in WMAP/Planck analyses), while sub-dominant components may produce anomalous indirect signals like those observed in Ophiuchus, provided such signals survive rigorous astrophysical background subtraction including turbulent re-acceleration.",
+              "mechanism": "Standard cosmological fits assume a single cold dark matter component (EV-Q085-cf7202fe39de431d579231e6). However, if dark matter comprises multiple species, the dominant component governs large-scale structure formation, while a sub-dominant annihilating component could explain localized anomalies (EV-Q085-9d1e8e6835c81b1929462f11) without conflicting with global CDM constraints. This hypothesis explicitly incorporates reviewer-mandated background modeling to ensure anomalies are not astrophysical artifacts.",
+              "falsifiable_prediction": "Cross-correlation of radio continuum anomalies across multiple galaxy clusters will show inconsistent mass fits or spectral shapes if they arise from a sub-dominant component with varying density profiles, whereas a single dominant WIMP explanation would predict universal scaling with cluster mass; if all anomalies disappear when turbulent re-acceleration is properly modeled, the multi-component hypothesis is falsified.",
+              "required_observations": [
+                "Radio continuum spectral data from a sample of galaxy clusters spanning different masses and dynamical states",
+                "Cluster mass calibration via weak lensing to establish scaling relations",
+                "Multi-wavelength follow-up to characterize astrophysical backgrounds uniformly across the sample using citable, peer-reviewed simulation templates"
+              ],
+              "risk_of_being_wrong": "The apparent need for multiple components may simply reflect inadequate astrophysical modeling rather than new physics. Current evidence does not independently support the existence of sub-dominant dark matter sectors beyond the anomalous fits themselves, and no allowed evidence validates specific background model parameters.",
+              "supporting_evidence_ids": [
+                "EV-Q085-cf7202fe39de431d579231e6",
+                "EV-Q085-9d1e8e6835c81b1929462f11"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.75,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.66
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the knowledge gap regarding dark matter's particle identity by proposing a specific, testable mass range derived from existing indirect detection evidence (EV-Q085-9d1e8e6835c81b1929462f11), while fully incorporating reviewer-mandated revisions: explicit inclusion of turbulent re-acceleration in the null hypothesis, requirement for citable background models, documentation of magnetic field/CR injection priors, and restriction to public Fermi-LAT data. It achieves the highest falsifiability score (0.95) by defining quantitative rejection criteria tied to background modeling completeness. While Hypothesis 1 has stronger evidential support for the gravitational role, it defers particle identification to future surveys and thus does not actively resolve the core question 'What is dark matter?' in the near term. Hypothesis 0 offers the most actionable, rigorously constrained path toward answering the question with current data while adhering to all safety and reproducibility requirements.",
+          "rejected_directions": [
+            "Modified gravity theories as an alternative to dark matter: No supporting evidence IDs in the allowed set address modifications to general relativity; all evidence assumes CDM within ΛCDM.",
+            "Axion or ultra-light dark matter models: The provided evidence only references GeV-scale mass fits and CDM assumptions; no evidence supports wave-like or fuzzy dark matter scenarios.",
+            "Direct detection experimental results: No allowed evidence IDs contain data from underground direct detection experiments; all references are cosmological or indirect."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that dark matter consists of WIMPs with mass 48–67 GeV by analyzing radio continuum spectral data from the Ophiuchus cluster. The core mechanism posits that WIMP self-annihilation produces charged secondary particles (e+/e-) which generate synchrotron radiation in intracluster magnetic fields. The experimental design involves fitting the observed radio spectrum with a composite model: S_total = S_DM(m_chi, <sigma v>) + S_CR(electron_population) + S_AGN(point_sources). The key discriminant is a spectral cutoff or bump feature in the 100 MHz – 10 GHz range corresponding to the injected electron energy spectrum from 48–67 GeV annihilation, distinct from the power-law spectrum of astrophysical cosmic rays. We will use Bayesian inference to constrain m_chi and <sigma v>, penalizing models that require fine-tuned astrophysical backgrounds. Crucially, the null hypothesis explicitly includes turbulent re-acceleration of cosmic rays to avoid false positives.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Ophiuchus Cluster Radio Continuum Data",
+                "description": "Multi-frequency radio flux density measurements of the Ophiuchus cluster, specifically targeting the diffuse halo emission. Derived from observational archives referenced in EV-Q085-9d1e8e6835c81b1929462f11.",
+                "evidence_ids": [
+                  "EV-Q085-9d1e8e6835c81b1929462f11"
+                ],
+                "access_type": "public_archive",
+                "format": "FITS/ASCII spectral tables"
+              },
+              {
+                "name": "Astrophysical Background Models",
+                "description": "Standard models for cosmic-ray electron populations and AGN feedback contributions in galaxy clusters, used to construct the null hypothesis baseline. Must be populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature as per reviewer revision.",
+                "evidence_ids": [],
+                "access_type": "theoretical_model",
+                "format": "Python/MATLAB simulation code"
+              }
+            ],
+            "target": {
+              "name": "Constrained WIMP Parameter Space",
+              "description": "Posterior probability distributions for dark matter mass (m_chi) and annihilation cross-section (<sigma v>), along with Bayes factors comparing the DM+Background model vs. Background-only model.",
+              "evidence_ids": [],
+              "format": "JSON/CSV statistical results"
+            }
+          },
+          "methods": "1. Data Preprocessing: Aggregate multi-frequency radio flux densities from Ophiuchus cluster observations, correcting for instrumental noise and point-source subtraction residuals. 2. Spectral Modeling: Construct two competing models: (A) Null Model: Power-law synchrotron emission from cosmic-ray electrons + AGN contributions + Turbulent Re-acceleration component; (B) Signal Model: Null Model + Synchrotron emission from secondary electrons produced by WIMP annihilation (mass 48–67 GeV). 3. Parameter Estimation: Use Markov Chain Monte Carlo (MCMC) methods to fit both models to the data, varying m_chi, <sigma v>, magnetic field strength B, and cosmic-ray injection indices. 4. Model Comparison: Compute Bayes Factors and AIC/BIC scores to determine if the inclusion of the DM component significantly improves the fit beyond the penalty for additional parameters.",
+          "experiments": {
+            "baselines": [
+              "Pure Astrophysical Background Model: Fits radio spectrum using only standard cosmic-ray electron power-law distributions and known AGN point sources, assuming no dark matter annihilation contribution.",
+              "Turbulent Re-acceleration Model: Fits spectrum using models of secondary electron production via turbulent re-acceleration of existing cosmic rays, without invoking dark matter annihilation."
+            ],
+            "metrics": [
+              "Bayes Factor (K): Ratio of marginal likelihoods between Signal Model and Null Model.",
+              "Reduced Chi-Squared (chi^2_red): Goodness-of-fit statistic for spectral residuals.",
+              "Akaike Information Criterion (AIC): Penalized likelihood score to compare model complexity vs. fit quality."
+            ],
+            "ablation": "1. Vary Magnetic Field Assumptions: Test sensitivity of m_chi constraint to assumed intracluster magnetic field profiles (uniform vs. radial decline). 2. Exclude Low-Frequency Data: Assess impact of removing frequencies < 300 MHz to test robustness against galactic foreground contamination. 3. Fixed Mass vs. Free Mass: Compare fits where m_chi is fixed to 48–67 GeV range vs. allowed to vary freely across 10–1000 GeV.",
+            "validation_protocol": "1. Cross-Validation: Split frequency bands into training and testing sets to check for overfitting. 2. Synthetic Data Injection: Inject simulated DM signals into real background data to verify recovery of input parameters. 3. Consistency Check: Compare derived <sigma v> limits with independent constraints from Fermi-LAT gamma-ray observations of the same region, strictly enforcing the use of only publicly available processed data products to maintain reproducibility without requiring proprietary access."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Source code for MCMC sampler and spectral modeling functions is version-controlled.",
+            "Raw radio flux data and error bars are archived with DOI or permanent URL.",
+            "Prior probability distributions for magnetic field strength and cosmic-ray injection indices are explicitly documented, as these are dominant systematic uncertainties not constrained by provided evidence cards.",
+            "Random seeds for MCMC initialization are recorded.",
+            "Configuration files for background astrophysical models are included, ensuring they are traceable to peer-reviewed literature.",
+            "Validation protocol strictly enforces the use of publicly available Fermi-LAT processed data products for cross-validation."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "High-performance computing cluster required for MCMC sampling (estimated 1000 CPU-hours).",
+            "software_dependencies": [
+              "Python 3.9+",
+              "NumPy/SciPy",
+              "Emcee or PyMC3 for MCMC",
+              "Astropy for FITS handling"
+            ],
+            "estimated_runtime": "48-72 hours for full parameter space exploration."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revision successfully incorporates all three required revisions from the previous review cycle without introducing new errors.",
+            "The 'Astrophysical Background Models' dataset description now explicitly mandates citable simulation codes or empirical templates traceable to peer-reviewed literature, addressing the lack of evidence-grounded background parameters (Issue 5de701aa011a).",
+            "The reproducibility checklist has been updated to explicitly require documentation of prior probability distributions for magnetic field strength and cosmic-ray injection indices, correctly identifying these as dominant systematics not constrained by allowed evidence cards (Issue edeb47a725d8).",
+            "The validation protocol now strictly enforces the use of publicly available Fermi-LAT processed data products, ensuring reproducibility without proprietary access (Issue b3dff97410f6).",
+            "Results remain correctly marked as pending/not executed; no fabrication of experimental outcomes is present.",
+            "All supporting evidence IDs (EV-Q085-9d1e8e6835c81b1929462f11, EV-Q085-cf7202fe39de431d579231e6) are valid and appropriately scoped to the hypothesis; no hallucinated references detected."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "During actual execution, maintain a version-controlled log of the specific background model codes/templates selected, including their DOI or permanent URL, to satisfy the 'citable' requirement introduced in this revision.",
+            "If the turbulent re-acceleration baseline model requires parameters outside the scope of allowed evidence cards, explicitly flag these as 'unconstrained priors' in the final results table to prevent overinterpretation of Bayes Factors.",
+            "Ensure that the synthetic data injection tests (ablation step 2) use background models consistent with the newly mandated citable templates, not simplified analytical approximations, to validate recovery fidelity under realistic conditions."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.98,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:5de701aa011a",
+            "category": "required_revision",
+            "description": "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:cbaa2f2ed644acd1; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:edeb47a725d8",
+            "category": "required_revision",
+            "description": "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:f8519f7b105f64d2; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:b3dff97410f6",
+            "category": "required_revision",
+            "description": "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:f3425ffe506301f0; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:f9a70f0fd86a",
+            "category": "required_revision",
+            "description": "During actual execution, maintain a version-controlled log of the specific background model codes/templates selected, including their DOI or permanent URL, to satisfy the 'citable' requirement introduced in this revision.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:fc923570a4a5",
+            "category": "required_revision",
+            "description": "If the turbulent re-acceleration baseline model requires parameters outside the scope of allowed evidence cards, explicitly flag these as 'unconstrained priors' in the final results table to prevent overinterpretation of Bayes Factors.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3a17e7ca6344",
+            "category": "required_revision",
+            "description": "Ensure that the synthetic data injection tests (ablation step 2) use background models consistent with the newly mandated citable templates, not simplified analytical approximations, to validate recovery fidelity under realistic conditions.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5f9bc32a98dc490f3cb4294bb9c0f6f47da07e3e78ffe5557261774a9aa7b634",
+          "experiment_designer": "d3482835cd54e697a8e6c62bfc5f5f8d3db241e7aa3e79a847edccf13b5e3472",
+          "scientific_reviewer": "4a9162678fad5edbd9eee54d7208bf05106d25ea778e850fa250b2380435000d"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-085848-48f1603f",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-085848-48f1603f:review:v1",
+        "20260822-085848-48f1603f:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-085848-48f1603f:v1",
+        "20260822-085848-48f1603f:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-085848-48f1603f",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-085848-48f1603f:review:v1",
+          "20260822-085848-48f1603f:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-085848-48f1603f:v1",
+          "20260822-085848-48f1603f:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-085848-48f1603f",
+          "version_number": 1,
+          "version_id": "20260822-085848-48f1603f:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range that annihilate into standard model particles, producing observable radio continuum emission in galaxy clusters.",
+                "mechanism": "If dark matter particles are Weakly Interacting Massive Particles (WIMPs) in the 48-67 GeV mass range, their self-annihilation in high-density regions like the Ophiuchus cluster would produce charged secondary particles. These particles interact with intracluster magnetic fields to generate synchrotron radiation, manifesting as a specific radio continuum spectral signature distinct from astrophysical backgrounds.",
+                "falsifiable_prediction": "High-resolution radio continuum spectra of the Ophiuchus cluster will exhibit a spectral cutoff or feature consistent with 48-67 GeV annihilation models that cannot be explained by standard cosmic-ray electron populations or active galactic nucleus (AGN) feedback mechanisms alone.",
+                "required_observations": [
+                  "Multi-frequency radio continuum spectral data of the Ophiuchus cluster with sufficient sensitivity to distinguish synchrotron components",
+                  "Independent gamma-ray or anti-proton flux measurements from the same region to cross-validate the annihilation interpretation",
+                  "Astrophysical background modeling of cosmic-ray electrons and AGN activity in the Ophiuchus cluster"
+                ],
+                "risk_of_being_wrong": "The radio signal may be entirely attributable to unmodeled astrophysical processes (e.g., turbulent re-acceleration of cosmic rays), rendering the dark matter mass fit spurious. Additionally, the assumption of cold dark matter in cosmological fits does not uniquely predict this specific mass range.",
+                "supporting_evidence_ids": [
+                  "EV-Q085-9d1e8e6835c81b1929462f11",
+                  "EV-Q085-cf7202fe39de431d579231e6"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "The gravitational effects attributed to dark matter are fully consistent with a cold, collisionless fluid in ΛCDM cosmology, but current indirect detection anomalies (e.g., Ophiuchus radio data) are insufficient to identify its particle nature without next-generation weak lensing and clustering surveys.",
+                "mechanism": "Cosmological parameter estimation relies on assuming cold dark matter as a pressureless fluid component. While this assumption successfully fits WMAP/Planck and cluster abundance data, it is degenerate with respect to microphysical particle properties. Therefore, confirming 'what dark matter is' requires breaking this degeneracy via precision large-scale structure measurements that constrain interaction cross-sections or substructure, rather than relying solely on current indirect signals.",
+                "falsifiable_prediction": "If future LSST-era weak lensing and galaxy clustering data remain consistent with pure ΛCDM predictions at sub-percent precision without revealing deviations indicative of self-interactions or warm dark matter free-streaming, then current indirect detection claims (like the 48-67 GeV fit) are likely astrophysical artifacts rather than particle identification.",
+                "required_observations": [
+                  "Precision weak lensing shear-shear and galaxy-shear correlation functions from LSST or equivalent Stage IV surveys",
+                  "Galaxy angular clustering power spectra at redshifts z > 1",
+                  "Joint analysis combining CMB priors with large-scale structure to test for deviations from collisionless CDM"
+                ],
+                "risk_of_being_wrong": "Dark matter may have non-standard properties (e.g., self-interactions, warmth) that are subtle enough to evade detection even in Stage IV surveys, leaving the particle identity unresolved despite improved gravitational constraints. Alternatively, a definitive indirect signal could emerge before LSST completes its survey.",
+                "supporting_evidence_ids": [
+                  "EV-Q085-cf7202fe39de431d579231e6",
+                  "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+                  "EV-Q085-f2eb2997fdb878c0db37eee4"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "Dark matter is not a single particle species but a composite sector where the dominant mass component is cold and collisionless (as assumed in WMAP/Planck analyses), while sub-dominant components may produce anomalous indirect signals like those observed in Ophiuchus.",
+                "mechanism": "Standard cosmological fits assume a single cold dark matter component. However, if dark matter comprises multiple species, the dominant component governs large-scale structure formation (consistent with EV-Q085-cf7202fe39de431d579231e6), while a sub-dominant annihilating component could explain localized anomalies (EV-Q085-9d1e8e6835c81b1929462f11) without conflicting with global CDM constraints.",
+                "falsifiable_prediction": "Cross-correlation of radio continuum anomalies across multiple galaxy clusters will show inconsistent mass fits or spectral shapes if they arise from a sub-dominant component with varying density profiles, whereas a single dominant WIMP explanation would predict universal scaling with cluster mass.",
+                "required_observations": [
+                  "Radio continuum spectral data from a sample of galaxy clusters spanning different masses and dynamical states",
+                  "Cluster mass calibration via weak lensing to establish scaling relations",
+                  "Multi-wavelength follow-up to characterize astrophysical backgrounds uniformly across the sample"
+                ],
+                "risk_of_being_wrong": "The apparent need for multiple components may simply reflect inadequate astrophysical modeling rather than new physics. Current evidence does not independently support the existence of sub-dominant dark matter sectors beyond the anomalous fits themselves.",
+                "supporting_evidence_ids": [
+                  "EV-Q085-cf7202fe39de431d579231e6",
+                  "EV-Q085-9d1e8e6835c81b1929462f11"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.5,
+                "overall_score": 0.65
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses the knowledge gap regarding dark matter's particle identity by proposing a specific, testable mass range derived from existing indirect detection evidence (EV-Q085-9d1e8e6835c81b1929462f11). It is highly falsifiable through publicly available or obtainable radio and multi-messenger data, and explicitly links the cosmological CDM assumption (EV-Q085-cf7202fe39de431d579231e6) to a concrete particle physics prediction. While Hypothesis 1 has stronger evidential support for the gravitational role, it defers particle identification to future surveys and thus does not actively resolve the core question 'What is dark matter?' in the near term. Hypothesis 0 offers the most actionable path toward answering the question with current data.",
+            "rejected_directions": [
+              "Modified gravity theories as an alternative to dark matter: No supporting evidence IDs in the allowed set address modifications to general relativity; all evidence assumes CDM within ΛCDM.",
+              "Axion or ultra-light dark matter models: The provided evidence only references GeV-scale mass fits and CDM assumptions; no evidence supports wave-like or fuzzy dark matter scenarios.",
+              "Direct detection experimental results: No allowed evidence IDs contain data from underground direct detection experiments; all references are cosmological or indirect."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that dark matter consists of WIMPs with mass 48–67 GeV by analyzing radio continuum spectral data from the Ophiuchus cluster. The core mechanism posits that WIMP self-annihilation produces charged secondary particles (e+/e-) which generate synchrotron radiation in intracluster magnetic fields. The experimental design involves fitting the observed radio spectrum with a composite model: S_total = S_DM(m_chi, <sigma v>) + S_CR(electron_population) + S_AGN(point_sources). The key discriminant is a spectral cutoff or bump feature in the 100 MHz – 10 GHz range corresponding to the injected electron energy spectrum from 48–67 GeV annihilation, distinct from the power-law spectrum of astrophysical cosmic rays. We will use Bayesian inference to constrain m_chi and <sigma v>, penalizing models that require fine-tuned astrophysical backgrounds.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Ophiuchus Cluster Radio Continuum Data",
+                  "description": "Multi-frequency radio flux density measurements of the Ophiuchus cluster, specifically targeting the diffuse halo emission. Derived from observational archives referenced in EV-Q085-9d1e8e6835c81b1929462f11.",
+                  "evidence_ids": [
+                    "EV-Q085-9d1e8e6835c81b1929462f11"
+                  ],
+                  "access_type": "public_archive",
+                  "format": "FITS/ASCII spectral tables"
+                },
+                {
+                  "name": "Astrophysical Background Models",
+                  "description": "Standard models for cosmic-ray electron populations and AGN feedback contributions in galaxy clusters, used to construct the null hypothesis baseline.",
+                  "evidence_ids": [],
+                  "access_type": "theoretical_model",
+                  "format": "Python/MATLAB simulation code"
+                }
+              ],
+              "target": {
+                "name": "Constrained WIMP Parameter Space",
+                "description": "Posterior probability distributions for dark matter mass (m_chi) and annihilation cross-section (<sigma v>), along with Bayes factors comparing the DM+Background model vs. Background-only model.",
+                "evidence_ids": [],
+                "format": "JSON/CSV statistical results"
+              }
+            },
+            "methods": "1. Data Preprocessing: Aggregate multi-frequency radio flux densities from Ophiuchus cluster observations, correcting for instrumental noise and point-source subtraction residuals. 2. Spectral Modeling: Construct two competing models: (A) Null Model: Power-law synchrotron emission from cosmic-ray electrons + AGN contributions; (B) Signal Model: Null Model + Synchrotron emission from secondary electrons produced by WIMP annihilation (mass 48–67 GeV). 3. Parameter Estimation: Use Markov Chain Monte Carlo (MCMC) methods to fit both models to the data, varying m_chi, <sigma v>, magnetic field strength B, and cosmic-ray injection indices. 4. Model Comparison: Compute Bayes Factors and AIC/BIC scores to determine if the inclusion of the DM component significantly improves the fit beyond the penalty for additional parameters.",
+            "experiments": {
+              "baselines": [
+                "Pure Astrophysical Background Model: Fits radio spectrum using only standard cosmic-ray electron power-law distributions and known AGN point sources, assuming no dark matter annihilation contribution.",
+                "Turbulent Re-acceleration Model: Fits spectrum using models of secondary electron production via turbulent re-acceleration of existing cosmic rays, without invoking dark matter annihilation."
+              ],
+              "metrics": [
+                "Bayes Factor (K): Ratio of marginal likelihoods between Signal Model and Null Model.",
+                "Reduced Chi-Squared (chi^2_red): Goodness-of-fit statistic for spectral residuals.",
+                "Akaike Information Criterion (AIC): Penalized likelihood score to compare model complexity vs. fit quality."
+              ],
+              "ablation": "1. Vary Magnetic Field Assumptions: Test sensitivity of m_chi constraint to assumed intracluster magnetic field profiles (uniform vs. radial decline). 2. Exclude Low-Frequency Data: Assess impact of removing frequencies < 300 MHz to test robustness against galactic foreground contamination. 3. Fixed Mass vs. Free Mass: Compare fits where m_chi is fixed to 48–67 GeV range vs. allowed to vary freely across 10–1000 GeV.",
+              "validation_protocol": "1. Cross-Validation: Split frequency bands into training and testing sets to check for overfitting. 2. Synthetic Data Injection: Inject simulated DM signals into real background data to verify recovery of input parameters. 3. Consistency Check: Compare derived <sigma v> limits with independent constraints from Fermi-LAT gamma-ray observations of the same region (if available in extended dataset)."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Source code for MCMC sampler and spectral modeling functions is version-controlled.",
+              "Raw radio flux data and error bars are archived with DOI or permanent URL.",
+              "Prior distributions for all physical parameters (B-field, CR index, m_chi) are explicitly documented.",
+              "Random seeds for MCMC initialization are recorded.",
+              "Configuration files for background astrophysical models are included."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "compute_resources": "High-performance computing cluster required for MCMC sampling (estimated 1000 CPU-hours).",
+              "software_dependencies": [
+                "Python 3.9+",
+                "NumPy/SciPy",
+                "Emcee or PyMC3 for MCMC",
+                "Astropy for FITS handling"
+              ],
+              "estimated_runtime": "48-72 hours for full parameter space exploration."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The recommended hypothesis correctly frames the 48-67 GeV mass range as a testable prediction derived from specific indirect detection literature (EV-Q085-9d1e8e6835c81b1929462f11) rather than an established fact.",
+              "Experiment design appropriately identifies astrophysical backgrounds (cosmic rays, AGN) as the primary null hypothesis and includes turbulent re-acceleration as a critical baseline to avoid false positives.",
+              "Results field is correctly marked as pending/not executed, adhering to safety guidelines against fabricating experimental outcomes.",
+              "Evidence grounding is strictly limited to the allowed IDs; no external or hallucinated references were introduced.",
+              "Falsifiability is high: the hypothesis explicitly predicts a spectral feature distinguishable from standard power-law synchrotron emission, and the experiment defines quantitative metrics (Bayes Factor, AIC) for rejection."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+              "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+              "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.85,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:5de701aa011a",
+              "category": "required_revision",
+              "description": "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:edeb47a725d8",
+              "category": "required_revision",
+              "description": "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:b3dff97410f6",
+              "category": "required_revision",
+              "description": "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "eb084f050c628aee95628f594a2176976348c88455b3ff36b2378f6034f24f34",
+            "experiment_designer": "cbb68a65746b56ac26361b2811f8e0e254a1c39d00228f29780b79a1c2e4f55d",
+            "scientific_reviewer": "6294337f9e7a979a1967bef51c17b33b86b4c61f34e24c1ac067236757aa5e4c"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-085848-48f1603f",
+          "version_number": 2,
+          "version_id": "20260822-085848-48f1603f:v2",
+          "parent_version_id": "20260822-085848-48f1603f:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range whose annihilation into Standard Model particles produces secondary electrons generating synchrotron radio emission in galaxy clusters, distinguishable from astrophysical backgrounds only when turbulent re-acceleration is explicitly modeled as a null hypothesis.",
+                "mechanism": "If dark matter particles are WIMPs in the 48-67 GeV mass range (EV-Q085-9d1e8e6835c81b1929462f11), their self-annihilation in high-density cluster environments produces charged secondaries that emit synchrotron radiation in intracluster magnetic fields. This signal must be disentangled from cosmic-ray electron populations and AGN feedback. Crucially, per reviewer feedback, the null hypothesis must include turbulent re-acceleration of cosmic rays to avoid false positives, as standard power-law models may insufficiently capture background spectral shapes.",
+                "falsifiable_prediction": "High-resolution radio continuum spectra of the Ophiuchus cluster will exhibit a spectral feature consistent with 48-67 GeV annihilation that yields a Bayes Factor > 10 over a composite null model including both standard cosmic-ray power-laws AND turbulent re-acceleration components; if the signal significance drops below threshold when turbulent re-acceleration is included, the DM interpretation is weakened.",
+                "required_observations": [
+                  "Multi-frequency radio continuum spectral data of the Ophiuchus cluster with sufficient sensitivity to distinguish synchrotron components",
+                  "Independent gamma-ray or anti-proton flux measurements from the same region using only publicly available Fermi-LAT processed data products",
+                  "Astrophysical background modeling incorporating specific, citable simulation codes for cosmic-ray electrons, AGN activity, and turbulent re-acceleration traceable to peer-reviewed literature"
+                ],
+                "risk_of_being_wrong": "The radio signal may be entirely attributable to unmodeled or inadequately modeled astrophysical processes (especially turbulent re-acceleration), rendering the dark matter mass fit spurious. Additionally, the assumption of cold dark matter in cosmological fits (EV-Q085-cf7202fe39de431d579231e6) does not uniquely predict this specific mass range, and magnetic field/cosmic-ray injection priors remain dominant systematic uncertainties not constrained by provided evidence.",
+                "supporting_evidence_ids": [
+                  "EV-Q085-9d1e8e6835c81b1929462f11",
+                  "EV-Q085-cf7202fe39de431d579231e6"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.78
+              },
+              {
+                "hypothesis": "The gravitational effects attributed to dark matter are fully consistent with a cold, collisionless fluid in ΛCDM cosmology, but current indirect detection anomalies (e.g., Ophiuchus radio data) are insufficient to identify its particle nature without next-generation weak lensing and clustering surveys that break degeneracies between microphysical properties and astrophysical systematics.",
+                "mechanism": "Cosmological parameter estimation relies on assuming cold dark matter as a pressureless fluid component (EV-Q085-cf7202fe39de431d579231e6). While this assumption successfully fits WMAP/Planck and cluster abundance data, it is degenerate with respect to microphysical particle properties. Therefore, confirming 'what dark matter is' requires breaking this degeneracy via precision large-scale structure measurements (EV-Q085-e4ed2d29b063d9aea8db5ae7, EV-Q085-f2eb2997fdb878c0db37eee4) that constrain interaction cross-sections or substructure, rather than relying solely on current indirect signals which suffer from astrophysical background uncertainties.",
+                "falsifiable_prediction": "If future LSST-era weak lensing and galaxy clustering data remain consistent with pure ΛCDM predictions at sub-percent precision without revealing deviations indicative of self-interactions or warm dark matter free-streaming, then current indirect detection claims (like the 48-67 GeV fit) are likely astrophysical artifacts rather than particle identification.",
+                "required_observations": [
+                  "Precision weak lensing shear-shear and galaxy-shear correlation functions from LSST or equivalent Stage IV surveys",
+                  "Galaxy angular clustering power spectra at redshifts z > 1",
+                  "Joint analysis combining CMB priors with large-scale structure to test for deviations from collisionless CDM"
+                ],
+                "risk_of_being_wrong": "Dark matter may have non-standard properties (e.g., self-interactions, warmth) that are subtle enough to evade detection even in Stage IV surveys, leaving the particle identity unresolved despite improved gravitational constraints. Alternatively, a definitive indirect signal could emerge before LSST completes its survey.",
+                "supporting_evidence_ids": [
+                  "EV-Q085-cf7202fe39de431d579231e6",
+                  "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+                  "EV-Q085-f2eb2997fdb878c0db37eee4"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "Dark matter is not a single particle species but a composite sector where the dominant mass component is cold and collisionless (as assumed in WMAP/Planck analyses), while sub-dominant components may produce anomalous indirect signals like those observed in Ophiuchus, provided such signals survive rigorous astrophysical background subtraction including turbulent re-acceleration.",
+                "mechanism": "Standard cosmological fits assume a single cold dark matter component (EV-Q085-cf7202fe39de431d579231e6). However, if dark matter comprises multiple species, the dominant component governs large-scale structure formation, while a sub-dominant annihilating component could explain localized anomalies (EV-Q085-9d1e8e6835c81b1929462f11) without conflicting with global CDM constraints. This hypothesis explicitly incorporates reviewer-mandated background modeling to ensure anomalies are not astrophysical artifacts.",
+                "falsifiable_prediction": "Cross-correlation of radio continuum anomalies across multiple galaxy clusters will show inconsistent mass fits or spectral shapes if they arise from a sub-dominant component with varying density profiles, whereas a single dominant WIMP explanation would predict universal scaling with cluster mass; if all anomalies disappear when turbulent re-acceleration is properly modeled, the multi-component hypothesis is falsified.",
+                "required_observations": [
+                  "Radio continuum spectral data from a sample of galaxy clusters spanning different masses and dynamical states",
+                  "Cluster mass calibration via weak lensing to establish scaling relations",
+                  "Multi-wavelength follow-up to characterize astrophysical backgrounds uniformly across the sample using citable, peer-reviewed simulation templates"
+                ],
+                "risk_of_being_wrong": "The apparent need for multiple components may simply reflect inadequate astrophysical modeling rather than new physics. Current evidence does not independently support the existence of sub-dominant dark matter sectors beyond the anomalous fits themselves, and no allowed evidence validates specific background model parameters.",
+                "supporting_evidence_ids": [
+                  "EV-Q085-cf7202fe39de431d579231e6",
+                  "EV-Q085-9d1e8e6835c81b1929462f11"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.75,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.5,
+                "overall_score": 0.66
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses the knowledge gap regarding dark matter's particle identity by proposing a specific, testable mass range derived from existing indirect detection evidence (EV-Q085-9d1e8e6835c81b1929462f11), while fully incorporating reviewer-mandated revisions: explicit inclusion of turbulent re-acceleration in the null hypothesis, requirement for citable background models, documentation of magnetic field/CR injection priors, and restriction to public Fermi-LAT data. It achieves the highest falsifiability score (0.95) by defining quantitative rejection criteria tied to background modeling completeness. While Hypothesis 1 has stronger evidential support for the gravitational role, it defers particle identification to future surveys and thus does not actively resolve the core question 'What is dark matter?' in the near term. Hypothesis 0 offers the most actionable, rigorously constrained path toward answering the question with current data while adhering to all safety and reproducibility requirements.",
+            "rejected_directions": [
+              "Modified gravity theories as an alternative to dark matter: No supporting evidence IDs in the allowed set address modifications to general relativity; all evidence assumes CDM within ΛCDM.",
+              "Axion or ultra-light dark matter models: The provided evidence only references GeV-scale mass fits and CDM assumptions; no evidence supports wave-like or fuzzy dark matter scenarios.",
+              "Direct detection experimental results: No allowed evidence IDs contain data from underground direct detection experiments; all references are cosmological or indirect."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that dark matter consists of WIMPs with mass 48–67 GeV by analyzing radio continuum spectral data from the Ophiuchus cluster. The core mechanism posits that WIMP self-annihilation produces charged secondary particles (e+/e-) which generate synchrotron radiation in intracluster magnetic fields. The experimental design involves fitting the observed radio spectrum with a composite model: S_total = S_DM(m_chi, <sigma v>) + S_CR(electron_population) + S_AGN(point_sources). The key discriminant is a spectral cutoff or bump feature in the 100 MHz – 10 GHz range corresponding to the injected electron energy spectrum from 48–67 GeV annihilation, distinct from the power-law spectrum of astrophysical cosmic rays. We will use Bayesian inference to constrain m_chi and <sigma v>, penalizing models that require fine-tuned astrophysical backgrounds. Crucially, the null hypothesis explicitly includes turbulent re-acceleration of cosmic rays to avoid false positives.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Ophiuchus Cluster Radio Continuum Data",
+                  "description": "Multi-frequency radio flux density measurements of the Ophiuchus cluster, specifically targeting the diffuse halo emission. Derived from observational archives referenced in EV-Q085-9d1e8e6835c81b1929462f11.",
+                  "evidence_ids": [
+                    "EV-Q085-9d1e8e6835c81b1929462f11"
+                  ],
+                  "access_type": "public_archive",
+                  "format": "FITS/ASCII spectral tables"
+                },
+                {
+                  "name": "Astrophysical Background Models",
+                  "description": "Standard models for cosmic-ray electron populations and AGN feedback contributions in galaxy clusters, used to construct the null hypothesis baseline. Must be populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature as per reviewer revision.",
+                  "evidence_ids": [],
+                  "access_type": "theoretical_model",
+                  "format": "Python/MATLAB simulation code"
+                }
+              ],
+              "target": {
+                "name": "Constrained WIMP Parameter Space",
+                "description": "Posterior probability distributions for dark matter mass (m_chi) and annihilation cross-section (<sigma v>), along with Bayes factors comparing the DM+Background model vs. Background-only model.",
+                "evidence_ids": [],
+                "format": "JSON/CSV statistical results"
+              }
+            },
+            "methods": "1. Data Preprocessing: Aggregate multi-frequency radio flux densities from Ophiuchus cluster observations, correcting for instrumental noise and point-source subtraction residuals. 2. Spectral Modeling: Construct two competing models: (A) Null Model: Power-law synchrotron emission from cosmic-ray electrons + AGN contributions + Turbulent Re-acceleration component; (B) Signal Model: Null Model + Synchrotron emission from secondary electrons produced by WIMP annihilation (mass 48–67 GeV). 3. Parameter Estimation: Use Markov Chain Monte Carlo (MCMC) methods to fit both models to the data, varying m_chi, <sigma v>, magnetic field strength B, and cosmic-ray injection indices. 4. Model Comparison: Compute Bayes Factors and AIC/BIC scores to determine if the inclusion of the DM component significantly improves the fit beyond the penalty for additional parameters.",
+            "experiments": {
+              "baselines": [
+                "Pure Astrophysical Background Model: Fits radio spectrum using only standard cosmic-ray electron power-law distributions and known AGN point sources, assuming no dark matter annihilation contribution.",
+                "Turbulent Re-acceleration Model: Fits spectrum using models of secondary electron production via turbulent re-acceleration of existing cosmic rays, without invoking dark matter annihilation."
+              ],
+              "metrics": [
+                "Bayes Factor (K): Ratio of marginal likelihoods between Signal Model and Null Model.",
+                "Reduced Chi-Squared (chi^2_red): Goodness-of-fit statistic for spectral residuals.",
+                "Akaike Information Criterion (AIC): Penalized likelihood score to compare model complexity vs. fit quality."
+              ],
+              "ablation": "1. Vary Magnetic Field Assumptions: Test sensitivity of m_chi constraint to assumed intracluster magnetic field profiles (uniform vs. radial decline). 2. Exclude Low-Frequency Data: Assess impact of removing frequencies < 300 MHz to test robustness against galactic foreground contamination. 3. Fixed Mass vs. Free Mass: Compare fits where m_chi is fixed to 48–67 GeV range vs. allowed to vary freely across 10–1000 GeV.",
+              "validation_protocol": "1. Cross-Validation: Split frequency bands into training and testing sets to check for overfitting. 2. Synthetic Data Injection: Inject simulated DM signals into real background data to verify recovery of input parameters. 3. Consistency Check: Compare derived <sigma v> limits with independent constraints from Fermi-LAT gamma-ray observations of the same region, strictly enforcing the use of only publicly available processed data products to maintain reproducibility without requiring proprietary access."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Source code for MCMC sampler and spectral modeling functions is version-controlled.",
+              "Raw radio flux data and error bars are archived with DOI or permanent URL.",
+              "Prior probability distributions for magnetic field strength and cosmic-ray injection indices are explicitly documented, as these are dominant systematic uncertainties not constrained by provided evidence cards.",
+              "Random seeds for MCMC initialization are recorded.",
+              "Configuration files for background astrophysical models are included, ensuring they are traceable to peer-reviewed literature.",
+              "Validation protocol strictly enforces the use of publicly available Fermi-LAT processed data products for cross-validation."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "compute_resources": "High-performance computing cluster required for MCMC sampling (estimated 1000 CPU-hours).",
+              "software_dependencies": [
+                "Python 3.9+",
+                "NumPy/SciPy",
+                "Emcee or PyMC3 for MCMC",
+                "Astropy for FITS handling"
+              ],
+              "estimated_runtime": "48-72 hours for full parameter space exploration."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revision successfully incorporates all three required revisions from the previous review cycle without introducing new errors.",
+              "The 'Astrophysical Background Models' dataset description now explicitly mandates citable simulation codes or empirical templates traceable to peer-reviewed literature, addressing the lack of evidence-grounded background parameters (Issue 5de701aa011a).",
+              "The reproducibility checklist has been updated to explicitly require documentation of prior probability distributions for magnetic field strength and cosmic-ray injection indices, correctly identifying these as dominant systematics not constrained by allowed evidence cards (Issue edeb47a725d8).",
+              "The validation protocol now strictly enforces the use of publicly available Fermi-LAT processed data products, ensuring reproducibility without proprietary access (Issue b3dff97410f6).",
+              "Results remain correctly marked as pending/not executed; no fabrication of experimental outcomes is present.",
+              "All supporting evidence IDs (EV-Q085-9d1e8e6835c81b1929462f11, EV-Q085-cf7202fe39de431d579231e6) are valid and appropriately scoped to the hypothesis; no hallucinated references detected."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "During actual execution, maintain a version-controlled log of the specific background model codes/templates selected, including their DOI or permanent URL, to satisfy the 'citable' requirement introduced in this revision.",
+              "If the turbulent re-acceleration baseline model requires parameters outside the scope of allowed evidence cards, explicitly flag these as 'unconstrained priors' in the final results table to prevent overinterpretation of Bayes Factors.",
+              "Ensure that the synthetic data injection tests (ablation step 2) use background models consistent with the newly mandated citable templates, not simplified analytical approximations, to validate recovery fidelity under realistic conditions."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.98,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:5de701aa011a",
+              "category": "required_revision",
+              "description": "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:cbaa2f2ed644acd1; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:edeb47a725d8",
+              "category": "required_revision",
+              "description": "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:f8519f7b105f64d2; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:b3dff97410f6",
+              "category": "required_revision",
+              "description": "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:f3425ffe506301f0; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:f9a70f0fd86a",
+              "category": "required_revision",
+              "description": "During actual execution, maintain a version-controlled log of the specific background model codes/templates selected, including their DOI or permanent URL, to satisfy the 'citable' requirement introduced in this revision.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:fc923570a4a5",
+              "category": "required_revision",
+              "description": "If the turbulent re-acceleration baseline model requires parameters outside the scope of allowed evidence cards, explicitly flag these as 'unconstrained priors' in the final results table to prevent overinterpretation of Bayes Factors.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:3a17e7ca6344",
+              "category": "required_revision",
+              "description": "Ensure that the synthetic data injection tests (ablation step 2) use background models consistent with the newly mandated citable templates, not simplified analytical approximations, to validate recovery fidelity under realistic conditions.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "5f9bc32a98dc490f3cb4294bb9c0f6f47da07e3e78ffe5557261774a9aa7b634",
+            "experiment_designer": "d3482835cd54e697a8e6c62bfc5f5f8d3db241e7aa3e79a847edccf13b5e3472",
+            "scientific_reviewer": "4a9162678fad5edbd9eee54d7208bf05106d25ea778e850fa250b2380435000d"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-085848-48f1603f:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-085848-48f1603f:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-085848-48f1603f:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-085848-48f1603f:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:5de701aa011a",
+          "category": "required_revision",
+          "description": "In the final execution phase, ensure that the 'Astrophysical Background Models' dataset is populated with specific, citable simulation codes or empirical templates traceable to peer-reviewed literature, as current evidence cards do not validate specific background model parameters.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:cbaa2f2ed644acd1; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:edeb47a725d8",
+          "category": "required_revision",
+          "description": "Explicitly document the prior probability distributions for the magnetic field strength and cosmic-ray injection indices in the reproducibility checklist, as these are dominant systematic uncertainties in radio-based dark matter searches not constrained by the provided evidence cards.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f8519f7b105f64d2; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b3dff97410f6",
+          "category": "required_revision",
+          "description": "When executing the validation protocol, strictly enforce that any cross-validation with Fermi-LAT gamma-ray data uses only publicly available processed data products to maintain reproducibility without requiring proprietary access.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:f3425ffe506301f0; evidence=EV-Q085-9d1e8e6835c81b1929462f11; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:f9a70f0fd86a",
+          "category": "required_revision",
+          "description": "During actual execution, maintain a version-controlled log of the specific background model codes/templates selected, including their DOI or permanent URL, to satisfy the 'citable' requirement introduced in this revision.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:fc923570a4a5",
+          "category": "required_revision",
+          "description": "If the turbulent re-acceleration baseline model requires parameters outside the scope of allowed evidence cards, explicitly flag these as 'unconstrained priors' in the final results table to prevent overinterpretation of Bayes Factors.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:3a17e7ca6344",
+          "category": "required_revision",
+          "description": "Ensure that the synthetic data injection tests (ablation step 2) use background models consistent with the newly mandated citable templates, not simplified analytical approximations, to validate recovery fidelity under realistic conditions.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "fd9df2cb13f8c66858f3515f088b8a09fc2587a1feba6a06f3e36abdc14606d7"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-085848-48f1603f:wave-b-two-round",
+      "run_id": "20260822-085848-48f1603f",
+      "v1_version_id": "20260822-085848-48f1603f:v1",
+      "v2_version_id": "20260822-085848-48f1603f:v2",
+      "input_fingerprints": {
+        "v1": "cbb68a65746b56ac26361b2811f8e0e254a1c39d00228f29780b79a1c2e4f55d",
+        "v2": "d3482835cd54e697a8e6c62bfc5f5f8d3db241e7aa3e79a847edccf13b5e3472"
+      },
+      "responded_issue_count": 3,
+      "issue_ids": [
+        "required_revision:5de701aa011a",
+        "required_revision:edeb47a725d8",
+        "required_revision:b3dff97410f6"
+      ],
+      "change_ids": [
+        "change:cbaa2f2ed644acd1",
+        "change:f8519f7b105f64d2",
+        "change:f3425ffe506301f0"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.95,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Dark matter consists of cold, non-baryonic particles with a mass in the 48–67 GeV range whose annihilation into Standard Model particles produces secondary electrons generating synchrotron radio emission in galaxy clusters, distinguishable from astrophysical backgrounds only when turbulent re-acceleration is explicitly modeled as a null hypothesis.",
+          "overall_score": 0.78,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The gravitational effects attributed to dark matter are fully consistent with a cold, collisionless fluid in ΛCDM cosmology, but current indirect detection anomalies (e.g., Ophiuchus radio data) are insufficient to identify its particle nature without next-generation weak lensing and clustering surveys that break degeneracies between microphysical properties and astrophysical systematics.",
+          "overall_score": 0.75,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Dark matter is not a single particle species but a composite sector where the dominant mass component is cold and collisionless (as assumed in WMAP/Planck analyses), while sub-dominant components may produce anomalous indirect signals like those observed in Ophiuchus, provided such signals survive rigorous astrophysical background subtraction including turbulent re-acceleration.",
+          "overall_score": 0.66,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "1eadb1b59156",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:01:39.802293+00:00",
+    "ended_at": "2026-08-22T09:02:27.141029+00:00",
+    "duration_ms": 47338,
+    "input_summary": "{\"question_item\": {\"id\": \"Q085\", \"domain\": \"Physics\", \"question\": \"What is dark matter?\", \"source_page\": 29, \"booklet_excerpt\": \"Approximately 95% of the constitution of the universe is unknown to us. That 95% seemingly has to account for the acceleration of the expansion of the universe, which has been proven thanks to data obtained by astronomers with modern instruments, starting with the Hubble Space Telescope. If the universe consisted only of observable matter, the accelerated expansion would not be happening—gravity would take hold. So, something unknown is causing this phenomenon. But w",
+    "output_summary": "{\"input_question\": \"What is dark matter?\", \"domain\": \"Physics\", \"problem_statement\": \"The physical nature and particle identity of dark matter remain unknown, despite its established role as a gravitational component accounting for approximately 25%-27% of the universe's mass-energy budget. Current cosmological models assume cold dark matter to fit observational data, but specific particle candidates and their properties are not definitively identified.\", \"rationale\": \"While dark matter is a standard assumption in Lambda-CDM cosmology supported by CMB and cluster abundance data, its fundamenta",
+    "evidence_ids": [
+      "EV-Q085-9d1e8e6835c81b1929462f11",
+      "EV-Q085-cf7202fe39de431d579231e6",
+      "EV-Q085-e4ed2d29b063d9aea8db5ae7",
+      "EV-Q085-f2eb2997fdb878c0db37eee4"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ae6de178898b",
+    "mock": false
+  },
+  {
+    "event_id": "396461387138",
+    "run_id": "20260822-085848-48f1603f",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:02:27.141029+00:00",
+    "ended_at": "2026-08-22T09:02:29.425535+00:00",
+    "duration_ms": 2284,
+    "input_summary": "{\"question_item\": {\"id\": \"Q085\", \"domain\": \"Physics\", \"question\": \"What is dark matter?\", \"source_page\": 29, \"booklet_excerpt\": \"Approximately 95% of the constitution of the universe is unknown to us. That 95% seemingly has to account for the acceleration of the expansion of the universe, which has been proven thanks to data obtained by astronomers with modern instruments, starting with the Hubble Space Telescope. If the universe consisted only of observable matter, the accelerated expansion would not be happening—gravity would take hold. So, something unknown is causing this phenomenon. But w",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not ResearchPlan. SchemaValidator requires a 'ResearchPlan' object to validate structure and evidence traceability.\", \"MissingField: 'research_plan' key is absent from input.\"], \"warnings\": [\"Input appears to be raw question data (Q085) rather than a generated research plan containing hypotheses, references, or experimental designs.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_check\": \"failed\", \"evidence_traceability\": \"not_applicable\", \"factuality_check\": \"not_applicable\"}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5879bf8f4eb5",
+    "mock": false
+  }
+]

@@ -1,0 +1,1516 @@
+[
+  {
+    "event_id": "c60c60d4880f",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:01:47.556910+00:00",
+    "ended_at": "2026-08-22T09:01:47.556910+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "687aba13b0b0",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:01:47.556910+00:00",
+    "ended_at": "2026-08-22T09:01:50.434637+00:00",
+    "duration_ms": 2877,
+    "input_summary": "{\"question_item\": {\"id\": \"Q092\", \"domain\": \"Information Science\", \"question\": \"Can DNA act as an information storage medium?\", \"source_page\": 32, \"booklet_excerpt\": \"DNA, which stores huge amounts of organismal data at high densities with great stability, may one day be used to store other types of information.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Information Science\", \"core_question\": \"Can DNA act as an information storage medium?\", \"keywords\": [\"DNA\", \"information storage\", \"data density\", \"stability\"], \"entities\": [\"DNA\", \"organismal data\", \"information storage medium\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"The scope is limited to the potential of DNA for storing non-organismal information, based on its inherent properties of high density and stability. It does not cover current commercial viability or specific encoding algorithms unless implied by the excerpt.\", \"what_not_to_claim\": [\"Th",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1dd0884d28d1",
+    "mock": false
+  },
+  {
+    "event_id": "a3b422d44590",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:01:50.434637+00:00",
+    "ended_at": "2026-08-22T09:02:11.093134+00:00",
+    "duration_ms": 20658,
+    "input_summary": "{\"question_item\": {\"id\": \"Q092\", \"domain\": \"Information Science\", \"question\": \"Can DNA act as an information storage medium?\", \"source_page\": 32, \"booklet_excerpt\": \"DNA, which stores huge amounts of organismal data at high densities with great stability, may one day be used to store other types of information.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Information Science\", \"core_question\": \"Can DNA act as an information storage medium?\", \"keywords\": [\"DNA\", \"information storage\", \"data density\"",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the fundamental physical properties of DNA (density and stability) that enable it to function as an information storage medium, as suggested by the booklet excerpt.\", \"query\": \"DNA data storage density bits per gram stability half-life\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Quantitative data on DNA storage density (e.g., exabytes per gram) and chemical stability metrics compared to traditional media.\", \"priority\": \"high\"}, {\"purpose\": \"Identify seminal experimental demonstrations proving that non-biological digital data can be encoded into an",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d3e69ff4d0cf",
+    "mock": false
+  },
+  {
+    "event_id": "2f834d3cd1de",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:02:11.104133+00:00",
+    "ended_at": "2026-08-22T09:02:22.663562+00:00",
+    "duration_ms": 11559,
+    "input_summary": "{\"question_item\": {\"id\": \"Q092\", \"domain\": \"Information Science\", \"question\": \"Can DNA act as an information storage medium?\", \"source_page\": 32, \"booklet_excerpt\": \"DNA, which stores huge amounts of organismal data at high densities with great stability, may one day be used to store other types of information.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q092-f3ff4d67e233b373196a5785\", \"title\": \"arXiv:1902.02292\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pdf/1902.02292.pdf\",",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"DNA is considered an attractive medium for archival data storage due to its longevity and enormous information density.\", \"evidence_ids\": [\"EV-Q092-2fbd48e494c76f6214c0e981\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": null}], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"Practical implementation details, error correction mechanisms, and cost-effectiveness of DNA data storage compared to traditional media are not detailed in the provided evidence.\", \"why_it_matters\": \"Understanding technical constraints and economic viability is essential f",
+    "evidence_ids": [
+      "EV-Q092-2fbd48e494c76f6214c0e981"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b34c2403e8e9",
+    "mock": false
+  },
+  {
+    "event_id": "50b2f36ac58b",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:02:22.663562+00:00",
+    "ended_at": "2026-08-22T09:02:39.547009+00:00",
+    "duration_ms": 16883,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q092\", \"domain\": \"Information Science\", \"question\": \"Can DNA act as an information storage medium?\", \"source_page\": 32, \"booklet_excerpt\": \"DNA, which stores huge amounts of organismal data at high densities with great stability, may one day be used to store other types of information.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q092-f3ff4d67e233b373196a5785\", \"title\": \"arXiv:1902.02292\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.\", \"mechanism\": \"The molecular structure of DNA allows for dense encoding of binary data into nucleotide sequences. Information-theoretic frameworks model the DNA storage system as a communication channel with specific capacity limits determined by synthesis/sequencing errors and biochemical constraints, theoretically validating its feasibility for archival purposes d",
+    "evidence_ids": [
+      "EV-Q092-2fbd48e494c76f6214c0e981",
+      "EV-Q092-f3ff4d67e233b373196a5785"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5adb46403756",
+    "mock": false
+  },
+  {
+    "event_id": "148920085735",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:02:39.547009+00:00",
+    "ended_at": "2026-08-22T09:02:56.643239+00:00",
+    "duration_ms": 17096,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q092\", \"domain\": \"Information Science\", \"question\": \"Can DNA act as an information storage medium?\", \"source_page\": 32, \"booklet_excerpt\": \"DNA, which stores huge amounts of organismal data at high densities with great stability, may one day be used to store other types of information.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"general_scientific_unknown\", \"recommended_hypothesis\": {\"hypothesis\": \"DNA can function as a viable archival information storage medi",
+    "output_summary": "{\"technical_details\": \"This study validates the hypothesis that DNA functions as a viable archival storage medium by quantifying its information-theoretic channel capacity. We model the DNA storage system as a discrete memoryless channel (DMC) or a deletion/insertion/substitution channel, incorporating error rates typical of synthesis and sequencing technologies. The core technical task is to derive the Shannon capacity C of this channel under specific biochemical constraints (e.g., homopolymer limits, GC-content balance) and compare it against the theoretical density limits of traditional mag",
+    "evidence_ids": [
+      "EV-Q092-2fbd48e494c76f6214c0e981"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "dfb3eaf4ccea",
+    "mock": false
+  },
+  {
+    "event_id": "1cf3edc6d105",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:02:56.644236+00:00",
+    "ended_at": "2026-08-22T09:03:03.139403+00:00",
+    "duration_ms": 6495,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q092\", \"domain\": \"Information Science\", \"question\": \"Can DNA act as an information storage medium?\", \"source_page\": 32, \"booklet_excerpt\": \"DNA, which stores huge amounts of organismal data at high densities with great stability, may one day be used to store other types of information.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"DNA can function as a viable archival information storage medium because its physical properties support high",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly links DNA storage viability to information-theoretic foundations.\", \"Experiment design correctly identifies the task as theoretical derivation and simulation rather than wet-lab validation, aligning with the available evidence type.\", \"Results field correctly states 'pending' and does not fabricate channel capacity values or density metrics.\", \"Falsifiability is well-defined via the requirement for non-zero channel capacity under realistic error constrai",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "62c6c72864f1",
+    "mock": false
+  },
+  {
+    "event_id": "5269cf3e1bde",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:03:03.140403+00:00",
+    "ended_at": "2026-08-22T09:03:18.064731+00:00",
+    "duration_ms": 14924,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly links DNA storage viability to information-theoretic foundations.\", \"Experiment design correctly identifies the task as theoretical derivation and simulation rather than wet-lab validation, aligning with the available evidence type.\", \"Results field correctly states 'pending' and does not fabricate channel capacity values or density metrics.\", \"Falsifiability is well-defined via the requirement for non-zero chan",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.\", \"mechanism\": \"The molecular structure of DNA allows for dense encoding of binary data into nucleotide sequences. Information-theoretic frameworks model the DNA storage system as a communication channel with specific capacity limits determined by synthesis/sequencing errors and biochemical constraints, theoretically validating its feasibility for archival purposes d",
+    "evidence_ids": [
+      "EV-Q092-2fbd48e494c76f6214c0e981",
+      "EV-Q092-f3ff4d67e233b373196a5785"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2b55c0239464",
+    "mock": false
+  },
+  {
+    "event_id": "e0e980c2e823",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:03:18.065732+00:00",
+    "ended_at": "2026-08-22T09:03:36.517184+00:00",
+    "duration_ms": 18451,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly links DNA storage viability to information-theoretic foundations.\", \"Experiment design correctly identifies the task as theoretical derivation and simulation rather than wet-lab validation, aligning with the available evidence type.\", \"Results field correctly states 'pending' and does not fabricate channel capacity values or density metrics.\", \"Falsifiability is well-defined via the requirement for non-zero chan",
+    "output_summary": "{\"technical_details\": \"This study validates the hypothesis by modeling DNA storage as a discrete memoryless channel (DMC) with insertion, deletion, and substitution errors. We will derive the Shannon capacity C under biochemical constraints (e.g., GC-content balance, homopolymer limits) using the Blahut-Arimoto algorithm. The model parameters (error rates) will be explicitly extracted from the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981. Theoretical information density (bits/gram) will be calculated and compared against external benchmarks for traditional archival media (e.g.",
+    "evidence_ids": [
+      "EV-Q092-2fbd48e494c76f6214c0e981"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2aea4143b610",
+    "mock": false
+  },
+  {
+    "event_id": "bc24a0a3c15d",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:03:36.517184+00:00",
+    "ended_at": "2026-08-22T09:03:43.719403+00:00",
+    "duration_ms": 7202,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly links DNA storage viability to information-theoretic foundations.\", \"Experiment design correctly identifies the task as theoretical derivation and simulation rather than wet-lab validation, aligning with the available evidence type.\", \"Results field correctly states 'pending' and does not fabricate channel capacity values or density metrics.\", \"Falsifiability is well-defined via the requirement for non-zero chan",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revision successfully addresses previous feedback by explicitly incorporating the requirement to cite specific error rate parameters from EV-Q092-2fbd48e494c76f6214c0e981 into both the technical_details and reproducibility_checklist.\", \"The distinction between evidence-based parameters (DNA channel model) and external non-evidence benchmarks (LTO roadmap) is now clearly articulated in the datasets and reproducibility sections, resolving the prior ambiguity.\", \"Hypothesis remains strictly grounded in the single relevant evidence card EV-Q092-2fbd48e49",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d888a9807032",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:dc376871edad2b86",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.",
+              "mechanism": "The molecular structure of DNA allows for dense encoding of binary data into nucleotide sequences. Information-theoretic frameworks model the DNA storage system as a communication channel with specific capacity limits determined by synthesis/sequencing errors and biochemical constraints, theoretically validating its feasibility for archival purposes despite practical implementation gaps.",
+              "falsifiable_prediction": "If DNA is a viable storage medium under current theoretical understanding, then established information-theoretic models must demonstrate a non-zero positive channel capacity for DNA storage that exceeds minimum thresholds for archival utility, even when accounting for typical error rates.",
+              "required_observations": [
+                "Derivation or citation of non-zero channel capacity bounds from information-theoretic models of DNA storage",
+                "Theoretical comparison of DNA storage density limits against traditional archival media benchmarks",
+                "Mathematical proof that error correction is feasible within the derived channel capacity"
+              ],
+              "risk_of_being_wrong": "The hypothesis relies on theoretical models which may not account for unmodeled biochemical noise or economic constraints; if the theoretical channel capacity is near-zero under realistic parameters, DNA would not be viable regardless of physical density.",
+              "supporting_evidence_ids": [
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "General computational information flow frameworks can be adapted to formally define and quantify the reliability of DNA as an information storage medium, bridging the gap between abstract theory and physical implementation.",
+              "mechanism": "While DNA has known physical advantages for storage, its operational viability depends on reliable information transfer during write/read cycles. General theoretical frameworks for information flow in computational systems provide formal tools to model these transfers, potentially allowing rigorous definition of DNA storage reliability metrics beyond simple density/longevity claims.",
+              "falsifiable_prediction": "If general information flow frameworks are applicable to DNA storage, then adapting such a framework to model DNA synthesis/sequencing as a computational process should yield quantifiable reliability metrics (e.g., mutual information bounds) consistent with DNA-specific information-theoretic results.",
+              "required_observations": [
+                "Successful mapping of DNA storage operations onto a general computational information flow framework",
+                "Derivation of reliability metrics using the general framework that match or refine DNA-specific theoretical predictions",
+                "Demonstration that the general framework captures unique DNA storage constraints (e.g., sequence-dependent errors)"
+              ],
+              "risk_of_being_wrong": "General computational frameworks may lack the specificity to capture biochemical nuances of DNA storage, leading to inaccurate or trivial reliability estimates that do not advance beyond existing DNA-specific theories.",
+              "supporting_evidence_ids": [
+                "EV-Q092-f3ff4d67e233b373196a5785",
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.5,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.6
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly grounded in the only evidence card specifically addressing DNA data storage (EV-Q092-2fbd48e494c76f6214c0e981), which explicitly cites information-theoretic foundations and DNA's attractiveness for archival storage. It is highly feasible to validate via theoretical analysis or simulation using public models, and it makes a clear falsifiable prediction about channel capacity. Hypothesis 1, while novel, relies on cross-domain application of a general framework (EV-Q092-f3ff4d67e233b373196a5785) not proven relevant to DNA storage, increasing risk and reducing direct evidence support.",
+          "rejected_directions": [
+            "Hypotheses focusing on cost-effectiveness or practical engineering implementations were rejected due to complete absence of empirical or economic data in allowed evidence.",
+            "Hypotheses linking DNA storage to cognitive biases or fairness-aware retrieval were rejected as irrelevant to the core question of DNA's physical/informational viability as a storage medium."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study validates the hypothesis that DNA functions as a viable archival storage medium by quantifying its information-theoretic channel capacity. We model the DNA storage system as a discrete memoryless channel (DMC) or a deletion/insertion/substitution channel, incorporating error rates typical of synthesis and sequencing technologies. The core technical task is to derive the Shannon capacity C of this channel under specific biochemical constraints (e.g., homopolymer limits, GC-content balance) and compare it against the theoretical density limits of traditional magnetic tape or optical media. We will implement numerical simulations to estimate mutual information I(X;Y) between input nucleotide sequences and output reads, applying forward error correction (FEC) codes (e.g., Reed-Solomon or LDPC) to determine the net usable capacity.",
+          "datasets": {
+            "source": {
+              "name": "Theoretical DNA Storage Channel Models",
+              "description": "Synthetic datasets generated based on error profiles (substitution, insertion, deletion rates) derived from literature cited in EV-Q092-2fbd48e494c76f6214c0e981. Includes parameters for synthesis fidelity and sequencing noise.",
+              "type": "simulated",
+              "evidence_ids": [
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ]
+            },
+            "target": {
+              "name": "Channel Capacity Bounds and Density Metrics",
+              "description": "Calculated upper bounds on bits per gram and bits per cubic millimeter, alongside channel capacity in bits per symbol, compared against archival benchmarks.",
+              "type": "derived_metrics"
+            }
+          },
+          "methods": "1. Channel Modeling: Define a probabilistic transition matrix P(Y|X) representing DNA synthesis and sequencing errors, parameterized by empirical error rates from foundational studies. 2. Capacity Estimation: Use the Blahut-Arimoto algorithm or Monte Carlo methods to compute the channel capacity C = max_{P(X)} I(X;Y). 3. Constraint Integration: Impose biological constraints (no long homopolymers, balanced GC content) as input distribution restrictions and recalculate capacity. 4. Benchmarking: Compare the derived theoretical density (bits/gram) against standard archival media (LTO tape, HDD) using established physical constants.",
+          "experiments": {
+            "baselines": [
+              "Unconstrained Binary Symmetric Channel (BSC) with equivalent raw error rate",
+              "Standard Magnetic Tape Archival Density (theoretical limit)",
+              "Naive DNA Encoding without Error Correction (raw capacity)"
+            ],
+            "metrics": [
+              "Channel Capacity (bits/symbol)",
+              "Information Density (bits/gram)",
+              "Net Storage Efficiency (after FEC overhead)",
+              "Mutual Information I(X;Y)"
+            ],
+            "ablation": "Varying error rates (synthesis vs. sequencing dominance), removing GC-content constraints, and testing different FEC code rates to observe impact on net capacity.",
+            "validation_protocol": "Cross-validate theoretical capacity estimates against published experimental data points from the literature referenced in EV-Q092-2fbd48e494c76f6214c0e981 to ensure model fidelity. Verify that calculated densities exceed minimum archival thresholds (e.g., >10^18 bits/gram)."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact error probability parameters for synthesis and sequencing steps",
+            "Specify the constraint set for valid nucleotide sequences (e.g., max homopolymer length)",
+            "Provide code for mutual information estimation (e.g., Blahut-Arimoto implementation)",
+            "Document baseline physical constants for traditional media comparison"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU for numerical optimization and Monte Carlo simulations",
+            "estimated_runtime": "2-4 hours for convergence of capacity estimation algorithms",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Information Theory Toolbox"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-090147-9209cb03",
+        "version_number": 1,
+        "version_id": "20260822-090147-9209cb03:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.",
+              "mechanism": "The molecular structure of DNA allows for dense encoding of binary data into nucleotide sequences. Information-theoretic frameworks model the DNA storage system as a communication channel with specific capacity limits determined by synthesis/sequencing errors and biochemical constraints, theoretically validating its feasibility for archival purposes despite practical implementation gaps.",
+              "falsifiable_prediction": "If DNA is a viable storage medium under current theoretical understanding, then established information-theoretic models must demonstrate a non-zero positive channel capacity for DNA storage that exceeds minimum thresholds for archival utility, even when accounting for typical error rates.",
+              "required_observations": [
+                "Derivation or citation of non-zero channel capacity bounds from information-theoretic models of DNA storage",
+                "Theoretical comparison of DNA storage density limits against traditional archival media benchmarks",
+                "Mathematical proof that error correction is feasible within the derived channel capacity"
+              ],
+              "risk_of_being_wrong": "The hypothesis relies on theoretical models which may not account for unmodeled biochemical noise or economic constraints; if the theoretical channel capacity is near-zero under realistic parameters, DNA would not be viable regardless of physical density.",
+              "supporting_evidence_ids": [
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "General computational information flow frameworks can be adapted to formally define and quantify the reliability of DNA as an information storage medium, bridging the gap between abstract theory and physical implementation.",
+              "mechanism": "While DNA has known physical advantages for storage, its operational viability depends on reliable information transfer during write/read cycles. General theoretical frameworks for information flow in computational systems provide formal tools to model these transfers, potentially allowing rigorous definition of DNA storage reliability metrics beyond simple density/longevity claims.",
+              "falsifiable_prediction": "If general information flow frameworks are applicable to DNA storage, then adapting such a framework to model DNA synthesis/sequencing as a computational process should yield quantifiable reliability metrics (e.g., mutual information bounds) consistent with DNA-specific information-theoretic results.",
+              "required_observations": [
+                "Successful mapping of DNA storage operations onto a general computational information flow framework",
+                "Derivation of reliability metrics using the general framework that match or refine DNA-specific theoretical predictions",
+                "Demonstration that the general framework captures unique DNA storage constraints (e.g., sequence-dependent errors)"
+              ],
+              "risk_of_being_wrong": "General computational frameworks may lack the specificity to capture biochemical nuances of DNA storage, leading to inaccurate or trivial reliability estimates that do not advance beyond existing DNA-specific theories.",
+              "supporting_evidence_ids": [
+                "EV-Q092-f3ff4d67e233b373196a5785",
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.5,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.6
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly grounded in the only evidence card specifically addressing DNA data storage (EV-Q092-2fbd48e494c76f6214c0e981), which explicitly cites information-theoretic foundations and DNA's attractiveness for archival storage. It is highly feasible to validate via theoretical analysis or simulation using public models, and it makes a clear falsifiable prediction about channel capacity. Hypothesis 1, while novel, relies on cross-domain application of a general framework (EV-Q092-f3ff4d67e233b373196a5785) not proven relevant to DNA storage, increasing risk and reducing direct evidence support.",
+          "rejected_directions": [
+            "Hypotheses focusing on cost-effectiveness or practical engineering implementations were rejected due to complete absence of empirical or economic data in allowed evidence.",
+            "Hypotheses linking DNA storage to cognitive biases or fairness-aware retrieval were rejected as irrelevant to the core question of DNA's physical/informational viability as a storage medium."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study validates the hypothesis that DNA functions as a viable archival storage medium by quantifying its information-theoretic channel capacity. We model the DNA storage system as a discrete memoryless channel (DMC) or a deletion/insertion/substitution channel, incorporating error rates typical of synthesis and sequencing technologies. The core technical task is to derive the Shannon capacity C of this channel under specific biochemical constraints (e.g., homopolymer limits, GC-content balance) and compare it against the theoretical density limits of traditional magnetic tape or optical media. We will implement numerical simulations to estimate mutual information I(X;Y) between input nucleotide sequences and output reads, applying forward error correction (FEC) codes (e.g., Reed-Solomon or LDPC) to determine the net usable capacity.",
+          "datasets": {
+            "source": {
+              "name": "Theoretical DNA Storage Channel Models",
+              "description": "Synthetic datasets generated based on error profiles (substitution, insertion, deletion rates) derived from literature cited in EV-Q092-2fbd48e494c76f6214c0e981. Includes parameters for synthesis fidelity and sequencing noise.",
+              "type": "simulated",
+              "evidence_ids": [
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ]
+            },
+            "target": {
+              "name": "Channel Capacity Bounds and Density Metrics",
+              "description": "Calculated upper bounds on bits per gram and bits per cubic millimeter, alongside channel capacity in bits per symbol, compared against archival benchmarks.",
+              "type": "derived_metrics"
+            }
+          },
+          "methods": "1. Channel Modeling: Define a probabilistic transition matrix P(Y|X) representing DNA synthesis and sequencing errors, parameterized by empirical error rates from foundational studies. 2. Capacity Estimation: Use the Blahut-Arimoto algorithm or Monte Carlo methods to compute the channel capacity C = max_{P(X)} I(X;Y). 3. Constraint Integration: Impose biological constraints (no long homopolymers, balanced GC content) as input distribution restrictions and recalculate capacity. 4. Benchmarking: Compare the derived theoretical density (bits/gram) against standard archival media (LTO tape, HDD) using established physical constants.",
+          "experiments": {
+            "baselines": [
+              "Unconstrained Binary Symmetric Channel (BSC) with equivalent raw error rate",
+              "Standard Magnetic Tape Archival Density (theoretical limit)",
+              "Naive DNA Encoding without Error Correction (raw capacity)"
+            ],
+            "metrics": [
+              "Channel Capacity (bits/symbol)",
+              "Information Density (bits/gram)",
+              "Net Storage Efficiency (after FEC overhead)",
+              "Mutual Information I(X;Y)"
+            ],
+            "ablation": "Varying error rates (synthesis vs. sequencing dominance), removing GC-content constraints, and testing different FEC code rates to observe impact on net capacity.",
+            "validation_protocol": "Cross-validate theoretical capacity estimates against published experimental data points from the literature referenced in EV-Q092-2fbd48e494c76f6214c0e981 to ensure model fidelity. Verify that calculated densities exceed minimum archival thresholds (e.g., >10^18 bits/gram)."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact error probability parameters for synthesis and sequencing steps",
+            "Specify the constraint set for valid nucleotide sequences (e.g., max homopolymer length)",
+            "Provide code for mutual information estimation (e.g., Blahut-Arimoto implementation)",
+            "Document baseline physical constants for traditional media comparison"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU for numerical optimization and Monte Carlo simulations",
+            "estimated_runtime": "2-4 hours for convergence of capacity estimation algorithms",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Information Theory Toolbox"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The recommended hypothesis is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly links DNA storage viability to information-theoretic foundations.",
+            "Experiment design correctly identifies the task as theoretical derivation and simulation rather than wet-lab validation, aligning with the available evidence type.",
+            "Results field correctly states 'pending' and does not fabricate channel capacity values or density metrics.",
+            "Falsifiability is well-defined via the requirement for non-zero channel capacity under realistic error constraints.",
+            "Rejected hypotheses appropriately exclude irrelevant evidence cards (fairness, cognitive bias) that do not pertain to DNA storage physics."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+            "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:530503ae2293",
+            "category": "required_revision",
+            "description": "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:dccc682d5a08",
+            "category": "required_revision",
+            "description": "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "e42f75f0e97eef9451fddcbe6e39bb25087638d70b6f945ef036c9ffc4ca839a",
+          "experiment_designer": "c3bd03bbfdfe7a703cde77ad51ea91bc91ece57154acf9e9495489dee4fc5f7c",
+          "scientific_reviewer": "ef22e984e31c0c91085ec4f216360764b901f2d183725c7ac27ecafb9fc71680"
+        }
+      },
+      "parent_version_id": "20260822-090147-9209cb03:v1",
+      "lineage": [
+        "20260822-090147-9209cb03:v1",
+        "20260822-090147-9209cb03:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The recommended hypothesis is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly links DNA storage viability to information-theoretic foundations.",
+          "Experiment design correctly identifies the task as theoretical derivation and simulation rather than wet-lab validation, aligning with the available evidence type.",
+          "Results field correctly states 'pending' and does not fabricate channel capacity values or density metrics.",
+          "Falsifiability is well-defined via the requirement for non-zero channel capacity under realistic error constraints.",
+          "Rejected hypotheses appropriately exclude irrelevant evidence cards (fairness, cognitive bias) that do not pertain to DNA storage physics."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+          "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.85,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revision successfully addresses previous feedback by explicitly incorporating the requirement to cite specific error rate parameters from EV-Q092-2fbd48e494c76f6214c0e981 into both the technical_details and reproducibility_checklist.",
+          "The distinction between evidence-based parameters (DNA channel model) and external non-evidence benchmarks (LTO roadmap) is now clearly articulated in the datasets and reproducibility sections, resolving the prior ambiguity.",
+          "Hypothesis remains strictly grounded in the single relevant evidence card EV-Q092-2fbd48e494c76f6214c0e981 without overclaiming or fabricating results.",
+          "Results field correctly maintains 'pending' status, adhering to the prohibition against fabricating experimental outcomes for unexecuted theoretical derivations.",
+          "Falsifiability is preserved through the specific prediction of non-zero channel capacity under constrained error models, which is theoretically verifiable."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "During execution, if specific numerical error rates cannot be located in the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981, this must be explicitly reported as a knowledge_gap rather than substituting values from non-allowed sources.",
+          "Ensure the final report includes a dedicated 'External Parameters' section listing all non-evidence-based constants (e.g., LTO density, molecular weights) with their specific external citations to maintain auditability."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.98,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:c0f8847b5c4e4847",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+          "issue_id": "required_revision:530503ae2293"
+        },
+        {
+          "failure_id": "failure:4dd7b25d8f3c929e",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.",
+          "issue_id": "required_revision:dccc682d5a08"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:3eee969352592033",
+          "issue_id": "required_revision:dccc682d5a08",
+          "reason": "Reviewer item required_revision:dccc682d5a08 requested 'Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.'. V2 changes technical_details; deterministic correlation evidence tokens=['archival', 'benchmark', 'card', 'e.g', 'evidence', 'external', 'lto', 'media', 'parameter', 'provid', 'sourc', 'specification', 'traditional'], coverage=0.542.",
+          "before": "This study validates the hypothesis that DNA functions as a viable archival storage medium by quantifying its information-theoretic channel capacity. We model the DNA storage system as a discrete memoryless channel (DMC) or a deletion/insertion/substitution channel, incorporating error rates typical of synthesis and sequencing technologies. The core technical task is to derive the Shannon capacity C of this channel under specific biochemical constraints (e.g., homopolymer limits, GC-content balance) and compare it against the theoretical density limits of traditional magnetic tape or optical media. We will implement numerical simulations to estimate mutual information I(X;Y) between input nucleotide sequences and output reads, applying forward error correction (FEC) codes (e.g., Reed-Solomon or LDPC) to determine the net usable capacity.",
+          "after": "This study validates the hypothesis by modeling DNA storage as a discrete memoryless channel (DMC) with insertion, deletion, and substitution errors. We will derive the Shannon capacity C under biochemical constraints (e.g., GC-content balance, homopolymer limits) using the Blahut-Arimoto algorithm. The model parameters (error rates) will be explicitly extracted from the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981. Theoretical information density (bits/gram) will be calculated and compared against external benchmarks for traditional archival media (e.g., LTO tape specifications), which are sourced independently of the provided evidence cards.",
+          "evidence_refs": [
+            "EV-Q092-2fbd48e494c76f6214c0e981"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:e8d6216e6212f886",
+          "issue_id": "required_revision:dccc682d5a08",
+          "reason": "Reviewer item required_revision:dccc682d5a08 requested 'Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['archival', 'bas', 'benchmark', 'checklist', 'document', 'e.g', 'evidence', 'external', 'lto', 'media', 'non', 'parameter', 'reproducibility', 'roadmap', 'traditional'], coverage=0.625.",
+          "before": [
+            "Define exact error probability parameters for synthesis and sequencing steps",
+            "Specify the constraint set for valid nucleotide sequences (e.g., max homopolymer length)",
+            "Provide code for mutual information estimation (e.g., Blahut-Arimoto implementation)",
+            "Document baseline physical constants for traditional media comparison"
+          ],
+          "after": [
+            "Explicitly cite specific error rate parameters from the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981",
+            "Specify the constraint set for valid nucleotide sequences (e.g., max homopolymer length, GC range)",
+            "Provide code for mutual information estimation (e.g., Blahut-Arimoto implementation)",
+            "Document external sources for traditional archival media benchmarks (e.g., LTO roadmap) as non-evidence-based parameters",
+            "Define the exact molecular weight constants used for bits/gram conversion"
+          ],
+          "evidence_refs": [
+            "EV-Q092-2fbd48e494c76f6214c0e981"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:530503ae2293",
+          "category": "required_revision",
+          "description": "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:dccc682d5a08",
+          "category": "required_revision",
+          "description": "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:3eee969352592033,change:e8d6216e6212f886; evidence=EV-Q092-2fbd48e494c76f6214c0e981; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b12fa2243d3f",
+          "category": "required_revision",
+          "description": "During execution, if specific numerical error rates cannot be located in the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981, this must be explicitly reported as a knowledge_gap rather than substituting values from non-allowed sources.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:f303c531c3c7",
+          "category": "required_revision",
+          "description": "Ensure the final report includes a dedicated 'External Parameters' section listing all non-evidence-based constants (e.g., LTO density, molecular weights) with their specific external citations to maintain auditability.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.95,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "General computational information flow frameworks can be adapted to formally define and quantify the reliability of DNA as an information storage medium, bridging the gap between abstract theory and physical implementation.",
+          "overall_score": 0.6,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 1,
+      "blocking_reasons": [
+        "required_revision_without_change:required_revision:530503ae2293",
+        "unresolved_issue:required_revision:530503ae2293",
+        "unresolved_issue:required_revision:b12fa2243d3f",
+        "unresolved_issue:required_revision:f303c531c3c7",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:530503ae2293: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:b12fa2243d3f: During execution, if specific numerical error rates cannot be located in the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981, this must be explicitly reported as a knowledge_gap rather than substituting values from non-allowed sources.",
+        "required_revision:f303c531c3c7: Ensure the final report includes a dedicated 'External Parameters' section listing all non-evidence-based constants (e.g., LTO density, molecular weights) with their specific external citations to maintain auditability."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-090147-9209cb03",
+        "version_number": 1,
+        "version_id": "20260822-090147-9209cb03:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.",
+              "mechanism": "The molecular structure of DNA allows for dense encoding of binary data into nucleotide sequences. Information-theoretic frameworks model the DNA storage system as a communication channel with specific capacity limits determined by synthesis/sequencing errors and biochemical constraints, theoretically validating its feasibility for archival purposes despite practical implementation gaps.",
+              "falsifiable_prediction": "If DNA is a viable storage medium under current theoretical understanding, then established information-theoretic models must demonstrate a non-zero positive channel capacity for DNA storage that exceeds minimum thresholds for archival utility, even when accounting for typical error rates.",
+              "required_observations": [
+                "Derivation or citation of non-zero channel capacity bounds from information-theoretic models of DNA storage",
+                "Theoretical comparison of DNA storage density limits against traditional archival media benchmarks",
+                "Mathematical proof that error correction is feasible within the derived channel capacity"
+              ],
+              "risk_of_being_wrong": "The hypothesis relies on theoretical models which may not account for unmodeled biochemical noise or economic constraints; if the theoretical channel capacity is near-zero under realistic parameters, DNA would not be viable regardless of physical density.",
+              "supporting_evidence_ids": [
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "General computational information flow frameworks can be adapted to formally define and quantify the reliability of DNA as an information storage medium, bridging the gap between abstract theory and physical implementation.",
+              "mechanism": "While DNA has known physical advantages for storage, its operational viability depends on reliable information transfer during write/read cycles. General theoretical frameworks for information flow in computational systems provide formal tools to model these transfers, potentially allowing rigorous definition of DNA storage reliability metrics beyond simple density/longevity claims.",
+              "falsifiable_prediction": "If general information flow frameworks are applicable to DNA storage, then adapting such a framework to model DNA synthesis/sequencing as a computational process should yield quantifiable reliability metrics (e.g., mutual information bounds) consistent with DNA-specific information-theoretic results.",
+              "required_observations": [
+                "Successful mapping of DNA storage operations onto a general computational information flow framework",
+                "Derivation of reliability metrics using the general framework that match or refine DNA-specific theoretical predictions",
+                "Demonstration that the general framework captures unique DNA storage constraints (e.g., sequence-dependent errors)"
+              ],
+              "risk_of_being_wrong": "General computational frameworks may lack the specificity to capture biochemical nuances of DNA storage, leading to inaccurate or trivial reliability estimates that do not advance beyond existing DNA-specific theories.",
+              "supporting_evidence_ids": [
+                "EV-Q092-f3ff4d67e233b373196a5785",
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.5,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.6
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is directly grounded in the only evidence card specifically addressing DNA data storage (EV-Q092-2fbd48e494c76f6214c0e981), which explicitly cites information-theoretic foundations and DNA's attractiveness for archival storage. It is highly feasible to validate via theoretical analysis or simulation using public models, and it makes a clear falsifiable prediction about channel capacity. Hypothesis 1, while novel, relies on cross-domain application of a general framework (EV-Q092-f3ff4d67e233b373196a5785) not proven relevant to DNA storage, increasing risk and reducing direct evidence support.",
+          "rejected_directions": [
+            "Hypotheses focusing on cost-effectiveness or practical engineering implementations were rejected due to complete absence of empirical or economic data in allowed evidence.",
+            "Hypotheses linking DNA storage to cognitive biases or fairness-aware retrieval were rejected as irrelevant to the core question of DNA's physical/informational viability as a storage medium."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study validates the hypothesis that DNA functions as a viable archival storage medium by quantifying its information-theoretic channel capacity. We model the DNA storage system as a discrete memoryless channel (DMC) or a deletion/insertion/substitution channel, incorporating error rates typical of synthesis and sequencing technologies. The core technical task is to derive the Shannon capacity C of this channel under specific biochemical constraints (e.g., homopolymer limits, GC-content balance) and compare it against the theoretical density limits of traditional magnetic tape or optical media. We will implement numerical simulations to estimate mutual information I(X;Y) between input nucleotide sequences and output reads, applying forward error correction (FEC) codes (e.g., Reed-Solomon or LDPC) to determine the net usable capacity.",
+          "datasets": {
+            "source": {
+              "name": "Theoretical DNA Storage Channel Models",
+              "description": "Synthetic datasets generated based on error profiles (substitution, insertion, deletion rates) derived from literature cited in EV-Q092-2fbd48e494c76f6214c0e981. Includes parameters for synthesis fidelity and sequencing noise.",
+              "type": "simulated",
+              "evidence_ids": [
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ]
+            },
+            "target": {
+              "name": "Channel Capacity Bounds and Density Metrics",
+              "description": "Calculated upper bounds on bits per gram and bits per cubic millimeter, alongside channel capacity in bits per symbol, compared against archival benchmarks.",
+              "type": "derived_metrics"
+            }
+          },
+          "methods": "1. Channel Modeling: Define a probabilistic transition matrix P(Y|X) representing DNA synthesis and sequencing errors, parameterized by empirical error rates from foundational studies. 2. Capacity Estimation: Use the Blahut-Arimoto algorithm or Monte Carlo methods to compute the channel capacity C = max_{P(X)} I(X;Y). 3. Constraint Integration: Impose biological constraints (no long homopolymers, balanced GC content) as input distribution restrictions and recalculate capacity. 4. Benchmarking: Compare the derived theoretical density (bits/gram) against standard archival media (LTO tape, HDD) using established physical constants.",
+          "experiments": {
+            "baselines": [
+              "Unconstrained Binary Symmetric Channel (BSC) with equivalent raw error rate",
+              "Standard Magnetic Tape Archival Density (theoretical limit)",
+              "Naive DNA Encoding without Error Correction (raw capacity)"
+            ],
+            "metrics": [
+              "Channel Capacity (bits/symbol)",
+              "Information Density (bits/gram)",
+              "Net Storage Efficiency (after FEC overhead)",
+              "Mutual Information I(X;Y)"
+            ],
+            "ablation": "Varying error rates (synthesis vs. sequencing dominance), removing GC-content constraints, and testing different FEC code rates to observe impact on net capacity.",
+            "validation_protocol": "Cross-validate theoretical capacity estimates against published experimental data points from the literature referenced in EV-Q092-2fbd48e494c76f6214c0e981 to ensure model fidelity. Verify that calculated densities exceed minimum archival thresholds (e.g., >10^18 bits/gram)."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Define exact error probability parameters for synthesis and sequencing steps",
+            "Specify the constraint set for valid nucleotide sequences (e.g., max homopolymer length)",
+            "Provide code for mutual information estimation (e.g., Blahut-Arimoto implementation)",
+            "Document baseline physical constants for traditional media comparison"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU for numerical optimization and Monte Carlo simulations",
+            "estimated_runtime": "2-4 hours for convergence of capacity estimation algorithms",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Information Theory Toolbox"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The recommended hypothesis is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly links DNA storage viability to information-theoretic foundations.",
+            "Experiment design correctly identifies the task as theoretical derivation and simulation rather than wet-lab validation, aligning with the available evidence type.",
+            "Results field correctly states 'pending' and does not fabricate channel capacity values or density metrics.",
+            "Falsifiability is well-defined via the requirement for non-zero channel capacity under realistic error constraints.",
+            "Rejected hypotheses appropriately exclude irrelevant evidence cards (fairness, cognitive bias) that do not pertain to DNA storage physics."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+            "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:530503ae2293",
+            "category": "required_revision",
+            "description": "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:dccc682d5a08",
+            "category": "required_revision",
+            "description": "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "e42f75f0e97eef9451fddcbe6e39bb25087638d70b6f945ef036c9ffc4ca839a",
+          "experiment_designer": "c3bd03bbfdfe7a703cde77ad51ea91bc91ece57154acf9e9495489dee4fc5f7c",
+          "scientific_reviewer": "ef22e984e31c0c91085ec4f216360764b901f2d183725c7ac27ecafb9fc71680"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-090147-9209cb03",
+        "version_number": 2,
+        "version_id": "20260822-090147-9209cb03:v2",
+        "parent_version_id": "20260822-090147-9209cb03:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.",
+              "mechanism": "The molecular structure of DNA allows for dense encoding of binary data into nucleotide sequences. Information-theoretic frameworks model the DNA storage system as a communication channel with specific capacity limits determined by synthesis/sequencing errors and biochemical constraints, theoretically validating its feasibility for archival purposes despite practical implementation gaps.",
+              "falsifiable_prediction": "If DNA is a viable storage medium under current theoretical understanding, then established information-theoretic models must demonstrate a non-zero positive channel capacity for DNA storage that exceeds minimum thresholds for archival utility, even when accounting for typical error rates.",
+              "required_observations": [
+                "Derivation or citation of non-zero channel capacity bounds from information-theoretic models of DNA storage",
+                "Theoretical comparison of DNA storage density limits against traditional archival media benchmarks (sourced externally)",
+                "Mathematical proof that error correction is feasible within the derived channel capacity"
+              ],
+              "risk_of_being_wrong": "The hypothesis relies on theoretical models which may not account for unmodeled biochemical noise or economic constraints; if the theoretical channel capacity is near-zero under realistic parameters, DNA would not be viable regardless of physical density.",
+              "supporting_evidence_ids": [
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "General computational information flow frameworks can be adapted to formally define and quantify the reliability of DNA as an information storage medium, bridging the gap between abstract theory and physical implementation.",
+              "mechanism": "While DNA has known physical advantages for storage, its operational viability depends on reliable information transfer during write/read cycles. General theoretical frameworks for information flow in computational systems provide formal tools to model these transfers, potentially allowing rigorous definition of DNA storage reliability metrics beyond simple density/longevity claims.",
+              "falsifiable_prediction": "If general information flow frameworks are applicable to DNA storage, then adapting such a framework to model DNA synthesis/sequencing as a computational process should yield quantifiable reliability metrics (e.g., mutual information bounds) consistent with DNA-specific information-theoretic results.",
+              "required_observations": [
+                "Successful mapping of DNA storage operations onto a general computational information flow framework",
+                "Derivation of reliability metrics using the general framework that match or refine DNA-specific theoretical predictions",
+                "Demonstration that the general framework captures unique DNA storage constraints (e.g., sequence-dependent errors)"
+              ],
+              "risk_of_being_wrong": "General computational frameworks may lack the specificity to capture biochemical nuances of DNA storage, leading to inaccurate or trivial reliability estimates that do not advance beyond existing DNA-specific theories.",
+              "supporting_evidence_ids": [
+                "EV-Q092-f3ff4d67e233b373196a5785",
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.5,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.6
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 remains the optimal choice as it is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly establishes the information-theoretic foundations of DNA storage. It directly addresses the reviewer's feedback by maintaining a theoretical/simulation-based validation approach that avoids fabricating wet-lab results. The required revisions regarding specific error rate parameters and external benchmarking are execution-level details that strengthen this hypothesis's reproducibility without altering its core theoretical premise. Hypothesis 1 is retained as an alternative but is less supported due to the lack of direct evidence linking general computational flow frameworks to DNA storage specifically.",
+          "rejected_directions": [
+            "Hypotheses focusing on cost-effectiveness or practical engineering implementations were rejected due to complete absence of empirical or economic data in allowed evidence.",
+            "Hypotheses linking DNA storage to cognitive biases (EV-Q092-1d71a19c2d69e3a65b00ee2c) or fairness-aware retrieval (EV-Q092-32078fe063ec9defdc41d475) were rejected as irrelevant to the core question of DNA's physical/informational viability as a storage medium."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study validates the hypothesis by modeling DNA storage as a discrete memoryless channel (DMC) with insertion, deletion, and substitution errors. We will derive the Shannon capacity C under biochemical constraints (e.g., GC-content balance, homopolymer limits) using the Blahut-Arimoto algorithm. The model parameters (error rates) will be explicitly extracted from the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981. Theoretical information density (bits/gram) will be calculated and compared against external benchmarks for traditional archival media (e.g., LTO tape specifications), which are sourced independently of the provided evidence cards.",
+          "datasets": {
+            "source": {
+              "name": "DNA Storage Channel Parameters",
+              "description": "Error rate parameters (substitution, insertion, deletion probabilities) and biochemical constraints extracted from EV-Q092-2fbd48e494c76f6214c0e981 and its referenced bibliography.",
+              "type": "simulated",
+              "evidence_ids": [
+                "EV-Q092-2fbd48e494c76f6214c0e981"
+              ]
+            },
+            "target": {
+              "name": "External Archival Media Benchmarks",
+              "description": "Theoretical density limits and longevity metrics for traditional media (LTO tape, HDD, optical discs) sourced from industry standards (e.g., LTO roadmap) external to the provided evidence.",
+              "type": "external_reference",
+              "evidence_ids": []
+            }
+          },
+          "methods": "1. Parameter Extraction: Identify specific synthesis and sequencing error rates from EV-Q092-2fbd48e494c76f6214c0e981. 2. Channel Modeling: Construct a transition matrix P(Y|X) for the DNA storage channel, incorporating identified error profiles and biochemical constraints. 3. Capacity Calculation: Apply the Blahut-Arimoto algorithm to compute the channel capacity C = max_{P(X)} I(X;Y). 4. Density Derivation: Convert channel capacity (bits/symbol) to information density (bits/gram) using the molecular weight of nucleotides. 5. Comparative Analysis: Compare derived DNA density against external benchmarks for traditional archival media.",
+          "experiments": {
+            "baselines": [
+              "Unconstrained Binary Symmetric Channel (BSC) with equivalent raw error rate",
+              "Standard Magnetic Tape Archival Density (theoretical limit from external sources)",
+              "Naive DNA Encoding without Error Correction (raw capacity)"
+            ],
+            "metrics": [
+              "Channel Capacity (bits/symbol)",
+              "Information Density (bits/gram)",
+              "Net Storage Efficiency (after FEC overhead)",
+              "Mutual Information I(X;Y)"
+            ],
+            "ablation": "Varying error rates (synthesis vs. sequencing dominance), removing GC-content constraints, and testing different FEC code rates to observe impact on net capacity.",
+            "validation_protocol": "Cross-validate theoretical capacity estimates against published experimental data points cited in EV-Q092-2fbd48e494c76f6214c0e981. Verify that calculated densities exceed minimum archival thresholds. Document all external benchmark sources separately."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Explicitly cite specific error rate parameters from the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981",
+            "Specify the constraint set for valid nucleotide sequences (e.g., max homopolymer length, GC range)",
+            "Provide code for mutual information estimation (e.g., Blahut-Arimoto implementation)",
+            "Document external sources for traditional archival media benchmarks (e.g., LTO roadmap) as non-evidence-based parameters",
+            "Define the exact molecular weight constants used for bits/gram conversion"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU for numerical optimization and Monte Carlo simulations",
+            "estimated_runtime": "2-4 hours for convergence of capacity estimation algorithms",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Information Theory Toolbox"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revision successfully addresses previous feedback by explicitly incorporating the requirement to cite specific error rate parameters from EV-Q092-2fbd48e494c76f6214c0e981 into both the technical_details and reproducibility_checklist.",
+            "The distinction between evidence-based parameters (DNA channel model) and external non-evidence benchmarks (LTO roadmap) is now clearly articulated in the datasets and reproducibility sections, resolving the prior ambiguity.",
+            "Hypothesis remains strictly grounded in the single relevant evidence card EV-Q092-2fbd48e494c76f6214c0e981 without overclaiming or fabricating results.",
+            "Results field correctly maintains 'pending' status, adhering to the prohibition against fabricating experimental outcomes for unexecuted theoretical derivations.",
+            "Falsifiability is preserved through the specific prediction of non-zero channel capacity under constrained error models, which is theoretically verifiable."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "During execution, if specific numerical error rates cannot be located in the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981, this must be explicitly reported as a knowledge_gap rather than substituting values from non-allowed sources.",
+            "Ensure the final report includes a dedicated 'External Parameters' section listing all non-evidence-based constants (e.g., LTO density, molecular weights) with their specific external citations to maintain auditability."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.98,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:530503ae2293",
+            "category": "required_revision",
+            "description": "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:dccc682d5a08",
+            "category": "required_revision",
+            "description": "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:3eee969352592033,change:e8d6216e6212f886; evidence=EV-Q092-2fbd48e494c76f6214c0e981; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:b12fa2243d3f",
+            "category": "required_revision",
+            "description": "During execution, if specific numerical error rates cannot be located in the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981, this must be explicitly reported as a knowledge_gap rather than substituting values from non-allowed sources.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:f303c531c3c7",
+            "category": "required_revision",
+            "description": "Ensure the final report includes a dedicated 'External Parameters' section listing all non-evidence-based constants (e.g., LTO density, molecular weights) with their specific external citations to maintain auditability.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "13530e682a8044645c7d495569c45002ab286529a9a37754a35d5774960fc60a",
+          "experiment_designer": "8ed53461f30a1819e3a3e6a3f7475991cb4135e1fe43ce0798e19fd2f536ee35",
+          "scientific_reviewer": "a7ba0013b3f1e5466ffb189d5bf8506b46ed7dd62f4fbcccce95d9abc6e38818"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-090147-9209cb03",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-090147-9209cb03:review:v1",
+        "20260822-090147-9209cb03:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-090147-9209cb03:v1",
+        "20260822-090147-9209cb03:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-090147-9209cb03",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-090147-9209cb03:review:v1",
+          "20260822-090147-9209cb03:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-090147-9209cb03:v1",
+          "20260822-090147-9209cb03:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-090147-9209cb03",
+          "version_number": 1,
+          "version_id": "20260822-090147-9209cb03:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.",
+                "mechanism": "The molecular structure of DNA allows for dense encoding of binary data into nucleotide sequences. Information-theoretic frameworks model the DNA storage system as a communication channel with specific capacity limits determined by synthesis/sequencing errors and biochemical constraints, theoretically validating its feasibility for archival purposes despite practical implementation gaps.",
+                "falsifiable_prediction": "If DNA is a viable storage medium under current theoretical understanding, then established information-theoretic models must demonstrate a non-zero positive channel capacity for DNA storage that exceeds minimum thresholds for archival utility, even when accounting for typical error rates.",
+                "required_observations": [
+                  "Derivation or citation of non-zero channel capacity bounds from information-theoretic models of DNA storage",
+                  "Theoretical comparison of DNA storage density limits against traditional archival media benchmarks",
+                  "Mathematical proof that error correction is feasible within the derived channel capacity"
+                ],
+                "risk_of_being_wrong": "The hypothesis relies on theoretical models which may not account for unmodeled biochemical noise or economic constraints; if the theoretical channel capacity is near-zero under realistic parameters, DNA would not be viable regardless of physical density.",
+                "supporting_evidence_ids": [
+                  "EV-Q092-2fbd48e494c76f6214c0e981"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "General computational information flow frameworks can be adapted to formally define and quantify the reliability of DNA as an information storage medium, bridging the gap between abstract theory and physical implementation.",
+                "mechanism": "While DNA has known physical advantages for storage, its operational viability depends on reliable information transfer during write/read cycles. General theoretical frameworks for information flow in computational systems provide formal tools to model these transfers, potentially allowing rigorous definition of DNA storage reliability metrics beyond simple density/longevity claims.",
+                "falsifiable_prediction": "If general information flow frameworks are applicable to DNA storage, then adapting such a framework to model DNA synthesis/sequencing as a computational process should yield quantifiable reliability metrics (e.g., mutual information bounds) consistent with DNA-specific information-theoretic results.",
+                "required_observations": [
+                  "Successful mapping of DNA storage operations onto a general computational information flow framework",
+                  "Derivation of reliability metrics using the general framework that match or refine DNA-specific theoretical predictions",
+                  "Demonstration that the general framework captures unique DNA storage constraints (e.g., sequence-dependent errors)"
+                ],
+                "risk_of_being_wrong": "General computational frameworks may lack the specificity to capture biochemical nuances of DNA storage, leading to inaccurate or trivial reliability estimates that do not advance beyond existing DNA-specific theories.",
+                "supporting_evidence_ids": [
+                  "EV-Q092-f3ff4d67e233b373196a5785",
+                  "EV-Q092-2fbd48e494c76f6214c0e981"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.5,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.6
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is directly grounded in the only evidence card specifically addressing DNA data storage (EV-Q092-2fbd48e494c76f6214c0e981), which explicitly cites information-theoretic foundations and DNA's attractiveness for archival storage. It is highly feasible to validate via theoretical analysis or simulation using public models, and it makes a clear falsifiable prediction about channel capacity. Hypothesis 1, while novel, relies on cross-domain application of a general framework (EV-Q092-f3ff4d67e233b373196a5785) not proven relevant to DNA storage, increasing risk and reducing direct evidence support.",
+            "rejected_directions": [
+              "Hypotheses focusing on cost-effectiveness or practical engineering implementations were rejected due to complete absence of empirical or economic data in allowed evidence.",
+              "Hypotheses linking DNA storage to cognitive biases or fairness-aware retrieval were rejected as irrelevant to the core question of DNA's physical/informational viability as a storage medium."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study validates the hypothesis that DNA functions as a viable archival storage medium by quantifying its information-theoretic channel capacity. We model the DNA storage system as a discrete memoryless channel (DMC) or a deletion/insertion/substitution channel, incorporating error rates typical of synthesis and sequencing technologies. The core technical task is to derive the Shannon capacity C of this channel under specific biochemical constraints (e.g., homopolymer limits, GC-content balance) and compare it against the theoretical density limits of traditional magnetic tape or optical media. We will implement numerical simulations to estimate mutual information I(X;Y) between input nucleotide sequences and output reads, applying forward error correction (FEC) codes (e.g., Reed-Solomon or LDPC) to determine the net usable capacity.",
+            "datasets": {
+              "source": {
+                "name": "Theoretical DNA Storage Channel Models",
+                "description": "Synthetic datasets generated based on error profiles (substitution, insertion, deletion rates) derived from literature cited in EV-Q092-2fbd48e494c76f6214c0e981. Includes parameters for synthesis fidelity and sequencing noise.",
+                "type": "simulated",
+                "evidence_ids": [
+                  "EV-Q092-2fbd48e494c76f6214c0e981"
+                ]
+              },
+              "target": {
+                "name": "Channel Capacity Bounds and Density Metrics",
+                "description": "Calculated upper bounds on bits per gram and bits per cubic millimeter, alongside channel capacity in bits per symbol, compared against archival benchmarks.",
+                "type": "derived_metrics"
+              }
+            },
+            "methods": "1. Channel Modeling: Define a probabilistic transition matrix P(Y|X) representing DNA synthesis and sequencing errors, parameterized by empirical error rates from foundational studies. 2. Capacity Estimation: Use the Blahut-Arimoto algorithm or Monte Carlo methods to compute the channel capacity C = max_{P(X)} I(X;Y). 3. Constraint Integration: Impose biological constraints (no long homopolymers, balanced GC content) as input distribution restrictions and recalculate capacity. 4. Benchmarking: Compare the derived theoretical density (bits/gram) against standard archival media (LTO tape, HDD) using established physical constants.",
+            "experiments": {
+              "baselines": [
+                "Unconstrained Binary Symmetric Channel (BSC) with equivalent raw error rate",
+                "Standard Magnetic Tape Archival Density (theoretical limit)",
+                "Naive DNA Encoding without Error Correction (raw capacity)"
+              ],
+              "metrics": [
+                "Channel Capacity (bits/symbol)",
+                "Information Density (bits/gram)",
+                "Net Storage Efficiency (after FEC overhead)",
+                "Mutual Information I(X;Y)"
+              ],
+              "ablation": "Varying error rates (synthesis vs. sequencing dominance), removing GC-content constraints, and testing different FEC code rates to observe impact on net capacity.",
+              "validation_protocol": "Cross-validate theoretical capacity estimates against published experimental data points from the literature referenced in EV-Q092-2fbd48e494c76f6214c0e981 to ensure model fidelity. Verify that calculated densities exceed minimum archival thresholds (e.g., >10^18 bits/gram)."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Define exact error probability parameters for synthesis and sequencing steps",
+              "Specify the constraint set for valid nucleotide sequences (e.g., max homopolymer length)",
+              "Provide code for mutual information estimation (e.g., Blahut-Arimoto implementation)",
+              "Document baseline physical constants for traditional media comparison"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU/GPU for numerical optimization and Monte Carlo simulations",
+              "estimated_runtime": "2-4 hours for convergence of capacity estimation algorithms",
+              "software_dependencies": [
+                "Python",
+                "NumPy/SciPy",
+                "Information Theory Toolbox"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The recommended hypothesis is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly links DNA storage viability to information-theoretic foundations.",
+              "Experiment design correctly identifies the task as theoretical derivation and simulation rather than wet-lab validation, aligning with the available evidence type.",
+              "Results field correctly states 'pending' and does not fabricate channel capacity values or density metrics.",
+              "Falsifiability is well-defined via the requirement for non-zero channel capacity under realistic error constraints.",
+              "Rejected hypotheses appropriately exclude irrelevant evidence cards (fairness, cognitive bias) that do not pertain to DNA storage physics."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+              "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.85,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:530503ae2293",
+              "category": "required_revision",
+              "description": "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:dccc682d5a08",
+              "category": "required_revision",
+              "description": "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "e42f75f0e97eef9451fddcbe6e39bb25087638d70b6f945ef036c9ffc4ca839a",
+            "experiment_designer": "c3bd03bbfdfe7a703cde77ad51ea91bc91ece57154acf9e9495489dee4fc5f7c",
+            "scientific_reviewer": "ef22e984e31c0c91085ec4f216360764b901f2d183725c7ac27ecafb9fc71680"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-090147-9209cb03",
+          "version_number": 2,
+          "version_id": "20260822-090147-9209cb03:v2",
+          "parent_version_id": "20260822-090147-9209cb03:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.",
+                "mechanism": "The molecular structure of DNA allows for dense encoding of binary data into nucleotide sequences. Information-theoretic frameworks model the DNA storage system as a communication channel with specific capacity limits determined by synthesis/sequencing errors and biochemical constraints, theoretically validating its feasibility for archival purposes despite practical implementation gaps.",
+                "falsifiable_prediction": "If DNA is a viable storage medium under current theoretical understanding, then established information-theoretic models must demonstrate a non-zero positive channel capacity for DNA storage that exceeds minimum thresholds for archival utility, even when accounting for typical error rates.",
+                "required_observations": [
+                  "Derivation or citation of non-zero channel capacity bounds from information-theoretic models of DNA storage",
+                  "Theoretical comparison of DNA storage density limits against traditional archival media benchmarks (sourced externally)",
+                  "Mathematical proof that error correction is feasible within the derived channel capacity"
+                ],
+                "risk_of_being_wrong": "The hypothesis relies on theoretical models which may not account for unmodeled biochemical noise or economic constraints; if the theoretical channel capacity is near-zero under realistic parameters, DNA would not be viable regardless of physical density.",
+                "supporting_evidence_ids": [
+                  "EV-Q092-2fbd48e494c76f6214c0e981"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.95,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "General computational information flow frameworks can be adapted to formally define and quantify the reliability of DNA as an information storage medium, bridging the gap between abstract theory and physical implementation.",
+                "mechanism": "While DNA has known physical advantages for storage, its operational viability depends on reliable information transfer during write/read cycles. General theoretical frameworks for information flow in computational systems provide formal tools to model these transfers, potentially allowing rigorous definition of DNA storage reliability metrics beyond simple density/longevity claims.",
+                "falsifiable_prediction": "If general information flow frameworks are applicable to DNA storage, then adapting such a framework to model DNA synthesis/sequencing as a computational process should yield quantifiable reliability metrics (e.g., mutual information bounds) consistent with DNA-specific information-theoretic results.",
+                "required_observations": [
+                  "Successful mapping of DNA storage operations onto a general computational information flow framework",
+                  "Derivation of reliability metrics using the general framework that match or refine DNA-specific theoretical predictions",
+                  "Demonstration that the general framework captures unique DNA storage constraints (e.g., sequence-dependent errors)"
+                ],
+                "risk_of_being_wrong": "General computational frameworks may lack the specificity to capture biochemical nuances of DNA storage, leading to inaccurate or trivial reliability estimates that do not advance beyond existing DNA-specific theories.",
+                "supporting_evidence_ids": [
+                  "EV-Q092-f3ff4d67e233b373196a5785",
+                  "EV-Q092-2fbd48e494c76f6214c0e981"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.5,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.6
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 remains the optimal choice as it is strictly grounded in EV-Q092-2fbd48e494c76f6214c0e981, which explicitly establishes the information-theoretic foundations of DNA storage. It directly addresses the reviewer's feedback by maintaining a theoretical/simulation-based validation approach that avoids fabricating wet-lab results. The required revisions regarding specific error rate parameters and external benchmarking are execution-level details that strengthen this hypothesis's reproducibility without altering its core theoretical premise. Hypothesis 1 is retained as an alternative but is less supported due to the lack of direct evidence linking general computational flow frameworks to DNA storage specifically.",
+            "rejected_directions": [
+              "Hypotheses focusing on cost-effectiveness or practical engineering implementations were rejected due to complete absence of empirical or economic data in allowed evidence.",
+              "Hypotheses linking DNA storage to cognitive biases (EV-Q092-1d71a19c2d69e3a65b00ee2c) or fairness-aware retrieval (EV-Q092-32078fe063ec9defdc41d475) were rejected as irrelevant to the core question of DNA's physical/informational viability as a storage medium."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study validates the hypothesis by modeling DNA storage as a discrete memoryless channel (DMC) with insertion, deletion, and substitution errors. We will derive the Shannon capacity C under biochemical constraints (e.g., GC-content balance, homopolymer limits) using the Blahut-Arimoto algorithm. The model parameters (error rates) will be explicitly extracted from the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981. Theoretical information density (bits/gram) will be calculated and compared against external benchmarks for traditional archival media (e.g., LTO tape specifications), which are sourced independently of the provided evidence cards.",
+            "datasets": {
+              "source": {
+                "name": "DNA Storage Channel Parameters",
+                "description": "Error rate parameters (substitution, insertion, deletion probabilities) and biochemical constraints extracted from EV-Q092-2fbd48e494c76f6214c0e981 and its referenced bibliography.",
+                "type": "simulated",
+                "evidence_ids": [
+                  "EV-Q092-2fbd48e494c76f6214c0e981"
+                ]
+              },
+              "target": {
+                "name": "External Archival Media Benchmarks",
+                "description": "Theoretical density limits and longevity metrics for traditional media (LTO tape, HDD, optical discs) sourced from industry standards (e.g., LTO roadmap) external to the provided evidence.",
+                "type": "external_reference",
+                "evidence_ids": []
+              }
+            },
+            "methods": "1. Parameter Extraction: Identify specific synthesis and sequencing error rates from EV-Q092-2fbd48e494c76f6214c0e981. 2. Channel Modeling: Construct a transition matrix P(Y|X) for the DNA storage channel, incorporating identified error profiles and biochemical constraints. 3. Capacity Calculation: Apply the Blahut-Arimoto algorithm to compute the channel capacity C = max_{P(X)} I(X;Y). 4. Density Derivation: Convert channel capacity (bits/symbol) to information density (bits/gram) using the molecular weight of nucleotides. 5. Comparative Analysis: Compare derived DNA density against external benchmarks for traditional archival media.",
+            "experiments": {
+              "baselines": [
+                "Unconstrained Binary Symmetric Channel (BSC) with equivalent raw error rate",
+                "Standard Magnetic Tape Archival Density (theoretical limit from external sources)",
+                "Naive DNA Encoding without Error Correction (raw capacity)"
+              ],
+              "metrics": [
+                "Channel Capacity (bits/symbol)",
+                "Information Density (bits/gram)",
+                "Net Storage Efficiency (after FEC overhead)",
+                "Mutual Information I(X;Y)"
+              ],
+              "ablation": "Varying error rates (synthesis vs. sequencing dominance), removing GC-content constraints, and testing different FEC code rates to observe impact on net capacity.",
+              "validation_protocol": "Cross-validate theoretical capacity estimates against published experimental data points cited in EV-Q092-2fbd48e494c76f6214c0e981. Verify that calculated densities exceed minimum archival thresholds. Document all external benchmark sources separately."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Explicitly cite specific error rate parameters from the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981",
+              "Specify the constraint set for valid nucleotide sequences (e.g., max homopolymer length, GC range)",
+              "Provide code for mutual information estimation (e.g., Blahut-Arimoto implementation)",
+              "Document external sources for traditional archival media benchmarks (e.g., LTO roadmap) as non-evidence-based parameters",
+              "Define the exact molecular weight constants used for bits/gram conversion"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU/GPU for numerical optimization and Monte Carlo simulations",
+              "estimated_runtime": "2-4 hours for convergence of capacity estimation algorithms",
+              "software_dependencies": [
+                "Python",
+                "NumPy/SciPy",
+                "Information Theory Toolbox"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revision successfully addresses previous feedback by explicitly incorporating the requirement to cite specific error rate parameters from EV-Q092-2fbd48e494c76f6214c0e981 into both the technical_details and reproducibility_checklist.",
+              "The distinction between evidence-based parameters (DNA channel model) and external non-evidence benchmarks (LTO roadmap) is now clearly articulated in the datasets and reproducibility sections, resolving the prior ambiguity.",
+              "Hypothesis remains strictly grounded in the single relevant evidence card EV-Q092-2fbd48e494c76f6214c0e981 without overclaiming or fabricating results.",
+              "Results field correctly maintains 'pending' status, adhering to the prohibition against fabricating experimental outcomes for unexecuted theoretical derivations.",
+              "Falsifiability is preserved through the specific prediction of non-zero channel capacity under constrained error models, which is theoretically verifiable."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "During execution, if specific numerical error rates cannot be located in the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981, this must be explicitly reported as a knowledge_gap rather than substituting values from non-allowed sources.",
+              "Ensure the final report includes a dedicated 'External Parameters' section listing all non-evidence-based constants (e.g., LTO density, molecular weights) with their specific external citations to maintain auditability."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.98,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:530503ae2293",
+              "category": "required_revision",
+              "description": "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:dccc682d5a08",
+              "category": "required_revision",
+              "description": "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:3eee969352592033,change:e8d6216e6212f886; evidence=EV-Q092-2fbd48e494c76f6214c0e981; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:b12fa2243d3f",
+              "category": "required_revision",
+              "description": "During execution, if specific numerical error rates cannot be located in the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981, this must be explicitly reported as a knowledge_gap rather than substituting values from non-allowed sources.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:f303c531c3c7",
+              "category": "required_revision",
+              "description": "Ensure the final report includes a dedicated 'External Parameters' section listing all non-evidence-based constants (e.g., LTO density, molecular weights) with their specific external citations to maintain auditability.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "13530e682a8044645c7d495569c45002ab286529a9a37754a35d5774960fc60a",
+            "experiment_designer": "8ed53461f30a1819e3a3e6a3f7475991cb4135e1fe43ce0798e19fd2f536ee35",
+            "scientific_reviewer": "a7ba0013b3f1e5466ffb189d5bf8506b46ed7dd62f4fbcccce95d9abc6e38818"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-090147-9209cb03:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-090147-9209cb03:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-090147-9209cb03:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-090147-9209cb03:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:530503ae2293",
+          "category": "required_revision",
+          "description": "In the final execution phase, ensure that specific error rate parameters used in the DMC model are explicitly cited from the full text of EV-Q092-2fbd48e494c76f6214c0e981 or its referenced bibliography, as the current snippet only confirms the topic but not the specific numerical values.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:dccc682d5a08",
+          "category": "required_revision",
+          "description": "Clarify in the reproducibility checklist that 'traditional archival media benchmarks' must be sourced from standard specifications (e.g., LTO roadmap) external to the provided evidence cards, and this external sourcing should be documented as a non-evidence-based parameter choice.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:3eee969352592033,change:e8d6216e6212f886; evidence=EV-Q092-2fbd48e494c76f6214c0e981; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b12fa2243d3f",
+          "category": "required_revision",
+          "description": "During execution, if specific numerical error rates cannot be located in the full text or bibliography of EV-Q092-2fbd48e494c76f6214c0e981, this must be explicitly reported as a knowledge_gap rather than substituting values from non-allowed sources.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:f303c531c3c7",
+          "category": "required_revision",
+          "description": "Ensure the final report includes a dedicated 'External Parameters' section listing all non-evidence-based constants (e.g., LTO density, molecular weights) with their specific external citations to maintain auditability.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "d856241918e21f38dbbbc8a86afa0be583765784013dde76aab224bd44a446e3"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-090147-9209cb03:wave-b-two-round",
+      "run_id": "20260822-090147-9209cb03",
+      "v1_version_id": "20260822-090147-9209cb03:v1",
+      "v2_version_id": "20260822-090147-9209cb03:v2",
+      "input_fingerprints": {
+        "v1": "c3bd03bbfdfe7a703cde77ad51ea91bc91ece57154acf9e9495489dee4fc5f7c",
+        "v2": "8ed53461f30a1819e3a3e6a3f7475991cb4135e1fe43ce0798e19fd2f536ee35"
+      },
+      "responded_issue_count": 1,
+      "issue_ids": [
+        "required_revision:dccc682d5a08"
+      ],
+      "change_ids": [
+        "change:3eee969352592033",
+        "change:e8d6216e6212f886"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.95,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "DNA can function as a viable archival information storage medium because its physical properties support high information density and longevity, as predicted by information-theoretic channel models.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "General computational information flow frameworks can be adapted to formally define and quantify the reliability of DNA as an information storage medium, bridging the gap between abstract theory and physical implementation.",
+          "overall_score": 0.6,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "bef8868bc7ef",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:03:43.726916+00:00",
+    "ended_at": "2026-08-22T09:04:18.614493+00:00",
+    "duration_ms": 34887,
+    "input_summary": "{\"question_item\": {\"id\": \"Q092\", \"domain\": \"Information Science\", \"question\": \"Can DNA act as an information storage medium?\", \"source_page\": 32, \"booklet_excerpt\": \"DNA, which stores huge amounts of organismal data at high densities with great stability, may one day be used to store other types of information.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Information Science\", \"core_question\": \"Can DNA act as an information storage medium?\", \"keywords\": [\"DNA\", \"information storage\", \"data density\"",
+    "output_summary": "{\"input_question\": \"Can DNA act as an information storage medium?\", \"domain\": \"Information Science\", \"problem_statement\": \"The question investigates whether Deoxyribonucleic Acid (DNA) can function as a viable medium for storing non-organismal digital information, leveraging its inherent physical properties such as high data density and stability. The scope is limited to theoretical viability and information-theoretic foundations, excluding current commercial cost-effectiveness or specific engineering implementations not supported by the provided evidence.\", \"rationale\": \"DNA is identified as ",
+    "evidence_ids": [
+      "EV-Q092-2fbd48e494c76f6214c0e981"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8bb3db22b8ac",
+    "mock": false
+  },
+  {
+    "event_id": "dee3081756a3",
+    "run_id": "20260822-090147-9209cb03",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:04:18.614493+00:00",
+    "ended_at": "2026-08-22T09:04:20.191802+00:00",
+    "duration_ms": 1577,
+    "input_summary": "{\"question_item\": {\"id\": \"Q092\", \"domain\": \"Information Science\", \"question\": \"Can DNA act as an information storage medium?\", \"source_page\": 32, \"booklet_excerpt\": \"DNA, which stores huge amounts of organismal data at high densities with great stability, may one day be used to store other types of information.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required field: ResearchPlan\", \"Missing required field: EvidenceCards\", \"Missing required field: AgentTrace\", \"Missing required field: execution_metadata\"], \"warnings\": [\"Input data is incomplete for schema validation. Cannot determine validation_status without ResearchPlan and EvidenceCards.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "dc0d507a8b1a",
+    "mock": false
+  }
+]

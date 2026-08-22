@@ -1,0 +1,2116 @@
+[
+  {
+    "event_id": "cedb7ac07835",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:37:30.360067+00:00",
+    "ended_at": "2026-08-22T08:37:30.360067+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "f9e4dd7a366b",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:37:30.360067+00:00",
+    "ended_at": "2026-08-22T08:37:33.575738+00:00",
+    "duration_ms": 3215,
+    "input_summary": "{\"question_item\": {\"id\": \"Q053\", \"domain\": \"Astronomy\", \"question\": \"What is the universe made of?\", \"source_page\": 21, \"booklet_excerpt\": \"The universe consists of measurable matter (5% of all matter, most of which is hydrogen), as well as dark matter (20%–25%) and dark energy (70%–75%). However, we do not fully understand the nature of dark matter or dark energy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Astronomy\", \"core_question\": \"What is the composition of the universe in terms of measurable matter, dark matter, and dark energy, and what are their respective proportions?\", \"keywords\": [\"universe\", \"measurable matter\", \"dark matter\", \"dark energy\", \"hydrogen\"], \"entities\": [\"universe\", \"measurable matter\", \"dark matter\", \"dark energy\", \"hydrogen\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"The question is limited to the compositional breakdown of the universe as described in the provided excerpt. It does not extend to the specific physical mechanisms",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "44b50475a157",
+    "mock": false
+  },
+  {
+    "event_id": "73e0aca00915",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:37:33.575738+00:00",
+    "ended_at": "2026-08-22T08:37:53.949822+00:00",
+    "duration_ms": 20374,
+    "input_summary": "{\"question_item\": {\"id\": \"Q053\", \"domain\": \"Astronomy\", \"question\": \"What is the universe made of?\", \"source_page\": 21, \"booklet_excerpt\": \"The universe consists of measurable matter (5% of all matter, most of which is hydrogen), as well as dark matter (20%–25%) and dark energy (70%–75%). However, we do not fully understand the nature of dark matter or dark energy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"What is the composition of the universe in terms of measurab",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the specific percentage breakdown of universe composition (measurable matter, dark matter, dark energy) as stated in the source booklet.\", \"query\": \"universe composition percentages measurable matter dark matter dark energy 5% 27% 68%\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming the approximate proportions of baryonic matter, dark matter, and dark energy in the universe.\", \"priority\": \"high\"}, {\"purpose\": \"Confirm the statement that most measurable matter is hydrogen within the context of the provided text.\", \"query\": \"measurable ma",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6578cbb3db29",
+    "mock": false
+  },
+  {
+    "event_id": "b1d9a4b4ed09",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:37:54.074450+00:00",
+    "ended_at": "2026-08-22T08:38:13.324026+00:00",
+    "duration_ms": 19249,
+    "input_summary": "{\"question_item\": {\"id\": \"Q053\", \"domain\": \"Astronomy\", \"question\": \"What is the universe made of?\", \"source_page\": 21, \"booklet_excerpt\": \"The universe consists of measurable matter (5% of all matter, most of which is hydrogen), as well as dark matter (20%–25%) and dark energy (70%–75%). However, we do not fully understand the nature of dark matter or dark energy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q053-5b6a5d5413f721935988346e\", \"title\": \"arXiv:2409.07509\", \"source_type\": \"arxiv\", \"doi",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"The nature of dark matter and dark energy remains not fully understood in current cosmological models.\", \"evidence_ids\": [\"EV-Q053-5b6a5d5413f721935988346e\"], \"confidence\": \"high\", \"fact_type\": \"limitation\", \"caveat\": \"Evidence identifies these as 'dark spots' in the model rather than defining their composition.\"}, {\"fact\": \"Dark matter and dark energy are cited as hints indicating potential incompleteness in General Relativity (GR) on cosmological scales.\", \"evidence_ids\": [\"EV-Q053-7e93b6230038a9c81916e34c\"], \"confidence\": \"medium\", \"fact_type\": \"controversy\"",
+    "evidence_ids": [
+      "EV-Q053-5b6a5d5413f721935988346e",
+      "EV-Q053-7e93b6230038a9c81916e34c",
+      "EV-Q053-1452363c14fbc7e57b667f1d"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b500c8de02a4",
+    "mock": false
+  },
+  {
+    "event_id": "2bac119e9378",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:38:13.324026+00:00",
+    "ended_at": "2026-08-22T08:38:37.198434+00:00",
+    "duration_ms": 23874,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q053\", \"domain\": \"Astronomy\", \"question\": \"What is the universe made of?\", \"source_page\": 21, \"booklet_excerpt\": \"The universe consists of measurable matter (5% of all matter, most of which is hydrogen), as well as dark matter (20%–25%) and dark energy (70%–75%). However, we do not fully understand the nature of dark matter or dark energy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q053-5b6a5d5413f721935988346e\", \"title\": \"arXiv:2409.07509\", \"so",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Dark matter and dark energy are not distinct material substances but emergent phenomena arising from the incompleteness of General Relativity on cosmological scales.\", \"mechanism\": \"If General Relativity is incomplete as suggested by EV-Q053-7e93b6230038a9c81916e34c, then the observed gravitational effects attributed to 'dark' components may instead result from modified gravity laws or geometric corrections at large scales (>100 Mpc), eliminating the need for exotic particle content.\", \"falsifiable_prediction\": \"High-precision tests of gravity at galactic and cl",
+    "evidence_ids": [
+      "EV-Q053-7e93b6230038a9c81916e34c",
+      "EV-Q053-5b6a5d5413f721935988346e",
+      "EV-Q053-1452363c14fbc7e57b667f1d"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "83c99300da7a",
+    "mock": false
+  },
+  {
+    "event_id": "fe123e7156b9",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:38:37.199434+00:00",
+    "ended_at": "2026-08-22T08:38:57.414704+00:00",
+    "duration_ms": 20215,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q053\", \"domain\": \"Astronomy\", \"question\": \"What is the universe made of?\", \"source_page\": 21, \"booklet_excerpt\": \"The universe consists of measurable matter (5% of all matter, most of which is hydrogen), as well as dark matter (20%–25%) and dark energy (70%–75%). However, we do not fully understand the nature of dark matter or dark energy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"general_scientific_unknown\", \"recommended_hypothesis\": {\"hypothesis\": \"The app",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that 'dark spots' (dark matter/energy) are artifacts of inadequate averaging of anisotropies below 100 Mpc. We will implement a non-perturbative backreaction framework (e.g., Buchert formalism or volume-averaging schemes) to re-analyze cosmological data. The core technical challenge is constructing effective Friedmann equations from inhomogeneous metrics without assuming global FLRW symmetry a priori. We will compare the inferred effective density parameters ($\\\\Omega_{m, eff}, \\\\Omega_{\\\\Lambda, eff}$) derived from this refined homog",
+    "evidence_ids": [
+      "EV-Q053-5b6a5d5413f721935988346e"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "06a5cf711be3",
+    "mock": false
+  },
+  {
+    "event_id": "05e788858d1e",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:38:57.414704+00:00",
+    "ended_at": "2026-08-22T08:39:09.494239+00:00",
+    "duration_ms": 12079,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q053\", \"domain\": \"Astronomy\", \"question\": \"What is the universe made of?\", \"source_page\": 21, \"booklet_excerpt\": \"The universe consists of measurable matter (5% of all matter, most of which is hydrogen), as well as dark matter (20%–25%) and dark energy (70%–75%). However, we do not fully understand the nature of dark matter or dark energy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"The apparent 'dark spots' in cosmological models (dark",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies a knowledge gap regarding the nature of dark components based on EV-Q053-5b6a5d5413f721935988346e and EV-Q053-7e93b6230038a9c81916e34c.\", \"The experimental design proposes a valid methodological test (backreaction/averaging) but lacks specific dataset identifiers. 'Cosmological Anisotropy Maps' is a generic class, not a reproducible data source.\", \"The mechanism cites EV-Q053-5b6a5d5413f721935988346e for the 100 Mpc scale, which is correct, but extrapolates that 'improved homogenization will reduce exotic components' ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b0fcc45a286b",
+    "mock": false
+  },
+  {
+    "event_id": "e353fcd28b70",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:39:09.496245+00:00",
+    "ended_at": "2026-08-22T08:39:41.328529+00:00",
+    "duration_ms": 31832,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies a knowledge gap regarding the nature of dark components based on EV-Q053-5b6a5d5413f721935988346e and EV-Q053-7e93b6230038a9c81916e34c.\", \"The experimental design proposes a valid methodological test (backreaction/averaging) but lacks specific dataset identifiers. 'Cosmological Anisotropy Maps' is a generic class, not a reproducible data source.\", \"The mechanism cites EV-Q053-5b6a5d5413f721935988346e for the 100 Mpc scale, which is correct, but extrapolates that 'improved hom",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Non-perturbative averaging of sub-100 Mpc structures in SDSS-IV eBOSS LRG and Planck 2018 data yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts.\", \"mechanism\": \"EV-Q053-5b6a5d5413f721935988346e establishes that homogeneity emerges only above ~100 Mpc after averaging anisotropies. If current FLRW-based analyses of SDSS-IV eBOSS and Planck 2018 data fail to fully capture non-linear backreaction from sub-100 Mpc structures, the inferred Ω_m and Ω_Λ may include systematic biases ",
+    "evidence_ids": [
+      "EV-Q053-5b6a5d5413f721935988346e",
+      "EV-Q053-1452363c14fbc7e57b667f1d",
+      "EV-Q053-7e93b6230038a9c81916e34c"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "10db94ed5690",
+    "mock": false
+  },
+  {
+    "event_id": "4c5a8e752e94",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:39:41.328529+00:00",
+    "ended_at": "2026-08-22T08:40:08.706799+00:00",
+    "duration_ms": 27378,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies a knowledge gap regarding the nature of dark components based on EV-Q053-5b6a5d5413f721935988346e and EV-Q053-7e93b6230038a9c81916e34c.\", \"The experimental design proposes a valid methodological test (backreaction/averaging) but lacks specific dataset identifiers. 'Cosmological Anisotropy Maps' is a generic class, not a reproducible data source.\", \"The mechanism cites EV-Q053-5b6a5d5413f721935988346e for the 100 Mpc scale, which is correct, but extrapolates that 'improved hom",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that non-perturbative averaging of sub-100 Mpc structures yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts. We will implement the Buchert averaging formalism to compute effective scale factors and curvature terms from inhomogeneous matter distributions, avoiding the assumption of global FLRW symmetry at small scales. The core technical challenge is reconstructing the local expansion history from SDSS-IV eBOSS LRG data and integrating it with Planck",
+    "evidence_ids": [
+      "EV-Q053-5b6a5d5413f721935988346e"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2811fff55151",
+    "mock": false
+  },
+  {
+    "event_id": "6097d420be48",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:40:08.707801+00:00",
+    "ended_at": "2026-08-22T08:40:14.965770+00:00",
+    "duration_ms": 6257,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies a knowledge gap regarding the nature of dark components based on EV-Q053-5b6a5d5413f721935988346e and EV-Q053-7e93b6230038a9c81916e34c.\", \"The experimental design proposes a valid methodological test (backreaction/averaging) but lacks specific dataset identifiers. 'Cosmological Anisotropy Maps' is a generic class, not a reproducible data source.\", \"The mechanism cites EV-Q053-5b6a5d5413f721935988346e for the 100 Mpc scale, which is correct, but extrapolates that 'improved hom",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis successfully addresses all critical issues from the previous review by specifying concrete datasets (SDSS-IV eBOSS LRG DR16, Planck 2018) instead of generic 'anisotropy maps'.\", \"Falsifiability is significantly improved with the inclusion of quantitative thresholds (>3σ deviation, Δχ² < -10) and a specific null-hypothesis baseline (Green & Wald 2014).\", \"Validation protocol now explicitly mandates independent probes (Pantheon+ SNe Ia, DES Y3 BAO) rather than leaving them conditional, satisfying reproducibility requirements.\", \"Evid",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6eab4e0a3e27",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:0212f4f8e393306e",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Dark matter and dark energy are not distinct material substances but emergent phenomena arising from the incompleteness of General Relativity on cosmological scales.",
+              "mechanism": "If General Relativity is incomplete as suggested by EV-Q053-7e93b6230038a9c81916e34c, then the observed gravitational effects attributed to 'dark' components may instead result from modified gravity laws or geometric corrections at large scales (>100 Mpc), eliminating the need for exotic particle content.",
+              "falsifiable_prediction": "High-precision tests of gravity at galactic and cluster scales will reveal deviations from GR predictions that correlate with the inferred dark matter/energy density profiles, without requiring new particle detections in direct detection experiments.",
+              "required_observations": [
+                "Precision measurements of galaxy rotation curves and cluster lensing consistent with modified gravity models",
+                "Absence of WIMP/axion signals in next-generation direct detection experiments",
+                "Consistency of CMB anisotropy patterns with modified gravity rather than Lambda-CDM"
+              ],
+              "risk_of_being_wrong": "Direct detection of a dark matter particle or confirmation of Lambda-CDM predictions at higher precision would falsify this hypothesis; current evidence only suggests GR incompleteness as a possibility, not proof.",
+              "supporting_evidence_ids": [
+                "EV-Q053-7e93b6230038a9c81916e34c",
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The apparent 'dark spots' in cosmological models (dark matter/energy) reflect limitations in averaging anisotropies below 100 Mpc, and improved homogenization procedures will reduce or eliminate the need for exotic components.",
+              "mechanism": "EV-Q053-5b6a5d5413f721935988346e states that homogeneity/isotropy emerges only above ~100 Mpc after averaging anisotropies; if current models inadequately account for sub-100 Mpc structure when inferring global composition, the inferred dark component fractions may be systematic artifacts of scale-dependent averaging.",
+              "falsifiable_prediction": "Re-analysis of cosmological datasets using refined backreaction or non-perturbative averaging methods will yield significantly different effective dark matter/energy densities compared to standard FLRW-based fits.",
+              "required_observations": [
+                "Publicly available cosmological anisotropy maps reprocessed with alternative averaging schemes",
+                "Statistical comparison of derived Omega_m/Omega_Lambda values between standard and revised methods",
+                "Validation against independent probes (e.g., BAO, SNe Ia) under both frameworks"
+              ],
+              "risk_of_being_wrong": "If revised averaging yields identical dark component estimates within error bars, or if independent local measurements confirm dark matter presence regardless of averaging, the hypothesis is weakened.",
+              "supporting_evidence_ids": [
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "Relic neutrino spectral distortions encode information about early-universe particle content that can constrain or redefine the nature of dark components beyond standard Lambda-CDM assumptions.",
+              "mechanism": "EV-Q053-1452363c14fbc7e57b667f1d indicates relic neutrino spectra are distorted by interactions in the early universe; these distortions may carry imprints of non-standard physics (e.g., sterile neutrinos, dark sector couplings) that affect the inferred composition of the universe today.",
+              "falsifiable_prediction": "Precise measurement or simulation of relic neutrino spectra will show deviations from standard decoupling predictions that correlate with anomalies in dark matter/energy inference, providing a particle-physics-consistent explanation for cosmological 'dark spots'.",
+              "required_observations": [
+                "Theoretical modeling of neutrino spectral distortions under extended particle physics models",
+                "Comparison with CMB and large-scale structure data to test consistency",
+                "Future direct detection of cosmic neutrino background spectrum (e.g., via PTOLEMY-type experiments)"
+              ],
+              "risk_of_being_wrong": "If neutrino spectra match standard predictions exactly, or if distortions cannot be linked to dark sector parameters, this pathway fails to explain dark components.",
+              "supporting_evidence_ids": [
+                "EV-Q053-1452363c14fbc7e57b667f1d",
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.85,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.65,
+              "overall_score": 0.73
+            }
+          ],
+          "recommended_hypothesis_index": 1,
+          "selection_reason": "Hypothesis 2 is selected because it directly leverages the explicit scale-dependence of homogeneity stated in EV-Q053-5b6a5d5413f721935988346e and is immediately testable using publicly available cosmological anisotropy maps. It addresses a concrete methodological gap (averaging procedure) rather than speculative new physics, offering high feasibility and falsifiability while remaining grounded in the provided evidence. Unlike Hypothesis 1, it does not assume GR is wrong but tests whether current implementation of GR-based averaging introduces systematic bias in composition inference.",
+          "rejected_directions": [
+            "Assuming specific particle identities for dark matter (e.g., WIMPs, axions) without supporting evidence in allowed cards",
+            "Quantifying baryonic composition (e.g., hydrogen percentage) as no EvidenceCard supports the booklet's 5% figure",
+            "Proposing multiverse or anthropic explanations which are unfalsifiable and unsupported by any allowed evidence"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that 'dark spots' (dark matter/energy) are artifacts of inadequate averaging of anisotropies below 100 Mpc. We will implement a non-perturbative backreaction framework (e.g., Buchert formalism or volume-averaging schemes) to re-analyze cosmological data. The core technical challenge is constructing effective Friedmann equations from inhomogeneous metrics without assuming global FLRW symmetry a priori. We will compare the inferred effective density parameters ($\\Omega_{m, eff}, \\Omega_{\\Lambda, eff}$) derived from this refined homogenization against standard $\\Lambda$CDM fits. The analysis focuses on scales <100 Mpc where EV-Q053-5b6a5d5413f721935988346e notes anisotropies persist, testing if their proper averaging eliminates the need for exotic components.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Cosmological Anisotropy Maps",
+                "description": "Publicly available maps of matter distribution and CMB anisotropies used to identify sub-100 Mpc structures.",
+                "evidence_ids": [
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              }
+            ],
+            "target": [
+              {
+                "name": "Effective Cosmological Parameters",
+                "description": "Derived values of $\\Omega_m$ and $\\Omega_\\Lambda$ under standard vs. refined averaging schemes.",
+                "type": "derived_metric"
+              }
+            ]
+          },
+          "methods": "1. Data Preprocessing: Extract sub-100 Mpc anisotropy fields from public cosmological maps (EV-Q053-5b6a5d5413f721935988346e). 2. Model Implementation: Implement a volume-averaging algorithm that computes effective scale factors and curvature terms from local inhomogeneities, avoiding standard FLRW assumptions at small scales. 3. Parameter Inference: Fit the effective expansion history derived from the averaged metric to observational proxies (e.g., distance-redshift relations implied by the anisotropy structure). 4. Comparative Analysis: Calculate the residual 'dark' component required in the refined model versus the standard model.",
+          "experiments": {
+            "baselines": [
+              "Standard $\\Lambda$CDM Model: Assumes global homogeneity/isotropy and fits $\\Omega_m \\approx 0.3, \\Omega_\\Lambda \\approx 0.7$.",
+              "Perturbative Backreaction Model: Uses standard linear perturbation theory to estimate corrections, typically yielding negligible effects."
+            ],
+            "metrics": [
+              "Deviation in $\\Omega_{dark}$: Difference in inferred dark component density between refined and standard models.",
+              "Goodness-of-Fit ($\\chi^2$): Fit quality of the refined effective metric to observed anisotropy statistics.",
+              "Scale-Dependence Index: Quantification of how inferred parameters change with averaging scale (specifically around 100 Mpc)."
+            ],
+            "ablation": "Vary the averaging scale threshold (50 Mpc, 100 Mpc, 200 Mpc) to test the specific claim from EV-Q053-5b6a5d5413f721935988346e that homogeneity emerges only above ~100 Mpc.",
+            "validation_protocol": "Cross-validate the effective parameters derived from local anisotropy averaging against independent large-scale probes (if available in public datasets) to ensure consistency. Check if the 'dark' component vanishes or significantly reduces when sub-100 Mpc structures are properly averaged."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to public cosmological anisotropy maps cited in EV-Q053-5b6a5d5413f721935988346e.",
+            "Implement open-source code for non-perturbative volume averaging.",
+            "Document the exact definition of 'effective' density parameters in the inhomogeneous context.",
+            "Provide scripts for comparing refined vs. standard $\\Lambda$CDM fits."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster for numerical integration of inhomogeneous metrics.",
+            "estimated_time": "2-4 weeks for implementation and initial runs.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Cosmological simulation libraries (e.g., CAMB/CLASS modified for backreaction)"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-083730-64f56892",
+        "version_number": 1,
+        "version_id": "20260822-083730-64f56892:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Dark matter and dark energy are not distinct material substances but emergent phenomena arising from the incompleteness of General Relativity on cosmological scales.",
+              "mechanism": "If General Relativity is incomplete as suggested by EV-Q053-7e93b6230038a9c81916e34c, then the observed gravitational effects attributed to 'dark' components may instead result from modified gravity laws or geometric corrections at large scales (>100 Mpc), eliminating the need for exotic particle content.",
+              "falsifiable_prediction": "High-precision tests of gravity at galactic and cluster scales will reveal deviations from GR predictions that correlate with the inferred dark matter/energy density profiles, without requiring new particle detections in direct detection experiments.",
+              "required_observations": [
+                "Precision measurements of galaxy rotation curves and cluster lensing consistent with modified gravity models",
+                "Absence of WIMP/axion signals in next-generation direct detection experiments",
+                "Consistency of CMB anisotropy patterns with modified gravity rather than Lambda-CDM"
+              ],
+              "risk_of_being_wrong": "Direct detection of a dark matter particle or confirmation of Lambda-CDM predictions at higher precision would falsify this hypothesis; current evidence only suggests GR incompleteness as a possibility, not proof.",
+              "supporting_evidence_ids": [
+                "EV-Q053-7e93b6230038a9c81916e34c",
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The apparent 'dark spots' in cosmological models (dark matter/energy) reflect limitations in averaging anisotropies below 100 Mpc, and improved homogenization procedures will reduce or eliminate the need for exotic components.",
+              "mechanism": "EV-Q053-5b6a5d5413f721935988346e states that homogeneity/isotropy emerges only above ~100 Mpc after averaging anisotropies; if current models inadequately account for sub-100 Mpc structure when inferring global composition, the inferred dark component fractions may be systematic artifacts of scale-dependent averaging.",
+              "falsifiable_prediction": "Re-analysis of cosmological datasets using refined backreaction or non-perturbative averaging methods will yield significantly different effective dark matter/energy densities compared to standard FLRW-based fits.",
+              "required_observations": [
+                "Publicly available cosmological anisotropy maps reprocessed with alternative averaging schemes",
+                "Statistical comparison of derived Omega_m/Omega_Lambda values between standard and revised methods",
+                "Validation against independent probes (e.g., BAO, SNe Ia) under both frameworks"
+              ],
+              "risk_of_being_wrong": "If revised averaging yields identical dark component estimates within error bars, or if independent local measurements confirm dark matter presence regardless of averaging, the hypothesis is weakened.",
+              "supporting_evidence_ids": [
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "Relic neutrino spectral distortions encode information about early-universe particle content that can constrain or redefine the nature of dark components beyond standard Lambda-CDM assumptions.",
+              "mechanism": "EV-Q053-1452363c14fbc7e57b667f1d indicates relic neutrino spectra are distorted by interactions in the early universe; these distortions may carry imprints of non-standard physics (e.g., sterile neutrinos, dark sector couplings) that affect the inferred composition of the universe today.",
+              "falsifiable_prediction": "Precise measurement or simulation of relic neutrino spectra will show deviations from standard decoupling predictions that correlate with anomalies in dark matter/energy inference, providing a particle-physics-consistent explanation for cosmological 'dark spots'.",
+              "required_observations": [
+                "Theoretical modeling of neutrino spectral distortions under extended particle physics models",
+                "Comparison with CMB and large-scale structure data to test consistency",
+                "Future direct detection of cosmic neutrino background spectrum (e.g., via PTOLEMY-type experiments)"
+              ],
+              "risk_of_being_wrong": "If neutrino spectra match standard predictions exactly, or if distortions cannot be linked to dark sector parameters, this pathway fails to explain dark components.",
+              "supporting_evidence_ids": [
+                "EV-Q053-1452363c14fbc7e57b667f1d",
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.85,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.65,
+              "overall_score": 0.73
+            }
+          ],
+          "recommended_hypothesis_index": 1,
+          "selection_reason": "Hypothesis 2 is selected because it directly leverages the explicit scale-dependence of homogeneity stated in EV-Q053-5b6a5d5413f721935988346e and is immediately testable using publicly available cosmological anisotropy maps. It addresses a concrete methodological gap (averaging procedure) rather than speculative new physics, offering high feasibility and falsifiability while remaining grounded in the provided evidence. Unlike Hypothesis 1, it does not assume GR is wrong but tests whether current implementation of GR-based averaging introduces systematic bias in composition inference.",
+          "rejected_directions": [
+            "Assuming specific particle identities for dark matter (e.g., WIMPs, axions) without supporting evidence in allowed cards",
+            "Quantifying baryonic composition (e.g., hydrogen percentage) as no EvidenceCard supports the booklet's 5% figure",
+            "Proposing multiverse or anthropic explanations which are unfalsifiable and unsupported by any allowed evidence"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that 'dark spots' (dark matter/energy) are artifacts of inadequate averaging of anisotropies below 100 Mpc. We will implement a non-perturbative backreaction framework (e.g., Buchert formalism or volume-averaging schemes) to re-analyze cosmological data. The core technical challenge is constructing effective Friedmann equations from inhomogeneous metrics without assuming global FLRW symmetry a priori. We will compare the inferred effective density parameters ($\\Omega_{m, eff}, \\Omega_{\\Lambda, eff}$) derived from this refined homogenization against standard $\\Lambda$CDM fits. The analysis focuses on scales <100 Mpc where EV-Q053-5b6a5d5413f721935988346e notes anisotropies persist, testing if their proper averaging eliminates the need for exotic components.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Cosmological Anisotropy Maps",
+                "description": "Publicly available maps of matter distribution and CMB anisotropies used to identify sub-100 Mpc structures.",
+                "evidence_ids": [
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              }
+            ],
+            "target": [
+              {
+                "name": "Effective Cosmological Parameters",
+                "description": "Derived values of $\\Omega_m$ and $\\Omega_\\Lambda$ under standard vs. refined averaging schemes.",
+                "type": "derived_metric"
+              }
+            ]
+          },
+          "methods": "1. Data Preprocessing: Extract sub-100 Mpc anisotropy fields from public cosmological maps (EV-Q053-5b6a5d5413f721935988346e). 2. Model Implementation: Implement a volume-averaging algorithm that computes effective scale factors and curvature terms from local inhomogeneities, avoiding standard FLRW assumptions at small scales. 3. Parameter Inference: Fit the effective expansion history derived from the averaged metric to observational proxies (e.g., distance-redshift relations implied by the anisotropy structure). 4. Comparative Analysis: Calculate the residual 'dark' component required in the refined model versus the standard model.",
+          "experiments": {
+            "baselines": [
+              "Standard $\\Lambda$CDM Model: Assumes global homogeneity/isotropy and fits $\\Omega_m \\approx 0.3, \\Omega_\\Lambda \\approx 0.7$.",
+              "Perturbative Backreaction Model: Uses standard linear perturbation theory to estimate corrections, typically yielding negligible effects."
+            ],
+            "metrics": [
+              "Deviation in $\\Omega_{dark}$: Difference in inferred dark component density between refined and standard models.",
+              "Goodness-of-Fit ($\\chi^2$): Fit quality of the refined effective metric to observed anisotropy statistics.",
+              "Scale-Dependence Index: Quantification of how inferred parameters change with averaging scale (specifically around 100 Mpc)."
+            ],
+            "ablation": "Vary the averaging scale threshold (50 Mpc, 100 Mpc, 200 Mpc) to test the specific claim from EV-Q053-5b6a5d5413f721935988346e that homogeneity emerges only above ~100 Mpc.",
+            "validation_protocol": "Cross-validate the effective parameters derived from local anisotropy averaging against independent large-scale probes (if available in public datasets) to ensure consistency. Check if the 'dark' component vanishes or significantly reduces when sub-100 Mpc structures are properly averaged."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to public cosmological anisotropy maps cited in EV-Q053-5b6a5d5413f721935988346e.",
+            "Implement open-source code for non-perturbative volume averaging.",
+            "Document the exact definition of 'effective' density parameters in the inhomogeneous context.",
+            "Provide scripts for comparing refined vs. standard $\\Lambda$CDM fits."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster for numerical integration of inhomogeneous metrics.",
+            "estimated_time": "2-4 weeks for implementation and initial runs.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Cosmological simulation libraries (e.g., CAMB/CLASS modified for backreaction)"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies a knowledge gap regarding the nature of dark components based on EV-Q053-5b6a5d5413f721935988346e and EV-Q053-7e93b6230038a9c81916e34c.",
+            "The experimental design proposes a valid methodological test (backreaction/averaging) but lacks specific dataset identifiers. 'Cosmological Anisotropy Maps' is a generic class, not a reproducible data source.",
+            "The mechanism cites EV-Q053-5b6a5d5413f721935988346e for the 100 Mpc scale, which is correct, but extrapolates that 'improved homogenization will reduce exotic components' without direct evidence support; this remains a speculative hypothesis derived from the 'dark spots' limitation mention.",
+            "Results field correctly states 'pending', avoiding fabrication.",
+            "No causal claims were made inappropriately; the link between averaging and dark energy is framed as a testable prediction."
+          ],
+          "critical_issues": [
+            "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+            "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+            "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them."
+          ],
+          "required_revisions": [
+            "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+            "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+            "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+            "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.8,
+          "falsifiability_score": 0.7,
+          "reproducibility_score": 0.4,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:297c95b8cdfe",
+            "category": "critical_issue",
+            "description": "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:e4d8817efbce",
+            "category": "critical_issue",
+            "description": "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:cdadffd2e181",
+            "category": "critical_issue",
+            "description": "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:174756b7ce79",
+            "category": "required_revision",
+            "description": "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7844293dac07",
+            "category": "required_revision",
+            "description": "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:c2da6d0cf420",
+            "category": "required_revision",
+            "description": "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:9535c76274d2",
+            "category": "required_revision",
+            "description": "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "0edd0a8f9ad440309bfac8dd80cc95c90106280d3995e8d78c5eb84b5e99feed",
+          "experiment_designer": "b0a7df4bbd7b2a93e3014c8421650713c33ea853ab5876efb2ad07a8c7c7cd2d",
+          "scientific_reviewer": "d93e1bc96bc88773f70771fd4d585f16319702059f63c30fc6fc0fb7f3106ca9"
+        }
+      },
+      "parent_version_id": "20260822-083730-64f56892:v1",
+      "lineage": [
+        "20260822-083730-64f56892:v1",
+        "20260822-083730-64f56892:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis correctly identifies a knowledge gap regarding the nature of dark components based on EV-Q053-5b6a5d5413f721935988346e and EV-Q053-7e93b6230038a9c81916e34c.",
+          "The experimental design proposes a valid methodological test (backreaction/averaging) but lacks specific dataset identifiers. 'Cosmological Anisotropy Maps' is a generic class, not a reproducible data source.",
+          "The mechanism cites EV-Q053-5b6a5d5413f721935988346e for the 100 Mpc scale, which is correct, but extrapolates that 'improved homogenization will reduce exotic components' without direct evidence support; this remains a speculative hypothesis derived from the 'dark spots' limitation mention.",
+          "Results field correctly states 'pending', avoiding fabrication.",
+          "No causal claims were made inappropriately; the link between averaging and dark energy is framed as a testable prediction."
+        ],
+        "critical_issues": [
+          "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+          "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+          "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them."
+        ],
+        "required_revisions": [
+          "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+          "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+          "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+          "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.8,
+        "falsifiability_score": 0.7,
+        "reproducibility_score": 0.4,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis successfully addresses all critical issues from the previous review by specifying concrete datasets (SDSS-IV eBOSS LRG DR16, Planck 2018) instead of generic 'anisotropy maps'.",
+          "Falsifiability is significantly improved with the inclusion of quantitative thresholds (>3σ deviation, Δχ² < -10) and a specific null-hypothesis baseline (Green & Wald 2014).",
+          "Validation protocol now explicitly mandates independent probes (Pantheon+ SNe Ia, DES Y3 BAO) rather than leaving them conditional, satisfying reproducibility requirements.",
+          "Evidence grounding remains strictly within allowed EvidenceCards; the link between 'dark spots' and averaging is correctly framed as a testable hypothesis derived from EV-Q053-5b6a5d5413f721935988346e rather than an established fact.",
+          "Results field correctly states 'pending' with no fabrication of experimental outcomes."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:cdd297924ff6e7cc",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+          "issue_id": "critical_issue:297c95b8cdfe"
+        },
+        {
+          "failure_id": "failure:1d1d389d32c731d8",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+          "issue_id": "critical_issue:e4d8817efbce"
+        },
+        {
+          "failure_id": "failure:a086d915473f99a2",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them.",
+          "issue_id": "critical_issue:cdadffd2e181"
+        },
+        {
+          "failure_id": "failure:ae6f3e49772c5802",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+          "issue_id": "required_revision:174756b7ce79"
+        },
+        {
+          "failure_id": "failure:c0ed95579038020d",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+          "issue_id": "required_revision:7844293dac07"
+        },
+        {
+          "failure_id": "failure:ce68af2481cf681d",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+          "issue_id": "required_revision:c2da6d0cf420"
+        },
+        {
+          "failure_id": "failure:8512837e72c9cc6b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.",
+          "issue_id": "required_revision:9535c76274d2"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:0a3b78034e72f58f",
+          "issue_id": "required_revision:174756b7ce79",
+          "reason": "Reviewer item required_revision:174756b7ce79 requested 'Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['2018', 'boss', 'catalog', 'cmb', 'cohort', 'iv', 'lrg', 'maps', 'planck', 'public', 'sdss'], coverage=0.550.",
+          "before": [
+            {
+              "name": "Cosmological Anisotropy Maps",
+              "description": "Publicly available maps of matter distribution and CMB anisotropies used to identify sub-100 Mpc structures.",
+              "evidence_ids": [
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "access_status": "public_candidate",
+              "is_downloaded": false
+            }
+          ],
+          "after": [
+            {
+              "name": "SDSS-IV eBOSS LRG Catalog (DR16)",
+              "description": "Large-scale structure data providing galaxy distribution at z<0.8 for sub-100 Mpc structure reconstruction.",
+              "evidence_ids": [
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "access_status": "public_candidate",
+              "is_downloaded": false
+            },
+            {
+              "name": "Planck 2018 CMB Maps",
+              "description": "Temperature and polarization maps providing large-scale boundary conditions and standard ΛCDM baseline parameters.",
+              "evidence_ids": [
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "access_status": "public_candidate",
+              "is_downloaded": false
+            }
+          ],
+          "evidence_refs": [
+            "EV-Q053-5b6a5d5413f721935988346e"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:d7dd7874da7211a0",
+          "issue_id": "required_revision:174756b7ce79",
+          "reason": "Reviewer item required_revision:174756b7ce79 requested 'Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.'. V2 changes methods; deterministic correlation evidence tokens=['2018', 'anisotropy', 'boss', 'catalog', 'cmb', 'field', 'iv', 'lrg', 'maps', 'planck', 'sdss'], coverage=0.550.",
+          "before": "1. Data Preprocessing: Extract sub-100 Mpc anisotropy fields from public cosmological maps (EV-Q053-5b6a5d5413f721935988346e). 2. Model Implementation: Implement a volume-averaging algorithm that computes effective scale factors and curvature terms from local inhomogeneities, avoiding standard FLRW assumptions at small scales. 3. Parameter Inference: Fit the effective expansion history derived from the averaged metric to observational proxies (e.g., distance-redshift relations implied by the anisotropy structure). 4. Comparative Analysis: Calculate the residual 'dark' component required in the refined model versus the standard model.",
+          "after": "1. Data Preprocessing: Extract sub-100 Mpc anisotropy fields from SDSS-IV eBOSS LRG catalog (DR16) and align with Planck 2018 CMB maps. 2. Model Implementation: Implement the Buchert averaging formalism to compute effective scale factors, curvature, and backreaction terms from local inhomogeneities. 3. Null-Hypothesis Baseline: Compute backreaction effects using the Green & Wald (2014) rigorous bounds to establish a negligible-effect baseline. 4. Parameter Inference: Fit the effective expansion history derived from the averaged metric to Pantheon+ SNe Ia and DES Y3 BAO data. 5. Comparative Analysis: Calculate the deviation of Ω_m,eff and Ω_Λ,eff from Planck 2018 best-fit ΛCDM parameters and assess statistical significance (>3σ threshold).",
+          "evidence_refs": [
+            "EV-Q053-5b6a5d5413f721935988346e"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:3da0606d2f6c31a4",
+          "issue_id": "required_revision:174756b7ce79",
+          "reason": "Reviewer item required_revision:174756b7ce79 requested 'Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.'. V2 changes technical_details; deterministic correlation evidence tokens=['2018', 'anisotropy', 'boss', 'cmb', 'cosmological', 'iv', 'lrg', 'planck', 'sdss'], coverage=0.450.",
+          "before": "This experiment tests the hypothesis that 'dark spots' (dark matter/energy) are artifacts of inadequate averaging of anisotropies below 100 Mpc. We will implement a non-perturbative backreaction framework (e.g., Buchert formalism or volume-averaging schemes) to re-analyze cosmological data. The core technical challenge is constructing effective Friedmann equations from inhomogeneous metrics without assuming global FLRW symmetry a priori. We will compare the inferred effective density parameters ($\\Omega_{m, eff}, \\Omega_{\\Lambda, eff}$) derived from this refined homogenization against standard $\\Lambda$CDM fits. The analysis focuses on scales <100 Mpc where EV-Q053-5b6a5d5413f721935988346e notes anisotropies persist, testing if their proper averaging eliminates the need for exotic components.",
+          "after": "This experiment tests the hypothesis that non-perturbative averaging of sub-100 Mpc structures yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts. We will implement the Buchert averaging formalism to compute effective scale factors and curvature terms from inhomogeneous matter distributions, avoiding the assumption of global FLRW symmetry at small scales. The core technical challenge is reconstructing the local expansion history from SDSS-IV eBOSS LRG data and integrating it with Planck 2018 CMB boundary conditions. We will compare the inferred effective density parameters (Ω_m,eff, Ω_Λ,eff) against standard ΛCDM fits and the Green & Wald (2014) null-backreaction bounds. The analysis focuses on scales <100 Mpc where EV-Q053-5b6a5d5413f721935988346e notes anisotropies persist, testing if their proper averaging eliminates the need for exotic components or significantly alters their inferred magnitude.",
+          "evidence_refs": [
+            "EV-Q053-5b6a5d5413f721935988346e"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:878cb5a0e130de1d",
+          "issue_id": "required_revision:174756b7ce79",
+          "reason": "Reviewer item required_revision:174756b7ce79 requested 'Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['2018', 'boss', 'catalog', 'cmb', 'iv', 'lrg', 'maps', 'planck', 'sdss'], coverage=0.450.",
+          "before": [
+            "Verify access to public cosmological anisotropy maps cited in EV-Q053-5b6a5d5413f721935988346e.",
+            "Implement open-source code for non-perturbative volume averaging.",
+            "Document the exact definition of 'effective' density parameters in the inhomogeneous context.",
+            "Provide scripts for comparing refined vs. standard $\\Lambda$CDM fits."
+          ],
+          "after": [
+            "Verify access to SDSS-IV eBOSS LRG catalog (DR16) and Planck 2018 CMB maps.",
+            "Implement open-source code for Buchert averaging formalism.",
+            "Include Green & Wald (2014) null-backreaction calculation as a baseline.",
+            "Document the exact definition of 'effective' density parameters in the inhomogeneous context.",
+            "Provide scripts for comparing refined vs. standard ΛCDM fits against Pantheon+ and DES Y3 data."
+          ],
+          "evidence_refs": [
+            "EV-Q053-5b6a5d5413f721935988346e"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:7e8ed040d951b6c7",
+          "issue_id": "required_revision:9535c76274d2",
+          "reason": "Reviewer item required_revision:9535c76274d2 requested 'Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.'. V2 changes validation_protocol; deterministic correlation evidence tokens=['bao', 'cohort', 'des', 'external', 'ia', 'pantheon', 'protocol', 'sne', 'validate', 'y3'], coverage=0.500.",
+          "before": "Cross-validate the effective parameters derived from local anisotropy averaging against independent large-scale probes (if available in public datasets) to ensure consistency. Check if the 'dark' component vanishes or significantly reduces when sub-100 Mpc structures are properly averaged.",
+          "after": "Strictly validate the effective parameters against independent probes: Pantheon+ SNe Ia sample for expansion history and DES Y3 BAO measurements for geometric distances. If the refined averaging fails to match these independent datasets within error bars, or if the deviation from Planck 2018 is <3σ, the hypothesis is falsified.",
+          "evidence_refs": [
+            "EV-Q053-5b6a5d5413f721935988346e"
+          ],
+          "affected_plan_section": "validation_protocol",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:297c95b8cdfe",
+          "category": "critical_issue",
+          "description": "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:e4d8817efbce",
+          "category": "critical_issue",
+          "description": "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:cdadffd2e181",
+          "category": "critical_issue",
+          "description": "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:174756b7ce79",
+          "category": "required_revision",
+          "description": "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:0a3b78034e72f58f,change:d7dd7874da7211a0,change:3da0606d2f6c31a4,change:878cb5a0e130de1d; evidence=EV-Q053-5b6a5d5413f721935988346e; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:7844293dac07",
+          "category": "required_revision",
+          "description": "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:c2da6d0cf420",
+          "category": "required_revision",
+          "description": "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:9535c76274d2",
+          "category": "required_revision",
+          "description": "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:7e8ed040d951b6c7; evidence=EV-Q053-5b6a5d5413f721935988346e; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.7,
+          "after": 0.95,
+          "delta": 0.25
+        },
+        "reproducibility_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Non-perturbative averaging of sub-100 Mpc structures in SDSS-IV eBOSS LRG and Planck 2018 data yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 2,
+          "hypothesis": "Dark matter and dark energy phenomenology arises from infrared modifications to General Relativity manifesting at scales >100 Mpc, eliminating need for exotic substances.",
+          "overall_score": 0.74,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "Relic neutrino spectral distortions from early-universe interactions encode non-standard physics that correlates with late-time dark sector anomalies, offering a particle-physics explanation for cosmological 'dark spots'.",
+          "overall_score": 0.73,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:297c95b8cdfe",
+        "required_revision_without_change:critical_issue:e4d8817efbce",
+        "required_revision_without_change:critical_issue:cdadffd2e181",
+        "required_revision_without_change:required_revision:7844293dac07",
+        "required_revision_without_change:required_revision:c2da6d0cf420",
+        "unresolved_issue:critical_issue:297c95b8cdfe",
+        "unresolved_issue:critical_issue:e4d8817efbce",
+        "unresolved_issue:critical_issue:cdadffd2e181",
+        "unresolved_issue:required_revision:7844293dac07",
+        "unresolved_issue:required_revision:c2da6d0cf420"
+      ],
+      "remaining_blockers": [
+        "critical_issue:297c95b8cdfe: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:e4d8817efbce: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:cdadffd2e181: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:7844293dac07: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:c2da6d0cf420: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-083730-64f56892",
+        "version_number": 1,
+        "version_id": "20260822-083730-64f56892:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Dark matter and dark energy are not distinct material substances but emergent phenomena arising from the incompleteness of General Relativity on cosmological scales.",
+              "mechanism": "If General Relativity is incomplete as suggested by EV-Q053-7e93b6230038a9c81916e34c, then the observed gravitational effects attributed to 'dark' components may instead result from modified gravity laws or geometric corrections at large scales (>100 Mpc), eliminating the need for exotic particle content.",
+              "falsifiable_prediction": "High-precision tests of gravity at galactic and cluster scales will reveal deviations from GR predictions that correlate with the inferred dark matter/energy density profiles, without requiring new particle detections in direct detection experiments.",
+              "required_observations": [
+                "Precision measurements of galaxy rotation curves and cluster lensing consistent with modified gravity models",
+                "Absence of WIMP/axion signals in next-generation direct detection experiments",
+                "Consistency of CMB anisotropy patterns with modified gravity rather than Lambda-CDM"
+              ],
+              "risk_of_being_wrong": "Direct detection of a dark matter particle or confirmation of Lambda-CDM predictions at higher precision would falsify this hypothesis; current evidence only suggests GR incompleteness as a possibility, not proof.",
+              "supporting_evidence_ids": [
+                "EV-Q053-7e93b6230038a9c81916e34c",
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "The apparent 'dark spots' in cosmological models (dark matter/energy) reflect limitations in averaging anisotropies below 100 Mpc, and improved homogenization procedures will reduce or eliminate the need for exotic components.",
+              "mechanism": "EV-Q053-5b6a5d5413f721935988346e states that homogeneity/isotropy emerges only above ~100 Mpc after averaging anisotropies; if current models inadequately account for sub-100 Mpc structure when inferring global composition, the inferred dark component fractions may be systematic artifacts of scale-dependent averaging.",
+              "falsifiable_prediction": "Re-analysis of cosmological datasets using refined backreaction or non-perturbative averaging methods will yield significantly different effective dark matter/energy densities compared to standard FLRW-based fits.",
+              "required_observations": [
+                "Publicly available cosmological anisotropy maps reprocessed with alternative averaging schemes",
+                "Statistical comparison of derived Omega_m/Omega_Lambda values between standard and revised methods",
+                "Validation against independent probes (e.g., BAO, SNe Ia) under both frameworks"
+              ],
+              "risk_of_being_wrong": "If revised averaging yields identical dark component estimates within error bars, or if independent local measurements confirm dark matter presence regardless of averaging, the hypothesis is weakened.",
+              "supporting_evidence_ids": [
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "Relic neutrino spectral distortions encode information about early-universe particle content that can constrain or redefine the nature of dark components beyond standard Lambda-CDM assumptions.",
+              "mechanism": "EV-Q053-1452363c14fbc7e57b667f1d indicates relic neutrino spectra are distorted by interactions in the early universe; these distortions may carry imprints of non-standard physics (e.g., sterile neutrinos, dark sector couplings) that affect the inferred composition of the universe today.",
+              "falsifiable_prediction": "Precise measurement or simulation of relic neutrino spectra will show deviations from standard decoupling predictions that correlate with anomalies in dark matter/energy inference, providing a particle-physics-consistent explanation for cosmological 'dark spots'.",
+              "required_observations": [
+                "Theoretical modeling of neutrino spectral distortions under extended particle physics models",
+                "Comparison with CMB and large-scale structure data to test consistency",
+                "Future direct detection of cosmic neutrino background spectrum (e.g., via PTOLEMY-type experiments)"
+              ],
+              "risk_of_being_wrong": "If neutrino spectra match standard predictions exactly, or if distortions cannot be linked to dark sector parameters, this pathway fails to explain dark components.",
+              "supporting_evidence_ids": [
+                "EV-Q053-1452363c14fbc7e57b667f1d",
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.85,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.65,
+              "overall_score": 0.73
+            }
+          ],
+          "recommended_hypothesis_index": 1,
+          "selection_reason": "Hypothesis 2 is selected because it directly leverages the explicit scale-dependence of homogeneity stated in EV-Q053-5b6a5d5413f721935988346e and is immediately testable using publicly available cosmological anisotropy maps. It addresses a concrete methodological gap (averaging procedure) rather than speculative new physics, offering high feasibility and falsifiability while remaining grounded in the provided evidence. Unlike Hypothesis 1, it does not assume GR is wrong but tests whether current implementation of GR-based averaging introduces systematic bias in composition inference.",
+          "rejected_directions": [
+            "Assuming specific particle identities for dark matter (e.g., WIMPs, axions) without supporting evidence in allowed cards",
+            "Quantifying baryonic composition (e.g., hydrogen percentage) as no EvidenceCard supports the booklet's 5% figure",
+            "Proposing multiverse or anthropic explanations which are unfalsifiable and unsupported by any allowed evidence"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that 'dark spots' (dark matter/energy) are artifacts of inadequate averaging of anisotropies below 100 Mpc. We will implement a non-perturbative backreaction framework (e.g., Buchert formalism or volume-averaging schemes) to re-analyze cosmological data. The core technical challenge is constructing effective Friedmann equations from inhomogeneous metrics without assuming global FLRW symmetry a priori. We will compare the inferred effective density parameters ($\\Omega_{m, eff}, \\Omega_{\\Lambda, eff}$) derived from this refined homogenization against standard $\\Lambda$CDM fits. The analysis focuses on scales <100 Mpc where EV-Q053-5b6a5d5413f721935988346e notes anisotropies persist, testing if their proper averaging eliminates the need for exotic components.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Cosmological Anisotropy Maps",
+                "description": "Publicly available maps of matter distribution and CMB anisotropies used to identify sub-100 Mpc structures.",
+                "evidence_ids": [
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              }
+            ],
+            "target": [
+              {
+                "name": "Effective Cosmological Parameters",
+                "description": "Derived values of $\\Omega_m$ and $\\Omega_\\Lambda$ under standard vs. refined averaging schemes.",
+                "type": "derived_metric"
+              }
+            ]
+          },
+          "methods": "1. Data Preprocessing: Extract sub-100 Mpc anisotropy fields from public cosmological maps (EV-Q053-5b6a5d5413f721935988346e). 2. Model Implementation: Implement a volume-averaging algorithm that computes effective scale factors and curvature terms from local inhomogeneities, avoiding standard FLRW assumptions at small scales. 3. Parameter Inference: Fit the effective expansion history derived from the averaged metric to observational proxies (e.g., distance-redshift relations implied by the anisotropy structure). 4. Comparative Analysis: Calculate the residual 'dark' component required in the refined model versus the standard model.",
+          "experiments": {
+            "baselines": [
+              "Standard $\\Lambda$CDM Model: Assumes global homogeneity/isotropy and fits $\\Omega_m \\approx 0.3, \\Omega_\\Lambda \\approx 0.7$.",
+              "Perturbative Backreaction Model: Uses standard linear perturbation theory to estimate corrections, typically yielding negligible effects."
+            ],
+            "metrics": [
+              "Deviation in $\\Omega_{dark}$: Difference in inferred dark component density between refined and standard models.",
+              "Goodness-of-Fit ($\\chi^2$): Fit quality of the refined effective metric to observed anisotropy statistics.",
+              "Scale-Dependence Index: Quantification of how inferred parameters change with averaging scale (specifically around 100 Mpc)."
+            ],
+            "ablation": "Vary the averaging scale threshold (50 Mpc, 100 Mpc, 200 Mpc) to test the specific claim from EV-Q053-5b6a5d5413f721935988346e that homogeneity emerges only above ~100 Mpc.",
+            "validation_protocol": "Cross-validate the effective parameters derived from local anisotropy averaging against independent large-scale probes (if available in public datasets) to ensure consistency. Check if the 'dark' component vanishes or significantly reduces when sub-100 Mpc structures are properly averaged."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to public cosmological anisotropy maps cited in EV-Q053-5b6a5d5413f721935988346e.",
+            "Implement open-source code for non-perturbative volume averaging.",
+            "Document the exact definition of 'effective' density parameters in the inhomogeneous context.",
+            "Provide scripts for comparing refined vs. standard $\\Lambda$CDM fits."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster for numerical integration of inhomogeneous metrics.",
+            "estimated_time": "2-4 weeks for implementation and initial runs.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Cosmological simulation libraries (e.g., CAMB/CLASS modified for backreaction)"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies a knowledge gap regarding the nature of dark components based on EV-Q053-5b6a5d5413f721935988346e and EV-Q053-7e93b6230038a9c81916e34c.",
+            "The experimental design proposes a valid methodological test (backreaction/averaging) but lacks specific dataset identifiers. 'Cosmological Anisotropy Maps' is a generic class, not a reproducible data source.",
+            "The mechanism cites EV-Q053-5b6a5d5413f721935988346e for the 100 Mpc scale, which is correct, but extrapolates that 'improved homogenization will reduce exotic components' without direct evidence support; this remains a speculative hypothesis derived from the 'dark spots' limitation mention.",
+            "Results field correctly states 'pending', avoiding fabrication.",
+            "No causal claims were made inappropriately; the link between averaging and dark energy is framed as a testable prediction."
+          ],
+          "critical_issues": [
+            "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+            "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+            "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them."
+          ],
+          "required_revisions": [
+            "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+            "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+            "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+            "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.8,
+          "falsifiability_score": 0.7,
+          "reproducibility_score": 0.4,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:297c95b8cdfe",
+            "category": "critical_issue",
+            "description": "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:e4d8817efbce",
+            "category": "critical_issue",
+            "description": "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:cdadffd2e181",
+            "category": "critical_issue",
+            "description": "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:174756b7ce79",
+            "category": "required_revision",
+            "description": "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7844293dac07",
+            "category": "required_revision",
+            "description": "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:c2da6d0cf420",
+            "category": "required_revision",
+            "description": "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:9535c76274d2",
+            "category": "required_revision",
+            "description": "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "0edd0a8f9ad440309bfac8dd80cc95c90106280d3995e8d78c5eb84b5e99feed",
+          "experiment_designer": "b0a7df4bbd7b2a93e3014c8421650713c33ea853ab5876efb2ad07a8c7c7cd2d",
+          "scientific_reviewer": "d93e1bc96bc88773f70771fd4d585f16319702059f63c30fc6fc0fb7f3106ca9"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-083730-64f56892",
+        "version_number": 2,
+        "version_id": "20260822-083730-64f56892:v2",
+        "parent_version_id": "20260822-083730-64f56892:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Non-perturbative averaging of sub-100 Mpc structures in SDSS-IV eBOSS LRG and Planck 2018 data yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts.",
+              "mechanism": "EV-Q053-5b6a5d5413f721935988346e establishes that homogeneity emerges only above ~100 Mpc after averaging anisotropies. If current FLRW-based analyses of SDSS-IV eBOSS and Planck 2018 data fail to fully capture non-linear backreaction from sub-100 Mpc structures, the inferred Ω_m and Ω_Λ may include systematic biases attributed to dark components. This hypothesis tests whether rigorous volume averaging reduces these apparent exotic components.",
+              "falsifiable_prediction": "Applying non-perturbative backreaction formalisms (e.g., Buchert averaging) to SDSS-IV eBOSS LRG catalog and Planck 2018 CMB maps will produce effective Ω_m,eff and Ω_Λ,eff values that differ by >3σ from Planck 2018 best-fit ΛCDM parameters AND provide a statistically superior fit (Δχ² < -10) to Pantheon+ SNe Ia and DES Y3 BAO data compared to both standard ΛCDM and Green & Wald (2014) null-backreaction bounds.",
+              "required_observations": [
+                "SDSS-IV eBOSS LRG catalog (DR16) galaxy distribution at z<0.8 for sub-100 Mpc structure reconstruction",
+                "Planck 2018 CMB temperature and polarization maps for large-scale boundary conditions",
+                "Pantheon+ Type Ia Supernovae sample for independent expansion history validation",
+                "DES Y3 BAO measurements for geometric distance scale cross-check",
+                "Computed effective density parameters under both standard perturbative and non-perturbative averaging schemes"
+              ],
+              "risk_of_being_wrong": "If non-perturbative averaging yields parameters consistent with Planck 2018 ΛCDM within 3σ, or fails to improve fit quality to Pantheon+/DES Y3 beyond Green & Wald (2014) limits, the hypothesis is falsified. Additionally, if local probes (e.g., SH0ES) remain inconsistent with averaged parameters, backreaction cannot resolve the tension.",
+              "supporting_evidence_ids": [
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.75,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Relic neutrino spectral distortions from early-universe interactions encode non-standard physics that correlates with late-time dark sector anomalies, offering a particle-physics explanation for cosmological 'dark spots'.",
+              "mechanism": "EV-Q053-1452363c14fbc7e57b667f1d documents that relic neutrino spectra are distorted by early-universe interactions. These distortions could carry imprints of dark sector couplings or sterile neutrinos that modify the effective number of relativistic species (N_eff) and matter-radiation equality epoch, thereby altering inferred dark matter/energy densities in ways not captured by standard ΛCDM.",
+              "falsifiable_prediction": "Theoretical modeling of neutrino spectral distortions under extended particle physics scenarios will predict N_eff and Σm_ν values that, when propagated through Boltzmann codes (CLASS/CAMB), produce CMB power spectra matching Planck 2018 residuals better than ΛCDM (ΔAIC > 6) while remaining consistent with SDSS-IV eBOSS LRG clustering statistics.",
+              "required_observations": [
+                "Planck 2018 CMB TT/TE/EE power spectra and lensing reconstruction",
+                "SDSS-IV eBOSS LRG correlation function measurements",
+                "Numerical solutions of neutrino decoupling with non-standard interaction terms",
+                "Derived constraints on N_eff and Σm_ν from joint CMB+LSS analysis"
+              ],
+              "risk_of_being_wrong": "If neutrino spectral distortion models cannot simultaneously fit Planck 2018 CMB and eBOSS LSS data better than ΛCDM, or if predicted N_eff values conflict with primordial nucleosynthesis bounds, this mechanism is excluded as an explanation for dark components.",
+              "supporting_evidence_ids": [
+                "EV-Q053-1452363c14fbc7e57b667f1d",
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.85,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.65,
+              "overall_score": 0.73
+            },
+            {
+              "hypothesis": "Dark matter and dark energy phenomenology arises from infrared modifications to General Relativity manifesting at scales >100 Mpc, eliminating need for exotic substances.",
+              "mechanism": "EV-Q053-7e93b6230038a9c81916e34c identifies dark matter and dark energy as hints of GR incompleteness. Combined with EV-Q053-5b6a5d5413f721935988346e's statement that homogeneity emerges at ~100 Mpc, this suggests gravitational dynamics may transition to modified behavior precisely at the homogeneity scale, mimicking dark component effects without new particles.",
+              "falsifiable_prediction": "Modified gravity models calibrated to reproduce galactic rotation curves will predict lensing-galaxy cross-correlations in SDSS-IV eBOSS and weak lensing shear patterns in DES Y3 that deviate from ΛCDM predictions by >5% at r > 10 Mpc/h, while maintaining consistency with Solar System tests.",
+              "required_observations": [
+                "SDSS-IV eBOSS LRG-galaxy lensing cross-correlation measurements",
+                "DES Y3 cosmic shear two-point correlation functions",
+                "Galaxy rotation curve catalogs (SPARC/THINGS)",
+                "Solar System ephemeris constraints on post-Newtonian parameters"
+              ],
+              "risk_of_being_wrong": "If lensing-galaxy correlations match ΛCDM within 5% at all scales, or if modified gravity models require fine-tuning to satisfy both cosmological and Solar System constraints, the hypothesis loses explanatory power relative to ΛCDM.",
+              "supporting_evidence_ids": [
+                "EV-Q053-7e93b6230038a9c81916e34c",
+                "EV-Q053-5b6a5d5413f721935988346e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.74
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 directly addresses all critical reviewer feedback: (1) specifies concrete public datasets (SDSS-IV eBOSS LRG, Planck 2018, Pantheon+, DES Y3) replacing vague 'anisotropy maps'; (2) includes explicit null baseline (Green & Wald 2014) alongside ΛCDM; (3) defines quantitative >3σ threshold for significance; (4) mandates specific independent validation probes. It remains grounded in EV-Q053-5b6a5d5413f721935988346e's 100 Mpc homogeneity scale while transforming speculative extrapolation into a rigorously falsifiable test with pending results. Higher feasibility than H2 (no future experiments needed) and stronger evidence grounding than H3 (directly tests averaging mechanism cited in evidence).",
+          "rejected_directions": [
+            "Generic claims about 'improved homogenization reducing exotic components' without specifying datasets, baselines, or quantitative thresholds",
+            "Assuming backreaction significance without null-hypothesis testing against established bounds like Green & Wald (2014)",
+            "Conditional validation protocols ('if available') instead of mandatory cross-checks with named surveys (Pantheon+, DES Y3)",
+            "Post-hoc interpretation of numerical noise as success without pre-defined σ-thresholds",
+            "Particle-specific dark matter hypotheses unsupported by allowed evidence cards"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that non-perturbative averaging of sub-100 Mpc structures yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts. We will implement the Buchert averaging formalism to compute effective scale factors and curvature terms from inhomogeneous matter distributions, avoiding the assumption of global FLRW symmetry at small scales. The core technical challenge is reconstructing the local expansion history from SDSS-IV eBOSS LRG data and integrating it with Planck 2018 CMB boundary conditions. We will compare the inferred effective density parameters (Ω_m,eff, Ω_Λ,eff) against standard ΛCDM fits and the Green & Wald (2014) null-backreaction bounds. The analysis focuses on scales <100 Mpc where EV-Q053-5b6a5d5413f721935988346e notes anisotropies persist, testing if their proper averaging eliminates the need for exotic components or significantly alters their inferred magnitude.",
+          "datasets": {
+            "source": [
+              {
+                "name": "SDSS-IV eBOSS LRG Catalog (DR16)",
+                "description": "Large-scale structure data providing galaxy distribution at z<0.8 for sub-100 Mpc structure reconstruction.",
+                "evidence_ids": [
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              },
+              {
+                "name": "Planck 2018 CMB Maps",
+                "description": "Temperature and polarization maps providing large-scale boundary conditions and standard ΛCDM baseline parameters.",
+                "evidence_ids": [
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              }
+            ],
+            "target": [
+              {
+                "name": "Pantheon+ SNe Ia Sample",
+                "description": "Independent Type Ia Supernovae data for validating the effective expansion history derived from averaging.",
+                "type": "validation_dataset"
+              },
+              {
+                "name": "DES Y3 BAO Measurements",
+                "description": "Baryon Acoustic Oscillation data for geometric distance scale cross-checks.",
+                "type": "validation_dataset"
+              },
+              {
+                "name": "Effective Cosmological Parameters",
+                "description": "Derived values of Ω_m,eff and Ω_Λ,eff under non-perturbative averaging schemes.",
+                "type": "derived_metric"
+              }
+            ]
+          },
+          "methods": "1. Data Preprocessing: Extract sub-100 Mpc anisotropy fields from SDSS-IV eBOSS LRG catalog (DR16) and align with Planck 2018 CMB maps. 2. Model Implementation: Implement the Buchert averaging formalism to compute effective scale factors, curvature, and backreaction terms from local inhomogeneities. 3. Null-Hypothesis Baseline: Compute backreaction effects using the Green & Wald (2014) rigorous bounds to establish a negligible-effect baseline. 4. Parameter Inference: Fit the effective expansion history derived from the averaged metric to Pantheon+ SNe Ia and DES Y3 BAO data. 5. Comparative Analysis: Calculate the deviation of Ω_m,eff and Ω_Λ,eff from Planck 2018 best-fit ΛCDM parameters and assess statistical significance (>3σ threshold).",
+          "experiments": {
+            "baselines": [
+              "Standard ΛCDM Model: Assumes global homogeneity/isotropy and uses Planck 2018 best-fit parameters (Ω_m ≈ 0.315, Ω_Λ ≈ 0.685).",
+              "Green & Wald (2014) Null-Backreaction Bounds: Rigorous theoretical limits demonstrating that backreaction effects are negligible in standard perturbation theory."
+            ],
+            "metrics": [
+              "Deviation in Ω_dark: Difference between inferred Ω_m,eff/Ω_Λ,eff and Planck 2018 best-fit values, measured in standard deviations (σ).",
+              "Goodness-of-Fit (Δχ²): Improvement in fit quality to Pantheon+ SNe Ia and DES Y3 BAO data compared to standard ΛCDM (threshold: Δχ² < -10).",
+              "Statistical Significance: Probability that the observed deviation from ΛCDM is due to random noise (target: p < 0.003 for >3σ)."
+            ],
+            "ablation": "Vary the averaging scale threshold (50 Mpc, 100 Mpc, 200 Mpc) to test the specific claim from EV-Q053-5b6a5d5413f721935988346e that homogeneity emerges only above ~100 Mpc. Compare results with and without the Green & Wald correction terms.",
+            "validation_protocol": "Strictly validate the effective parameters against independent probes: Pantheon+ SNe Ia sample for expansion history and DES Y3 BAO measurements for geometric distances. If the refined averaging fails to match these independent datasets within error bars, or if the deviation from Planck 2018 is <3σ, the hypothesis is falsified."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify access to SDSS-IV eBOSS LRG catalog (DR16) and Planck 2018 CMB maps.",
+            "Implement open-source code for Buchert averaging formalism.",
+            "Include Green & Wald (2014) null-backreaction calculation as a baseline.",
+            "Document the exact definition of 'effective' density parameters in the inhomogeneous context.",
+            "Provide scripts for comparing refined vs. standard ΛCDM fits against Pantheon+ and DES Y3 data."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster for numerical integration of inhomogeneous metrics and MCMC parameter estimation.",
+            "estimated_time": "4-6 weeks for implementation, baseline validation, and initial runs.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Astropy",
+              "Cosmological simulation libraries (e.g., CAMB/CLASS modified for backreaction)"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis successfully addresses all critical issues from the previous review by specifying concrete datasets (SDSS-IV eBOSS LRG DR16, Planck 2018) instead of generic 'anisotropy maps'.",
+            "Falsifiability is significantly improved with the inclusion of quantitative thresholds (>3σ deviation, Δχ² < -10) and a specific null-hypothesis baseline (Green & Wald 2014).",
+            "Validation protocol now explicitly mandates independent probes (Pantheon+ SNe Ia, DES Y3 BAO) rather than leaving them conditional, satisfying reproducibility requirements.",
+            "Evidence grounding remains strictly within allowed EvidenceCards; the link between 'dark spots' and averaging is correctly framed as a testable hypothesis derived from EV-Q053-5b6a5d5413f721935988346e rather than an established fact.",
+            "Results field correctly states 'pending' with no fabrication of experimental outcomes."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:297c95b8cdfe",
+            "category": "critical_issue",
+            "description": "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:e4d8817efbce",
+            "category": "critical_issue",
+            "description": "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:cdadffd2e181",
+            "category": "critical_issue",
+            "description": "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:174756b7ce79",
+            "category": "required_revision",
+            "description": "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:0a3b78034e72f58f,change:d7dd7874da7211a0,change:3da0606d2f6c31a4,change:878cb5a0e130de1d; evidence=EV-Q053-5b6a5d5413f721935988346e; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:7844293dac07",
+            "category": "required_revision",
+            "description": "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:c2da6d0cf420",
+            "category": "required_revision",
+            "description": "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:9535c76274d2",
+            "category": "required_revision",
+            "description": "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:7e8ed040d951b6c7; evidence=EV-Q053-5b6a5d5413f721935988346e; V2 Reviewer no longer reports the issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "69bfa19303d30a2e9132257aa4cb12b9b75e33afe36ec819c265ea81c22761a0",
+          "experiment_designer": "febe4b15c15eb98238a28e1c213c851eeb94d8f7e9f1f856494b51d349f038f6",
+          "scientific_reviewer": "74f246f592a7d6daafad0b779826416a493c83af2bd42531b89393412fb0ad5c"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-083730-64f56892",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-083730-64f56892:review:v1",
+        "20260822-083730-64f56892:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-083730-64f56892:v1",
+        "20260822-083730-64f56892:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-083730-64f56892",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-083730-64f56892:review:v1",
+          "20260822-083730-64f56892:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-083730-64f56892:v1",
+          "20260822-083730-64f56892:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-083730-64f56892",
+          "version_number": 1,
+          "version_id": "20260822-083730-64f56892:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Dark matter and dark energy are not distinct material substances but emergent phenomena arising from the incompleteness of General Relativity on cosmological scales.",
+                "mechanism": "If General Relativity is incomplete as suggested by EV-Q053-7e93b6230038a9c81916e34c, then the observed gravitational effects attributed to 'dark' components may instead result from modified gravity laws or geometric corrections at large scales (>100 Mpc), eliminating the need for exotic particle content.",
+                "falsifiable_prediction": "High-precision tests of gravity at galactic and cluster scales will reveal deviations from GR predictions that correlate with the inferred dark matter/energy density profiles, without requiring new particle detections in direct detection experiments.",
+                "required_observations": [
+                  "Precision measurements of galaxy rotation curves and cluster lensing consistent with modified gravity models",
+                  "Absence of WIMP/axion signals in next-generation direct detection experiments",
+                  "Consistency of CMB anisotropy patterns with modified gravity rather than Lambda-CDM"
+                ],
+                "risk_of_being_wrong": "Direct detection of a dark matter particle or confirmation of Lambda-CDM predictions at higher precision would falsify this hypothesis; current evidence only suggests GR incompleteness as a possibility, not proof.",
+                "supporting_evidence_ids": [
+                  "EV-Q053-7e93b6230038a9c81916e34c",
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "The apparent 'dark spots' in cosmological models (dark matter/energy) reflect limitations in averaging anisotropies below 100 Mpc, and improved homogenization procedures will reduce or eliminate the need for exotic components.",
+                "mechanism": "EV-Q053-5b6a5d5413f721935988346e states that homogeneity/isotropy emerges only above ~100 Mpc after averaging anisotropies; if current models inadequately account for sub-100 Mpc structure when inferring global composition, the inferred dark component fractions may be systematic artifacts of scale-dependent averaging.",
+                "falsifiable_prediction": "Re-analysis of cosmological datasets using refined backreaction or non-perturbative averaging methods will yield significantly different effective dark matter/energy densities compared to standard FLRW-based fits.",
+                "required_observations": [
+                  "Publicly available cosmological anisotropy maps reprocessed with alternative averaging schemes",
+                  "Statistical comparison of derived Omega_m/Omega_Lambda values between standard and revised methods",
+                  "Validation against independent probes (e.g., BAO, SNe Ia) under both frameworks"
+                ],
+                "risk_of_being_wrong": "If revised averaging yields identical dark component estimates within error bars, or if independent local measurements confirm dark matter presence regardless of averaging, the hypothesis is weakened.",
+                "supporting_evidence_ids": [
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.78
+              },
+              {
+                "hypothesis": "Relic neutrino spectral distortions encode information about early-universe particle content that can constrain or redefine the nature of dark components beyond standard Lambda-CDM assumptions.",
+                "mechanism": "EV-Q053-1452363c14fbc7e57b667f1d indicates relic neutrino spectra are distorted by interactions in the early universe; these distortions may carry imprints of non-standard physics (e.g., sterile neutrinos, dark sector couplings) that affect the inferred composition of the universe today.",
+                "falsifiable_prediction": "Precise measurement or simulation of relic neutrino spectra will show deviations from standard decoupling predictions that correlate with anomalies in dark matter/energy inference, providing a particle-physics-consistent explanation for cosmological 'dark spots'.",
+                "required_observations": [
+                  "Theoretical modeling of neutrino spectral distortions under extended particle physics models",
+                  "Comparison with CMB and large-scale structure data to test consistency",
+                  "Future direct detection of cosmic neutrino background spectrum (e.g., via PTOLEMY-type experiments)"
+                ],
+                "risk_of_being_wrong": "If neutrino spectra match standard predictions exactly, or if distortions cannot be linked to dark sector parameters, this pathway fails to explain dark components.",
+                "supporting_evidence_ids": [
+                  "EV-Q053-1452363c14fbc7e57b667f1d",
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.85,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.65,
+                "overall_score": 0.73
+              }
+            ],
+            "recommended_hypothesis_index": 1,
+            "selection_reason": "Hypothesis 2 is selected because it directly leverages the explicit scale-dependence of homogeneity stated in EV-Q053-5b6a5d5413f721935988346e and is immediately testable using publicly available cosmological anisotropy maps. It addresses a concrete methodological gap (averaging procedure) rather than speculative new physics, offering high feasibility and falsifiability while remaining grounded in the provided evidence. Unlike Hypothesis 1, it does not assume GR is wrong but tests whether current implementation of GR-based averaging introduces systematic bias in composition inference.",
+            "rejected_directions": [
+              "Assuming specific particle identities for dark matter (e.g., WIMPs, axions) without supporting evidence in allowed cards",
+              "Quantifying baryonic composition (e.g., hydrogen percentage) as no EvidenceCard supports the booklet's 5% figure",
+              "Proposing multiverse or anthropic explanations which are unfalsifiable and unsupported by any allowed evidence"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that 'dark spots' (dark matter/energy) are artifacts of inadequate averaging of anisotropies below 100 Mpc. We will implement a non-perturbative backreaction framework (e.g., Buchert formalism or volume-averaging schemes) to re-analyze cosmological data. The core technical challenge is constructing effective Friedmann equations from inhomogeneous metrics without assuming global FLRW symmetry a priori. We will compare the inferred effective density parameters ($\\Omega_{m, eff}, \\Omega_{\\Lambda, eff}$) derived from this refined homogenization against standard $\\Lambda$CDM fits. The analysis focuses on scales <100 Mpc where EV-Q053-5b6a5d5413f721935988346e notes anisotropies persist, testing if their proper averaging eliminates the need for exotic components.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Cosmological Anisotropy Maps",
+                  "description": "Publicly available maps of matter distribution and CMB anisotropies used to identify sub-100 Mpc structures.",
+                  "evidence_ids": [
+                    "EV-Q053-5b6a5d5413f721935988346e"
+                  ],
+                  "access_status": "public_candidate",
+                  "is_downloaded": false
+                }
+              ],
+              "target": [
+                {
+                  "name": "Effective Cosmological Parameters",
+                  "description": "Derived values of $\\Omega_m$ and $\\Omega_\\Lambda$ under standard vs. refined averaging schemes.",
+                  "type": "derived_metric"
+                }
+              ]
+            },
+            "methods": "1. Data Preprocessing: Extract sub-100 Mpc anisotropy fields from public cosmological maps (EV-Q053-5b6a5d5413f721935988346e). 2. Model Implementation: Implement a volume-averaging algorithm that computes effective scale factors and curvature terms from local inhomogeneities, avoiding standard FLRW assumptions at small scales. 3. Parameter Inference: Fit the effective expansion history derived from the averaged metric to observational proxies (e.g., distance-redshift relations implied by the anisotropy structure). 4. Comparative Analysis: Calculate the residual 'dark' component required in the refined model versus the standard model.",
+            "experiments": {
+              "baselines": [
+                "Standard $\\Lambda$CDM Model: Assumes global homogeneity/isotropy and fits $\\Omega_m \\approx 0.3, \\Omega_\\Lambda \\approx 0.7$.",
+                "Perturbative Backreaction Model: Uses standard linear perturbation theory to estimate corrections, typically yielding negligible effects."
+              ],
+              "metrics": [
+                "Deviation in $\\Omega_{dark}$: Difference in inferred dark component density between refined and standard models.",
+                "Goodness-of-Fit ($\\chi^2$): Fit quality of the refined effective metric to observed anisotropy statistics.",
+                "Scale-Dependence Index: Quantification of how inferred parameters change with averaging scale (specifically around 100 Mpc)."
+              ],
+              "ablation": "Vary the averaging scale threshold (50 Mpc, 100 Mpc, 200 Mpc) to test the specific claim from EV-Q053-5b6a5d5413f721935988346e that homogeneity emerges only above ~100 Mpc.",
+              "validation_protocol": "Cross-validate the effective parameters derived from local anisotropy averaging against independent large-scale probes (if available in public datasets) to ensure consistency. Check if the 'dark' component vanishes or significantly reduces when sub-100 Mpc structures are properly averaged."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify access to public cosmological anisotropy maps cited in EV-Q053-5b6a5d5413f721935988346e.",
+              "Implement open-source code for non-perturbative volume averaging.",
+              "Document the exact definition of 'effective' density parameters in the inhomogeneous context.",
+              "Provide scripts for comparing refined vs. standard $\\Lambda$CDM fits."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-performance computing cluster for numerical integration of inhomogeneous metrics.",
+              "estimated_time": "2-4 weeks for implementation and initial runs.",
+              "software_dependencies": [
+                "Python",
+                "NumPy/SciPy",
+                "Cosmological simulation libraries (e.g., CAMB/CLASS modified for backreaction)"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis correctly identifies a knowledge gap regarding the nature of dark components based on EV-Q053-5b6a5d5413f721935988346e and EV-Q053-7e93b6230038a9c81916e34c.",
+              "The experimental design proposes a valid methodological test (backreaction/averaging) but lacks specific dataset identifiers. 'Cosmological Anisotropy Maps' is a generic class, not a reproducible data source.",
+              "The mechanism cites EV-Q053-5b6a5d5413f721935988346e for the 100 Mpc scale, which is correct, but extrapolates that 'improved homogenization will reduce exotic components' without direct evidence support; this remains a speculative hypothesis derived from the 'dark spots' limitation mention.",
+              "Results field correctly states 'pending', avoiding fabrication.",
+              "No causal claims were made inappropriately; the link between averaging and dark energy is framed as a testable prediction."
+            ],
+            "critical_issues": [
+              "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+              "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+              "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them."
+            ],
+            "required_revisions": [
+              "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+              "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+              "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+              "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.8,
+            "falsifiability_score": 0.7,
+            "reproducibility_score": 0.4,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:297c95b8cdfe",
+              "category": "critical_issue",
+              "description": "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:e4d8817efbce",
+              "category": "critical_issue",
+              "description": "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:cdadffd2e181",
+              "category": "critical_issue",
+              "description": "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:174756b7ce79",
+              "category": "required_revision",
+              "description": "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:7844293dac07",
+              "category": "required_revision",
+              "description": "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:c2da6d0cf420",
+              "category": "required_revision",
+              "description": "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:9535c76274d2",
+              "category": "required_revision",
+              "description": "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "0edd0a8f9ad440309bfac8dd80cc95c90106280d3995e8d78c5eb84b5e99feed",
+            "experiment_designer": "b0a7df4bbd7b2a93e3014c8421650713c33ea853ab5876efb2ad07a8c7c7cd2d",
+            "scientific_reviewer": "d93e1bc96bc88773f70771fd4d585f16319702059f63c30fc6fc0fb7f3106ca9"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-083730-64f56892",
+          "version_number": 2,
+          "version_id": "20260822-083730-64f56892:v2",
+          "parent_version_id": "20260822-083730-64f56892:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Non-perturbative averaging of sub-100 Mpc structures in SDSS-IV eBOSS LRG and Planck 2018 data yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts.",
+                "mechanism": "EV-Q053-5b6a5d5413f721935988346e establishes that homogeneity emerges only above ~100 Mpc after averaging anisotropies. If current FLRW-based analyses of SDSS-IV eBOSS and Planck 2018 data fail to fully capture non-linear backreaction from sub-100 Mpc structures, the inferred Ω_m and Ω_Λ may include systematic biases attributed to dark components. This hypothesis tests whether rigorous volume averaging reduces these apparent exotic components.",
+                "falsifiable_prediction": "Applying non-perturbative backreaction formalisms (e.g., Buchert averaging) to SDSS-IV eBOSS LRG catalog and Planck 2018 CMB maps will produce effective Ω_m,eff and Ω_Λ,eff values that differ by >3σ from Planck 2018 best-fit ΛCDM parameters AND provide a statistically superior fit (Δχ² < -10) to Pantheon+ SNe Ia and DES Y3 BAO data compared to both standard ΛCDM and Green & Wald (2014) null-backreaction bounds.",
+                "required_observations": [
+                  "SDSS-IV eBOSS LRG catalog (DR16) galaxy distribution at z<0.8 for sub-100 Mpc structure reconstruction",
+                  "Planck 2018 CMB temperature and polarization maps for large-scale boundary conditions",
+                  "Pantheon+ Type Ia Supernovae sample for independent expansion history validation",
+                  "DES Y3 BAO measurements for geometric distance scale cross-check",
+                  "Computed effective density parameters under both standard perturbative and non-perturbative averaging schemes"
+                ],
+                "risk_of_being_wrong": "If non-perturbative averaging yields parameters consistent with Planck 2018 ΛCDM within 3σ, or fails to improve fit quality to Pantheon+/DES Y3 beyond Green & Wald (2014) limits, the hypothesis is falsified. Additionally, if local probes (e.g., SH0ES) remain inconsistent with averaged parameters, backreaction cannot resolve the tension.",
+                "supporting_evidence_ids": [
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.75,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "Relic neutrino spectral distortions from early-universe interactions encode non-standard physics that correlates with late-time dark sector anomalies, offering a particle-physics explanation for cosmological 'dark spots'.",
+                "mechanism": "EV-Q053-1452363c14fbc7e57b667f1d documents that relic neutrino spectra are distorted by early-universe interactions. These distortions could carry imprints of dark sector couplings or sterile neutrinos that modify the effective number of relativistic species (N_eff) and matter-radiation equality epoch, thereby altering inferred dark matter/energy densities in ways not captured by standard ΛCDM.",
+                "falsifiable_prediction": "Theoretical modeling of neutrino spectral distortions under extended particle physics scenarios will predict N_eff and Σm_ν values that, when propagated through Boltzmann codes (CLASS/CAMB), produce CMB power spectra matching Planck 2018 residuals better than ΛCDM (ΔAIC > 6) while remaining consistent with SDSS-IV eBOSS LRG clustering statistics.",
+                "required_observations": [
+                  "Planck 2018 CMB TT/TE/EE power spectra and lensing reconstruction",
+                  "SDSS-IV eBOSS LRG correlation function measurements",
+                  "Numerical solutions of neutrino decoupling with non-standard interaction terms",
+                  "Derived constraints on N_eff and Σm_ν from joint CMB+LSS analysis"
+                ],
+                "risk_of_being_wrong": "If neutrino spectral distortion models cannot simultaneously fit Planck 2018 CMB and eBOSS LSS data better than ΛCDM, or if predicted N_eff values conflict with primordial nucleosynthesis bounds, this mechanism is excluded as an explanation for dark components.",
+                "supporting_evidence_ids": [
+                  "EV-Q053-1452363c14fbc7e57b667f1d",
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.85,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.65,
+                "overall_score": 0.73
+              },
+              {
+                "hypothesis": "Dark matter and dark energy phenomenology arises from infrared modifications to General Relativity manifesting at scales >100 Mpc, eliminating need for exotic substances.",
+                "mechanism": "EV-Q053-7e93b6230038a9c81916e34c identifies dark matter and dark energy as hints of GR incompleteness. Combined with EV-Q053-5b6a5d5413f721935988346e's statement that homogeneity emerges at ~100 Mpc, this suggests gravitational dynamics may transition to modified behavior precisely at the homogeneity scale, mimicking dark component effects without new particles.",
+                "falsifiable_prediction": "Modified gravity models calibrated to reproduce galactic rotation curves will predict lensing-galaxy cross-correlations in SDSS-IV eBOSS and weak lensing shear patterns in DES Y3 that deviate from ΛCDM predictions by >5% at r > 10 Mpc/h, while maintaining consistency with Solar System tests.",
+                "required_observations": [
+                  "SDSS-IV eBOSS LRG-galaxy lensing cross-correlation measurements",
+                  "DES Y3 cosmic shear two-point correlation functions",
+                  "Galaxy rotation curve catalogs (SPARC/THINGS)",
+                  "Solar System ephemeris constraints on post-Newtonian parameters"
+                ],
+                "risk_of_being_wrong": "If lensing-galaxy correlations match ΛCDM within 5% at all scales, or if modified gravity models require fine-tuning to satisfy both cosmological and Solar System constraints, the hypothesis loses explanatory power relative to ΛCDM.",
+                "supporting_evidence_ids": [
+                  "EV-Q053-7e93b6230038a9c81916e34c",
+                  "EV-Q053-5b6a5d5413f721935988346e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.74
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 directly addresses all critical reviewer feedback: (1) specifies concrete public datasets (SDSS-IV eBOSS LRG, Planck 2018, Pantheon+, DES Y3) replacing vague 'anisotropy maps'; (2) includes explicit null baseline (Green & Wald 2014) alongside ΛCDM; (3) defines quantitative >3σ threshold for significance; (4) mandates specific independent validation probes. It remains grounded in EV-Q053-5b6a5d5413f721935988346e's 100 Mpc homogeneity scale while transforming speculative extrapolation into a rigorously falsifiable test with pending results. Higher feasibility than H2 (no future experiments needed) and stronger evidence grounding than H3 (directly tests averaging mechanism cited in evidence).",
+            "rejected_directions": [
+              "Generic claims about 'improved homogenization reducing exotic components' without specifying datasets, baselines, or quantitative thresholds",
+              "Assuming backreaction significance without null-hypothesis testing against established bounds like Green & Wald (2014)",
+              "Conditional validation protocols ('if available') instead of mandatory cross-checks with named surveys (Pantheon+, DES Y3)",
+              "Post-hoc interpretation of numerical noise as success without pre-defined σ-thresholds",
+              "Particle-specific dark matter hypotheses unsupported by allowed evidence cards"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that non-perturbative averaging of sub-100 Mpc structures yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts. We will implement the Buchert averaging formalism to compute effective scale factors and curvature terms from inhomogeneous matter distributions, avoiding the assumption of global FLRW symmetry at small scales. The core technical challenge is reconstructing the local expansion history from SDSS-IV eBOSS LRG data and integrating it with Planck 2018 CMB boundary conditions. We will compare the inferred effective density parameters (Ω_m,eff, Ω_Λ,eff) against standard ΛCDM fits and the Green & Wald (2014) null-backreaction bounds. The analysis focuses on scales <100 Mpc where EV-Q053-5b6a5d5413f721935988346e notes anisotropies persist, testing if their proper averaging eliminates the need for exotic components or significantly alters their inferred magnitude.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "SDSS-IV eBOSS LRG Catalog (DR16)",
+                  "description": "Large-scale structure data providing galaxy distribution at z<0.8 for sub-100 Mpc structure reconstruction.",
+                  "evidence_ids": [
+                    "EV-Q053-5b6a5d5413f721935988346e"
+                  ],
+                  "access_status": "public_candidate",
+                  "is_downloaded": false
+                },
+                {
+                  "name": "Planck 2018 CMB Maps",
+                  "description": "Temperature and polarization maps providing large-scale boundary conditions and standard ΛCDM baseline parameters.",
+                  "evidence_ids": [
+                    "EV-Q053-5b6a5d5413f721935988346e"
+                  ],
+                  "access_status": "public_candidate",
+                  "is_downloaded": false
+                }
+              ],
+              "target": [
+                {
+                  "name": "Pantheon+ SNe Ia Sample",
+                  "description": "Independent Type Ia Supernovae data for validating the effective expansion history derived from averaging.",
+                  "type": "validation_dataset"
+                },
+                {
+                  "name": "DES Y3 BAO Measurements",
+                  "description": "Baryon Acoustic Oscillation data for geometric distance scale cross-checks.",
+                  "type": "validation_dataset"
+                },
+                {
+                  "name": "Effective Cosmological Parameters",
+                  "description": "Derived values of Ω_m,eff and Ω_Λ,eff under non-perturbative averaging schemes.",
+                  "type": "derived_metric"
+                }
+              ]
+            },
+            "methods": "1. Data Preprocessing: Extract sub-100 Mpc anisotropy fields from SDSS-IV eBOSS LRG catalog (DR16) and align with Planck 2018 CMB maps. 2. Model Implementation: Implement the Buchert averaging formalism to compute effective scale factors, curvature, and backreaction terms from local inhomogeneities. 3. Null-Hypothesis Baseline: Compute backreaction effects using the Green & Wald (2014) rigorous bounds to establish a negligible-effect baseline. 4. Parameter Inference: Fit the effective expansion history derived from the averaged metric to Pantheon+ SNe Ia and DES Y3 BAO data. 5. Comparative Analysis: Calculate the deviation of Ω_m,eff and Ω_Λ,eff from Planck 2018 best-fit ΛCDM parameters and assess statistical significance (>3σ threshold).",
+            "experiments": {
+              "baselines": [
+                "Standard ΛCDM Model: Assumes global homogeneity/isotropy and uses Planck 2018 best-fit parameters (Ω_m ≈ 0.315, Ω_Λ ≈ 0.685).",
+                "Green & Wald (2014) Null-Backreaction Bounds: Rigorous theoretical limits demonstrating that backreaction effects are negligible in standard perturbation theory."
+              ],
+              "metrics": [
+                "Deviation in Ω_dark: Difference between inferred Ω_m,eff/Ω_Λ,eff and Planck 2018 best-fit values, measured in standard deviations (σ).",
+                "Goodness-of-Fit (Δχ²): Improvement in fit quality to Pantheon+ SNe Ia and DES Y3 BAO data compared to standard ΛCDM (threshold: Δχ² < -10).",
+                "Statistical Significance: Probability that the observed deviation from ΛCDM is due to random noise (target: p < 0.003 for >3σ)."
+              ],
+              "ablation": "Vary the averaging scale threshold (50 Mpc, 100 Mpc, 200 Mpc) to test the specific claim from EV-Q053-5b6a5d5413f721935988346e that homogeneity emerges only above ~100 Mpc. Compare results with and without the Green & Wald correction terms.",
+              "validation_protocol": "Strictly validate the effective parameters against independent probes: Pantheon+ SNe Ia sample for expansion history and DES Y3 BAO measurements for geometric distances. If the refined averaging fails to match these independent datasets within error bars, or if the deviation from Planck 2018 is <3σ, the hypothesis is falsified."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify access to SDSS-IV eBOSS LRG catalog (DR16) and Planck 2018 CMB maps.",
+              "Implement open-source code for Buchert averaging formalism.",
+              "Include Green & Wald (2014) null-backreaction calculation as a baseline.",
+              "Document the exact definition of 'effective' density parameters in the inhomogeneous context.",
+              "Provide scripts for comparing refined vs. standard ΛCDM fits against Pantheon+ and DES Y3 data."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-performance computing cluster for numerical integration of inhomogeneous metrics and MCMC parameter estimation.",
+              "estimated_time": "4-6 weeks for implementation, baseline validation, and initial runs.",
+              "software_dependencies": [
+                "Python",
+                "NumPy/SciPy",
+                "Astropy",
+                "Cosmological simulation libraries (e.g., CAMB/CLASS modified for backreaction)"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis successfully addresses all critical issues from the previous review by specifying concrete datasets (SDSS-IV eBOSS LRG DR16, Planck 2018) instead of generic 'anisotropy maps'.",
+              "Falsifiability is significantly improved with the inclusion of quantitative thresholds (>3σ deviation, Δχ² < -10) and a specific null-hypothesis baseline (Green & Wald 2014).",
+              "Validation protocol now explicitly mandates independent probes (Pantheon+ SNe Ia, DES Y3 BAO) rather than leaving them conditional, satisfying reproducibility requirements.",
+              "Evidence grounding remains strictly within allowed EvidenceCards; the link between 'dark spots' and averaging is correctly framed as a testable hypothesis derived from EV-Q053-5b6a5d5413f721935988346e rather than an established fact.",
+              "Results field correctly states 'pending' with no fabrication of experimental outcomes."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:297c95b8cdfe",
+              "category": "critical_issue",
+              "description": "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:e4d8817efbce",
+              "category": "critical_issue",
+              "description": "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:cdadffd2e181",
+              "category": "critical_issue",
+              "description": "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:174756b7ce79",
+              "category": "required_revision",
+              "description": "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:0a3b78034e72f58f,change:d7dd7874da7211a0,change:3da0606d2f6c31a4,change:878cb5a0e130de1d; evidence=EV-Q053-5b6a5d5413f721935988346e; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:7844293dac07",
+              "category": "required_revision",
+              "description": "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:c2da6d0cf420",
+              "category": "required_revision",
+              "description": "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:9535c76274d2",
+              "category": "required_revision",
+              "description": "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:7e8ed040d951b6c7; evidence=EV-Q053-5b6a5d5413f721935988346e; V2 Reviewer no longer reports the issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "69bfa19303d30a2e9132257aa4cb12b9b75e33afe36ec819c265ea81c22761a0",
+            "experiment_designer": "febe4b15c15eb98238a28e1c213c851eeb94d8f7e9f1f856494b51d349f038f6",
+            "scientific_reviewer": "74f246f592a7d6daafad0b779826416a493c83af2bd42531b89393412fb0ad5c"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-083730-64f56892:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-083730-64f56892:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-083730-64f56892:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-083730-64f56892:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:297c95b8cdfe",
+          "category": "critical_issue",
+          "description": "Dataset 'Cosmological Anisotropy Maps' is too vague for reproducibility. Must specify exact public surveys (e.g., SDSS DR18, DESI Y1, Planck 2018) that contain the sub-100 Mpc structure data required for the proposed averaging analysis.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:e4d8817efbce",
+          "category": "critical_issue",
+          "description": "The hypothesis assumes that backreaction effects are significant enough to alter Omega_m/Omega_Lambda. While EV-Q053-5b6a5d5413f721935988346e mentions 'dark spots', it does not provide evidence that averaging is the cause. The experiment must explicitly include a null-hypothesis test where backreaction is shown to be negligible, to avoid confirmation bias.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:cdadffd2e181",
+          "category": "critical_issue",
+          "description": "Validation protocol mentions 'independent large-scale probes (if available)'. This is insufficient. Specific independent probes (e.g., BAO from eBOSS, SNe Ia from Pantheon+) must be named and integrated into the metrics to strictly falsify the hypothesis if the revised averaging fails to match them.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:174756b7ce79",
+          "category": "required_revision",
+          "description": "Replace generic 'Cosmological Anisotropy Maps' with specific, versioned public datasets (e.g., 'SDSS-IV eBOSS LRG catalog', 'Planck 2018 CMB maps') in the datasets.source field.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:0a3b78034e72f58f,change:d7dd7874da7211a0,change:3da0606d2f6c31a4,change:878cb5a0e130de1d; evidence=EV-Q053-5b6a5d5413f721935988346e; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:7844293dac07",
+          "category": "required_revision",
+          "description": "Add a specific baseline representing 'Standard Backreaction Consensus' (e.g., Green & Wald 2014 or similar rigorous bounds) to demonstrate that the proposed method improves upon or challenges existing limits, rather than just comparing to Lambda-CDM.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:c2da6d0cf420",
+          "category": "required_revision",
+          "description": "Refine the falsifiable prediction to include quantitative thresholds: define what constitutes a 'significant' difference in Omega_m/Omega_Lambda (e.g., >3sigma deviation from Planck 2018 best-fit) to prevent post-hoc interpretation of minor numerical noise as success.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:9535c76274d2",
+          "category": "required_revision",
+          "description": "Explicitly list the independent validation datasets in required_observations and experiments.validation_protocol (e.g., 'Pantheon+ SNe Ia sample', 'DES Y3 BAO') rather than leaving it conditional.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:7e8ed040d951b6c7; evidence=EV-Q053-5b6a5d5413f721935988346e; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "checkpoint_hash": "da2e833747b2000f4e4aa7f327549aa8746b1a9a77327c04d9811a46618dd695"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-083730-64f56892:wave-b-two-round",
+      "run_id": "20260822-083730-64f56892",
+      "v1_version_id": "20260822-083730-64f56892:v1",
+      "v2_version_id": "20260822-083730-64f56892:v2",
+      "input_fingerprints": {
+        "v1": "b0a7df4bbd7b2a93e3014c8421650713c33ea853ab5876efb2ad07a8c7c7cd2d",
+        "v2": "febe4b15c15eb98238a28e1c213c851eeb94d8f7e9f1f856494b51d349f038f6"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "required_revision:174756b7ce79",
+        "required_revision:9535c76274d2"
+      ],
+      "change_ids": [
+        "change:0a3b78034e72f58f",
+        "change:d7dd7874da7211a0",
+        "change:3da0606d2f6c31a4",
+        "change:878cb5a0e130de1d",
+        "change:7e8ed040d951b6c7"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "falsifiability_score": {
+          "before": 0.7,
+          "after": 0.95,
+          "delta": 0.25
+        },
+        "reproducibility_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Non-perturbative averaging of sub-100 Mpc structures in SDSS-IV eBOSS LRG and Planck 2018 data yields effective cosmological parameters deviating >3σ from standard ΛCDM, potentially explaining 'dark spots' as backreaction artifacts.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 2,
+          "hypothesis": "Dark matter and dark energy phenomenology arises from infrared modifications to General Relativity manifesting at scales >100 Mpc, eliminating need for exotic substances.",
+          "overall_score": 0.74,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "Relic neutrino spectral distortions from early-universe interactions encode non-standard physics that correlates with late-time dark sector anomalies, offering a particle-physics explanation for cosmological 'dark spots'.",
+          "overall_score": 0.73,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "daca7316aa3a",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:40:14.976530+00:00",
+    "ended_at": "2026-08-22T08:41:11.602249+00:00",
+    "duration_ms": 56625,
+    "input_summary": "{\"question_item\": {\"id\": \"Q053\", \"domain\": \"Astronomy\", \"question\": \"What is the universe made of?\", \"source_page\": 21, \"booklet_excerpt\": \"The universe consists of measurable matter (5% of all matter, most of which is hydrogen), as well as dark matter (20%–25%) and dark energy (70%–75%). However, we do not fully understand the nature of dark matter or dark energy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"What is the composition of the universe in terms of measurab",
+    "output_summary": "{\"input_question\": \"What is the universe made of?\", \"domain\": \"Astronomy\", \"problem_statement\": \"The composition of the universe includes measurable matter, dark matter, and dark energy. While standard cosmological models assign approximate proportions (5% measurable, 20-25% dark matter, 70-75% dark energy), the physical nature of dark components remains undefined ('dark spots'). Current evidence suggests these components may arise from averaging anisotropies on cosmological scales or indicate incompleteness in General Relativity, rather than representing distinct exotic substances.\", \"rationa",
+    "evidence_ids": [
+      "EV-Q053-5b6a5d5413f721935988346e",
+      "EV-Q053-7e93b6230038a9c81916e34c",
+      "EV-Q053-1452363c14fbc7e57b667f1d"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "dc1e23363c4b",
+    "mock": false
+  },
+  {
+    "event_id": "f264004e7567",
+    "run_id": "20260822-083730-64f56892",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:41:11.603245+00:00",
+    "ended_at": "2026-08-22T08:41:13.199537+00:00",
+    "duration_ms": 1596,
+    "input_summary": "{\"question_item\": {\"id\": \"Q053\", \"domain\": \"Astronomy\", \"question\": \"What is the universe made of?\", \"source_page\": 21, \"booklet_excerpt\": \"The universe consists of measurable matter (5% of all matter, most of which is hydrogen), as well as dark matter (20%–25%) and dark energy (70%–75%). However, we do not fully understand the nature of dark matter or dark energy.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required input fields: ResearchPlan, EvidenceCards, AgentTrace, execution_metadata. Cannot perform validation without these inputs.\", \"No allowed_evidence_ids provided to validate against.\"], \"warnings\": [\"Input contains only question_item; insufficient data for SchemaValidator role.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "34cf4c6eba73",
+    "mock": false
+  }
+]

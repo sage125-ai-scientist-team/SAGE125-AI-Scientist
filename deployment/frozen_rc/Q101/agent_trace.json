@@ -1,0 +1,1726 @@
+[
+  {
+    "event_id": "14f4f998a837",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:06:11.677931+00:00",
+    "ended_at": "2026-08-22T09:06:11.677931+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "00f676417477",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:06:11.677931+00:00",
+    "ended_at": "2026-08-22T09:06:15.311837+00:00",
+    "duration_ms": 3633,
+    "input_summary": "{\"question_item\": {\"id\": \"Q101\", \"domain\": \"Neuroscience\", \"question\": \"Can we cure neurodegenerative diseases?\", \"source_page\": 35, \"booklet_excerpt\": \"Neurodegenerative diseases, in which nerve cells in the brain or nervous system lose function and die, cause great suffering. Millions of people each year experience the pain and trauma of these ailments, the most common of which are Alzheimer’s disease and Parkinson’s disease. Interventions can reduce or relieve symptoms, but not in their entirety, and to date, there is no cure and no way to completely halt or reverse disease progression. Age",
+    "output_summary": "{\"domain\": \"Neuroscience\", \"core_question\": \"Is it possible to develop interventions that completely halt or reverse the progression of neurodegenerative diseases, thereby constituting a 'cure'?\", \"keywords\": [\"neurodegenerative diseases\", \"Alzheimer’s disease\", \"Parkinson’s disease\", \"nerve cell death\", \"disease progression\", \"cure\", \"symptom relief\"], \"entities\": [\"Neurodegenerative diseases\", \"Alzheimer’s disease\", \"Parkinson’s disease\", \"Nerve cells\", \"Brain\", \"Nervous system\", \"World Health Organization\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"Based on the provid",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "4bcad1a43ebf",
+    "mock": false
+  },
+  {
+    "event_id": "3e24bb642d9d",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:06:15.311837+00:00",
+    "ended_at": "2026-08-22T09:06:37.138861+00:00",
+    "duration_ms": 21827,
+    "input_summary": "{\"question_item\": {\"id\": \"Q101\", \"domain\": \"Neuroscience\", \"question\": \"Can we cure neurodegenerative diseases?\", \"source_page\": 35, \"booklet_excerpt\": \"Neurodegenerative diseases, in which nerve cells in the brain or nervous system lose function and die, cause great suffering. Millions of people each year experience the pain and trauma of these ailments, the most common of which are Alzheimer’s disease and Parkinson’s disease. Interventions can reduce or relieve symptoms, but not in their entirety, and to date, there is no cure and no way to completely halt or reverse disease progression. Age",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the current clinical consensus on the definition of 'cure' versus 'symptom management' in Alzheimer's and Parkinson's disease as stated in standard medical literature.\", \"query\": \"\\\"neurodegenerative diseases\\\" AND (\\\"no cure\\\" OR \\\"disease modifying therapy\\\" OR \\\"symptomatic treatment\\\") AND (\\\"Alzheimer's\\\" OR \\\"Parkinson's\\\")\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming that current interventions only relieve symptoms and do not halt progression, supporting the booklet's claim.\", \"priority\": \"high\"}, {\"purpose\": \"Identify specif",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "f8eacda5b716",
+    "mock": false
+  },
+  {
+    "event_id": "488baa9568a3",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:06:37.153980+00:00",
+    "ended_at": "2026-08-22T09:06:49.349512+00:00",
+    "duration_ms": 12195,
+    "input_summary": "{\"question_item\": {\"id\": \"Q101\", \"domain\": \"Neuroscience\", \"question\": \"Can we cure neurodegenerative diseases?\", \"source_page\": 35, \"booklet_excerpt\": \"Neurodegenerative diseases, in which nerve cells in the brain or nervous system lose function and die, cause great suffering. Millions of people each year experience the pain and trauma of these ailments, the most common of which are Alzheimer’s disease and Parkinson’s disease. Interventions can reduce or relieve symptoms, but not in their entirety, and to date, there is no cure and no way to completely halt or reverse disease progression. Age",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"Current evidence does not provide clinical or biological data regarding the curability of neurodegenerative diseases such as Alzheimer's or Parkinson's.\", \"why_it_matters\": \"The provided evidence cards discuss statistical 'cure models' in biostatistics (survival analysis) or gene selection for breast cancer, which are methodologically distinct from the clinical cure of neurodegenerative conditions. Without specific neurological evidence, the core question remains unanswered by the provided corpus.\", \"evidence_ids\": []",
+    "evidence_ids": [
+      "EV-Q101-187ef521d9529a6042a34991",
+      "EV-Q101-e04f8a29c94f4a1c767e282d",
+      "EV-Q101-3427c07fc3ad1b00b752ac79"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "cb01a1d44e81",
+    "mock": false
+  },
+  {
+    "event_id": "bf961669fdb4",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:06:49.349512+00:00",
+    "ended_at": "2026-08-22T09:07:10.985769+00:00",
+    "duration_ms": 21636,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q101\", \"domain\": \"Neuroscience\", \"question\": \"Can we cure neurodegenerative diseases?\", \"source_page\": 35, \"booklet_excerpt\": \"Neurodegenerative diseases, in which nerve cells in the brain or nervous system lose function and die, cause great suffering. Millions of people each year experience the pain and trauma of these ailments, the most common of which are Alzheimer’s disease and Parkinson’s disease. Interventions can reduce or relieve symptoms, but not in their entirety, and to date, there is no cure and no way to completely halt or reverse",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Neurodegenerative disease progression can be accurately modeled using semiparametric transformation cure models with competing risks, enabling the statistical identification of a 'cured' subpopulation in longitudinal clinical cohorts.\", \"mechanism\": \"Standard survival analysis assumes all subjects will eventually experience the event (disease progression/death). However, if a therapeutic intervention creates a true biological plateau, standard models fail. Semiparametric transformation models with cure fraction (EV-Q101-e04f8a29c94f4a1c767e282d) allow for a non-",
+    "evidence_ids": [
+      "EV-Q101-e04f8a29c94f4a1c767e282d",
+      "EV-Q101-3427c07fc3ad1b00b752ac79",
+      "EV-Q101-187ef521d9529a6042a34991"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8e9e6e4870c3",
+    "mock": false
+  },
+  {
+    "event_id": "484e9cb88f99",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:07:10.985769+00:00",
+    "ended_at": "2026-08-22T09:07:31.797088+00:00",
+    "duration_ms": 20811,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q101\", \"domain\": \"Neuroscience\", \"question\": \"Can we cure neurodegenerative diseases?\", \"source_page\": 35, \"booklet_excerpt\": \"Neurodegenerative diseases, in which nerve cells in the brain or nervous system lose function and die, cause great suffering. Millions of people each year experience the pain and trauma of these ailments, the most common of which are Alzheimer’s disease and Parkinson’s disease. Interventions can reduce or relieve symptoms, but not in their entirety, and to date, there is no cure and no way to completely halt or reverse",
+    "output_summary": "{\"technical_details\": \"This study proposes a rigorous statistical validation framework to test the hypothesis that neurodegenerative disease progression contains a 'cured' or stable subpopulation, identifiable via semiparametric transformation cure models with competing risks. The core technical challenge is distinguishing true biological stability from statistical artifacts caused by insufficient follow-up or competing mortality in elderly cohorts. We will implement the semiparametric transformation model described in EV-Q101-e04f8a29c94f4a1c767e282d, which allows for a non-zero asymptote in ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "85a3738fa56f",
+    "mock": false
+  },
+  {
+    "event_id": "e678779739e9",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:07:31.797088+00:00",
+    "ended_at": "2026-08-22T09:07:42.212348+00:00",
+    "duration_ms": 10415,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q101\", \"domain\": \"Neuroscience\", \"question\": \"Can we cure neurodegenerative diseases?\", \"source_page\": 35, \"booklet_excerpt\": \"Neurodegenerative diseases, in which nerve cells in the brain or nervous system lose function and die, cause great suffering. Millions of people each year experience the pain and trauma of these ailments, the most common of which are Alzheimer’s disease and Parkinson’s disease. Interventions can reduce or relieve symptoms, but not in their entirety, and to date, there is no cure and no way to completely halt or reverse",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies a methodological gap and proposes a valid statistical validation framework using allowed evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991).\", \"The experiment design appropriately marks results as 'pending' and avoids fabricating outcomes.\", \"However, the dataset specification lists 'ADNI, A4 Study' as source data. These specific datasets are not present in the allowed EvidenceCards. Citing them as definitive sources violates the constraint that all factual claims (including data availab",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d11354b70c8a",
+    "mock": false
+  },
+  {
+    "event_id": "3572478dde49",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:07:42.215344+00:00",
+    "ended_at": "2026-08-22T09:08:04.049056+00:00",
+    "duration_ms": 21833,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies a methodological gap and proposes a valid statistical validation framework using allowed evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991).\", \"The experiment design appropriately marks results as 'pending' and avoids fabricating outcomes.\", \"However, the dataset specification lists 'ADNI, A4 Study' as source data. These specific datasets are not present in the allowed EvidenceCards. Citing them as definitive sources violates the constraint that",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.\", \"mechanism\": \"Standard survival models assume all subjects are susceptible to the event. Semiparametric transformation cure models (EV-Q101-e04f8a29c94f4a1c767e282d) allow for a non-zero asymptote in the survival function, representing a latent 'cured' or stable fraction. By incorporating competing risks (EV-Q101-3427c",
+    "evidence_ids": [
+      "EV-Q101-e04f8a29c94f4a1c767e282d",
+      "EV-Q101-187ef521d9529a6042a34991",
+      "EV-Q101-3427c07fc3ad1b00b752ac79"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e510d372fbed",
+    "mock": false
+  },
+  {
+    "event_id": "2dde3be6a527",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:04.050056+00:00",
+    "ended_at": "2026-08-22T09:08:26.153658+00:00",
+    "duration_ms": 22103,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies a methodological gap and proposes a valid statistical validation framework using allowed evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991).\", \"The experiment design appropriately marks results as 'pending' and avoids fabricating outcomes.\", \"However, the dataset specification lists 'ADNI, A4 Study' as source data. These specific datasets are not present in the allowed EvidenceCards. Citing them as definitive sources violates the constraint that",
+    "output_summary": "{\"technical_details\": \"This study implements a statistical validation framework to evaluate whether neurodegenerative disease progression data supports the existence of a latent 'cured' or stable subpopulation. The core methodology utilizes semiparametric transformation cure models with competing risks, as described in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. These models allow for a non-zero asymptote in the survival function, distinguishing between subjects who are susceptible to progression and those who are statistically 'cured' (stable). Crucially, this appro",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "cfc5cf4c771f",
+    "mock": false
+  },
+  {
+    "event_id": "25646b64f96c",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:26.153658+00:00",
+    "ended_at": "2026-08-22T09:08:33.228388+00:00",
+    "duration_ms": 7074,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies a methodological gap and proposes a valid statistical validation framework using allowed evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991).\", \"The experiment design appropriately marks results as 'pending' and avoids fabricating outcomes.\", \"However, the dataset specification lists 'ADNI, A4 Study' as source data. These specific datasets are not present in the allowed EvidenceCards. Citing them as definitive sources violates the constraint that",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly replaces 'accurately modeled' with 'statistically evaluated... distinct from clinical cure', resolving the conflation of statistical fit and biological truth (critical_issue:62e210844358).\", \"Dataset source description has been appropriately generalized to 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search...)', removing unverified references to ADNI/A4 Study and satisfying evidence grounding constraints.\", \"Methods section now includes a mandatory pre-analysis verification ste",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6242a2f9dccb",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:cd3ae4be827eeb6f",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Neurodegenerative disease progression can be accurately modeled using semiparametric transformation cure models with competing risks, enabling the statistical identification of a 'cured' subpopulation in longitudinal clinical cohorts.",
+              "mechanism": "Standard survival analysis assumes all subjects will eventually experience the event (disease progression/death). However, if a therapeutic intervention creates a true biological plateau, standard models fail. Semiparametric transformation models with cure fraction (EV-Q101-e04f8a29c94f4a1c767e282d) allow for a non-zero asymptote in the survival function, distinguishing between 'susceptible' and 'cured/stable' latent classes while accounting for competing mortality risks common in elderly neurodegenerative populations.",
+              "falsifiable_prediction": "When applied to long-term (>5 years) longitudinal data from disease-modifying therapy trials, a cure model will demonstrate significantly better fit (lower AIC/BIC) compared to standard Cox proportional hazards models only if a true stable subpopulation exists; otherwise, the estimated cure fraction will converge to zero or the model will fail to converge.",
+              "required_observations": [
+                "Longitudinal time-to-progression datasets from neurodegenerative clinical trials with sufficient follow-up to observe survival curve plateaus",
+                "Competing risk data (non-neurodegenerative mortality) for the same cohort",
+                "Model fitting diagnostics comparing cure vs. non-cure frameworks"
+              ],
+              "risk_of_being_wrong": "High risk that observed 'statistical cure fractions' represent selection bias, loss to follow-up, or insufficient observation time rather than true biological disease arrest. The methodology validates statistical fit, not clinical reversal.",
+              "supporting_evidence_ids": [
+                "EV-Q101-e04f8a29c94f4a1c767e282d",
+                "EV-Q101-3427c07fc3ad1b00b752ac79"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Current definitions of 'cure' in neurodegeneration are methodologically invalid because existing statistical cure models have not been validated for appropriateness in progressive neurological contexts.",
+              "mechanism": "Cure models rely on specific assumptions about the tail behavior of survival distributions (EV-Q101-187ef521d9529a6042a34991). Neurodegenerative diseases exhibit complex, multi-stage progression with variable latency that may violate these parametric assumptions. Without rigorous evaluation of model appropriateness specifically for neurodegenerative trajectories, claims of 'cure fractions' derived from generic oncology-derived models are likely artifacts.",
+              "falsifiable_prediction": "Systematic application of cure model appropriateness tests (goodness-of-fit for the cured fraction) to neurodegenerative datasets will reveal significant violations of model assumptions in >80% of cases, indicating that current statistical 'cures' are methodological misapplications.",
+              "required_observations": [
+                "Application of diagnostic tests for cure model validity to AD/PD trial data",
+                "Comparison of parametric vs. non-parametric cure estimates",
+                "Sensitivity analysis of cure fraction estimates to model specification"
+              ],
+              "risk_of_being_wrong": "Risk that some neurodegenerative subtypes or early-stage interventions do satisfy cure model assumptions, making the blanket rejection of the methodology incorrect. Also risks conflating statistical inadequacy with biological impossibility.",
+              "supporting_evidence_ids": [
+                "EV-Q101-187ef521d9529a6042a34991"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.71
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected as the best candidate because it constructively bridges the gap between the available methodological evidence (statistical cure models) and the domain question (neurodegenerative cure). While no biological evidence exists in the allowed set, this hypothesis provides a concrete, falsifiable framework to test whether 'cure' is even statistically detectable in existing data. It avoids claiming biological efficacy while offering a verifiable path to define or refute the concept of cure using the specific tools documented in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. Hypothesis 2 is valuable but purely critical; Hypothesis 1 enables active research.",
+          "rejected_directions": [
+            "Hypotheses proposing specific molecular mechanisms of neurodegeneration reversal (e.g., protein aggregation clearance, stem cell regeneration) were rejected due to complete absence of supporting biological evidence in allowed_evidence_ids.",
+            "Hypotheses equating statistical cure fractions directly with clinical symptom resolution were rejected as they conflate distinct domains without validation evidence.",
+            "Directions focusing on breast cancer gene selection methodologies (EV-Q101-97eb89e9c99d2bf070d4510c) were rejected as domain-inappropriate despite superficial keyword overlap."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes a rigorous statistical validation framework to test the hypothesis that neurodegenerative disease progression contains a 'cured' or stable subpopulation, identifiable via semiparametric transformation cure models with competing risks. The core technical challenge is distinguishing true biological stability from statistical artifacts caused by insufficient follow-up or competing mortality in elderly cohorts. We will implement the semiparametric transformation model described in EV-Q101-e04f8a29c94f4a1c767e282d, which allows for a non-zero asymptote in the survival function. This will be contrasted against standard Cox proportional hazards models (which assume all subjects are susceptible) and parametric cure models. The analysis will explicitly account for competing risks (non-neurodegenerative death) as outlined in the methodological constraints. Model appropriateness will be evaluated using diagnostic tests for cure model validity as suggested by EV-Q101-187ef521d9529a6042a34991. The primary falsifiable prediction is that if a true stable subpopulation exists, the cure model will yield significantly better fit statistics (AIC/BIC) and a non-zero, statistically significant cure fraction; otherwise, the cure fraction will converge to zero or the model will fail convergence diagnostics.",
+          "datasets": {
+            "source": "Publicly available longitudinal clinical trial datasets for Alzheimer's Disease (e.g., ADNI, A4 Study) or Parkinson's Disease with >5 years follow-up, including time-to-progression events and censoring indicators for competing risks (death from other causes).",
+            "target": "Processed survival objects containing: (1) Time-to-event (progression or censoring), (2) Event type indicator (Progression=1, Competing Death=2, Censored=0), (3) Covariates (age, baseline severity, treatment arm), (4) Estimated cure fraction parameters."
+          },
+          "methods": "1. Data Preprocessing: Clean longitudinal data to define 'progression' endpoints and identify competing risk events. Handle missing data via multiple imputation if <20% missingness. 2. Model Implementation: Fit three classes of models: (a) Standard Cox Proportional Hazards (non-cure baseline), (b) Parametric Cure Models (Weibull/Log-normal mixture), (c) Semiparametric Transformation Cure Models with Competing Risks (as per EV-Q101-e04f8a29c94f4a1c767e282d). 3. Model Comparison: Use Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) to compare fit. 4. Diagnostic Validation: Apply goodness-of-fit tests for cure model appropriateness (EV-Q101-187ef521d9529a6042a34991) to check if the tail behavior supports a cure fraction. 5. Sensitivity Analysis: Vary the definition of 'stable' (e.g., no progression for 3 vs 5 years) to test robustness of the cure fraction estimate.",
+          "experiments": {
+            "baselines": [
+              "Cox Proportional Hazards Model (Standard survival analysis, assumes no cure)",
+              "Parametric Mixture Cure Model (Weibull distribution for susceptible population)"
+            ],
+            "metrics": [
+              "Akaike Information Criterion (AIC)",
+              "Bayesian Information Criterion (BIC)",
+              "Estimated Cure Fraction (with 95% Confidence Interval)",
+              "Convergence Status (Binary: Converged/Failed)"
+            ],
+            "ablation": "Remove competing risk component to assess impact on cure fraction estimation; Exclude short-term follow-up (<2 years) to test if 'cure' is an artifact of early dropout.",
+            "validation_protocol": "5-fold cross-validation for model stability; Bootstrap resampling (n=1000) to estimate confidence intervals for the cure fraction; Visual inspection of Kaplan-Meier curves vs. model-predicted survival functions to check for plateau alignment."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for semiparametric transformation model implementation is version-controlled and documented.",
+            "Data preprocessing steps (definition of progression, competing risks) are explicitly scripted.",
+            "Random seeds for bootstrap resampling and cross-validation are fixed and recorded.",
+            "Model convergence criteria and failure handling protocols are defined.",
+            "All diagnostic plots (survival curves, residual plots) are generated automatically."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation sufficient for statistical modeling; no large-scale deep learning training required.",
+            "estimated_runtime": "4-8 hours for data preprocessing and model fitting across 5 folds.",
+            "software_dependencies": [
+              "R (survival, smcure, or custom implementation based on EV-Q101-e04f8a29c94f4a1c767e282d)",
+              "Python (pandas, numpy for preprocessing)"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-090611-9b787966",
+        "version_number": 1,
+        "version_id": "20260822-090611-9b787966:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Neurodegenerative disease progression can be accurately modeled using semiparametric transformation cure models with competing risks, enabling the statistical identification of a 'cured' subpopulation in longitudinal clinical cohorts.",
+              "mechanism": "Standard survival analysis assumes all subjects will eventually experience the event (disease progression/death). However, if a therapeutic intervention creates a true biological plateau, standard models fail. Semiparametric transformation models with cure fraction (EV-Q101-e04f8a29c94f4a1c767e282d) allow for a non-zero asymptote in the survival function, distinguishing between 'susceptible' and 'cured/stable' latent classes while accounting for competing mortality risks common in elderly neurodegenerative populations.",
+              "falsifiable_prediction": "When applied to long-term (>5 years) longitudinal data from disease-modifying therapy trials, a cure model will demonstrate significantly better fit (lower AIC/BIC) compared to standard Cox proportional hazards models only if a true stable subpopulation exists; otherwise, the estimated cure fraction will converge to zero or the model will fail to converge.",
+              "required_observations": [
+                "Longitudinal time-to-progression datasets from neurodegenerative clinical trials with sufficient follow-up to observe survival curve plateaus",
+                "Competing risk data (non-neurodegenerative mortality) for the same cohort",
+                "Model fitting diagnostics comparing cure vs. non-cure frameworks"
+              ],
+              "risk_of_being_wrong": "High risk that observed 'statistical cure fractions' represent selection bias, loss to follow-up, or insufficient observation time rather than true biological disease arrest. The methodology validates statistical fit, not clinical reversal.",
+              "supporting_evidence_ids": [
+                "EV-Q101-e04f8a29c94f4a1c767e282d",
+                "EV-Q101-3427c07fc3ad1b00b752ac79"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Current definitions of 'cure' in neurodegeneration are methodologically invalid because existing statistical cure models have not been validated for appropriateness in progressive neurological contexts.",
+              "mechanism": "Cure models rely on specific assumptions about the tail behavior of survival distributions (EV-Q101-187ef521d9529a6042a34991). Neurodegenerative diseases exhibit complex, multi-stage progression with variable latency that may violate these parametric assumptions. Without rigorous evaluation of model appropriateness specifically for neurodegenerative trajectories, claims of 'cure fractions' derived from generic oncology-derived models are likely artifacts.",
+              "falsifiable_prediction": "Systematic application of cure model appropriateness tests (goodness-of-fit for the cured fraction) to neurodegenerative datasets will reveal significant violations of model assumptions in >80% of cases, indicating that current statistical 'cures' are methodological misapplications.",
+              "required_observations": [
+                "Application of diagnostic tests for cure model validity to AD/PD trial data",
+                "Comparison of parametric vs. non-parametric cure estimates",
+                "Sensitivity analysis of cure fraction estimates to model specification"
+              ],
+              "risk_of_being_wrong": "Risk that some neurodegenerative subtypes or early-stage interventions do satisfy cure model assumptions, making the blanket rejection of the methodology incorrect. Also risks conflating statistical inadequacy with biological impossibility.",
+              "supporting_evidence_ids": [
+                "EV-Q101-187ef521d9529a6042a34991"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.71
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected as the best candidate because it constructively bridges the gap between the available methodological evidence (statistical cure models) and the domain question (neurodegenerative cure). While no biological evidence exists in the allowed set, this hypothesis provides a concrete, falsifiable framework to test whether 'cure' is even statistically detectable in existing data. It avoids claiming biological efficacy while offering a verifiable path to define or refute the concept of cure using the specific tools documented in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. Hypothesis 2 is valuable but purely critical; Hypothesis 1 enables active research.",
+          "rejected_directions": [
+            "Hypotheses proposing specific molecular mechanisms of neurodegeneration reversal (e.g., protein aggregation clearance, stem cell regeneration) were rejected due to complete absence of supporting biological evidence in allowed_evidence_ids.",
+            "Hypotheses equating statistical cure fractions directly with clinical symptom resolution were rejected as they conflate distinct domains without validation evidence.",
+            "Directions focusing on breast cancer gene selection methodologies (EV-Q101-97eb89e9c99d2bf070d4510c) were rejected as domain-inappropriate despite superficial keyword overlap."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes a rigorous statistical validation framework to test the hypothesis that neurodegenerative disease progression contains a 'cured' or stable subpopulation, identifiable via semiparametric transformation cure models with competing risks. The core technical challenge is distinguishing true biological stability from statistical artifacts caused by insufficient follow-up or competing mortality in elderly cohorts. We will implement the semiparametric transformation model described in EV-Q101-e04f8a29c94f4a1c767e282d, which allows for a non-zero asymptote in the survival function. This will be contrasted against standard Cox proportional hazards models (which assume all subjects are susceptible) and parametric cure models. The analysis will explicitly account for competing risks (non-neurodegenerative death) as outlined in the methodological constraints. Model appropriateness will be evaluated using diagnostic tests for cure model validity as suggested by EV-Q101-187ef521d9529a6042a34991. The primary falsifiable prediction is that if a true stable subpopulation exists, the cure model will yield significantly better fit statistics (AIC/BIC) and a non-zero, statistically significant cure fraction; otherwise, the cure fraction will converge to zero or the model will fail convergence diagnostics.",
+          "datasets": {
+            "source": "Publicly available longitudinal clinical trial datasets for Alzheimer's Disease (e.g., ADNI, A4 Study) or Parkinson's Disease with >5 years follow-up, including time-to-progression events and censoring indicators for competing risks (death from other causes).",
+            "target": "Processed survival objects containing: (1) Time-to-event (progression or censoring), (2) Event type indicator (Progression=1, Competing Death=2, Censored=0), (3) Covariates (age, baseline severity, treatment arm), (4) Estimated cure fraction parameters."
+          },
+          "methods": "1. Data Preprocessing: Clean longitudinal data to define 'progression' endpoints and identify competing risk events. Handle missing data via multiple imputation if <20% missingness. 2. Model Implementation: Fit three classes of models: (a) Standard Cox Proportional Hazards (non-cure baseline), (b) Parametric Cure Models (Weibull/Log-normal mixture), (c) Semiparametric Transformation Cure Models with Competing Risks (as per EV-Q101-e04f8a29c94f4a1c767e282d). 3. Model Comparison: Use Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) to compare fit. 4. Diagnostic Validation: Apply goodness-of-fit tests for cure model appropriateness (EV-Q101-187ef521d9529a6042a34991) to check if the tail behavior supports a cure fraction. 5. Sensitivity Analysis: Vary the definition of 'stable' (e.g., no progression for 3 vs 5 years) to test robustness of the cure fraction estimate.",
+          "experiments": {
+            "baselines": [
+              "Cox Proportional Hazards Model (Standard survival analysis, assumes no cure)",
+              "Parametric Mixture Cure Model (Weibull distribution for susceptible population)"
+            ],
+            "metrics": [
+              "Akaike Information Criterion (AIC)",
+              "Bayesian Information Criterion (BIC)",
+              "Estimated Cure Fraction (with 95% Confidence Interval)",
+              "Convergence Status (Binary: Converged/Failed)"
+            ],
+            "ablation": "Remove competing risk component to assess impact on cure fraction estimation; Exclude short-term follow-up (<2 years) to test if 'cure' is an artifact of early dropout.",
+            "validation_protocol": "5-fold cross-validation for model stability; Bootstrap resampling (n=1000) to estimate confidence intervals for the cure fraction; Visual inspection of Kaplan-Meier curves vs. model-predicted survival functions to check for plateau alignment."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for semiparametric transformation model implementation is version-controlled and documented.",
+            "Data preprocessing steps (definition of progression, competing risks) are explicitly scripted.",
+            "Random seeds for bootstrap resampling and cross-validation are fixed and recorded.",
+            "Model convergence criteria and failure handling protocols are defined.",
+            "All diagnostic plots (survival curves, residual plots) are generated automatically."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation sufficient for statistical modeling; no large-scale deep learning training required.",
+            "estimated_runtime": "4-8 hours for data preprocessing and model fitting across 5 folds.",
+            "software_dependencies": [
+              "R (survival, smcure, or custom implementation based on EV-Q101-e04f8a29c94f4a1c767e282d)",
+              "Python (pandas, numpy for preprocessing)"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies a methodological gap and proposes a valid statistical validation framework using allowed evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991).",
+            "The experiment design appropriately marks results as 'pending' and avoids fabricating outcomes.",
+            "However, the dataset specification lists 'ADNI, A4 Study' as source data. These specific datasets are not present in the allowed EvidenceCards. Citing them as definitive sources violates the constraint that all factual claims (including data availability) must be traceable to evidence_ids.",
+            "The term 'accurately modeled' in the hypothesis is ambiguous; it should be refined to 'statistically distinguishable from non-cure models' to avoid implying clinical validity which is unsupported by the provided evidence.",
+            "Risk level is elevated to 'medium' because applying oncology-derived cure models to neurodegeneration without domain-specific validation evidence carries a high risk of misinterpretation, even if the statistical exercise is valid."
+          ],
+          "critical_issues": [
+            "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+            "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability."
+          ],
+          "required_revisions": [
+            "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+            "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+            "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+            "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.65,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 0.7
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:c3dbf99914b0",
+            "category": "critical_issue",
+            "description": "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:62e210844358",
+            "category": "critical_issue",
+            "description": "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1b000459f42c",
+            "category": "required_revision",
+            "description": "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:00f1695f1c8e",
+            "category": "required_revision",
+            "description": "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3caf5e00303c",
+            "category": "required_revision",
+            "description": "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2b96929ec04d",
+            "category": "required_revision",
+            "description": "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "6f7b46ca7afdfb4eaf1a203625b8f24cf00567842064c889877294f27e98b139",
+          "experiment_designer": "1af3db44a50cf86cc3f683375ab38b375d69c9f8de5a739c9385d9d8694d80c9",
+          "scientific_reviewer": "3ef7c34dbfa6fc199e59dc1069719a30717fbf85753ac778789d7c09f26b5bf5"
+        }
+      },
+      "parent_version_id": "20260822-090611-9b787966:v1",
+      "lineage": [
+        "20260822-090611-9b787966:v1",
+        "20260822-090611-9b787966:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis correctly identifies a methodological gap and proposes a valid statistical validation framework using allowed evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991).",
+          "The experiment design appropriately marks results as 'pending' and avoids fabricating outcomes.",
+          "However, the dataset specification lists 'ADNI, A4 Study' as source data. These specific datasets are not present in the allowed EvidenceCards. Citing them as definitive sources violates the constraint that all factual claims (including data availability) must be traceable to evidence_ids.",
+          "The term 'accurately modeled' in the hypothesis is ambiguous; it should be refined to 'statistically distinguishable from non-cure models' to avoid implying clinical validity which is unsupported by the provided evidence.",
+          "Risk level is elevated to 'medium' because applying oncology-derived cure models to neurodegeneration without domain-specific validation evidence carries a high risk of misinterpretation, even if the statistical exercise is valid."
+        ],
+        "critical_issues": [
+          "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+          "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability."
+        ],
+        "required_revisions": [
+          "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+          "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+          "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+          "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.65,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.85,
+        "reference_reliability_score": 0.7
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly replaces 'accurately modeled' with 'statistically evaluated... distinct from clinical cure', resolving the conflation of statistical fit and biological truth (critical_issue:62e210844358).",
+          "Dataset source description has been appropriately generalized to 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search...)', removing unverified references to ADNI/A4 Study and satisfying evidence grounding constraints.",
+          "Methods section now includes a mandatory pre-analysis verification step referencing EV-Q101-187ef521d9529a6042a34991 for minimum follow-up and event count requirements, enhancing reproducibility and methodological rigor.",
+          "Risk of being wrong explicitly states 'Statistical cure fraction ≠ Clinical reversal', directly addressing the knowledge gap identified in EvidenceExtractionResult and preventing overinterpretation.",
+          "All supporting evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991, EV-Q101-3427c07fc3ad1b00b752ac79) are valid and present in the allowed EvidenceCards; no fabricated or disallowed references detected.",
+          "Results field remains correctly marked as pending with no fabrication; experiment design includes appropriate baselines (Cox, Parametric Mixture) and metrics (AIC/BIC, Cure Fraction CI, Convergence Status) capable of falsifying the hypothesis."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:1c9646688819ef6a",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+          "issue_id": "critical_issue:c3dbf99914b0"
+        },
+        {
+          "failure_id": "failure:45521451cc45e9e4",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability.",
+          "issue_id": "critical_issue:62e210844358"
+        },
+        {
+          "failure_id": "failure:19c9a469fe54fdb6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+          "issue_id": "required_revision:1b000459f42c"
+        },
+        {
+          "failure_id": "failure:05ce7b618569c3b8",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+          "issue_id": "required_revision:00f1695f1c8e"
+        },
+        {
+          "failure_id": "failure:9096f56bf60da19c",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+          "issue_id": "required_revision:3caf5e00303c"
+        },
+        {
+          "failure_id": "failure:84c19de5ea0cbc91",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult.",
+          "issue_id": "required_revision:2b96929ec04d"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:7fe445a7773baad7",
+          "issue_id": "required_revision:1b000459f42c",
+          "reason": "Reviewer item required_revision:1b000459f42c requested 'Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.'. V2 changes dataset_sources; deterministic correlation evidence tokens=['absent', 'access', 'allow', 'availability', 'card', 'cohort', 'confirm', 'evidence', 'external', 'longitudinal', 'neurodegenerative', 'search', 'specific', 'trial', 'verifi', 'via'], coverage=0.640.",
+          "before": "Publicly available longitudinal clinical trial datasets for Alzheimer's Disease (e.g., ADNI, A4 Study) or Parkinson's Disease with >5 years follow-up, including time-to-progression events and censoring indicators for competing risks (death from other causes).",
+          "after": "Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access). Data must include time-to-progression, censoring indicators, and competing risk events.",
+          "evidence_refs": [
+            "EV-Q101-187ef521d9529a6042a34991",
+            "EV-Q101-3427c07fc3ad1b00b752ac79",
+            "EV-Q101-97eb89e9c99d2bf070d4510c",
+            "EV-Q101-e04f8a29c94f4a1c767e282d"
+          ],
+          "affected_plan_section": "dataset_sources",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:58bac9c7da3bfa53",
+          "issue_id": "required_revision:00f1695f1c8e",
+          "reason": "Reviewer item required_revision:00f1695f1c8e requested 'Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.''. V2 changes technical_details; deterministic correlation evidence tokens=['clinical', 'compet', 'cure', 'disease', 'existence', 'fraction', 'latent', 'model', 'neurodegenerative', 'progression', 'risk', 'semiparametric', 'statistically', 'test', 'transformation', 'using'], coverage=0.667.",
+          "before": "This study proposes a rigorous statistical validation framework to test the hypothesis that neurodegenerative disease progression contains a 'cured' or stable subpopulation, identifiable via semiparametric transformation cure models with competing risks. The core technical challenge is distinguishing true biological stability from statistical artifacts caused by insufficient follow-up or competing mortality in elderly cohorts. We will implement the semiparametric transformation model described in EV-Q101-e04f8a29c94f4a1c767e282d, which allows for a non-zero asymptote in the survival function. This will be contrasted against standard Cox proportional hazards models (which assume all subjects are susceptible) and parametric cure models. The analysis will explicitly account for competing risks (non-neurodegenerative death) as outlined in the methodological constraints. Model appropriateness will be evaluated using diagnostic tests for cure model validity as suggested by EV-Q101-187ef521d9529a6042a34991. The primary falsifiable prediction is that if a true stable subpopulation exists, the cure model will yield significantly better fit statistics (AIC/BIC) and a non-zero, statistically significant cure fraction; otherwise, the cure fraction will converge to zero or the model will fail convergence diagnostics.",
+          "after": "This study implements a statistical validation framework to evaluate whether neurodegenerative disease progression data supports the existence of a latent 'cured' or stable subpopulation. The core methodology utilizes semiparametric transformation cure models with competing risks, as described in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. These models allow for a non-zero asymptote in the survival function, distinguishing between subjects who are susceptible to progression and those who are statistically 'cured' (stable). Crucially, this approach tests for statistical distinguishability from standard non-cure models, explicitly avoiding claims of clinical biological reversal. Model appropriateness is rigorously assessed using diagnostic tests for cure model validity outlined in EV-Q101-187ef521d9529a6042a34991. A mandatory pre-analysis step verifies that candidate datasets meet minimum follow-up duration and event count requirements before fitting. The analysis accounts for competing risks (e.g., non-neurodegenerative mortality) to prevent bias in cure fraction estimation. Limitations explicitly state that 'Statistical cure fraction ≠ Clinical reversal'.",
+          "evidence_refs": [
+            "EV-Q101-187ef521d9529a6042a34991",
+            "EV-Q101-3427c07fc3ad1b00b752ac79",
+            "EV-Q101-97eb89e9c99d2bf070d4510c",
+            "EV-Q101-e04f8a29c94f4a1c767e282d"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:ab46e71b13947918",
+          "issue_id": "required_revision:3caf5e00303c",
+          "reason": "Reviewer item required_revision:3caf5e00303c requested 'Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.''. V2 changes technical_details; deterministic correlation evidence tokens=['187ef521d9529a6042a34991', 'analysi', 'candidate', 'cohort', 'count', 'duration', 'ev', 'event', 'fit', 'follow', 'mandatory', 'meet', 'minimum', 'model', 'pre', 'q101', 'requirement', 'step', 'up', 'validate'], coverage=0.909.",
+          "before": "This study proposes a rigorous statistical validation framework to test the hypothesis that neurodegenerative disease progression contains a 'cured' or stable subpopulation, identifiable via semiparametric transformation cure models with competing risks. The core technical challenge is distinguishing true biological stability from statistical artifacts caused by insufficient follow-up or competing mortality in elderly cohorts. We will implement the semiparametric transformation model described in EV-Q101-e04f8a29c94f4a1c767e282d, which allows for a non-zero asymptote in the survival function. This will be contrasted against standard Cox proportional hazards models (which assume all subjects are susceptible) and parametric cure models. The analysis will explicitly account for competing risks (non-neurodegenerative death) as outlined in the methodological constraints. Model appropriateness will be evaluated using diagnostic tests for cure model validity as suggested by EV-Q101-187ef521d9529a6042a34991. The primary falsifiable prediction is that if a true stable subpopulation exists, the cure model will yield significantly better fit statistics (AIC/BIC) and a non-zero, statistically significant cure fraction; otherwise, the cure fraction will converge to zero or the model will fail convergence diagnostics.",
+          "after": "This study implements a statistical validation framework to evaluate whether neurodegenerative disease progression data supports the existence of a latent 'cured' or stable subpopulation. The core methodology utilizes semiparametric transformation cure models with competing risks, as described in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. These models allow for a non-zero asymptote in the survival function, distinguishing between subjects who are susceptible to progression and those who are statistically 'cured' (stable). Crucially, this approach tests for statistical distinguishability from standard non-cure models, explicitly avoiding claims of clinical biological reversal. Model appropriateness is rigorously assessed using diagnostic tests for cure model validity outlined in EV-Q101-187ef521d9529a6042a34991. A mandatory pre-analysis step verifies that candidate datasets meet minimum follow-up duration and event count requirements before fitting. The analysis accounts for competing risks (e.g., non-neurodegenerative mortality) to prevent bias in cure fraction estimation. Limitations explicitly state that 'Statistical cure fraction ≠ Clinical reversal'.",
+          "evidence_refs": [
+            "EV-Q101-187ef521d9529a6042a34991",
+            "EV-Q101-3427c07fc3ad1b00b752ac79",
+            "EV-Q101-97eb89e9c99d2bf070d4510c",
+            "EV-Q101-e04f8a29c94f4a1c767e282d"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:b124ff008acc6448",
+          "issue_id": "required_revision:3caf5e00303c",
+          "reason": "Reviewer item required_revision:3caf5e00303c requested 'Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.''. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['187ef521d9529a6042a34991', 'analysi', 'cohort', 'ev', 'model', 'pre', 'q101', 'step', 'validate'], coverage=0.409.",
+          "before": [
+            "Code for semiparametric transformation model implementation is version-controlled and documented.",
+            "Data preprocessing steps (definition of progression, competing risks) are explicitly scripted.",
+            "Random seeds for bootstrap resampling and cross-validation are fixed and recorded.",
+            "Model convergence criteria and failure handling protocols are defined.",
+            "All diagnostic plots (survival curves, residual plots) are generated automatically."
+          ],
+          "after": [
+            "Code for semiparametric transformation model implementation is version-controlled and documented.",
+            "Data preprocessing steps (definition of progression, competing risks) are explicitly scripted.",
+            "Random seeds for bootstrap resampling and cross-validation are fixed and recorded.",
+            "Model convergence criteria and failure handling protocols are defined.",
+            "All diagnostic plots (survival curves, residual plots) are generated automatically.",
+            "Pre-analysis verification log confirming dataset eligibility per EV-Q101-187ef521d9529a6042a34991 is saved."
+          ],
+          "evidence_refs": [
+            "EV-Q101-187ef521d9529a6042a34991",
+            "EV-Q101-3427c07fc3ad1b00b752ac79",
+            "EV-Q101-97eb89e9c99d2bf070d4510c",
+            "EV-Q101-e04f8a29c94f4a1c767e282d"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:c3dbf99914b0",
+          "category": "critical_issue",
+          "description": "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:62e210844358",
+          "category": "critical_issue",
+          "description": "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:1b000459f42c",
+          "category": "required_revision",
+          "description": "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:7fe445a7773baad7; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:00f1695f1c8e",
+          "category": "required_revision",
+          "description": "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:58bac9c7da3bfa53; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:3caf5e00303c",
+          "category": "required_revision",
+          "description": "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ab46e71b13947918,change:b124ff008acc6448; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:2b96929ec04d",
+          "category": "required_revision",
+          "description": "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "upstream_target_blocked:EvidenceExtractionResult"
+        }
+      ],
+      "substantive_sections": [
+        "dataset_sources",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.65,
+          "after": 0.95,
+          "delta": 0.29999999999999993
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.95,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 0.7,
+          "after": 1.0,
+          "delta": 0.30000000000000004
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.",
+          "overall_score": 0.81,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Existing statistical cure models are methodologically inappropriate for neurodegenerative disease trajectories due to violation of tail behavior assumptions, rendering 'cure fraction' estimates invalid in this domain.",
+          "overall_score": 0.71,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 3,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:c3dbf99914b0",
+        "required_revision_without_change:critical_issue:62e210844358",
+        "upstream_target_blocked:required_revision:2b96929ec04d:EvidenceExtractionResult",
+        "required_revision_without_change:required_revision:2b96929ec04d",
+        "unresolved_issue:critical_issue:c3dbf99914b0",
+        "unresolved_issue:critical_issue:62e210844358",
+        "unresolved_issue:required_revision:2b96929ec04d"
+      ],
+      "remaining_blockers": [
+        "critical_issue:c3dbf99914b0: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:62e210844358: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:2b96929ec04d: upstream_target_blocked:EvidenceExtractionResult"
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-090611-9b787966",
+        "version_number": 1,
+        "version_id": "20260822-090611-9b787966:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Neurodegenerative disease progression can be accurately modeled using semiparametric transformation cure models with competing risks, enabling the statistical identification of a 'cured' subpopulation in longitudinal clinical cohorts.",
+              "mechanism": "Standard survival analysis assumes all subjects will eventually experience the event (disease progression/death). However, if a therapeutic intervention creates a true biological plateau, standard models fail. Semiparametric transformation models with cure fraction (EV-Q101-e04f8a29c94f4a1c767e282d) allow for a non-zero asymptote in the survival function, distinguishing between 'susceptible' and 'cured/stable' latent classes while accounting for competing mortality risks common in elderly neurodegenerative populations.",
+              "falsifiable_prediction": "When applied to long-term (>5 years) longitudinal data from disease-modifying therapy trials, a cure model will demonstrate significantly better fit (lower AIC/BIC) compared to standard Cox proportional hazards models only if a true stable subpopulation exists; otherwise, the estimated cure fraction will converge to zero or the model will fail to converge.",
+              "required_observations": [
+                "Longitudinal time-to-progression datasets from neurodegenerative clinical trials with sufficient follow-up to observe survival curve plateaus",
+                "Competing risk data (non-neurodegenerative mortality) for the same cohort",
+                "Model fitting diagnostics comparing cure vs. non-cure frameworks"
+              ],
+              "risk_of_being_wrong": "High risk that observed 'statistical cure fractions' represent selection bias, loss to follow-up, or insufficient observation time rather than true biological disease arrest. The methodology validates statistical fit, not clinical reversal.",
+              "supporting_evidence_ids": [
+                "EV-Q101-e04f8a29c94f4a1c767e282d",
+                "EV-Q101-3427c07fc3ad1b00b752ac79"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.75
+            },
+            {
+              "hypothesis": "Current definitions of 'cure' in neurodegeneration are methodologically invalid because existing statistical cure models have not been validated for appropriateness in progressive neurological contexts.",
+              "mechanism": "Cure models rely on specific assumptions about the tail behavior of survival distributions (EV-Q101-187ef521d9529a6042a34991). Neurodegenerative diseases exhibit complex, multi-stage progression with variable latency that may violate these parametric assumptions. Without rigorous evaluation of model appropriateness specifically for neurodegenerative trajectories, claims of 'cure fractions' derived from generic oncology-derived models are likely artifacts.",
+              "falsifiable_prediction": "Systematic application of cure model appropriateness tests (goodness-of-fit for the cured fraction) to neurodegenerative datasets will reveal significant violations of model assumptions in >80% of cases, indicating that current statistical 'cures' are methodological misapplications.",
+              "required_observations": [
+                "Application of diagnostic tests for cure model validity to AD/PD trial data",
+                "Comparison of parametric vs. non-parametric cure estimates",
+                "Sensitivity analysis of cure fraction estimates to model specification"
+              ],
+              "risk_of_being_wrong": "Risk that some neurodegenerative subtypes or early-stage interventions do satisfy cure model assumptions, making the blanket rejection of the methodology incorrect. Also risks conflating statistical inadequacy with biological impossibility.",
+              "supporting_evidence_ids": [
+                "EV-Q101-187ef521d9529a6042a34991"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.71
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 1 is selected as the best candidate because it constructively bridges the gap between the available methodological evidence (statistical cure models) and the domain question (neurodegenerative cure). While no biological evidence exists in the allowed set, this hypothesis provides a concrete, falsifiable framework to test whether 'cure' is even statistically detectable in existing data. It avoids claiming biological efficacy while offering a verifiable path to define or refute the concept of cure using the specific tools documented in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. Hypothesis 2 is valuable but purely critical; Hypothesis 1 enables active research.",
+          "rejected_directions": [
+            "Hypotheses proposing specific molecular mechanisms of neurodegeneration reversal (e.g., protein aggregation clearance, stem cell regeneration) were rejected due to complete absence of supporting biological evidence in allowed_evidence_ids.",
+            "Hypotheses equating statistical cure fractions directly with clinical symptom resolution were rejected as they conflate distinct domains without validation evidence.",
+            "Directions focusing on breast cancer gene selection methodologies (EV-Q101-97eb89e9c99d2bf070d4510c) were rejected as domain-inappropriate despite superficial keyword overlap."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study proposes a rigorous statistical validation framework to test the hypothesis that neurodegenerative disease progression contains a 'cured' or stable subpopulation, identifiable via semiparametric transformation cure models with competing risks. The core technical challenge is distinguishing true biological stability from statistical artifacts caused by insufficient follow-up or competing mortality in elderly cohorts. We will implement the semiparametric transformation model described in EV-Q101-e04f8a29c94f4a1c767e282d, which allows for a non-zero asymptote in the survival function. This will be contrasted against standard Cox proportional hazards models (which assume all subjects are susceptible) and parametric cure models. The analysis will explicitly account for competing risks (non-neurodegenerative death) as outlined in the methodological constraints. Model appropriateness will be evaluated using diagnostic tests for cure model validity as suggested by EV-Q101-187ef521d9529a6042a34991. The primary falsifiable prediction is that if a true stable subpopulation exists, the cure model will yield significantly better fit statistics (AIC/BIC) and a non-zero, statistically significant cure fraction; otherwise, the cure fraction will converge to zero or the model will fail convergence diagnostics.",
+          "datasets": {
+            "source": "Publicly available longitudinal clinical trial datasets for Alzheimer's Disease (e.g., ADNI, A4 Study) or Parkinson's Disease with >5 years follow-up, including time-to-progression events and censoring indicators for competing risks (death from other causes).",
+            "target": "Processed survival objects containing: (1) Time-to-event (progression or censoring), (2) Event type indicator (Progression=1, Competing Death=2, Censored=0), (3) Covariates (age, baseline severity, treatment arm), (4) Estimated cure fraction parameters."
+          },
+          "methods": "1. Data Preprocessing: Clean longitudinal data to define 'progression' endpoints and identify competing risk events. Handle missing data via multiple imputation if <20% missingness. 2. Model Implementation: Fit three classes of models: (a) Standard Cox Proportional Hazards (non-cure baseline), (b) Parametric Cure Models (Weibull/Log-normal mixture), (c) Semiparametric Transformation Cure Models with Competing Risks (as per EV-Q101-e04f8a29c94f4a1c767e282d). 3. Model Comparison: Use Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) to compare fit. 4. Diagnostic Validation: Apply goodness-of-fit tests for cure model appropriateness (EV-Q101-187ef521d9529a6042a34991) to check if the tail behavior supports a cure fraction. 5. Sensitivity Analysis: Vary the definition of 'stable' (e.g., no progression for 3 vs 5 years) to test robustness of the cure fraction estimate.",
+          "experiments": {
+            "baselines": [
+              "Cox Proportional Hazards Model (Standard survival analysis, assumes no cure)",
+              "Parametric Mixture Cure Model (Weibull distribution for susceptible population)"
+            ],
+            "metrics": [
+              "Akaike Information Criterion (AIC)",
+              "Bayesian Information Criterion (BIC)",
+              "Estimated Cure Fraction (with 95% Confidence Interval)",
+              "Convergence Status (Binary: Converged/Failed)"
+            ],
+            "ablation": "Remove competing risk component to assess impact on cure fraction estimation; Exclude short-term follow-up (<2 years) to test if 'cure' is an artifact of early dropout.",
+            "validation_protocol": "5-fold cross-validation for model stability; Bootstrap resampling (n=1000) to estimate confidence intervals for the cure fraction; Visual inspection of Kaplan-Meier curves vs. model-predicted survival functions to check for plateau alignment."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for semiparametric transformation model implementation is version-controlled and documented.",
+            "Data preprocessing steps (definition of progression, competing risks) are explicitly scripted.",
+            "Random seeds for bootstrap resampling and cross-validation are fixed and recorded.",
+            "Model convergence criteria and failure handling protocols are defined.",
+            "All diagnostic plots (survival curves, residual plots) are generated automatically."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation sufficient for statistical modeling; no large-scale deep learning training required.",
+            "estimated_runtime": "4-8 hours for data preprocessing and model fitting across 5 folds.",
+            "software_dependencies": [
+              "R (survival, smcure, or custom implementation based on EV-Q101-e04f8a29c94f4a1c767e282d)",
+              "Python (pandas, numpy for preprocessing)"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies a methodological gap and proposes a valid statistical validation framework using allowed evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991).",
+            "The experiment design appropriately marks results as 'pending' and avoids fabricating outcomes.",
+            "However, the dataset specification lists 'ADNI, A4 Study' as source data. These specific datasets are not present in the allowed EvidenceCards. Citing them as definitive sources violates the constraint that all factual claims (including data availability) must be traceable to evidence_ids.",
+            "The term 'accurately modeled' in the hypothesis is ambiguous; it should be refined to 'statistically distinguishable from non-cure models' to avoid implying clinical validity which is unsupported by the provided evidence.",
+            "Risk level is elevated to 'medium' because applying oncology-derived cure models to neurodegeneration without domain-specific validation evidence carries a high risk of misinterpretation, even if the statistical exercise is valid."
+          ],
+          "critical_issues": [
+            "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+            "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability."
+          ],
+          "required_revisions": [
+            "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+            "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+            "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+            "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.65,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 0.7
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:c3dbf99914b0",
+            "category": "critical_issue",
+            "description": "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:62e210844358",
+            "category": "critical_issue",
+            "description": "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1b000459f42c",
+            "category": "required_revision",
+            "description": "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:00f1695f1c8e",
+            "category": "required_revision",
+            "description": "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3caf5e00303c",
+            "category": "required_revision",
+            "description": "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2b96929ec04d",
+            "category": "required_revision",
+            "description": "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "6f7b46ca7afdfb4eaf1a203625b8f24cf00567842064c889877294f27e98b139",
+          "experiment_designer": "1af3db44a50cf86cc3f683375ab38b375d69c9f8de5a739c9385d9d8694d80c9",
+          "scientific_reviewer": "3ef7c34dbfa6fc199e59dc1069719a30717fbf85753ac778789d7c09f26b5bf5"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-090611-9b787966",
+        "version_number": 2,
+        "version_id": "20260822-090611-9b787966:v2",
+        "parent_version_id": "20260822-090611-9b787966:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.",
+              "mechanism": "Standard survival models assume all subjects are susceptible to the event. Semiparametric transformation cure models (EV-Q101-e04f8a29c94f4a1c767e282d) allow for a non-zero asymptote in the survival function, representing a latent 'cured' or stable fraction. By incorporating competing risks (EV-Q101-3427c07fc3ad1b00b752ac79), this framework distinguishes true disease stability from censoring due to death or dropout. Crucially, this tests statistical distinguishability from non-cure models, not biological reversal, addressing the knowledge gap regarding clinical curability.",
+              "falsifiable_prediction": "If applied to longitudinal neurodegenerative trial datasets (availability to be verified externally as no allowed EvidenceCard confirms specific cohort access) that meet minimum follow-up and event count requirements (EV-Q101-187ef521d9529a6042a34991), the cure model will yield significantly better fit (lower AIC/BIC) than standard Cox models only if a stable subpopulation exists; otherwise, the estimated cure fraction will converge to zero or fail convergence diagnostics.",
+              "required_observations": [
+                "Longitudinal time-to-progression datasets with sufficient follow-up duration and event counts as specified in EV-Q101-187ef521d9529a6042a34991 (availability unverified by allowed evidence)",
+                "Competing risk indicators (non-neurodegenerative mortality) for the same cohort",
+                "Model fitting diagnostics comparing cure vs. non-cure frameworks including goodness-of-fit tests for cure model appropriateness (EV-Q101-187ef521d9529a6042a34991)"
+              ],
+              "risk_of_being_wrong": "Medium risk. Observed 'statistical cure fractions' may represent selection bias, insufficient observation time, or model misfit rather than true biological stability. Statistical cure fraction ≠ Clinical reversal (per knowledge_gap). Applying oncology-derived models to neurodegeneration without domain-specific validation carries interpretation risk even if statistically valid.",
+              "supporting_evidence_ids": [
+                "EV-Q101-e04f8a29c94f4a1c767e282d",
+                "EV-Q101-187ef521d9529a6042a34991",
+                "EV-Q101-3427c07fc3ad1b00b752ac79"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.65,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.81
+            },
+            {
+              "hypothesis": "Existing statistical cure models are methodologically inappropriate for neurodegenerative disease trajectories due to violation of tail behavior assumptions, rendering 'cure fraction' estimates invalid in this domain.",
+              "mechanism": "Cure models rely on specific parametric assumptions about survival distribution tails (EV-Q101-187ef521d9529a6042a34991). Neurodegenerative diseases exhibit complex, multi-stage progression with variable latency that may systematically violate these assumptions. Without domain-specific validation, applying these models risks producing artifactual 'cure' estimates that reflect model misfit rather than biological reality.",
+              "falsifiable_prediction": "Systematic application of cure model appropriateness tests (EV-Q101-187ef521d9529a6042a34991) to neurodegenerative datasets meeting minimum requirements will reveal significant violations of model assumptions in >80% of cases, indicating current statistical 'cures' are methodological misapplications.",
+              "required_observations": [
+                "Application of diagnostic tests for cure model validity to neurodegenerative trial data (availability unverified by allowed evidence)",
+                "Comparison of parametric vs. non-parametric cure estimates",
+                "Sensitivity analysis of cure fraction estimates to model specification and tail behavior assumptions"
+              ],
+              "risk_of_being_wrong": "Risk that some neurodegenerative subtypes or early-stage interventions do satisfy cure model assumptions, making blanket rejection incorrect. Also risks conflating statistical inadequacy with biological impossibility of stability.",
+              "supporting_evidence_ids": [
+                "EV-Q101-187ef521d9529a6042a34991"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.71
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses all reviewer-required revisions: (1) replaces specific dataset names with generic description conditioned on external verification, (2) uses precise phrasing 'statistically evaluated...distinct from clinical cure' to avoid conflating statistical fit with biological truth, (3) incorporates mandatory pre-analysis verification step referencing EV-Q101-187ef521d9529a6042a34991, and (4) explicitly acknowledges 'Statistical cure fraction ≠ Clinical reversal' limitation. It constructively bridges available methodological evidence with the domain question while maintaining strict epistemic boundaries. Hypothesis 1 is valuable but purely critical and less actionable.",
+          "rejected_directions": [
+            "Hypotheses proposing specific molecular mechanisms of neurodegeneration reversal (e.g., protein aggregation clearance, stem cell regeneration) were rejected due to complete absence of supporting biological evidence in allowed_evidence_ids.",
+            "Hypotheses equating statistical cure fractions directly with clinical symptom resolution were rejected as they conflate distinct domains without validation evidence.",
+            "Directions focusing on breast cancer gene selection methodologies (EV-Q101-97eb89e9c99d2bf070d4510c) were rejected as domain-inappropriate despite superficial keyword overlap.",
+            "Any hypothesis citing specific datasets (ADNI, A4 Study) as confirmed sources was rejected per critical_issue:c3dbf99914b0 since no allowed EvidenceCard verifies their availability."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study implements a statistical validation framework to evaluate whether neurodegenerative disease progression data supports the existence of a latent 'cured' or stable subpopulation. The core methodology utilizes semiparametric transformation cure models with competing risks, as described in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. These models allow for a non-zero asymptote in the survival function, distinguishing between subjects who are susceptible to progression and those who are statistically 'cured' (stable). Crucially, this approach tests for statistical distinguishability from standard non-cure models, explicitly avoiding claims of clinical biological reversal. Model appropriateness is rigorously assessed using diagnostic tests for cure model validity outlined in EV-Q101-187ef521d9529a6042a34991. A mandatory pre-analysis step verifies that candidate datasets meet minimum follow-up duration and event count requirements before fitting. The analysis accounts for competing risks (e.g., non-neurodegenerative mortality) to prevent bias in cure fraction estimation. Limitations explicitly state that 'Statistical cure fraction ≠ Clinical reversal'.",
+          "datasets": {
+            "source": "Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access). Data must include time-to-progression, censoring indicators, and competing risk events.",
+            "target": "Processed survival objects containing: (1) Time-to-event (progression or censoring), (2) Event type indicator (Progression=1, Competing Death=2, Censored=0), (3) Covariates (age, baseline severity, treatment arm), (4) Estimated cure fraction parameters."
+          },
+          "methods": "1. Pre-analysis Verification: Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting. 2. Data Preprocessing: Clean longitudinal data to define 'progression' endpoints and identify competing risk events. Handle missing data via multiple imputation if <20% missingness. 3. Model Implementation: Fit three classes of models: (a) Standard Cox Proportional Hazards (non-cure baseline), (b) Parametric Cure Models (Weibull/Log-normal mixture), (c) Semiparametric Transformation Cure Models with Competing Risks (as per EV-Q101-e04f8a29c94f4a1c767e282d). 4. Model Comparison: Use Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) to compare fit. 5. Diagnostic Validation: Apply goodness-of-fit tests for cure model appropriateness (EV-Q101-187ef521d9529a6042a34991). 6. Sensitivity Analysis: Vary the definition of 'stable' to test robustness.",
+          "experiments": {
+            "baselines": [
+              "Cox Proportional Hazards Model (Standard survival analysis, assumes no cure)",
+              "Parametric Mixture Cure Model (Weibull distribution for susceptible population)"
+            ],
+            "metrics": [
+              "Akaike Information Criterion (AIC)",
+              "Bayesian Information Criterion (BIC)",
+              "Estimated Cure Fraction (with 95% Confidence Interval)",
+              "Convergence Status (Binary: Converged/Failed)"
+            ],
+            "ablation": "Remove competing risk component to assess impact on cure fraction estimation; Exclude short-term follow-up (<2 years) to test if 'cure' is an artifact of early dropout.",
+            "validation_protocol": "5-fold cross-validation for model stability; Bootstrap resampling (n=1000) to estimate confidence intervals for the cure fraction; Visual inspection of Kaplan-Meier curves vs. model-predicted survival functions to check for plateau alignment."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for semiparametric transformation model implementation is version-controlled and documented.",
+            "Data preprocessing steps (definition of progression, competing risks) are explicitly scripted.",
+            "Random seeds for bootstrap resampling and cross-validation are fixed and recorded.",
+            "Model convergence criteria and failure handling protocols are defined.",
+            "All diagnostic plots (survival curves, residual plots) are generated automatically.",
+            "Pre-analysis verification log confirming dataset eligibility per EV-Q101-187ef521d9529a6042a34991 is saved."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation sufficient for statistical modeling; no large-scale deep learning training required.",
+            "estimated_runtime": "4-8 hours for data preprocessing and model fitting across 5 folds.",
+            "software_dependencies": [
+              "R (survival, smcure, or custom implementation based on EV-Q101-e04f8a29c94f4a1c767e282d)",
+              "Python (pandas, numpy for preprocessing)"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly replaces 'accurately modeled' with 'statistically evaluated... distinct from clinical cure', resolving the conflation of statistical fit and biological truth (critical_issue:62e210844358).",
+            "Dataset source description has been appropriately generalized to 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search...)', removing unverified references to ADNI/A4 Study and satisfying evidence grounding constraints.",
+            "Methods section now includes a mandatory pre-analysis verification step referencing EV-Q101-187ef521d9529a6042a34991 for minimum follow-up and event count requirements, enhancing reproducibility and methodological rigor.",
+            "Risk of being wrong explicitly states 'Statistical cure fraction ≠ Clinical reversal', directly addressing the knowledge gap identified in EvidenceExtractionResult and preventing overinterpretation.",
+            "All supporting evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991, EV-Q101-3427c07fc3ad1b00b752ac79) are valid and present in the allowed EvidenceCards; no fabricated or disallowed references detected.",
+            "Results field remains correctly marked as pending with no fabrication; experiment design includes appropriate baselines (Cox, Parametric Mixture) and metrics (AIC/BIC, Cure Fraction CI, Convergence Status) capable of falsifying the hypothesis."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:c3dbf99914b0",
+            "category": "critical_issue",
+            "description": "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:62e210844358",
+            "category": "critical_issue",
+            "description": "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:1b000459f42c",
+            "category": "required_revision",
+            "description": "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:7fe445a7773baad7; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:00f1695f1c8e",
+            "category": "required_revision",
+            "description": "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:58bac9c7da3bfa53; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:3caf5e00303c",
+            "category": "required_revision",
+            "description": "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:ab46e71b13947918,change:b124ff008acc6448; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:2b96929ec04d",
+            "category": "required_revision",
+            "description": "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "upstream_target_blocked:EvidenceExtractionResult"
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "0368d1ef3f058f209a3a72cfed40eec28481d8a4c32c5aea9660c8fc99859280",
+          "experiment_designer": "92e47aa8f4d2ab6f029c1f0ad57171512bff3dd0c50a317a2bb3b4369f31b998",
+          "scientific_reviewer": "9c236c1427337a60f51cdaf7365f2bb2cde0c86c059af5c69a7a6433bda31082"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-090611-9b787966",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-090611-9b787966:review:v1",
+        "20260822-090611-9b787966:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-090611-9b787966:v1",
+        "20260822-090611-9b787966:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-090611-9b787966",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-090611-9b787966:review:v1",
+          "20260822-090611-9b787966:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-090611-9b787966:v1",
+          "20260822-090611-9b787966:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-090611-9b787966",
+          "version_number": 1,
+          "version_id": "20260822-090611-9b787966:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Neurodegenerative disease progression can be accurately modeled using semiparametric transformation cure models with competing risks, enabling the statistical identification of a 'cured' subpopulation in longitudinal clinical cohorts.",
+                "mechanism": "Standard survival analysis assumes all subjects will eventually experience the event (disease progression/death). However, if a therapeutic intervention creates a true biological plateau, standard models fail. Semiparametric transformation models with cure fraction (EV-Q101-e04f8a29c94f4a1c767e282d) allow for a non-zero asymptote in the survival function, distinguishing between 'susceptible' and 'cured/stable' latent classes while accounting for competing mortality risks common in elderly neurodegenerative populations.",
+                "falsifiable_prediction": "When applied to long-term (>5 years) longitudinal data from disease-modifying therapy trials, a cure model will demonstrate significantly better fit (lower AIC/BIC) compared to standard Cox proportional hazards models only if a true stable subpopulation exists; otherwise, the estimated cure fraction will converge to zero or the model will fail to converge.",
+                "required_observations": [
+                  "Longitudinal time-to-progression datasets from neurodegenerative clinical trials with sufficient follow-up to observe survival curve plateaus",
+                  "Competing risk data (non-neurodegenerative mortality) for the same cohort",
+                  "Model fitting diagnostics comparing cure vs. non-cure frameworks"
+                ],
+                "risk_of_being_wrong": "High risk that observed 'statistical cure fractions' represent selection bias, loss to follow-up, or insufficient observation time rather than true biological disease arrest. The methodology validates statistical fit, not clinical reversal.",
+                "supporting_evidence_ids": [
+                  "EV-Q101-e04f8a29c94f4a1c767e282d",
+                  "EV-Q101-3427c07fc3ad1b00b752ac79"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.75
+              },
+              {
+                "hypothesis": "Current definitions of 'cure' in neurodegeneration are methodologically invalid because existing statistical cure models have not been validated for appropriateness in progressive neurological contexts.",
+                "mechanism": "Cure models rely on specific assumptions about the tail behavior of survival distributions (EV-Q101-187ef521d9529a6042a34991). Neurodegenerative diseases exhibit complex, multi-stage progression with variable latency that may violate these parametric assumptions. Without rigorous evaluation of model appropriateness specifically for neurodegenerative trajectories, claims of 'cure fractions' derived from generic oncology-derived models are likely artifacts.",
+                "falsifiable_prediction": "Systematic application of cure model appropriateness tests (goodness-of-fit for the cured fraction) to neurodegenerative datasets will reveal significant violations of model assumptions in >80% of cases, indicating that current statistical 'cures' are methodological misapplications.",
+                "required_observations": [
+                  "Application of diagnostic tests for cure model validity to AD/PD trial data",
+                  "Comparison of parametric vs. non-parametric cure estimates",
+                  "Sensitivity analysis of cure fraction estimates to model specification"
+                ],
+                "risk_of_being_wrong": "Risk that some neurodegenerative subtypes or early-stage interventions do satisfy cure model assumptions, making the blanket rejection of the methodology incorrect. Also risks conflating statistical inadequacy with biological impossibility.",
+                "supporting_evidence_ids": [
+                  "EV-Q101-187ef521d9529a6042a34991"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.71
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 1 is selected as the best candidate because it constructively bridges the gap between the available methodological evidence (statistical cure models) and the domain question (neurodegenerative cure). While no biological evidence exists in the allowed set, this hypothesis provides a concrete, falsifiable framework to test whether 'cure' is even statistically detectable in existing data. It avoids claiming biological efficacy while offering a verifiable path to define or refute the concept of cure using the specific tools documented in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. Hypothesis 2 is valuable but purely critical; Hypothesis 1 enables active research.",
+            "rejected_directions": [
+              "Hypotheses proposing specific molecular mechanisms of neurodegeneration reversal (e.g., protein aggregation clearance, stem cell regeneration) were rejected due to complete absence of supporting biological evidence in allowed_evidence_ids.",
+              "Hypotheses equating statistical cure fractions directly with clinical symptom resolution were rejected as they conflate distinct domains without validation evidence.",
+              "Directions focusing on breast cancer gene selection methodologies (EV-Q101-97eb89e9c99d2bf070d4510c) were rejected as domain-inappropriate despite superficial keyword overlap."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study proposes a rigorous statistical validation framework to test the hypothesis that neurodegenerative disease progression contains a 'cured' or stable subpopulation, identifiable via semiparametric transformation cure models with competing risks. The core technical challenge is distinguishing true biological stability from statistical artifacts caused by insufficient follow-up or competing mortality in elderly cohorts. We will implement the semiparametric transformation model described in EV-Q101-e04f8a29c94f4a1c767e282d, which allows for a non-zero asymptote in the survival function. This will be contrasted against standard Cox proportional hazards models (which assume all subjects are susceptible) and parametric cure models. The analysis will explicitly account for competing risks (non-neurodegenerative death) as outlined in the methodological constraints. Model appropriateness will be evaluated using diagnostic tests for cure model validity as suggested by EV-Q101-187ef521d9529a6042a34991. The primary falsifiable prediction is that if a true stable subpopulation exists, the cure model will yield significantly better fit statistics (AIC/BIC) and a non-zero, statistically significant cure fraction; otherwise, the cure fraction will converge to zero or the model will fail convergence diagnostics.",
+            "datasets": {
+              "source": "Publicly available longitudinal clinical trial datasets for Alzheimer's Disease (e.g., ADNI, A4 Study) or Parkinson's Disease with >5 years follow-up, including time-to-progression events and censoring indicators for competing risks (death from other causes).",
+              "target": "Processed survival objects containing: (1) Time-to-event (progression or censoring), (2) Event type indicator (Progression=1, Competing Death=2, Censored=0), (3) Covariates (age, baseline severity, treatment arm), (4) Estimated cure fraction parameters."
+            },
+            "methods": "1. Data Preprocessing: Clean longitudinal data to define 'progression' endpoints and identify competing risk events. Handle missing data via multiple imputation if <20% missingness. 2. Model Implementation: Fit three classes of models: (a) Standard Cox Proportional Hazards (non-cure baseline), (b) Parametric Cure Models (Weibull/Log-normal mixture), (c) Semiparametric Transformation Cure Models with Competing Risks (as per EV-Q101-e04f8a29c94f4a1c767e282d). 3. Model Comparison: Use Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) to compare fit. 4. Diagnostic Validation: Apply goodness-of-fit tests for cure model appropriateness (EV-Q101-187ef521d9529a6042a34991) to check if the tail behavior supports a cure fraction. 5. Sensitivity Analysis: Vary the definition of 'stable' (e.g., no progression for 3 vs 5 years) to test robustness of the cure fraction estimate.",
+            "experiments": {
+              "baselines": [
+                "Cox Proportional Hazards Model (Standard survival analysis, assumes no cure)",
+                "Parametric Mixture Cure Model (Weibull distribution for susceptible population)"
+              ],
+              "metrics": [
+                "Akaike Information Criterion (AIC)",
+                "Bayesian Information Criterion (BIC)",
+                "Estimated Cure Fraction (with 95% Confidence Interval)",
+                "Convergence Status (Binary: Converged/Failed)"
+              ],
+              "ablation": "Remove competing risk component to assess impact on cure fraction estimation; Exclude short-term follow-up (<2 years) to test if 'cure' is an artifact of early dropout.",
+              "validation_protocol": "5-fold cross-validation for model stability; Bootstrap resampling (n=1000) to estimate confidence intervals for the cure fraction; Visual inspection of Kaplan-Meier curves vs. model-predicted survival functions to check for plateau alignment."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code for semiparametric transformation model implementation is version-controlled and documented.",
+              "Data preprocessing steps (definition of progression, competing risks) are explicitly scripted.",
+              "Random seeds for bootstrap resampling and cross-validation are fixed and recorded.",
+              "Model convergence criteria and failure handling protocols are defined.",
+              "All diagnostic plots (survival curves, residual plots) are generated automatically."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU/GPU workstation sufficient for statistical modeling; no large-scale deep learning training required.",
+              "estimated_runtime": "4-8 hours for data preprocessing and model fitting across 5 folds.",
+              "software_dependencies": [
+                "R (survival, smcure, or custom implementation based on EV-Q101-e04f8a29c94f4a1c767e282d)",
+                "Python (pandas, numpy for preprocessing)"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis correctly identifies a methodological gap and proposes a valid statistical validation framework using allowed evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991).",
+              "The experiment design appropriately marks results as 'pending' and avoids fabricating outcomes.",
+              "However, the dataset specification lists 'ADNI, A4 Study' as source data. These specific datasets are not present in the allowed EvidenceCards. Citing them as definitive sources violates the constraint that all factual claims (including data availability) must be traceable to evidence_ids.",
+              "The term 'accurately modeled' in the hypothesis is ambiguous; it should be refined to 'statistically distinguishable from non-cure models' to avoid implying clinical validity which is unsupported by the provided evidence.",
+              "Risk level is elevated to 'medium' because applying oncology-derived cure models to neurodegeneration without domain-specific validation evidence carries a high risk of misinterpretation, even if the statistical exercise is valid."
+            ],
+            "critical_issues": [
+              "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+              "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability."
+            ],
+            "required_revisions": [
+              "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+              "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+              "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+              "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.65,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.85,
+            "reference_reliability_score": 0.7
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:c3dbf99914b0",
+              "category": "critical_issue",
+              "description": "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:62e210844358",
+              "category": "critical_issue",
+              "description": "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:1b000459f42c",
+              "category": "required_revision",
+              "description": "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:00f1695f1c8e",
+              "category": "required_revision",
+              "description": "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:3caf5e00303c",
+              "category": "required_revision",
+              "description": "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:2b96929ec04d",
+              "category": "required_revision",
+              "description": "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "6f7b46ca7afdfb4eaf1a203625b8f24cf00567842064c889877294f27e98b139",
+            "experiment_designer": "1af3db44a50cf86cc3f683375ab38b375d69c9f8de5a739c9385d9d8694d80c9",
+            "scientific_reviewer": "3ef7c34dbfa6fc199e59dc1069719a30717fbf85753ac778789d7c09f26b5bf5"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-090611-9b787966",
+          "version_number": 2,
+          "version_id": "20260822-090611-9b787966:v2",
+          "parent_version_id": "20260822-090611-9b787966:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.",
+                "mechanism": "Standard survival models assume all subjects are susceptible to the event. Semiparametric transformation cure models (EV-Q101-e04f8a29c94f4a1c767e282d) allow for a non-zero asymptote in the survival function, representing a latent 'cured' or stable fraction. By incorporating competing risks (EV-Q101-3427c07fc3ad1b00b752ac79), this framework distinguishes true disease stability from censoring due to death or dropout. Crucially, this tests statistical distinguishability from non-cure models, not biological reversal, addressing the knowledge gap regarding clinical curability.",
+                "falsifiable_prediction": "If applied to longitudinal neurodegenerative trial datasets (availability to be verified externally as no allowed EvidenceCard confirms specific cohort access) that meet minimum follow-up and event count requirements (EV-Q101-187ef521d9529a6042a34991), the cure model will yield significantly better fit (lower AIC/BIC) than standard Cox models only if a stable subpopulation exists; otherwise, the estimated cure fraction will converge to zero or fail convergence diagnostics.",
+                "required_observations": [
+                  "Longitudinal time-to-progression datasets with sufficient follow-up duration and event counts as specified in EV-Q101-187ef521d9529a6042a34991 (availability unverified by allowed evidence)",
+                  "Competing risk indicators (non-neurodegenerative mortality) for the same cohort",
+                  "Model fitting diagnostics comparing cure vs. non-cure frameworks including goodness-of-fit tests for cure model appropriateness (EV-Q101-187ef521d9529a6042a34991)"
+                ],
+                "risk_of_being_wrong": "Medium risk. Observed 'statistical cure fractions' may represent selection bias, insufficient observation time, or model misfit rather than true biological stability. Statistical cure fraction ≠ Clinical reversal (per knowledge_gap). Applying oncology-derived models to neurodegeneration without domain-specific validation carries interpretation risk even if statistically valid.",
+                "supporting_evidence_ids": [
+                  "EV-Q101-e04f8a29c94f4a1c767e282d",
+                  "EV-Q101-187ef521d9529a6042a34991",
+                  "EV-Q101-3427c07fc3ad1b00b752ac79"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.65,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.81
+              },
+              {
+                "hypothesis": "Existing statistical cure models are methodologically inappropriate for neurodegenerative disease trajectories due to violation of tail behavior assumptions, rendering 'cure fraction' estimates invalid in this domain.",
+                "mechanism": "Cure models rely on specific parametric assumptions about survival distribution tails (EV-Q101-187ef521d9529a6042a34991). Neurodegenerative diseases exhibit complex, multi-stage progression with variable latency that may systematically violate these assumptions. Without domain-specific validation, applying these models risks producing artifactual 'cure' estimates that reflect model misfit rather than biological reality.",
+                "falsifiable_prediction": "Systematic application of cure model appropriateness tests (EV-Q101-187ef521d9529a6042a34991) to neurodegenerative datasets meeting minimum requirements will reveal significant violations of model assumptions in >80% of cases, indicating current statistical 'cures' are methodological misapplications.",
+                "required_observations": [
+                  "Application of diagnostic tests for cure model validity to neurodegenerative trial data (availability unverified by allowed evidence)",
+                  "Comparison of parametric vs. non-parametric cure estimates",
+                  "Sensitivity analysis of cure fraction estimates to model specification and tail behavior assumptions"
+                ],
+                "risk_of_being_wrong": "Risk that some neurodegenerative subtypes or early-stage interventions do satisfy cure model assumptions, making blanket rejection incorrect. Also risks conflating statistical inadequacy with biological impossibility of stability.",
+                "supporting_evidence_ids": [
+                  "EV-Q101-187ef521d9529a6042a34991"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.71
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it directly addresses all reviewer-required revisions: (1) replaces specific dataset names with generic description conditioned on external verification, (2) uses precise phrasing 'statistically evaluated...distinct from clinical cure' to avoid conflating statistical fit with biological truth, (3) incorporates mandatory pre-analysis verification step referencing EV-Q101-187ef521d9529a6042a34991, and (4) explicitly acknowledges 'Statistical cure fraction ≠ Clinical reversal' limitation. It constructively bridges available methodological evidence with the domain question while maintaining strict epistemic boundaries. Hypothesis 1 is valuable but purely critical and less actionable.",
+            "rejected_directions": [
+              "Hypotheses proposing specific molecular mechanisms of neurodegeneration reversal (e.g., protein aggregation clearance, stem cell regeneration) were rejected due to complete absence of supporting biological evidence in allowed_evidence_ids.",
+              "Hypotheses equating statistical cure fractions directly with clinical symptom resolution were rejected as they conflate distinct domains without validation evidence.",
+              "Directions focusing on breast cancer gene selection methodologies (EV-Q101-97eb89e9c99d2bf070d4510c) were rejected as domain-inappropriate despite superficial keyword overlap.",
+              "Any hypothesis citing specific datasets (ADNI, A4 Study) as confirmed sources was rejected per critical_issue:c3dbf99914b0 since no allowed EvidenceCard verifies their availability."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study implements a statistical validation framework to evaluate whether neurodegenerative disease progression data supports the existence of a latent 'cured' or stable subpopulation. The core methodology utilizes semiparametric transformation cure models with competing risks, as described in EV-Q101-e04f8a29c94f4a1c767e282d and EV-Q101-3427c07fc3ad1b00b752ac79. These models allow for a non-zero asymptote in the survival function, distinguishing between subjects who are susceptible to progression and those who are statistically 'cured' (stable). Crucially, this approach tests for statistical distinguishability from standard non-cure models, explicitly avoiding claims of clinical biological reversal. Model appropriateness is rigorously assessed using diagnostic tests for cure model validity outlined in EV-Q101-187ef521d9529a6042a34991. A mandatory pre-analysis step verifies that candidate datasets meet minimum follow-up duration and event count requirements before fitting. The analysis accounts for competing risks (e.g., non-neurodegenerative mortality) to prevent bias in cure fraction estimation. Limitations explicitly state that 'Statistical cure fraction ≠ Clinical reversal'.",
+            "datasets": {
+              "source": "Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access). Data must include time-to-progression, censoring indicators, and competing risk events.",
+              "target": "Processed survival objects containing: (1) Time-to-event (progression or censoring), (2) Event type indicator (Progression=1, Competing Death=2, Censored=0), (3) Covariates (age, baseline severity, treatment arm), (4) Estimated cure fraction parameters."
+            },
+            "methods": "1. Pre-analysis Verification: Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting. 2. Data Preprocessing: Clean longitudinal data to define 'progression' endpoints and identify competing risk events. Handle missing data via multiple imputation if <20% missingness. 3. Model Implementation: Fit three classes of models: (a) Standard Cox Proportional Hazards (non-cure baseline), (b) Parametric Cure Models (Weibull/Log-normal mixture), (c) Semiparametric Transformation Cure Models with Competing Risks (as per EV-Q101-e04f8a29c94f4a1c767e282d). 4. Model Comparison: Use Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) to compare fit. 5. Diagnostic Validation: Apply goodness-of-fit tests for cure model appropriateness (EV-Q101-187ef521d9529a6042a34991). 6. Sensitivity Analysis: Vary the definition of 'stable' to test robustness.",
+            "experiments": {
+              "baselines": [
+                "Cox Proportional Hazards Model (Standard survival analysis, assumes no cure)",
+                "Parametric Mixture Cure Model (Weibull distribution for susceptible population)"
+              ],
+              "metrics": [
+                "Akaike Information Criterion (AIC)",
+                "Bayesian Information Criterion (BIC)",
+                "Estimated Cure Fraction (with 95% Confidence Interval)",
+                "Convergence Status (Binary: Converged/Failed)"
+              ],
+              "ablation": "Remove competing risk component to assess impact on cure fraction estimation; Exclude short-term follow-up (<2 years) to test if 'cure' is an artifact of early dropout.",
+              "validation_protocol": "5-fold cross-validation for model stability; Bootstrap resampling (n=1000) to estimate confidence intervals for the cure fraction; Visual inspection of Kaplan-Meier curves vs. model-predicted survival functions to check for plateau alignment."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code for semiparametric transformation model implementation is version-controlled and documented.",
+              "Data preprocessing steps (definition of progression, competing risks) are explicitly scripted.",
+              "Random seeds for bootstrap resampling and cross-validation are fixed and recorded.",
+              "Model convergence criteria and failure handling protocols are defined.",
+              "All diagnostic plots (survival curves, residual plots) are generated automatically.",
+              "Pre-analysis verification log confirming dataset eligibility per EV-Q101-187ef521d9529a6042a34991 is saved."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU/GPU workstation sufficient for statistical modeling; no large-scale deep learning training required.",
+              "estimated_runtime": "4-8 hours for data preprocessing and model fitting across 5 folds.",
+              "software_dependencies": [
+                "R (survival, smcure, or custom implementation based on EV-Q101-e04f8a29c94f4a1c767e282d)",
+                "Python (pandas, numpy for preprocessing)"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly replaces 'accurately modeled' with 'statistically evaluated... distinct from clinical cure', resolving the conflation of statistical fit and biological truth (critical_issue:62e210844358).",
+              "Dataset source description has been appropriately generalized to 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search...)', removing unverified references to ADNI/A4 Study and satisfying evidence grounding constraints.",
+              "Methods section now includes a mandatory pre-analysis verification step referencing EV-Q101-187ef521d9529a6042a34991 for minimum follow-up and event count requirements, enhancing reproducibility and methodological rigor.",
+              "Risk of being wrong explicitly states 'Statistical cure fraction ≠ Clinical reversal', directly addressing the knowledge gap identified in EvidenceExtractionResult and preventing overinterpretation.",
+              "All supporting evidence IDs (EV-Q101-e04f8a29c94f4a1c767e282d, EV-Q101-187ef521d9529a6042a34991, EV-Q101-3427c07fc3ad1b00b752ac79) are valid and present in the allowed EvidenceCards; no fabricated or disallowed references detected.",
+              "Results field remains correctly marked as pending with no fabrication; experiment design includes appropriate baselines (Cox, Parametric Mixture) and metrics (AIC/BIC, Cure Fraction CI, Convergence Status) capable of falsifying the hypothesis."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:c3dbf99914b0",
+              "category": "critical_issue",
+              "description": "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:62e210844358",
+              "category": "critical_issue",
+              "description": "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:1b000459f42c",
+              "category": "required_revision",
+              "description": "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:7fe445a7773baad7; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:00f1695f1c8e",
+              "category": "required_revision",
+              "description": "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:58bac9c7da3bfa53; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:3caf5e00303c",
+              "category": "required_revision",
+              "description": "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:ab46e71b13947918,change:b124ff008acc6448; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:2b96929ec04d",
+              "category": "required_revision",
+              "description": "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "upstream_target_blocked:EvidenceExtractionResult"
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "0368d1ef3f058f209a3a72cfed40eec28481d8a4c32c5aea9660c8fc99859280",
+            "experiment_designer": "92e47aa8f4d2ab6f029c1f0ad57171512bff3dd0c50a317a2bb3b4369f31b998",
+            "scientific_reviewer": "9c236c1427337a60f51cdaf7365f2bb2cde0c86c059af5c69a7a6433bda31082"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-090611-9b787966:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-090611-9b787966:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-090611-9b787966:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-090611-9b787966:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:c3dbf99914b0",
+          "category": "critical_issue",
+          "description": "Dataset source 'ADNI, A4 Study' is not supported by any allowed EvidenceCard ID; this constitutes an unverified factual claim regarding data availability.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:62e210844358",
+          "category": "critical_issue",
+          "description": "Hypothesis phrasing 'accurately modeled' risks conflating statistical fit with biological truth, contradicting the explicit knowledge_gap regarding clinical curability.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:1b000459f42c",
+          "category": "required_revision",
+          "description": "Replace specific dataset names ('ADNI', 'A4 Study') with a generic description conditioned on evidence, e.g., 'Longitudinal neurodegenerative trial datasets (availability to be verified via external search, as no allowed EvidenceCard confirms specific cohort access)'.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:7fe445a7773baad7; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:00f1695f1c8e",
+          "category": "required_revision",
+          "description": "Revise hypothesis to: 'Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.'",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:58bac9c7da3bfa53; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:3caf5e00303c",
+          "category": "required_revision",
+          "description": "Add a mandatory pre-analysis step in Methods: 'Verify that candidate datasets meet the minimum follow-up duration and event count requirements specified in EV-Q101-187ef521d9529a6042a34991 before model fitting.'",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ab46e71b13947918,change:b124ff008acc6448; evidence=EV-Q101-187ef521d9529a6042a34991,EV-Q101-3427c07fc3ad1b00b752ac79,EV-Q101-97eb89e9c99d2bf070d4510c,EV-Q101-e04f8a29c94f4a1c767e282d; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:2b96929ec04d",
+          "category": "required_revision",
+          "description": "Explicitly state in Limitations that 'Statistical cure fraction ≠ Clinical reversal' citing the knowledge_gap identified in EvidenceExtractionResult.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "upstream_target_blocked:EvidenceExtractionResult"
+        }
+      ],
+      "checkpoint_hash": "d270738e0d7b11dd54809533b6289a9a0056d991623540a9c1f78ab943ab7b89"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-090611-9b787966:wave-b-two-round",
+      "run_id": "20260822-090611-9b787966",
+      "v1_version_id": "20260822-090611-9b787966:v1",
+      "v2_version_id": "20260822-090611-9b787966:v2",
+      "input_fingerprints": {
+        "v1": "1af3db44a50cf86cc3f683375ab38b375d69c9f8de5a739c9385d9d8694d80c9",
+        "v2": "92e47aa8f4d2ab6f029c1f0ad57171512bff3dd0c50a317a2bb3b4369f31b998"
+      },
+      "responded_issue_count": 3,
+      "issue_ids": [
+        "required_revision:1b000459f42c",
+        "required_revision:00f1695f1c8e",
+        "required_revision:3caf5e00303c"
+      ],
+      "change_ids": [
+        "change:7fe445a7773baad7",
+        "change:58bac9c7da3bfa53",
+        "change:ab46e71b13947918",
+        "change:b124ff008acc6448"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.65,
+          "after": 0.95,
+          "delta": 0.29999999999999993
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.95,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 0.7,
+          "after": 1.0,
+          "delta": 0.30000000000000004
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Neurodegenerative disease progression can be statistically evaluated for latent cure fractions using semiparametric transformation cure models with competing risks, providing a quantitative test for plateau existence distinct from clinical cure.",
+          "overall_score": 0.81,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Existing statistical cure models are methodologically inappropriate for neurodegenerative disease trajectories due to violation of tail behavior assumptions, rendering 'cure fraction' estimates invalid in this domain.",
+          "overall_score": 0.71,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "4d6de769e280",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:08:33.234386+00:00",
+    "ended_at": "2026-08-22T09:09:11.084077+00:00",
+    "duration_ms": 37849,
+    "input_summary": "{\"question_item\": {\"id\": \"Q101\", \"domain\": \"Neuroscience\", \"question\": \"Can we cure neurodegenerative diseases?\", \"source_page\": 35, \"booklet_excerpt\": \"Neurodegenerative diseases, in which nerve cells in the brain or nervous system lose function and die, cause great suffering. Millions of people each year experience the pain and trauma of these ailments, the most common of which are Alzheimer’s disease and Parkinson’s disease. Interventions can reduce or relieve symptoms, but not in their entirety, and to date, there is no cure and no way to completely halt or reverse disease progression. Age",
+    "output_summary": "{\"input_question\": \"Can we cure neurodegenerative diseases?\", \"domain\": \"Neuroscience\", \"problem_statement\": \"Current clinical consensus indicates that while symptoms of neurodegenerative diseases (e.g., Alzheimer’s, Parkinson’s) can be relieved, there is no known cure or method to completely halt or reverse disease progression. The core scientific question is whether interventions can be developed to achieve a 'cure,' defined as the complete cessation or reversal of pathological nerve cell loss and functional decline.\", \"rationale\": \"The provided evidence corpus does not contain direct clinic",
+    "evidence_ids": [
+      "EV-Q101-187ef521d9529a6042a34991",
+      "EV-Q101-e04f8a29c94f4a1c767e282d",
+      "EV-Q101-3427c07fc3ad1b00b752ac79"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "20e703fd73c4",
+    "mock": false
+  },
+  {
+    "event_id": "10b1eafc5f17",
+    "run_id": "20260822-090611-9b787966",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:09:11.084077+00:00",
+    "ended_at": "2026-08-22T09:09:12.325197+00:00",
+    "duration_ms": 1241,
+    "input_summary": "{\"question_item\": {\"id\": \"Q101\", \"domain\": \"Neuroscience\", \"question\": \"Can we cure neurodegenerative diseases?\", \"source_page\": 35, \"booklet_excerpt\": \"Neurodegenerative diseases, in which nerve cells in the brain or nervous system lose function and die, cause great suffering. Millions of people each year experience the pain and trauma of these ailments, the most common of which are Alzheimer’s disease and Parkinson’s disease. Interventions can reduce or relieve symptoms, but not in their entirety, and to date, there is no cure and no way to completely halt or reverse disease progression. Age",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required field: ResearchPlan\", \"Missing required field: EvidenceCards\", \"Missing required field: AgentTrace\", \"Missing required field: execution_metadata\"], \"warnings\": [], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0e2ed5e620e3",
+    "mock": false
+  }
+]

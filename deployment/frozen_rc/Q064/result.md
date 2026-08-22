@@ -1,0 +1,137 @@
+# Insufficiency of Current AI-Focused Evidence for Evaluating Human Existential Risk and Interplanetary Migration Necessity
+
+## Input Question
+Will humans one day have to leave the planet (or die trying)?
+
+## Domain
+Astronomy
+
+## Validation Status
+needs_data
+
+## Problem Statement
+The question asks whether existential threats (nuclear war, climate change, extraterrestrial impacts) make interplanetary expansion a necessity for human survival. The provided booklet excerpt cites Stephen Hawking's opinion but lacks empirical evidence in the allowed evidence set.
+
+## Rationale
+To answer this scientifically, one requires quantitative risk assessments of Earth-bound existential threats and feasibility studies of space colonization. The allowed evidence cards (EV-Q064-d3a4efd5e2dc168664847182, EV-Q064-fe31aacd06d47b2a4e08fc7a, EV-Q064-f4cd06d7966218f63f614eac, EV-Q064-349d47028f94e8f4b597ed63) are exclusively focused on Artificial Intelligence and Machine Learning topics (animal communication, meta-learning, human-AI coordination, multimodal LLMs). Therefore, there is insufficient evidence to validate or refute the hypothesis that humans must leave Earth based on the provided sources.
+
+## Generated Hypotheses
+
+### Hypothesis 1
+- **Hypothesis**: Current evidence is insufficient to scientifically evaluate whether humans must leave Earth to avoid extinction, as no provided sources address existential risks or space habitation viability.
+- **Mechanism**: The question requires data on astrophysical threats, climate/nuclear risk modeling, and space technology readiness. The allowed evidence set contains only AI/ML papers unrelated to these domains, creating a fundamental epistemic gap that prevents hypothesis testing.
+- **Falsifiable Prediction**: If future evidence retrieval yields at least one peer-reviewed study quantifying Earth-bound existential risk probabilities or space colonization feasibility within the allowed ID set, this insufficiency claim will be falsified.
+- **Required Observations**: Presence of evidence cards with topic_relevance_status=DIRECT_QUESTION_CORE and content related to existential risk or space migration；Quantitative risk assessments for nuclear war, climate change, or asteroid impacts in allowed evidence；Technical feasibility studies for long-term human space habitation in allowed evidence
+- **Risk of Being Wrong**: Moderate: A relevant evidence card might exist in the allowed list but was misclassified during extraction; however, quoted texts confirm AI/ML focus.
+
+### Hypothesis 2
+- **Hypothesis**: Human-AI coordination frameworks (EV-Q064-f4cd06d7966218f63f614eac) could theoretically model collective decision-making under existential threat, but cannot substitute for missing physical risk data needed to answer the core question.
+- **Mechanism**: While human-AI coordination research addresses how agents collaborate under uncertainty, it does not provide empirical parameters for Earth's habitability timeline or space travel constraints. Any application to existential risk would require external validation data not present in allowed evidence.
+- **Falsifiable Prediction**: If EV-Q064-f4cd06d7966218f63f614eac contains explicit models parameterized with astronomical or climatological existential risk variables, this limitation claim is falsified.
+- **Required Observations**: Full-text verification that EV-Q064-f4cd06d7966218f63f614eac includes existential risk parameters；Demonstration that human-AI coordination models can output Earth-habitability probability distributions without external data
+- **Risk of Being Wrong**: High: The quoted text suggests general coordination utility, not domain-specific risk modeling; likely overextension of source scope.
+
+## Technical Details
+The recommended hypothesis posits that current evidence is insufficient to evaluate the necessity of human space migration for survival. This is a meta-scientific claim regarding data availability rather than a physical prediction. To verify this, we design a systematic review protocol treating the 'allowed evidence set' as the population of interest. The experiment tests whether any document within the provided EvidenceCards (EV-Q064-d3a4efd5e2dc168664847182, EV-Q064-fe31aacd06d47b2a4e08fc7a, EV-Q064-f4cd06d7966218f63f614eac, EV-Q064-349d47028f94e8f4b597ed63) contains keywords or semantic embeddings related to 'existential risk', 'asteroid impact', 'nuclear winter', 'climate tipping points', or 'space colonization feasibility'. Since the input explicitly states these papers are AI/ML focused, the expected outcome is a null result, confirming the knowledge gap. The technical approach involves NLP-based topic modeling and keyword matching against a predefined ontology of existential risk terms.
+
+## Datasets
+### Source
+
+
+```json
+[
+  {
+    "id": "EV-Q064-d3a4efd5e2dc168664847182",
+    "description": "ArXiv paper on animal communication comparison; irrelevant to existential risk."
+  },
+  {
+    "id": "EV-Q064-fe31aacd06d47b2a4e08fc7a",
+    "description": "ArXiv paper on Domain-Adaptive Meta-Learning; irrelevant to existential risk."
+  },
+  {
+    "id": "EV-Q064-f4cd06d7966218f63f614eac",
+    "description": "ArXiv paper on Human-AI Coordination; irrelevant to existential risk."
+  },
+  {
+    "id": "EV-Q064-349d47028f94e8f4b597ed63",
+    "description": "ArXiv paper on GazeLLM and Multimodal LLMs; irrelevant to existential risk."
+  }
+]
+```
+
+
+### Target
+Binary classification of each evidence card as 'Relevant to Existential Risk/Space Migration' or 'Irrelevant'.
+
+## Paper Abstract
+Background: The question of whether humanity must leave Earth to survive existential threats (nuclear war, climate change, asteroids) requires robust astrophysical and geopolitical risk modeling. Method: We conducted a systematic review of the allowed evidence set (N=4), comprising recent arXiv preprints on AI/ML topics. We applied keyword matching and semantic embedding analysis to detect any relevant data on existential risks or space colonization feasibility. Validation Plan: The study validates the hypothesis that the provided evidence is domain-mismatched by demonstrating the absence of relevant quantitative risk assessments. Results: Pending execution of the verification script. The current evidence set contains no factual basis to support or refute the necessity of leaving Earth.
+
+## Methods
+1. Keyword Matching: Scan full texts of allowed EvidenceCards for terms: ['extinction', 'asteroid', 'nuclear war', 'climate change', 'space colonization']. 2. Semantic Analysis: Compute cosine similarity between document embeddings and existential risk query vectors using pre-trained transformers. 3. Manual Verification: Confirm that high-relevance scores in metadata do not correspond to actual content relevance for the specific question domain.
+
+## Experiments
+### Baselines
+
+
+```json
+[
+  "Random Baseline: Assume 50% probability of relevance without inspection.",
+  "Keyword-only Baseline: Simple string matching without semantic context."
+]
+```
+
+
+### Metrics
+
+
+```json
+[
+  "Precision@K (K=4, total cards)",
+  "Recall of Relevant Documents (Expected 0 based on prior extraction)",
+  "F1-Score for Relevance Classification"
+]
+```
+
+
+### Ablation
+Remove semantic embedding step to test if keyword matching alone yields false positives from metaphorical uses of 'extinction' or 'space' in AI contexts.
+
+### Validation Protocol
+Leave-one-out cross-validation is not applicable due to small N=4. Instead, use ground-truth labels derived from the initial EvidenceExtractionResult which already classified these as 'needs_data' and unrelated. The validation confirms the consistency of the 'insufficient evidence' claim.
+
+## Results
+当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。
+
+## References
+- **EV-Q064-d3a4efd5e2dc168664847182** · arxiv · arXiv:2512.06890
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/2512.06890.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=ae48b83bb044bb49815d745f38532fc29211c85cca10119fbd78d9ae6a7d39de
+- **EV-Q064-fe31aacd06d47b2a4e08fc7a** · arxiv · arXiv:1911.01103
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/1911.01103.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=1c353d4ec9ec411a06217247bd304f8251d9076520cd4c309b33fcef582b7f1f
+- **EV-Q064-f4cd06d7966218f63f614eac** · arxiv · arXiv:1910.05789
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/1910.05789.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=6bda2592f7e454cec67b72e9ce17f403ad44db44a29c902f19089c84238962d7
+- **EV-Q064-349d47028f94e8f4b597ed63** · arxiv · arXiv:2504.00221
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/2504.00221.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=223c39472dc9ec49ee67bda0078d02ded51fd62970f93d8c5a4fc4a7d1f65368
+
+## Reviewer Comments
+- The candidate hypothesis correctly identifies a fundamental knowledge gap: the allowed evidence set consists exclusively of AI/ML papers and contains no data on existential risks or space habitation.
+- The system successfully avoided hallucinating connections between irrelevant AI papers (e.g., GazeLLM, DAML) and the user's question about human extinction.
+- The experiment design is appropriately scoped as a meta-analysis of the provided evidence corpus rather than a physical simulation, which aligns with the 'insufficient evidence' conclusion.
+- Results are correctly marked as pending, adhering to the prohibition against fabricating experimental outcomes.
+- References in the experiment design strictly utilize the allowed evidence IDs without inventing new sources.
+
+## Revision History
+
+## Reproducibility Checklist
+- Access to full text of EV-Q064-d3a4efd5e2dc168664847182, EV-Q064-fe31aacd06d47b2a4e08fc7a, EV-Q064-f4cd06d7966218f63f614eac, EV-Q064-349d47028f94e8f4b597ed63
+- Pre-trained sentence transformer model availability
+- Defined list of existential risk keywords
+- Python environment with numpy, sklearn, and transformers libraries
+

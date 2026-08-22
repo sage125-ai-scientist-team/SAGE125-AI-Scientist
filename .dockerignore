@@ -1,10 +1,13 @@
-# Deny the entire repository by default.  Only Dockerfile runtime inputs are
+# Deny the entire repository by default. Only Dockerfile runtime inputs are
 # admitted below, so .env, VCS metadata, tests, caches, local data, and exports
 # never enter the build context.
 **
 
 !Dockerfile
+!Dockerfile.api
+!Dockerfile.ui
 !requirements.txt
+!requirements-final-demo.txt
 
 !app/
 !app/**
@@ -14,3 +17,8 @@
 
 !scripts/
 !scripts/**
+
+!deployment/
+!deployment/**
+!deployment/frozen_rc/
+!deployment/frozen_rc/**

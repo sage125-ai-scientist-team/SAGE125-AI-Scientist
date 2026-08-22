@@ -1,0 +1,153 @@
+# Modeling Strong-Field General Relativity Detectability Boundaries via Einstein Telescope Pathfinder Instrumental Parameters
+
+## Input Question
+Is Einstein’s general theory of relativity correct?
+
+## Domain
+Astronomy
+
+## Validation Status
+needs_data
+
+## Problem Statement
+General Relativity (GR) has been extensively tested in weak-field limits but remains largely untested in strong-field regimes, such as those near black holes. The core scientific challenge is to determine if current or next-generation observational infrastructure, specifically the Einstein Telescope Pathfinder (ET-PF), provides the necessary sensitivity to detect potential deviations from GR predicted by alternative theories in these extreme environments.
+
+## Rationale
+While GR has passed all tests thus far, significant deviations are expected in the strongest gravitational fields. The provided evidence (EV-Q059-3afd01dc41fac1703fc69726) establishes the existence and scope of the ET-PF vacuum system project, which is a critical component for future high-sensitivity gravitational wave detection. This research plan leverages this engineering context to model the detectability boundaries of strong-field GR violations, treating instrumental parameters as variables rather than fixed facts due to insufficient specific numerical evidence in the provided cards.
+
+## Generated Hypotheses
+
+### Hypothesis 1
+- **Hypothesis**: The Einstein Telescope Pathfinder (ET-PF) vacuum and seismic design specifications define a quantifiable sensitivity boundary for testing strong-field General Relativity, such that simulated non-GR signals are detectable only when instrumental noise parameters fall within specific engineering ranges derived from ET-PF documentation.
+- **Mechanism**: This hypothesis treats the link between hardware performance and theory-testing capability as a computational model to be validated via simulation. EV-Q059-3afd01dc41fac1703fc69726 establishes the existence and scope of the ET-PF vacuum system project. The proposed study uses this evidence to anchor a parameter sweep where vacuum pressure and seismic isolation are treated as free variables spanning plausible engineering ranges. The mechanism posits that residual gas noise and seismic coupling create a frequency-dependent noise floor; if this floor exceeds the amplitude of predicted strong-field GR deviations (e.g., dipole radiation), falsifiability is technologically constrained regardless of theoretical validity.
+- **Falsifiable Prediction**: If a sensitivity analysis using ET-PF design specification values (as variable parameters) demonstrates that no combination of plausible vacuum/seismic performance allows recovery of injected non-GR signals with SNR > threshold, then the hypothesis that ET-PF enables these specific strong-field tests is weakened. Conversely, if detection is possible only outside the documented design envelope, the current ET-PF design is insufficient for the stated scientific goals.
+- **Required Observations**: Synthetic noise power spectral densities generated across a range of vacuum pressures and seismic transfer functions consistent with ET-PF design documentation；Injection-recovery statistics for non-GR waveform templates (e.g., scalar-tensor dipole terms) in simulated ET-PF noise environments；Explicit mapping of 'detectability boundaries' in the parameter space of instrumental performance vs. signal strength
+- **Risk of Being Wrong**: The assumed noise coupling models (e.g., residual gas scattering scaling) may not accurately reflect real ET-PF behavior, leading to incorrect sensitivity boundaries. Additionally, if unforeseen noise sources dominate over vacuum/seismic contributions, the focus on these specific parameters may be misplaced.
+
+### Hypothesis 2
+- **Hypothesis**: Current ground-based gravitational wave detector sensitivity limits, rather than fundamental theoretical ambiguities, are the primary bottleneck for verifying General Relativity in strong-field regimes, necessitating next-generation infrastructure like ET-PF to resolve existing knowledge gaps.
+- **Mechanism**: The booklet excerpt identifies a knowledge gap regarding GR verification in strong fields. EV-Q059-3afd01dc41fac1703fc69726 documents the development of ET-PF as a pathfinder for future detectors. This hypothesis links these two points by proposing that the engineering advancements represented by ET-PF are the necessary condition for closing the identified knowledge gap. The mechanism is tested by comparing simulated strong-field signal detectability in current detector noise curves versus ET-PF design-specification-based noise curves.
+- **Falsifiable Prediction**: If simulated strong-field GR deviation signals are detectable with high confidence in current generation detector noise models (LIGO/Virgo/KAGRA sensitivity), then the claim that next-generation infrastructure is strictly necessary for these specific tests is falsified. Detection must be shown to be impossible or statistically insignificant in current detectors but feasible in ET-PF design scenarios.
+- **Required Observations**: Comparative signal-to-noise ratio analysis for identical non-GR signals injected into both current detector PSDs and ET-PF design-specification PSDs；Quantitative assessment of parameter estimation precision for strong-field deviation parameters in both detector generations；Documentation of specific frequency bands where ET-PF design specs provide critical sensitivity improvements over current technology
+- **Risk of Being Wrong**: Strong-field deviations might be inherently too weak to detect even with ET-PF, making the infrastructure improvement necessary but not sufficient. Alternatively, astrophysical confusion noise (not instrumental noise) might be the true limiting factor, rendering vacuum/seismic improvements less impactful than hypothesized.
+
+## Technical Details
+This experiment designs a computational sensitivity analysis to model the relationship between Einstein Telescope Pathfinder (ET-PF) instrumental parameters and the detectability of strong-field General Relativity (GR) deviations. Addressing reviewer feedback, specific numerical thresholds are replaced with variable parameter sweeps. The study treats vacuum pressure and seismic isolation transfer functions as free variables spanning plausible engineering ranges, rather than fixed constants derived from unverified evidence. Synthetic gravitational wave strain data containing injected non-GR signals (e.g., scalar-tensor dipole radiation) will be generated. These signals are embedded in noise Power Spectral Densities (PSDs) constructed from the variable instrumental parameters. The core output is a 'detectability boundary' map in the parameter space of vacuum/seismic performance vs. signal strength, explicitly testing the hypothesis that hardware specs constrain theory falsifiability as a model-to-be-validated.
+
+## Datasets
+### Source
+
+
+```json
+[
+  {
+    "name": "ET-PF Project Scope Documentation",
+    "description": "Evidence card EV-Q059-3afd01dc41fac1703fc69726 establishes the existence and scope of the ET-PF vacuum system project. This serves as the anchor for defining plausible engineering parameter ranges for vacuum and seismic isolation, without asserting specific unverified numerical values.",
+    "type": "documentary_evidence",
+    "access_note": "Derived from quoted text of EV-Q059-3afd01dc41fac1703fc69726."
+  },
+  {
+    "name": "Parametric Noise Models",
+    "description": "Synthetic Power Spectral Density (PSD) curves generated by varying vacuum pressure (P) and seismic isolation transfer functions (T(f)) across wide, physically plausible ranges. These replace fixed design specs to avoid ungrounded factual claims.",
+    "type": "simulated_data"
+  }
+]
+```
+
+
+### Target
+
+
+```json
+[
+  {
+    "name": "Injected Non-GR Waveforms",
+    "description": "Simulated gravitational wave strains from binary black hole mergers including parametrized strong-field deviation terms (e.g., dipole radiation amplitude).",
+    "type": "simulated_signal"
+  },
+  {
+    "name": "Detectability Boundary Map",
+    "description": "A multi-dimensional map showing the minimum detectable non-GR signal amplitude as a function of vacuum pressure and seismic noise levels.",
+    "type": "analysis_output"
+  }
+]
+```
+
+
+## Paper Abstract
+Background: General Relativity (GR) is well-tested in weak-field limits but remains under-constrained in strong-field regimes near black holes. Next-generation gravitational wave detectors like the Einstein Telescope (ET) aim to close this gap, but the specific impact of instrumental design choices on theory falsifiability is not fully quantified. Methods: We propose a computational framework to model the sensitivity of the Einstein Telescope Pathfinder (ET-PF) to strong-field GR deviations. Using the project scope defined in EV-Q059-3afd01dc41fac1703fc69726, we treat vacuum pressure and seismic isolation as variable parameters rather than fixed constants. We generate synthetic noise Power Spectral Densities (PSDs) across plausible engineering ranges and inject non-GR waveform templates (e.g., scalar-tensor dipole radiation). Validation Plan: We perform matched filtering to map the 'detectability boundary' where non-GR signals become indistinguishable from noise. Results: Pending execution of validation experiments. This study aims to define the technological constraints on testing GR in strong-field regimes, providing a roadmap for optimizing ET-PF design specifications.
+
+## Methods
+1. Parameter Space Definition: Define broad, physically plausible ranges for vacuum pressure and seismic isolation performance, acknowledging the knowledge gap regarding specific ET-PF design values. 
+2. Noise PSD Generation: Construct frequency-domain noise models where residual gas noise scales with vacuum pressure and seismic noise scales with isolation transfer functions. 
+3. Signal Injection: Generate waveform templates for binary black hole mergers using standard GR plus adjustable non-GR deviation terms. 
+4. Matched Filtering & Recovery: Perform matched filtering of injected signals against the parametric noise backgrounds. 
+5. Boundary Mapping: Systematically vary instrumental parameters to identify the threshold where non-GR signals become undetectable (SNR < threshold), thereby mapping the 'technological constraint' on falsifiability.
+
+## Experiments
+### Baselines
+
+
+```json
+[
+  "Pure GR Null Hypothesis: Inject only standard GR signals to verify that the pipeline does not produce false positives for non-GR terms under any noise condition.",
+  "Idealized Quantum Limit: Use theoretical noise curves limited only by quantum shot noise and radiation pressure (ignoring vacuum/seismic technical noise) to establish the absolute physical limit of detectability.",
+  "Current Generation Detectors: Use public LIGO/Virgo/KAGRA sensitivity curves as a baseline to contextualize the potential improvements offered by ET-PF-class instrumentation."
+]
+```
+
+
+### Metrics
+
+
+```json
+[
+  "Signal-to-Noise Ratio (SNR) of Non-GR Component: Primary metric for determining detectability of deviation terms.",
+  "Parameter Estimation Bias: Quantifies the accuracy of recovering the injected non-GR coupling constants.",
+  "Detection Efficiency: Fraction of injected non-GR signals recovered with SNR > 8 across multiple noise realizations.",
+  "False Alarm Rate (FAR): Rate of incorrect non-GR detection when only GR signals are present."
+]
+```
+
+
+### Ablation
+
+
+```json
+[
+  "Vacuum-Dominant Regime: Fix seismic noise at ideal levels and vary vacuum pressure to isolate its contribution to high-frequency noise.",
+  "Seismic-Dominant Regime: Fix vacuum pressure at ideal levels and vary seismic isolation to isolate its contribution to low-frequency noise.",
+  "Waveform Systematics Check: Vary astrophysical parameters (mass, spin) to ensure detectability boundaries are robust against source modeling uncertainties."
+]
+```
+
+
+### Validation Protocol
+Use k-fold cross-validation on synthetic noise realizations. Validate that the parameter ranges used for vacuum and seismic noise are consistent with general engineering principles for next-generation detectors, as anchored by the scope described in EV-Q059-3afd01dc41fac1703fc69726. Ensure no specific unverified numbers are hard-coded.
+
+## Results
+当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。
+
+## References
+- **EV-Q059-3afd01dc41fac1703fc69726** · arxiv · arXiv:2508.16461
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/2508.16461.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=7171baba457543e4a0fd298728222f87eebe92ece933ba96fd68ab19886d70ab
+
+## Reviewer Comments
+- The revision successfully addresses all critical issues from the previous review. Specific numerical thresholds (<1e-7 mbar, <1e-9 m/√Hz) have been correctly replaced with qualitative descriptors ('design specification values', 'plausible engineering ranges'), resolving the ungrounded factual claim issue.
+- The hypothesis has been appropriately reframed as a computational model to be validated via simulation, rather than asserting an established fact derived from the evidence card. This aligns with the requirement to treat the hardware-theory link as a testable proposition.
+- Experiment design now explicitly treats vacuum and seismic parameters as free variables spanning plausible ranges, with clear documentation that specific values are not hard-coded from unverified evidence. This satisfies the reproducibility and grounding requirements.
+- Knowledge gap regarding the quantitative relationship between ET-PF specs and non-GR detectability is properly acknowledged in the evidence extraction section, preventing over-interpretation of the single available evidence card.
+- Results field correctly maintains 'pending' status with no fabrication. All references are traceable to allowed evidence IDs, and no new IDs were created.
+
+## Revision History
+- auto_revision_1: 依据评审意见重做假设与实验设计。
+
+## Reproducibility Checklist
+- Code for generating parametric noise PSDs is version-controlled and accepts vacuum/seismic parameters as input variables.
+- Waveform generation uses open-source libraries (e.g., LALSuite) with documented modifications for non-GR terms.
+- Random seeds for noise realization and injection parameters are fixed and recorded.
+- Explicit documentation that specific numerical design values are treated as free variables due to lack of explicit evidence in EV-Q059-3afd01dc41fac1703fc69726.
+- Analysis pipeline outputs raw SNR values and parameter posterior distributions for independent verification.
+

@@ -1,0 +1,1716 @@
+[
+  {
+    "event_id": "569ec615426a",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:18.557778+00:00",
+    "ended_at": "2026-08-22T08:45:18.557778+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "e766b596df63",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:18.557778+00:00",
+    "ended_at": "2026-08-22T08:45:22.466349+00:00",
+    "duration_ms": 3908,
+    "input_summary": "{\"question_item\": {\"id\": \"Q066\", \"domain\": \"Astronomy\", \"question\": \"What is the origin of high-energy cosmic neutrinos?\", \"source_page\": 24, \"booklet_excerpt\": \"Scientists with the IceCube Neutrino Observatory are exploring possible sources of high-energy cosmic neutrinos, including supermassive black holes/active galactic nuclei and starburst galaxies. The next generation of more sensitive, high-energy neutrino telescopes may be able to solve this mystery and make connections with the origins of ultrahigh-energy cosmic rays.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"s",
+    "output_summary": "{\"domain\": \"Astronomy\", \"core_question\": \"What are the astrophysical sources responsible for producing high-energy cosmic neutrinos?\", \"keywords\": [\"high-energy cosmic neutrinos\", \"IceCube Neutrino Observatory\", \"supermassive black holes\", \"active galactic nuclei\", \"starburst galaxies\", \"ultrahigh-energy cosmic rays\"], \"entities\": [\"IceCube Neutrino Observatory\", \"supermassive black holes\", \"active galactic nuclei\", \"starburst galaxies\", \"ultrahigh-energy cosmic rays\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The current scientific understanding, as reflected in the pro",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "08cd10d096ce",
+    "mock": false
+  },
+  {
+    "event_id": "02d5444422f3",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:22.466349+00:00",
+    "ended_at": "2026-08-22T08:45:43.775680+00:00",
+    "duration_ms": 21309,
+    "input_summary": "{\"question_item\": {\"id\": \"Q066\", \"domain\": \"Astronomy\", \"question\": \"What is the origin of high-energy cosmic neutrinos?\", \"source_page\": 24, \"booklet_excerpt\": \"Scientists with the IceCube Neutrino Observatory are exploring possible sources of high-energy cosmic neutrinos, including supermassive black holes/active galactic nuclei and starburst galaxies. The next generation of more sensitive, high-energy neutrino telescopes may be able to solve this mystery and make connections with the origins of ultrahigh-energy cosmic rays.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"s",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the current status of IceCube's identification of AGN as neutrino sources based on local documentation.\", \"query\": \"IceCube Neutrino Observatory active galactic nuclei high-energy neutrino source candidate evidence\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming AGN as a investigated source but not definitively proven, aligning with the booklet's 'exploring possible sources' statement.\", \"priority\": \"high\"}, {\"purpose\": \"Verify the role of starburst galaxies in high-energy neutrino production according to local documents.\", \"query\": \"s",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "5416452ec16d",
+    "mock": false
+  },
+  {
+    "event_id": "e30fd6825777",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:43.787685+00:00",
+    "ended_at": "2026-08-22T08:45:58.437178+00:00",
+    "duration_ms": 14649,
+    "input_summary": "{\"question_item\": {\"id\": \"Q066\", \"domain\": \"Astronomy\", \"question\": \"What is the origin of high-energy cosmic neutrinos?\", \"source_page\": 24, \"booklet_excerpt\": \"Scientists with the IceCube Neutrino Observatory are exploring possible sources of high-energy cosmic neutrinos, including supermassive black holes/active galactic nuclei and starburst galaxies. The next generation of more sensitive, high-energy neutrino telescopes may be able to solve this mystery and make connections with the origins of ultrahigh-energy cosmic rays.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"s",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"The IceCube Neutrino Observatory has reported the detection of extraterrestrial neutrinos with energies in the TeV-PeV range.\", \"evidence_ids\": [\"EV-Q066-adc90af4a34fccc99300ab02\"], \"confidence\": \"high\", \"fact_type\": \"dataset\", \"caveat\": null}, {\"fact\": \"As of the time of the cited literature, IceCube had reported 37 neutrinos with energies that can exceed a few PeV.\", \"evidence_ids\": [\"EV-Q066-e4f904ffe04f69fbe6d26c70\"], \"confidence\": \"high\", \"fact_type\": \"dataset\", \"caveat\": \"This is a snapshot from the specific publication date and may not reflect current to",
+    "evidence_ids": [
+      "EV-Q066-adc90af4a34fccc99300ab02",
+      "EV-Q066-e4f904ffe04f69fbe6d26c70"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d5788fce6f43",
+    "mock": false
+  },
+  {
+    "event_id": "fb375dbb37a2",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:58.437178+00:00",
+    "ended_at": "2026-08-22T08:46:21.574859+00:00",
+    "duration_ms": 23137,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q066\", \"domain\": \"Astronomy\", \"question\": \"What is the origin of high-energy cosmic neutrinos?\", \"source_page\": 24, \"booklet_excerpt\": \"Scientists with the IceCube Neutrino Observatory are exploring possible sources of high-energy cosmic neutrinos, including supermassive black holes/active galactic nuclei and starburst galaxies. The next generation of more sensitive, high-energy neutrino telescopes may be able to solve this mystery and make connections with the origins of ultrahigh-energy cosmic rays.\", \"metadata\": {\"confidence\": 0.9, \"extract",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"High-energy cosmic neutrinos originate predominantly from hadronic interactions within the jets of Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux.\", \"mechanism\": \"Protons accelerated in AGN jets interact with ambient photons or matter via p-p or p-γ collisions, producing charged pions that decay into high-energy neutrinos and neutral pions that decay into gamma rays. If AGNs are the dominant source, the integrated neutrino flux must be accompanied by a predictable level of associated gamma-ray emission not exceeding Fermi-LAT limits.\"",
+    "evidence_ids": [
+      "EV-Q066-adc90af4a34fccc99300ab02",
+      "EV-Q066-e4f904ffe04f69fbe6d26c70"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c7d3bfd3b18e",
+    "mock": false
+  },
+  {
+    "event_id": "6f3e80b7e26a",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:46:21.575859+00:00",
+    "ended_at": "2026-08-22T08:46:45.502458+00:00",
+    "duration_ms": 23926,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q066\", \"domain\": \"Astronomy\", \"question\": \"What is the origin of high-energy cosmic neutrinos?\", \"source_page\": 24, \"booklet_excerpt\": \"Scientists with the IceCube Neutrino Observatory are exploring possible sources of high-energy cosmic neutrinos, including supermassive black holes/active galactic nuclei and starburst galaxies. The next generation of more sensitive, high-energy neutrino telescopes may be able to solve this mystery and make connections with the origins of ultrahigh-energy cosmic rays.\", \"metadata\": {\"confidence\": 0.9, \"extract",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino exc",
+    "evidence_ids": [
+      "EV-Q066-adc90af4a34fccc99300ab02",
+      "EV-Q066-e4f904ffe04f69fbe6d26c70"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c836830fe159",
+    "mock": false
+  },
+  {
+    "event_id": "f622d5702669",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:46:45.503452+00:00",
+    "ended_at": "2026-08-22T08:46:52.820004+00:00",
+    "duration_ms": 7316,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q066\", \"domain\": \"Astronomy\", \"question\": \"What is the origin of high-energy cosmic neutrinos?\", \"source_page\": 24, \"booklet_excerpt\": \"Scientists with the IceCube Neutrino Observatory are exploring possible sources of high-energy cosmic neutrinos, including supermassive black holes/active galactic nuclei and starburst galaxies. The next generation of more sensitive, high-energy neutrino telescopes may be able to solve this mystery and make connections with the origins of ultrahigh-energy cosmic rays.\", \"metadata\": {\"confidence\": 0.9, \"extract",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis is well-grounded in the provided evidence cards (EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70), which explicitly discuss IceCube neutrinos and Fermi-LAT constraints on their origin.\", \"The experiment design correctly identifies 'Results' as pending/unexecuted, adhering to strict anti-hallucination protocols.\", \"Falsifiability is high: the hypothesis makes specific quantitative predictions (>3σ stacking significance and gamma-ray flux consistency) that can be refuted by null results or multi-messenger in",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "53c968f9dd4b",
+    "mock": false
+  },
+  {
+    "event_id": "3e6334bac56b",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:46:52.820506+00:00",
+    "ended_at": "2026-08-22T08:47:12.604670+00:00",
+    "duration_ms": 19784,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis is well-grounded in the provided evidence cards (EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70), which explicitly discuss IceCube neutrinos and Fermi-LAT constraints on their origin.\", \"The experiment design correctly identifies 'Results' as pending/unexecuted, adhering to strict anti-hallucination protocols.\", \"Falsifiability is high: the hypothesis makes specific quantitative predictions (>3σ stacking significance and gamma-ray flux consistency) that can be re",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"High-energy cosmic neutrinos originate predominantly from hadronic interactions within Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux consistent with Fermi-LAT constraints.\", \"mechanism\": \"Protons accelerated in AGN jets interact with ambient photons or matter via p-p or p-γ collisions, producing charged pions that decay into high-energy neutrinos and neutral pions that decay into gamma rays. If AGNs are the dominant source, the integrated neutrino flux must be accompanied by a predictable level of associated gamma-ray emission not ex",
+    "evidence_ids": [
+      "EV-Q066-adc90af4a34fccc99300ab02",
+      "EV-Q066-e4f904ffe04f69fbe6d26c70"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "aea9d500387e",
+    "mock": false
+  },
+  {
+    "event_id": "de86b608659e",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:47:12.604670+00:00",
+    "ended_at": "2026-08-22T08:47:40.157702+00:00",
+    "duration_ms": 27553,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis is well-grounded in the provided evidence cards (EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70), which explicitly discuss IceCube neutrinos and Fermi-LAT constraints on their origin.\", \"The experiment design correctly identifies 'Results' as pending/unexecuted, adhering to strict anti-hallucination protocols.\", \"Falsifiability is high: the hypothesis makes specific quantitative predictions (>3σ stacking significance and gamma-ray flux consistency) that can be re",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino exc",
+    "evidence_ids": [
+      "EV-Q066-adc90af4a34fccc99300ab02",
+      "EV-Q066-e4f904ffe04f69fbe6d26c70"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7969382994c1",
+    "mock": false
+  },
+  {
+    "event_id": "921781317282",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:47:40.157702+00:00",
+    "ended_at": "2026-08-22T08:47:46.204558+00:00",
+    "duration_ms": 6046,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The recommended hypothesis is well-grounded in the provided evidence cards (EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70), which explicitly discuss IceCube neutrinos and Fermi-LAT constraints on their origin.\", \"The experiment design correctly identifies 'Results' as pending/unexecuted, adhering to strict anti-hallucination protocols.\", \"Falsifiability is high: the hypothesis makes specific quantitative predictions (>3σ stacking significance and gamma-ray flux consistency) that can be re",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revision successfully addresses the previous critical issues regarding statistical rigor. The methods section now explicitly includes Step 4 for calculating both pre-trial and post-trial p-values to account for look-elsewhere effects, closing issue required_revision:dbfe3bb2f524.\", \"The methods section has been updated with Step 2 describing PSF uncertainty propagation via marginalization over angular error parameters, directly addressing the concern about >3σ threshold validity (closing issue required_revision:1904c89fe4cf).\", \"Evidence grounding re",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a1d95cabf6b7",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:096a5bf725a28c34",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "High-energy cosmic neutrinos originate predominantly from hadronic interactions within the jets of Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux.",
+              "mechanism": "Protons accelerated in AGN jets interact with ambient photons or matter via p-p or p-γ collisions, producing charged pions that decay into high-energy neutrinos and neutral pions that decay into gamma rays. If AGNs are the dominant source, the integrated neutrino flux must be accompanied by a predictable level of associated gamma-ray emission not exceeding Fermi-LAT limits.",
+              "falsifiable_prediction": "If AGNs are the primary source, stacking analysis of known AGN positions should yield a statistically significant (>3σ) excess of neutrino events compared to background, and the associated gamma-ray flux should be consistent with hadronic models constrained by Fermi-LAT observations.",
+              "required_observations": [
+                "Spatial correlation statistics between IceCube high-energy neutrino arrival directions and catalogs of AGNs",
+                "Diffuse gamma-ray background measurements from Fermi-LAT to constrain hadronic vs. leptonic models",
+                "Spectral energy distribution modeling of candidate AGNs matching neutrino energy range"
+              ],
+              "risk_of_being_wrong": "Current evidence confirms neutrino detection but does not establish source association; if no spatial correlation is found with improved statistics, or if gamma-ray constraints rule out sufficient hadronic power, this hypothesis is weakened.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02",
+                "EV-Q066-e4f904ffe04f69fbe6d26c70"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "Starburst galaxies contribute significantly to the high-energy neutrino flux through cosmic ray interactions with dense interstellar medium, distinct from AGN-dominated scenarios.",
+              "mechanism": "Enhanced star formation rates in starburst galaxies lead to high supernova rates and cosmic ray acceleration; these cosmic rays interact with the dense gas, producing neutrinos via pion decay. This mechanism predicts a neutrino flux correlated with star formation rate density rather than AGN luminosity.",
+              "falsifiable_prediction": "If starburst galaxies are major contributors, neutrino event rates should correlate with tracers of star formation (e.g., infrared luminosity) independent of AGN activity, and the spectral shape should reflect cosmic ray interaction timescales in dense media.",
+              "required_observations": [
+                "Cross-correlation of neutrino events with starburst galaxy catalogs excluding AGN-host systems",
+                "Multi-wavelength characterization (IR, radio) of neutrino error regions",
+                "Comparison of neutrino spectral index with predictions from starburst cosmic ray propagation models"
+              ],
+              "risk_of_being_wrong": "The provided evidence does not confirm starburst contributions; if correlations with star formation tracers remain insignificant after accounting for AGN contamination, this hypothesis lacks support.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.75,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.69
+            },
+            {
+              "hypothesis": "The observed high-energy neutrino flux arises from a composite population where neither AGNs nor starburst galaxies individually dominate, requiring next-generation telescopes to resolve individual sources.",
+              "mechanism": "Multiple source classes (AGNs, starbursts, GRBs, etc.) each contribute sub-dominant fractions to the total flux, such that current detector sensitivity cannot distinguish individual populations via stacking or correlation. Resolution requires improved angular resolution and effective area.",
+              "falsifiable_prediction": "If this hypothesis is correct, current-generation stacking analyses will remain inconclusive (<3σ significance for any single class), but next-generation detectors will identify individual bright sources or achieve >5σ population discrimination within 5 years of operation.",
+              "required_observations": [
+                "Null results from current stacking/correlation studies with existing IceCube data",
+                "Detection of point-like or population-resolved neutrino sources by next-generation observatories",
+                "Improved source catalog completeness at relevant redshifts"
+              ],
+              "risk_of_being_wrong": "This hypothesis risks being unfalsifiable in the short term; however, it is weakened if current data already shows strong (>5σ) correlation with a specific source class, which would indicate a dominant population exists.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02",
+                "EV-Q066-e4f904ffe04f69fbe6d26c70"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best candidate because it offers the highest falsifiability score using currently available public datasets (IceCube events and Fermi-LAT gamma-ray data referenced in EV-Q066-adc90af4a34fccc99300ab02). It directly addresses the knowledge gap regarding source identification by proposing a testable correlation between neutrinos and AGNs, which is explicitly mentioned as a candidate in the domain context. Unlike Hypothesis 2, it yields immediate verifiable predictions rather than deferring validation entirely to future instruments, and unlike Hypothesis 1, it has stronger indirect support from the cited literature discussing Fermi-LAT implications on IceCube neutrino origins.",
+          "rejected_directions": [
+            "Hypotheses relying solely on ultrahigh-energy cosmic ray correlations without neutrino-gamma ray multi-messenger constraints are rejected due to lack of supporting evidence IDs linking UHECRs to the specific TeV-PeV neutrino signal confirmed in the evidence.",
+            "Exotic origin models (e.g., dark matter decay) are rejected as they are not supported by the allowed evidence IDs which focus on astrophysical accelerators and observational constraints from Fermi-LAT/IceCube."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino excesses at AGN positions and uses spectral energy distribution (SED) modeling to ensure the implied gamma-ray output does not violate existing observational limits.",
+          "datasets": {
+            "source": [
+              {
+                "name": "IceCube High-Energy Starting Events (HESE)",
+                "description": "Publicly available catalog of high-energy neutrino candidates detected by IceCube, including event energies, arrival directions, and estimated background probabilities.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02",
+                  "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                ],
+                "access_type": "public_release",
+                "format": "FITS/CSV"
+              },
+              {
+                "name": "AGN Catalogs (e.g., Fermi-LAT 4LAC or Veron-Cetty)",
+                "description": "Comprehensive catalogs of Active Galactic Nuclei with known positions, redshifts, and multi-wavelength fluxes.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "access_type": "public_archive",
+                "format": "VOTable/CSV"
+              }
+            ],
+            "target": [
+              {
+                "name": "Fermi-LAT Diffuse Gamma-Ray Background Data",
+                "description": "Measurements of the isotropic diffuse gamma-ray background used to constrain the total hadronic emission from the AGN population.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "access_type": "public_archive",
+                "format": "FITS"
+              }
+            ]
+          },
+          "methods": "1. **Data Preprocessing**: Filter IceCube HESE data for high-purity astrophysical candidates (E > 60 TeV) to minimize atmospheric background. Match neutrino arrival directions with AGN coordinates within angular error radii defined by IceCube's point-spread function. \n2. **Stacking Analysis**: Perform a maximum-likelihood ratio test to evaluate the significance of neutrino clustering around AGN positions compared to an isotropic background model. The test statistic accounts for individual event weights based on energy and angular uncertainty. \n3. **Multi-messenger Consistency Check**: For any significant correlation found, calculate the expected gamma-ray flux using standard hadronic interaction models (p-p or p-gamma). Compare this predicted flux against the Fermi-LAT diffuse background measurements and individual source limits to verify physical consistency.",
+          "experiments": {
+            "baselines": [
+              "Isotropic Background Model: Assumes neutrinos arrive uniformly from all directions, representing the null hypothesis of no source association.",
+              "Galactic Plane Correlation Model: Tests if neutrinos correlate with the Milky Way's galactic plane rather than extragalactic AGNs, serving as a control for local astrophysical backgrounds."
+            ],
+            "metrics": [
+              "Log-Likelihood Ratio Test Statistic (TS): Quantifies the preference for the AGN-correlated model over the isotropic background.",
+              "Pre-trial and Post-trial Significance (sigma): Statistical significance of the excess, corrected for multiple trials across different AGN subclasses or energy ranges.",
+              "Gamma-ray Flux Upper Limits: Constraints on the hadronic gamma-ray component derived from the neutrino flux, compared against Fermi-LAT observations."
+            ],
+            "ablation": [
+              "Exclude Blazars: Remove blazar-type AGNs from the catalog to test if the correlation is driven specifically by this subclass.",
+              "Energy Threshold Variation: Vary the minimum neutrino energy threshold (e.g., 30 TeV vs 100 TeV) to assess spectral dependence of the correlation."
+            ],
+            "validation_protocol": "Split the IceCube dataset into temporal halves (e.g., first 5 years vs. next 5 years) to perform a cross-validation. A significant signal in the discovery sample must be confirmed in the independent validation sample to claim robustness. Additionally, perform Monte Carlo simulations of isotropic neutrino skies to estimate the false-positive rate of the stacking method."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Use publicly available IceCube HESE data releases as cited in EV-Q066-adc90af4a34fccc99300ab02.",
+            "Document exact AGN catalog version and selection criteria (e.g., flux limits, redshift range).",
+            "Provide code for the likelihood-ratio stacking analysis and background simulation.",
+            "Report both pre-trial and post-trial p-values to account for look-elsewhere effects.",
+            "Include detailed assumptions for the hadronic interaction models used in gamma-ray flux prediction."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for Monte Carlo simulations and likelihood maximization.",
+            "estimated_runtime": "48-72 hours for full parameter space scan and validation.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Astropy",
+              "IceCube public analysis tools"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-084518-60ce76eb",
+        "version_number": 1,
+        "version_id": "20260822-084518-60ce76eb:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "High-energy cosmic neutrinos originate predominantly from hadronic interactions within the jets of Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux.",
+              "mechanism": "Protons accelerated in AGN jets interact with ambient photons or matter via p-p or p-γ collisions, producing charged pions that decay into high-energy neutrinos and neutral pions that decay into gamma rays. If AGNs are the dominant source, the integrated neutrino flux must be accompanied by a predictable level of associated gamma-ray emission not exceeding Fermi-LAT limits.",
+              "falsifiable_prediction": "If AGNs are the primary source, stacking analysis of known AGN positions should yield a statistically significant (>3σ) excess of neutrino events compared to background, and the associated gamma-ray flux should be consistent with hadronic models constrained by Fermi-LAT observations.",
+              "required_observations": [
+                "Spatial correlation statistics between IceCube high-energy neutrino arrival directions and catalogs of AGNs",
+                "Diffuse gamma-ray background measurements from Fermi-LAT to constrain hadronic vs. leptonic models",
+                "Spectral energy distribution modeling of candidate AGNs matching neutrino energy range"
+              ],
+              "risk_of_being_wrong": "Current evidence confirms neutrino detection but does not establish source association; if no spatial correlation is found with improved statistics, or if gamma-ray constraints rule out sufficient hadronic power, this hypothesis is weakened.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02",
+                "EV-Q066-e4f904ffe04f69fbe6d26c70"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "Starburst galaxies contribute significantly to the high-energy neutrino flux through cosmic ray interactions with dense interstellar medium, distinct from AGN-dominated scenarios.",
+              "mechanism": "Enhanced star formation rates in starburst galaxies lead to high supernova rates and cosmic ray acceleration; these cosmic rays interact with the dense gas, producing neutrinos via pion decay. This mechanism predicts a neutrino flux correlated with star formation rate density rather than AGN luminosity.",
+              "falsifiable_prediction": "If starburst galaxies are major contributors, neutrino event rates should correlate with tracers of star formation (e.g., infrared luminosity) independent of AGN activity, and the spectral shape should reflect cosmic ray interaction timescales in dense media.",
+              "required_observations": [
+                "Cross-correlation of neutrino events with starburst galaxy catalogs excluding AGN-host systems",
+                "Multi-wavelength characterization (IR, radio) of neutrino error regions",
+                "Comparison of neutrino spectral index with predictions from starburst cosmic ray propagation models"
+              ],
+              "risk_of_being_wrong": "The provided evidence does not confirm starburst contributions; if correlations with star formation tracers remain insignificant after accounting for AGN contamination, this hypothesis lacks support.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.75,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.69
+            },
+            {
+              "hypothesis": "The observed high-energy neutrino flux arises from a composite population where neither AGNs nor starburst galaxies individually dominate, requiring next-generation telescopes to resolve individual sources.",
+              "mechanism": "Multiple source classes (AGNs, starbursts, GRBs, etc.) each contribute sub-dominant fractions to the total flux, such that current detector sensitivity cannot distinguish individual populations via stacking or correlation. Resolution requires improved angular resolution and effective area.",
+              "falsifiable_prediction": "If this hypothesis is correct, current-generation stacking analyses will remain inconclusive (<3σ significance for any single class), but next-generation detectors will identify individual bright sources or achieve >5σ population discrimination within 5 years of operation.",
+              "required_observations": [
+                "Null results from current stacking/correlation studies with existing IceCube data",
+                "Detection of point-like or population-resolved neutrino sources by next-generation observatories",
+                "Improved source catalog completeness at relevant redshifts"
+              ],
+              "risk_of_being_wrong": "This hypothesis risks being unfalsifiable in the short term; however, it is weakened if current data already shows strong (>5σ) correlation with a specific source class, which would indicate a dominant population exists.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02",
+                "EV-Q066-e4f904ffe04f69fbe6d26c70"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best candidate because it offers the highest falsifiability score using currently available public datasets (IceCube events and Fermi-LAT gamma-ray data referenced in EV-Q066-adc90af4a34fccc99300ab02). It directly addresses the knowledge gap regarding source identification by proposing a testable correlation between neutrinos and AGNs, which is explicitly mentioned as a candidate in the domain context. Unlike Hypothesis 2, it yields immediate verifiable predictions rather than deferring validation entirely to future instruments, and unlike Hypothesis 1, it has stronger indirect support from the cited literature discussing Fermi-LAT implications on IceCube neutrino origins.",
+          "rejected_directions": [
+            "Hypotheses relying solely on ultrahigh-energy cosmic ray correlations without neutrino-gamma ray multi-messenger constraints are rejected due to lack of supporting evidence IDs linking UHECRs to the specific TeV-PeV neutrino signal confirmed in the evidence.",
+            "Exotic origin models (e.g., dark matter decay) are rejected as they are not supported by the allowed evidence IDs which focus on astrophysical accelerators and observational constraints from Fermi-LAT/IceCube."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino excesses at AGN positions and uses spectral energy distribution (SED) modeling to ensure the implied gamma-ray output does not violate existing observational limits.",
+          "datasets": {
+            "source": [
+              {
+                "name": "IceCube High-Energy Starting Events (HESE)",
+                "description": "Publicly available catalog of high-energy neutrino candidates detected by IceCube, including event energies, arrival directions, and estimated background probabilities.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02",
+                  "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                ],
+                "access_type": "public_release",
+                "format": "FITS/CSV"
+              },
+              {
+                "name": "AGN Catalogs (e.g., Fermi-LAT 4LAC or Veron-Cetty)",
+                "description": "Comprehensive catalogs of Active Galactic Nuclei with known positions, redshifts, and multi-wavelength fluxes.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "access_type": "public_archive",
+                "format": "VOTable/CSV"
+              }
+            ],
+            "target": [
+              {
+                "name": "Fermi-LAT Diffuse Gamma-Ray Background Data",
+                "description": "Measurements of the isotropic diffuse gamma-ray background used to constrain the total hadronic emission from the AGN population.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "access_type": "public_archive",
+                "format": "FITS"
+              }
+            ]
+          },
+          "methods": "1. **Data Preprocessing**: Filter IceCube HESE data for high-purity astrophysical candidates (E > 60 TeV) to minimize atmospheric background. Match neutrino arrival directions with AGN coordinates within angular error radii defined by IceCube's point-spread function. \n2. **Stacking Analysis**: Perform a maximum-likelihood ratio test to evaluate the significance of neutrino clustering around AGN positions compared to an isotropic background model. The test statistic accounts for individual event weights based on energy and angular uncertainty. \n3. **Multi-messenger Consistency Check**: For any significant correlation found, calculate the expected gamma-ray flux using standard hadronic interaction models (p-p or p-gamma). Compare this predicted flux against the Fermi-LAT diffuse background measurements and individual source limits to verify physical consistency.",
+          "experiments": {
+            "baselines": [
+              "Isotropic Background Model: Assumes neutrinos arrive uniformly from all directions, representing the null hypothesis of no source association.",
+              "Galactic Plane Correlation Model: Tests if neutrinos correlate with the Milky Way's galactic plane rather than extragalactic AGNs, serving as a control for local astrophysical backgrounds."
+            ],
+            "metrics": [
+              "Log-Likelihood Ratio Test Statistic (TS): Quantifies the preference for the AGN-correlated model over the isotropic background.",
+              "Pre-trial and Post-trial Significance (sigma): Statistical significance of the excess, corrected for multiple trials across different AGN subclasses or energy ranges.",
+              "Gamma-ray Flux Upper Limits: Constraints on the hadronic gamma-ray component derived from the neutrino flux, compared against Fermi-LAT observations."
+            ],
+            "ablation": [
+              "Exclude Blazars: Remove blazar-type AGNs from the catalog to test if the correlation is driven specifically by this subclass.",
+              "Energy Threshold Variation: Vary the minimum neutrino energy threshold (e.g., 30 TeV vs 100 TeV) to assess spectral dependence of the correlation."
+            ],
+            "validation_protocol": "Split the IceCube dataset into temporal halves (e.g., first 5 years vs. next 5 years) to perform a cross-validation. A significant signal in the discovery sample must be confirmed in the independent validation sample to claim robustness. Additionally, perform Monte Carlo simulations of isotropic neutrino skies to estimate the false-positive rate of the stacking method."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Use publicly available IceCube HESE data releases as cited in EV-Q066-adc90af4a34fccc99300ab02.",
+            "Document exact AGN catalog version and selection criteria (e.g., flux limits, redshift range).",
+            "Provide code for the likelihood-ratio stacking analysis and background simulation.",
+            "Report both pre-trial and post-trial p-values to account for look-elsewhere effects.",
+            "Include detailed assumptions for the hadronic interaction models used in gamma-ray flux prediction."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for Monte Carlo simulations and likelihood maximization.",
+            "estimated_runtime": "48-72 hours for full parameter space scan and validation.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Astropy",
+              "IceCube public analysis tools"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The recommended hypothesis is well-grounded in the provided evidence cards (EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70), which explicitly discuss IceCube neutrinos and Fermi-LAT constraints on their origin.",
+            "The experiment design correctly identifies 'Results' as pending/unexecuted, adhering to strict anti-hallucination protocols.",
+            "Falsifiability is high: the hypothesis makes specific quantitative predictions (>3σ stacking significance and gamma-ray flux consistency) that can be refuted by null results or multi-messenger inconsistencies.",
+            "Datasets are properly categorized into source (IceCube HESE, AGN catalogs) and target (Fermi-LAT diffuse background), satisfying structural requirements.",
+            "Baselines (isotropic background, galactic plane correlation) and metrics (TS, sigma, flux limits) are appropriate for verifying the specific AGN-neutrino correlation hypothesis."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+            "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:dbfe3bb2f524",
+            "category": "required_revision",
+            "description": "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1904c89fe4cf",
+            "category": "required_revision",
+            "description": "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "568437c9ce25c40ebfcc4411c6be20f7ff0ee13423ef0bb2559581b952cb47ea",
+          "experiment_designer": "89ae2a629c000a8849ca1ce3f80cceb52ba48ea7e2dcacd8fd57fbbe96074aa6",
+          "scientific_reviewer": "358e226b90238c1874d924a814cc8391c95149348d178e79df76998d0eb2cabc"
+        }
+      },
+      "parent_version_id": "20260822-084518-60ce76eb:v1",
+      "lineage": [
+        "20260822-084518-60ce76eb:v1",
+        "20260822-084518-60ce76eb:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The recommended hypothesis is well-grounded in the provided evidence cards (EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70), which explicitly discuss IceCube neutrinos and Fermi-LAT constraints on their origin.",
+          "The experiment design correctly identifies 'Results' as pending/unexecuted, adhering to strict anti-hallucination protocols.",
+          "Falsifiability is high: the hypothesis makes specific quantitative predictions (>3σ stacking significance and gamma-ray flux consistency) that can be refuted by null results or multi-messenger inconsistencies.",
+          "Datasets are properly categorized into source (IceCube HESE, AGN catalogs) and target (Fermi-LAT diffuse background), satisfying structural requirements.",
+          "Baselines (isotropic background, galactic plane correlation) and metrics (TS, sigma, flux limits) are appropriate for verifying the specific AGN-neutrino correlation hypothesis."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+          "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.95,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.85,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revision successfully addresses the previous critical issues regarding statistical rigor. The methods section now explicitly includes Step 4 for calculating both pre-trial and post-trial p-values to account for look-elsewhere effects, closing issue required_revision:dbfe3bb2f524.",
+          "The methods section has been updated with Step 2 describing PSF uncertainty propagation via marginalization over angular error parameters, directly addressing the concern about >3σ threshold validity (closing issue required_revision:1904c89fe4cf).",
+          "Evidence grounding remains robust, with all factual claims traceable to EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70. No unauthorized evidence IDs were introduced.",
+          "The Results field correctly maintains 'pending' status, confirming no fabrication of experimental outcomes occurred during the revision process.",
+          "Reproducibility checklist has been updated to include specific requirements for publishing Monte Carlo simulation scripts and PSF marginalization code, enhancing verification potential."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 0.98,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:aeca45dbaf903a7b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+          "issue_id": "required_revision:dbfe3bb2f524"
+        },
+        {
+          "failure_id": "failure:a136907976979a08",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.",
+          "issue_id": "required_revision:1904c89fe4cf"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:d14eaeb594b3de0a",
+          "issue_id": "required_revision:dbfe3bb2f524",
+          "reason": "Reviewer item required_revision:dbfe3bb2f524 requested 'Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.'. V2 changes methods; deterministic correlation evidence tokens=['account', 'analysi', 'both', 'effect', 'elsewhere', 'explicitly', 'look', 'method', 'post', 'pre', 'stack', 'trial', 'value'], coverage=0.565.",
+          "before": "1. **Data Preprocessing**: Filter IceCube HESE data for high-purity astrophysical candidates (E > 60 TeV) to minimize atmospheric background. Match neutrino arrival directions with AGN coordinates within angular error radii defined by IceCube's point-spread function. \n2. **Stacking Analysis**: Perform a maximum-likelihood ratio test to evaluate the significance of neutrino clustering around AGN positions compared to an isotropic background model. The test statistic accounts for individual event weights based on energy and angular uncertainty. \n3. **Multi-messenger Consistency Check**: For any significant correlation found, calculate the expected gamma-ray flux using standard hadronic interaction models (p-p or p-gamma). Compare this predicted flux against the Fermi-LAT diffuse background measurements and individual source limits to verify physical consistency.",
+          "after": "1. **Data Preprocessing**: Filter IceCube HESE data for high-purity astrophysical candidates (E > 60 TeV) to minimize atmospheric background. Match neutrino arrival directions with AGN coordinates within angular error radii defined by IceCube's point-spread function (PSF). \n2. **PSF Uncertainty Propagation**: Incorporate systematic uncertainties in the IceCube PSF by marginalizing the likelihood function over the angular error parameters for each event, rather than using fixed error circles. This ensures robust significance estimation.\n3. **Stacking Analysis**: Perform a maximum-likelihood ratio test to evaluate the significance of neutrino clustering around AGN positions compared to an isotropic background model. The test statistic accounts for individual event weights based on energy and angular uncertainty. \n4. **Statistical Correction**: Explicitly calculate both pre-trial p-values (for specific AGN subsets) and post-trial p-values (corrected for multiple trials across different AGN subclasses, energy ranges, and spatial windows) to address look-elsewhere effects.\n5. **Multi-messenger Consistency Check**: For any significant correlation found, calculate the expected gamma-ray flux using standard hadronic interaction models (p-p or p-gamma). Compare this predicted flux against the Fermi-LAT diffuse background measurements and individual source limits to verify physical consistency.",
+          "evidence_refs": [
+            "EV-Q066-adc90af4a34fccc99300ab02",
+            "EV-Q066-e4f904ffe04f69fbe6d26c70"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:b5c74683cd54cc89",
+          "issue_id": "required_revision:dbfe3bb2f524",
+          "reason": "Reviewer item required_revision:dbfe3bb2f524 requested 'Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['account', 'analysi', 'both', 'checklist', 'effect', 'elsewhere', 'explicitly', 'look', 'post', 'pre', 'report', 'reproducibility', 'stack', 'trial', 'value'], coverage=0.652.",
+          "before": [
+            "Use publicly available IceCube HESE data releases as cited in EV-Q066-adc90af4a34fccc99300ab02.",
+            "Document exact AGN catalog version and selection criteria (e.g., flux limits, redshift range).",
+            "Provide code for the likelihood-ratio stacking analysis and background simulation.",
+            "Report both pre-trial and post-trial p-values to account for look-elsewhere effects.",
+            "Include detailed assumptions for the hadronic interaction models used in gamma-ray flux prediction."
+          ],
+          "after": [
+            "Use publicly available IceCube HESE data releases as cited in EV-Q066-adc90af4a34fccc99300ab02.",
+            "Document exact AGN catalog version and selection criteria (e.g., flux limits, redshift range).",
+            "Provide code for the likelihood-ratio stacking analysis with PSF uncertainty marginalization.",
+            "Explicitly report both pre-trial and post-trial p-values to account for look-elsewhere effects.",
+            "Include detailed assumptions for the hadronic interaction models used in gamma-ray flux prediction.",
+            "Publish Monte Carlo simulation scripts used for background estimation and significance calibration."
+          ],
+          "evidence_refs": [
+            "EV-Q066-adc90af4a34fccc99300ab02",
+            "EV-Q066-e4f904ffe04f69fbe6d26c70"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:d88a96580563a741",
+          "issue_id": "required_revision:1904c89fe4cf",
+          "reason": "Reviewer item required_revision:1904c89fe4cf requested 'Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.'. V2 changes technical_details; deterministic correlation evidence tokens=['cube', 'function', 'ice', 'into', 'likelihood', 'point', 'propagat', 'psf', 'ratio', 'spread', 'statistic', 'systematic', 'test', 'threshold', 'uncertainty', 'validity'], coverage=0.667.",
+          "before": "This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino excesses at AGN positions and uses spectral energy distribution (SED) modeling to ensure the implied gamma-ray output does not violate existing observational limits.",
+          "after": "This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino excesses at AGN positions. Crucially, systematic uncertainties in the IceCube point-spread function (PSF) are propagated into the likelihood ratio test statistic via marginalization over angular error parameters, ensuring the validity of the >3σ threshold. Both pre-trial and post-trial p-values are explicitly calculated to account for look-elsewhere effects across AGN subclasses and energy bins.",
+          "evidence_refs": [
+            "EV-Q066-adc90af4a34fccc99300ab02",
+            "EV-Q066-e4f904ffe04f69fbe6d26c70"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:dbfe3bb2f524",
+          "category": "required_revision",
+          "description": "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:d14eaeb594b3de0a,change:b5c74683cd54cc89; evidence=EV-Q066-adc90af4a34fccc99300ab02,EV-Q066-e4f904ffe04f69fbe6d26c70; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:1904c89fe4cf",
+          "category": "required_revision",
+          "description": "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:d88a96580563a741; evidence=EV-Q066-adc90af4a34fccc99300ab02,EV-Q066-e4f904ffe04f69fbe6d26c70; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "substantive_sections": [
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.95,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "High-energy cosmic neutrinos originate predominantly from hadronic interactions within Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux consistent with Fermi-LAT constraints.",
+          "overall_score": 0.78,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 2,
+          "hypothesis": "The observed high-energy neutrino flux arises from a composite population where neither AGNs nor starburst galaxies individually dominate, requiring next-generation telescopes to resolve individual sources.",
+          "overall_score": 0.7,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "Starburst galaxies contribute significantly to the high-energy neutrino flux through cosmic ray interactions with dense interstellar medium, distinct from AGN-dominated scenarios.",
+          "overall_score": 0.69,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [],
+      "remaining_blockers": [],
+      "stop_reason": null,
+      "accepted": true
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084518-60ce76eb",
+        "version_number": 1,
+        "version_id": "20260822-084518-60ce76eb:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "High-energy cosmic neutrinos originate predominantly from hadronic interactions within the jets of Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux.",
+              "mechanism": "Protons accelerated in AGN jets interact with ambient photons or matter via p-p or p-γ collisions, producing charged pions that decay into high-energy neutrinos and neutral pions that decay into gamma rays. If AGNs are the dominant source, the integrated neutrino flux must be accompanied by a predictable level of associated gamma-ray emission not exceeding Fermi-LAT limits.",
+              "falsifiable_prediction": "If AGNs are the primary source, stacking analysis of known AGN positions should yield a statistically significant (>3σ) excess of neutrino events compared to background, and the associated gamma-ray flux should be consistent with hadronic models constrained by Fermi-LAT observations.",
+              "required_observations": [
+                "Spatial correlation statistics between IceCube high-energy neutrino arrival directions and catalogs of AGNs",
+                "Diffuse gamma-ray background measurements from Fermi-LAT to constrain hadronic vs. leptonic models",
+                "Spectral energy distribution modeling of candidate AGNs matching neutrino energy range"
+              ],
+              "risk_of_being_wrong": "Current evidence confirms neutrino detection but does not establish source association; if no spatial correlation is found with improved statistics, or if gamma-ray constraints rule out sufficient hadronic power, this hypothesis is weakened.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02",
+                "EV-Q066-e4f904ffe04f69fbe6d26c70"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "Starburst galaxies contribute significantly to the high-energy neutrino flux through cosmic ray interactions with dense interstellar medium, distinct from AGN-dominated scenarios.",
+              "mechanism": "Enhanced star formation rates in starburst galaxies lead to high supernova rates and cosmic ray acceleration; these cosmic rays interact with the dense gas, producing neutrinos via pion decay. This mechanism predicts a neutrino flux correlated with star formation rate density rather than AGN luminosity.",
+              "falsifiable_prediction": "If starburst galaxies are major contributors, neutrino event rates should correlate with tracers of star formation (e.g., infrared luminosity) independent of AGN activity, and the spectral shape should reflect cosmic ray interaction timescales in dense media.",
+              "required_observations": [
+                "Cross-correlation of neutrino events with starburst galaxy catalogs excluding AGN-host systems",
+                "Multi-wavelength characterization (IR, radio) of neutrino error regions",
+                "Comparison of neutrino spectral index with predictions from starburst cosmic ray propagation models"
+              ],
+              "risk_of_being_wrong": "The provided evidence does not confirm starburst contributions; if correlations with star formation tracers remain insignificant after accounting for AGN contamination, this hypothesis lacks support.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.75,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.69
+            },
+            {
+              "hypothesis": "The observed high-energy neutrino flux arises from a composite population where neither AGNs nor starburst galaxies individually dominate, requiring next-generation telescopes to resolve individual sources.",
+              "mechanism": "Multiple source classes (AGNs, starbursts, GRBs, etc.) each contribute sub-dominant fractions to the total flux, such that current detector sensitivity cannot distinguish individual populations via stacking or correlation. Resolution requires improved angular resolution and effective area.",
+              "falsifiable_prediction": "If this hypothesis is correct, current-generation stacking analyses will remain inconclusive (<3σ significance for any single class), but next-generation detectors will identify individual bright sources or achieve >5σ population discrimination within 5 years of operation.",
+              "required_observations": [
+                "Null results from current stacking/correlation studies with existing IceCube data",
+                "Detection of point-like or population-resolved neutrino sources by next-generation observatories",
+                "Improved source catalog completeness at relevant redshifts"
+              ],
+              "risk_of_being_wrong": "This hypothesis risks being unfalsifiable in the short term; however, it is weakened if current data already shows strong (>5σ) correlation with a specific source class, which would indicate a dominant population exists.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02",
+                "EV-Q066-e4f904ffe04f69fbe6d26c70"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best candidate because it offers the highest falsifiability score using currently available public datasets (IceCube events and Fermi-LAT gamma-ray data referenced in EV-Q066-adc90af4a34fccc99300ab02). It directly addresses the knowledge gap regarding source identification by proposing a testable correlation between neutrinos and AGNs, which is explicitly mentioned as a candidate in the domain context. Unlike Hypothesis 2, it yields immediate verifiable predictions rather than deferring validation entirely to future instruments, and unlike Hypothesis 1, it has stronger indirect support from the cited literature discussing Fermi-LAT implications on IceCube neutrino origins.",
+          "rejected_directions": [
+            "Hypotheses relying solely on ultrahigh-energy cosmic ray correlations without neutrino-gamma ray multi-messenger constraints are rejected due to lack of supporting evidence IDs linking UHECRs to the specific TeV-PeV neutrino signal confirmed in the evidence.",
+            "Exotic origin models (e.g., dark matter decay) are rejected as they are not supported by the allowed evidence IDs which focus on astrophysical accelerators and observational constraints from Fermi-LAT/IceCube."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino excesses at AGN positions and uses spectral energy distribution (SED) modeling to ensure the implied gamma-ray output does not violate existing observational limits.",
+          "datasets": {
+            "source": [
+              {
+                "name": "IceCube High-Energy Starting Events (HESE)",
+                "description": "Publicly available catalog of high-energy neutrino candidates detected by IceCube, including event energies, arrival directions, and estimated background probabilities.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02",
+                  "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                ],
+                "access_type": "public_release",
+                "format": "FITS/CSV"
+              },
+              {
+                "name": "AGN Catalogs (e.g., Fermi-LAT 4LAC or Veron-Cetty)",
+                "description": "Comprehensive catalogs of Active Galactic Nuclei with known positions, redshifts, and multi-wavelength fluxes.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "access_type": "public_archive",
+                "format": "VOTable/CSV"
+              }
+            ],
+            "target": [
+              {
+                "name": "Fermi-LAT Diffuse Gamma-Ray Background Data",
+                "description": "Measurements of the isotropic diffuse gamma-ray background used to constrain the total hadronic emission from the AGN population.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "access_type": "public_archive",
+                "format": "FITS"
+              }
+            ]
+          },
+          "methods": "1. **Data Preprocessing**: Filter IceCube HESE data for high-purity astrophysical candidates (E > 60 TeV) to minimize atmospheric background. Match neutrino arrival directions with AGN coordinates within angular error radii defined by IceCube's point-spread function. \n2. **Stacking Analysis**: Perform a maximum-likelihood ratio test to evaluate the significance of neutrino clustering around AGN positions compared to an isotropic background model. The test statistic accounts for individual event weights based on energy and angular uncertainty. \n3. **Multi-messenger Consistency Check**: For any significant correlation found, calculate the expected gamma-ray flux using standard hadronic interaction models (p-p or p-gamma). Compare this predicted flux against the Fermi-LAT diffuse background measurements and individual source limits to verify physical consistency.",
+          "experiments": {
+            "baselines": [
+              "Isotropic Background Model: Assumes neutrinos arrive uniformly from all directions, representing the null hypothesis of no source association.",
+              "Galactic Plane Correlation Model: Tests if neutrinos correlate with the Milky Way's galactic plane rather than extragalactic AGNs, serving as a control for local astrophysical backgrounds."
+            ],
+            "metrics": [
+              "Log-Likelihood Ratio Test Statistic (TS): Quantifies the preference for the AGN-correlated model over the isotropic background.",
+              "Pre-trial and Post-trial Significance (sigma): Statistical significance of the excess, corrected for multiple trials across different AGN subclasses or energy ranges.",
+              "Gamma-ray Flux Upper Limits: Constraints on the hadronic gamma-ray component derived from the neutrino flux, compared against Fermi-LAT observations."
+            ],
+            "ablation": [
+              "Exclude Blazars: Remove blazar-type AGNs from the catalog to test if the correlation is driven specifically by this subclass.",
+              "Energy Threshold Variation: Vary the minimum neutrino energy threshold (e.g., 30 TeV vs 100 TeV) to assess spectral dependence of the correlation."
+            ],
+            "validation_protocol": "Split the IceCube dataset into temporal halves (e.g., first 5 years vs. next 5 years) to perform a cross-validation. A significant signal in the discovery sample must be confirmed in the independent validation sample to claim robustness. Additionally, perform Monte Carlo simulations of isotropic neutrino skies to estimate the false-positive rate of the stacking method."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Use publicly available IceCube HESE data releases as cited in EV-Q066-adc90af4a34fccc99300ab02.",
+            "Document exact AGN catalog version and selection criteria (e.g., flux limits, redshift range).",
+            "Provide code for the likelihood-ratio stacking analysis and background simulation.",
+            "Report both pre-trial and post-trial p-values to account for look-elsewhere effects.",
+            "Include detailed assumptions for the hadronic interaction models used in gamma-ray flux prediction."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for Monte Carlo simulations and likelihood maximization.",
+            "estimated_runtime": "48-72 hours for full parameter space scan and validation.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Astropy",
+              "IceCube public analysis tools"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The recommended hypothesis is well-grounded in the provided evidence cards (EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70), which explicitly discuss IceCube neutrinos and Fermi-LAT constraints on their origin.",
+            "The experiment design correctly identifies 'Results' as pending/unexecuted, adhering to strict anti-hallucination protocols.",
+            "Falsifiability is high: the hypothesis makes specific quantitative predictions (>3σ stacking significance and gamma-ray flux consistency) that can be refuted by null results or multi-messenger inconsistencies.",
+            "Datasets are properly categorized into source (IceCube HESE, AGN catalogs) and target (Fermi-LAT diffuse background), satisfying structural requirements.",
+            "Baselines (isotropic background, galactic plane correlation) and metrics (TS, sigma, flux limits) are appropriate for verifying the specific AGN-neutrino correlation hypothesis."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+            "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.95,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.85,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:dbfe3bb2f524",
+            "category": "required_revision",
+            "description": "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1904c89fe4cf",
+            "category": "required_revision",
+            "description": "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "568437c9ce25c40ebfcc4411c6be20f7ff0ee13423ef0bb2559581b952cb47ea",
+          "experiment_designer": "89ae2a629c000a8849ca1ce3f80cceb52ba48ea7e2dcacd8fd57fbbe96074aa6",
+          "scientific_reviewer": "358e226b90238c1874d924a814cc8391c95149348d178e79df76998d0eb2cabc"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084518-60ce76eb",
+        "version_number": 2,
+        "version_id": "20260822-084518-60ce76eb:v2",
+        "parent_version_id": "20260822-084518-60ce76eb:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "High-energy cosmic neutrinos originate predominantly from hadronic interactions within Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux consistent with Fermi-LAT constraints.",
+              "mechanism": "Protons accelerated in AGN jets interact with ambient photons or matter via p-p or p-γ collisions, producing charged pions that decay into high-energy neutrinos and neutral pions that decay into gamma rays. If AGNs are the dominant source, the integrated neutrino flux must be accompanied by a predictable level of associated gamma-ray emission not exceeding Fermi-LAT limits.",
+              "falsifiable_prediction": "Stacking analysis of known AGN positions using IceCube HESE data will yield a post-trial significance >3σ for neutrino excess, AND the implied gamma-ray flux derived from this neutrino signal will remain below the Fermi-LAT isotropic diffuse background upper limits. Failure to meet BOTH criteria simultaneously falsifies the hypothesis as the dominant origin mechanism.",
+              "required_observations": [
+                "Spatial correlation statistics between IceCube high-energy neutrino arrival directions and catalogs of AGNs",
+                "Diffuse gamma-ray background measurements from Fermi-LAT to constrain hadronic vs. leptonic models",
+                "Spectral energy distribution modeling of candidate AGNs matching neutrino energy range"
+              ],
+              "risk_of_being_wrong": "Current evidence confirms neutrino detection but does not establish source association; if no spatial correlation is found with improved statistics, or if gamma-ray constraints rule out sufficient hadronic power, this hypothesis is weakened.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02",
+                "EV-Q066-e4f904ffe04f69fbe6d26c70"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.78
+            },
+            {
+              "hypothesis": "Starburst galaxies contribute significantly to the high-energy neutrino flux through cosmic ray interactions with dense interstellar medium, distinct from AGN-dominated scenarios.",
+              "mechanism": "Enhanced star formation rates in starburst galaxies lead to high supernova rates and cosmic ray acceleration; these cosmic rays interact with the dense gas, producing neutrinos via pion decay. This mechanism predicts a neutrino flux correlated with star formation rate density rather than AGN luminosity.",
+              "falsifiable_prediction": "If starburst galaxies are major contributors, neutrino event rates should correlate with tracers of star formation (e.g., infrared luminosity) independent of AGN activity, and the spectral shape should reflect cosmic ray interaction timescales in dense media.",
+              "required_observations": [
+                "Cross-correlation of neutrino events with starburst galaxy catalogs excluding AGN-host systems",
+                "Multi-wavelength characterization (IR, radio) of neutrino error regions",
+                "Comparison of neutrino spectral index with predictions from starburst cosmic ray propagation models"
+              ],
+              "risk_of_being_wrong": "The provided evidence does not confirm starburst contributions; if correlations with star formation tracers remain insignificant after accounting for AGN contamination, this hypothesis lacks support.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.75,
+              "evidence_support_score": 0.5,
+              "overall_score": 0.69
+            },
+            {
+              "hypothesis": "The observed high-energy neutrino flux arises from a composite population where neither AGNs nor starburst galaxies individually dominate, requiring next-generation telescopes to resolve individual sources.",
+              "mechanism": "Multiple source classes (AGNs, starbursts, GRBs, etc.) each contribute sub-dominant fractions to the total flux, such that current detector sensitivity cannot distinguish individual populations via stacking or correlation. Resolution requires improved angular resolution and effective area.",
+              "falsifiable_prediction": "If this hypothesis is correct, current-generation stacking analyses will remain inconclusive (<3σ significance for any single class), but next-generation detectors will identify individual bright sources or achieve >5σ population discrimination within 5 years of operation.",
+              "required_observations": [
+                "Null results from current stacking/correlation studies with existing IceCube data",
+                "Detection of point-like or population-resolved neutrino sources by next-generation observatories",
+                "Improved source catalog completeness at relevant redshifts"
+              ],
+              "risk_of_being_wrong": "This hypothesis risks being unfalsifiable in the short term; however, it is weakened if current data already shows strong (>5σ) correlation with a specific source class, which would indicate a dominant population exists.",
+              "supporting_evidence_ids": [
+                "EV-Q066-adc90af4a34fccc99300ab02",
+                "EV-Q066-e4f904ffe04f69fbe6d26c70"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is retained as the best candidate because it directly addresses the reviewer's feedback regarding statistical rigor and systematic uncertainties. It offers the highest falsifiability score using currently available public datasets (IceCube events and Fermi-LAT gamma-ray data referenced in EV-Q066-adc90af4a34fccc99300ab02). The hypothesis explicitly incorporates the requirement for post-trial p-values and PSF uncertainty propagation into its verification criteria, ensuring that the claimed >3σ threshold is statistically valid. Unlike Hypothesis 2, it yields immediate verifiable predictions rather than deferring validation entirely to future instruments, and unlike Hypothesis 1, it has stronger indirect support from the cited literature discussing Fermi-LAT implications on IceCube neutrino origins.",
+          "rejected_directions": [
+            "Hypotheses relying solely on ultrahigh-energy cosmic ray correlations without neutrino-gamma ray multi-messenger constraints are rejected due to lack of supporting evidence IDs linking UHECRs to the specific TeV-PeV neutrino signal confirmed in the evidence.",
+            "Exotic origin models (e.g., dark matter decay) are rejected as they are not supported by the allowed evidence IDs which focus on astrophysical accelerators and observational constraints from Fermi-LAT/IceCube."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino excesses at AGN positions. Crucially, systematic uncertainties in the IceCube point-spread function (PSF) are propagated into the likelihood ratio test statistic via marginalization over angular error parameters, ensuring the validity of the >3σ threshold. Both pre-trial and post-trial p-values are explicitly calculated to account for look-elsewhere effects across AGN subclasses and energy bins.",
+          "datasets": {
+            "source": [
+              {
+                "name": "IceCube High-Energy Starting Events (HESE)",
+                "description": "Publicly available catalog of high-energy neutrino candidates detected by IceCube, including event energies, arrival directions, and estimated background probabilities.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02",
+                  "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                ],
+                "access_type": "public_release",
+                "format": "FITS/CSV"
+              },
+              {
+                "name": "AGN Catalogs (e.g., Fermi-LAT 4LAC or Veron-Cetty)",
+                "description": "Comprehensive catalogs of Active Galactic Nuclei with known positions, redshifts, and multi-wavelength fluxes.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "access_type": "public_archive",
+                "format": "VOTable/CSV"
+              }
+            ],
+            "target": [
+              {
+                "name": "Fermi-LAT Diffuse Gamma-Ray Background Data",
+                "description": "Measurements of the isotropic diffuse gamma-ray background used to constrain the total hadronic emission from the AGN population.",
+                "evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "access_type": "public_archive",
+                "format": "FITS"
+              }
+            ]
+          },
+          "methods": "1. **Data Preprocessing**: Filter IceCube HESE data for high-purity astrophysical candidates (E > 60 TeV) to minimize atmospheric background. Match neutrino arrival directions with AGN coordinates within angular error radii defined by IceCube's point-spread function (PSF). \n2. **PSF Uncertainty Propagation**: Incorporate systematic uncertainties in the IceCube PSF by marginalizing the likelihood function over the angular error parameters for each event, rather than using fixed error circles. This ensures robust significance estimation.\n3. **Stacking Analysis**: Perform a maximum-likelihood ratio test to evaluate the significance of neutrino clustering around AGN positions compared to an isotropic background model. The test statistic accounts for individual event weights based on energy and angular uncertainty. \n4. **Statistical Correction**: Explicitly calculate both pre-trial p-values (for specific AGN subsets) and post-trial p-values (corrected for multiple trials across different AGN subclasses, energy ranges, and spatial windows) to address look-elsewhere effects.\n5. **Multi-messenger Consistency Check**: For any significant correlation found, calculate the expected gamma-ray flux using standard hadronic interaction models (p-p or p-gamma). Compare this predicted flux against the Fermi-LAT diffuse background measurements and individual source limits to verify physical consistency.",
+          "experiments": {
+            "baselines": [
+              "Isotropic Background Model: Assumes neutrinos arrive uniformly from all directions, representing the null hypothesis of no source association.",
+              "Galactic Plane Correlation Model: Tests if neutrinos correlate with the Milky Way's galactic plane rather than extragalactic AGNs, serving as a control for local astrophysical backgrounds."
+            ],
+            "metrics": [
+              "Log-Likelihood Ratio Test Statistic (TS): Quantifies the preference for the AGN-correlated model over the isotropic background.",
+              "Pre-trial and Post-trial Significance (sigma): Statistical significance of the excess, corrected for multiple trials across different AGN subclasses or energy ranges.",
+              "Gamma-ray Flux Upper Limits: Constraints on the hadronic gamma-ray component derived from the neutrino flux, compared against Fermi-LAT observations."
+            ],
+            "ablation": [
+              "Exclude Blazars: Remove blazar-type AGNs from the catalog to test if the correlation is driven specifically by this subclass.",
+              "Energy Threshold Variation: Vary the minimum neutrino energy threshold (e.g., 30 TeV vs 100 TeV) to assess spectral dependence of the correlation."
+            ],
+            "validation_protocol": "Split the IceCube dataset into temporal halves (e.g., first 5 years vs. next 5 years) to perform a cross-validation. A significant signal in the discovery sample must be confirmed in the independent validation sample to claim robustness. Additionally, perform Monte Carlo simulations of isotropic neutrino skies to estimate the false-positive rate of the stacking method and validate the post-trial correction procedure."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Use publicly available IceCube HESE data releases as cited in EV-Q066-adc90af4a34fccc99300ab02.",
+            "Document exact AGN catalog version and selection criteria (e.g., flux limits, redshift range).",
+            "Provide code for the likelihood-ratio stacking analysis with PSF uncertainty marginalization.",
+            "Explicitly report both pre-trial and post-trial p-values to account for look-elsewhere effects.",
+            "Include detailed assumptions for the hadronic interaction models used in gamma-ray flux prediction.",
+            "Publish Monte Carlo simulation scripts used for background estimation and significance calibration."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "High-performance computing cluster required for Monte Carlo simulations and likelihood maximization with PSF marginalization.",
+            "estimated_runtime": "48-72 hours for full parameter space scan, PSF uncertainty propagation, and validation.",
+            "software_dependencies": [
+              "Python",
+              "NumPy/SciPy",
+              "Astropy",
+              "IceCube public analysis tools"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revision successfully addresses the previous critical issues regarding statistical rigor. The methods section now explicitly includes Step 4 for calculating both pre-trial and post-trial p-values to account for look-elsewhere effects, closing issue required_revision:dbfe3bb2f524.",
+            "The methods section has been updated with Step 2 describing PSF uncertainty propagation via marginalization over angular error parameters, directly addressing the concern about >3σ threshold validity (closing issue required_revision:1904c89fe4cf).",
+            "Evidence grounding remains robust, with all factual claims traceable to EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70. No unauthorized evidence IDs were introduced.",
+            "The Results field correctly maintains 'pending' status, confirming no fabrication of experimental outcomes occurred during the revision process.",
+            "Reproducibility checklist has been updated to include specific requirements for publishing Monte Carlo simulation scripts and PSF marginalization code, enhancing verification potential."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 0.98,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:dbfe3bb2f524",
+            "category": "required_revision",
+            "description": "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:d14eaeb594b3de0a,change:b5c74683cd54cc89; evidence=EV-Q066-adc90af4a34fccc99300ab02,EV-Q066-e4f904ffe04f69fbe6d26c70; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:1904c89fe4cf",
+            "category": "required_revision",
+            "description": "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:d88a96580563a741; evidence=EV-Q066-adc90af4a34fccc99300ab02,EV-Q066-e4f904ffe04f69fbe6d26c70; V2 Reviewer no longer reports the issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "c10a39e6233e47b721e6fce52158efc2f7dfa250f1b2598cf9d114e8fd373308",
+          "experiment_designer": "7c04beb1970c1d77072c8a2658260211790b946b6b2cafbd686c3c49b1280d3d",
+          "scientific_reviewer": "69ded01fc918c27e3883cb233b8569271a54df39ec8acffb5d12eb7d5ce741e6"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-084518-60ce76eb",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "completed",
+      "processed_event_ids": [
+        "20260822-084518-60ce76eb:review:v1",
+        "20260822-084518-60ce76eb:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-084518-60ce76eb:v1",
+        "20260822-084518-60ce76eb:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": null
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-084518-60ce76eb",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "completed",
+        "processed_event_ids": [
+          "20260822-084518-60ce76eb:review:v1",
+          "20260822-084518-60ce76eb:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-084518-60ce76eb:v1",
+          "20260822-084518-60ce76eb:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": null
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084518-60ce76eb",
+          "version_number": 1,
+          "version_id": "20260822-084518-60ce76eb:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "High-energy cosmic neutrinos originate predominantly from hadronic interactions within the jets of Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux.",
+                "mechanism": "Protons accelerated in AGN jets interact with ambient photons or matter via p-p or p-γ collisions, producing charged pions that decay into high-energy neutrinos and neutral pions that decay into gamma rays. If AGNs are the dominant source, the integrated neutrino flux must be accompanied by a predictable level of associated gamma-ray emission not exceeding Fermi-LAT limits.",
+                "falsifiable_prediction": "If AGNs are the primary source, stacking analysis of known AGN positions should yield a statistically significant (>3σ) excess of neutrino events compared to background, and the associated gamma-ray flux should be consistent with hadronic models constrained by Fermi-LAT observations.",
+                "required_observations": [
+                  "Spatial correlation statistics between IceCube high-energy neutrino arrival directions and catalogs of AGNs",
+                  "Diffuse gamma-ray background measurements from Fermi-LAT to constrain hadronic vs. leptonic models",
+                  "Spectral energy distribution modeling of candidate AGNs matching neutrino energy range"
+                ],
+                "risk_of_being_wrong": "Current evidence confirms neutrino detection but does not establish source association; if no spatial correlation is found with improved statistics, or if gamma-ray constraints rule out sufficient hadronic power, this hypothesis is weakened.",
+                "supporting_evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02",
+                  "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.76
+              },
+              {
+                "hypothesis": "Starburst galaxies contribute significantly to the high-energy neutrino flux through cosmic ray interactions with dense interstellar medium, distinct from AGN-dominated scenarios.",
+                "mechanism": "Enhanced star formation rates in starburst galaxies lead to high supernova rates and cosmic ray acceleration; these cosmic rays interact with the dense gas, producing neutrinos via pion decay. This mechanism predicts a neutrino flux correlated with star formation rate density rather than AGN luminosity.",
+                "falsifiable_prediction": "If starburst galaxies are major contributors, neutrino event rates should correlate with tracers of star formation (e.g., infrared luminosity) independent of AGN activity, and the spectral shape should reflect cosmic ray interaction timescales in dense media.",
+                "required_observations": [
+                  "Cross-correlation of neutrino events with starburst galaxy catalogs excluding AGN-host systems",
+                  "Multi-wavelength characterization (IR, radio) of neutrino error regions",
+                  "Comparison of neutrino spectral index with predictions from starburst cosmic ray propagation models"
+                ],
+                "risk_of_being_wrong": "The provided evidence does not confirm starburst contributions; if correlations with star formation tracers remain insignificant after accounting for AGN contamination, this hypothesis lacks support.",
+                "supporting_evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.75,
+                "evidence_support_score": 0.5,
+                "overall_score": 0.69
+              },
+              {
+                "hypothesis": "The observed high-energy neutrino flux arises from a composite population where neither AGNs nor starburst galaxies individually dominate, requiring next-generation telescopes to resolve individual sources.",
+                "mechanism": "Multiple source classes (AGNs, starbursts, GRBs, etc.) each contribute sub-dominant fractions to the total flux, such that current detector sensitivity cannot distinguish individual populations via stacking or correlation. Resolution requires improved angular resolution and effective area.",
+                "falsifiable_prediction": "If this hypothesis is correct, current-generation stacking analyses will remain inconclusive (<3σ significance for any single class), but next-generation detectors will identify individual bright sources or achieve >5σ population discrimination within 5 years of operation.",
+                "required_observations": [
+                  "Null results from current stacking/correlation studies with existing IceCube data",
+                  "Detection of point-like or population-resolved neutrino sources by next-generation observatories",
+                  "Improved source catalog completeness at relevant redshifts"
+                ],
+                "risk_of_being_wrong": "This hypothesis risks being unfalsifiable in the short term; however, it is weakened if current data already shows strong (>5σ) correlation with a specific source class, which would indicate a dominant population exists.",
+                "supporting_evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02",
+                  "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.7
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected as the best candidate because it offers the highest falsifiability score using currently available public datasets (IceCube events and Fermi-LAT gamma-ray data referenced in EV-Q066-adc90af4a34fccc99300ab02). It directly addresses the knowledge gap regarding source identification by proposing a testable correlation between neutrinos and AGNs, which is explicitly mentioned as a candidate in the domain context. Unlike Hypothesis 2, it yields immediate verifiable predictions rather than deferring validation entirely to future instruments, and unlike Hypothesis 1, it has stronger indirect support from the cited literature discussing Fermi-LAT implications on IceCube neutrino origins.",
+            "rejected_directions": [
+              "Hypotheses relying solely on ultrahigh-energy cosmic ray correlations without neutrino-gamma ray multi-messenger constraints are rejected due to lack of supporting evidence IDs linking UHECRs to the specific TeV-PeV neutrino signal confirmed in the evidence.",
+              "Exotic origin models (e.g., dark matter decay) are rejected as they are not supported by the allowed evidence IDs which focus on astrophysical accelerators and observational constraints from Fermi-LAT/IceCube."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino excesses at AGN positions and uses spectral energy distribution (SED) modeling to ensure the implied gamma-ray output does not violate existing observational limits.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "IceCube High-Energy Starting Events (HESE)",
+                  "description": "Publicly available catalog of high-energy neutrino candidates detected by IceCube, including event energies, arrival directions, and estimated background probabilities.",
+                  "evidence_ids": [
+                    "EV-Q066-adc90af4a34fccc99300ab02",
+                    "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                  ],
+                  "access_type": "public_release",
+                  "format": "FITS/CSV"
+                },
+                {
+                  "name": "AGN Catalogs (e.g., Fermi-LAT 4LAC or Veron-Cetty)",
+                  "description": "Comprehensive catalogs of Active Galactic Nuclei with known positions, redshifts, and multi-wavelength fluxes.",
+                  "evidence_ids": [
+                    "EV-Q066-adc90af4a34fccc99300ab02"
+                  ],
+                  "access_type": "public_archive",
+                  "format": "VOTable/CSV"
+                }
+              ],
+              "target": [
+                {
+                  "name": "Fermi-LAT Diffuse Gamma-Ray Background Data",
+                  "description": "Measurements of the isotropic diffuse gamma-ray background used to constrain the total hadronic emission from the AGN population.",
+                  "evidence_ids": [
+                    "EV-Q066-adc90af4a34fccc99300ab02"
+                  ],
+                  "access_type": "public_archive",
+                  "format": "FITS"
+                }
+              ]
+            },
+            "methods": "1. **Data Preprocessing**: Filter IceCube HESE data for high-purity astrophysical candidates (E > 60 TeV) to minimize atmospheric background. Match neutrino arrival directions with AGN coordinates within angular error radii defined by IceCube's point-spread function. \n2. **Stacking Analysis**: Perform a maximum-likelihood ratio test to evaluate the significance of neutrino clustering around AGN positions compared to an isotropic background model. The test statistic accounts for individual event weights based on energy and angular uncertainty. \n3. **Multi-messenger Consistency Check**: For any significant correlation found, calculate the expected gamma-ray flux using standard hadronic interaction models (p-p or p-gamma). Compare this predicted flux against the Fermi-LAT diffuse background measurements and individual source limits to verify physical consistency.",
+            "experiments": {
+              "baselines": [
+                "Isotropic Background Model: Assumes neutrinos arrive uniformly from all directions, representing the null hypothesis of no source association.",
+                "Galactic Plane Correlation Model: Tests if neutrinos correlate with the Milky Way's galactic plane rather than extragalactic AGNs, serving as a control for local astrophysical backgrounds."
+              ],
+              "metrics": [
+                "Log-Likelihood Ratio Test Statistic (TS): Quantifies the preference for the AGN-correlated model over the isotropic background.",
+                "Pre-trial and Post-trial Significance (sigma): Statistical significance of the excess, corrected for multiple trials across different AGN subclasses or energy ranges.",
+                "Gamma-ray Flux Upper Limits: Constraints on the hadronic gamma-ray component derived from the neutrino flux, compared against Fermi-LAT observations."
+              ],
+              "ablation": [
+                "Exclude Blazars: Remove blazar-type AGNs from the catalog to test if the correlation is driven specifically by this subclass.",
+                "Energy Threshold Variation: Vary the minimum neutrino energy threshold (e.g., 30 TeV vs 100 TeV) to assess spectral dependence of the correlation."
+              ],
+              "validation_protocol": "Split the IceCube dataset into temporal halves (e.g., first 5 years vs. next 5 years) to perform a cross-validation. A significant signal in the discovery sample must be confirmed in the independent validation sample to claim robustness. Additionally, perform Monte Carlo simulations of isotropic neutrino skies to estimate the false-positive rate of the stacking method."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Use publicly available IceCube HESE data releases as cited in EV-Q066-adc90af4a34fccc99300ab02.",
+              "Document exact AGN catalog version and selection criteria (e.g., flux limits, redshift range).",
+              "Provide code for the likelihood-ratio stacking analysis and background simulation.",
+              "Report both pre-trial and post-trial p-values to account for look-elsewhere effects.",
+              "Include detailed assumptions for the hadronic interaction models used in gamma-ray flux prediction."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-performance computing cluster required for Monte Carlo simulations and likelihood maximization.",
+              "estimated_runtime": "48-72 hours for full parameter space scan and validation.",
+              "software_dependencies": [
+                "Python",
+                "NumPy/SciPy",
+                "Astropy",
+                "IceCube public analysis tools"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The recommended hypothesis is well-grounded in the provided evidence cards (EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70), which explicitly discuss IceCube neutrinos and Fermi-LAT constraints on their origin.",
+              "The experiment design correctly identifies 'Results' as pending/unexecuted, adhering to strict anti-hallucination protocols.",
+              "Falsifiability is high: the hypothesis makes specific quantitative predictions (>3σ stacking significance and gamma-ray flux consistency) that can be refuted by null results or multi-messenger inconsistencies.",
+              "Datasets are properly categorized into source (IceCube HESE, AGN catalogs) and target (Fermi-LAT diffuse background), satisfying structural requirements.",
+              "Baselines (isotropic background, galactic plane correlation) and metrics (TS, sigma, flux limits) are appropriate for verifying the specific AGN-neutrino correlation hypothesis."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+              "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.95,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.85,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:dbfe3bb2f524",
+              "category": "required_revision",
+              "description": "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:1904c89fe4cf",
+              "category": "required_revision",
+              "description": "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "568437c9ce25c40ebfcc4411c6be20f7ff0ee13423ef0bb2559581b952cb47ea",
+            "experiment_designer": "89ae2a629c000a8849ca1ce3f80cceb52ba48ea7e2dcacd8fd57fbbe96074aa6",
+            "scientific_reviewer": "358e226b90238c1874d924a814cc8391c95149348d178e79df76998d0eb2cabc"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084518-60ce76eb",
+          "version_number": 2,
+          "version_id": "20260822-084518-60ce76eb:v2",
+          "parent_version_id": "20260822-084518-60ce76eb:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "High-energy cosmic neutrinos originate predominantly from hadronic interactions within Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux consistent with Fermi-LAT constraints.",
+                "mechanism": "Protons accelerated in AGN jets interact with ambient photons or matter via p-p or p-γ collisions, producing charged pions that decay into high-energy neutrinos and neutral pions that decay into gamma rays. If AGNs are the dominant source, the integrated neutrino flux must be accompanied by a predictable level of associated gamma-ray emission not exceeding Fermi-LAT limits.",
+                "falsifiable_prediction": "Stacking analysis of known AGN positions using IceCube HESE data will yield a post-trial significance >3σ for neutrino excess, AND the implied gamma-ray flux derived from this neutrino signal will remain below the Fermi-LAT isotropic diffuse background upper limits. Failure to meet BOTH criteria simultaneously falsifies the hypothesis as the dominant origin mechanism.",
+                "required_observations": [
+                  "Spatial correlation statistics between IceCube high-energy neutrino arrival directions and catalogs of AGNs",
+                  "Diffuse gamma-ray background measurements from Fermi-LAT to constrain hadronic vs. leptonic models",
+                  "Spectral energy distribution modeling of candidate AGNs matching neutrino energy range"
+                ],
+                "risk_of_being_wrong": "Current evidence confirms neutrino detection but does not establish source association; if no spatial correlation is found with improved statistics, or if gamma-ray constraints rule out sufficient hadronic power, this hypothesis is weakened.",
+                "supporting_evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02",
+                  "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.78
+              },
+              {
+                "hypothesis": "Starburst galaxies contribute significantly to the high-energy neutrino flux through cosmic ray interactions with dense interstellar medium, distinct from AGN-dominated scenarios.",
+                "mechanism": "Enhanced star formation rates in starburst galaxies lead to high supernova rates and cosmic ray acceleration; these cosmic rays interact with the dense gas, producing neutrinos via pion decay. This mechanism predicts a neutrino flux correlated with star formation rate density rather than AGN luminosity.",
+                "falsifiable_prediction": "If starburst galaxies are major contributors, neutrino event rates should correlate with tracers of star formation (e.g., infrared luminosity) independent of AGN activity, and the spectral shape should reflect cosmic ray interaction timescales in dense media.",
+                "required_observations": [
+                  "Cross-correlation of neutrino events with starburst galaxy catalogs excluding AGN-host systems",
+                  "Multi-wavelength characterization (IR, radio) of neutrino error regions",
+                  "Comparison of neutrino spectral index with predictions from starburst cosmic ray propagation models"
+                ],
+                "risk_of_being_wrong": "The provided evidence does not confirm starburst contributions; if correlations with star formation tracers remain insignificant after accounting for AGN contamination, this hypothesis lacks support.",
+                "supporting_evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.75,
+                "evidence_support_score": 0.5,
+                "overall_score": 0.69
+              },
+              {
+                "hypothesis": "The observed high-energy neutrino flux arises from a composite population where neither AGNs nor starburst galaxies individually dominate, requiring next-generation telescopes to resolve individual sources.",
+                "mechanism": "Multiple source classes (AGNs, starbursts, GRBs, etc.) each contribute sub-dominant fractions to the total flux, such that current detector sensitivity cannot distinguish individual populations via stacking or correlation. Resolution requires improved angular resolution and effective area.",
+                "falsifiable_prediction": "If this hypothesis is correct, current-generation stacking analyses will remain inconclusive (<3σ significance for any single class), but next-generation detectors will identify individual bright sources or achieve >5σ population discrimination within 5 years of operation.",
+                "required_observations": [
+                  "Null results from current stacking/correlation studies with existing IceCube data",
+                  "Detection of point-like or population-resolved neutrino sources by next-generation observatories",
+                  "Improved source catalog completeness at relevant redshifts"
+                ],
+                "risk_of_being_wrong": "This hypothesis risks being unfalsifiable in the short term; however, it is weakened if current data already shows strong (>5σ) correlation with a specific source class, which would indicate a dominant population exists.",
+                "supporting_evidence_ids": [
+                  "EV-Q066-adc90af4a34fccc99300ab02",
+                  "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.7
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is retained as the best candidate because it directly addresses the reviewer's feedback regarding statistical rigor and systematic uncertainties. It offers the highest falsifiability score using currently available public datasets (IceCube events and Fermi-LAT gamma-ray data referenced in EV-Q066-adc90af4a34fccc99300ab02). The hypothesis explicitly incorporates the requirement for post-trial p-values and PSF uncertainty propagation into its verification criteria, ensuring that the claimed >3σ threshold is statistically valid. Unlike Hypothesis 2, it yields immediate verifiable predictions rather than deferring validation entirely to future instruments, and unlike Hypothesis 1, it has stronger indirect support from the cited literature discussing Fermi-LAT implications on IceCube neutrino origins.",
+            "rejected_directions": [
+              "Hypotheses relying solely on ultrahigh-energy cosmic ray correlations without neutrino-gamma ray multi-messenger constraints are rejected due to lack of supporting evidence IDs linking UHECRs to the specific TeV-PeV neutrino signal confirmed in the evidence.",
+              "Exotic origin models (e.g., dark matter decay) are rejected as they are not supported by the allowed evidence IDs which focus on astrophysical accelerators and observational constraints from Fermi-LAT/IceCube."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that Active Galactic Nuclei (AGN) are the dominant source of high-energy cosmic neutrinos via hadronic interactions. The core mechanism posits that proton-photon (p-gamma) or proton-proton (p-p) collisions in AGN jets produce pions, which decay into neutrinos and gamma rays. Consequently, a spatial correlation between IceCube neutrino events and known AGN catalogs is expected, accompanied by a diffuse gamma-ray flux consistent with Fermi-LAT constraints. The study employs a likelihood-ratio stacking analysis to search for neutrino excesses at AGN positions. Crucially, systematic uncertainties in the IceCube point-spread function (PSF) are propagated into the likelihood ratio test statistic via marginalization over angular error parameters, ensuring the validity of the >3σ threshold. Both pre-trial and post-trial p-values are explicitly calculated to account for look-elsewhere effects across AGN subclasses and energy bins.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "IceCube High-Energy Starting Events (HESE)",
+                  "description": "Publicly available catalog of high-energy neutrino candidates detected by IceCube, including event energies, arrival directions, and estimated background probabilities.",
+                  "evidence_ids": [
+                    "EV-Q066-adc90af4a34fccc99300ab02",
+                    "EV-Q066-e4f904ffe04f69fbe6d26c70"
+                  ],
+                  "access_type": "public_release",
+                  "format": "FITS/CSV"
+                },
+                {
+                  "name": "AGN Catalogs (e.g., Fermi-LAT 4LAC or Veron-Cetty)",
+                  "description": "Comprehensive catalogs of Active Galactic Nuclei with known positions, redshifts, and multi-wavelength fluxes.",
+                  "evidence_ids": [
+                    "EV-Q066-adc90af4a34fccc99300ab02"
+                  ],
+                  "access_type": "public_archive",
+                  "format": "VOTable/CSV"
+                }
+              ],
+              "target": [
+                {
+                  "name": "Fermi-LAT Diffuse Gamma-Ray Background Data",
+                  "description": "Measurements of the isotropic diffuse gamma-ray background used to constrain the total hadronic emission from the AGN population.",
+                  "evidence_ids": [
+                    "EV-Q066-adc90af4a34fccc99300ab02"
+                  ],
+                  "access_type": "public_archive",
+                  "format": "FITS"
+                }
+              ]
+            },
+            "methods": "1. **Data Preprocessing**: Filter IceCube HESE data for high-purity astrophysical candidates (E > 60 TeV) to minimize atmospheric background. Match neutrino arrival directions with AGN coordinates within angular error radii defined by IceCube's point-spread function (PSF). \n2. **PSF Uncertainty Propagation**: Incorporate systematic uncertainties in the IceCube PSF by marginalizing the likelihood function over the angular error parameters for each event, rather than using fixed error circles. This ensures robust significance estimation.\n3. **Stacking Analysis**: Perform a maximum-likelihood ratio test to evaluate the significance of neutrino clustering around AGN positions compared to an isotropic background model. The test statistic accounts for individual event weights based on energy and angular uncertainty. \n4. **Statistical Correction**: Explicitly calculate both pre-trial p-values (for specific AGN subsets) and post-trial p-values (corrected for multiple trials across different AGN subclasses, energy ranges, and spatial windows) to address look-elsewhere effects.\n5. **Multi-messenger Consistency Check**: For any significant correlation found, calculate the expected gamma-ray flux using standard hadronic interaction models (p-p or p-gamma). Compare this predicted flux against the Fermi-LAT diffuse background measurements and individual source limits to verify physical consistency.",
+            "experiments": {
+              "baselines": [
+                "Isotropic Background Model: Assumes neutrinos arrive uniformly from all directions, representing the null hypothesis of no source association.",
+                "Galactic Plane Correlation Model: Tests if neutrinos correlate with the Milky Way's galactic plane rather than extragalactic AGNs, serving as a control for local astrophysical backgrounds."
+              ],
+              "metrics": [
+                "Log-Likelihood Ratio Test Statistic (TS): Quantifies the preference for the AGN-correlated model over the isotropic background.",
+                "Pre-trial and Post-trial Significance (sigma): Statistical significance of the excess, corrected for multiple trials across different AGN subclasses or energy ranges.",
+                "Gamma-ray Flux Upper Limits: Constraints on the hadronic gamma-ray component derived from the neutrino flux, compared against Fermi-LAT observations."
+              ],
+              "ablation": [
+                "Exclude Blazars: Remove blazar-type AGNs from the catalog to test if the correlation is driven specifically by this subclass.",
+                "Energy Threshold Variation: Vary the minimum neutrino energy threshold (e.g., 30 TeV vs 100 TeV) to assess spectral dependence of the correlation."
+              ],
+              "validation_protocol": "Split the IceCube dataset into temporal halves (e.g., first 5 years vs. next 5 years) to perform a cross-validation. A significant signal in the discovery sample must be confirmed in the independent validation sample to claim robustness. Additionally, perform Monte Carlo simulations of isotropic neutrino skies to estimate the false-positive rate of the stacking method and validate the post-trial correction procedure."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Use publicly available IceCube HESE data releases as cited in EV-Q066-adc90af4a34fccc99300ab02.",
+              "Document exact AGN catalog version and selection criteria (e.g., flux limits, redshift range).",
+              "Provide code for the likelihood-ratio stacking analysis with PSF uncertainty marginalization.",
+              "Explicitly report both pre-trial and post-trial p-values to account for look-elsewhere effects.",
+              "Include detailed assumptions for the hadronic interaction models used in gamma-ray flux prediction.",
+              "Publish Monte Carlo simulation scripts used for background estimation and significance calibration."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "High-performance computing cluster required for Monte Carlo simulations and likelihood maximization with PSF marginalization.",
+              "estimated_runtime": "48-72 hours for full parameter space scan, PSF uncertainty propagation, and validation.",
+              "software_dependencies": [
+                "Python",
+                "NumPy/SciPy",
+                "Astropy",
+                "IceCube public analysis tools"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revision successfully addresses the previous critical issues regarding statistical rigor. The methods section now explicitly includes Step 4 for calculating both pre-trial and post-trial p-values to account for look-elsewhere effects, closing issue required_revision:dbfe3bb2f524.",
+              "The methods section has been updated with Step 2 describing PSF uncertainty propagation via marginalization over angular error parameters, directly addressing the concern about >3σ threshold validity (closing issue required_revision:1904c89fe4cf).",
+              "Evidence grounding remains robust, with all factual claims traceable to EV-Q066-adc90af4a34fccc99300ab02 and EV-Q066-e4f904ffe04f69fbe6d26c70. No unauthorized evidence IDs were introduced.",
+              "The Results field correctly maintains 'pending' status, confirming no fabrication of experimental outcomes occurred during the revision process.",
+              "Reproducibility checklist has been updated to include specific requirements for publishing Monte Carlo simulation scripts and PSF marginalization code, enhancing verification potential."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 0.98,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:dbfe3bb2f524",
+              "category": "required_revision",
+              "description": "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:d14eaeb594b3de0a,change:b5c74683cd54cc89; evidence=EV-Q066-adc90af4a34fccc99300ab02,EV-Q066-e4f904ffe04f69fbe6d26c70; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:1904c89fe4cf",
+              "category": "required_revision",
+              "description": "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:d88a96580563a741; evidence=EV-Q066-adc90af4a34fccc99300ab02,EV-Q066-e4f904ffe04f69fbe6d26c70; V2 Reviewer no longer reports the issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "c10a39e6233e47b721e6fce52158efc2f7dfa250f1b2598cf9d114e8fd373308",
+            "experiment_designer": "7c04beb1970c1d77072c8a2658260211790b946b6b2cafbd686c3c49b1280d3d",
+            "scientific_reviewer": "69ded01fc918c27e3883cb233b8569271a54df39ec8acffb5d12eb7d5ce741e6"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-084518-60ce76eb:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-084518-60ce76eb:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-084518-60ce76eb:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-084518-60ce76eb:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:dbfe3bb2f524",
+          "category": "required_revision",
+          "description": "Ensure the final execution of the stacking analysis explicitly reports both pre-trial and post-trial p-values to account for look-elsewhere effects, as noted in the reproducibility checklist but not yet enforced in the methods description.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:d14eaeb594b3de0a,change:b5c74683cd54cc89; evidence=EV-Q066-adc90af4a34fccc99300ab02,EV-Q066-e4f904ffe04f69fbe6d26c70; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:1904c89fe4cf",
+          "category": "required_revision",
+          "description": "Clarify in the methods section how systematic uncertainties in the IceCube point-spread function (PSF) will be propagated into the likelihood ratio test statistic, as this directly affects the claimed >3σ threshold validity.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:d88a96580563a741; evidence=EV-Q066-adc90af4a34fccc99300ab02,EV-Q066-e4f904ffe04f69fbe6d26c70; V2 Reviewer no longer reports the issue."
+        }
+      ],
+      "checkpoint_hash": "3a5588318d0c1deabef8a39b21fc4fa955ebddfd550a28b73acda56c47b160e3"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-084518-60ce76eb:wave-b-two-round",
+      "run_id": "20260822-084518-60ce76eb",
+      "v1_version_id": "20260822-084518-60ce76eb:v1",
+      "v2_version_id": "20260822-084518-60ce76eb:v2",
+      "input_fingerprints": {
+        "v1": "89ae2a629c000a8849ca1ce3f80cceb52ba48ea7e2dcacd8fd57fbbe96074aa6",
+        "v2": "7c04beb1970c1d77072c8a2658260211790b946b6b2cafbd686c3c49b1280d3d"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "required_revision:dbfe3bb2f524",
+        "required_revision:1904c89fe4cf"
+      ],
+      "change_ids": [
+        "change:d14eaeb594b3de0a",
+        "change:b5c74683cd54cc89",
+        "change:d88a96580563a741"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.85,
+          "after": 0.95,
+          "delta": 0.09999999999999998
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "High-energy cosmic neutrinos originate predominantly from hadronic interactions within Active Galactic Nuclei (AGN), implying a correlated diffuse gamma-ray flux consistent with Fermi-LAT constraints.",
+          "overall_score": 0.78,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 2,
+          "hypothesis": "The observed high-energy neutrino flux arises from a composite population where neither AGNs nor starburst galaxies individually dominate, requiring next-generation telescopes to resolve individual sources.",
+          "overall_score": 0.7,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "Starburst galaxies contribute significantly to the high-energy neutrino flux through cosmic ray interactions with dense interstellar medium, distinct from AGN-dominated scenarios.",
+          "overall_score": 0.69,
+          "recommended": false
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "event_id": "cd8b782bcdc9",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:47:46.210563+00:00",
+    "ended_at": "2026-08-22T08:48:32.199761+00:00",
+    "duration_ms": 45989,
+    "input_summary": "{\"question_item\": {\"id\": \"Q066\", \"domain\": \"Astronomy\", \"question\": \"What is the origin of high-energy cosmic neutrinos?\", \"source_page\": 24, \"booklet_excerpt\": \"Scientists with the IceCube Neutrino Observatory are exploring possible sources of high-energy cosmic neutrinos, including supermassive black holes/active galactic nuclei and starburst galaxies. The next generation of more sensitive, high-energy neutrino telescopes may be able to solve this mystery and make connections with the origins of ultrahigh-energy cosmic rays.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"s",
+    "output_summary": "{\"input_question\": \"What is the origin of high-energy cosmic neutrinos?\", \"domain\": \"Astronomy\", \"problem_statement\": \"The IceCube Neutrino Observatory has detected extraterrestrial neutrinos in the TeV-PeV energy range, but their specific astrophysical sources remain unidentified. While Active Galactic Nuclei (AGN) and starburst galaxies are candidate sources, current evidence does not definitively establish which population dominates the flux or the precise acceleration mechanisms involved.\", \"rationale\": \"Identifying the sources of high-energy cosmic neutrinos is critical for understanding ",
+    "evidence_ids": [
+      "EV-Q066-adc90af4a34fccc99300ab02",
+      "EV-Q066-e4f904ffe04f69fbe6d26c70"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8fb773325ff2",
+    "mock": false
+  },
+  {
+    "event_id": "09fb2db3c1fb",
+    "run_id": "20260822-084518-60ce76eb",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:32.200758+00:00",
+    "ended_at": "2026-08-22T08:48:34.310750+00:00",
+    "duration_ms": 2109,
+    "input_summary": "{\"question_item\": {\"id\": \"Q066\", \"domain\": \"Astronomy\", \"question\": \"What is the origin of high-energy cosmic neutrinos?\", \"source_page\": 24, \"booklet_excerpt\": \"Scientists with the IceCube Neutrino Observatory are exploring possible sources of high-energy cosmic neutrinos, including supermassive black holes/active galactic nuclei and starburst galaxies. The next generation of more sensitive, high-energy neutrino telescopes may be able to solve this mystery and make connections with the origins of ultrahigh-energy cosmic rays.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"s",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required input fields: 'ResearchPlan', 'EvidenceCards', 'AgentTrace', and/or 'execution_metadata' are not provided in the input context.\", \"Cannot validate schema completeness or evidence traceability without a ResearchPlan to check against allowed_evidence_ids.\"], \"warnings\": [\"Input contains only question metadata; validation of factual claims is impossible due to lack of supporting EvidenceCards.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_check\": \"failed\", \"evidence_traceability\": \"insufficient_evidence\", \"fabrication_check\": ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1923fa72f581",
+    "mock": false
+  }
+]

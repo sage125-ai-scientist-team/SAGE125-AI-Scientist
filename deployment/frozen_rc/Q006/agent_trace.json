@@ -1,0 +1,1999 @@
+[
+  {
+    "event_id": "ae2a284bb965",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:07:32.012442+00:00",
+    "ended_at": "2026-08-22T08:07:32.012442+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "cee722244bb3",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:07:32.012442+00:00",
+    "ended_at": "2026-08-22T08:07:36.120188+00:00",
+    "duration_ms": 4107,
+    "input_summary": "{\"question_item\": {\"id\": \"Q006\", \"domain\": \"Chemistry\", \"question\": \"How can we measure interface phenomena on the microscopic level?\", \"source_page\": 8, \"booklet_excerpt\": \"Interfacial chemistry is a fascinating field that seeks to expand and deepen our comprehension of behavior at the molecular interface of gases and liquids, liquids and solids, and solids and solids, among other systems. At these microscopic and nanoscale borders, an elemental dance occurs involving mass and heat transfer through evaporation, reaction, and micro- or even nanoscale explosions, but we still are unsure how the",
+    "output_summary": "{\"domain\": \"Chemistry\", \"core_question\": \"What methods can be used to measure interface phenomena on the microscopic level beyond current optical interference limitations?\", \"keywords\": [\"interface phenomena\", \"microscopic level\", \"interfacial chemistry\", \"optical interference\", \"gas-liquid interfaces\", \"liquid-solid interfaces\", \"mass transfer\", \"heat transfer\"], \"entities\": [\"Interfacial chemistry\", \"molecular interface\", \"gases and liquids\", \"liquids and solids\", \"solids and solids\", \"optical interference methods\", \"gas-film thicknesses\", \"liquid-film thicknesses\"], \"question_type\": \"mechan",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "54bf38ad04d5",
+    "mock": false
+  },
+  {
+    "event_id": "94715a31ca57",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:07:36.121203+00:00",
+    "ended_at": "2026-08-22T08:07:57.380863+00:00",
+    "duration_ms": 21259,
+    "input_summary": "{\"question_item\": {\"id\": \"Q006\", \"domain\": \"Chemistry\", \"question\": \"How can we measure interface phenomena on the microscopic level?\", \"source_page\": 8, \"booklet_excerpt\": \"Interfacial chemistry is a fascinating field that seeks to expand and deepen our comprehension of behavior at the molecular interface of gases and liquids, liquids and solids, and solids and solids, among other systems. At these microscopic and nanoscale borders, an elemental dance occurs involving mass and heat transfer through evaporation, reaction, and micro- or even nanoscale explosions, but we still are unsure how the",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify specific limitations of optical interference methods in measuring interfacial phenomena as described in the source material to establish the baseline knowledge gap.\", \"query\": \"optical interference methods limitations gas-liquid liquid-solid interface thickness measurement nanoscale\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming that optical interference provides limited information on complex physical and chemical phenomena despite measuring film thickness.\", \"priority\": \"high\"}, {\"purpose\": \"Extract any mentions of alternative or ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1c3b8933ca04",
+    "mock": false
+  },
+  {
+    "event_id": "bd4b7285e075",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:07:57.394915+00:00",
+    "ended_at": "2026-08-22T08:08:09.927505+00:00",
+    "duration_ms": 12532,
+    "input_summary": "{\"question_item\": {\"id\": \"Q006\", \"domain\": \"Chemistry\", \"question\": \"How can we measure interface phenomena on the microscopic level?\", \"source_page\": 8, \"booklet_excerpt\": \"Interfacial chemistry is a fascinating field that seeks to expand and deepen our comprehension of behavior at the molecular interface of gases and liquids, liquids and solids, and solids and solids, among other systems. At these microscopic and nanoscale borders, an elemental dance occurs involving mass and heat transfer through evaporation, reaction, and micro- or even nanoscale explosions, but we still are unsure how the",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Optical interference methods can measure gas-film or liquid-film thicknesses up to nanoscale levels at gas–liquid or liquid–solid interfaces.\", \"evidence_ids\": [], \"confidence\": \"high\", \"fact_type\": \"method\", \"caveat\": \"This fact is derived from the booklet excerpt provided in the question_item, but no specific evidence_id from the allowed_evidence_ids list supports this chemical measurement technique. The provided evidence IDs are mathematical or quantum physics related.\"}], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"Lack of direct experimental evidenc",
+    "evidence_ids": [
+      "EV-Q006-96d82a3d3c56ef0dbf41225f",
+      "EV-Q006-6cf08952bc7ef9b695c9aeae",
+      "EV-Q006-6ff9624118d1915d27e6119e",
+      "EV-Q006-fa7bc1f10b31ef34e57e2351"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "046b985c7fa3",
+    "mock": false
+  },
+  {
+    "event_id": "2f855a0bd063",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:08:09.927505+00:00",
+    "ended_at": "2026-08-22T08:08:32.736124+00:00",
+    "duration_ms": 22808,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q006\", \"domain\": \"Chemistry\", \"question\": \"How can we measure interface phenomena on the microscopic level?\", \"source_page\": 8, \"booklet_excerpt\": \"Interfacial chemistry is a fascinating field that seeks to expand and deepen our comprehension of behavior at the molecular interface of gases and liquids, liquids and solids, and solids and solids, among other systems. At these microscopic and nanoscale borders, an elemental dance occurs involving mass and heat transfer through evaporation, reaction, and micro- or even nanoscale explosions, but we",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Geometric measure theory frameworks for C1,1 functions can be adapted to reconstruct microscopic interfacial topology from sparse optical interference data, overcoming current information limitations in film thickness measurements.\", \"mechanism\": \"Optical interference provides level-set data of the interface; applying geometric measure theory (specifically methods for measuring level sets of C1,1 functions) allows mathematical reconstruction of boundary measures and curvature that are not directly observable in raw interference patterns, thereby extracting hidde",
+    "evidence_ids": [
+      "EV-Q006-96d82a3d3c56ef0dbf41225f",
+      "EV-Q006-fa7bc1f10b31ef34e57e2351",
+      "EV-Q006-6cf08952bc7ef9b695c9aeae"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "cff81589c746",
+    "mock": false
+  },
+  {
+    "event_id": "05d91fa9096d",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:08:32.736124+00:00",
+    "ended_at": "2026-08-22T08:08:52.197839+00:00",
+    "duration_ms": 19461,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q006\", \"domain\": \"Chemistry\", \"question\": \"How can we measure interface phenomena on the microscopic level?\", \"source_page\": 8, \"booklet_excerpt\": \"Interfacial chemistry is a fascinating field that seeks to expand and deepen our comprehension of behavior at the molecular interface of gases and liquids, liquids and solids, and solids and solids, among other systems. At these microscopic and nanoscale borders, an elemental dance occurs involving mass and heat transfer through evaporation, reaction, and micro- or even nanoscale explosions, but we",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that Geometric Measure Theory (GMT) frameworks for C1,1 functions can reconstruct microscopic interfacial topology from sparse optical interference data. The core mechanism relies on treating optical interference fringes as level sets of a height function h(x,y). Standard interferometry often fails to resolve curvature or complex topology due to phase ambiguity and sparsity. We will implement the 'Measuring Level Sets of C1,1 Functions' algorithm described in EV-Q006-96d82a3d3c56ef0dbf41225f. The method involves: 1) Generating synthet",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "075bdbb315cd",
+    "mock": false
+  },
+  {
+    "event_id": "ae24a7400c4f",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:08:52.198837+00:00",
+    "ended_at": "2026-08-22T08:09:03.699310+00:00",
+    "duration_ms": 11500,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q006\", \"domain\": \"Chemistry\", \"question\": \"How can we measure interface phenomena on the microscopic level?\", \"source_page\": 8, \"booklet_excerpt\": \"Interfacial chemistry is a fascinating field that seeks to expand and deepen our comprehension of behavior at the molecular interface of gases and liquids, liquids and solids, and solids and solids, among other systems. At these microscopic and nanoscale borders, an elemental dance occurs involving mass and heat transfer through evaporation, reaction, and micro- or even nanoscale explosions, but we",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a critical factual premise ('Optical interference provides level-set data of the interface') that is not supported by any allowed Evidence ID. The evidence extraction correctly identifies this as a knowledge gap derived solely from the question booklet, which violates the rule against using non-evidence sources for factual claims.\", \"Evidence EV-Q006-96d82a3d3c56ef0dbf41225f establishes mathematical methods for C1,1 functions but does not validate their applicability to optical interference patterns or chemical interfaces. The l",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3e7462284333",
+    "mock": false
+  },
+  {
+    "event_id": "31cd3cbf04c8",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:09:03.702387+00:00",
+    "ended_at": "2026-08-22T08:09:33.854692+00:00",
+    "duration_ms": 30152,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a critical factual premise ('Optical interference provides level-set data of the interface') that is not supported by any allowed Evidence ID. The evidence extraction correctly identifies this as a knowledge gap derived solely from the question booklet, which violates the rule against using non-evidence sources for factual claims.\", \"Evidence EV-Q006-96d82a3d3c56ef0dbf41225f establishes mathematical methods for C1,1 functions but does not validate their applicability to optical interfer",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"The mathematical framework for measuring level sets of C1,1 functions (EV-Q006-96d82a3d3c56ef0dbf41225f) can be theoretically validated as a consistent estimator for interface geometry *if and only if* optical interference intensity maps satisfy specific regularity conditions, serving as a necessary feasibility check before any physical application.\", \"mechanism\": \"This hypothesis treats the link between 'optical interference' and 'C1,1 level sets' not as an established fact but as the primary variable to be tested. The mechanism is a mathematical consistency ve",
+    "evidence_ids": [
+      "EV-Q006-96d82a3d3c56ef0dbf41225f",
+      "EV-Q006-6cf08952bc7ef9b695c9aeae",
+      "EV-Q006-6ff9624118d1915d27e6119e",
+      "EV-Q006-fa7bc1f10b31ef34e57e2351"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c81ea97e5e00",
+    "mock": false
+  },
+  {
+    "event_id": "c3c7ab61b1c9",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:09:33.855693+00:00",
+    "ended_at": "2026-08-22T08:09:55.479948+00:00",
+    "duration_ms": 21624,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a critical factual premise ('Optical interference provides level-set data of the interface') that is not supported by any allowed Evidence ID. The evidence extraction correctly identifies this as a knowledge gap derived solely from the question booklet, which violates the rule against using non-evidence sources for factual claims.\", \"Evidence EV-Q006-96d82a3d3c56ef0dbf41225f establishes mathematical methods for C1,1 functions but does not validate their applicability to optical interfer",
+    "output_summary": "{\"technical_details\": \"This experiment is a theoretical feasibility study designed to test the mathematical compatibility between optical interference intensity maps and the C1,1 regularity assumptions required by the Geometric Measure Theory (GMT) framework in EV-Q006-96d82a3d3c56ef0dbf41225f. It does not assume that interference fringes are level sets of physical interfaces as an established fact, but rather treats this mapping as the primary variable under investigation. The study involves: 1) Generating synthetic optical interference patterns using standard thin-film physics equations (I =",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9f59238d84dd",
+    "mock": false
+  },
+  {
+    "event_id": "4a6d55c1b114",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:09:55.481396+00:00",
+    "ended_at": "2026-08-22T08:10:02.506101+00:00",
+    "duration_ms": 7024,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis relies on a critical factual premise ('Optical interference provides level-set data of the interface') that is not supported by any allowed Evidence ID. The evidence extraction correctly identifies this as a knowledge gap derived solely from the question booklet, which violates the rule against using non-evidence sources for factual claims.\", \"Evidence EV-Q006-96d82a3d3c56ef0dbf41225f establishes mathematical methods for C1,1 functions but does not validate their applicability to optical interfer",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly reframes the previously unsupported factual premise ('interference fringes are level sets') into a conditional, testable mathematical compatibility check ('if and only if'), directly addressing the critical issue of circular validation.\", \"Evidence grounding is now compliant: the hypothesis relies solely on EV-Q006-96d82a3d3c56ef0dbf41225f for the mathematical framework and explicitly treats the physical applicability as a knowledge gap to be tested, rather than an established fact.\", \"The experiment design has been succe",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3ee99c908305",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:f4d87f633b90b71d",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Geometric measure theory frameworks for C1,1 functions can be adapted to reconstruct microscopic interfacial topology from sparse optical interference data, overcoming current information limitations in film thickness measurements.",
+              "mechanism": "Optical interference provides level-set data of the interface; applying geometric measure theory (specifically methods for measuring level sets of C1,1 functions) allows mathematical reconstruction of boundary measures and curvature that are not directly observable in raw interference patterns, thereby extracting hidden topological information about mass/heat transfer boundaries.",
+              "falsifiable_prediction": "If geometric measure theory reconstruction is applied to synthetic or experimental optical interference data of a known nanoscale interface, the reconstructed boundary measure will match ground-truth topological metrics (e.g., surface area, curvature distribution) with significantly lower error than standard interferometric inversion methods.",
+              "required_observations": [
+                "Synthetic or experimental optical interference datasets of gas-liquid or liquid-solid interfaces with known ground-truth geometry",
+                "Implementation of C1,1 level set measurement algorithms from EV-Q006-96d82a3d3c56ef0dbf41225f",
+                "Quantitative comparison metrics between reconstructed and true interface topology"
+              ],
+              "risk_of_being_wrong": "The mathematical assumptions of C1,1 regularity may not hold for dynamic chemical interfaces undergoing evaporation or reaction, rendering the geometric measure theory framework inapplicable to real interfacial chemistry phenomena despite theoretical elegance.",
+              "supporting_evidence_ids": [
+                "EV-Q006-96d82a3d3c56ef0dbf41225f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.85,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.71
+            },
+            {
+              "hypothesis": "Weak measurement protocols from quantum optics can be repurposed to probe microscopic interfacial phenomena without perturbing delicate mass/heat transfer processes at gas-liquid or liquid-solid boundaries.",
+              "mechanism": "Weak measurement allows extraction of information about a system with minimal back-action; applying this to interfacial probing could yield molecular-scale data on evaporation or reaction dynamics that conventional optical interference cannot capture due to its limited information content and potential perturbation of the interface.",
+              "falsifiable_prediction": "If weak measurement is applied to a model gas-liquid interface, it will yield statistically significant signals correlated with interfacial molecular dynamics that are unobtainable via standard optical interference, while demonstrating measurably lower perturbation to the interface state.",
+              "required_observations": [
+                "Experimental weak measurement setup adapted for classical interfacial systems",
+                "Simultaneous comparison with standard optical interference on identical interface",
+                "Quantification of interface perturbation (e.g., temperature, concentration disturbance) under both measurement modalities"
+              ],
+              "risk_of_being_wrong": "Weak measurement was developed for quantum systems (EV-Q006-fa7bc1f10b31ef34e57e2351); its translation to classical chemical interfaces may fail due to decoherence, insufficient signal-to-noise, or fundamental incompatibility with thermodynamic ensembles governing interfacial chemistry.",
+              "supporting_evidence_ids": [
+                "EV-Q006-fa7bc1f10b31ef34e57e2351"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.95,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.3,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.59
+            },
+            {
+              "hypothesis": "Metric measure space formalisms can provide a unified mathematical representation of heterogeneous interfacial phenomena, enabling integration of disparate microscopic measurement data into coherent models of mass and heat transfer.",
+              "mechanism": "Interfacial chemistry involves multiple coupled processes (evaporation, reaction, explosions) across different scales; metric measure spaces (complete separable metric spaces with probability measures) offer a framework to encode spatial heterogeneity and stochastic dynamics simultaneously, potentially reconciling limited optical interference data with other partial observations.",
+              "falsifiable_prediction": "A metric measure space model fitted to multi-modal interfacial data will produce predictions of unobserved interfacial properties (e.g., local reaction rates) that are more accurate than models using only Euclidean or standard statistical representations, as validated against independent measurements.",
+              "required_observations": [
+                "Multi-modal dataset combining optical interference with at least one other interfacial measurement technique",
+                "Construction of metric measure space representation per EV-Q006-6cf08952bc7ef9b695c9aeae",
+                "Out-of-sample prediction accuracy compared to baseline models"
+              ],
+              "risk_of_being_wrong": "The abstract nature of metric measure spaces may introduce unnecessary complexity without improving predictive power for concrete chemical phenomena; the framework may be mathematically valid but physically uninformative for interfacial choreography.",
+              "supporting_evidence_ids": [
+                "EV-Q006-6cf08952bc7ef9b695c9aeae"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.5
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is recommended because it directly addresses the stated limitation in the question (optical interference being 'too limited') by leveraging the most methodologically relevant evidence (EV-Q006-96d82a3d3c56ef0dbf41225f on measuring level sets of C1,1 functions). It has the highest combined feasibility and falsifiability scores, and can be validated using synthetic data or existing experimental datasets without requiring novel instrumentation. While evidence support is limited due to domain mismatch in the catalog, this hypothesis represents the most tractable bridge between available mathematical tools and the identified knowledge gap in interfacial measurement.",
+          "rejected_directions": [
+            "Direct application of H-measure classification performance metrics (EV-Q006-6ff9624118d1915d27e6119e) to interfacial chemistry lacks mechanistic plausibility and no clear pathway exists to connect classifier evaluation to physical measurement of interface phenomena.",
+            "Pursuing purely theoretical extensions of metric measure spaces without grounding in observable interfacial data risks producing mathematically rigorous but chemically irrelevant frameworks given the severe evidence gap."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Geometric Measure Theory (GMT) frameworks for C1,1 functions can reconstruct microscopic interfacial topology from sparse optical interference data. The core mechanism relies on treating optical interference fringes as level sets of a height function h(x,y). Standard interferometry often fails to resolve curvature or complex topology due to phase ambiguity and sparsity. We will implement the 'Measuring Level Sets of C1,1 Functions' algorithm described in EV-Q006-96d82a3d3c56ef0dbf41225f. The method involves: 1) Generating synthetic ground-truth interfaces with known C1,1 regularity (bounded second derivatives); 2) Simulating sparse optical interference patterns (intensity maps) from these interfaces; 3) Applying GMT-based reconstruction to estimate boundary measures (perimeter, area) and curvature distributions from the intensity level sets; 4) Comparing reconstructed metrics against ground truth and standard inversion baselines. The key technical challenge is ensuring the simulated interface satisfies the C1,1 condition required by the GMT framework, as real chemical interfaces may exhibit higher irregularity.",
+          "datasets": {
+            "source": "Synthetic dataset generated via numerical simulation. Ground-truth interfaces are modeled as C1,1 continuous surfaces (e.g., superpositions of smooth Gaussian bumps and sinusoidal waves with bounded curvature). Optical interference data is simulated using the thin-film interference equation I(x,y) = I0 * cos^2(2*pi*n*h(x,y)/lambda + phi), subsampled to mimic sparse experimental data (e.g., 10-20% pixel density).",
+            "target": "Reconstructed topological metrics: Surface area, mean curvature distribution, and boundary length. These are compared against the known ground-truth values from the synthetic generation process."
+          },
+          "methods": "1. **Data Generation**: Create a set of 100 synthetic 2D interface height maps h(x,y) ensuring C1,1 regularity (Lipschitz continuous gradients). Simulate corresponding sparse optical interference intensity maps. 2. **GMT Reconstruction**: Implement the level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f. This involves identifying level sets in the intensity data and applying geometric measure theory integrals to estimate the underlying surface geometry without assuming global smoothness beyond C1,1. 3. **Baseline Inversion**: Apply standard Fourier-transform based phase retrieval and simple thresholding methods commonly used in basic interferometry. 4. **Metric Calculation**: Compute L2 error for height reconstruction, Hausdorff distance for boundary shape, and relative error for integrated curvature and surface area.",
+          "experiments": {
+            "baselines": [
+              "Standard Fourier Transform Phase Retrieval (FTPR): A common linear inversion technique for interferometric data.",
+              "Simple Thresholding/Contour Extraction: Directly extracting iso-intensity lines as height contours without geometric correction."
+            ],
+            "metrics": [
+              "Root Mean Square Error (RMSE) of reconstructed height map vs. ground truth.",
+              "Relative Error in Estimated Surface Area.",
+              "Hausdorff Distance between reconstructed and true interface boundaries."
+            ],
+            "ablation": "Vary the sparsity of the optical data (10%, 30%, 50% sampling) to test robustness. Vary the degree of C1,1 regularity (smoothness parameter) to test the limits of the GMT assumption.",
+            "validation_protocol": "K-fold cross-validation is not applicable for synthetic ground-truth comparison. Instead, use a hold-out test set of 20 unseen synthetic interfaces. Statistical significance of improvement over baselines will be assessed using paired t-tests on the error metrics across the 100 samples."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for synthetic data generation (C1,1 surface creation and interference simulation) is version-controlled.",
+            "Implementation of GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f is documented with mathematical correspondence.",
+            "Random seeds for noise addition and subsampling are fixed and recorded.",
+            "Baseline algorithms (FTPR, Thresholding) are implemented using standard libraries (e.g., NumPy, SciPy) with specified parameters.",
+            "All error metrics are calculated using identical grid resolutions for fair comparison."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation for numerical simulations.",
+            "estimated_runtime": "4-6 hours for full dataset generation and processing.",
+            "software_dependencies": [
+              "Python 3.9+",
+              "NumPy",
+              "SciPy",
+              "Matplotlib"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-080732-b15068dd",
+        "version_number": 1,
+        "version_id": "20260822-080732-b15068dd:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Geometric measure theory frameworks for C1,1 functions can be adapted to reconstruct microscopic interfacial topology from sparse optical interference data, overcoming current information limitations in film thickness measurements.",
+              "mechanism": "Optical interference provides level-set data of the interface; applying geometric measure theory (specifically methods for measuring level sets of C1,1 functions) allows mathematical reconstruction of boundary measures and curvature that are not directly observable in raw interference patterns, thereby extracting hidden topological information about mass/heat transfer boundaries.",
+              "falsifiable_prediction": "If geometric measure theory reconstruction is applied to synthetic or experimental optical interference data of a known nanoscale interface, the reconstructed boundary measure will match ground-truth topological metrics (e.g., surface area, curvature distribution) with significantly lower error than standard interferometric inversion methods.",
+              "required_observations": [
+                "Synthetic or experimental optical interference datasets of gas-liquid or liquid-solid interfaces with known ground-truth geometry",
+                "Implementation of C1,1 level set measurement algorithms from EV-Q006-96d82a3d3c56ef0dbf41225f",
+                "Quantitative comparison metrics between reconstructed and true interface topology"
+              ],
+              "risk_of_being_wrong": "The mathematical assumptions of C1,1 regularity may not hold for dynamic chemical interfaces undergoing evaporation or reaction, rendering the geometric measure theory framework inapplicable to real interfacial chemistry phenomena despite theoretical elegance.",
+              "supporting_evidence_ids": [
+                "EV-Q006-96d82a3d3c56ef0dbf41225f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.85,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.71
+            },
+            {
+              "hypothesis": "Weak measurement protocols from quantum optics can be repurposed to probe microscopic interfacial phenomena without perturbing delicate mass/heat transfer processes at gas-liquid or liquid-solid boundaries.",
+              "mechanism": "Weak measurement allows extraction of information about a system with minimal back-action; applying this to interfacial probing could yield molecular-scale data on evaporation or reaction dynamics that conventional optical interference cannot capture due to its limited information content and potential perturbation of the interface.",
+              "falsifiable_prediction": "If weak measurement is applied to a model gas-liquid interface, it will yield statistically significant signals correlated with interfacial molecular dynamics that are unobtainable via standard optical interference, while demonstrating measurably lower perturbation to the interface state.",
+              "required_observations": [
+                "Experimental weak measurement setup adapted for classical interfacial systems",
+                "Simultaneous comparison with standard optical interference on identical interface",
+                "Quantification of interface perturbation (e.g., temperature, concentration disturbance) under both measurement modalities"
+              ],
+              "risk_of_being_wrong": "Weak measurement was developed for quantum systems (EV-Q006-fa7bc1f10b31ef34e57e2351); its translation to classical chemical interfaces may fail due to decoherence, insufficient signal-to-noise, or fundamental incompatibility with thermodynamic ensembles governing interfacial chemistry.",
+              "supporting_evidence_ids": [
+                "EV-Q006-fa7bc1f10b31ef34e57e2351"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.95,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.3,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.59
+            },
+            {
+              "hypothesis": "Metric measure space formalisms can provide a unified mathematical representation of heterogeneous interfacial phenomena, enabling integration of disparate microscopic measurement data into coherent models of mass and heat transfer.",
+              "mechanism": "Interfacial chemistry involves multiple coupled processes (evaporation, reaction, explosions) across different scales; metric measure spaces (complete separable metric spaces with probability measures) offer a framework to encode spatial heterogeneity and stochastic dynamics simultaneously, potentially reconciling limited optical interference data with other partial observations.",
+              "falsifiable_prediction": "A metric measure space model fitted to multi-modal interfacial data will produce predictions of unobserved interfacial properties (e.g., local reaction rates) that are more accurate than models using only Euclidean or standard statistical representations, as validated against independent measurements.",
+              "required_observations": [
+                "Multi-modal dataset combining optical interference with at least one other interfacial measurement technique",
+                "Construction of metric measure space representation per EV-Q006-6cf08952bc7ef9b695c9aeae",
+                "Out-of-sample prediction accuracy compared to baseline models"
+              ],
+              "risk_of_being_wrong": "The abstract nature of metric measure spaces may introduce unnecessary complexity without improving predictive power for concrete chemical phenomena; the framework may be mathematically valid but physically uninformative for interfacial choreography.",
+              "supporting_evidence_ids": [
+                "EV-Q006-6cf08952bc7ef9b695c9aeae"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.5
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is recommended because it directly addresses the stated limitation in the question (optical interference being 'too limited') by leveraging the most methodologically relevant evidence (EV-Q006-96d82a3d3c56ef0dbf41225f on measuring level sets of C1,1 functions). It has the highest combined feasibility and falsifiability scores, and can be validated using synthetic data or existing experimental datasets without requiring novel instrumentation. While evidence support is limited due to domain mismatch in the catalog, this hypothesis represents the most tractable bridge between available mathematical tools and the identified knowledge gap in interfacial measurement.",
+          "rejected_directions": [
+            "Direct application of H-measure classification performance metrics (EV-Q006-6ff9624118d1915d27e6119e) to interfacial chemistry lacks mechanistic plausibility and no clear pathway exists to connect classifier evaluation to physical measurement of interface phenomena.",
+            "Pursuing purely theoretical extensions of metric measure spaces without grounding in observable interfacial data risks producing mathematically rigorous but chemically irrelevant frameworks given the severe evidence gap."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Geometric Measure Theory (GMT) frameworks for C1,1 functions can reconstruct microscopic interfacial topology from sparse optical interference data. The core mechanism relies on treating optical interference fringes as level sets of a height function h(x,y). Standard interferometry often fails to resolve curvature or complex topology due to phase ambiguity and sparsity. We will implement the 'Measuring Level Sets of C1,1 Functions' algorithm described in EV-Q006-96d82a3d3c56ef0dbf41225f. The method involves: 1) Generating synthetic ground-truth interfaces with known C1,1 regularity (bounded second derivatives); 2) Simulating sparse optical interference patterns (intensity maps) from these interfaces; 3) Applying GMT-based reconstruction to estimate boundary measures (perimeter, area) and curvature distributions from the intensity level sets; 4) Comparing reconstructed metrics against ground truth and standard inversion baselines. The key technical challenge is ensuring the simulated interface satisfies the C1,1 condition required by the GMT framework, as real chemical interfaces may exhibit higher irregularity.",
+          "datasets": {
+            "source": "Synthetic dataset generated via numerical simulation. Ground-truth interfaces are modeled as C1,1 continuous surfaces (e.g., superpositions of smooth Gaussian bumps and sinusoidal waves with bounded curvature). Optical interference data is simulated using the thin-film interference equation I(x,y) = I0 * cos^2(2*pi*n*h(x,y)/lambda + phi), subsampled to mimic sparse experimental data (e.g., 10-20% pixel density).",
+            "target": "Reconstructed topological metrics: Surface area, mean curvature distribution, and boundary length. These are compared against the known ground-truth values from the synthetic generation process."
+          },
+          "methods": "1. **Data Generation**: Create a set of 100 synthetic 2D interface height maps h(x,y) ensuring C1,1 regularity (Lipschitz continuous gradients). Simulate corresponding sparse optical interference intensity maps. 2. **GMT Reconstruction**: Implement the level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f. This involves identifying level sets in the intensity data and applying geometric measure theory integrals to estimate the underlying surface geometry without assuming global smoothness beyond C1,1. 3. **Baseline Inversion**: Apply standard Fourier-transform based phase retrieval and simple thresholding methods commonly used in basic interferometry. 4. **Metric Calculation**: Compute L2 error for height reconstruction, Hausdorff distance for boundary shape, and relative error for integrated curvature and surface area.",
+          "experiments": {
+            "baselines": [
+              "Standard Fourier Transform Phase Retrieval (FTPR): A common linear inversion technique for interferometric data.",
+              "Simple Thresholding/Contour Extraction: Directly extracting iso-intensity lines as height contours without geometric correction."
+            ],
+            "metrics": [
+              "Root Mean Square Error (RMSE) of reconstructed height map vs. ground truth.",
+              "Relative Error in Estimated Surface Area.",
+              "Hausdorff Distance between reconstructed and true interface boundaries."
+            ],
+            "ablation": "Vary the sparsity of the optical data (10%, 30%, 50% sampling) to test robustness. Vary the degree of C1,1 regularity (smoothness parameter) to test the limits of the GMT assumption.",
+            "validation_protocol": "K-fold cross-validation is not applicable for synthetic ground-truth comparison. Instead, use a hold-out test set of 20 unseen synthetic interfaces. Statistical significance of improvement over baselines will be assessed using paired t-tests on the error metrics across the 100 samples."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for synthetic data generation (C1,1 surface creation and interference simulation) is version-controlled.",
+            "Implementation of GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f is documented with mathematical correspondence.",
+            "Random seeds for noise addition and subsampling are fixed and recorded.",
+            "Baseline algorithms (FTPR, Thresholding) are implemented using standard libraries (e.g., NumPy, SciPy) with specified parameters.",
+            "All error metrics are calculated using identical grid resolutions for fair comparison."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation for numerical simulations.",
+            "estimated_runtime": "4-6 hours for full dataset generation and processing.",
+            "software_dependencies": [
+              "Python 3.9+",
+              "NumPy",
+              "SciPy",
+              "Matplotlib"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis relies on a critical factual premise ('Optical interference provides level-set data of the interface') that is not supported by any allowed Evidence ID. The evidence extraction correctly identifies this as a knowledge gap derived solely from the question booklet, which violates the rule against using non-evidence sources for factual claims.",
+            "Evidence EV-Q006-96d82a3d3c56ef0dbf41225f establishes mathematical methods for C1,1 functions but does not validate their applicability to optical interference patterns or chemical interfaces. The link between the math and the physical measurement modality is currently an unverified assumption presented as a mechanism.",
+            "While the experiment design uses synthetic data (which avoids immediate empirical fabrication), the validation is circular if the synthetic data generation assumes the very C1,1 regularity and level-set correspondence that the hypothesis seeks to prove applicable. Without external ground truth from allowed evidence, this remains a purely mathematical exercise with no verified connection to the scientific problem.",
+            "The 'established_facts' section in evidence_extraction explicitly admits reliance on the booklet excerpt. This confirms insufficient evidence grounding for the core problem definition."
+          ],
+          "critical_issues": [
+            "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+            "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+            "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence."
+          ],
+          "required_revisions": [
+            "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+            "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+            "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+            "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.2,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.9
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:f082b83e2a5d",
+            "category": "critical_issue",
+            "description": "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:d04468f9c291",
+            "category": "critical_issue",
+            "description": "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:4c0529a808dc",
+            "category": "critical_issue",
+            "description": "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1d6938fef8c9",
+            "category": "required_revision",
+            "description": "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3a4f5782359e",
+            "category": "required_revision",
+            "description": "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:8fc7c448ebc0",
+            "category": "required_revision",
+            "description": "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:56a55148c5f9",
+            "category": "required_revision",
+            "description": "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "8ce528c0477a00a7bd35c9e99c44bc35371cf2327b26c526a60fb808499de043",
+          "experiment_designer": "167f12eca142811bdb6e76ecd65d6cb7ae1e741f671765292c61f646d16e24be",
+          "scientific_reviewer": "a53f8aebee3f209b617e79f7671130913bd863dfa9e1db5f7009e4b31491fc15"
+        }
+      },
+      "parent_version_id": "20260822-080732-b15068dd:v1",
+      "lineage": [
+        "20260822-080732-b15068dd:v1",
+        "20260822-080732-b15068dd:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis relies on a critical factual premise ('Optical interference provides level-set data of the interface') that is not supported by any allowed Evidence ID. The evidence extraction correctly identifies this as a knowledge gap derived solely from the question booklet, which violates the rule against using non-evidence sources for factual claims.",
+          "Evidence EV-Q006-96d82a3d3c56ef0dbf41225f establishes mathematical methods for C1,1 functions but does not validate their applicability to optical interference patterns or chemical interfaces. The link between the math and the physical measurement modality is currently an unverified assumption presented as a mechanism.",
+          "While the experiment design uses synthetic data (which avoids immediate empirical fabrication), the validation is circular if the synthetic data generation assumes the very C1,1 regularity and level-set correspondence that the hypothesis seeks to prove applicable. Without external ground truth from allowed evidence, this remains a purely mathematical exercise with no verified connection to the scientific problem.",
+          "The 'established_facts' section in evidence_extraction explicitly admits reliance on the booklet excerpt. This confirms insufficient evidence grounding for the core problem definition."
+        ],
+        "critical_issues": [
+          "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+          "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+          "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence."
+        ],
+        "required_revisions": [
+          "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+          "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+          "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+          "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.2,
+        "falsifiability_score": 0.8,
+        "reproducibility_score": 0.7,
+        "reference_reliability_score": 0.9
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly reframes the previously unsupported factual premise ('interference fringes are level sets') into a conditional, testable mathematical compatibility check ('if and only if'), directly addressing the critical issue of circular validation.",
+          "Evidence grounding is now compliant: the hypothesis relies solely on EV-Q006-96d82a3d3c56ef0dbf41225f for the mathematical framework and explicitly treats the physical applicability as a knowledge gap to be tested, rather than an established fact.",
+          "The experiment design has been successfully re-scoped as a 'theoretical feasibility study' with appropriate metrics (Lipschitz constants, stability indices) that validate the mathematical assumptions without claiming unverified physical reconstruction capabilities.",
+          "Results are correctly marked as pending, and no fabricated empirical data or unauthorized sources are present in this revision."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final report execution, ensure the 'established_facts' field from evidence_extraction is either removed or explicitly annotated as 'context_from_question_not_evidence' to prevent downstream consumers from misinterpreting booklet-derived context as verified fact.",
+          "Explicitly state in the experiment limitations that synthetic data generation uses standard optical models which themselves assume certain regularity; thus, passing the feasibility check validates consistency with standard models, not necessarily with all possible real-world interfacial phenomena."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 0.9,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:9f26e0f3f9b2a3ff",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+          "issue_id": "critical_issue:f082b83e2a5d"
+        },
+        {
+          "failure_id": "failure:58be461c8d7cc8d3",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+          "issue_id": "critical_issue:d04468f9c291"
+        },
+        {
+          "failure_id": "failure:bb6ffd9a776b218d",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.",
+          "issue_id": "critical_issue:4c0529a808dc"
+        },
+        {
+          "failure_id": "failure:a7820d6f750771ea",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+          "issue_id": "required_revision:1d6938fef8c9"
+        },
+        {
+          "failure_id": "failure:a022af9f624505e8",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+          "issue_id": "required_revision:3a4f5782359e"
+        },
+        {
+          "failure_id": "failure:2e45b38cab99cc47",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+          "issue_id": "required_revision:8fc7c448ebc0"
+        },
+        {
+          "failure_id": "failure:4d8281806fc79d0f",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance.",
+          "issue_id": "required_revision:56a55148c5f9"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:bd1f8a8653bf3743",
+          "issue_id": "critical_issue:d04468f9c291",
+          "reason": "Reviewer item critical_issue:d04468f9c291 requested 'No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.'. V2 changes technical_details; deterministic correlation evidence tokens=['96d82a3d3c56ef0dbf41225f', 'c1', 'ev', 'framework', 'gmt', 'optical', 'q006'], coverage=0.500.",
+          "before": "This experiment tests the hypothesis that Geometric Measure Theory (GMT) frameworks for C1,1 functions can reconstruct microscopic interfacial topology from sparse optical interference data. The core mechanism relies on treating optical interference fringes as level sets of a height function h(x,y). Standard interferometry often fails to resolve curvature or complex topology due to phase ambiguity and sparsity. We will implement the 'Measuring Level Sets of C1,1 Functions' algorithm described in EV-Q006-96d82a3d3c56ef0dbf41225f. The method involves: 1) Generating synthetic ground-truth interfaces with known C1,1 regularity (bounded second derivatives); 2) Simulating sparse optical interference patterns (intensity maps) from these interfaces; 3) Applying GMT-based reconstruction to estimate boundary measures (perimeter, area) and curvature distributions from the intensity level sets; 4) Comparing reconstructed metrics against ground truth and standard inversion baselines. The key technical challenge is ensuring the simulated interface satisfies the C1,1 condition required by the GMT framework, as real chemical interfaces may exhibit higher irregularity.",
+          "after": "This experiment is a theoretical feasibility study designed to test the mathematical compatibility between optical interference intensity maps and the C1,1 regularity assumptions required by the Geometric Measure Theory (GMT) framework in EV-Q006-96d82a3d3c56ef0dbf41225f. It does not assume that interference fringes are level sets of physical interfaces as an established fact, but rather treats this mapping as the primary variable under investigation. The study involves: 1) Generating synthetic optical interference patterns using standard thin-film physics equations (I = I0 cos^2(phi)), introducing controlled noise and phase singularities typical of real-world data; 2) Analyzing the regularity of these intensity functions to determine if they belong to the C1,1 class (Lipschitz continuous gradients) or if they exhibit discontinuities/singularities that violate GMT assumptions; 3) Applying the GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f only to those synthetic patterns that mathematically satisfy the C1,1 condition; 4) Quantifying the error introduced when applying GMT to patterns that marginally violate C1,1 conditions. This approach avoids circular validation by explicitly testing the boundary conditions of the mathematical theory against the structural properties of the measurement modality, without claiming physical reconstruction accuracy for real chemical interfaces.",
+          "evidence_refs": [
+            "EV-Q006-6cf08952bc7ef9b695c9aeae",
+            "EV-Q006-6ff9624118d1915d27e6119e",
+            "EV-Q006-96d82a3d3c56ef0dbf41225f",
+            "EV-Q006-fa7bc1f10b31ef34e57e2351"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:ee229a279f11aad4",
+          "issue_id": "critical_issue:4c0529a808dc",
+          "reason": "Reviewer item critical_issue:4c0529a808dc requested 'Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.'. V2 changes technical_details; deterministic correlation evidence tokens=['c1', 'circular', 'data', 'generat', 'interference', 'property', 'real', 'synthetic', 'theory', 'validate', 'without'], coverage=0.579.",
+          "before": "This experiment tests the hypothesis that Geometric Measure Theory (GMT) frameworks for C1,1 functions can reconstruct microscopic interfacial topology from sparse optical interference data. The core mechanism relies on treating optical interference fringes as level sets of a height function h(x,y). Standard interferometry often fails to resolve curvature or complex topology due to phase ambiguity and sparsity. We will implement the 'Measuring Level Sets of C1,1 Functions' algorithm described in EV-Q006-96d82a3d3c56ef0dbf41225f. The method involves: 1) Generating synthetic ground-truth interfaces with known C1,1 regularity (bounded second derivatives); 2) Simulating sparse optical interference patterns (intensity maps) from these interfaces; 3) Applying GMT-based reconstruction to estimate boundary measures (perimeter, area) and curvature distributions from the intensity level sets; 4) Comparing reconstructed metrics against ground truth and standard inversion baselines. The key technical challenge is ensuring the simulated interface satisfies the C1,1 condition required by the GMT framework, as real chemical interfaces may exhibit higher irregularity.",
+          "after": "This experiment is a theoretical feasibility study designed to test the mathematical compatibility between optical interference intensity maps and the C1,1 regularity assumptions required by the Geometric Measure Theory (GMT) framework in EV-Q006-96d82a3d3c56ef0dbf41225f. It does not assume that interference fringes are level sets of physical interfaces as an established fact, but rather treats this mapping as the primary variable under investigation. The study involves: 1) Generating synthetic optical interference patterns using standard thin-film physics equations (I = I0 cos^2(phi)), introducing controlled noise and phase singularities typical of real-world data; 2) Analyzing the regularity of these intensity functions to determine if they belong to the C1,1 class (Lipschitz continuous gradients) or if they exhibit discontinuities/singularities that violate GMT assumptions; 3) Applying the GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f only to those synthetic patterns that mathematically satisfy the C1,1 condition; 4) Quantifying the error introduced when applying GMT to patterns that marginally violate C1,1 conditions. This approach avoids circular validation by explicitly testing the boundary conditions of the mathematical theory against the structural properties of the measurement modality, without claiming physical reconstruction accuracy for real chemical interfaces.",
+          "evidence_refs": [
+            "EV-Q006-6cf08952bc7ef9b695c9aeae",
+            "EV-Q006-6ff9624118d1915d27e6119e",
+            "EV-Q006-96d82a3d3c56ef0dbf41225f",
+            "EV-Q006-fa7bc1f10b31ef34e57e2351"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:70e3b77c3ff35d58",
+          "issue_id": "required_revision:3a4f5782359e",
+          "reason": "Reviewer item required_revision:3a4f5782359e requested 'Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.'. V2 changes technical_details; deterministic correlation evidence tokens=['c1', 'function', 'gmt', 'intensity', 'interference', 'level', 'maps', 'mathematically', 'only', 'optical', 'reconstruction', 'sets', 'treat', 'using', 'validate'], coverage=0.600.",
+          "before": "This experiment tests the hypothesis that Geometric Measure Theory (GMT) frameworks for C1,1 functions can reconstruct microscopic interfacial topology from sparse optical interference data. The core mechanism relies on treating optical interference fringes as level sets of a height function h(x,y). Standard interferometry often fails to resolve curvature or complex topology due to phase ambiguity and sparsity. We will implement the 'Measuring Level Sets of C1,1 Functions' algorithm described in EV-Q006-96d82a3d3c56ef0dbf41225f. The method involves: 1) Generating synthetic ground-truth interfaces with known C1,1 regularity (bounded second derivatives); 2) Simulating sparse optical interference patterns (intensity maps) from these interfaces; 3) Applying GMT-based reconstruction to estimate boundary measures (perimeter, area) and curvature distributions from the intensity level sets; 4) Comparing reconstructed metrics against ground truth and standard inversion baselines. The key technical challenge is ensuring the simulated interface satisfies the C1,1 condition required by the GMT framework, as real chemical interfaces may exhibit higher irregularity.",
+          "after": "This experiment is a theoretical feasibility study designed to test the mathematical compatibility between optical interference intensity maps and the C1,1 regularity assumptions required by the Geometric Measure Theory (GMT) framework in EV-Q006-96d82a3d3c56ef0dbf41225f. It does not assume that interference fringes are level sets of physical interfaces as an established fact, but rather treats this mapping as the primary variable under investigation. The study involves: 1) Generating synthetic optical interference patterns using standard thin-film physics equations (I = I0 cos^2(phi)), introducing controlled noise and phase singularities typical of real-world data; 2) Analyzing the regularity of these intensity functions to determine if they belong to the C1,1 class (Lipschitz continuous gradients) or if they exhibit discontinuities/singularities that violate GMT assumptions; 3) Applying the GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f only to those synthetic patterns that mathematically satisfy the C1,1 condition; 4) Quantifying the error introduced when applying GMT to patterns that marginally violate C1,1 conditions. This approach avoids circular validation by explicitly testing the boundary conditions of the mathematical theory against the structural properties of the measurement modality, without claiming physical reconstruction accuracy for real chemical interfaces.",
+          "evidence_refs": [
+            "EV-Q006-6cf08952bc7ef9b695c9aeae",
+            "EV-Q006-6ff9624118d1915d27e6119e",
+            "EV-Q006-96d82a3d3c56ef0dbf41225f",
+            "EV-Q006-fa7bc1f10b31ef34e57e2351"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:9dd2184cec3fad89",
+          "issue_id": "required_revision:3a4f5782359e",
+          "reason": "Reviewer item required_revision:3a4f5782359e requested 'Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.'. V2 changes methods; deterministic correlation evidence tokens=['c1', 'gmt', 'intensity', 'interference', 'level', 'maps', 'mathematically', 'only', 'using', 'whether'], coverage=0.400.",
+          "before": "1. **Data Generation**: Create a set of 100 synthetic 2D interface height maps h(x,y) ensuring C1,1 regularity (Lipschitz continuous gradients). Simulate corresponding sparse optical interference intensity maps. 2. **GMT Reconstruction**: Implement the level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f. This involves identifying level sets in the intensity data and applying geometric measure theory integrals to estimate the underlying surface geometry without assuming global smoothness beyond C1,1. 3. **Baseline Inversion**: Apply standard Fourier-transform based phase retrieval and simple thresholding methods commonly used in basic interferometry. 4. **Metric Calculation**: Compute L2 error for height reconstruction, Hausdorff distance for boundary shape, and relative error for integrated curvature and surface area.",
+          "after": "1. **Synthetic Data Generation**: Generate interference patterns using I(x,y) = I0 * cos^2(2*pi*n*h(x,y)/lambda + phi). Vary h(x,y) to include both C1,1 smooth surfaces and surfaces with sharp features or noise-induced singularities. 2. **Regularity Analysis**: Compute numerical gradients and second derivatives of I(x,y) to estimate Lipschitz constants. Classify patterns as 'C1,1-compliant' or 'C1,1-violating'. 3. **GMT Application**: Apply the level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f to the intensity maps. 4. **Consistency Check**: Evaluate whether the GMT output remains stable and mathematically well-defined for C1,1-compliant patterns, and quantify divergence/error for violating patterns. This tests the hypothesis that GMT is applicable *if and only if* regularity conditions are met.",
+          "evidence_refs": [
+            "EV-Q006-6cf08952bc7ef9b695c9aeae",
+            "EV-Q006-6ff9624118d1915d27e6119e",
+            "EV-Q006-96d82a3d3c56ef0dbf41225f",
+            "EV-Q006-fa7bc1f10b31ef34e57e2351"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:f082b83e2a5d",
+          "category": "critical_issue",
+          "description": "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:d04468f9c291",
+          "category": "critical_issue",
+          "description": "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:bd1f8a8653bf3743; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:4c0529a808dc",
+          "category": "critical_issue",
+          "description": "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ee229a279f11aad4; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:1d6938fef8c9",
+          "category": "required_revision",
+          "description": "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:3a4f5782359e",
+          "category": "required_revision",
+          "description": "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:70e3b77c3ff35d58,change:9dd2184cec3fad89; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:8fc7c448ebc0",
+          "category": "required_revision",
+          "description": "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:56a55148c5f9",
+          "category": "required_revision",
+          "description": "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a4394751a99d",
+          "category": "required_revision",
+          "description": "In the final report execution, ensure the 'established_facts' field from evidence_extraction is either removed or explicitly annotated as 'context_from_question_not_evidence' to prevent downstream consumers from misinterpreting booklet-derived context as verified fact.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:29ed4cf6a934",
+          "category": "required_revision",
+          "description": "Explicitly state in the experiment limitations that synthetic data generation uses standard optical models which themselves assume certain regularity; thus, passing the feasibility check validates consistency with standard models, not necessarily with all possible real-world interfacial phenomena.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.2,
+          "after": 0.9,
+          "delta": 0.7
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.9,
+          "delta": 0.20000000000000007
+        },
+        "reference_reliability_score": {
+          "before": 0.9,
+          "after": 1.0,
+          "delta": 0.09999999999999998
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "The mathematical framework for measuring level sets of C1,1 functions (EV-Q006-96d82a3d3c56ef0dbf41225f) can be theoretically validated as a consistent estimator for interface geometry *if and only if* optical interference intensity maps satisfy specific regularity conditions, serving as a necessary feasibility check before any physical application.",
+          "overall_score": 0.81,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 2,
+          "hypothesis": "Current allowed evidence is insufficient to formulate any valid hypothesis connecting microscopic interfacial measurement to available mathematical frameworks, constituting a definitive knowledge gap requiring new domain-specific evidence.",
+          "overall_score": 0.78,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "Metric measure space formalisms (EV-Q006-6cf08952bc7ef9b695c9aeae) provide a more robust theoretical basis for representing microscopic interfacial uncertainty than C1,1 GMT when domain-specific measurement physics is unverified.",
+          "overall_score": 0.68,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 3,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:f082b83e2a5d",
+        "required_revision_without_change:required_revision:1d6938fef8c9",
+        "required_revision_without_change:required_revision:8fc7c448ebc0",
+        "required_revision_without_change:required_revision:56a55148c5f9",
+        "unresolved_issue:critical_issue:f082b83e2a5d",
+        "unresolved_issue:required_revision:1d6938fef8c9",
+        "unresolved_issue:required_revision:8fc7c448ebc0",
+        "unresolved_issue:required_revision:56a55148c5f9",
+        "unresolved_issue:required_revision:a4394751a99d",
+        "unresolved_issue:required_revision:29ed4cf6a934",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "critical_issue:f082b83e2a5d: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:1d6938fef8c9: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:8fc7c448ebc0: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:56a55148c5f9: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:a4394751a99d: In the final report execution, ensure the 'established_facts' field from evidence_extraction is either removed or explicitly annotated as 'context_from_question_not_evidence' to prevent downstream consumers from misinterpreting booklet-derived context as verified fact.",
+        "required_revision:29ed4cf6a934: Explicitly state in the experiment limitations that synthetic data generation uses standard optical models which themselves assume certain regularity; thus, passing the feasibility check validates consistency with standard models, not necessarily with all possible real-world interfacial phenomena."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-080732-b15068dd",
+        "version_number": 1,
+        "version_id": "20260822-080732-b15068dd:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Geometric measure theory frameworks for C1,1 functions can be adapted to reconstruct microscopic interfacial topology from sparse optical interference data, overcoming current information limitations in film thickness measurements.",
+              "mechanism": "Optical interference provides level-set data of the interface; applying geometric measure theory (specifically methods for measuring level sets of C1,1 functions) allows mathematical reconstruction of boundary measures and curvature that are not directly observable in raw interference patterns, thereby extracting hidden topological information about mass/heat transfer boundaries.",
+              "falsifiable_prediction": "If geometric measure theory reconstruction is applied to synthetic or experimental optical interference data of a known nanoscale interface, the reconstructed boundary measure will match ground-truth topological metrics (e.g., surface area, curvature distribution) with significantly lower error than standard interferometric inversion methods.",
+              "required_observations": [
+                "Synthetic or experimental optical interference datasets of gas-liquid or liquid-solid interfaces with known ground-truth geometry",
+                "Implementation of C1,1 level set measurement algorithms from EV-Q006-96d82a3d3c56ef0dbf41225f",
+                "Quantitative comparison metrics between reconstructed and true interface topology"
+              ],
+              "risk_of_being_wrong": "The mathematical assumptions of C1,1 regularity may not hold for dynamic chemical interfaces undergoing evaporation or reaction, rendering the geometric measure theory framework inapplicable to real interfacial chemistry phenomena despite theoretical elegance.",
+              "supporting_evidence_ids": [
+                "EV-Q006-96d82a3d3c56ef0dbf41225f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.85,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.4,
+              "overall_score": 0.71
+            },
+            {
+              "hypothesis": "Weak measurement protocols from quantum optics can be repurposed to probe microscopic interfacial phenomena without perturbing delicate mass/heat transfer processes at gas-liquid or liquid-solid boundaries.",
+              "mechanism": "Weak measurement allows extraction of information about a system with minimal back-action; applying this to interfacial probing could yield molecular-scale data on evaporation or reaction dynamics that conventional optical interference cannot capture due to its limited information content and potential perturbation of the interface.",
+              "falsifiable_prediction": "If weak measurement is applied to a model gas-liquid interface, it will yield statistically significant signals correlated with interfacial molecular dynamics that are unobtainable via standard optical interference, while demonstrating measurably lower perturbation to the interface state.",
+              "required_observations": [
+                "Experimental weak measurement setup adapted for classical interfacial systems",
+                "Simultaneous comparison with standard optical interference on identical interface",
+                "Quantification of interface perturbation (e.g., temperature, concentration disturbance) under both measurement modalities"
+              ],
+              "risk_of_being_wrong": "Weak measurement was developed for quantum systems (EV-Q006-fa7bc1f10b31ef34e57e2351); its translation to classical chemical interfaces may fail due to decoherence, insufficient signal-to-noise, or fundamental incompatibility with thermodynamic ensembles governing interfacial chemistry.",
+              "supporting_evidence_ids": [
+                "EV-Q006-fa7bc1f10b31ef34e57e2351"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.95,
+              "falsifiability_score": 0.8,
+              "feasibility_score": 0.3,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.59
+            },
+            {
+              "hypothesis": "Metric measure space formalisms can provide a unified mathematical representation of heterogeneous interfacial phenomena, enabling integration of disparate microscopic measurement data into coherent models of mass and heat transfer.",
+              "mechanism": "Interfacial chemistry involves multiple coupled processes (evaporation, reaction, explosions) across different scales; metric measure spaces (complete separable metric spaces with probability measures) offer a framework to encode spatial heterogeneity and stochastic dynamics simultaneously, potentially reconciling limited optical interference data with other partial observations.",
+              "falsifiable_prediction": "A metric measure space model fitted to multi-modal interfacial data will produce predictions of unobserved interfacial properties (e.g., local reaction rates) that are more accurate than models using only Euclidean or standard statistical representations, as validated against independent measurements.",
+              "required_observations": [
+                "Multi-modal dataset combining optical interference with at least one other interfacial measurement technique",
+                "Construction of metric measure space representation per EV-Q006-6cf08952bc7ef9b695c9aeae",
+                "Out-of-sample prediction accuracy compared to baseline models"
+              ],
+              "risk_of_being_wrong": "The abstract nature of metric measure spaces may introduce unnecessary complexity without improving predictive power for concrete chemical phenomena; the framework may be mathematically valid but physically uninformative for interfacial choreography.",
+              "supporting_evidence_ids": [
+                "EV-Q006-6cf08952bc7ef9b695c9aeae"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.5
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is recommended because it directly addresses the stated limitation in the question (optical interference being 'too limited') by leveraging the most methodologically relevant evidence (EV-Q006-96d82a3d3c56ef0dbf41225f on measuring level sets of C1,1 functions). It has the highest combined feasibility and falsifiability scores, and can be validated using synthetic data or existing experimental datasets without requiring novel instrumentation. While evidence support is limited due to domain mismatch in the catalog, this hypothesis represents the most tractable bridge between available mathematical tools and the identified knowledge gap in interfacial measurement.",
+          "rejected_directions": [
+            "Direct application of H-measure classification performance metrics (EV-Q006-6ff9624118d1915d27e6119e) to interfacial chemistry lacks mechanistic plausibility and no clear pathway exists to connect classifier evaluation to physical measurement of interface phenomena.",
+            "Pursuing purely theoretical extensions of metric measure spaces without grounding in observable interfacial data risks producing mathematically rigorous but chemically irrelevant frameworks given the severe evidence gap."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that Geometric Measure Theory (GMT) frameworks for C1,1 functions can reconstruct microscopic interfacial topology from sparse optical interference data. The core mechanism relies on treating optical interference fringes as level sets of a height function h(x,y). Standard interferometry often fails to resolve curvature or complex topology due to phase ambiguity and sparsity. We will implement the 'Measuring Level Sets of C1,1 Functions' algorithm described in EV-Q006-96d82a3d3c56ef0dbf41225f. The method involves: 1) Generating synthetic ground-truth interfaces with known C1,1 regularity (bounded second derivatives); 2) Simulating sparse optical interference patterns (intensity maps) from these interfaces; 3) Applying GMT-based reconstruction to estimate boundary measures (perimeter, area) and curvature distributions from the intensity level sets; 4) Comparing reconstructed metrics against ground truth and standard inversion baselines. The key technical challenge is ensuring the simulated interface satisfies the C1,1 condition required by the GMT framework, as real chemical interfaces may exhibit higher irregularity.",
+          "datasets": {
+            "source": "Synthetic dataset generated via numerical simulation. Ground-truth interfaces are modeled as C1,1 continuous surfaces (e.g., superpositions of smooth Gaussian bumps and sinusoidal waves with bounded curvature). Optical interference data is simulated using the thin-film interference equation I(x,y) = I0 * cos^2(2*pi*n*h(x,y)/lambda + phi), subsampled to mimic sparse experimental data (e.g., 10-20% pixel density).",
+            "target": "Reconstructed topological metrics: Surface area, mean curvature distribution, and boundary length. These are compared against the known ground-truth values from the synthetic generation process."
+          },
+          "methods": "1. **Data Generation**: Create a set of 100 synthetic 2D interface height maps h(x,y) ensuring C1,1 regularity (Lipschitz continuous gradients). Simulate corresponding sparse optical interference intensity maps. 2. **GMT Reconstruction**: Implement the level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f. This involves identifying level sets in the intensity data and applying geometric measure theory integrals to estimate the underlying surface geometry without assuming global smoothness beyond C1,1. 3. **Baseline Inversion**: Apply standard Fourier-transform based phase retrieval and simple thresholding methods commonly used in basic interferometry. 4. **Metric Calculation**: Compute L2 error for height reconstruction, Hausdorff distance for boundary shape, and relative error for integrated curvature and surface area.",
+          "experiments": {
+            "baselines": [
+              "Standard Fourier Transform Phase Retrieval (FTPR): A common linear inversion technique for interferometric data.",
+              "Simple Thresholding/Contour Extraction: Directly extracting iso-intensity lines as height contours without geometric correction."
+            ],
+            "metrics": [
+              "Root Mean Square Error (RMSE) of reconstructed height map vs. ground truth.",
+              "Relative Error in Estimated Surface Area.",
+              "Hausdorff Distance between reconstructed and true interface boundaries."
+            ],
+            "ablation": "Vary the sparsity of the optical data (10%, 30%, 50% sampling) to test robustness. Vary the degree of C1,1 regularity (smoothness parameter) to test the limits of the GMT assumption.",
+            "validation_protocol": "K-fold cross-validation is not applicable for synthetic ground-truth comparison. Instead, use a hold-out test set of 20 unseen synthetic interfaces. Statistical significance of improvement over baselines will be assessed using paired t-tests on the error metrics across the 100 samples."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for synthetic data generation (C1,1 surface creation and interference simulation) is version-controlled.",
+            "Implementation of GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f is documented with mathematical correspondence.",
+            "Random seeds for noise addition and subsampling are fixed and recorded.",
+            "Baseline algorithms (FTPR, Thresholding) are implemented using standard libraries (e.g., NumPy, SciPy) with specified parameters.",
+            "All error metrics are calculated using identical grid resolutions for fair comparison."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU/GPU workstation for numerical simulations.",
+            "estimated_runtime": "4-6 hours for full dataset generation and processing.",
+            "software_dependencies": [
+              "Python 3.9+",
+              "NumPy",
+              "SciPy",
+              "Matplotlib"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis relies on a critical factual premise ('Optical interference provides level-set data of the interface') that is not supported by any allowed Evidence ID. The evidence extraction correctly identifies this as a knowledge gap derived solely from the question booklet, which violates the rule against using non-evidence sources for factual claims.",
+            "Evidence EV-Q006-96d82a3d3c56ef0dbf41225f establishes mathematical methods for C1,1 functions but does not validate their applicability to optical interference patterns or chemical interfaces. The link between the math and the physical measurement modality is currently an unverified assumption presented as a mechanism.",
+            "While the experiment design uses synthetic data (which avoids immediate empirical fabrication), the validation is circular if the synthetic data generation assumes the very C1,1 regularity and level-set correspondence that the hypothesis seeks to prove applicable. Without external ground truth from allowed evidence, this remains a purely mathematical exercise with no verified connection to the scientific problem.",
+            "The 'established_facts' section in evidence_extraction explicitly admits reliance on the booklet excerpt. This confirms insufficient evidence grounding for the core problem definition."
+          ],
+          "critical_issues": [
+            "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+            "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+            "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence."
+          ],
+          "required_revisions": [
+            "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+            "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+            "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+            "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.2,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.7,
+          "reference_reliability_score": 0.9
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:f082b83e2a5d",
+            "category": "critical_issue",
+            "description": "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:d04468f9c291",
+            "category": "critical_issue",
+            "description": "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:4c0529a808dc",
+            "category": "critical_issue",
+            "description": "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:1d6938fef8c9",
+            "category": "required_revision",
+            "description": "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:3a4f5782359e",
+            "category": "required_revision",
+            "description": "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:8fc7c448ebc0",
+            "category": "required_revision",
+            "description": "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:56a55148c5f9",
+            "category": "required_revision",
+            "description": "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "8ce528c0477a00a7bd35c9e99c44bc35371cf2327b26c526a60fb808499de043",
+          "experiment_designer": "167f12eca142811bdb6e76ecd65d6cb7ae1e741f671765292c61f646d16e24be",
+          "scientific_reviewer": "a53f8aebee3f209b617e79f7671130913bd863dfa9e1db5f7009e4b31491fc15"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-080732-b15068dd",
+        "version_number": 2,
+        "version_id": "20260822-080732-b15068dd:v2",
+        "parent_version_id": "20260822-080732-b15068dd:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "The mathematical framework for measuring level sets of C1,1 functions (EV-Q006-96d82a3d3c56ef0dbf41225f) can be theoretically validated as a consistent estimator for interface geometry *if and only if* optical interference intensity maps satisfy specific regularity conditions, serving as a necessary feasibility check before any physical application.",
+              "mechanism": "This hypothesis treats the link between 'optical interference' and 'C1,1 level sets' not as an established fact but as the primary variable to be tested. The mechanism is a mathematical consistency verification: determining whether the structural properties of interference patterns (as defined in general optics literature, currently a knowledge gap in allowed evidence) map bijectively to the domain of validity for the GMT algorithms in EV-Q006-96d82a3d3c56ef0dbf41225f. Success is defined by mathematical compatibility, not physical measurement accuracy.",
+              "falsifiable_prediction": "If optical interference intensity functions do not possess bounded second derivatives (Lipschitz continuous gradients) or if their level sets fail to satisfy the rectifiability conditions required by the GMT framework in EV-Q006-96d82a3d3c56ef0dbf41225f, then the theoretical applicability of this specific GMT method to interferometry is falsified, regardless of synthetic data performance.",
+              "required_observations": [
+                "Formal mathematical proof or disproof that standard thin-film interference intensity functions I(x,y) belong to the C1,1 class under realistic experimental noise and discretization",
+                "Verification that the level set measure definition in EV-Q006-96d82a3d3c56ef0dbf41225f is well-defined for the specific topology of interference fringes",
+                "Identification of specific breakdown points where interference physics violates GMT assumptions"
+              ],
+              "risk_of_being_wrong": "High risk that interference patterns are fundamentally incompatible with C1,1 assumptions due to phase singularities, noise, or diffraction effects, rendering the entire GMT approach theoretically invalid for this domain. This would confirm the 'knowledge gap' rather than bridge it.",
+              "supporting_evidence_ids": [
+                "EV-Q006-96d82a3d3c56ef0dbf41225f"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.81
+            },
+            {
+              "hypothesis": "Metric measure space formalisms (EV-Q006-6cf08952bc7ef9b695c9aeae) provide a more robust theoretical basis for representing microscopic interfacial uncertainty than C1,1 GMT when domain-specific measurement physics is unverified.",
+              "mechanism": "Given the lack of evidence linking optical interference to C1,1 functions, this hypothesis proposes using metric measure spaces as a weaker, more general framework that does not assume differentiability. The mechanism relies on encoding the interface as a probability measure over a metric space, which accommodates the 'limited information' nature of current measurements without requiring unverified smoothness assumptions. This shifts the problem from 'reconstruction' to 'probabilistic representation'.",
+              "falsifiable_prediction": "If a metric measure space representation cannot capture the essential topological features of an interface (e.g., connectivity, dimension) with less information loss than a naive Euclidean embedding, then this framework offers no advantage for handling unverified measurement modalities.",
+              "required_observations": [
+                "Construction of a metric measure space model for a generic interface using only sparse intensity data",
+                "Comparison of information retention (entropy, mutual information) between MMS representation and standard Euclidean/C1,1 representations",
+                "Demonstration that MMS axioms hold for the available data types without assuming C1,1 regularity"
+              ],
+              "risk_of_being_wrong": "The abstraction may be too general to yield actionable insights for interfacial chemistry; without specific physical constraints, the MMS might represent mathematical artifacts rather than chemical reality.",
+              "supporting_evidence_ids": [
+                "EV-Q006-6cf08952bc7ef9b695c9aeae"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.68
+            },
+            {
+              "hypothesis": "Current allowed evidence is insufficient to formulate any valid hypothesis connecting microscopic interfacial measurement to available mathematical frameworks, constituting a definitive knowledge gap requiring new domain-specific evidence.",
+              "mechanism": "This is a null hypothesis asserting that no valid mechanistic link exists between the provided mathematical evidence (GMT, MMS, Weak Measurement) and the chemical interface problem without external validation. The 'mechanism' is the identification of the epistemic boundary: attempting to force a connection leads to circular validation or unfounded assumptions.",
+              "falsifiable_prediction": "If a comprehensive literature search (using only allowed IDs) reveals even one explicit theorem or example applying EV-Q006-96d82a3d3c56ef0dbf41225f or EV-Q006-6cf08952bc7ef9b695c9aeae to optical sensing or surface metrology, this null hypothesis is falsified.",
+              "required_observations": [
+                "Exhaustive semantic search within allowed evidence texts for terms like 'interference', 'surface', 'film', 'optical', 'sensor'",
+                "Verification that no implicit mapping exists between the mathematical definitions and physical measurement concepts",
+                "Documentation of the specific missing axioms or empirical facts needed to bridge the gap"
+              ],
+              "risk_of_being_wrong": "Low risk of being factually wrong given current evidence state, but high risk of being unhelpful if a non-obvious theoretical connection actually exists that was missed due to overly strict interpretation.",
+              "supporting_evidence_ids": [
+                "EV-Q006-96d82a3d3c56ef0dbf41225f",
+                "EV-Q006-6cf08952bc7ef9b695c9aeae",
+                "EV-Q006-6ff9624118d1915d27e6119e",
+                "EV-Q006-fa7bc1f10b31ef34e57e2351"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 1.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.78
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the reviewer's critical feedback by reframing the previously assumed 'interference-as-level-set' link as the primary testable proposition rather than a premise. It avoids circular validation by focusing on mathematical consistency checks (feasibility study) rather than claiming physical reconstruction capability. It strictly adheres to allowed evidence EV-Q006-96d82a3d3c56ef0dbf41225f while explicitly acknowledging the knowledge gap regarding physical applicability. Unlike Hypothesis 2 (which gives up), it provides a constructive path to either validate the theoretical foundation or definitively prove its inapplicability, satisfying the requirement for a non-circular, evidence-grounded research plan.",
+          "rejected_directions": [
+            "Direct application of GMT to reconstruct physical interfaces (rejected due to circular validation and unsupported factual premises per reviewer feedback)",
+            "Weak measurement adaptation (rejected due to extreme domain mismatch between quantum weak values and classical interfacial chemistry, lacking any bridging evidence)",
+            "H-measure classification metrics (rejected as irrelevant to physical measurement problems)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is a theoretical feasibility study designed to test the mathematical compatibility between optical interference intensity maps and the C1,1 regularity assumptions required by the Geometric Measure Theory (GMT) framework in EV-Q006-96d82a3d3c56ef0dbf41225f. It does not assume that interference fringes are level sets of physical interfaces as an established fact, but rather treats this mapping as the primary variable under investigation. The study involves: 1) Generating synthetic optical interference patterns using standard thin-film physics equations (I = I0 cos^2(phi)), introducing controlled noise and phase singularities typical of real-world data; 2) Analyzing the regularity of these intensity functions to determine if they belong to the C1,1 class (Lipschitz continuous gradients) or if they exhibit discontinuities/singularities that violate GMT assumptions; 3) Applying the GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f only to those synthetic patterns that mathematically satisfy the C1,1 condition; 4) Quantifying the error introduced when applying GMT to patterns that marginally violate C1,1 conditions. This approach avoids circular validation by explicitly testing the boundary conditions of the mathematical theory against the structural properties of the measurement modality, without claiming physical reconstruction accuracy for real chemical interfaces.",
+          "datasets": {
+            "source": "Synthetic dataset generated via numerical simulation. Source data consists of 2D intensity maps I(x,y) derived from thin-film interference models with varying degrees of smoothness, noise levels, and phase singularities. No real experimental data is used due to lack of allowed evidence supporting specific chemical interface measurements.",
+            "target": "Mathematical regularity metrics (Lipschitz constants of gradients), GMT reconstruction stability scores, and identification of breakdown points where interference physics violates C1,1 assumptions."
+          },
+          "methods": "1. **Synthetic Data Generation**: Generate interference patterns using I(x,y) = I0 * cos^2(2*pi*n*h(x,y)/lambda + phi). Vary h(x,y) to include both C1,1 smooth surfaces and surfaces with sharp features or noise-induced singularities. 2. **Regularity Analysis**: Compute numerical gradients and second derivatives of I(x,y) to estimate Lipschitz constants. Classify patterns as 'C1,1-compliant' or 'C1,1-violating'. 3. **GMT Application**: Apply the level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f to the intensity maps. 4. **Consistency Check**: Evaluate whether the GMT output remains stable and mathematically well-defined for C1,1-compliant patterns, and quantify divergence/error for violating patterns. This tests the hypothesis that GMT is applicable *if and only if* regularity conditions are met.",
+          "experiments": {
+            "baselines": [
+              "Naive Level-Set Extraction: Directly treating intensity iso-lines as geometric boundaries without GMT correction, serving as a baseline for uncorrected geometric interpretation.",
+              "Standard Fourier Phase Retrieval: A common linear inversion method that assumes global smoothness and periodicity, used to contrast with the local measure-theoretic approach of GMT."
+            ],
+            "metrics": [
+              "Lipschitz Constant of Gradient: Quantitative measure of C1,1 regularity for each synthetic pattern.",
+              "GMT Stability Index: Variance in reconstructed measure when perturbing input data slightly; high variance indicates instability due to violated assumptions.",
+              "Reconstruction Error (Relative): Difference between GMT-derived geometric measures and analytical ground truth for known smooth cases."
+            ],
+            "ablation": "Vary the amplitude of high-frequency noise added to the interference pattern to simulate experimental uncertainty. Vary the presence of phase singularities (discontinuities in derivative) to test the robustness of the C1,1 assumption.",
+            "validation_protocol": "Split synthetic datasets into 'Compliant' (strictly C1,1) and 'Non-Compliant' (violating C1,1) groups. Validate that GMT performs consistently on the Compliant group and fails predictably on the Non-Compliant group. Use statistical tests (t-test) to compare stability indices between groups."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Code for generating synthetic interference patterns with controlled regularity properties is version-controlled.",
+            "Numerical differentiation methods for estimating Lipschitz constants are documented and standardized.",
+            "Implementation of GMT algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f is isolated and tested against known mathematical examples from the paper.",
+            "Random seeds for noise generation are fixed.",
+            "Criteria for classifying patterns as C1,1-compliant vs. violating are explicitly defined and threshold-based."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU workstation for numerical simulations and analysis.",
+            "estimated_runtime": "2-4 hours for dataset generation and regularity analysis.",
+            "software_dependencies": [
+              "Python 3.9+",
+              "NumPy",
+              "SciPy",
+              "Matplotlib"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly reframes the previously unsupported factual premise ('interference fringes are level sets') into a conditional, testable mathematical compatibility check ('if and only if'), directly addressing the critical issue of circular validation.",
+            "Evidence grounding is now compliant: the hypothesis relies solely on EV-Q006-96d82a3d3c56ef0dbf41225f for the mathematical framework and explicitly treats the physical applicability as a knowledge gap to be tested, rather than an established fact.",
+            "The experiment design has been successfully re-scoped as a 'theoretical feasibility study' with appropriate metrics (Lipschitz constants, stability indices) that validate the mathematical assumptions without claiming unverified physical reconstruction capabilities.",
+            "Results are correctly marked as pending, and no fabricated empirical data or unauthorized sources are present in this revision."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final report execution, ensure the 'established_facts' field from evidence_extraction is either removed or explicitly annotated as 'context_from_question_not_evidence' to prevent downstream consumers from misinterpreting booklet-derived context as verified fact.",
+            "Explicitly state in the experiment limitations that synthetic data generation uses standard optical models which themselves assume certain regularity; thus, passing the feasibility check validates consistency with standard models, not necessarily with all possible real-world interfacial phenomena."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 0.9,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:f082b83e2a5d",
+            "category": "critical_issue",
+            "description": "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:d04468f9c291",
+            "category": "critical_issue",
+            "description": "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:bd1f8a8653bf3743; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "critical_issue:4c0529a808dc",
+            "category": "critical_issue",
+            "description": "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:ee229a279f11aad4; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:1d6938fef8c9",
+            "category": "required_revision",
+            "description": "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:3a4f5782359e",
+            "category": "required_revision",
+            "description": "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:70e3b77c3ff35d58,change:9dd2184cec3fad89; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:8fc7c448ebc0",
+            "category": "required_revision",
+            "description": "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:56a55148c5f9",
+            "category": "required_revision",
+            "description": "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:a4394751a99d",
+            "category": "required_revision",
+            "description": "In the final report execution, ensure the 'established_facts' field from evidence_extraction is either removed or explicitly annotated as 'context_from_question_not_evidence' to prevent downstream consumers from misinterpreting booklet-derived context as verified fact.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:29ed4cf6a934",
+            "category": "required_revision",
+            "description": "Explicitly state in the experiment limitations that synthetic data generation uses standard optical models which themselves assume certain regularity; thus, passing the feasibility check validates consistency with standard models, not necessarily with all possible real-world interfacial phenomena.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "678c3cda741bdcb5e07dfb2160b66a51b8fd34f9958f53bf863d8aeb9702b35e",
+          "experiment_designer": "3e9e2baa460fff0e2c8f92d75a252489f74e3a928f4611a2eadcd17ee0e62d9c",
+          "scientific_reviewer": "0c971494c5a558c2c034e27d08da5f4f9a8acc6d7c7e58ae4ab1e2e1d5580748"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-080732-b15068dd",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-080732-b15068dd:review:v1",
+        "20260822-080732-b15068dd:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-080732-b15068dd:v1",
+        "20260822-080732-b15068dd:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-080732-b15068dd",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-080732-b15068dd:review:v1",
+          "20260822-080732-b15068dd:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-080732-b15068dd:v1",
+          "20260822-080732-b15068dd:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-080732-b15068dd",
+          "version_number": 1,
+          "version_id": "20260822-080732-b15068dd:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Geometric measure theory frameworks for C1,1 functions can be adapted to reconstruct microscopic interfacial topology from sparse optical interference data, overcoming current information limitations in film thickness measurements.",
+                "mechanism": "Optical interference provides level-set data of the interface; applying geometric measure theory (specifically methods for measuring level sets of C1,1 functions) allows mathematical reconstruction of boundary measures and curvature that are not directly observable in raw interference patterns, thereby extracting hidden topological information about mass/heat transfer boundaries.",
+                "falsifiable_prediction": "If geometric measure theory reconstruction is applied to synthetic or experimental optical interference data of a known nanoscale interface, the reconstructed boundary measure will match ground-truth topological metrics (e.g., surface area, curvature distribution) with significantly lower error than standard interferometric inversion methods.",
+                "required_observations": [
+                  "Synthetic or experimental optical interference datasets of gas-liquid or liquid-solid interfaces with known ground-truth geometry",
+                  "Implementation of C1,1 level set measurement algorithms from EV-Q006-96d82a3d3c56ef0dbf41225f",
+                  "Quantitative comparison metrics between reconstructed and true interface topology"
+                ],
+                "risk_of_being_wrong": "The mathematical assumptions of C1,1 regularity may not hold for dynamic chemical interfaces undergoing evaporation or reaction, rendering the geometric measure theory framework inapplicable to real interfacial chemistry phenomena despite theoretical elegance.",
+                "supporting_evidence_ids": [
+                  "EV-Q006-96d82a3d3c56ef0dbf41225f"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.85,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.4,
+                "overall_score": 0.71
+              },
+              {
+                "hypothesis": "Weak measurement protocols from quantum optics can be repurposed to probe microscopic interfacial phenomena without perturbing delicate mass/heat transfer processes at gas-liquid or liquid-solid boundaries.",
+                "mechanism": "Weak measurement allows extraction of information about a system with minimal back-action; applying this to interfacial probing could yield molecular-scale data on evaporation or reaction dynamics that conventional optical interference cannot capture due to its limited information content and potential perturbation of the interface.",
+                "falsifiable_prediction": "If weak measurement is applied to a model gas-liquid interface, it will yield statistically significant signals correlated with interfacial molecular dynamics that are unobtainable via standard optical interference, while demonstrating measurably lower perturbation to the interface state.",
+                "required_observations": [
+                  "Experimental weak measurement setup adapted for classical interfacial systems",
+                  "Simultaneous comparison with standard optical interference on identical interface",
+                  "Quantification of interface perturbation (e.g., temperature, concentration disturbance) under both measurement modalities"
+                ],
+                "risk_of_being_wrong": "Weak measurement was developed for quantum systems (EV-Q006-fa7bc1f10b31ef34e57e2351); its translation to classical chemical interfaces may fail due to decoherence, insufficient signal-to-noise, or fundamental incompatibility with thermodynamic ensembles governing interfacial chemistry.",
+                "supporting_evidence_ids": [
+                  "EV-Q006-fa7bc1f10b31ef34e57e2351"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.95,
+                "falsifiability_score": 0.8,
+                "feasibility_score": 0.3,
+                "evidence_support_score": 0.3,
+                "overall_score": 0.59
+              },
+              {
+                "hypothesis": "Metric measure space formalisms can provide a unified mathematical representation of heterogeneous interfacial phenomena, enabling integration of disparate microscopic measurement data into coherent models of mass and heat transfer.",
+                "mechanism": "Interfacial chemistry involves multiple coupled processes (evaporation, reaction, explosions) across different scales; metric measure spaces (complete separable metric spaces with probability measures) offer a framework to encode spatial heterogeneity and stochastic dynamics simultaneously, potentially reconciling limited optical interference data with other partial observations.",
+                "falsifiable_prediction": "A metric measure space model fitted to multi-modal interfacial data will produce predictions of unobserved interfacial properties (e.g., local reaction rates) that are more accurate than models using only Euclidean or standard statistical representations, as validated against independent measurements.",
+                "required_observations": [
+                  "Multi-modal dataset combining optical interference with at least one other interfacial measurement technique",
+                  "Construction of metric measure space representation per EV-Q006-6cf08952bc7ef9b695c9aeae",
+                  "Out-of-sample prediction accuracy compared to baseline models"
+                ],
+                "risk_of_being_wrong": "The abstract nature of metric measure spaces may introduce unnecessary complexity without improving predictive power for concrete chemical phenomena; the framework may be mathematically valid but physically uninformative for interfacial choreography.",
+                "supporting_evidence_ids": [
+                  "EV-Q006-6cf08952bc7ef9b695c9aeae"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.4,
+                "evidence_support_score": 0.3,
+                "overall_score": 0.5
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is recommended because it directly addresses the stated limitation in the question (optical interference being 'too limited') by leveraging the most methodologically relevant evidence (EV-Q006-96d82a3d3c56ef0dbf41225f on measuring level sets of C1,1 functions). It has the highest combined feasibility and falsifiability scores, and can be validated using synthetic data or existing experimental datasets without requiring novel instrumentation. While evidence support is limited due to domain mismatch in the catalog, this hypothesis represents the most tractable bridge between available mathematical tools and the identified knowledge gap in interfacial measurement.",
+            "rejected_directions": [
+              "Direct application of H-measure classification performance metrics (EV-Q006-6ff9624118d1915d27e6119e) to interfacial chemistry lacks mechanistic plausibility and no clear pathway exists to connect classifier evaluation to physical measurement of interface phenomena.",
+              "Pursuing purely theoretical extensions of metric measure spaces without grounding in observable interfacial data risks producing mathematically rigorous but chemically irrelevant frameworks given the severe evidence gap."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that Geometric Measure Theory (GMT) frameworks for C1,1 functions can reconstruct microscopic interfacial topology from sparse optical interference data. The core mechanism relies on treating optical interference fringes as level sets of a height function h(x,y). Standard interferometry often fails to resolve curvature or complex topology due to phase ambiguity and sparsity. We will implement the 'Measuring Level Sets of C1,1 Functions' algorithm described in EV-Q006-96d82a3d3c56ef0dbf41225f. The method involves: 1) Generating synthetic ground-truth interfaces with known C1,1 regularity (bounded second derivatives); 2) Simulating sparse optical interference patterns (intensity maps) from these interfaces; 3) Applying GMT-based reconstruction to estimate boundary measures (perimeter, area) and curvature distributions from the intensity level sets; 4) Comparing reconstructed metrics against ground truth and standard inversion baselines. The key technical challenge is ensuring the simulated interface satisfies the C1,1 condition required by the GMT framework, as real chemical interfaces may exhibit higher irregularity.",
+            "datasets": {
+              "source": "Synthetic dataset generated via numerical simulation. Ground-truth interfaces are modeled as C1,1 continuous surfaces (e.g., superpositions of smooth Gaussian bumps and sinusoidal waves with bounded curvature). Optical interference data is simulated using the thin-film interference equation I(x,y) = I0 * cos^2(2*pi*n*h(x,y)/lambda + phi), subsampled to mimic sparse experimental data (e.g., 10-20% pixel density).",
+              "target": "Reconstructed topological metrics: Surface area, mean curvature distribution, and boundary length. These are compared against the known ground-truth values from the synthetic generation process."
+            },
+            "methods": "1. **Data Generation**: Create a set of 100 synthetic 2D interface height maps h(x,y) ensuring C1,1 regularity (Lipschitz continuous gradients). Simulate corresponding sparse optical interference intensity maps. 2. **GMT Reconstruction**: Implement the level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f. This involves identifying level sets in the intensity data and applying geometric measure theory integrals to estimate the underlying surface geometry without assuming global smoothness beyond C1,1. 3. **Baseline Inversion**: Apply standard Fourier-transform based phase retrieval and simple thresholding methods commonly used in basic interferometry. 4. **Metric Calculation**: Compute L2 error for height reconstruction, Hausdorff distance for boundary shape, and relative error for integrated curvature and surface area.",
+            "experiments": {
+              "baselines": [
+                "Standard Fourier Transform Phase Retrieval (FTPR): A common linear inversion technique for interferometric data.",
+                "Simple Thresholding/Contour Extraction: Directly extracting iso-intensity lines as height contours without geometric correction."
+              ],
+              "metrics": [
+                "Root Mean Square Error (RMSE) of reconstructed height map vs. ground truth.",
+                "Relative Error in Estimated Surface Area.",
+                "Hausdorff Distance between reconstructed and true interface boundaries."
+              ],
+              "ablation": "Vary the sparsity of the optical data (10%, 30%, 50% sampling) to test robustness. Vary the degree of C1,1 regularity (smoothness parameter) to test the limits of the GMT assumption.",
+              "validation_protocol": "K-fold cross-validation is not applicable for synthetic ground-truth comparison. Instead, use a hold-out test set of 20 unseen synthetic interfaces. Statistical significance of improvement over baselines will be assessed using paired t-tests on the error metrics across the 100 samples."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code for synthetic data generation (C1,1 surface creation and interference simulation) is version-controlled.",
+              "Implementation of GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f is documented with mathematical correspondence.",
+              "Random seeds for noise addition and subsampling are fixed and recorded.",
+              "Baseline algorithms (FTPR, Thresholding) are implemented using standard libraries (e.g., NumPy, SciPy) with specified parameters.",
+              "All error metrics are calculated using identical grid resolutions for fair comparison."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU/GPU workstation for numerical simulations.",
+              "estimated_runtime": "4-6 hours for full dataset generation and processing.",
+              "software_dependencies": [
+                "Python 3.9+",
+                "NumPy",
+                "SciPy",
+                "Matplotlib"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis relies on a critical factual premise ('Optical interference provides level-set data of the interface') that is not supported by any allowed Evidence ID. The evidence extraction correctly identifies this as a knowledge gap derived solely from the question booklet, which violates the rule against using non-evidence sources for factual claims.",
+              "Evidence EV-Q006-96d82a3d3c56ef0dbf41225f establishes mathematical methods for C1,1 functions but does not validate their applicability to optical interference patterns or chemical interfaces. The link between the math and the physical measurement modality is currently an unverified assumption presented as a mechanism.",
+              "While the experiment design uses synthetic data (which avoids immediate empirical fabrication), the validation is circular if the synthetic data generation assumes the very C1,1 regularity and level-set correspondence that the hypothesis seeks to prove applicable. Without external ground truth from allowed evidence, this remains a purely mathematical exercise with no verified connection to the scientific problem.",
+              "The 'established_facts' section in evidence_extraction explicitly admits reliance on the booklet excerpt. This confirms insufficient evidence grounding for the core problem definition."
+            ],
+            "critical_issues": [
+              "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+              "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+              "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence."
+            ],
+            "required_revisions": [
+              "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+              "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+              "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+              "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.2,
+            "falsifiability_score": 0.8,
+            "reproducibility_score": 0.7,
+            "reference_reliability_score": 0.9
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:f082b83e2a5d",
+              "category": "critical_issue",
+              "description": "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:d04468f9c291",
+              "category": "critical_issue",
+              "description": "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:4c0529a808dc",
+              "category": "critical_issue",
+              "description": "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:1d6938fef8c9",
+              "category": "required_revision",
+              "description": "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:3a4f5782359e",
+              "category": "required_revision",
+              "description": "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:8fc7c448ebc0",
+              "category": "required_revision",
+              "description": "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:56a55148c5f9",
+              "category": "required_revision",
+              "description": "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "8ce528c0477a00a7bd35c9e99c44bc35371cf2327b26c526a60fb808499de043",
+            "experiment_designer": "167f12eca142811bdb6e76ecd65d6cb7ae1e741f671765292c61f646d16e24be",
+            "scientific_reviewer": "a53f8aebee3f209b617e79f7671130913bd863dfa9e1db5f7009e4b31491fc15"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-080732-b15068dd",
+          "version_number": 2,
+          "version_id": "20260822-080732-b15068dd:v2",
+          "parent_version_id": "20260822-080732-b15068dd:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "The mathematical framework for measuring level sets of C1,1 functions (EV-Q006-96d82a3d3c56ef0dbf41225f) can be theoretically validated as a consistent estimator for interface geometry *if and only if* optical interference intensity maps satisfy specific regularity conditions, serving as a necessary feasibility check before any physical application.",
+                "mechanism": "This hypothesis treats the link between 'optical interference' and 'C1,1 level sets' not as an established fact but as the primary variable to be tested. The mechanism is a mathematical consistency verification: determining whether the structural properties of interference patterns (as defined in general optics literature, currently a knowledge gap in allowed evidence) map bijectively to the domain of validity for the GMT algorithms in EV-Q006-96d82a3d3c56ef0dbf41225f. Success is defined by mathematical compatibility, not physical measurement accuracy.",
+                "falsifiable_prediction": "If optical interference intensity functions do not possess bounded second derivatives (Lipschitz continuous gradients) or if their level sets fail to satisfy the rectifiability conditions required by the GMT framework in EV-Q006-96d82a3d3c56ef0dbf41225f, then the theoretical applicability of this specific GMT method to interferometry is falsified, regardless of synthetic data performance.",
+                "required_observations": [
+                  "Formal mathematical proof or disproof that standard thin-film interference intensity functions I(x,y) belong to the C1,1 class under realistic experimental noise and discretization",
+                  "Verification that the level set measure definition in EV-Q006-96d82a3d3c56ef0dbf41225f is well-defined for the specific topology of interference fringes",
+                  "Identification of specific breakdown points where interference physics violates GMT assumptions"
+                ],
+                "risk_of_being_wrong": "High risk that interference patterns are fundamentally incompatible with C1,1 assumptions due to phase singularities, noise, or diffraction effects, rendering the entire GMT approach theoretically invalid for this domain. This would confirm the 'knowledge gap' rather than bridge it.",
+                "supporting_evidence_ids": [
+                  "EV-Q006-96d82a3d3c56ef0dbf41225f"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.81
+              },
+              {
+                "hypothesis": "Metric measure space formalisms (EV-Q006-6cf08952bc7ef9b695c9aeae) provide a more robust theoretical basis for representing microscopic interfacial uncertainty than C1,1 GMT when domain-specific measurement physics is unverified.",
+                "mechanism": "Given the lack of evidence linking optical interference to C1,1 functions, this hypothesis proposes using metric measure spaces as a weaker, more general framework that does not assume differentiability. The mechanism relies on encoding the interface as a probability measure over a metric space, which accommodates the 'limited information' nature of current measurements without requiring unverified smoothness assumptions. This shifts the problem from 'reconstruction' to 'probabilistic representation'.",
+                "falsifiable_prediction": "If a metric measure space representation cannot capture the essential topological features of an interface (e.g., connectivity, dimension) with less information loss than a naive Euclidean embedding, then this framework offers no advantage for handling unverified measurement modalities.",
+                "required_observations": [
+                  "Construction of a metric measure space model for a generic interface using only sparse intensity data",
+                  "Comparison of information retention (entropy, mutual information) between MMS representation and standard Euclidean/C1,1 representations",
+                  "Demonstration that MMS axioms hold for the available data types without assuming C1,1 regularity"
+                ],
+                "risk_of_being_wrong": "The abstraction may be too general to yield actionable insights for interfacial chemistry; without specific physical constraints, the MMS might represent mathematical artifacts rather than chemical reality.",
+                "supporting_evidence_ids": [
+                  "EV-Q006-6cf08952bc7ef9b695c9aeae"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.68
+              },
+              {
+                "hypothesis": "Current allowed evidence is insufficient to formulate any valid hypothesis connecting microscopic interfacial measurement to available mathematical frameworks, constituting a definitive knowledge gap requiring new domain-specific evidence.",
+                "mechanism": "This is a null hypothesis asserting that no valid mechanistic link exists between the provided mathematical evidence (GMT, MMS, Weak Measurement) and the chemical interface problem without external validation. The 'mechanism' is the identification of the epistemic boundary: attempting to force a connection leads to circular validation or unfounded assumptions.",
+                "falsifiable_prediction": "If a comprehensive literature search (using only allowed IDs) reveals even one explicit theorem or example applying EV-Q006-96d82a3d3c56ef0dbf41225f or EV-Q006-6cf08952bc7ef9b695c9aeae to optical sensing or surface metrology, this null hypothesis is falsified.",
+                "required_observations": [
+                  "Exhaustive semantic search within allowed evidence texts for terms like 'interference', 'surface', 'film', 'optical', 'sensor'",
+                  "Verification that no implicit mapping exists between the mathematical definitions and physical measurement concepts",
+                  "Documentation of the specific missing axioms or empirical facts needed to bridge the gap"
+                ],
+                "risk_of_being_wrong": "Low risk of being factually wrong given current evidence state, but high risk of being unhelpful if a non-obvious theoretical connection actually exists that was missed due to overly strict interpretation.",
+                "supporting_evidence_ids": [
+                  "EV-Q006-96d82a3d3c56ef0dbf41225f",
+                  "EV-Q006-6cf08952bc7ef9b695c9aeae",
+                  "EV-Q006-6ff9624118d1915d27e6119e",
+                  "EV-Q006-fa7bc1f10b31ef34e57e2351"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 1.0,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.78
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it directly addresses the reviewer's critical feedback by reframing the previously assumed 'interference-as-level-set' link as the primary testable proposition rather than a premise. It avoids circular validation by focusing on mathematical consistency checks (feasibility study) rather than claiming physical reconstruction capability. It strictly adheres to allowed evidence EV-Q006-96d82a3d3c56ef0dbf41225f while explicitly acknowledging the knowledge gap regarding physical applicability. Unlike Hypothesis 2 (which gives up), it provides a constructive path to either validate the theoretical foundation or definitively prove its inapplicability, satisfying the requirement for a non-circular, evidence-grounded research plan.",
+            "rejected_directions": [
+              "Direct application of GMT to reconstruct physical interfaces (rejected due to circular validation and unsupported factual premises per reviewer feedback)",
+              "Weak measurement adaptation (rejected due to extreme domain mismatch between quantum weak values and classical interfacial chemistry, lacking any bridging evidence)",
+              "H-measure classification metrics (rejected as irrelevant to physical measurement problems)"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment is a theoretical feasibility study designed to test the mathematical compatibility between optical interference intensity maps and the C1,1 regularity assumptions required by the Geometric Measure Theory (GMT) framework in EV-Q006-96d82a3d3c56ef0dbf41225f. It does not assume that interference fringes are level sets of physical interfaces as an established fact, but rather treats this mapping as the primary variable under investigation. The study involves: 1) Generating synthetic optical interference patterns using standard thin-film physics equations (I = I0 cos^2(phi)), introducing controlled noise and phase singularities typical of real-world data; 2) Analyzing the regularity of these intensity functions to determine if they belong to the C1,1 class (Lipschitz continuous gradients) or if they exhibit discontinuities/singularities that violate GMT assumptions; 3) Applying the GMT level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f only to those synthetic patterns that mathematically satisfy the C1,1 condition; 4) Quantifying the error introduced when applying GMT to patterns that marginally violate C1,1 conditions. This approach avoids circular validation by explicitly testing the boundary conditions of the mathematical theory against the structural properties of the measurement modality, without claiming physical reconstruction accuracy for real chemical interfaces.",
+            "datasets": {
+              "source": "Synthetic dataset generated via numerical simulation. Source data consists of 2D intensity maps I(x,y) derived from thin-film interference models with varying degrees of smoothness, noise levels, and phase singularities. No real experimental data is used due to lack of allowed evidence supporting specific chemical interface measurements.",
+              "target": "Mathematical regularity metrics (Lipschitz constants of gradients), GMT reconstruction stability scores, and identification of breakdown points where interference physics violates C1,1 assumptions."
+            },
+            "methods": "1. **Synthetic Data Generation**: Generate interference patterns using I(x,y) = I0 * cos^2(2*pi*n*h(x,y)/lambda + phi). Vary h(x,y) to include both C1,1 smooth surfaces and surfaces with sharp features or noise-induced singularities. 2. **Regularity Analysis**: Compute numerical gradients and second derivatives of I(x,y) to estimate Lipschitz constants. Classify patterns as 'C1,1-compliant' or 'C1,1-violating'. 3. **GMT Application**: Apply the level-set measurement algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f to the intensity maps. 4. **Consistency Check**: Evaluate whether the GMT output remains stable and mathematically well-defined for C1,1-compliant patterns, and quantify divergence/error for violating patterns. This tests the hypothesis that GMT is applicable *if and only if* regularity conditions are met.",
+            "experiments": {
+              "baselines": [
+                "Naive Level-Set Extraction: Directly treating intensity iso-lines as geometric boundaries without GMT correction, serving as a baseline for uncorrected geometric interpretation.",
+                "Standard Fourier Phase Retrieval: A common linear inversion method that assumes global smoothness and periodicity, used to contrast with the local measure-theoretic approach of GMT."
+              ],
+              "metrics": [
+                "Lipschitz Constant of Gradient: Quantitative measure of C1,1 regularity for each synthetic pattern.",
+                "GMT Stability Index: Variance in reconstructed measure when perturbing input data slightly; high variance indicates instability due to violated assumptions.",
+                "Reconstruction Error (Relative): Difference between GMT-derived geometric measures and analytical ground truth for known smooth cases."
+              ],
+              "ablation": "Vary the amplitude of high-frequency noise added to the interference pattern to simulate experimental uncertainty. Vary the presence of phase singularities (discontinuities in derivative) to test the robustness of the C1,1 assumption.",
+              "validation_protocol": "Split synthetic datasets into 'Compliant' (strictly C1,1) and 'Non-Compliant' (violating C1,1) groups. Validate that GMT performs consistently on the Compliant group and fails predictably on the Non-Compliant group. Use statistical tests (t-test) to compare stability indices between groups."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Code for generating synthetic interference patterns with controlled regularity properties is version-controlled.",
+              "Numerical differentiation methods for estimating Lipschitz constants are documented and standardized.",
+              "Implementation of GMT algorithm from EV-Q006-96d82a3d3c56ef0dbf41225f is isolated and tested against known mathematical examples from the paper.",
+              "Random seeds for noise generation are fixed.",
+              "Criteria for classifying patterns as C1,1-compliant vs. violating are explicitly defined and threshold-based."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU workstation for numerical simulations and analysis.",
+              "estimated_runtime": "2-4 hours for dataset generation and regularity analysis.",
+              "software_dependencies": [
+                "Python 3.9+",
+                "NumPy",
+                "SciPy",
+                "Matplotlib"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly reframes the previously unsupported factual premise ('interference fringes are level sets') into a conditional, testable mathematical compatibility check ('if and only if'), directly addressing the critical issue of circular validation.",
+              "Evidence grounding is now compliant: the hypothesis relies solely on EV-Q006-96d82a3d3c56ef0dbf41225f for the mathematical framework and explicitly treats the physical applicability as a knowledge gap to be tested, rather than an established fact.",
+              "The experiment design has been successfully re-scoped as a 'theoretical feasibility study' with appropriate metrics (Lipschitz constants, stability indices) that validate the mathematical assumptions without claiming unverified physical reconstruction capabilities.",
+              "Results are correctly marked as pending, and no fabricated empirical data or unauthorized sources are present in this revision."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final report execution, ensure the 'established_facts' field from evidence_extraction is either removed or explicitly annotated as 'context_from_question_not_evidence' to prevent downstream consumers from misinterpreting booklet-derived context as verified fact.",
+              "Explicitly state in the experiment limitations that synthetic data generation uses standard optical models which themselves assume certain regularity; thus, passing the feasibility check validates consistency with standard models, not necessarily with all possible real-world interfacial phenomena."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 0.9,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:f082b83e2a5d",
+              "category": "critical_issue",
+              "description": "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:d04468f9c291",
+              "category": "critical_issue",
+              "description": "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:bd1f8a8653bf3743; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "critical_issue:4c0529a808dc",
+              "category": "critical_issue",
+              "description": "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:ee229a279f11aad4; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:1d6938fef8c9",
+              "category": "required_revision",
+              "description": "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:3a4f5782359e",
+              "category": "required_revision",
+              "description": "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:70e3b77c3ff35d58,change:9dd2184cec3fad89; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:8fc7c448ebc0",
+              "category": "required_revision",
+              "description": "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:56a55148c5f9",
+              "category": "required_revision",
+              "description": "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:a4394751a99d",
+              "category": "required_revision",
+              "description": "In the final report execution, ensure the 'established_facts' field from evidence_extraction is either removed or explicitly annotated as 'context_from_question_not_evidence' to prevent downstream consumers from misinterpreting booklet-derived context as verified fact.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:29ed4cf6a934",
+              "category": "required_revision",
+              "description": "Explicitly state in the experiment limitations that synthetic data generation uses standard optical models which themselves assume certain regularity; thus, passing the feasibility check validates consistency with standard models, not necessarily with all possible real-world interfacial phenomena.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "678c3cda741bdcb5e07dfb2160b66a51b8fd34f9958f53bf863d8aeb9702b35e",
+            "experiment_designer": "3e9e2baa460fff0e2c8f92d75a252489f74e3a928f4611a2eadcd17ee0e62d9c",
+            "scientific_reviewer": "0c971494c5a558c2c034e27d08da5f4f9a8acc6d7c7e58ae4ab1e2e1d5580748"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-080732-b15068dd:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-080732-b15068dd:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-080732-b15068dd:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-080732-b15068dd:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:f082b83e2a5d",
+          "category": "critical_issue",
+          "description": "Core factual premise (interference fringes = level sets) lacks support from allowed_evidence_ids; derived from prohibited source (booklet).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:d04468f9c291",
+          "category": "critical_issue",
+          "description": "No evidence supports the transferability of GMT C1,1 frameworks (EV-Q006-96d82a3d3c56ef0dbf41225f) to optical interferometry or interfacial chemistry.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:bd1f8a8653bf3743; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "critical_issue:4c0529a808dc",
+          "category": "critical_issue",
+          "description": "Risk of circular validation: Synthetic data generated with assumed C1,1 properties cannot independently validate the applicability of C1,1 theory to real/sparse interference data without external evidence.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:ee229a279f11aad4; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:1d6938fef8c9",
+          "category": "required_revision",
+          "description": "Reformulate the hypothesis to explicitly frame the 'interference-as-level-set' relationship as a待验证假设 (hypothesis to be tested) rather than an established mechanism, acknowledging the lack of direct evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:3a4f5782359e",
+          "category": "required_revision",
+          "description": "Add a specific experimental step or literature search task (using allowed IDs only) to verify whether optical interference intensity maps can be mathematically treated as level sets of C1,1 functions before applying GMT reconstruction.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:70e3b77c3ff35d58,change:9dd2184cec3fad89; evidence=EV-Q006-6cf08952bc7ef9b695c9aeae,EV-Q006-6ff9624118d1915d27e6119e,EV-Q006-96d82a3d3c56ef0dbf41225f,EV-Q006-fa7bc1f10b31ef34e57e2351; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:8fc7c448ebc0",
+          "category": "required_revision",
+          "description": "Clearly label the current approach as a 'theoretical feasibility study' rather than a solution to interfacial measurement limitations, given the absence of domain-specific evidence.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:56a55148c5f9",
+          "category": "required_revision",
+          "description": "If no allowed evidence can bridge the gap between GMT and interferometry, downgrade the claim to a 'knowledge_gap' identification or propose a pilot study strictly limited to mathematical consistency checks without claiming physical relevance.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a4394751a99d",
+          "category": "required_revision",
+          "description": "In the final report execution, ensure the 'established_facts' field from evidence_extraction is either removed or explicitly annotated as 'context_from_question_not_evidence' to prevent downstream consumers from misinterpreting booklet-derived context as verified fact.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:29ed4cf6a934",
+          "category": "required_revision",
+          "description": "Explicitly state in the experiment limitations that synthetic data generation uses standard optical models which themselves assume certain regularity; thus, passing the feasibility check validates consistency with standard models, not necessarily with all possible real-world interfacial phenomena.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "1e1836fe1df5f147158d0cb07e5fb5e96e01fedaa1e3b2f9b3f866c0ad4a1531"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-080732-b15068dd:wave-b-two-round",
+      "run_id": "20260822-080732-b15068dd",
+      "v1_version_id": "20260822-080732-b15068dd:v1",
+      "v2_version_id": "20260822-080732-b15068dd:v2",
+      "input_fingerprints": {
+        "v1": "167f12eca142811bdb6e76ecd65d6cb7ae1e741f671765292c61f646d16e24be",
+        "v2": "3e9e2baa460fff0e2c8f92d75a252489f74e3a928f4611a2eadcd17ee0e62d9c"
+      },
+      "responded_issue_count": 3,
+      "issue_ids": [
+        "critical_issue:d04468f9c291",
+        "critical_issue:4c0529a808dc",
+        "required_revision:3a4f5782359e"
+      ],
+      "change_ids": [
+        "change:bd1f8a8653bf3743",
+        "change:ee229a279f11aad4",
+        "change:70e3b77c3ff35d58",
+        "change:9dd2184cec3fad89"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.2,
+          "after": 0.9,
+          "delta": 0.7
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 0.95,
+          "delta": 0.1499999999999999
+        },
+        "reproducibility_score": {
+          "before": 0.7,
+          "after": 0.9,
+          "delta": 0.20000000000000007
+        },
+        "reference_reliability_score": {
+          "before": 0.9,
+          "after": 1.0,
+          "delta": 0.09999999999999998
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "The mathematical framework for measuring level sets of C1,1 functions (EV-Q006-96d82a3d3c56ef0dbf41225f) can be theoretically validated as a consistent estimator for interface geometry *if and only if* optical interference intensity maps satisfy specific regularity conditions, serving as a necessary feasibility check before any physical application.",
+          "overall_score": 0.81,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 2,
+          "hypothesis": "Current allowed evidence is insufficient to formulate any valid hypothesis connecting microscopic interfacial measurement to available mathematical frameworks, constituting a definitive knowledge gap requiring new domain-specific evidence.",
+          "overall_score": 0.78,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "Metric measure space formalisms (EV-Q006-6cf08952bc7ef9b695c9aeae) provide a more robust theoretical basis for representing microscopic interfacial uncertainty than C1,1 GMT when domain-specific measurement physics is unverified.",
+          "overall_score": 0.68,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "c31a9eeda662",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:10:02.517430+00:00",
+    "ended_at": "2026-08-22T08:10:32.142463+00:00",
+    "duration_ms": 29625,
+    "input_summary": "{\"question_item\": {\"id\": \"Q006\", \"domain\": \"Chemistry\", \"question\": \"How can we measure interface phenomena on the microscopic level?\", \"source_page\": 8, \"booklet_excerpt\": \"Interfacial chemistry is a fascinating field that seeks to expand and deepen our comprehension of behavior at the molecular interface of gases and liquids, liquids and solids, and solids and solids, among other systems. At these microscopic and nanoscale borders, an elemental dance occurs involving mass and heat transfer through evaporation, reaction, and micro- or even nanoscale explosions, but we still are unsure how the",
+    "output_summary": "{\"input_question\": \"How can we measure interface phenomena on the microscopic level?\", \"domain\": \"Chemistry\", \"problem_statement\": \"Current optical interference methods for measuring gas-liquid or liquid-solid interfaces provide limited information (e.g., film thickness) and fail to fully capture complex physical and chemical phenomena such as mass/heat transfer choreography at the nanoscale. There is a lack of validated microscopic measurement techniques in the provided evidence that bridge this gap.\", \"rationale\": \"The provided evidence catalog contains mathematical frameworks (Geometric Mea",
+    "evidence_ids": [
+      "EV-Q006-96d82a3d3c56ef0dbf41225f"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "f74c5539fbb4",
+    "mock": false
+  },
+  {
+    "event_id": "e63be82cf1d2",
+    "run_id": "20260822-080732-b15068dd",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:10:32.142463+00:00",
+    "ended_at": "2026-08-22T08:10:33.733998+00:00",
+    "duration_ms": 1591,
+    "input_summary": "{\"question_item\": {\"id\": \"Q006\", \"domain\": \"Chemistry\", \"question\": \"How can we measure interface phenomena on the microscopic level?\", \"source_page\": 8, \"booklet_excerpt\": \"Interfacial chemistry is a fascinating field that seeks to expand and deepen our comprehension of behavior at the molecular interface of gases and liquids, liquids and solids, and solids and solids, among other systems. At these microscopic and nanoscale borders, an elemental dance occurs involving mass and heat transfer through evaporation, reaction, and micro- or even nanoscale explosions, but we still are unsure how the",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not ResearchPlan. SchemaValidator requires a 'ResearchPlan' object to validate structure and evidence traceability.\", \"MissingFieldError: 'ResearchPlan' field is absent from input.\"], \"warnings\": [], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_check\": \"failed\", \"evidence_traceability\": \"skipped\", \"factual_accuracy\": \"skipped\"}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "857cd7076dd4",
+    "mock": false
+  }
+]

@@ -1,0 +1,1792 @@
+[
+  {
+    "event_id": "29b5e6a29c18",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:05.308448+00:00",
+    "ended_at": "2026-08-22T08:48:05.309449+00:00",
+    "duration_ms": 1,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "0ad8d3269b61",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:05.309449+00:00",
+    "ended_at": "2026-08-22T08:48:09.231623+00:00",
+    "duration_ms": 3922,
+    "input_summary": "{\"question_item\": {\"id\": \"Q067\", \"domain\": \"Astronomy\", \"question\": \"What is gravity?\", \"source_page\": 24, \"booklet_excerpt\": \"The universe consists of four fundamental forces: the weak force, which governs particle decay; the strong force, which allows for the formation of matter from particles like quarks and gluons; electromagnetism, which dictates how charged particles interact; and gravity, which describes and predicts movement, such as the orbits, formation, and stability of stars, galaxies, and anything that has mass or energy. But the makeup of gravity is still a mystery, igniting the ",
+    "output_summary": "{\"domain\": \"Astronomy\", \"core_question\": \"What is the fundamental nature or makeup of gravity?\", \"keywords\": [\"gravity\", \"fundamental forces\", \"space-time\", \"general theory of relativity\", \"Newton\", \"Einstein\"], \"entities\": [\"gravity\", \"weak force\", \"strong force\", \"electromagnetism\", \"particles\", \"quarks\", \"gluons\", \"charged particles\", \"stars\", \"galaxies\", \"mass\", \"energy\", \"Newton\", \"Einstein\", \"general theory of relativity\", \"space-time\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The provided text defines gravity by its effects (predicting movement, orbits, formation",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b0406d3336b5",
+    "mock": false
+  },
+  {
+    "event_id": "fef03abf3b77",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:09.232625+00:00",
+    "ended_at": "2026-08-22T08:48:31.101343+00:00",
+    "duration_ms": 21868,
+    "input_summary": "{\"question_item\": {\"id\": \"Q067\", \"domain\": \"Astronomy\", \"question\": \"What is gravity?\", \"source_page\": 24, \"booklet_excerpt\": \"The universe consists of four fundamental forces: the weak force, which governs particle decay; the strong force, which allows for the formation of matter from particles like quarks and gluons; electromagnetism, which dictates how charged particles interact; and gravity, which describes and predicts movement, such as the orbits, formation, and stability of stars, galaxies, and anything that has mass or energy. But the makeup of gravity is still a mystery, igniting the ",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the booklet's claim that gravity is one of the four fundamental forces and its role in celestial mechanics as described in the source text.\", \"query\": \"gravity fundamental force orbits stars galaxies mass energy Newton Einstein\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming gravity as a fundamental force governing movement, orbits, and stability of massive objects, contrasting with weak, strong, and electromagnetic forces.\", \"priority\": \"high\"}, {\"purpose\": \"Extract the specific description of Newton's model of gravity as 'attraction'",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "07330e8721c2",
+    "mock": false
+  },
+  {
+    "event_id": "b17690829bae",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:31.113871+00:00",
+    "ended_at": "2026-08-22T08:48:51.709701+00:00",
+    "duration_ms": 20595,
+    "input_summary": "{\"question_item\": {\"id\": \"Q067\", \"domain\": \"Astronomy\", \"question\": \"What is gravity?\", \"source_page\": 24, \"booklet_excerpt\": \"The universe consists of four fundamental forces: the weak force, which governs particle decay; the strong force, which allows for the formation of matter from particles like quarks and gluons; electromagnetism, which dictates how charged particles interact; and gravity, which describes and predicts movement, such as the orbits, formation, and stability of stars, galaxies, and anything that has mass or energy. But the makeup of gravity is still a mystery, igniting the ",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Gravity is classified as one of the four fundamental interactions in physics.\", \"evidence_ids\": [\"EV-Q067-16bec119afd02a3796e9eeed\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": null}, {\"fact\": \"Gravity is considered the most mysterious fundamental interaction to study.\", \"evidence_ids\": [\"EV-Q067-16bec119afd02a3796e9eeed\"], \"confidence\": \"medium\", \"fact_type\": \"background\", \"caveat\": \"Reflects current scientific consensus on the difficulty of unifying gravity with quantum mechanics.\"}, {\"fact\": \"Any viable theory of gravity must reproduce Newton",
+    "evidence_ids": [
+      "EV-Q067-16bec119afd02a3796e9eeed",
+      "EV-Q067-4dc4b7d0e3d42b5dfdd38565",
+      "EV-Q067-6b5243bd87caa32ed2094f3a",
+      "EV-Q067-da43d6b6c21ff8d094c67551"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0c5db59ff9a2",
+    "mock": false
+  },
+  {
+    "event_id": "3d4b4b95a71a",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:51.709701+00:00",
+    "ended_at": "2026-08-22T08:49:16.761034+00:00",
+    "duration_ms": 25051,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q067\", \"domain\": \"Astronomy\", \"question\": \"What is gravity?\", \"source_page\": 24, \"booklet_excerpt\": \"The universe consists of four fundamental forces: the weak force, which governs particle decay; the strong force, which allows for the formation of matter from particles like quarks and gluons; electromagnetism, which dictates how charged particles interact; and gravity, which describes and predicts movement, such as the orbits, formation, and stability of stars, galaxies, and anything that has mass or energy. But the makeup of gravity is still",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales.\", \"mechanism\": \"Mass-energy dictates spacetime geometry; test particles follow geodesics in this curved manifold. In the weak-field limit, this geometry reduces to Newtonian potential. Deviations from Newtonian predictions in strong fields (e.g., near SgrA*) are strictly determined by the metric tensor with",
+    "evidence_ids": [
+      "EV-Q067-6b5243bd87caa32ed2094f3a",
+      "EV-Q067-4dc4b7d0e3d42b5dfdd38565",
+      "EV-Q067-16bec119afd02a3796e9eeed",
+      "EV-Q067-da43d6b6c21ff8d094c67551"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "f97ef1d6f562",
+    "mock": false
+  },
+  {
+    "event_id": "f14a584b6793",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:49:16.761034+00:00",
+    "ended_at": "2026-08-22T08:49:41.439114+00:00",
+    "duration_ms": 24678,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q067\", \"domain\": \"Astronomy\", \"question\": \"What is gravity?\", \"source_page\": 24, \"booklet_excerpt\": \"The universe consists of four fundamental forces: the weak force, which governs particle decay; the strong force, which allows for the formation of matter from particles like quarks and gluons; electromagnetism, which dictates how charged particles interact; and gravity, which describes and predicts movement, such as the orbits, formation, and stability of stars, galaxies, and anything that has mass or energy. But the makeup of gravity is still",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\\\Delta \\\\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will inclu",
+    "evidence_ids": [
+      "EV-Q067-6b5243bd87caa32ed2094f3a",
+      "EV-Q067-da43d6b6c21ff8d094c67551"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c643d4e919a0",
+    "mock": false
+  },
+  {
+    "event_id": "978162ec3769",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:49:41.440117+00:00",
+    "ended_at": "2026-08-22T08:49:48.487440+00:00",
+    "duration_ms": 7047,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q067\", \"domain\": \"Astronomy\", \"question\": \"What is gravity?\", \"source_page\": 24, \"booklet_excerpt\": \"The universe consists of four fundamental forces: the weak force, which governs particle decay; the strong force, which allows for the formation of matter from particles like quarks and gluons; electromagnetism, which dictates how charged particles interact; and gravity, which describes and predicts movement, such as the orbits, formation, and stability of stars, galaxies, and anything that has mass or energy. But the makeup of gravity is still",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the 'mysterious makeup' of gravity as a knowledge gap (EV-Q067-16bec119afd02a3796e9eeed) while proposing a testable geometric description grounded in available GRAVITY evidence (EV-Q067-6b5243bd87caa32ed2094f3a).\", \"Experiment design includes appropriate baselines (Newtonian, Fixed GR, Extended Mass) and metrics (Bayes Factor, Posterior Intervals) capable of falsifying the hypothesis.\", \"Results field correctly states 'pending' status; no fabrication of experimental outcomes detected.\", \"All factual claims re",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "865f75dc7d4a",
+    "mock": false
+  },
+  {
+    "event_id": "6bc8e136ce0f",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:49:48.489429+00:00",
+    "ended_at": "2026-08-22T08:50:14.334952+00:00",
+    "duration_ms": 25845,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the 'mysterious makeup' of gravity as a knowledge gap (EV-Q067-16bec119afd02a3796e9eeed) while proposing a testable geometric description grounded in available GRAVITY evidence (EV-Q067-6b5243bd87caa32ed2094f3a).\", \"Experiment design includes appropriate baselines (Newtonian, Fixed GR, Extended Mass) and metrics (Bayes Factor, Posterior Intervals) capable of falsifying the hypothesis.\", \"Results field correctly states 'pending' status; no fabrication of experimental ",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales accessible to current interferometry.\", \"mechanism\": \"Mass-energy dictates spacetime geometry; test particles follow geodesics in this curved manifold. In the weak-field limit, this geometry reduces to Newtonian potential (EV-Q067-4dc4b7d0e3d42b5dfdd38565). Deviations from Newtonian predictions in strong fie",
+    "evidence_ids": [
+      "EV-Q067-6b5243bd87caa32ed2094f3a",
+      "EV-Q067-4dc4b7d0e3d42b5dfdd38565",
+      "EV-Q067-16bec119afd02a3796e9eeed",
+      "EV-Q067-da43d6b6c21ff8d094c67551"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1f57eb0d8bb7",
+    "mock": false
+  },
+  {
+    "event_id": "63992aa07137",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:50:14.335951+00:00",
+    "ended_at": "2026-08-22T08:50:43.286467+00:00",
+    "duration_ms": 28950,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the 'mysterious makeup' of gravity as a knowledge gap (EV-Q067-16bec119afd02a3796e9eeed) while proposing a testable geometric description grounded in available GRAVITY evidence (EV-Q067-6b5243bd87caa32ed2094f3a).\", \"Experiment design includes appropriate baselines (Newtonian, Fixed GR, Extended Mass) and metrics (Bayes Factor, Posterior Intervals) capable of falsifying the hypothesis.\", \"Results field correctly states 'pending' status; no fabrication of experimental ",
+    "output_summary": "{\"technical_details\": \"This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\\\Delta \\\\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will inclu",
+    "evidence_ids": [
+      "EV-Q067-6b5243bd87caa32ed2094f3a",
+      "EV-Q067-da43d6b6c21ff8d094c67551"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b41368faa9aa",
+    "mock": false
+  },
+  {
+    "event_id": "f29195506802",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:50:43.286467+00:00",
+    "ended_at": "2026-08-22T08:50:51.255205+00:00",
+    "duration_ms": 7968,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies the 'mysterious makeup' of gravity as a knowledge gap (EV-Q067-16bec119afd02a3796e9eeed) while proposing a testable geometric description grounded in available GRAVITY evidence (EV-Q067-6b5243bd87caa32ed2094f3a).\", \"Experiment design includes appropriate baselines (Newtonian, Fixed GR, Extended Mass) and metrics (Bayes Factor, Posterior Intervals) capable of falsifying the hypothesis.\", \"Results field correctly states 'pending' status; no fabrication of experimental ",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"Revision successfully addresses previous critical issues by explicitly defining 'Stellar Cusp' and 'Dark Matter Spike' as distinct baselines in the experiment design, directly resolving the degeneracy concern (Issue required_revision:6a4910a29343).\", \"Validation protocol now clearly specifies that Injection-Recovery Tests must use real K-band visibility noise (EV-Q067-da43d6b6c21ff8d094c67551) to distinguish instrumental systematics from physical signals, satisfying Issue required_revision:159a9f6ece58.\", \"All factual claims remain strictly grounded in a",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "142628a501aa",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:6a0975a46a5d5093",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales.",
+              "mechanism": "Mass-energy dictates spacetime geometry; test particles follow geodesics in this curved manifold. In the weak-field limit, this geometry reduces to Newtonian potential. Deviations from Newtonian predictions in strong fields (e.g., near SgrA*) are strictly determined by the metric tensor without additional degrees of freedom.",
+              "falsifiable_prediction": "High-precision measurements of stellar orbits near SgrA* using the GRAVITY instrument will match General Relativity's post-Newtonian parameters (specifically gravitational redshift and Schwarzschild precession) within observational error bars, showing no statistically significant residuals indicative of non-geometric forces or modified gravity.",
+              "required_observations": [
+                "Spectroscopic radial velocity and astrometric position data of S-stars orbiting SgrA* obtained via GRAVITY instrument",
+                "K-band continuum flux and visibility amplitude data from GRAVITY Unit Telescopes for precise orbit fitting"
+              ],
+              "risk_of_being_wrong": "If GRAVITY data reveals systematic deviations from GR predictions (e.g., anomalous redshift or precession) that cannot be explained by astrophysical noise or standard matter distribution, the pure geometric hypothesis would be weakened in favor of modified gravity or extra-dimensional theories.",
+              "supporting_evidence_ids": [
+                "EV-Q067-6b5243bd87caa32ed2094f3a",
+                "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "The 'mysterious makeup' of gravity implies it is an emergent phenomenon or effective field theory that deviates from pure General Relativity at the strong-field regime accessible to current interferometry, manifesting as measurable anomalies in orbital dynamics near SgrA*.",
+              "mechanism": "While recovering Newtonian gravity in the weak limit, the underlying microstructure of gravity introduces correction terms to the metric or adds scalar/vector fields that become non-negligible at high curvatures (near event horizons). These corrections alter the relationship between mass and spacetime curvature compared to standard GR.",
+              "falsifiable_prediction": "Analysis of GRAVITY observations of SgrA* stellar orbits will detect statistically significant residuals (>3σ) from General Relativity predictions in gravitational redshift or orbital precession that correlate with proximity to the central mass, inconsistent with standard astrophysical systematics.",
+              "required_observations": [
+                "Time-series astrometry and spectroscopy of S-stars at pericenter passage using GRAVITY",
+                "Comparative analysis of K-band visibility amplitudes to rule out instrumental artifacts"
+              ],
+              "risk_of_being_wrong": "If all strong-field observations remain consistent with GR within error margins, or if apparent anomalies are fully explained by conventional astrophysics (e.g., extended mass distribution), the hypothesis of emergent/modified gravity at this scale is falsified.",
+              "supporting_evidence_ids": [
+                "EV-Q067-16bec119afd02a3796e9eeed",
+                "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+              ],
+              "contradicted_by_evidence_ids": [
+                "EV-Q067-6b5243bd87caa32ed2094f3a"
+              ],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "Current observational constraints on gravity's nature are limited by the precision of interferometric baselines; next-generation analysis of existing GRAVITY K-band data can tighten bounds on post-Newtonian parameters by an order of magnitude, distinguishing between geometric and alternative formulations.",
+              "mechanism": "Systematic errors in previous GRAVITY analyses may have masked subtle signals. Re-processing raw flux and visibility data with improved calibration and noise modeling will reduce uncertainty in orbital parameter estimation, enabling stricter tests of the Newtonian limit and relativistic corrections.",
+              "falsifiable_prediction": "Re-analysis of archived GRAVITY Unit Telescope data will yield reduced confidence intervals for post-Newtonian parameters that either confirm GR with higher precision or reveal previously hidden tensions with theoretical predictions.",
+              "required_observations": [
+                "Raw K-band continuum flux and normalized visibility amplitude data from GRAVITY UT baselines",
+                "Calibration frames and transfer function data for systematic error characterization"
+              ],
+              "risk_of_being_wrong": "If re-analysis does not significantly improve parameter constraints due to fundamental noise limits or irreducible systematics, the hypothesis that better analysis can resolve gravity's makeup is operationally falsified for this dataset.",
+              "supporting_evidence_ids": [
+                "EV-Q067-da43d6b6c21ff8d094c67551",
+                "EV-Q067-6b5243bd87caa32ed2094f3a"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.74
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best candidate because it directly addresses the question 'What is gravity?' using the strongest available observational evidence (GRAVITY measurements of SgrA*). It provides a clear, falsifiable framework grounded in established physics while acknowledging the knowledge gap regarding quantum makeup. It has the highest combined feasibility and evidence support scores, utilizing specific public datasets referenced in the evidence catalog. Unlike Hypothesis 1, it does not presuppose new physics without evidence, and unlike Hypothesis 2, it focuses on the physical nature of gravity rather than methodological refinement.",
+          "rejected_directions": [
+            "Quantum gravity mechanisms involving gravitons or string theory: Rejected due to complete absence of supporting evidence in the allowed catalog and inability to test with current astronomical observations.",
+            "Dark matter/energy explanations for gravitational phenomena: Rejected as outside the scope of defining gravity's fundamental nature based on provided evidence.",
+            "Purely philosophical definitions of gravity: Rejected for lacking falsifiable predictions and empirical grounding."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\Delta \\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will include standard Keplerian elements plus relativistic perturbations derived from the Schwarzschild metric. Systematic errors from instrumental calibration (GRAVITY UT baselines) and astrophysical noise (extended mass distribution) will be marginalized over using hierarchical modeling.",
+          "datasets": {
+            "source": [
+              {
+                "name": "GRAVITY SgrA* Spectroscopic and Astrometric Data",
+                "description": "Time-series radial velocity and sky-position coordinates of S-stars (e.g., S2, S38) obtained via the GRAVITY instrument on the VLT Interferometer.",
+                "evidence_ids": [
+                  "EV-Q067-6b5243bd87caa32ed2094f3a"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              },
+              {
+                "name": "GRAVITY K-band Continuum and Visibility Data",
+                "description": "Raw flux and normalized visibility amplitude data from the four Unit Telescopes and six baselines, used for precise astrometric centroiding and error characterization.",
+                "evidence_ids": [
+                  "EV-Q067-da43d6b6c21ff8d094c67551"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              }
+            ],
+            "target": {
+              "parameter_estimates": "Posterior distributions for Post-Newtonian parameters (f_redshift, f_precession) and orbital elements.",
+              "residual_analysis": "Time-series residuals of astrometric position and radial velocity after subtracting the best-fit GR model."
+            }
+          },
+          "methods": "1. Data Preprocessing: Calibrate raw K-band visibility amplitudes and fluxes using transfer function data to correct for atmospheric and instrumental systematics. Extract precise astrometric positions and radial velocities with associated covariance matrices.\n2. Orbital Modeling: Implement a relativistic orbital integrator that includes 1st-order Post-Newtonian corrections (Schwarzschild precession and gravitational redshift) as free scaling parameters ($f_{SP}$ and $f_{GR}$). In pure GR, these should equal 1.\n3. Bayesian Inference: Use an affine-invariant MCMC sampler (e.g., emcee) to explore the parameter space. Priors will be set based on Newtonian limits and previous observational constraints.\n4. Model Comparison: Compute Bayes Factors to compare the pure GR model ($f_{SP}=1, f_{GR}=1$) against alternative models (e.g., modified gravity where $f \\neq 1$, or Newtonian only).",
+          "experiments": {
+            "baselines": [
+              "Pure Newtonian Gravity Model: Assumes no relativistic corrections; serves as the null hypothesis for strong-field deviations.",
+              "Standard General Relativity (Fixed): Fixes PN parameters to exactly 1; used to calculate goodness-of-fit ($\\chi^2$) and residuals.",
+              "Extended Mass Distribution Model: Includes a distributed mass component (e.g., stellar cluster, dark matter spike) to test if apparent relativistic effects are mimicked by local mass density."
+            ],
+            "metrics": [
+              "Posterior Mean and Credible Intervals for f_SP and f_GR: Quantifies deviation from GR predictions.",
+              "Bayes Factor (K): Evaluates statistical preference for GR vs. alternative models.",
+              "Reduced Chi-Squared ($\\chi^2_\\nu$): Assesses the goodness-of-fit for the best-fit model.",
+              "Residual Autocorrelation: Checks for unmodeled systematic errors in time-series residuals."
+            ],
+            "ablation": "1. Exclude Gravitational Redshift: Fit only astrometric precession to isolate spatial curvature effects.\n2. Exclude Extended Mass: Fix extended mass to zero to test sensitivity of PN parameters to background potential assumptions.\n3. Subset Analysis: Perform fits using only pre-2018 data vs. full dataset including pericenter passage to evaluate information gain from strong-field regime.",
+            "validation_protocol": "1. Injection-Recovery Tests: Inject synthetic signals with known PN parameters into real noise data to verify parameter recovery accuracy.\n2. Cross-Validation: Split data by epoch (pre-pericenter vs. post-pericenter) to ensure consistency of derived parameters.\n3. Systematic Error Budget: Propagate calibration uncertainties from K-band visibility data into final parameter posteriors."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Archive raw GRAVITY visibility and flux data with DOI reference.",
+            "Publish Python/Jupyter notebooks containing the relativistic orbital integrator and MCMC setup.",
+            "Provide configuration files for the MCMC sampler (priors, step sizes, convergence criteria).",
+            "Document the calibration pipeline for converting raw interferometric data to astrometric/spectroscopic observables.",
+            "Release posterior samples and corner plots for all fitted parameters."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_time": "48-72 hours on high-performance cluster for full MCMC convergence.",
+            "required_software": [
+              "Python 3.9+",
+              "NumPy/SciPy",
+              "emcee (MCMC sampler)",
+              "Astropy (coordinate transformations)",
+              "Corner (visualization)"
+            ],
+            "data_access_requirements": "Access to ESO Archive for GRAVITY raw data (requires registration); public access to reduced data products via arXiv supplementary materials."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-084805-b799bcbf",
+        "version_number": 1,
+        "version_id": "20260822-084805-b799bcbf:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales.",
+              "mechanism": "Mass-energy dictates spacetime geometry; test particles follow geodesics in this curved manifold. In the weak-field limit, this geometry reduces to Newtonian potential. Deviations from Newtonian predictions in strong fields (e.g., near SgrA*) are strictly determined by the metric tensor without additional degrees of freedom.",
+              "falsifiable_prediction": "High-precision measurements of stellar orbits near SgrA* using the GRAVITY instrument will match General Relativity's post-Newtonian parameters (specifically gravitational redshift and Schwarzschild precession) within observational error bars, showing no statistically significant residuals indicative of non-geometric forces or modified gravity.",
+              "required_observations": [
+                "Spectroscopic radial velocity and astrometric position data of S-stars orbiting SgrA* obtained via GRAVITY instrument",
+                "K-band continuum flux and visibility amplitude data from GRAVITY Unit Telescopes for precise orbit fitting"
+              ],
+              "risk_of_being_wrong": "If GRAVITY data reveals systematic deviations from GR predictions (e.g., anomalous redshift or precession) that cannot be explained by astrophysical noise or standard matter distribution, the pure geometric hypothesis would be weakened in favor of modified gravity or extra-dimensional theories.",
+              "supporting_evidence_ids": [
+                "EV-Q067-6b5243bd87caa32ed2094f3a",
+                "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "The 'mysterious makeup' of gravity implies it is an emergent phenomenon or effective field theory that deviates from pure General Relativity at the strong-field regime accessible to current interferometry, manifesting as measurable anomalies in orbital dynamics near SgrA*.",
+              "mechanism": "While recovering Newtonian gravity in the weak limit, the underlying microstructure of gravity introduces correction terms to the metric or adds scalar/vector fields that become non-negligible at high curvatures (near event horizons). These corrections alter the relationship between mass and spacetime curvature compared to standard GR.",
+              "falsifiable_prediction": "Analysis of GRAVITY observations of SgrA* stellar orbits will detect statistically significant residuals (>3σ) from General Relativity predictions in gravitational redshift or orbital precession that correlate with proximity to the central mass, inconsistent with standard astrophysical systematics.",
+              "required_observations": [
+                "Time-series astrometry and spectroscopy of S-stars at pericenter passage using GRAVITY",
+                "Comparative analysis of K-band visibility amplitudes to rule out instrumental artifacts"
+              ],
+              "risk_of_being_wrong": "If all strong-field observations remain consistent with GR within error margins, or if apparent anomalies are fully explained by conventional astrophysics (e.g., extended mass distribution), the hypothesis of emergent/modified gravity at this scale is falsified.",
+              "supporting_evidence_ids": [
+                "EV-Q067-16bec119afd02a3796e9eeed",
+                "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+              ],
+              "contradicted_by_evidence_ids": [
+                "EV-Q067-6b5243bd87caa32ed2094f3a"
+              ],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "Current observational constraints on gravity's nature are limited by the precision of interferometric baselines; next-generation analysis of existing GRAVITY K-band data can tighten bounds on post-Newtonian parameters by an order of magnitude, distinguishing between geometric and alternative formulations.",
+              "mechanism": "Systematic errors in previous GRAVITY analyses may have masked subtle signals. Re-processing raw flux and visibility data with improved calibration and noise modeling will reduce uncertainty in orbital parameter estimation, enabling stricter tests of the Newtonian limit and relativistic corrections.",
+              "falsifiable_prediction": "Re-analysis of archived GRAVITY Unit Telescope data will yield reduced confidence intervals for post-Newtonian parameters that either confirm GR with higher precision or reveal previously hidden tensions with theoretical predictions.",
+              "required_observations": [
+                "Raw K-band continuum flux and normalized visibility amplitude data from GRAVITY UT baselines",
+                "Calibration frames and transfer function data for systematic error characterization"
+              ],
+              "risk_of_being_wrong": "If re-analysis does not significantly improve parameter constraints due to fundamental noise limits or irreducible systematics, the hypothesis that better analysis can resolve gravity's makeup is operationally falsified for this dataset.",
+              "supporting_evidence_ids": [
+                "EV-Q067-da43d6b6c21ff8d094c67551",
+                "EV-Q067-6b5243bd87caa32ed2094f3a"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.74
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best candidate because it directly addresses the question 'What is gravity?' using the strongest available observational evidence (GRAVITY measurements of SgrA*). It provides a clear, falsifiable framework grounded in established physics while acknowledging the knowledge gap regarding quantum makeup. It has the highest combined feasibility and evidence support scores, utilizing specific public datasets referenced in the evidence catalog. Unlike Hypothesis 1, it does not presuppose new physics without evidence, and unlike Hypothesis 2, it focuses on the physical nature of gravity rather than methodological refinement.",
+          "rejected_directions": [
+            "Quantum gravity mechanisms involving gravitons or string theory: Rejected due to complete absence of supporting evidence in the allowed catalog and inability to test with current astronomical observations.",
+            "Dark matter/energy explanations for gravitational phenomena: Rejected as outside the scope of defining gravity's fundamental nature based on provided evidence.",
+            "Purely philosophical definitions of gravity: Rejected for lacking falsifiable predictions and empirical grounding."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\Delta \\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will include standard Keplerian elements plus relativistic perturbations derived from the Schwarzschild metric. Systematic errors from instrumental calibration (GRAVITY UT baselines) and astrophysical noise (extended mass distribution) will be marginalized over using hierarchical modeling.",
+          "datasets": {
+            "source": [
+              {
+                "name": "GRAVITY SgrA* Spectroscopic and Astrometric Data",
+                "description": "Time-series radial velocity and sky-position coordinates of S-stars (e.g., S2, S38) obtained via the GRAVITY instrument on the VLT Interferometer.",
+                "evidence_ids": [
+                  "EV-Q067-6b5243bd87caa32ed2094f3a"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              },
+              {
+                "name": "GRAVITY K-band Continuum and Visibility Data",
+                "description": "Raw flux and normalized visibility amplitude data from the four Unit Telescopes and six baselines, used for precise astrometric centroiding and error characterization.",
+                "evidence_ids": [
+                  "EV-Q067-da43d6b6c21ff8d094c67551"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              }
+            ],
+            "target": {
+              "parameter_estimates": "Posterior distributions for Post-Newtonian parameters (f_redshift, f_precession) and orbital elements.",
+              "residual_analysis": "Time-series residuals of astrometric position and radial velocity after subtracting the best-fit GR model."
+            }
+          },
+          "methods": "1. Data Preprocessing: Calibrate raw K-band visibility amplitudes and fluxes using transfer function data to correct for atmospheric and instrumental systematics. Extract precise astrometric positions and radial velocities with associated covariance matrices.\n2. Orbital Modeling: Implement a relativistic orbital integrator that includes 1st-order Post-Newtonian corrections (Schwarzschild precession and gravitational redshift) as free scaling parameters ($f_{SP}$ and $f_{GR}$). In pure GR, these should equal 1.\n3. Bayesian Inference: Use an affine-invariant MCMC sampler (e.g., emcee) to explore the parameter space. Priors will be set based on Newtonian limits and previous observational constraints.\n4. Model Comparison: Compute Bayes Factors to compare the pure GR model ($f_{SP}=1, f_{GR}=1$) against alternative models (e.g., modified gravity where $f \\neq 1$, or Newtonian only).",
+          "experiments": {
+            "baselines": [
+              "Pure Newtonian Gravity Model: Assumes no relativistic corrections; serves as the null hypothesis for strong-field deviations.",
+              "Standard General Relativity (Fixed): Fixes PN parameters to exactly 1; used to calculate goodness-of-fit ($\\chi^2$) and residuals.",
+              "Extended Mass Distribution Model: Includes a distributed mass component (e.g., stellar cluster, dark matter spike) to test if apparent relativistic effects are mimicked by local mass density."
+            ],
+            "metrics": [
+              "Posterior Mean and Credible Intervals for f_SP and f_GR: Quantifies deviation from GR predictions.",
+              "Bayes Factor (K): Evaluates statistical preference for GR vs. alternative models.",
+              "Reduced Chi-Squared ($\\chi^2_\\nu$): Assesses the goodness-of-fit for the best-fit model.",
+              "Residual Autocorrelation: Checks for unmodeled systematic errors in time-series residuals."
+            ],
+            "ablation": "1. Exclude Gravitational Redshift: Fit only astrometric precession to isolate spatial curvature effects.\n2. Exclude Extended Mass: Fix extended mass to zero to test sensitivity of PN parameters to background potential assumptions.\n3. Subset Analysis: Perform fits using only pre-2018 data vs. full dataset including pericenter passage to evaluate information gain from strong-field regime.",
+            "validation_protocol": "1. Injection-Recovery Tests: Inject synthetic signals with known PN parameters into real noise data to verify parameter recovery accuracy.\n2. Cross-Validation: Split data by epoch (pre-pericenter vs. post-pericenter) to ensure consistency of derived parameters.\n3. Systematic Error Budget: Propagate calibration uncertainties from K-band visibility data into final parameter posteriors."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Archive raw GRAVITY visibility and flux data with DOI reference.",
+            "Publish Python/Jupyter notebooks containing the relativistic orbital integrator and MCMC setup.",
+            "Provide configuration files for the MCMC sampler (priors, step sizes, convergence criteria).",
+            "Document the calibration pipeline for converting raw interferometric data to astrometric/spectroscopic observables.",
+            "Release posterior samples and corner plots for all fitted parameters."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_time": "48-72 hours on high-performance cluster for full MCMC convergence.",
+            "required_software": [
+              "Python 3.9+",
+              "NumPy/SciPy",
+              "emcee (MCMC sampler)",
+              "Astropy (coordinate transformations)",
+              "Corner (visualization)"
+            ],
+            "data_access_requirements": "Access to ESO Archive for GRAVITY raw data (requires registration); public access to reduced data products via arXiv supplementary materials."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies the 'mysterious makeup' of gravity as a knowledge gap (EV-Q067-16bec119afd02a3796e9eeed) while proposing a testable geometric description grounded in available GRAVITY evidence (EV-Q067-6b5243bd87caa32ed2094f3a).",
+            "Experiment design includes appropriate baselines (Newtonian, Fixed GR, Extended Mass) and metrics (Bayes Factor, Posterior Intervals) capable of falsifying the hypothesis.",
+            "Results field correctly states 'pending' status; no fabrication of experimental outcomes detected.",
+            "All factual claims regarding GRAVITY capabilities and theoretical constraints are strictly mapped to valid Evidence IDs.",
+            "Reproducibility checklist is comprehensive, covering raw data archiving, code release, and calibration documentation."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+            "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:6a4910a29343",
+            "category": "required_revision",
+            "description": "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:159a9f6ece58",
+            "category": "required_revision",
+            "description": "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "30eeb5664668e605a0e28bc56b4a1e08c1a6a07868141b8620da8eb518049a34",
+          "experiment_designer": "6f7aa242e3f36dc597a8e2349c80ff6d1e6367385f93440eb6deba000abd561d",
+          "scientific_reviewer": "2a55461f6755bc49bdbe85d6f33886f4ed961aca3929badb926f8a992d07c37b"
+        }
+      },
+      "parent_version_id": "20260822-084805-b799bcbf:v1",
+      "lineage": [
+        "20260822-084805-b799bcbf:v1",
+        "20260822-084805-b799bcbf:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The candidate hypothesis correctly identifies the 'mysterious makeup' of gravity as a knowledge gap (EV-Q067-16bec119afd02a3796e9eeed) while proposing a testable geometric description grounded in available GRAVITY evidence (EV-Q067-6b5243bd87caa32ed2094f3a).",
+          "Experiment design includes appropriate baselines (Newtonian, Fixed GR, Extended Mass) and metrics (Bayes Factor, Posterior Intervals) capable of falsifying the hypothesis.",
+          "Results field correctly states 'pending' status; no fabrication of experimental outcomes detected.",
+          "All factual claims regarding GRAVITY capabilities and theoretical constraints are strictly mapped to valid Evidence IDs.",
+          "Reproducibility checklist is comprehensive, covering raw data archiving, code release, and calibration documentation."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+          "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "Revision successfully addresses previous critical issues by explicitly defining 'Stellar Cusp' and 'Dark Matter Spike' as distinct baselines in the experiment design, directly resolving the degeneracy concern (Issue required_revision:6a4910a29343).",
+          "Validation protocol now clearly specifies that Injection-Recovery Tests must use real K-band visibility noise (EV-Q067-da43d6b6c21ff8d094c67551) to distinguish instrumental systematics from physical signals, satisfying Issue required_revision:159a9f6ece58.",
+          "All factual claims remain strictly grounded in allowed Evidence IDs; no hallucinated references or unverified causal links detected.",
+          "Results field correctly maintains 'pending' status with no fabrication of experimental outcomes.",
+          "Hypothesis remains falsifiable via Bayes Factor comparison against the newly specified extended mass baselines."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "In the final execution phase, ensure the priors for the 'Dark Matter Spike' baseline are explicitly derived from EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 to prevent unconstrained fitting that could artificially absorb GR deviations.",
+          "Verify that the 'Injection-Recovery Tests' include specific cases where synthetic PN deviations are injected alongside realistic stellar cusp signals to confirm the pipeline can disentangle mass distribution effects from metric modifications."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.98,
+        "reproducibility_score": 0.98,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:4400ea58649387a5",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+          "issue_id": "required_revision:6a4910a29343"
+        },
+        {
+          "failure_id": "failure:621870fdd1d0a0cf",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.",
+          "issue_id": "required_revision:159a9f6ece58"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:1b2e09e911e7e5c7",
+          "issue_id": "required_revision:6a4910a29343",
+          "reason": "Reviewer item required_revision:6a4910a29343 requested 'Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.'. V2 changes control_groups; deterministic correlation evidence tokens=['baseline', 'cusp', 'dark', 'distribution', 'extend', 'mass', 'matter', 'model', 'parameter', 'pn', 'spike', 'stellar'], coverage=0.429.",
+          "before": [
+            "Pure Newtonian Gravity Model: Assumes no relativistic corrections; serves as the null hypothesis for strong-field deviations.",
+            "Standard General Relativity (Fixed): Fixes PN parameters to exactly 1; used to calculate goodness-of-fit ($\\chi^2$) and residuals.",
+            "Extended Mass Distribution Model: Includes a distributed mass component (e.g., stellar cluster, dark matter spike) to test if apparent relativistic effects are mimicked by local mass density."
+          ],
+          "after": [
+            "Pure Newtonian Gravity Model: Assumes no relativistic corrections; serves as the null hypothesis for strong-field deviations.",
+            "Standard General Relativity (Fixed): Fixes PN parameters to exactly 1; used to calculate goodness-of-fit ($\\chi^2$) and residuals.",
+            "Extended Mass Distribution Baseline (Stellar Cusp): Includes a distributed mass component modeled as a power-law stellar cusp to test if apparent relativistic effects are mimicked by local stellar density.",
+            "Extended Mass Distribution Baseline (Dark Matter Spike): Includes a distributed mass component modeled as a dark matter spike to test if apparent relativistic effects are mimicked by dark matter accumulation."
+          ],
+          "evidence_refs": [
+            "EV-Q067-6b5243bd87caa32ed2094f3a",
+            "EV-Q067-da43d6b6c21ff8d094c67551"
+          ],
+          "affected_plan_section": "control_groups",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:06de493d35f89da5",
+          "issue_id": "required_revision:6a4910a29343",
+          "reason": "Reviewer item required_revision:6a4910a29343 requested 'Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.'. V2 changes methods; deterministic correlation evidence tokens=['cusp', 'dark', 'degeneracy', 'distribution', 'e.g', 'extend', 'mass', 'matter', 'model', 'parameter', 'pn', 'specific', 'spike', 'stellar'], coverage=0.500.",
+          "before": "1. Data Preprocessing: Calibrate raw K-band visibility amplitudes and fluxes using transfer function data to correct for atmospheric and instrumental systematics. Extract precise astrometric positions and radial velocities with associated covariance matrices.\n2. Orbital Modeling: Implement a relativistic orbital integrator that includes 1st-order Post-Newtonian corrections (Schwarzschild precession and gravitational redshift) as free scaling parameters ($f_{SP}$ and $f_{GR}$). In pure GR, these should equal 1.\n3. Bayesian Inference: Use an affine-invariant MCMC sampler (e.g., emcee) to explore the parameter space. Priors will be set based on Newtonian limits and previous observational constraints.\n4. Model Comparison: Compute Bayes Factors to compare the pure GR model ($f_{SP}=1, f_{GR}=1$) against alternative models (e.g., modified gravity where $f \\neq 1$, or Newtonian only).",
+          "after": "1. Data Preprocessing: Calibrate raw K-band visibility amplitudes and fluxes using transfer function data to correct for atmospheric and instrumental systematics. Extract precise astrometric positions and radial velocities with associated covariance matrices.\n2. Orbital Modeling: Implement a relativistic orbital integrator that includes 1st-order Post-Newtonian corrections (Schwarzschild precession and gravitational redshift) as free scaling parameters ($f_{SP}$ and $f_{GR}$). In pure GR, these should equal 1.\n3. Extended Mass Modeling: Incorporate two specific mass distribution models to break degeneracy with PN parameters: (a) Stellar Cusp: $\\rho(r) \\propto r^{-\\gamma}$; (b) Dark Matter Spike: NFW-like profile modified by adiabatic contraction. These are fitted simultaneously with orbital parameters.\n4. Bayesian Inference: Use an affine-invariant MCMC sampler (e.g., emcee) to explore the parameter space. Priors will be set based on Newtonian limits and previous observational constraints.\n5. Model Comparison: Compute Bayes Factors to compare the pure GR model ($f_{SP}=1, f_{GR}=1$) against alternative models (e.g., modified gravity where $f \\neq 1$, or Newtonian only), while accounting for the extended mass priors.",
+          "evidence_refs": [
+            "EV-Q067-6b5243bd87caa32ed2094f3a",
+            "EV-Q067-da43d6b6c21ff8d094c67551"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:e8f1bb9bad348388",
+          "issue_id": "required_revision:6a4910a29343",
+          "reason": "Reviewer item required_revision:6a4910a29343 requested 'Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.'. V2 changes technical_details; deterministic correlation evidence tokens=['cusp', 'dark', 'degeneracy', 'distribution', 'explicitly', 'extend', 'implementation', 'mass', 'matter', 'model', 'parameter', 'pn', 'spike', 'stellar'], coverage=0.500.",
+          "before": "This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\Delta \\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will include standard Keplerian elements plus relativistic perturbations derived from the Schwarzschild metric. Systematic errors from instrumental calibration (GRAVITY UT baselines) and astrophysical noise (extended mass distribution) will be marginalized over using hierarchical modeling.",
+          "after": "This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\Delta \\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will include standard Keplerian elements plus relativistic perturbations derived from the Schwarzschild metric. To address degeneracy, we explicitly model extended mass distributions using two distinct profiles: a stellar cusp (power-law density profile) and a dark matter spike (adiabatically contracted halo profile), marginalizing over their normalization and slope parameters. Systematic errors from instrumental calibration in K-band visibility data are characterized via transfer function modeling.",
+          "evidence_refs": [
+            "EV-Q067-6b5243bd87caa32ed2094f3a",
+            "EV-Q067-da43d6b6c21ff8d094c67551"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:26435220106381b3",
+          "issue_id": "required_revision:159a9f6ece58",
+          "reason": "Reviewer item required_revision:159a9f6ece58 requested 'Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.'. V2 changes validation_protocol; deterministic correlation evidence tokens=['band', 'da43d6b6c21ff8d094c67551', 'data', 'deviation', 'ev', 'injection', 'instrumental', 'physical', 'protocol', 'q067', 'recovery', 'systematic', 'test', 'validate', 'visibility'], coverage=0.714.",
+          "before": "1. Injection-Recovery Tests: Inject synthetic signals with known PN parameters into real noise data to verify parameter recovery accuracy.\n2. Cross-Validation: Split data by epoch (pre-pericenter vs. post-pericenter) to ensure consistency of derived parameters.\n3. Systematic Error Budget: Propagate calibration uncertainties from K-band visibility data into final parameter posteriors.",
+          "after": "1. Injection-Recovery Tests for Systematics: Inject synthetic orbital signals with known PN parameters into real K-band visibility noise data (EV-Q067-da43d6b6c21ff8d094c67551). If the recovery pipeline yields biased PN parameters correlated with visibility amplitude fluctuations, this indicates instrumental systematics rather than physical deviations. Successful recovery within error bars validates the distinction.\n2. Cross-Validation: Split data by epoch (pre-pericenter vs. post-pericenter) to ensure consistency of derived parameters.\n3. Systematic Error Budget: Propagate calibration uncertainties from K-band visibility data into final parameter posteriors.",
+          "evidence_refs": [
+            "EV-Q067-6b5243bd87caa32ed2094f3a",
+            "EV-Q067-da43d6b6c21ff8d094c67551"
+          ],
+          "affected_plan_section": "validation_protocol",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:6a4910a29343",
+          "category": "required_revision",
+          "description": "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:1b2e09e911e7e5c7,change:06de493d35f89da5,change:e8f1bb9bad348388; evidence=EV-Q067-6b5243bd87caa32ed2094f3a,EV-Q067-da43d6b6c21ff8d094c67551; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:159a9f6ece58",
+          "category": "required_revision",
+          "description": "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:26435220106381b3; evidence=EV-Q067-6b5243bd87caa32ed2094f3a,EV-Q067-da43d6b6c21ff8d094c67551; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:fce3880c43ea",
+          "category": "required_revision",
+          "description": "In the final execution phase, ensure the priors for the 'Dark Matter Spike' baseline are explicitly derived from EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 to prevent unconstrained fitting that could artificially absorb GR deviations.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:444766b370b7",
+          "category": "required_revision",
+          "description": "Verify that the 'Injection-Recovery Tests' include specific cases where synthetic PN deviations are injected alongside realistic stellar cusp signals to confirm the pipeline can disentangle mass distribution effects from metric modifications.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reproducibility_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales accessible to current interferometry.",
+          "overall_score": 0.76,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The 'mysterious makeup' of gravity implies it is an emergent phenomenon or effective field theory that deviates from pure General Relativity at the strong-field regime accessible to current interferometry, manifesting as measurable anomalies in orbital dynamics near SgrA* distinct from extended mass effects.",
+          "overall_score": 0.76,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Current observational constraints on gravity's nature are limited by the precision of interferometric baselines and degeneracy with extended mass models; next-generation analysis of existing GRAVITY K-band data can tighten bounds on post-Newtonian parameters by explicitly modeling stellar cusp vs. dark matter spike distributions and validating instrumental systematics.",
+          "overall_score": 0.74,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "unresolved_issue:required_revision:fce3880c43ea",
+        "unresolved_issue:required_revision:444766b370b7",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:fce3880c43ea: In the final execution phase, ensure the priors for the 'Dark Matter Spike' baseline are explicitly derived from EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 to prevent unconstrained fitting that could artificially absorb GR deviations.",
+        "required_revision:444766b370b7: Verify that the 'Injection-Recovery Tests' include specific cases where synthetic PN deviations are injected alongside realistic stellar cusp signals to confirm the pipeline can disentangle mass distribution effects from metric modifications."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084805-b799bcbf",
+        "version_number": 1,
+        "version_id": "20260822-084805-b799bcbf:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales.",
+              "mechanism": "Mass-energy dictates spacetime geometry; test particles follow geodesics in this curved manifold. In the weak-field limit, this geometry reduces to Newtonian potential. Deviations from Newtonian predictions in strong fields (e.g., near SgrA*) are strictly determined by the metric tensor without additional degrees of freedom.",
+              "falsifiable_prediction": "High-precision measurements of stellar orbits near SgrA* using the GRAVITY instrument will match General Relativity's post-Newtonian parameters (specifically gravitational redshift and Schwarzschild precession) within observational error bars, showing no statistically significant residuals indicative of non-geometric forces or modified gravity.",
+              "required_observations": [
+                "Spectroscopic radial velocity and astrometric position data of S-stars orbiting SgrA* obtained via GRAVITY instrument",
+                "K-band continuum flux and visibility amplitude data from GRAVITY Unit Telescopes for precise orbit fitting"
+              ],
+              "risk_of_being_wrong": "If GRAVITY data reveals systematic deviations from GR predictions (e.g., anomalous redshift or precession) that cannot be explained by astrophysical noise or standard matter distribution, the pure geometric hypothesis would be weakened in favor of modified gravity or extra-dimensional theories.",
+              "supporting_evidence_ids": [
+                "EV-Q067-6b5243bd87caa32ed2094f3a",
+                "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "The 'mysterious makeup' of gravity implies it is an emergent phenomenon or effective field theory that deviates from pure General Relativity at the strong-field regime accessible to current interferometry, manifesting as measurable anomalies in orbital dynamics near SgrA*.",
+              "mechanism": "While recovering Newtonian gravity in the weak limit, the underlying microstructure of gravity introduces correction terms to the metric or adds scalar/vector fields that become non-negligible at high curvatures (near event horizons). These corrections alter the relationship between mass and spacetime curvature compared to standard GR.",
+              "falsifiable_prediction": "Analysis of GRAVITY observations of SgrA* stellar orbits will detect statistically significant residuals (>3σ) from General Relativity predictions in gravitational redshift or orbital precession that correlate with proximity to the central mass, inconsistent with standard astrophysical systematics.",
+              "required_observations": [
+                "Time-series astrometry and spectroscopy of S-stars at pericenter passage using GRAVITY",
+                "Comparative analysis of K-band visibility amplitudes to rule out instrumental artifacts"
+              ],
+              "risk_of_being_wrong": "If all strong-field observations remain consistent with GR within error margins, or if apparent anomalies are fully explained by conventional astrophysics (e.g., extended mass distribution), the hypothesis of emergent/modified gravity at this scale is falsified.",
+              "supporting_evidence_ids": [
+                "EV-Q067-16bec119afd02a3796e9eeed",
+                "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+              ],
+              "contradicted_by_evidence_ids": [
+                "EV-Q067-6b5243bd87caa32ed2094f3a"
+              ],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "Current observational constraints on gravity's nature are limited by the precision of interferometric baselines; next-generation analysis of existing GRAVITY K-band data can tighten bounds on post-Newtonian parameters by an order of magnitude, distinguishing between geometric and alternative formulations.",
+              "mechanism": "Systematic errors in previous GRAVITY analyses may have masked subtle signals. Re-processing raw flux and visibility data with improved calibration and noise modeling will reduce uncertainty in orbital parameter estimation, enabling stricter tests of the Newtonian limit and relativistic corrections.",
+              "falsifiable_prediction": "Re-analysis of archived GRAVITY Unit Telescope data will yield reduced confidence intervals for post-Newtonian parameters that either confirm GR with higher precision or reveal previously hidden tensions with theoretical predictions.",
+              "required_observations": [
+                "Raw K-band continuum flux and normalized visibility amplitude data from GRAVITY UT baselines",
+                "Calibration frames and transfer function data for systematic error characterization"
+              ],
+              "risk_of_being_wrong": "If re-analysis does not significantly improve parameter constraints due to fundamental noise limits or irreducible systematics, the hypothesis that better analysis can resolve gravity's makeup is operationally falsified for this dataset.",
+              "supporting_evidence_ids": [
+                "EV-Q067-da43d6b6c21ff8d094c67551",
+                "EV-Q067-6b5243bd87caa32ed2094f3a"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.74
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best candidate because it directly addresses the question 'What is gravity?' using the strongest available observational evidence (GRAVITY measurements of SgrA*). It provides a clear, falsifiable framework grounded in established physics while acknowledging the knowledge gap regarding quantum makeup. It has the highest combined feasibility and evidence support scores, utilizing specific public datasets referenced in the evidence catalog. Unlike Hypothesis 1, it does not presuppose new physics without evidence, and unlike Hypothesis 2, it focuses on the physical nature of gravity rather than methodological refinement.",
+          "rejected_directions": [
+            "Quantum gravity mechanisms involving gravitons or string theory: Rejected due to complete absence of supporting evidence in the allowed catalog and inability to test with current astronomical observations.",
+            "Dark matter/energy explanations for gravitational phenomena: Rejected as outside the scope of defining gravity's fundamental nature based on provided evidence.",
+            "Purely philosophical definitions of gravity: Rejected for lacking falsifiable predictions and empirical grounding."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\Delta \\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will include standard Keplerian elements plus relativistic perturbations derived from the Schwarzschild metric. Systematic errors from instrumental calibration (GRAVITY UT baselines) and astrophysical noise (extended mass distribution) will be marginalized over using hierarchical modeling.",
+          "datasets": {
+            "source": [
+              {
+                "name": "GRAVITY SgrA* Spectroscopic and Astrometric Data",
+                "description": "Time-series radial velocity and sky-position coordinates of S-stars (e.g., S2, S38) obtained via the GRAVITY instrument on the VLT Interferometer.",
+                "evidence_ids": [
+                  "EV-Q067-6b5243bd87caa32ed2094f3a"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              },
+              {
+                "name": "GRAVITY K-band Continuum and Visibility Data",
+                "description": "Raw flux and normalized visibility amplitude data from the four Unit Telescopes and six baselines, used for precise astrometric centroiding and error characterization.",
+                "evidence_ids": [
+                  "EV-Q067-da43d6b6c21ff8d094c67551"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              }
+            ],
+            "target": {
+              "parameter_estimates": "Posterior distributions for Post-Newtonian parameters (f_redshift, f_precession) and orbital elements.",
+              "residual_analysis": "Time-series residuals of astrometric position and radial velocity after subtracting the best-fit GR model."
+            }
+          },
+          "methods": "1. Data Preprocessing: Calibrate raw K-band visibility amplitudes and fluxes using transfer function data to correct for atmospheric and instrumental systematics. Extract precise astrometric positions and radial velocities with associated covariance matrices.\n2. Orbital Modeling: Implement a relativistic orbital integrator that includes 1st-order Post-Newtonian corrections (Schwarzschild precession and gravitational redshift) as free scaling parameters ($f_{SP}$ and $f_{GR}$). In pure GR, these should equal 1.\n3. Bayesian Inference: Use an affine-invariant MCMC sampler (e.g., emcee) to explore the parameter space. Priors will be set based on Newtonian limits and previous observational constraints.\n4. Model Comparison: Compute Bayes Factors to compare the pure GR model ($f_{SP}=1, f_{GR}=1$) against alternative models (e.g., modified gravity where $f \\neq 1$, or Newtonian only).",
+          "experiments": {
+            "baselines": [
+              "Pure Newtonian Gravity Model: Assumes no relativistic corrections; serves as the null hypothesis for strong-field deviations.",
+              "Standard General Relativity (Fixed): Fixes PN parameters to exactly 1; used to calculate goodness-of-fit ($\\chi^2$) and residuals.",
+              "Extended Mass Distribution Model: Includes a distributed mass component (e.g., stellar cluster, dark matter spike) to test if apparent relativistic effects are mimicked by local mass density."
+            ],
+            "metrics": [
+              "Posterior Mean and Credible Intervals for f_SP and f_GR: Quantifies deviation from GR predictions.",
+              "Bayes Factor (K): Evaluates statistical preference for GR vs. alternative models.",
+              "Reduced Chi-Squared ($\\chi^2_\\nu$): Assesses the goodness-of-fit for the best-fit model.",
+              "Residual Autocorrelation: Checks for unmodeled systematic errors in time-series residuals."
+            ],
+            "ablation": "1. Exclude Gravitational Redshift: Fit only astrometric precession to isolate spatial curvature effects.\n2. Exclude Extended Mass: Fix extended mass to zero to test sensitivity of PN parameters to background potential assumptions.\n3. Subset Analysis: Perform fits using only pre-2018 data vs. full dataset including pericenter passage to evaluate information gain from strong-field regime.",
+            "validation_protocol": "1. Injection-Recovery Tests: Inject synthetic signals with known PN parameters into real noise data to verify parameter recovery accuracy.\n2. Cross-Validation: Split data by epoch (pre-pericenter vs. post-pericenter) to ensure consistency of derived parameters.\n3. Systematic Error Budget: Propagate calibration uncertainties from K-band visibility data into final parameter posteriors."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Archive raw GRAVITY visibility and flux data with DOI reference.",
+            "Publish Python/Jupyter notebooks containing the relativistic orbital integrator and MCMC setup.",
+            "Provide configuration files for the MCMC sampler (priors, step sizes, convergence criteria).",
+            "Document the calibration pipeline for converting raw interferometric data to astrometric/spectroscopic observables.",
+            "Release posterior samples and corner plots for all fitted parameters."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_time": "48-72 hours on high-performance cluster for full MCMC convergence.",
+            "required_software": [
+              "Python 3.9+",
+              "NumPy/SciPy",
+              "emcee (MCMC sampler)",
+              "Astropy (coordinate transformations)",
+              "Corner (visualization)"
+            ],
+            "data_access_requirements": "Access to ESO Archive for GRAVITY raw data (requires registration); public access to reduced data products via arXiv supplementary materials."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies the 'mysterious makeup' of gravity as a knowledge gap (EV-Q067-16bec119afd02a3796e9eeed) while proposing a testable geometric description grounded in available GRAVITY evidence (EV-Q067-6b5243bd87caa32ed2094f3a).",
+            "Experiment design includes appropriate baselines (Newtonian, Fixed GR, Extended Mass) and metrics (Bayes Factor, Posterior Intervals) capable of falsifying the hypothesis.",
+            "Results field correctly states 'pending' status; no fabrication of experimental outcomes detected.",
+            "All factual claims regarding GRAVITY capabilities and theoretical constraints are strictly mapped to valid Evidence IDs.",
+            "Reproducibility checklist is comprehensive, covering raw data archiving, code release, and calibration documentation."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+            "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:6a4910a29343",
+            "category": "required_revision",
+            "description": "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:159a9f6ece58",
+            "category": "required_revision",
+            "description": "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "30eeb5664668e605a0e28bc56b4a1e08c1a6a07868141b8620da8eb518049a34",
+          "experiment_designer": "6f7aa242e3f36dc597a8e2349c80ff6d1e6367385f93440eb6deba000abd561d",
+          "scientific_reviewer": "2a55461f6755bc49bdbe85d6f33886f4ed961aca3929badb926f8a992d07c37b"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084805-b799bcbf",
+        "version_number": 2,
+        "version_id": "20260822-084805-b799bcbf:v2",
+        "parent_version_id": "20260822-084805-b799bcbf:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales accessible to current interferometry.",
+              "mechanism": "Mass-energy dictates spacetime geometry; test particles follow geodesics in this curved manifold. In the weak-field limit, this geometry reduces to Newtonian potential (EV-Q067-4dc4b7d0e3d42b5dfdd38565). Deviations from Newtonian predictions in strong fields (e.g., near SgrA*) are strictly determined by the metric tensor without additional degrees of freedom. Any observed anomalies must be attributable to extended mass distributions (stellar cusp or dark matter spike) or instrumental systematics in K-band visibility data before invoking non-geometric physics.",
+              "falsifiable_prediction": "High-precision measurements of stellar orbits near SgrA* using the GRAVITY instrument will match General Relativity's post-Newtonian parameters (specifically gravitational redshift and Schwarzschild precession) within observational error bars, showing no statistically significant residuals indicative of non-geometric forces or modified gravity after marginalizing over specific extended mass models and validated instrumental systematics.",
+              "required_observations": [
+                "Spectroscopic radial velocity and astrometric position data of S-stars orbiting SgrA* obtained via GRAVITY instrument (EV-Q067-6b5243bd87caa32ed2094f3a)",
+                "K-band continuum flux and normalized visibility amplitude data from GRAVITY Unit Telescopes for precise orbit fitting and systematic error characterization (EV-Q067-da43d6b6c21ff8d094c67551)",
+                "Injection-recovery test results distinguishing instrumental systematics from physical signals in K-band visibility data"
+              ],
+              "risk_of_being_wrong": "If GRAVITY data reveals systematic deviations from GR predictions (e.g., anomalous redshift or precession) that persist after accounting for specific extended mass models (stellar cusp vs. dark matter spike) and validated instrumental systematics, the pure geometric hypothesis would be weakened in favor of modified gravity or extra-dimensional theories.",
+              "supporting_evidence_ids": [
+                "EV-Q067-6b5243bd87caa32ed2094f3a",
+                "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "The 'mysterious makeup' of gravity implies it is an emergent phenomenon or effective field theory that deviates from pure General Relativity at the strong-field regime accessible to current interferometry, manifesting as measurable anomalies in orbital dynamics near SgrA* distinct from extended mass effects.",
+              "mechanism": "While recovering Newtonian gravity in the weak limit (EV-Q067-4dc4b7d0e3d42b5dfdd38565), the underlying microstructure of gravity introduces correction terms to the metric or adds scalar/vector fields that become non-negligible at high curvatures (near event horizons). These corrections alter the relationship between mass and spacetime curvature compared to standard GR, producing signatures distinguishable from stellar cusp or dark matter spike mass distributions.",
+              "falsifiable_prediction": "Analysis of GRAVITY observations of SgrA* stellar orbits will detect statistically significant residuals (>3σ) from General Relativity predictions in gravitational redshift or orbital precession that correlate with proximity to the central mass and cannot be explained by specific extended mass models (stellar cusp vs. dark matter spike) or instrumental systematics validated through injection-recovery tests.",
+              "required_observations": [
+                "Time-series astrometry and spectroscopy of S-stars at pericenter passage using GRAVITY (EV-Q067-6b5243bd87caa32ed2094f3a)",
+                "Comparative analysis of K-band visibility amplitudes to rule out instrumental artifacts via injection-recovery tests (EV-Q067-da43d6b6c21ff8d094c67551)",
+                "Bayesian model comparison between modified gravity and specific extended mass distribution models"
+              ],
+              "risk_of_being_wrong": "If all strong-field observations remain consistent with GR within error margins, or if apparent anomalies are fully explained by conventional astrophysics (e.g., stellar cusp or dark matter spike) or instrumental systematics, the hypothesis of emergent/modified gravity at this scale is falsified.",
+              "supporting_evidence_ids": [
+                "EV-Q067-16bec119afd02a3796e9eeed",
+                "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+              ],
+              "contradicted_by_evidence_ids": [
+                "EV-Q067-6b5243bd87caa32ed2094f3a"
+              ],
+              "novelty_score": 0.8,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.6,
+              "overall_score": 0.76
+            },
+            {
+              "hypothesis": "Current observational constraints on gravity's nature are limited by the precision of interferometric baselines and degeneracy with extended mass models; next-generation analysis of existing GRAVITY K-band data can tighten bounds on post-Newtonian parameters by explicitly modeling stellar cusp vs. dark matter spike distributions and validating instrumental systematics.",
+              "mechanism": "Systematic errors in previous GRAVITY analyses and degeneracy with unspecified extended mass distributions may have masked subtle signals. Re-processing raw flux and visibility data with improved calibration, explicit mass model comparison (stellar cusp vs. dark matter spike), and injection-recovery validation for K-band systematics will reduce uncertainty in orbital parameter estimation, enabling stricter tests of the Newtonian limit and relativistic corrections.",
+              "falsifiable_prediction": "Re-analysis of archived GRAVITY Unit Telescope data with explicit extended mass modeling and instrumental systematic validation will yield reduced confidence intervals for post-Newtonian parameters that either confirm GR with higher precision or reveal previously hidden tensions with theoretical predictions, resolving degeneracy between mass distribution and PN parameters.",
+              "required_observations": [
+                "Raw K-band continuum flux and normalized visibility amplitude data from GRAVITY UT baselines (EV-Q067-da43d6b6c21ff8d094c67551)",
+                "Calibration frames and transfer function data for systematic error characterization",
+                "Injection-recovery test results validating distinction between instrumental systematics and physical deviations"
+              ],
+              "risk_of_being_wrong": "If re-analysis does not significantly improve parameter constraints due to fundamental noise limits, irreducible systematics, or persistent degeneracy between mass models and PN parameters despite explicit modeling, the hypothesis that better analysis can resolve gravity's makeup is operationally falsified for this dataset.",
+              "supporting_evidence_ids": [
+                "EV-Q067-da43d6b6c21ff8d094c67551",
+                "EV-Q067-6b5243bd87caa32ed2094f3a"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.95,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.74
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected as the best candidate because it directly addresses the question 'What is gravity?' using the strongest available observational evidence (GRAVITY measurements of SgrA*). It provides a clear, falsifiable framework grounded in established physics while acknowledging the knowledge gap regarding quantum makeup. It has the highest combined feasibility and evidence support scores, utilizing specific public datasets referenced in the evidence catalog. The mechanism and validation protocol now explicitly address reviewer feedback by incorporating specific extended mass models (stellar cusp vs. dark matter spike) and injection-recovery tests for K-band systematics, ensuring degeneracy is properly handled. Unlike Hypothesis 1, it does not presuppose new physics without evidence, and unlike Hypothesis 2, it focuses on the physical nature of gravity rather than methodological refinement alone.",
+          "rejected_directions": [
+            "Quantum gravity mechanisms involving gravitons or string theory: Rejected due to complete absence of supporting evidence in the allowed catalog and inability to test with current astronomical observations.",
+            "Dark matter/energy explanations for gravitational phenomena: Rejected as outside the scope of defining gravity's fundamental nature based on provided evidence.",
+            "Purely philosophical definitions of gravity: Rejected for lacking falsifiable predictions and empirical grounding."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\Delta \\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will include standard Keplerian elements plus relativistic perturbations derived from the Schwarzschild metric. To address degeneracy, we explicitly model extended mass distributions using two distinct profiles: a stellar cusp (power-law density profile) and a dark matter spike (adiabatically contracted halo profile), marginalizing over their normalization and slope parameters. Systematic errors from instrumental calibration in K-band visibility data are characterized via transfer function modeling.",
+          "datasets": {
+            "source": [
+              {
+                "name": "GRAVITY SgrA* Spectroscopic and Astrometric Data",
+                "description": "Time-series radial velocity and sky-position coordinates of S-stars (e.g., S2, S38) obtained via the GRAVITY instrument on the VLT Interferometer.",
+                "evidence_ids": [
+                  "EV-Q067-6b5243bd87caa32ed2094f3a"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              },
+              {
+                "name": "GRAVITY K-band Continuum and Visibility Data",
+                "description": "Raw flux and normalized visibility amplitude data from the four Unit Telescopes and six baselines, used for precise astrometric centroiding and systematic error characterization.",
+                "evidence_ids": [
+                  "EV-Q067-da43d6b6c21ff8d094c67551"
+                ],
+                "access_status": "public_candidate",
+                "is_downloaded": false
+              }
+            ],
+            "target": {
+              "parameter_estimates": "Posterior distributions for Post-Newtonian parameters (f_redshift, f_precession), extended mass model parameters (cusp slope/spike density), and orbital elements.",
+              "residual_analysis": "Time-series residuals of astrometric position and radial velocity after subtracting the best-fit GR + Extended Mass model."
+            }
+          },
+          "methods": "1. Data Preprocessing: Calibrate raw K-band visibility amplitudes and fluxes using transfer function data to correct for atmospheric and instrumental systematics. Extract precise astrometric positions and radial velocities with associated covariance matrices.\n2. Orbital Modeling: Implement a relativistic orbital integrator that includes 1st-order Post-Newtonian corrections (Schwarzschild precession and gravitational redshift) as free scaling parameters ($f_{SP}$ and $f_{GR}$). In pure GR, these should equal 1.\n3. Extended Mass Modeling: Incorporate two specific mass distribution models to break degeneracy with PN parameters: (a) Stellar Cusp: $\\rho(r) \\propto r^{-\\gamma}$; (b) Dark Matter Spike: NFW-like profile modified by adiabatic contraction. These are fitted simultaneously with orbital parameters.\n4. Bayesian Inference: Use an affine-invariant MCMC sampler (e.g., emcee) to explore the parameter space. Priors will be set based on Newtonian limits and previous observational constraints.\n5. Model Comparison: Compute Bayes Factors to compare the pure GR model ($f_{SP}=1, f_{GR}=1$) against alternative models (e.g., modified gravity where $f \\neq 1$, or Newtonian only), while accounting for the extended mass priors.",
+          "experiments": {
+            "baselines": [
+              "Pure Newtonian Gravity Model: Assumes no relativistic corrections; serves as the null hypothesis for strong-field deviations.",
+              "Standard General Relativity (Fixed): Fixes PN parameters to exactly 1; used to calculate goodness-of-fit ($\\chi^2$) and residuals.",
+              "Extended Mass Distribution Baseline (Stellar Cusp): Includes a distributed mass component modeled as a power-law stellar cusp to test if apparent relativistic effects are mimicked by local stellar density.",
+              "Extended Mass Distribution Baseline (Dark Matter Spike): Includes a distributed mass component modeled as a dark matter spike to test if apparent relativistic effects are mimicked by dark matter accumulation."
+            ],
+            "metrics": [
+              "Posterior Mean and Credible Intervals for f_SP and f_GR: Quantifies deviation from GR predictions.",
+              "Bayes Factor (K): Evaluates statistical preference for GR vs. alternative models.",
+              "Reduced Chi-Squared ($\\chi^2_\\nu$): Assesses the goodness-of-fit for the best-fit model.",
+              "Residual Autocorrelation: Checks for unmodeled systematic errors in time-series residuals."
+            ],
+            "ablation": "1. Exclude Gravitational Redshift: Fit only astrometric precession to isolate spatial curvature effects.\n2. Exclude Extended Mass: Fix extended mass to zero to test sensitivity of PN parameters to background potential assumptions.\n3. Subset Analysis: Perform fits using only pre-2018 data vs. full dataset including pericenter passage to evaluate information gain from strong-field regime.",
+            "validation_protocol": "1. Injection-Recovery Tests for Systematics: Inject synthetic orbital signals with known PN parameters into real K-band visibility noise data (EV-Q067-da43d6b6c21ff8d094c67551). If the recovery pipeline yields biased PN parameters correlated with visibility amplitude fluctuations, this indicates instrumental systematics rather than physical deviations. Successful recovery within error bars validates the distinction.\n2. Cross-Validation: Split data by epoch (pre-pericenter vs. post-pericenter) to ensure consistency of derived parameters.\n3. Systematic Error Budget: Propagate calibration uncertainties from K-band visibility data into final parameter posteriors."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Archive raw GRAVITY visibility and flux data with DOI reference.",
+            "Publish Python/Jupyter notebooks containing the relativistic orbital integrator and MCMC setup.",
+            "Provide configuration files for the MCMC sampler (priors, step sizes, convergence criteria).",
+            "Document the calibration pipeline for converting raw interferometric data to astrometric/spectroscopic observables.",
+            "Release posterior samples and corner plots for all fitted parameters.",
+            "Include code for generating synthetic injection-recovery tests using real noise properties."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_time": "48-72 hours on high-performance cluster for full MCMC convergence.",
+            "required_software": [
+              "Python 3.9+",
+              "NumPy/SciPy",
+              "emcee (MCMC sampler)",
+              "Astropy (coordinate transformations)",
+              "Corner (visualization)"
+            ],
+            "data_access_requirements": "Access to ESO Archive for GRAVITY raw data (requires registration); public access to reduced data products via arXiv supplementary materials."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "Revision successfully addresses previous critical issues by explicitly defining 'Stellar Cusp' and 'Dark Matter Spike' as distinct baselines in the experiment design, directly resolving the degeneracy concern (Issue required_revision:6a4910a29343).",
+            "Validation protocol now clearly specifies that Injection-Recovery Tests must use real K-band visibility noise (EV-Q067-da43d6b6c21ff8d094c67551) to distinguish instrumental systematics from physical signals, satisfying Issue required_revision:159a9f6ece58.",
+            "All factual claims remain strictly grounded in allowed Evidence IDs; no hallucinated references or unverified causal links detected.",
+            "Results field correctly maintains 'pending' status with no fabrication of experimental outcomes.",
+            "Hypothesis remains falsifiable via Bayes Factor comparison against the newly specified extended mass baselines."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "In the final execution phase, ensure the priors for the 'Dark Matter Spike' baseline are explicitly derived from EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 to prevent unconstrained fitting that could artificially absorb GR deviations.",
+            "Verify that the 'Injection-Recovery Tests' include specific cases where synthetic PN deviations are injected alongside realistic stellar cusp signals to confirm the pipeline can disentangle mass distribution effects from metric modifications."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.98,
+          "reproducibility_score": 0.98,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:6a4910a29343",
+            "category": "required_revision",
+            "description": "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:1b2e09e911e7e5c7,change:06de493d35f89da5,change:e8f1bb9bad348388; evidence=EV-Q067-6b5243bd87caa32ed2094f3a,EV-Q067-da43d6b6c21ff8d094c67551; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:159a9f6ece58",
+            "category": "required_revision",
+            "description": "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:26435220106381b3; evidence=EV-Q067-6b5243bd87caa32ed2094f3a,EV-Q067-da43d6b6c21ff8d094c67551; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:fce3880c43ea",
+            "category": "required_revision",
+            "description": "In the final execution phase, ensure the priors for the 'Dark Matter Spike' baseline are explicitly derived from EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 to prevent unconstrained fitting that could artificially absorb GR deviations.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:444766b370b7",
+            "category": "required_revision",
+            "description": "Verify that the 'Injection-Recovery Tests' include specific cases where synthetic PN deviations are injected alongside realistic stellar cusp signals to confirm the pipeline can disentangle mass distribution effects from metric modifications.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "c211e580e70f29a7cd543eb948a901a81002bdba3cf101b95b54ca3a6bbab81b",
+          "experiment_designer": "6167b00aae007f2e12efc74085d34b96dc8ec39146c1e2908f2bf421f0f72b1b",
+          "scientific_reviewer": "060f1a2ea4554fb268e58241444722c2501904aa4544a99e3789024abbc286f0"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-084805-b799bcbf",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-084805-b799bcbf:review:v1",
+        "20260822-084805-b799bcbf:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-084805-b799bcbf:v1",
+        "20260822-084805-b799bcbf:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-084805-b799bcbf",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-084805-b799bcbf:review:v1",
+          "20260822-084805-b799bcbf:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-084805-b799bcbf:v1",
+          "20260822-084805-b799bcbf:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084805-b799bcbf",
+          "version_number": 1,
+          "version_id": "20260822-084805-b799bcbf:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales.",
+                "mechanism": "Mass-energy dictates spacetime geometry; test particles follow geodesics in this curved manifold. In the weak-field limit, this geometry reduces to Newtonian potential. Deviations from Newtonian predictions in strong fields (e.g., near SgrA*) are strictly determined by the metric tensor without additional degrees of freedom.",
+                "falsifiable_prediction": "High-precision measurements of stellar orbits near SgrA* using the GRAVITY instrument will match General Relativity's post-Newtonian parameters (specifically gravitational redshift and Schwarzschild precession) within observational error bars, showing no statistically significant residuals indicative of non-geometric forces or modified gravity.",
+                "required_observations": [
+                  "Spectroscopic radial velocity and astrometric position data of S-stars orbiting SgrA* obtained via GRAVITY instrument",
+                  "K-band continuum flux and visibility amplitude data from GRAVITY Unit Telescopes for precise orbit fitting"
+                ],
+                "risk_of_being_wrong": "If GRAVITY data reveals systematic deviations from GR predictions (e.g., anomalous redshift or precession) that cannot be explained by astrophysical noise or standard matter distribution, the pure geometric hypothesis would be weakened in favor of modified gravity or extra-dimensional theories.",
+                "supporting_evidence_ids": [
+                  "EV-Q067-6b5243bd87caa32ed2094f3a",
+                  "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.76
+              },
+              {
+                "hypothesis": "The 'mysterious makeup' of gravity implies it is an emergent phenomenon or effective field theory that deviates from pure General Relativity at the strong-field regime accessible to current interferometry, manifesting as measurable anomalies in orbital dynamics near SgrA*.",
+                "mechanism": "While recovering Newtonian gravity in the weak limit, the underlying microstructure of gravity introduces correction terms to the metric or adds scalar/vector fields that become non-negligible at high curvatures (near event horizons). These corrections alter the relationship between mass and spacetime curvature compared to standard GR.",
+                "falsifiable_prediction": "Analysis of GRAVITY observations of SgrA* stellar orbits will detect statistically significant residuals (>3σ) from General Relativity predictions in gravitational redshift or orbital precession that correlate with proximity to the central mass, inconsistent with standard astrophysical systematics.",
+                "required_observations": [
+                  "Time-series astrometry and spectroscopy of S-stars at pericenter passage using GRAVITY",
+                  "Comparative analysis of K-band visibility amplitudes to rule out instrumental artifacts"
+                ],
+                "risk_of_being_wrong": "If all strong-field observations remain consistent with GR within error margins, or if apparent anomalies are fully explained by conventional astrophysics (e.g., extended mass distribution), the hypothesis of emergent/modified gravity at this scale is falsified.",
+                "supporting_evidence_ids": [
+                  "EV-Q067-16bec119afd02a3796e9eeed",
+                  "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+                ],
+                "contradicted_by_evidence_ids": [
+                  "EV-Q067-6b5243bd87caa32ed2094f3a"
+                ],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.76
+              },
+              {
+                "hypothesis": "Current observational constraints on gravity's nature are limited by the precision of interferometric baselines; next-generation analysis of existing GRAVITY K-band data can tighten bounds on post-Newtonian parameters by an order of magnitude, distinguishing between geometric and alternative formulations.",
+                "mechanism": "Systematic errors in previous GRAVITY analyses may have masked subtle signals. Re-processing raw flux and visibility data with improved calibration and noise modeling will reduce uncertainty in orbital parameter estimation, enabling stricter tests of the Newtonian limit and relativistic corrections.",
+                "falsifiable_prediction": "Re-analysis of archived GRAVITY Unit Telescope data will yield reduced confidence intervals for post-Newtonian parameters that either confirm GR with higher precision or reveal previously hidden tensions with theoretical predictions.",
+                "required_observations": [
+                  "Raw K-band continuum flux and normalized visibility amplitude data from GRAVITY UT baselines",
+                  "Calibration frames and transfer function data for systematic error characterization"
+                ],
+                "risk_of_being_wrong": "If re-analysis does not significantly improve parameter constraints due to fundamental noise limits or irreducible systematics, the hypothesis that better analysis can resolve gravity's makeup is operationally falsified for this dataset.",
+                "supporting_evidence_ids": [
+                  "EV-Q067-da43d6b6c21ff8d094c67551",
+                  "EV-Q067-6b5243bd87caa32ed2094f3a"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.95,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.74
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected as the best candidate because it directly addresses the question 'What is gravity?' using the strongest available observational evidence (GRAVITY measurements of SgrA*). It provides a clear, falsifiable framework grounded in established physics while acknowledging the knowledge gap regarding quantum makeup. It has the highest combined feasibility and evidence support scores, utilizing specific public datasets referenced in the evidence catalog. Unlike Hypothesis 1, it does not presuppose new physics without evidence, and unlike Hypothesis 2, it focuses on the physical nature of gravity rather than methodological refinement.",
+            "rejected_directions": [
+              "Quantum gravity mechanisms involving gravitons or string theory: Rejected due to complete absence of supporting evidence in the allowed catalog and inability to test with current astronomical observations.",
+              "Dark matter/energy explanations for gravitational phenomena: Rejected as outside the scope of defining gravity's fundamental nature based on provided evidence.",
+              "Purely philosophical definitions of gravity: Rejected for lacking falsifiable predictions and empirical grounding."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\Delta \\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will include standard Keplerian elements plus relativistic perturbations derived from the Schwarzschild metric. Systematic errors from instrumental calibration (GRAVITY UT baselines) and astrophysical noise (extended mass distribution) will be marginalized over using hierarchical modeling.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "GRAVITY SgrA* Spectroscopic and Astrometric Data",
+                  "description": "Time-series radial velocity and sky-position coordinates of S-stars (e.g., S2, S38) obtained via the GRAVITY instrument on the VLT Interferometer.",
+                  "evidence_ids": [
+                    "EV-Q067-6b5243bd87caa32ed2094f3a"
+                  ],
+                  "access_status": "public_candidate",
+                  "is_downloaded": false
+                },
+                {
+                  "name": "GRAVITY K-band Continuum and Visibility Data",
+                  "description": "Raw flux and normalized visibility amplitude data from the four Unit Telescopes and six baselines, used for precise astrometric centroiding and error characterization.",
+                  "evidence_ids": [
+                    "EV-Q067-da43d6b6c21ff8d094c67551"
+                  ],
+                  "access_status": "public_candidate",
+                  "is_downloaded": false
+                }
+              ],
+              "target": {
+                "parameter_estimates": "Posterior distributions for Post-Newtonian parameters (f_redshift, f_precession) and orbital elements.",
+                "residual_analysis": "Time-series residuals of astrometric position and radial velocity after subtracting the best-fit GR model."
+              }
+            },
+            "methods": "1. Data Preprocessing: Calibrate raw K-band visibility amplitudes and fluxes using transfer function data to correct for atmospheric and instrumental systematics. Extract precise astrometric positions and radial velocities with associated covariance matrices.\n2. Orbital Modeling: Implement a relativistic orbital integrator that includes 1st-order Post-Newtonian corrections (Schwarzschild precession and gravitational redshift) as free scaling parameters ($f_{SP}$ and $f_{GR}$). In pure GR, these should equal 1.\n3. Bayesian Inference: Use an affine-invariant MCMC sampler (e.g., emcee) to explore the parameter space. Priors will be set based on Newtonian limits and previous observational constraints.\n4. Model Comparison: Compute Bayes Factors to compare the pure GR model ($f_{SP}=1, f_{GR}=1$) against alternative models (e.g., modified gravity where $f \\neq 1$, or Newtonian only).",
+            "experiments": {
+              "baselines": [
+                "Pure Newtonian Gravity Model: Assumes no relativistic corrections; serves as the null hypothesis for strong-field deviations.",
+                "Standard General Relativity (Fixed): Fixes PN parameters to exactly 1; used to calculate goodness-of-fit ($\\chi^2$) and residuals.",
+                "Extended Mass Distribution Model: Includes a distributed mass component (e.g., stellar cluster, dark matter spike) to test if apparent relativistic effects are mimicked by local mass density."
+              ],
+              "metrics": [
+                "Posterior Mean and Credible Intervals for f_SP and f_GR: Quantifies deviation from GR predictions.",
+                "Bayes Factor (K): Evaluates statistical preference for GR vs. alternative models.",
+                "Reduced Chi-Squared ($\\chi^2_\\nu$): Assesses the goodness-of-fit for the best-fit model.",
+                "Residual Autocorrelation: Checks for unmodeled systematic errors in time-series residuals."
+              ],
+              "ablation": "1. Exclude Gravitational Redshift: Fit only astrometric precession to isolate spatial curvature effects.\n2. Exclude Extended Mass: Fix extended mass to zero to test sensitivity of PN parameters to background potential assumptions.\n3. Subset Analysis: Perform fits using only pre-2018 data vs. full dataset including pericenter passage to evaluate information gain from strong-field regime.",
+              "validation_protocol": "1. Injection-Recovery Tests: Inject synthetic signals with known PN parameters into real noise data to verify parameter recovery accuracy.\n2. Cross-Validation: Split data by epoch (pre-pericenter vs. post-pericenter) to ensure consistency of derived parameters.\n3. Systematic Error Budget: Propagate calibration uncertainties from K-band visibility data into final parameter posteriors."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Archive raw GRAVITY visibility and flux data with DOI reference.",
+              "Publish Python/Jupyter notebooks containing the relativistic orbital integrator and MCMC setup.",
+              "Provide configuration files for the MCMC sampler (priors, step sizes, convergence criteria).",
+              "Document the calibration pipeline for converting raw interferometric data to astrometric/spectroscopic observables.",
+              "Release posterior samples and corner plots for all fitted parameters."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_compute_time": "48-72 hours on high-performance cluster for full MCMC convergence.",
+              "required_software": [
+                "Python 3.9+",
+                "NumPy/SciPy",
+                "emcee (MCMC sampler)",
+                "Astropy (coordinate transformations)",
+                "Corner (visualization)"
+              ],
+              "data_access_requirements": "Access to ESO Archive for GRAVITY raw data (requires registration); public access to reduced data products via arXiv supplementary materials."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The candidate hypothesis correctly identifies the 'mysterious makeup' of gravity as a knowledge gap (EV-Q067-16bec119afd02a3796e9eeed) while proposing a testable geometric description grounded in available GRAVITY evidence (EV-Q067-6b5243bd87caa32ed2094f3a).",
+              "Experiment design includes appropriate baselines (Newtonian, Fixed GR, Extended Mass) and metrics (Bayes Factor, Posterior Intervals) capable of falsifying the hypothesis.",
+              "Results field correctly states 'pending' status; no fabrication of experimental outcomes detected.",
+              "All factual claims regarding GRAVITY capabilities and theoretical constraints are strictly mapped to valid Evidence IDs.",
+              "Reproducibility checklist is comprehensive, covering raw data archiving, code release, and calibration documentation."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+              "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:6a4910a29343",
+              "category": "required_revision",
+              "description": "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:159a9f6ece58",
+              "category": "required_revision",
+              "description": "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "30eeb5664668e605a0e28bc56b4a1e08c1a6a07868141b8620da8eb518049a34",
+            "experiment_designer": "6f7aa242e3f36dc597a8e2349c80ff6d1e6367385f93440eb6deba000abd561d",
+            "scientific_reviewer": "2a55461f6755bc49bdbe85d6f33886f4ed961aca3929badb926f8a992d07c37b"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084805-b799bcbf",
+          "version_number": 2,
+          "version_id": "20260822-084805-b799bcbf:v2",
+          "parent_version_id": "20260822-084805-b799bcbf:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales accessible to current interferometry.",
+                "mechanism": "Mass-energy dictates spacetime geometry; test particles follow geodesics in this curved manifold. In the weak-field limit, this geometry reduces to Newtonian potential (EV-Q067-4dc4b7d0e3d42b5dfdd38565). Deviations from Newtonian predictions in strong fields (e.g., near SgrA*) are strictly determined by the metric tensor without additional degrees of freedom. Any observed anomalies must be attributable to extended mass distributions (stellar cusp or dark matter spike) or instrumental systematics in K-band visibility data before invoking non-geometric physics.",
+                "falsifiable_prediction": "High-precision measurements of stellar orbits near SgrA* using the GRAVITY instrument will match General Relativity's post-Newtonian parameters (specifically gravitational redshift and Schwarzschild precession) within observational error bars, showing no statistically significant residuals indicative of non-geometric forces or modified gravity after marginalizing over specific extended mass models and validated instrumental systematics.",
+                "required_observations": [
+                  "Spectroscopic radial velocity and astrometric position data of S-stars orbiting SgrA* obtained via GRAVITY instrument (EV-Q067-6b5243bd87caa32ed2094f3a)",
+                  "K-band continuum flux and normalized visibility amplitude data from GRAVITY Unit Telescopes for precise orbit fitting and systematic error characterization (EV-Q067-da43d6b6c21ff8d094c67551)",
+                  "Injection-recovery test results distinguishing instrumental systematics from physical signals in K-band visibility data"
+                ],
+                "risk_of_being_wrong": "If GRAVITY data reveals systematic deviations from GR predictions (e.g., anomalous redshift or precession) that persist after accounting for specific extended mass models (stellar cusp vs. dark matter spike) and validated instrumental systematics, the pure geometric hypothesis would be weakened in favor of modified gravity or extra-dimensional theories.",
+                "supporting_evidence_ids": [
+                  "EV-Q067-6b5243bd87caa32ed2094f3a",
+                  "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.76
+              },
+              {
+                "hypothesis": "The 'mysterious makeup' of gravity implies it is an emergent phenomenon or effective field theory that deviates from pure General Relativity at the strong-field regime accessible to current interferometry, manifesting as measurable anomalies in orbital dynamics near SgrA* distinct from extended mass effects.",
+                "mechanism": "While recovering Newtonian gravity in the weak limit (EV-Q067-4dc4b7d0e3d42b5dfdd38565), the underlying microstructure of gravity introduces correction terms to the metric or adds scalar/vector fields that become non-negligible at high curvatures (near event horizons). These corrections alter the relationship between mass and spacetime curvature compared to standard GR, producing signatures distinguishable from stellar cusp or dark matter spike mass distributions.",
+                "falsifiable_prediction": "Analysis of GRAVITY observations of SgrA* stellar orbits will detect statistically significant residuals (>3σ) from General Relativity predictions in gravitational redshift or orbital precession that correlate with proximity to the central mass and cannot be explained by specific extended mass models (stellar cusp vs. dark matter spike) or instrumental systematics validated through injection-recovery tests.",
+                "required_observations": [
+                  "Time-series astrometry and spectroscopy of S-stars at pericenter passage using GRAVITY (EV-Q067-6b5243bd87caa32ed2094f3a)",
+                  "Comparative analysis of K-band visibility amplitudes to rule out instrumental artifacts via injection-recovery tests (EV-Q067-da43d6b6c21ff8d094c67551)",
+                  "Bayesian model comparison between modified gravity and specific extended mass distribution models"
+                ],
+                "risk_of_being_wrong": "If all strong-field observations remain consistent with GR within error margins, or if apparent anomalies are fully explained by conventional astrophysics (e.g., stellar cusp or dark matter spike) or instrumental systematics, the hypothesis of emergent/modified gravity at this scale is falsified.",
+                "supporting_evidence_ids": [
+                  "EV-Q067-16bec119afd02a3796e9eeed",
+                  "EV-Q067-4dc4b7d0e3d42b5dfdd38565"
+                ],
+                "contradicted_by_evidence_ids": [
+                  "EV-Q067-6b5243bd87caa32ed2094f3a"
+                ],
+                "novelty_score": 0.8,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.6,
+                "overall_score": 0.76
+              },
+              {
+                "hypothesis": "Current observational constraints on gravity's nature are limited by the precision of interferometric baselines and degeneracy with extended mass models; next-generation analysis of existing GRAVITY K-band data can tighten bounds on post-Newtonian parameters by explicitly modeling stellar cusp vs. dark matter spike distributions and validating instrumental systematics.",
+                "mechanism": "Systematic errors in previous GRAVITY analyses and degeneracy with unspecified extended mass distributions may have masked subtle signals. Re-processing raw flux and visibility data with improved calibration, explicit mass model comparison (stellar cusp vs. dark matter spike), and injection-recovery validation for K-band systematics will reduce uncertainty in orbital parameter estimation, enabling stricter tests of the Newtonian limit and relativistic corrections.",
+                "falsifiable_prediction": "Re-analysis of archived GRAVITY Unit Telescope data with explicit extended mass modeling and instrumental systematic validation will yield reduced confidence intervals for post-Newtonian parameters that either confirm GR with higher precision or reveal previously hidden tensions with theoretical predictions, resolving degeneracy between mass distribution and PN parameters.",
+                "required_observations": [
+                  "Raw K-band continuum flux and normalized visibility amplitude data from GRAVITY UT baselines (EV-Q067-da43d6b6c21ff8d094c67551)",
+                  "Calibration frames and transfer function data for systematic error characterization",
+                  "Injection-recovery test results validating distinction between instrumental systematics and physical deviations"
+                ],
+                "risk_of_being_wrong": "If re-analysis does not significantly improve parameter constraints due to fundamental noise limits, irreducible systematics, or persistent degeneracy between mass models and PN parameters despite explicit modeling, the hypothesis that better analysis can resolve gravity's makeup is operationally falsified for this dataset.",
+                "supporting_evidence_ids": [
+                  "EV-Q067-da43d6b6c21ff8d094c67551",
+                  "EV-Q067-6b5243bd87caa32ed2094f3a"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.95,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.74
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected as the best candidate because it directly addresses the question 'What is gravity?' using the strongest available observational evidence (GRAVITY measurements of SgrA*). It provides a clear, falsifiable framework grounded in established physics while acknowledging the knowledge gap regarding quantum makeup. It has the highest combined feasibility and evidence support scores, utilizing specific public datasets referenced in the evidence catalog. The mechanism and validation protocol now explicitly address reviewer feedback by incorporating specific extended mass models (stellar cusp vs. dark matter spike) and injection-recovery tests for K-band systematics, ensuring degeneracy is properly handled. Unlike Hypothesis 1, it does not presuppose new physics without evidence, and unlike Hypothesis 2, it focuses on the physical nature of gravity rather than methodological refinement alone.",
+            "rejected_directions": [
+              "Quantum gravity mechanisms involving gravitons or string theory: Rejected due to complete absence of supporting evidence in the allowed catalog and inability to test with current astronomical observations.",
+              "Dark matter/energy explanations for gravitational phenomena: Rejected as outside the scope of defining gravity's fundamental nature based on provided evidence.",
+              "Purely philosophical definitions of gravity: Rejected for lacking falsifiable predictions and empirical grounding."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment tests the hypothesis that gravity is purely geometric (General Relativity) by analyzing high-precision astrometric and spectroscopic data of S-stars orbiting SgrA*. The core technical challenge is fitting orbital parameters while simultaneously solving for post-Newtonian (PN) corrections, specifically the gravitational redshift ($z_{GR}$) and Schwarzschild precession ($\\Delta \\omega$). We will employ a Bayesian inference framework using Markov Chain Monte Carlo (MCMC) methods to estimate the posterior distributions of PN parameters. The model will include standard Keplerian elements plus relativistic perturbations derived from the Schwarzschild metric. To address degeneracy, we explicitly model extended mass distributions using two distinct profiles: a stellar cusp (power-law density profile) and a dark matter spike (adiabatically contracted halo profile), marginalizing over their normalization and slope parameters. Systematic errors from instrumental calibration in K-band visibility data are characterized via transfer function modeling.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "GRAVITY SgrA* Spectroscopic and Astrometric Data",
+                  "description": "Time-series radial velocity and sky-position coordinates of S-stars (e.g., S2, S38) obtained via the GRAVITY instrument on the VLT Interferometer.",
+                  "evidence_ids": [
+                    "EV-Q067-6b5243bd87caa32ed2094f3a"
+                  ],
+                  "access_status": "public_candidate",
+                  "is_downloaded": false
+                },
+                {
+                  "name": "GRAVITY K-band Continuum and Visibility Data",
+                  "description": "Raw flux and normalized visibility amplitude data from the four Unit Telescopes and six baselines, used for precise astrometric centroiding and systematic error characterization.",
+                  "evidence_ids": [
+                    "EV-Q067-da43d6b6c21ff8d094c67551"
+                  ],
+                  "access_status": "public_candidate",
+                  "is_downloaded": false
+                }
+              ],
+              "target": {
+                "parameter_estimates": "Posterior distributions for Post-Newtonian parameters (f_redshift, f_precession), extended mass model parameters (cusp slope/spike density), and orbital elements.",
+                "residual_analysis": "Time-series residuals of astrometric position and radial velocity after subtracting the best-fit GR + Extended Mass model."
+              }
+            },
+            "methods": "1. Data Preprocessing: Calibrate raw K-band visibility amplitudes and fluxes using transfer function data to correct for atmospheric and instrumental systematics. Extract precise astrometric positions and radial velocities with associated covariance matrices.\n2. Orbital Modeling: Implement a relativistic orbital integrator that includes 1st-order Post-Newtonian corrections (Schwarzschild precession and gravitational redshift) as free scaling parameters ($f_{SP}$ and $f_{GR}$). In pure GR, these should equal 1.\n3. Extended Mass Modeling: Incorporate two specific mass distribution models to break degeneracy with PN parameters: (a) Stellar Cusp: $\\rho(r) \\propto r^{-\\gamma}$; (b) Dark Matter Spike: NFW-like profile modified by adiabatic contraction. These are fitted simultaneously with orbital parameters.\n4. Bayesian Inference: Use an affine-invariant MCMC sampler (e.g., emcee) to explore the parameter space. Priors will be set based on Newtonian limits and previous observational constraints.\n5. Model Comparison: Compute Bayes Factors to compare the pure GR model ($f_{SP}=1, f_{GR}=1$) against alternative models (e.g., modified gravity where $f \\neq 1$, or Newtonian only), while accounting for the extended mass priors.",
+            "experiments": {
+              "baselines": [
+                "Pure Newtonian Gravity Model: Assumes no relativistic corrections; serves as the null hypothesis for strong-field deviations.",
+                "Standard General Relativity (Fixed): Fixes PN parameters to exactly 1; used to calculate goodness-of-fit ($\\chi^2$) and residuals.",
+                "Extended Mass Distribution Baseline (Stellar Cusp): Includes a distributed mass component modeled as a power-law stellar cusp to test if apparent relativistic effects are mimicked by local stellar density.",
+                "Extended Mass Distribution Baseline (Dark Matter Spike): Includes a distributed mass component modeled as a dark matter spike to test if apparent relativistic effects are mimicked by dark matter accumulation."
+              ],
+              "metrics": [
+                "Posterior Mean and Credible Intervals for f_SP and f_GR: Quantifies deviation from GR predictions.",
+                "Bayes Factor (K): Evaluates statistical preference for GR vs. alternative models.",
+                "Reduced Chi-Squared ($\\chi^2_\\nu$): Assesses the goodness-of-fit for the best-fit model.",
+                "Residual Autocorrelation: Checks for unmodeled systematic errors in time-series residuals."
+              ],
+              "ablation": "1. Exclude Gravitational Redshift: Fit only astrometric precession to isolate spatial curvature effects.\n2. Exclude Extended Mass: Fix extended mass to zero to test sensitivity of PN parameters to background potential assumptions.\n3. Subset Analysis: Perform fits using only pre-2018 data vs. full dataset including pericenter passage to evaluate information gain from strong-field regime.",
+              "validation_protocol": "1. Injection-Recovery Tests for Systematics: Inject synthetic orbital signals with known PN parameters into real K-band visibility noise data (EV-Q067-da43d6b6c21ff8d094c67551). If the recovery pipeline yields biased PN parameters correlated with visibility amplitude fluctuations, this indicates instrumental systematics rather than physical deviations. Successful recovery within error bars validates the distinction.\n2. Cross-Validation: Split data by epoch (pre-pericenter vs. post-pericenter) to ensure consistency of derived parameters.\n3. Systematic Error Budget: Propagate calibration uncertainties from K-band visibility data into final parameter posteriors."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Archive raw GRAVITY visibility and flux data with DOI reference.",
+              "Publish Python/Jupyter notebooks containing the relativistic orbital integrator and MCMC setup.",
+              "Provide configuration files for the MCMC sampler (priors, step sizes, convergence criteria).",
+              "Document the calibration pipeline for converting raw interferometric data to astrometric/spectroscopic observables.",
+              "Release posterior samples and corner plots for all fitted parameters.",
+              "Include code for generating synthetic injection-recovery tests using real noise properties."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_compute_time": "48-72 hours on high-performance cluster for full MCMC convergence.",
+              "required_software": [
+                "Python 3.9+",
+                "NumPy/SciPy",
+                "emcee (MCMC sampler)",
+                "Astropy (coordinate transformations)",
+                "Corner (visualization)"
+              ],
+              "data_access_requirements": "Access to ESO Archive for GRAVITY raw data (requires registration); public access to reduced data products via arXiv supplementary materials."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "Revision successfully addresses previous critical issues by explicitly defining 'Stellar Cusp' and 'Dark Matter Spike' as distinct baselines in the experiment design, directly resolving the degeneracy concern (Issue required_revision:6a4910a29343).",
+              "Validation protocol now clearly specifies that Injection-Recovery Tests must use real K-band visibility noise (EV-Q067-da43d6b6c21ff8d094c67551) to distinguish instrumental systematics from physical signals, satisfying Issue required_revision:159a9f6ece58.",
+              "All factual claims remain strictly grounded in allowed Evidence IDs; no hallucinated references or unverified causal links detected.",
+              "Results field correctly maintains 'pending' status with no fabrication of experimental outcomes.",
+              "Hypothesis remains falsifiable via Bayes Factor comparison against the newly specified extended mass baselines."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "In the final execution phase, ensure the priors for the 'Dark Matter Spike' baseline are explicitly derived from EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 to prevent unconstrained fitting that could artificially absorb GR deviations.",
+              "Verify that the 'Injection-Recovery Tests' include specific cases where synthetic PN deviations are injected alongside realistic stellar cusp signals to confirm the pipeline can disentangle mass distribution effects from metric modifications."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.98,
+            "reproducibility_score": 0.98,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:6a4910a29343",
+              "category": "required_revision",
+              "description": "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:1b2e09e911e7e5c7,change:06de493d35f89da5,change:e8f1bb9bad348388; evidence=EV-Q067-6b5243bd87caa32ed2094f3a,EV-Q067-da43d6b6c21ff8d094c67551; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:159a9f6ece58",
+              "category": "required_revision",
+              "description": "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:26435220106381b3; evidence=EV-Q067-6b5243bd87caa32ed2094f3a,EV-Q067-da43d6b6c21ff8d094c67551; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:fce3880c43ea",
+              "category": "required_revision",
+              "description": "In the final execution phase, ensure the priors for the 'Dark Matter Spike' baseline are explicitly derived from EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 to prevent unconstrained fitting that could artificially absorb GR deviations.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:444766b370b7",
+              "category": "required_revision",
+              "description": "Verify that the 'Injection-Recovery Tests' include specific cases where synthetic PN deviations are injected alongside realistic stellar cusp signals to confirm the pipeline can disentangle mass distribution effects from metric modifications.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "c211e580e70f29a7cd543eb948a901a81002bdba3cf101b95b54ca3a6bbab81b",
+            "experiment_designer": "6167b00aae007f2e12efc74085d34b96dc8ec39146c1e2908f2bf421f0f72b1b",
+            "scientific_reviewer": "060f1a2ea4554fb268e58241444722c2501904aa4544a99e3789024abbc286f0"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-084805-b799bcbf:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-084805-b799bcbf:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-084805-b799bcbf:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-084805-b799bcbf:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:6a4910a29343",
+          "category": "required_revision",
+          "description": "Ensure the 'Extended Mass Distribution' baseline explicitly references the specific mass models (e.g., stellar cusp vs. dark matter spike) discussed in the full text of EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 during implementation to avoid degeneracy with PN parameters.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:1b2e09e911e7e5c7,change:06de493d35f89da5,change:e8f1bb9bad348388; evidence=EV-Q067-6b5243bd87caa32ed2094f3a,EV-Q067-da43d6b6c21ff8d094c67551; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:159a9f6ece58",
+          "category": "required_revision",
+          "description": "Clarify in the validation protocol how the 'Injection-Recovery Tests' will distinguish between instrumental systematics in K-band visibility data (EV-Q067-da43d6b6c21ff8d094c67551) and genuine physical deviations.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:26435220106381b3; evidence=EV-Q067-6b5243bd87caa32ed2094f3a,EV-Q067-da43d6b6c21ff8d094c67551; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:fce3880c43ea",
+          "category": "required_revision",
+          "description": "In the final execution phase, ensure the priors for the 'Dark Matter Spike' baseline are explicitly derived from EV-Q067-6b5243bd87caa32ed2094f3a or EV-Q067-da43d6b6c21ff8d094c67551 to prevent unconstrained fitting that could artificially absorb GR deviations.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:444766b370b7",
+          "category": "required_revision",
+          "description": "Verify that the 'Injection-Recovery Tests' include specific cases where synthetic PN deviations are injected alongside realistic stellar cusp signals to confirm the pipeline can disentangle mass distribution effects from metric modifications.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "6a835a9f62da0d74652f087a875c7017d04a6b3af6f653d89f854922d0775bd2"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-084805-b799bcbf:wave-b-two-round",
+      "run_id": "20260822-084805-b799bcbf",
+      "v1_version_id": "20260822-084805-b799bcbf:v1",
+      "v2_version_id": "20260822-084805-b799bcbf:v2",
+      "input_fingerprints": {
+        "v1": "6f7aa242e3f36dc597a8e2349c80ff6d1e6367385f93440eb6deba000abd561d",
+        "v2": "6167b00aae007f2e12efc74085d34b96dc8ec39146c1e2908f2bf421f0f72b1b"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "required_revision:6a4910a29343",
+        "required_revision:159a9f6ece58"
+      ],
+      "change_ids": [
+        "change:1b2e09e911e7e5c7",
+        "change:06de493d35f89da5",
+        "change:e8f1bb9bad348388",
+        "change:26435220106381b3"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reproducibility_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Gravity is fundamentally a geometric curvature of spacetime as described by General Relativity, and its apparent 'mysterious makeup' arises solely from the lack of quantum unification rather than a failure of the geometric description at astrophysical scales accessible to current interferometry.",
+          "overall_score": 0.76,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "The 'mysterious makeup' of gravity implies it is an emergent phenomenon or effective field theory that deviates from pure General Relativity at the strong-field regime accessible to current interferometry, manifesting as measurable anomalies in orbital dynamics near SgrA* distinct from extended mass effects.",
+          "overall_score": 0.76,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 2,
+          "hypothesis": "Current observational constraints on gravity's nature are limited by the precision of interferometric baselines and degeneracy with extended mass models; next-generation analysis of existing GRAVITY K-band data can tighten bounds on post-Newtonian parameters by explicitly modeling stellar cusp vs. dark matter spike distributions and validating instrumental systematics.",
+          "overall_score": 0.74,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "098863b70e48",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:50:51.263208+00:00",
+    "ended_at": "2026-08-22T08:51:26.917712+00:00",
+    "duration_ms": 35654,
+    "input_summary": "{\"question_item\": {\"id\": \"Q067\", \"domain\": \"Astronomy\", \"question\": \"What is gravity?\", \"source_page\": 24, \"booklet_excerpt\": \"The universe consists of four fundamental forces: the weak force, which governs particle decay; the strong force, which allows for the formation of matter from particles like quarks and gluons; electromagnetism, which dictates how charged particles interact; and gravity, which describes and predicts movement, such as the orbits, formation, and stability of stars, galaxies, and anything that has mass or energy. But the makeup of gravity is still a mystery, igniting the ",
+    "output_summary": "{\"input_question\": \"What is gravity?\", \"domain\": \"Astronomy\", \"problem_statement\": \"Gravity is identified as one of the four fundamental interactions, yet its fundamental makeup remains a mystery. While Newton described it as attraction and Einstein's General Relativity (GR) as the bending of space-time, the underlying mechanism unifying these descriptions or revealing its quantum nature is unknown. Current observational capabilities, such as the GRAVITY instrument, allow for precision tests in strong-field regimes (e.g., near SgrA*), but distinguishing pure geometric effects from extended mas",
+    "evidence_ids": [
+      "EV-Q067-6b5243bd87caa32ed2094f3a",
+      "EV-Q067-da43d6b6c21ff8d094c67551",
+      "EV-Q067-4dc4b7d0e3d42b5dfdd38565",
+      "EV-Q067-16bec119afd02a3796e9eeed"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2b7e5dddd14b",
+    "mock": false
+  },
+  {
+    "event_id": "5797d9446ae5",
+    "run_id": "20260822-084805-b799bcbf",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:51:26.917712+00:00",
+    "ended_at": "2026-08-22T08:51:28.329365+00:00",
+    "duration_ms": 1411,
+    "input_summary": "{\"question_item\": {\"id\": \"Q067\", \"domain\": \"Astronomy\", \"question\": \"What is gravity?\", \"source_page\": 24, \"booklet_excerpt\": \"The universe consists of four fundamental forces: the weak force, which governs particle decay; the strong force, which allows for the formation of matter from particles like quarks and gluons; electromagnetism, which dictates how charged particles interact; and gravity, which describes and predicts movement, such as the orbits, formation, and stability of stars, galaxies, and anything that has mass or energy. But the makeup of gravity is still a mystery, igniting the ",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Input missing required fields: ResearchPlan, EvidenceCards, AgentTrace, execution_metadata.\", \"Cannot perform validation without a submitted ResearchPlan to check against schema and evidence.\"], \"warnings\": [], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "f165a838bfb0",
+    "mock": false
+  }
+]

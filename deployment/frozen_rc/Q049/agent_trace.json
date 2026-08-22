@@ -1,0 +1,1896 @@
+[
+  {
+    "event_id": "997878498682",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:38:54.577163+00:00",
+    "ended_at": "2026-08-22T08:38:54.577163+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "21829c360248",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:38:54.577163+00:00",
+    "ended_at": "2026-08-22T08:38:57.584887+00:00",
+    "duration_ms": 3007,
+    "input_summary": "{\"question_item\": {\"id\": \"Q049\", \"domain\": \"Astronomy\", \"question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"source_page\": 21, \"booklet_excerpt\": \"Gravity keeps planets in stable orbits around the sun. Yet orbits do decay very gradually. Eventually, the planets will swirl into the sun.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Astronomy\", \"core_question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"keywords\": [\"planetary orbits\", \"orbit decay\", \"gravitational stability\", \"collision avoidance\"], \"entities\": [\"planets\", \"orbits\", \"sun\", \"gravity\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The analysis is strictly limited to the provided booklet excerpt which states that gravity maintains stable orbits but also notes gradual decay leading to eventual collapse. The scientific boundary does not extend to standard celestial mechanics (e.g., conserva",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "b1f103c2b088",
+    "mock": false
+  },
+  {
+    "event_id": "d02383e844fd",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:38:57.584887+00:00",
+    "ended_at": "2026-08-22T08:39:18.201092+00:00",
+    "duration_ms": 20616,
+    "input_summary": "{\"question_item\": {\"id\": \"Q049\", \"domain\": \"Astronomy\", \"question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"source_page\": 21, \"booklet_excerpt\": \"Gravity keeps planets in stable orbits around the sun. Yet orbits do decay very gradually. Eventually, the planets will swirl into the sun.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"keywords\": [\"plan",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the booklet's specific claim regarding gradual orbital decay and eventual collapse into the sun, as this contradicts standard Newtonian stability assumptions.\", \"query\": \"planetary orbit decay timescale collapse into sun gravitational radiation\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming or refuting the statement that orbits decay gradually leading to planets swirling into the sun.\", \"priority\": \"high\"}, {\"purpose\": \"Identify the mechanism cited in the source for orbital stability versus decay, specifically looking for mentions of ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "497aa42bfc69",
+    "mock": false
+  },
+  {
+    "event_id": "520da73042d0",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:39:18.247808+00:00",
+    "ended_at": "2026-08-22T08:39:28.238537+00:00",
+    "duration_ms": 9990,
+    "input_summary": "{\"question_item\": {\"id\": \"Q049\", \"domain\": \"Astronomy\", \"question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"source_page\": 21, \"booklet_excerpt\": \"Gravity keeps planets in stable orbits around the sun. Yet orbits do decay very gradually. Eventually, the planets will swirl into the sun.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q049-8bbe55a84dc7ec7a0a7655b0\", \"title\": \"arXiv:2404.00800\", \"source_type\": \"arxiv\", \"doi\": null, \"url\": \"https://arxiv.org/pdf/",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"Mechanisms preventing rapid orbital decay of planets (e.g., conservation of angular momentum, vacuum of space reducing drag) and the specific timescales or conditions under which decay might occur.\", \"why_it_matters\": \"The user question asks for the physical explanation of orbital stability versus decay. Without evidence addressing celestial mechanics, gravitational dynamics, or orbital friction, this core scientific concept cannot be answered.\", \"evidence_ids\": [], \"validation_need\": \"Requires astrophysical literatur",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "f6ac388167c0",
+    "mock": false
+  },
+  {
+    "event_id": "9272b90fbe3a",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:39:28.238537+00:00",
+    "ended_at": "2026-08-22T08:39:46.402714+00:00",
+    "duration_ms": 18164,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q049\", \"domain\": \"Astronomy\", \"question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"source_page\": 21, \"booklet_excerpt\": \"Gravity keeps planets in stable orbits around the sun. Yet orbits do decay very gradually. Eventually, the planets will swirl into the sun.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q049-8bbe55a84dc7ec7a0a7655b0\", \"title\": \"arXiv:2404.00800\", \"source_type\": \"arxiv\", \"doi\": null, \"url\"",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Planetary orbits remain stable against rapid decay because the interplanetary medium density is insufficient to generate significant aerodynamic drag, and gravitational wave emission is negligible at planetary mass scales, making angular momentum loss timescales exceed the current age of the solar system.\", \"mechanism\": \"Orbital decay requires a non-conservative force or torque to remove orbital energy and angular momentum. In the near-vacuum of interplanetary space, gas drag is minimal. Gravitational radiation power scales as (v/c)^5 and is negligible for plane",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "cfa5d8ad7659",
+    "mock": false
+  },
+  {
+    "event_id": "ae2d1967215a",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:39:46.402714+00:00",
+    "ended_at": "2026-08-22T08:40:11.231736+00:00",
+    "duration_ms": 24829,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q049\", \"domain\": \"Astronomy\", \"question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"source_page\": 21, \"booklet_excerpt\": \"Gravity keeps planets in stable orbits around the sun. Yet orbits do decay very gradually. Eventually, the planets will swirl into the sun.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery\", \"recommended_hypothesis\": {\"hypothesis\": \"Planetary orbits remain stable against rapid decay be",
+    "output_summary": "{\"technical_details\": \"This study aims to validate the hypothesis that planetary orbital stability is maintained due to negligible non-conservative forces (aerodynamic drag and gravitational wave emission) in the interplanetary medium. The core mechanism involves quantifying the timescale of orbital decay ($\\\\tau_{decay}$) induced by gas drag and gravitational radiation, comparing it against the age of the Solar System ($\\\\sim 4.5 \\\\times 10^9$ years). We will employ high-precision N-body simulations incorporating perturbative forces: Poynting-Robertson drag, solar wind drag, and quadrupole gr",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "6e12a7cdcdef",
+    "mock": false
+  },
+  {
+    "event_id": "101c12862c50",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:40:11.231736+00:00",
+    "ended_at": "2026-08-22T08:40:23.044072+00:00",
+    "duration_ms": 11812,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q049\", \"domain\": \"Astronomy\", \"question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"source_page\": 21, \"booklet_excerpt\": \"Gravity keeps planets in stable orbits around the sun. Yet orbits do decay very gradually. Eventually, the planets will swirl into the sun.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Planetary orbits remain stable against rapid decay because the interplanetary medium density ",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis and experiment design rely entirely on external astrophysical knowledge (JPL DE440, ISM density models, GW quadrupole formula) that is not present in the provided EvidenceCards.\", \"All four provided EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) are topically irrelevant to planetary orbital mechanics, covering Mars propellant costs, ferroelectric materials, particle physics flavor symmetries, and geodynamo theory respectively.",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0a39fbac9bbd",
+    "mock": false
+  },
+  {
+    "event_id": "fbf9c6e1a314",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:40:23.047070+00:00",
+    "ended_at": "2026-08-22T08:40:44.271241+00:00",
+    "duration_ms": 21224,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis and experiment design rely entirely on external astrophysical knowledge (JPL DE440, ISM density models, GW quadrupole formula) that is not present in the provided EvidenceCards.\", \"All four provided EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) are topically irrelevant to planetary orbital mechanics, covering Mars propellant costs, ferroelectric materials, particle physics flavor sym",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Current evidence catalog is insufficient to explain planetary orbital stability or decay; no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction, rendering the question unanswerable within the allowed scope.\", \"mechanism\": \"The provided evidence set (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) covers Mars propellant logistics, ferroelectric materials, particle physics flavor symmetries, and geodynamo theory respectively. None c",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "067c0968c2f5",
+    "mock": false
+  },
+  {
+    "event_id": "734b57c39ee6",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:40:44.271241+00:00",
+    "ended_at": "2026-08-22T08:41:08.062496+00:00",
+    "duration_ms": 23791,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis and experiment design rely entirely on external astrophysical knowledge (JPL DE440, ISM density models, GW quadrupole formula) that is not present in the provided EvidenceCards.\", \"All four provided EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) are topically irrelevant to planetary orbital mechanics, covering Mars propellant costs, ferroelectric materials, particle physics flavor sym",
+    "output_summary": "{\"technical_details\": \"This research plan addresses a critical knowledge gap identified in the evidence extraction phase. The recommended hypothesis posits that the current evidence catalog is insufficient to explain planetary orbital stability or decay because no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction. Consequently, this experiment design does not propose a physical simulation of orbital dynamics (which would require external data like JPL DE440 or ISM models not present in the allowed evidence). Instead, it designs a meta-analytical v",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8d2cfc0d3151",
+    "mock": false
+  },
+  {
+    "event_id": "f1a29620a718",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:41:08.062496+00:00",
+    "ended_at": "2026-08-22T08:41:13.356266+00:00",
+    "duration_ms": 5293,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The candidate hypothesis and experiment design rely entirely on external astrophysical knowledge (JPL DE440, ISM density models, GW quadrupole formula) that is not present in the provided EvidenceCards.\", \"All four provided EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) are topically irrelevant to planetary orbital mechanics, covering Mars propellant costs, ferroelectric materials, particle physics flavor sym",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly identifies the query as a 'knowledge_gap' due to the complete absence of relevant EvidenceCards for celestial mechanics.\", \"All references to external datasets (JPL DE440, ISM models) have been successfully removed from the experiment design, resolving the critical issue of external data dependency.\", \"The experimental design has been appropriately reframed as a meta-analytical audit of the evidence catalog rather than a physical simulation, adhering strictly to allowed evidence constraints.\", \"Supporting_evidence_ids rem",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c9a542636906",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:d763c2f503c3d8df",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Planetary orbits remain stable against rapid decay because the interplanetary medium density is insufficient to generate significant aerodynamic drag, and gravitational wave emission is negligible at planetary mass scales, making angular momentum loss timescales exceed the current age of the solar system.",
+              "mechanism": "Orbital decay requires a non-conservative force or torque to remove orbital energy and angular momentum. In the near-vacuum of interplanetary space, gas drag is minimal. Gravitational radiation power scales as (v/c)^5 and is negligible for planets. Without these dissipative mechanisms, Keplerian orbits are effectively conserved over Gyr timescales.",
+              "falsifiable_prediction": "If this hypothesis is correct, high-precision ephemeris data should show no statistically significant secular decrease in semi-major axes attributable to drag or GWs beyond known tidal effects; simulated decay rates using standard ISM densities must yield timescales >10^15 years.",
+              "required_observations": [
+                "Long-term planetary ephemerides (e.g., JPL DE440) to constrain da/dt",
+                "In-situ measurements of interplanetary medium density and velocity distribution",
+                "N-body simulations including Poynting-Robertson drag and solar wind drag terms"
+              ],
+              "risk_of_being_wrong": "Unknown or underestimated non-gravitational forces (e.g., dark matter drag, modified gravity) could cause faster decay; booklet claim of gradual swirl-in might reflect outdated models not captured in provided evidence.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "The booklet's assertion that planets will 'swirl into the sun' due to orbital decay is factually incorrect under standard astrophysical models; instead, stellar evolution (solar mass loss and expansion) dominates long-term orbital dynamics, potentially causing outward migration rather than inward spiral.",
+              "mechanism": "As the Sun loses mass via stellar winds and nuclear fusion, planetary orbits expand adiabatically (a ∝ 1/M_sun). Tidal interactions with the expanding solar envelope during RGB/AGB phases may later cause engulfment, but this is distinct from vacuum orbital decay. The 'swirl-in' narrative conflates tidal engulfment with continuous orbital decay.",
+              "falsifiable_prediction": "If this hypothesis is correct, stellar evolution models coupled with orbital dynamics should predict net outward migration for inner planets during main-sequence and early giant phases, contradicting monotonic inward decay claims.",
+              "required_observations": [
+                "Stellar mass-loss rate estimates for Sun-like stars across evolutionary stages",
+                "Tidal dissipation factors (Q) for solar-type stars and gas giants",
+                "Comparative analysis of exoplanet systems around post-main-sequence stars"
+              ],
+              "risk_of_being_wrong": "If significant unmodeled drag exists (e.g., from circumsolar dust disks), inward decay could compete with mass-loss-driven expansion; booklet may refer to extremely long-term GR effects not yet ruled out.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.54
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the core mechanism of orbital stability versus decay and is highly falsifiable with existing ephemeris and simulation tools. Although no supporting evidence IDs are available (insufficient_evidence), it aligns with established celestial mechanics principles and explicitly defines observable constraints. Hypothesis 1, while relevant to correcting the booklet, depends more heavily on stellar evolution models outside the immediate scope of orbital decay mechanisms.",
+          "rejected_directions": [
+            "Invoking magnetic braking or dynamo effects as primary orbital decay mechanisms (EV-Q049-d8b0aafaf37dc75c63b51ce4 relates to geodynamo, not orbital mechanics)",
+            "Attributing orbital stability to material science properties like ferroelectric polarization (EV-Q049-62174834a29a81c036ba3f3f is irrelevant)",
+            "Using particle physics flavor symmetries to explain macroscopic orbital dynamics (EV-Q049-c36de67711a6d7af2674a742 is topically mismatched)",
+            "Citing Mars mission propellant costs as evidence for orbital stability (EV-Q049-8bbe55a84dc7ec7a0a7655b0 is unrelated to natural orbital decay)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study aims to validate the hypothesis that planetary orbital stability is maintained due to negligible non-conservative forces (aerodynamic drag and gravitational wave emission) in the interplanetary medium. The core mechanism involves quantifying the timescale of orbital decay ($\\tau_{decay}$) induced by gas drag and gravitational radiation, comparing it against the age of the Solar System ($\\sim 4.5 \\times 10^9$ years). We will employ high-precision N-body simulations incorporating perturbative forces: Poynting-Robertson drag, solar wind drag, and quadrupole gravitational wave emission. The simulation will use initial conditions derived from JPL DE440 ephemerides. The primary output is the secular change in semi-major axis ($da/dt$) for Earth and Mars over a $10^6$ year integration window, extrapolated to Gyr scales. The hypothesis is supported if simulated $da/dt$ values are statistically indistinguishable from zero within measurement uncertainties of current radar/laser ranging data, or if calculated decay timescales exceed $10^{15}$ years.",
+          "datasets": {
+            "source": [
+              {
+                "name": "JPL Horizons System Ephemerides (DE440)",
+                "description": "High-precision planetary state vectors (position, velocity) for the Solar System bodies. Used for initial conditions and validation of baseline Keplerian orbits.",
+                "url": "https://ssd.jpl.nasa.gov/horizons/",
+                "license": "Public Domain"
+              },
+              {
+                "name": "Interplanetary Medium Density Models",
+                "description": "Empirical models of solar wind density and velocity distributions (e.g., from ACE, WIND, Parker Solar Probe data) to parameterize drag forces.",
+                "url": null,
+                "license": "Public Domain"
+              }
+            ],
+            "target": {
+              "name": "Simulated Orbital Decay Rates",
+              "description": "Time-series data of semi-major axis variations ($a(t)$) and derived decay rates ($da/dt$) for inner planets under various drag scenarios.",
+              "format": "HDF5/CSV",
+              "schema": {
+                "time_years": "float64",
+                "semi_major_axis_au": "float64",
+                "eccentricity": "float64",
+                "drag_force_N": "float64",
+                "gw_power_W": "float64"
+              }
+            }
+          },
+          "methods": "1. **N-Body Simulation Framework**: Use a symplectic integrator (e.g., Wisdom-Holman map) modified to include non-conservative perturbative accelerations. \n2. **Drag Force Modeling**: Implement aerodynamic drag $F_D = -\\frac{1}{2} C_D \\rho v^2 A$, where $\\rho$ is interplanetary medium density (variable with heliocentric distance), $v$ is relative velocity, and $A$ is cross-sectional area. Include Poynting-Robertson effect for dust drag. \n3. **Gravitational Wave Emission**: Calculate energy loss rate using the quadrupole formula $P_{GW} = \\frac{32}{5} \\frac{G^4}{c^5} \\frac{m_1^2 m_2^2 (m_1+m_2)}{a^5}$. Convert to orbital decay rate $da/dt$. \n4. **Parameter Sweep**: Vary interplanetary density $\\rho$ by orders of magnitude ($10^{-24}$ to $10^{-18}$ kg/m³) to bound worst-case drag scenarios. \n5. **Statistical Analysis**: Compare simulated secular trends with residual analysis from JPL DE440 fit residuals to determine if observed anomalies can be attributed to drag/GW.",
+          "experiments": {
+            "baselines": [
+              "Pure Newtonian/GR Point-Mass N-Body (No Drag/GW): Establishes the conservative baseline for orbital stability.",
+              "Standard Solar Wind Drag Model: Uses average solar wind density ($\\sim 5$ protons/cm³ at 1 AU) and velocity ($\\sim 400$ km/s) to estimate typical drag effects."
+            ],
+            "metrics": [
+              "Secular Semi-Major Axis Decay Rate ($da/dt$ in meters/year)",
+              "Orbital Decay Timescale ($\\tau = a / |da/dt|$ in years)",
+              "Residual RMS Fit Error (comparison with JPL DE440 observational residuals)"
+            ],
+            "ablation": [
+              "Remove Gravitational Wave Term: Isolate the contribution of GW emission vs. drag.",
+              "Remove Aerodynamic Drag Term: Isolate the contribution of gas/plasma drag vs. GW.",
+              "Vary Density Profile: Test sensitivity to extreme assumptions about interplanetary medium density (e.g., dense dust cloud scenarios)."
+            ],
+            "validation_protocol": "1. **Code Verification**: Reproduce known analytical solutions for two-body decay under constant drag. \n2. **Data Validation**: Ensure initial conditions match JPL DE440 states at epoch J2000.0 within $10^{-9}$ AU. \n3. **Convergence Test**: Verify that integration timestep errors are below the magnitude of the perturbative forces being measured. \n4. **Cross-Check**: Compare GW decay rates with independent calculations using Peters' formula for eccentric orbits."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Initial condition files (JPL DE440 snapshot) archived with checksums.",
+            "Source code for modified N-body integrator (Python/C++) version-controlled.",
+            "Configuration files for drag coefficients and density profiles documented.",
+            "Random seeds for any stochastic solar wind variations fixed.",
+            "Hardware specifications and floating-point precision details recorded."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_hours": 48,
+            "required_storage_gb": 50,
+            "software_dependencies": [
+              "Rebound (N-body library)",
+              "NumPy/SciPy",
+              "Astropy"
+            ]
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-083854-da0f61b6",
+        "version_number": 1,
+        "version_id": "20260822-083854-da0f61b6:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Planetary orbits remain stable against rapid decay because the interplanetary medium density is insufficient to generate significant aerodynamic drag, and gravitational wave emission is negligible at planetary mass scales, making angular momentum loss timescales exceed the current age of the solar system.",
+              "mechanism": "Orbital decay requires a non-conservative force or torque to remove orbital energy and angular momentum. In the near-vacuum of interplanetary space, gas drag is minimal. Gravitational radiation power scales as (v/c)^5 and is negligible for planets. Without these dissipative mechanisms, Keplerian orbits are effectively conserved over Gyr timescales.",
+              "falsifiable_prediction": "If this hypothesis is correct, high-precision ephemeris data should show no statistically significant secular decrease in semi-major axes attributable to drag or GWs beyond known tidal effects; simulated decay rates using standard ISM densities must yield timescales >10^15 years.",
+              "required_observations": [
+                "Long-term planetary ephemerides (e.g., JPL DE440) to constrain da/dt",
+                "In-situ measurements of interplanetary medium density and velocity distribution",
+                "N-body simulations including Poynting-Robertson drag and solar wind drag terms"
+              ],
+              "risk_of_being_wrong": "Unknown or underestimated non-gravitational forces (e.g., dark matter drag, modified gravity) could cause faster decay; booklet claim of gradual swirl-in might reflect outdated models not captured in provided evidence.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "The booklet's assertion that planets will 'swirl into the sun' due to orbital decay is factually incorrect under standard astrophysical models; instead, stellar evolution (solar mass loss and expansion) dominates long-term orbital dynamics, potentially causing outward migration rather than inward spiral.",
+              "mechanism": "As the Sun loses mass via stellar winds and nuclear fusion, planetary orbits expand adiabatically (a ∝ 1/M_sun). Tidal interactions with the expanding solar envelope during RGB/AGB phases may later cause engulfment, but this is distinct from vacuum orbital decay. The 'swirl-in' narrative conflates tidal engulfment with continuous orbital decay.",
+              "falsifiable_prediction": "If this hypothesis is correct, stellar evolution models coupled with orbital dynamics should predict net outward migration for inner planets during main-sequence and early giant phases, contradicting monotonic inward decay claims.",
+              "required_observations": [
+                "Stellar mass-loss rate estimates for Sun-like stars across evolutionary stages",
+                "Tidal dissipation factors (Q) for solar-type stars and gas giants",
+                "Comparative analysis of exoplanet systems around post-main-sequence stars"
+              ],
+              "risk_of_being_wrong": "If significant unmodeled drag exists (e.g., from circumsolar dust disks), inward decay could compete with mass-loss-driven expansion; booklet may refer to extremely long-term GR effects not yet ruled out.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.54
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the core mechanism of orbital stability versus decay and is highly falsifiable with existing ephemeris and simulation tools. Although no supporting evidence IDs are available (insufficient_evidence), it aligns with established celestial mechanics principles and explicitly defines observable constraints. Hypothesis 1, while relevant to correcting the booklet, depends more heavily on stellar evolution models outside the immediate scope of orbital decay mechanisms.",
+          "rejected_directions": [
+            "Invoking magnetic braking or dynamo effects as primary orbital decay mechanisms (EV-Q049-d8b0aafaf37dc75c63b51ce4 relates to geodynamo, not orbital mechanics)",
+            "Attributing orbital stability to material science properties like ferroelectric polarization (EV-Q049-62174834a29a81c036ba3f3f is irrelevant)",
+            "Using particle physics flavor symmetries to explain macroscopic orbital dynamics (EV-Q049-c36de67711a6d7af2674a742 is topically mismatched)",
+            "Citing Mars mission propellant costs as evidence for orbital stability (EV-Q049-8bbe55a84dc7ec7a0a7655b0 is unrelated to natural orbital decay)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study aims to validate the hypothesis that planetary orbital stability is maintained due to negligible non-conservative forces (aerodynamic drag and gravitational wave emission) in the interplanetary medium. The core mechanism involves quantifying the timescale of orbital decay ($\\tau_{decay}$) induced by gas drag and gravitational radiation, comparing it against the age of the Solar System ($\\sim 4.5 \\times 10^9$ years). We will employ high-precision N-body simulations incorporating perturbative forces: Poynting-Robertson drag, solar wind drag, and quadrupole gravitational wave emission. The simulation will use initial conditions derived from JPL DE440 ephemerides. The primary output is the secular change in semi-major axis ($da/dt$) for Earth and Mars over a $10^6$ year integration window, extrapolated to Gyr scales. The hypothesis is supported if simulated $da/dt$ values are statistically indistinguishable from zero within measurement uncertainties of current radar/laser ranging data, or if calculated decay timescales exceed $10^{15}$ years.",
+          "datasets": {
+            "source": [
+              {
+                "name": "JPL Horizons System Ephemerides (DE440)",
+                "description": "High-precision planetary state vectors (position, velocity) for the Solar System bodies. Used for initial conditions and validation of baseline Keplerian orbits.",
+                "url": "https://ssd.jpl.nasa.gov/horizons/",
+                "license": "Public Domain"
+              },
+              {
+                "name": "Interplanetary Medium Density Models",
+                "description": "Empirical models of solar wind density and velocity distributions (e.g., from ACE, WIND, Parker Solar Probe data) to parameterize drag forces.",
+                "url": null,
+                "license": "Public Domain"
+              }
+            ],
+            "target": {
+              "name": "Simulated Orbital Decay Rates",
+              "description": "Time-series data of semi-major axis variations ($a(t)$) and derived decay rates ($da/dt$) for inner planets under various drag scenarios.",
+              "format": "HDF5/CSV",
+              "schema": {
+                "time_years": "float64",
+                "semi_major_axis_au": "float64",
+                "eccentricity": "float64",
+                "drag_force_N": "float64",
+                "gw_power_W": "float64"
+              }
+            }
+          },
+          "methods": "1. **N-Body Simulation Framework**: Use a symplectic integrator (e.g., Wisdom-Holman map) modified to include non-conservative perturbative accelerations. \n2. **Drag Force Modeling**: Implement aerodynamic drag $F_D = -\\frac{1}{2} C_D \\rho v^2 A$, where $\\rho$ is interplanetary medium density (variable with heliocentric distance), $v$ is relative velocity, and $A$ is cross-sectional area. Include Poynting-Robertson effect for dust drag. \n3. **Gravitational Wave Emission**: Calculate energy loss rate using the quadrupole formula $P_{GW} = \\frac{32}{5} \\frac{G^4}{c^5} \\frac{m_1^2 m_2^2 (m_1+m_2)}{a^5}$. Convert to orbital decay rate $da/dt$. \n4. **Parameter Sweep**: Vary interplanetary density $\\rho$ by orders of magnitude ($10^{-24}$ to $10^{-18}$ kg/m³) to bound worst-case drag scenarios. \n5. **Statistical Analysis**: Compare simulated secular trends with residual analysis from JPL DE440 fit residuals to determine if observed anomalies can be attributed to drag/GW.",
+          "experiments": {
+            "baselines": [
+              "Pure Newtonian/GR Point-Mass N-Body (No Drag/GW): Establishes the conservative baseline for orbital stability.",
+              "Standard Solar Wind Drag Model: Uses average solar wind density ($\\sim 5$ protons/cm³ at 1 AU) and velocity ($\\sim 400$ km/s) to estimate typical drag effects."
+            ],
+            "metrics": [
+              "Secular Semi-Major Axis Decay Rate ($da/dt$ in meters/year)",
+              "Orbital Decay Timescale ($\\tau = a / |da/dt|$ in years)",
+              "Residual RMS Fit Error (comparison with JPL DE440 observational residuals)"
+            ],
+            "ablation": [
+              "Remove Gravitational Wave Term: Isolate the contribution of GW emission vs. drag.",
+              "Remove Aerodynamic Drag Term: Isolate the contribution of gas/plasma drag vs. GW.",
+              "Vary Density Profile: Test sensitivity to extreme assumptions about interplanetary medium density (e.g., dense dust cloud scenarios)."
+            ],
+            "validation_protocol": "1. **Code Verification**: Reproduce known analytical solutions for two-body decay under constant drag. \n2. **Data Validation**: Ensure initial conditions match JPL DE440 states at epoch J2000.0 within $10^{-9}$ AU. \n3. **Convergence Test**: Verify that integration timestep errors are below the magnitude of the perturbative forces being measured. \n4. **Cross-Check**: Compare GW decay rates with independent calculations using Peters' formula for eccentric orbits."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Initial condition files (JPL DE440 snapshot) archived with checksums.",
+            "Source code for modified N-body integrator (Python/C++) version-controlled.",
+            "Configuration files for drag coefficients and density profiles documented.",
+            "Random seeds for any stochastic solar wind variations fixed.",
+            "Hardware specifications and floating-point precision details recorded."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_hours": 48,
+            "required_storage_gb": 50,
+            "software_dependencies": [
+              "Rebound (N-body library)",
+              "NumPy/SciPy",
+              "Astropy"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The candidate hypothesis and experiment design rely entirely on external astrophysical knowledge (JPL DE440, ISM density models, GW quadrupole formula) that is not present in the provided EvidenceCards.",
+            "All four provided EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) are topically irrelevant to planetary orbital mechanics, covering Mars propellant costs, ferroelectric materials, particle physics flavor symmetries, and geodynamo theory respectively.",
+            "The 'supporting_evidence_ids' field is correctly empty, but this confirms the hypothesis is currently ungrounded within the allowed evidence scope.",
+            "While the Results field correctly states 'pending' and avoids fabrication, the experimental design cannot be validated against the provided evidence catalog as no relevant baselines or datasets exist in the input.",
+            "The system correctly identified 'insufficient_evidence' in the extraction phase but failed to halt hypothesis generation or mark the plan as purely speculative/knowledge_gap-only in the final output structure."
+          ],
+          "critical_issues": [
+            "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+            "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+            "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context."
+          ],
+          "required_revisions": [
+            "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+            "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+            "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+            "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.0,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.2,
+          "reference_reliability_score": 0.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:daa5449c592e",
+            "category": "critical_issue",
+            "description": "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:e937c5cbddbc",
+            "category": "critical_issue",
+            "description": "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:33e2be9faa46",
+            "category": "critical_issue",
+            "description": "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a79b8ced86bb",
+            "category": "required_revision",
+            "description": "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7244f9bb0c92",
+            "category": "required_revision",
+            "description": "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:4ae98423a2f6",
+            "category": "required_revision",
+            "description": "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:801ca75ee439",
+            "category": "required_revision",
+            "description": "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "a3966d688a33e86d8f3ae6e9492df476ce1a478afe73f9264c5f7d3d19be8d7e",
+          "experiment_designer": "1f023ff11038d5c8b1e4af8200cd8ca23bdb4edb3d9115d998dce27200f4aee2",
+          "scientific_reviewer": "69b9e6a78ea75199d43823685758718674aa3ae63e0c8035712840ca3d2c9463"
+        }
+      },
+      "parent_version_id": "20260822-083854-da0f61b6:v1",
+      "lineage": [
+        "20260822-083854-da0f61b6:v1",
+        "20260822-083854-da0f61b6:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The candidate hypothesis and experiment design rely entirely on external astrophysical knowledge (JPL DE440, ISM density models, GW quadrupole formula) that is not present in the provided EvidenceCards.",
+          "All four provided EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) are topically irrelevant to planetary orbital mechanics, covering Mars propellant costs, ferroelectric materials, particle physics flavor symmetries, and geodynamo theory respectively.",
+          "The 'supporting_evidence_ids' field is correctly empty, but this confirms the hypothesis is currently ungrounded within the allowed evidence scope.",
+          "While the Results field correctly states 'pending' and avoids fabrication, the experimental design cannot be validated against the provided evidence catalog as no relevant baselines or datasets exist in the input.",
+          "The system correctly identified 'insufficient_evidence' in the extraction phase but failed to halt hypothesis generation or mark the plan as purely speculative/knowledge_gap-only in the final output structure."
+        ],
+        "critical_issues": [
+          "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+          "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+          "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context."
+        ],
+        "required_revisions": [
+          "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+          "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+          "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+          "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly."
+        ],
+        "risk_level": "high",
+        "evidence_grounding_score": 0.0,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.2,
+        "reference_reliability_score": 0.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly identifies the query as a 'knowledge_gap' due to the complete absence of relevant EvidenceCards for celestial mechanics.",
+          "All references to external datasets (JPL DE440, ISM models) have been successfully removed from the experiment design, resolving the critical issue of external data dependency.",
+          "The experimental design has been appropriately reframed as a meta-analytical audit of the evidence catalog rather than a physical simulation, adhering strictly to allowed evidence constraints.",
+          "Supporting_evidence_ids remains correctly empty, avoiding any force-fitting of irrelevant cards (e.g., geodynamo or propellant costs).",
+          "Results field correctly states 'pending' without fabrication, and the validation protocol is reproducible within the system's current scope."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:c41d94054b39cb39",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+          "issue_id": "critical_issue:daa5449c592e"
+        },
+        {
+          "failure_id": "failure:9e8c955555d8671d",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+          "issue_id": "critical_issue:e937c5cbddbc"
+        },
+        {
+          "failure_id": "failure:241a8aca7ac15bc3",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context.",
+          "issue_id": "critical_issue:33e2be9faa46"
+        },
+        {
+          "failure_id": "failure:689b4e50bd7e632b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+          "issue_id": "required_revision:a79b8ced86bb"
+        },
+        {
+          "failure_id": "failure:cf4903e3f2955f4b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+          "issue_id": "required_revision:7244f9bb0c92"
+        },
+        {
+          "failure_id": "failure:ee2eaf54a3ffe27a",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+          "issue_id": "required_revision:4ae98423a2f6"
+        },
+        {
+          "failure_id": "failure:d75e87d777228fa4",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly.",
+          "issue_id": "required_revision:801ca75ee439"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:705cb98482f4aa21",
+          "issue_id": "critical_issue:e937c5cbddbc",
+          "reason": "Reviewer item critical_issue:e937c5cbddbc requested 'External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.'. V2 changes technical_details; deterministic correlation evidence tokens=['allow', 'constraint', 'data', 'de440', 'evidence', 'experiment', 'external', 'ism', 'jpl', 'model', 'not', 'provid', 'require', 'which'], coverage=0.667.",
+          "before": "This study aims to validate the hypothesis that planetary orbital stability is maintained due to negligible non-conservative forces (aerodynamic drag and gravitational wave emission) in the interplanetary medium. The core mechanism involves quantifying the timescale of orbital decay ($\\tau_{decay}$) induced by gas drag and gravitational radiation, comparing it against the age of the Solar System ($\\sim 4.5 \\times 10^9$ years). We will employ high-precision N-body simulations incorporating perturbative forces: Poynting-Robertson drag, solar wind drag, and quadrupole gravitational wave emission. The simulation will use initial conditions derived from JPL DE440 ephemerides. The primary output is the secular change in semi-major axis ($da/dt$) for Earth and Mars over a $10^6$ year integration window, extrapolated to Gyr scales. The hypothesis is supported if simulated $da/dt$ values are statistically indistinguishable from zero within measurement uncertainties of current radar/laser ranging data, or if calculated decay timescales exceed $10^{15}$ years.",
+          "after": "This research plan addresses a critical knowledge gap identified in the evidence extraction phase. The recommended hypothesis posits that the current evidence catalog is insufficient to explain planetary orbital stability or decay because no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction. Consequently, this experiment design does not propose a physical simulation of orbital dynamics (which would require external data like JPL DE440 or ISM models not present in the allowed evidence). Instead, it designs a meta-analytical verification protocol to rigorously confirm the absence of relevant astronomical data within the allowed EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4). The technical approach involves systematic text mining and topical classification of the provided cards to verify their irrelevance to the domain of orbital mechanics, thereby validating the 'insufficient_evidence' status as a robust scientific conclusion under the system's constraints.",
+          "evidence_refs": [],
+          "affected_plan_section": "technical_details",
+          "closure_status": "open",
+          "unresolved_reason": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "change_id": "change:1971df89df5d44e9",
+          "issue_id": "required_revision:a79b8ced86bb",
+          "reason": "Reviewer item required_revision:a79b8ced86bb requested 'Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.'. V2 changes methods; deterministic correlation evidence tokens=['absent', 'allow', 'classify', 'evidence', 'external', 'gap', 'ids'], coverage=0.500.",
+          "before": "1. **N-Body Simulation Framework**: Use a symplectic integrator (e.g., Wisdom-Holman map) modified to include non-conservative perturbative accelerations. \n2. **Drag Force Modeling**: Implement aerodynamic drag $F_D = -\\frac{1}{2} C_D \\rho v^2 A$, where $\\rho$ is interplanetary medium density (variable with heliocentric distance), $v$ is relative velocity, and $A$ is cross-sectional area. Include Poynting-Robertson effect for dust drag. \n3. **Gravitational Wave Emission**: Calculate energy loss rate using the quadrupole formula $P_{GW} = \\frac{32}{5} \\frac{G^4}{c^5} \\frac{m_1^2 m_2^2 (m_1+m_2)}{a^5}$. Convert to orbital decay rate $da/dt$. \n4. **Parameter Sweep**: Vary interplanetary density $\\rho$ by orders of magnitude ($10^{-24}$ to $10^{-18}$ kg/m³) to bound worst-case drag scenarios. \n5. **Statistical Analysis**: Compare simulated secular trends with residual analysis from JPL DE440 fit residuals to determine if observed anomalies can be attributed to drag/GW.",
+          "after": "1. **Systematic Keyword Search**: Scan the quoted_text and metadata of all allowed EvidenceCards for terms related to orbital mechanics (e.g., 'orbit', 'gravity', 'Kepler', 'drag', 'ephemeris', 'semi-major axis'). \n2. **Topical Classification**: Manually or algorithmically classify each EvidenceCard into its actual domain (e.g., Aerospace Logistics, Condensed Matter Physics, High-Energy Physics, Geophysics) to demonstrate the disconnect from Astronomy/Celestial Mechanics. \n3. **Gap Analysis**: Document the specific physical mechanisms required to answer the original question (e.g., N-body dynamics, tidal dissipation) and verify their absence in the evidence set. \n4. **Constraint Verification**: Confirm that no external datasets (JPL DE440, etc.) are referenced or used, adhering strictly to the allowed_evidence_ids constraint.",
+          "evidence_refs": [],
+          "affected_plan_section": "methods",
+          "closure_status": "open",
+          "unresolved_reason": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "change_id": "change:c06ac7d84a7db1c7",
+          "issue_id": "required_revision:a79b8ced86bb",
+          "reason": "Reviewer item required_revision:a79b8ced86bb requested 'Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['absent', 'allow', 'evidence', 'explicitly', 'external', 'ids'], coverage=0.429.",
+          "before": [
+            "Initial condition files (JPL DE440 snapshot) archived with checksums.",
+            "Source code for modified N-body integrator (Python/C++) version-controlled.",
+            "Configuration files for drag coefficients and density profiles documented.",
+            "Random seeds for any stochastic solar wind variations fixed.",
+            "Hardware specifications and floating-point precision details recorded."
+          ],
+          "after": [
+            "List of allowed EvidenceCards (IDs and quoted_text) archived.",
+            "Keyword list for orbital mechanics defined and documented.",
+            "Classification criteria for 'relevant' vs 'irrelevant' evidence explicitly stated.",
+            "Verification that no external data sources were accessed during the audit.",
+            "Final audit report format standardized for JSON output."
+          ],
+          "evidence_refs": [],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "open",
+          "unresolved_reason": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "change_id": "change:6a29adc27729e2ea",
+          "issue_id": "required_revision:7244f9bb0c92",
+          "reason": "Reviewer item required_revision:7244f9bb0c92 requested 'Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).'. V2 changes methods; deterministic correlation evidence tokens=['absent', 'allow', 'card', 'cohort', 'de440', 'evidence', 'external', 'jpl', 'specific'], coverage=0.450.",
+          "before": "1. **N-Body Simulation Framework**: Use a symplectic integrator (e.g., Wisdom-Holman map) modified to include non-conservative perturbative accelerations. \n2. **Drag Force Modeling**: Implement aerodynamic drag $F_D = -\\frac{1}{2} C_D \\rho v^2 A$, where $\\rho$ is interplanetary medium density (variable with heliocentric distance), $v$ is relative velocity, and $A$ is cross-sectional area. Include Poynting-Robertson effect for dust drag. \n3. **Gravitational Wave Emission**: Calculate energy loss rate using the quadrupole formula $P_{GW} = \\frac{32}{5} \\frac{G^4}{c^5} \\frac{m_1^2 m_2^2 (m_1+m_2)}{a^5}$. Convert to orbital decay rate $da/dt$. \n4. **Parameter Sweep**: Vary interplanetary density $\\rho$ by orders of magnitude ($10^{-24}$ to $10^{-18}$ kg/m³) to bound worst-case drag scenarios. \n5. **Statistical Analysis**: Compare simulated secular trends with residual analysis from JPL DE440 fit residuals to determine if observed anomalies can be attributed to drag/GW.",
+          "after": "1. **Systematic Keyword Search**: Scan the quoted_text and metadata of all allowed EvidenceCards for terms related to orbital mechanics (e.g., 'orbit', 'gravity', 'Kepler', 'drag', 'ephemeris', 'semi-major axis'). \n2. **Topical Classification**: Manually or algorithmically classify each EvidenceCard into its actual domain (e.g., Aerospace Logistics, Condensed Matter Physics, High-Energy Physics, Geophysics) to demonstrate the disconnect from Astronomy/Celestial Mechanics. \n3. **Gap Analysis**: Document the specific physical mechanisms required to answer the original question (e.g., N-body dynamics, tidal dissipation) and verify their absence in the evidence set. \n4. **Constraint Verification**: Confirm that no external datasets (JPL DE440, etc.) are referenced or used, adhering strictly to the allowed_evidence_ids constraint.",
+          "evidence_refs": [],
+          "affected_plan_section": "methods",
+          "closure_status": "open",
+          "unresolved_reason": "The mapped experiment change has no validated evidence reference."
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:daa5449c592e",
+          "category": "critical_issue",
+          "description": "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:e937c5cbddbc",
+          "category": "critical_issue",
+          "description": "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "issue_id": "critical_issue:33e2be9faa46",
+          "category": "critical_issue",
+          "description": "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a79b8ced86bb",
+          "category": "required_revision",
+          "description": "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "issue_id": "required_revision:7244f9bb0c92",
+          "category": "required_revision",
+          "description": "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "issue_id": "required_revision:4ae98423a2f6",
+          "category": "required_revision",
+          "description": "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:801ca75ee439",
+          "category": "required_revision",
+          "description": "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist",
+        "evidence_references"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.0,
+          "after": 1.0,
+          "delta": 1.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.2,
+          "after": 0.9,
+          "delta": 0.7
+        },
+        "reference_reliability_score": {
+          "before": 0.0,
+          "after": 1.0,
+          "delta": 1.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 1,
+          "hypothesis": "The booklet's claim that 'orbits do decay very gradually' and planets will 'swirl into the sun' cannot be verified or refuted using the provided evidence, as no EvidenceCard addresses stellar evolution, tidal dissipation, or long-term orbital dynamics.",
+          "overall_score": 0.52,
+          "recommended": false
+        },
+        {
+          "rank": 2,
+          "original_index": 0,
+          "hypothesis": "Current evidence catalog is insufficient to explain planetary orbital stability or decay; no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction, rendering the question unanswerable within the allowed scope.",
+          "overall_score": 0.51,
+          "recommended": true
+        }
+      ],
+      "responded_issue_count": 0,
+      "blocking_reasons": [
+        "substantive_change_missing_validated_evidence",
+        "required_revision_without_change:critical_issue:daa5449c592e",
+        "required_revision_without_change:critical_issue:33e2be9faa46",
+        "required_revision_without_change:required_revision:4ae98423a2f6",
+        "required_revision_without_change:required_revision:801ca75ee439",
+        "unresolved_issue:critical_issue:daa5449c592e",
+        "unresolved_issue:critical_issue:e937c5cbddbc",
+        "unresolved_issue:critical_issue:33e2be9faa46",
+        "unresolved_issue:required_revision:a79b8ced86bb",
+        "unresolved_issue:required_revision:7244f9bb0c92",
+        "unresolved_issue:required_revision:4ae98423a2f6",
+        "unresolved_issue:required_revision:801ca75ee439"
+      ],
+      "remaining_blockers": [
+        "critical_issue:daa5449c592e: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:e937c5cbddbc: The mapped experiment change has no validated evidence reference.",
+        "critical_issue:33e2be9faa46: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:a79b8ced86bb: The mapped experiment change has no validated evidence reference.",
+        "required_revision:7244f9bb0c92: The mapped experiment change has no validated evidence reference.",
+        "required_revision:4ae98423a2f6: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:801ca75ee439: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-083854-da0f61b6",
+        "version_number": 1,
+        "version_id": "20260822-083854-da0f61b6:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Planetary orbits remain stable against rapid decay because the interplanetary medium density is insufficient to generate significant aerodynamic drag, and gravitational wave emission is negligible at planetary mass scales, making angular momentum loss timescales exceed the current age of the solar system.",
+              "mechanism": "Orbital decay requires a non-conservative force or torque to remove orbital energy and angular momentum. In the near-vacuum of interplanetary space, gas drag is minimal. Gravitational radiation power scales as (v/c)^5 and is negligible for planets. Without these dissipative mechanisms, Keplerian orbits are effectively conserved over Gyr timescales.",
+              "falsifiable_prediction": "If this hypothesis is correct, high-precision ephemeris data should show no statistically significant secular decrease in semi-major axes attributable to drag or GWs beyond known tidal effects; simulated decay rates using standard ISM densities must yield timescales >10^15 years.",
+              "required_observations": [
+                "Long-term planetary ephemerides (e.g., JPL DE440) to constrain da/dt",
+                "In-situ measurements of interplanetary medium density and velocity distribution",
+                "N-body simulations including Poynting-Robertson drag and solar wind drag terms"
+              ],
+              "risk_of_being_wrong": "Unknown or underestimated non-gravitational forces (e.g., dark matter drag, modified gravity) could cause faster decay; booklet claim of gradual swirl-in might reflect outdated models not captured in provided evidence.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.8,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "The booklet's assertion that planets will 'swirl into the sun' due to orbital decay is factually incorrect under standard astrophysical models; instead, stellar evolution (solar mass loss and expansion) dominates long-term orbital dynamics, potentially causing outward migration rather than inward spiral.",
+              "mechanism": "As the Sun loses mass via stellar winds and nuclear fusion, planetary orbits expand adiabatically (a ∝ 1/M_sun). Tidal interactions with the expanding solar envelope during RGB/AGB phases may later cause engulfment, but this is distinct from vacuum orbital decay. The 'swirl-in' narrative conflates tidal engulfment with continuous orbital decay.",
+              "falsifiable_prediction": "If this hypothesis is correct, stellar evolution models coupled with orbital dynamics should predict net outward migration for inner planets during main-sequence and early giant phases, contradicting monotonic inward decay claims.",
+              "required_observations": [
+                "Stellar mass-loss rate estimates for Sun-like stars across evolutionary stages",
+                "Tidal dissipation factors (Q) for solar-type stars and gas giants",
+                "Comparative analysis of exoplanet systems around post-main-sequence stars"
+              ],
+              "risk_of_being_wrong": "If significant unmodeled drag exists (e.g., from circumsolar dust disks), inward decay could compete with mass-loss-driven expansion; booklet may refer to extremely long-term GR effects not yet ruled out.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.85,
+              "feasibility_score": 0.7,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.54
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the core mechanism of orbital stability versus decay and is highly falsifiable with existing ephemeris and simulation tools. Although no supporting evidence IDs are available (insufficient_evidence), it aligns with established celestial mechanics principles and explicitly defines observable constraints. Hypothesis 1, while relevant to correcting the booklet, depends more heavily on stellar evolution models outside the immediate scope of orbital decay mechanisms.",
+          "rejected_directions": [
+            "Invoking magnetic braking or dynamo effects as primary orbital decay mechanisms (EV-Q049-d8b0aafaf37dc75c63b51ce4 relates to geodynamo, not orbital mechanics)",
+            "Attributing orbital stability to material science properties like ferroelectric polarization (EV-Q049-62174834a29a81c036ba3f3f is irrelevant)",
+            "Using particle physics flavor symmetries to explain macroscopic orbital dynamics (EV-Q049-c36de67711a6d7af2674a742 is topically mismatched)",
+            "Citing Mars mission propellant costs as evidence for orbital stability (EV-Q049-8bbe55a84dc7ec7a0a7655b0 is unrelated to natural orbital decay)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This study aims to validate the hypothesis that planetary orbital stability is maintained due to negligible non-conservative forces (aerodynamic drag and gravitational wave emission) in the interplanetary medium. The core mechanism involves quantifying the timescale of orbital decay ($\\tau_{decay}$) induced by gas drag and gravitational radiation, comparing it against the age of the Solar System ($\\sim 4.5 \\times 10^9$ years). We will employ high-precision N-body simulations incorporating perturbative forces: Poynting-Robertson drag, solar wind drag, and quadrupole gravitational wave emission. The simulation will use initial conditions derived from JPL DE440 ephemerides. The primary output is the secular change in semi-major axis ($da/dt$) for Earth and Mars over a $10^6$ year integration window, extrapolated to Gyr scales. The hypothesis is supported if simulated $da/dt$ values are statistically indistinguishable from zero within measurement uncertainties of current radar/laser ranging data, or if calculated decay timescales exceed $10^{15}$ years.",
+          "datasets": {
+            "source": [
+              {
+                "name": "JPL Horizons System Ephemerides (DE440)",
+                "description": "High-precision planetary state vectors (position, velocity) for the Solar System bodies. Used for initial conditions and validation of baseline Keplerian orbits.",
+                "url": "https://ssd.jpl.nasa.gov/horizons/",
+                "license": "Public Domain"
+              },
+              {
+                "name": "Interplanetary Medium Density Models",
+                "description": "Empirical models of solar wind density and velocity distributions (e.g., from ACE, WIND, Parker Solar Probe data) to parameterize drag forces.",
+                "url": null,
+                "license": "Public Domain"
+              }
+            ],
+            "target": {
+              "name": "Simulated Orbital Decay Rates",
+              "description": "Time-series data of semi-major axis variations ($a(t)$) and derived decay rates ($da/dt$) for inner planets under various drag scenarios.",
+              "format": "HDF5/CSV",
+              "schema": {
+                "time_years": "float64",
+                "semi_major_axis_au": "float64",
+                "eccentricity": "float64",
+                "drag_force_N": "float64",
+                "gw_power_W": "float64"
+              }
+            }
+          },
+          "methods": "1. **N-Body Simulation Framework**: Use a symplectic integrator (e.g., Wisdom-Holman map) modified to include non-conservative perturbative accelerations. \n2. **Drag Force Modeling**: Implement aerodynamic drag $F_D = -\\frac{1}{2} C_D \\rho v^2 A$, where $\\rho$ is interplanetary medium density (variable with heliocentric distance), $v$ is relative velocity, and $A$ is cross-sectional area. Include Poynting-Robertson effect for dust drag. \n3. **Gravitational Wave Emission**: Calculate energy loss rate using the quadrupole formula $P_{GW} = \\frac{32}{5} \\frac{G^4}{c^5} \\frac{m_1^2 m_2^2 (m_1+m_2)}{a^5}$. Convert to orbital decay rate $da/dt$. \n4. **Parameter Sweep**: Vary interplanetary density $\\rho$ by orders of magnitude ($10^{-24}$ to $10^{-18}$ kg/m³) to bound worst-case drag scenarios. \n5. **Statistical Analysis**: Compare simulated secular trends with residual analysis from JPL DE440 fit residuals to determine if observed anomalies can be attributed to drag/GW.",
+          "experiments": {
+            "baselines": [
+              "Pure Newtonian/GR Point-Mass N-Body (No Drag/GW): Establishes the conservative baseline for orbital stability.",
+              "Standard Solar Wind Drag Model: Uses average solar wind density ($\\sim 5$ protons/cm³ at 1 AU) and velocity ($\\sim 400$ km/s) to estimate typical drag effects."
+            ],
+            "metrics": [
+              "Secular Semi-Major Axis Decay Rate ($da/dt$ in meters/year)",
+              "Orbital Decay Timescale ($\\tau = a / |da/dt|$ in years)",
+              "Residual RMS Fit Error (comparison with JPL DE440 observational residuals)"
+            ],
+            "ablation": [
+              "Remove Gravitational Wave Term: Isolate the contribution of GW emission vs. drag.",
+              "Remove Aerodynamic Drag Term: Isolate the contribution of gas/plasma drag vs. GW.",
+              "Vary Density Profile: Test sensitivity to extreme assumptions about interplanetary medium density (e.g., dense dust cloud scenarios)."
+            ],
+            "validation_protocol": "1. **Code Verification**: Reproduce known analytical solutions for two-body decay under constant drag. \n2. **Data Validation**: Ensure initial conditions match JPL DE440 states at epoch J2000.0 within $10^{-9}$ AU. \n3. **Convergence Test**: Verify that integration timestep errors are below the magnitude of the perturbative forces being measured. \n4. **Cross-Check**: Compare GW decay rates with independent calculations using Peters' formula for eccentric orbits."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Initial condition files (JPL DE440 snapshot) archived with checksums.",
+            "Source code for modified N-body integrator (Python/C++) version-controlled.",
+            "Configuration files for drag coefficients and density profiles documented.",
+            "Random seeds for any stochastic solar wind variations fixed.",
+            "Hardware specifications and floating-point precision details recorded."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_hours": 48,
+            "required_storage_gb": 50,
+            "software_dependencies": [
+              "Rebound (N-body library)",
+              "NumPy/SciPy",
+              "Astropy"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The candidate hypothesis and experiment design rely entirely on external astrophysical knowledge (JPL DE440, ISM density models, GW quadrupole formula) that is not present in the provided EvidenceCards.",
+            "All four provided EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) are topically irrelevant to planetary orbital mechanics, covering Mars propellant costs, ferroelectric materials, particle physics flavor symmetries, and geodynamo theory respectively.",
+            "The 'supporting_evidence_ids' field is correctly empty, but this confirms the hypothesis is currently ungrounded within the allowed evidence scope.",
+            "While the Results field correctly states 'pending' and avoids fabrication, the experimental design cannot be validated against the provided evidence catalog as no relevant baselines or datasets exist in the input.",
+            "The system correctly identified 'insufficient_evidence' in the extraction phase but failed to halt hypothesis generation or mark the plan as purely speculative/knowledge_gap-only in the final output structure."
+          ],
+          "critical_issues": [
+            "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+            "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+            "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context."
+          ],
+          "required_revisions": [
+            "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+            "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+            "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+            "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly."
+          ],
+          "risk_level": "high",
+          "evidence_grounding_score": 0.0,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.2,
+          "reference_reliability_score": 0.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:daa5449c592e",
+            "category": "critical_issue",
+            "description": "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:e937c5cbddbc",
+            "category": "critical_issue",
+            "description": "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:33e2be9faa46",
+            "category": "critical_issue",
+            "description": "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:a79b8ced86bb",
+            "category": "required_revision",
+            "description": "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7244f9bb0c92",
+            "category": "required_revision",
+            "description": "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:4ae98423a2f6",
+            "category": "required_revision",
+            "description": "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:801ca75ee439",
+            "category": "required_revision",
+            "description": "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "a3966d688a33e86d8f3ae6e9492df476ce1a478afe73f9264c5f7d3d19be8d7e",
+          "experiment_designer": "1f023ff11038d5c8b1e4af8200cd8ca23bdb4edb3d9115d998dce27200f4aee2",
+          "scientific_reviewer": "69b9e6a78ea75199d43823685758718674aa3ae63e0c8035712840ca3d2c9463"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-083854-da0f61b6",
+        "version_number": 2,
+        "version_id": "20260822-083854-da0f61b6:v2",
+        "parent_version_id": "20260822-083854-da0f61b6:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current evidence catalog is insufficient to explain planetary orbital stability or decay; no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction, rendering the question unanswerable within the allowed scope.",
+              "mechanism": "The provided evidence set (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) covers Mars propellant logistics, ferroelectric materials, particle physics flavor symmetries, and geodynamo theory respectively. None contain information on N-body gravitational interactions, vacuum drag coefficients, or general relativistic orbital corrections necessary to validate or refute claims about planetary orbit decay.",
+              "falsifiable_prediction": "If a relevant EvidenceCard containing celestial mechanics data were added to the allowed list, this hypothesis would be falsified; conversely, as long as the allowed_evidence_ids remain restricted to the current four unrelated IDs, the knowledge gap persists and no grounded answer can be generated.",
+              "required_observations": [
+                "Verification that none of the allowed_evidence_ids contain keywords or concepts related to orbital mechanics, gravity, or planetary motion",
+                "Confirmation that evidence_extraction.knowledge_gaps correctly identifies missing astrophysical context",
+                "Audit of evidence_catalog relevance_scores showing topical mismatch despite non-zero scores"
+              ],
+              "risk_of_being_wrong": "Low risk within system constraints: this hypothesis accurately reflects the current evidence state. Risk only arises if hidden metadata or implicit links in existing cards actually contain relevant orbital data not captured in quoted_text.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.51
+            },
+            {
+              "hypothesis": "The booklet's claim that 'orbits do decay very gradually' and planets will 'swirl into the sun' cannot be verified or refuted using the provided evidence, as no EvidenceCard addresses stellar evolution, tidal dissipation, or long-term orbital dynamics.",
+              "mechanism": "Validating the booklet excerpt requires evidence on solar mass loss rates, tidal quality factors, or post-main-sequence stellar expansion—none of which appear in the allowed evidence set. The available cards (propellant costs, ferroelectrics, flavor symmetries, geodynamo) are causally and topologically disconnected from stellar-planetary interaction timescales.",
+              "falsifiable_prediction": "If any allowed EvidenceCard were found to contain data on solar wind mass loss, tidal torques, or RGB/AGB phase orbital evolution, this hypothesis would be weakened; currently, with zero matching IDs, the claim remains an unverified external assertion.",
+              "required_observations": [
+                "Text mining of all allowed EvidenceCards for terms like 'tidal', 'mass loss', 'stellar evolution', 'orbital period change'",
+                "Cross-reference of booklet_excerpt claims against evidence_extraction.established_facts (currently empty)",
+                "Validation that knowledge_gaps explicitly flag the booklet's decay narrative as ungrounded"
+              ],
+              "risk_of_being_wrong": "Moderate risk: future evidence ingestion might retroactively validate the booklet, but under current constraints the hypothesis correctly identifies the verification gap without asserting truth or falsehood of the claim itself.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.2,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.52
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the core system constraint violation identified in review: zero evidence grounding for orbital mechanics. It reframes the problem as a verifiable knowledge_gap rather than proposing ungrounded astrophysical mechanisms. Unlike previous iterations, it avoids referencing external datasets (JPL DE440, ISM models) and does not force-fit irrelevant EvidenceCards. It satisfies reviewer requirements to classify the entire inquiry as unverified_external_knowledge while maintaining strict adherence to allowed_evidence_ids (empty supporting list). Hypothesis 1 is valid but narrower in scope; Hypothesis 0 encompasses both the mechanistic explanation gap and the booklet verification gap under a single evidence-grounded meta-hypothesis.",
+          "rejected_directions": [
+            "Proposing specific orbital decay mechanisms (drag, GW emission) without supporting EvidenceCards",
+            "Referencing JPL DE440, ACE/WIND, or other external datasets not in allowed_evidence_ids",
+            "Force-fitting EV-Q049-d8b0aafaf37dc75c63b51ce4 (geodynamo) as analog for orbital angular momentum loss",
+            "Using EV-Q049-8bbe55a84dc7ec7a0a7655b0 (Mars propellant) to infer anything about natural orbital stability",
+            "Generating hypotheses with non-empty supporting_evidence_ids when no relevant cards exist",
+            "Claiming planetary orbits are stable or unstable as established fact without evidence backing"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This research plan addresses a critical knowledge gap identified in the evidence extraction phase. The recommended hypothesis posits that the current evidence catalog is insufficient to explain planetary orbital stability or decay because no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction. Consequently, this experiment design does not propose a physical simulation of orbital dynamics (which would require external data like JPL DE440 or ISM models not present in the allowed evidence). Instead, it designs a meta-analytical verification protocol to rigorously confirm the absence of relevant astronomical data within the allowed EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4). The technical approach involves systematic text mining and topical classification of the provided cards to verify their irrelevance to the domain of orbital mechanics, thereby validating the 'insufficient_evidence' status as a robust scientific conclusion under the system's constraints.",
+          "datasets": {
+            "source": [
+              {
+                "name": "Allowed Evidence Cards Catalog",
+                "description": "The set of four provided EvidenceCards: EV-Q049-8bbe55a84dc7ec7a0a7655b0 (Mars propellant), EV-Q049-62174834a29a81c036ba3f3f (ferroelectric materials), EV-Q049-c36de67711a6d7af2674a742 (particle physics), and EV-Q049-d8b0aafaf37dc75c63b51ce4 (geodynamo). These are the only permissible data sources for factual grounding.",
+                "url": null,
+                "license": "Unknown"
+              }
+            ],
+            "target": {
+              "name": "Evidence Relevance Audit Report",
+              "description": "A structured output confirming the topical mismatch between the provided evidence and the query domain (planetary orbital mechanics).",
+              "format": "JSON/Text",
+              "schema": {
+                "evidence_id": "string",
+                "topic_classification": "string",
+                "relevance_to_orbital_mechanics": "boolean",
+                "key_terms_found": "list[string]"
+              }
+            }
+          },
+          "methods": "1. **Systematic Keyword Search**: Scan the quoted_text and metadata of all allowed EvidenceCards for terms related to orbital mechanics (e.g., 'orbit', 'gravity', 'Kepler', 'drag', 'ephemeris', 'semi-major axis'). \n2. **Topical Classification**: Manually or algorithmically classify each EvidenceCard into its actual domain (e.g., Aerospace Logistics, Condensed Matter Physics, High-Energy Physics, Geophysics) to demonstrate the disconnect from Astronomy/Celestial Mechanics. \n3. **Gap Analysis**: Document the specific physical mechanisms required to answer the original question (e.g., N-body dynamics, tidal dissipation) and verify their absence in the evidence set. \n4. **Constraint Verification**: Confirm that no external datasets (JPL DE440, etc.) are referenced or used, adhering strictly to the allowed_evidence_ids constraint.",
+          "experiments": {
+            "baselines": [
+              "Null Hypothesis: At least one provided EvidenceCard contains sufficient information to validate or refute claims about planetary orbital decay.",
+              "Random Baseline: A random selection of scientific abstracts from unrelated fields (similar to the provided set) to establish a baseline for topical irrelevance."
+            ],
+            "metrics": [
+              "Keyword Hit Rate: Number of orbital-mechanics-related terms found per EvidenceCard (expected: 0).",
+              "Topical Match Score: Semantic similarity score between EvidenceCard content and a standard corpus of celestial mechanics literature (expected: near 0).",
+              "Evidence Coverage Percentage: Proportion of required physical mechanisms (drag, GW emission, tidal forces) covered by the evidence set (expected: 0%)."
+            ],
+            "ablation": [
+              "Exclude Metadata: Verify that even with title/metadata expansion, no hidden orbital data exists in the cards.",
+              "Broaden Search Terms: Expand keyword list to include indirect references (e.g., 'sun', 'planet') to ensure no contextual clues were missed, while still confirming lack of mechanistic data."
+            ],
+            "validation_protocol": "1. **Manual Review**: Human-in-the-loop verification of each EvidenceCard's content against the query domain. \n2. **Cross-Reference Check**: Ensure that no 'title_only' or 'doi_only' entries are mistakenly treated as full evidence. \n3. **Consistency Check**: Verify that the conclusion of 'insufficient_evidence' aligns with the empty supporting_evidence_ids list in the hypothesis."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "List of allowed EvidenceCards (IDs and quoted_text) archived.",
+            "Keyword list for orbital mechanics defined and documented.",
+            "Classification criteria for 'relevant' vs 'irrelevant' evidence explicitly stated.",
+            "Verification that no external data sources were accessed during the audit.",
+            "Final audit report format standardized for JSON output."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "estimated_compute_hours": 0.5,
+            "required_storage_gb": 0.1,
+            "software_dependencies": [
+              "Python",
+              "Pandas",
+              "NLTK/spaCy (for keyword extraction)"
+            ]
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly identifies the query as a 'knowledge_gap' due to the complete absence of relevant EvidenceCards for celestial mechanics.",
+            "All references to external datasets (JPL DE440, ISM models) have been successfully removed from the experiment design, resolving the critical issue of external data dependency.",
+            "The experimental design has been appropriately reframed as a meta-analytical audit of the evidence catalog rather than a physical simulation, adhering strictly to allowed evidence constraints.",
+            "Supporting_evidence_ids remains correctly empty, avoiding any force-fitting of irrelevant cards (e.g., geodynamo or propellant costs).",
+            "Results field correctly states 'pending' without fabrication, and the validation protocol is reproducible within the system's current scope."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:daa5449c592e",
+            "category": "critical_issue",
+            "description": "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:e937c5cbddbc",
+            "category": "critical_issue",
+            "description": "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "The mapped experiment change has no validated evidence reference."
+          },
+          {
+            "issue_id": "critical_issue:33e2be9faa46",
+            "category": "critical_issue",
+            "description": "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:a79b8ced86bb",
+            "category": "required_revision",
+            "description": "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "The mapped experiment change has no validated evidence reference."
+          },
+          {
+            "issue_id": "required_revision:7244f9bb0c92",
+            "category": "required_revision",
+            "description": "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "The mapped experiment change has no validated evidence reference."
+          },
+          {
+            "issue_id": "required_revision:4ae98423a2f6",
+            "category": "required_revision",
+            "description": "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:801ca75ee439",
+            "category": "required_revision",
+            "description": "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "7031d317d47a97f5efd23aaf8eeb35a30b9fe518f1840a0c0e74a2aa670aa744",
+          "experiment_designer": "7bbe338f9f4d45d895ec3f951799316ff8c2108170b7dbf28fd4345091464c1d",
+          "scientific_reviewer": "659a7967074cfe1d8143248f80204913b3135a14bdd82a883fb0081cfb25aa72"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-083854-da0f61b6",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-083854-da0f61b6:review:v1",
+        "20260822-083854-da0f61b6:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-083854-da0f61b6:v1",
+        "20260822-083854-da0f61b6:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-083854-da0f61b6",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-083854-da0f61b6:review:v1",
+          "20260822-083854-da0f61b6:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-083854-da0f61b6:v1",
+          "20260822-083854-da0f61b6:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-083854-da0f61b6",
+          "version_number": 1,
+          "version_id": "20260822-083854-da0f61b6:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Planetary orbits remain stable against rapid decay because the interplanetary medium density is insufficient to generate significant aerodynamic drag, and gravitational wave emission is negligible at planetary mass scales, making angular momentum loss timescales exceed the current age of the solar system.",
+                "mechanism": "Orbital decay requires a non-conservative force or torque to remove orbital energy and angular momentum. In the near-vacuum of interplanetary space, gas drag is minimal. Gravitational radiation power scales as (v/c)^5 and is negligible for planets. Without these dissipative mechanisms, Keplerian orbits are effectively conserved over Gyr timescales.",
+                "falsifiable_prediction": "If this hypothesis is correct, high-precision ephemeris data should show no statistically significant secular decrease in semi-major axes attributable to drag or GWs beyond known tidal effects; simulated decay rates using standard ISM densities must yield timescales >10^15 years.",
+                "required_observations": [
+                  "Long-term planetary ephemerides (e.g., JPL DE440) to constrain da/dt",
+                  "In-situ measurements of interplanetary medium density and velocity distribution",
+                  "N-body simulations including Poynting-Robertson drag and solar wind drag terms"
+                ],
+                "risk_of_being_wrong": "Unknown or underestimated non-gravitational forces (e.g., dark matter drag, modified gravity) could cause faster decay; booklet claim of gradual swirl-in might reflect outdated models not captured in provided evidence.",
+                "supporting_evidence_ids": [],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.8,
+                "evidence_support_score": 0.0,
+                "overall_score": 0.5
+              },
+              {
+                "hypothesis": "The booklet's assertion that planets will 'swirl into the sun' due to orbital decay is factually incorrect under standard astrophysical models; instead, stellar evolution (solar mass loss and expansion) dominates long-term orbital dynamics, potentially causing outward migration rather than inward spiral.",
+                "mechanism": "As the Sun loses mass via stellar winds and nuclear fusion, planetary orbits expand adiabatically (a ∝ 1/M_sun). Tidal interactions with the expanding solar envelope during RGB/AGB phases may later cause engulfment, but this is distinct from vacuum orbital decay. The 'swirl-in' narrative conflates tidal engulfment with continuous orbital decay.",
+                "falsifiable_prediction": "If this hypothesis is correct, stellar evolution models coupled with orbital dynamics should predict net outward migration for inner planets during main-sequence and early giant phases, contradicting monotonic inward decay claims.",
+                "required_observations": [
+                  "Stellar mass-loss rate estimates for Sun-like stars across evolutionary stages",
+                  "Tidal dissipation factors (Q) for solar-type stars and gas giants",
+                  "Comparative analysis of exoplanet systems around post-main-sequence stars"
+                ],
+                "risk_of_being_wrong": "If significant unmodeled drag exists (e.g., from circumsolar dust disks), inward decay could compete with mass-loss-driven expansion; booklet may refer to extremely long-term GR effects not yet ruled out.",
+                "supporting_evidence_ids": [],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.85,
+                "feasibility_score": 0.7,
+                "evidence_support_score": 0.0,
+                "overall_score": 0.54
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses the core mechanism of orbital stability versus decay and is highly falsifiable with existing ephemeris and simulation tools. Although no supporting evidence IDs are available (insufficient_evidence), it aligns with established celestial mechanics principles and explicitly defines observable constraints. Hypothesis 1, while relevant to correcting the booklet, depends more heavily on stellar evolution models outside the immediate scope of orbital decay mechanisms.",
+            "rejected_directions": [
+              "Invoking magnetic braking or dynamo effects as primary orbital decay mechanisms (EV-Q049-d8b0aafaf37dc75c63b51ce4 relates to geodynamo, not orbital mechanics)",
+              "Attributing orbital stability to material science properties like ferroelectric polarization (EV-Q049-62174834a29a81c036ba3f3f is irrelevant)",
+              "Using particle physics flavor symmetries to explain macroscopic orbital dynamics (EV-Q049-c36de67711a6d7af2674a742 is topically mismatched)",
+              "Citing Mars mission propellant costs as evidence for orbital stability (EV-Q049-8bbe55a84dc7ec7a0a7655b0 is unrelated to natural orbital decay)"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This study aims to validate the hypothesis that planetary orbital stability is maintained due to negligible non-conservative forces (aerodynamic drag and gravitational wave emission) in the interplanetary medium. The core mechanism involves quantifying the timescale of orbital decay ($\\tau_{decay}$) induced by gas drag and gravitational radiation, comparing it against the age of the Solar System ($\\sim 4.5 \\times 10^9$ years). We will employ high-precision N-body simulations incorporating perturbative forces: Poynting-Robertson drag, solar wind drag, and quadrupole gravitational wave emission. The simulation will use initial conditions derived from JPL DE440 ephemerides. The primary output is the secular change in semi-major axis ($da/dt$) for Earth and Mars over a $10^6$ year integration window, extrapolated to Gyr scales. The hypothesis is supported if simulated $da/dt$ values are statistically indistinguishable from zero within measurement uncertainties of current radar/laser ranging data, or if calculated decay timescales exceed $10^{15}$ years.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "JPL Horizons System Ephemerides (DE440)",
+                  "description": "High-precision planetary state vectors (position, velocity) for the Solar System bodies. Used for initial conditions and validation of baseline Keplerian orbits.",
+                  "url": "https://ssd.jpl.nasa.gov/horizons/",
+                  "license": "Public Domain"
+                },
+                {
+                  "name": "Interplanetary Medium Density Models",
+                  "description": "Empirical models of solar wind density and velocity distributions (e.g., from ACE, WIND, Parker Solar Probe data) to parameterize drag forces.",
+                  "url": null,
+                  "license": "Public Domain"
+                }
+              ],
+              "target": {
+                "name": "Simulated Orbital Decay Rates",
+                "description": "Time-series data of semi-major axis variations ($a(t)$) and derived decay rates ($da/dt$) for inner planets under various drag scenarios.",
+                "format": "HDF5/CSV",
+                "schema": {
+                  "time_years": "float64",
+                  "semi_major_axis_au": "float64",
+                  "eccentricity": "float64",
+                  "drag_force_N": "float64",
+                  "gw_power_W": "float64"
+                }
+              }
+            },
+            "methods": "1. **N-Body Simulation Framework**: Use a symplectic integrator (e.g., Wisdom-Holman map) modified to include non-conservative perturbative accelerations. \n2. **Drag Force Modeling**: Implement aerodynamic drag $F_D = -\\frac{1}{2} C_D \\rho v^2 A$, where $\\rho$ is interplanetary medium density (variable with heliocentric distance), $v$ is relative velocity, and $A$ is cross-sectional area. Include Poynting-Robertson effect for dust drag. \n3. **Gravitational Wave Emission**: Calculate energy loss rate using the quadrupole formula $P_{GW} = \\frac{32}{5} \\frac{G^4}{c^5} \\frac{m_1^2 m_2^2 (m_1+m_2)}{a^5}$. Convert to orbital decay rate $da/dt$. \n4. **Parameter Sweep**: Vary interplanetary density $\\rho$ by orders of magnitude ($10^{-24}$ to $10^{-18}$ kg/m³) to bound worst-case drag scenarios. \n5. **Statistical Analysis**: Compare simulated secular trends with residual analysis from JPL DE440 fit residuals to determine if observed anomalies can be attributed to drag/GW.",
+            "experiments": {
+              "baselines": [
+                "Pure Newtonian/GR Point-Mass N-Body (No Drag/GW): Establishes the conservative baseline for orbital stability.",
+                "Standard Solar Wind Drag Model: Uses average solar wind density ($\\sim 5$ protons/cm³ at 1 AU) and velocity ($\\sim 400$ km/s) to estimate typical drag effects."
+              ],
+              "metrics": [
+                "Secular Semi-Major Axis Decay Rate ($da/dt$ in meters/year)",
+                "Orbital Decay Timescale ($\\tau = a / |da/dt|$ in years)",
+                "Residual RMS Fit Error (comparison with JPL DE440 observational residuals)"
+              ],
+              "ablation": [
+                "Remove Gravitational Wave Term: Isolate the contribution of GW emission vs. drag.",
+                "Remove Aerodynamic Drag Term: Isolate the contribution of gas/plasma drag vs. GW.",
+                "Vary Density Profile: Test sensitivity to extreme assumptions about interplanetary medium density (e.g., dense dust cloud scenarios)."
+              ],
+              "validation_protocol": "1. **Code Verification**: Reproduce known analytical solutions for two-body decay under constant drag. \n2. **Data Validation**: Ensure initial conditions match JPL DE440 states at epoch J2000.0 within $10^{-9}$ AU. \n3. **Convergence Test**: Verify that integration timestep errors are below the magnitude of the perturbative forces being measured. \n4. **Cross-Check**: Compare GW decay rates with independent calculations using Peters' formula for eccentric orbits."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Initial condition files (JPL DE440 snapshot) archived with checksums.",
+              "Source code for modified N-body integrator (Python/C++) version-controlled.",
+              "Configuration files for drag coefficients and density profiles documented.",
+              "Random seeds for any stochastic solar wind variations fixed.",
+              "Hardware specifications and floating-point precision details recorded."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_compute_hours": 48,
+              "required_storage_gb": 50,
+              "software_dependencies": [
+                "Rebound (N-body library)",
+                "NumPy/SciPy",
+                "Astropy"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The candidate hypothesis and experiment design rely entirely on external astrophysical knowledge (JPL DE440, ISM density models, GW quadrupole formula) that is not present in the provided EvidenceCards.",
+              "All four provided EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) are topically irrelevant to planetary orbital mechanics, covering Mars propellant costs, ferroelectric materials, particle physics flavor symmetries, and geodynamo theory respectively.",
+              "The 'supporting_evidence_ids' field is correctly empty, but this confirms the hypothesis is currently ungrounded within the allowed evidence scope.",
+              "While the Results field correctly states 'pending' and avoids fabrication, the experimental design cannot be validated against the provided evidence catalog as no relevant baselines or datasets exist in the input.",
+              "The system correctly identified 'insufficient_evidence' in the extraction phase but failed to halt hypothesis generation or mark the plan as purely speculative/knowledge_gap-only in the final output structure."
+            ],
+            "critical_issues": [
+              "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+              "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+              "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context."
+            ],
+            "required_revisions": [
+              "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+              "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+              "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+              "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly."
+            ],
+            "risk_level": "high",
+            "evidence_grounding_score": 0.0,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.2,
+            "reference_reliability_score": 0.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:daa5449c592e",
+              "category": "critical_issue",
+              "description": "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:e937c5cbddbc",
+              "category": "critical_issue",
+              "description": "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:33e2be9faa46",
+              "category": "critical_issue",
+              "description": "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:a79b8ced86bb",
+              "category": "required_revision",
+              "description": "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:7244f9bb0c92",
+              "category": "required_revision",
+              "description": "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:4ae98423a2f6",
+              "category": "required_revision",
+              "description": "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:801ca75ee439",
+              "category": "required_revision",
+              "description": "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "a3966d688a33e86d8f3ae6e9492df476ce1a478afe73f9264c5f7d3d19be8d7e",
+            "experiment_designer": "1f023ff11038d5c8b1e4af8200cd8ca23bdb4edb3d9115d998dce27200f4aee2",
+            "scientific_reviewer": "69b9e6a78ea75199d43823685758718674aa3ae63e0c8035712840ca3d2c9463"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-083854-da0f61b6",
+          "version_number": 2,
+          "version_id": "20260822-083854-da0f61b6:v2",
+          "parent_version_id": "20260822-083854-da0f61b6:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Current evidence catalog is insufficient to explain planetary orbital stability or decay; no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction, rendering the question unanswerable within the allowed scope.",
+                "mechanism": "The provided evidence set (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4) covers Mars propellant logistics, ferroelectric materials, particle physics flavor symmetries, and geodynamo theory respectively. None contain information on N-body gravitational interactions, vacuum drag coefficients, or general relativistic orbital corrections necessary to validate or refute claims about planetary orbit decay.",
+                "falsifiable_prediction": "If a relevant EvidenceCard containing celestial mechanics data were added to the allowed list, this hypothesis would be falsified; conversely, as long as the allowed_evidence_ids remain restricted to the current four unrelated IDs, the knowledge gap persists and no grounded answer can be generated.",
+                "required_observations": [
+                  "Verification that none of the allowed_evidence_ids contain keywords or concepts related to orbital mechanics, gravity, or planetary motion",
+                  "Confirmation that evidence_extraction.knowledge_gaps correctly identifies missing astrophysical context",
+                  "Audit of evidence_catalog relevance_scores showing topical mismatch despite non-zero scores"
+                ],
+                "risk_of_being_wrong": "Low risk within system constraints: this hypothesis accurately reflects the current evidence state. Risk only arises if hidden metadata or implicit links in existing cards actually contain relevant orbital data not captured in quoted_text.",
+                "supporting_evidence_ids": [],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.0,
+                "overall_score": 0.51
+              },
+              {
+                "hypothesis": "The booklet's claim that 'orbits do decay very gradually' and planets will 'swirl into the sun' cannot be verified or refuted using the provided evidence, as no EvidenceCard addresses stellar evolution, tidal dissipation, or long-term orbital dynamics.",
+                "mechanism": "Validating the booklet excerpt requires evidence on solar mass loss rates, tidal quality factors, or post-main-sequence stellar expansion—none of which appear in the allowed evidence set. The available cards (propellant costs, ferroelectrics, flavor symmetries, geodynamo) are causally and topologically disconnected from stellar-planetary interaction timescales.",
+                "falsifiable_prediction": "If any allowed EvidenceCard were found to contain data on solar wind mass loss, tidal torques, or RGB/AGB phase orbital evolution, this hypothesis would be weakened; currently, with zero matching IDs, the claim remains an unverified external assertion.",
+                "required_observations": [
+                  "Text mining of all allowed EvidenceCards for terms like 'tidal', 'mass loss', 'stellar evolution', 'orbital period change'",
+                  "Cross-reference of booklet_excerpt claims against evidence_extraction.established_facts (currently empty)",
+                  "Validation that knowledge_gaps explicitly flag the booklet's decay narrative as ungrounded"
+                ],
+                "risk_of_being_wrong": "Moderate risk: future evidence ingestion might retroactively validate the booklet, but under current constraints the hypothesis correctly identifies the verification gap without asserting truth or falsehood of the claim itself.",
+                "supporting_evidence_ids": [],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.2,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.0,
+                "overall_score": 0.52
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses the core system constraint violation identified in review: zero evidence grounding for orbital mechanics. It reframes the problem as a verifiable knowledge_gap rather than proposing ungrounded astrophysical mechanisms. Unlike previous iterations, it avoids referencing external datasets (JPL DE440, ISM models) and does not force-fit irrelevant EvidenceCards. It satisfies reviewer requirements to classify the entire inquiry as unverified_external_knowledge while maintaining strict adherence to allowed_evidence_ids (empty supporting list). Hypothesis 1 is valid but narrower in scope; Hypothesis 0 encompasses both the mechanistic explanation gap and the booklet verification gap under a single evidence-grounded meta-hypothesis.",
+            "rejected_directions": [
+              "Proposing specific orbital decay mechanisms (drag, GW emission) without supporting EvidenceCards",
+              "Referencing JPL DE440, ACE/WIND, or other external datasets not in allowed_evidence_ids",
+              "Force-fitting EV-Q049-d8b0aafaf37dc75c63b51ce4 (geodynamo) as analog for orbital angular momentum loss",
+              "Using EV-Q049-8bbe55a84dc7ec7a0a7655b0 (Mars propellant) to infer anything about natural orbital stability",
+              "Generating hypotheses with non-empty supporting_evidence_ids when no relevant cards exist",
+              "Claiming planetary orbits are stable or unstable as established fact without evidence backing"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This research plan addresses a critical knowledge gap identified in the evidence extraction phase. The recommended hypothesis posits that the current evidence catalog is insufficient to explain planetary orbital stability or decay because no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction. Consequently, this experiment design does not propose a physical simulation of orbital dynamics (which would require external data like JPL DE440 or ISM models not present in the allowed evidence). Instead, it designs a meta-analytical verification protocol to rigorously confirm the absence of relevant astronomical data within the allowed EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a7655b0, EV-Q049-62174834a29a81c036ba3f3f, EV-Q049-c36de67711a6d7af2674a742, EV-Q049-d8b0aafaf37dc75c63b51ce4). The technical approach involves systematic text mining and topical classification of the provided cards to verify their irrelevance to the domain of orbital mechanics, thereby validating the 'insufficient_evidence' status as a robust scientific conclusion under the system's constraints.",
+            "datasets": {
+              "source": [
+                {
+                  "name": "Allowed Evidence Cards Catalog",
+                  "description": "The set of four provided EvidenceCards: EV-Q049-8bbe55a84dc7ec7a0a7655b0 (Mars propellant), EV-Q049-62174834a29a81c036ba3f3f (ferroelectric materials), EV-Q049-c36de67711a6d7af2674a742 (particle physics), and EV-Q049-d8b0aafaf37dc75c63b51ce4 (geodynamo). These are the only permissible data sources for factual grounding.",
+                  "url": null,
+                  "license": "Unknown"
+                }
+              ],
+              "target": {
+                "name": "Evidence Relevance Audit Report",
+                "description": "A structured output confirming the topical mismatch between the provided evidence and the query domain (planetary orbital mechanics).",
+                "format": "JSON/Text",
+                "schema": {
+                  "evidence_id": "string",
+                  "topic_classification": "string",
+                  "relevance_to_orbital_mechanics": "boolean",
+                  "key_terms_found": "list[string]"
+                }
+              }
+            },
+            "methods": "1. **Systematic Keyword Search**: Scan the quoted_text and metadata of all allowed EvidenceCards for terms related to orbital mechanics (e.g., 'orbit', 'gravity', 'Kepler', 'drag', 'ephemeris', 'semi-major axis'). \n2. **Topical Classification**: Manually or algorithmically classify each EvidenceCard into its actual domain (e.g., Aerospace Logistics, Condensed Matter Physics, High-Energy Physics, Geophysics) to demonstrate the disconnect from Astronomy/Celestial Mechanics. \n3. **Gap Analysis**: Document the specific physical mechanisms required to answer the original question (e.g., N-body dynamics, tidal dissipation) and verify their absence in the evidence set. \n4. **Constraint Verification**: Confirm that no external datasets (JPL DE440, etc.) are referenced or used, adhering strictly to the allowed_evidence_ids constraint.",
+            "experiments": {
+              "baselines": [
+                "Null Hypothesis: At least one provided EvidenceCard contains sufficient information to validate or refute claims about planetary orbital decay.",
+                "Random Baseline: A random selection of scientific abstracts from unrelated fields (similar to the provided set) to establish a baseline for topical irrelevance."
+              ],
+              "metrics": [
+                "Keyword Hit Rate: Number of orbital-mechanics-related terms found per EvidenceCard (expected: 0).",
+                "Topical Match Score: Semantic similarity score between EvidenceCard content and a standard corpus of celestial mechanics literature (expected: near 0).",
+                "Evidence Coverage Percentage: Proportion of required physical mechanisms (drag, GW emission, tidal forces) covered by the evidence set (expected: 0%)."
+              ],
+              "ablation": [
+                "Exclude Metadata: Verify that even with title/metadata expansion, no hidden orbital data exists in the cards.",
+                "Broaden Search Terms: Expand keyword list to include indirect references (e.g., 'sun', 'planet') to ensure no contextual clues were missed, while still confirming lack of mechanistic data."
+              ],
+              "validation_protocol": "1. **Manual Review**: Human-in-the-loop verification of each EvidenceCard's content against the query domain. \n2. **Cross-Reference Check**: Ensure that no 'title_only' or 'doi_only' entries are mistakenly treated as full evidence. \n3. **Consistency Check**: Verify that the conclusion of 'insufficient_evidence' aligns with the empty supporting_evidence_ids list in the hypothesis."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "List of allowed EvidenceCards (IDs and quoted_text) archived.",
+              "Keyword list for orbital mechanics defined and documented.",
+              "Classification criteria for 'relevant' vs 'irrelevant' evidence explicitly stated.",
+              "Verification that no external data sources were accessed during the audit.",
+              "Final audit report format standardized for JSON output."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "estimated_compute_hours": 0.5,
+              "required_storage_gb": 0.1,
+              "software_dependencies": [
+                "Python",
+                "Pandas",
+                "NLTK/spaCy (for keyword extraction)"
+              ]
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly identifies the query as a 'knowledge_gap' due to the complete absence of relevant EvidenceCards for celestial mechanics.",
+              "All references to external datasets (JPL DE440, ISM models) have been successfully removed from the experiment design, resolving the critical issue of external data dependency.",
+              "The experimental design has been appropriately reframed as a meta-analytical audit of the evidence catalog rather than a physical simulation, adhering strictly to allowed evidence constraints.",
+              "Supporting_evidence_ids remains correctly empty, avoiding any force-fitting of irrelevant cards (e.g., geodynamo or propellant costs).",
+              "Results field correctly states 'pending' without fabrication, and the validation protocol is reproducible within the system's current scope."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:daa5449c592e",
+              "category": "critical_issue",
+              "description": "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:e937c5cbddbc",
+              "category": "critical_issue",
+              "description": "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "The mapped experiment change has no validated evidence reference."
+            },
+            {
+              "issue_id": "critical_issue:33e2be9faa46",
+              "category": "critical_issue",
+              "description": "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:a79b8ced86bb",
+              "category": "required_revision",
+              "description": "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "The mapped experiment change has no validated evidence reference."
+            },
+            {
+              "issue_id": "required_revision:7244f9bb0c92",
+              "category": "required_revision",
+              "description": "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "The mapped experiment change has no validated evidence reference."
+            },
+            {
+              "issue_id": "required_revision:4ae98423a2f6",
+              "category": "required_revision",
+              "description": "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:801ca75ee439",
+              "category": "required_revision",
+              "description": "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "7031d317d47a97f5efd23aaf8eeb35a30b9fe518f1840a0c0e74a2aa670aa744",
+            "experiment_designer": "7bbe338f9f4d45d895ec3f951799316ff8c2108170b7dbf28fd4345091464c1d",
+            "scientific_reviewer": "659a7967074cfe1d8143248f80204913b3135a14bdd82a883fb0081cfb25aa72"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-083854-da0f61b6:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-083854-da0f61b6:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-083854-da0f61b6:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-083854-da0f61b6:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:daa5449c592e",
+          "category": "critical_issue",
+          "description": "Zero evidence grounding: No provided EvidenceCard supports the claims regarding interplanetary medium density, gravitational wave emission scaling, or orbital decay timescales.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:e937c5cbddbc",
+          "category": "critical_issue",
+          "description": "External data dependency: The experiment requires JPL DE440 and ISM models which are not in the allowed evidence list; using them violates the constraint to only use provided evidence for factual grounding.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "issue_id": "critical_issue:33e2be9faa46",
+          "category": "critical_issue",
+          "description": "Topical mismatch: The available evidence covers unrelated domains (materials science, particle physics, mission logistics), making verification of the astronomical hypothesis impossible within the current context.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:a79b8ced86bb",
+          "category": "required_revision",
+          "description": "Explicitly classify the entire hypothesis as a 'knowledge_gap' or 'unverified_external_knowledge' since no allowed evidence IDs support it.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "issue_id": "required_revision:7244f9bb0c92",
+          "category": "required_revision",
+          "description": "Remove specific references to external datasets (JPL DE440, ACE/WIND data) from the 'datasets' field unless they can be mapped to an allowed EvidenceCard (currently none exist).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "The mapped experiment change has no validated evidence reference."
+        },
+        {
+          "issue_id": "required_revision:4ae98423a2f6",
+          "category": "required_revision",
+          "description": "Reframe the ResearchPlan to focus solely on identifying what evidence *would be needed* to test this hypothesis, rather than proposing a concrete simulation plan that implies access to unverified external data.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:801ca75ee439",
+          "category": "required_revision",
+          "description": "Do not attempt to force-fit irrelevant EvidenceCards (e.g., geodynamo or propellant costs) to justify the hypothesis; maintain the empty evidence list honestly.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "checkpoint_hash": "bc3dbfd312681af8048e1eb6def2d2ed523bcd0020d89a4d3ee083e766c76903"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-083854-da0f61b6:wave-b-two-round",
+      "run_id": "20260822-083854-da0f61b6",
+      "v1_version_id": "20260822-083854-da0f61b6:v1",
+      "v2_version_id": "20260822-083854-da0f61b6:v2",
+      "input_fingerprints": {
+        "v1": "1f023ff11038d5c8b1e4af8200cd8ca23bdb4edb3d9115d998dce27200f4aee2",
+        "v2": "7bbe338f9f4d45d895ec3f951799316ff8c2108170b7dbf28fd4345091464c1d"
+      },
+      "responded_issue_count": 0,
+      "issue_ids": [],
+      "change_ids": [
+        "change:705cb98482f4aa21",
+        "change:1971df89df5d44e9",
+        "change:c06ac7d84a7db1c7",
+        "change:6a29adc27729e2ea"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 0.0,
+          "after": 1.0,
+          "delta": 1.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.2,
+          "after": 0.9,
+          "delta": 0.7
+        },
+        "reference_reliability_score": {
+          "before": 0.0,
+          "after": 1.0,
+          "delta": 1.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 1,
+          "hypothesis": "The booklet's claim that 'orbits do decay very gradually' and planets will 'swirl into the sun' cannot be verified or refuted using the provided evidence, as no EvidenceCard addresses stellar evolution, tidal dissipation, or long-term orbital dynamics.",
+          "overall_score": 0.52,
+          "recommended": false
+        },
+        {
+          "rank": 2,
+          "original_index": 0,
+          "hypothesis": "Current evidence catalog is insufficient to explain planetary orbital stability or decay; no provided EvidenceCard addresses celestial mechanics, gravitational dynamics, or orbital friction, rendering the question unanswerable within the allowed scope.",
+          "overall_score": 0.51,
+          "recommended": true
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "bdaf645c6c62",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:41:13.377786+00:00",
+    "ended_at": "2026-08-22T08:41:53.969593+00:00",
+    "duration_ms": 40591,
+    "input_summary": "{\"question_item\": {\"id\": \"Q049\", \"domain\": \"Astronomy\", \"question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"source_page\": 21, \"booklet_excerpt\": \"Gravity keeps planets in stable orbits around the sun. Yet orbits do decay very gradually. Eventually, the planets will swirl into the sun.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"keywords\": [\"plan",
+    "output_summary": "{\"input_question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"domain\": \"Astronomy\", \"problem_statement\": \"The user inquiry seeks a mechanistic explanation for the stability of planetary orbits against decay and collision, referencing a booklet excerpt that claims orbits decay gradually leading to eventual collapse into the sun. The core scientific challenge is to validate or refute this claim and explain orbital stability using only the provided evidence catalog.\", \"rationale\": \"A rigorous analysis of the allowed EvidenceCards (EV-Q049-8bbe55a84dc7ec7a0a",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "910a7c14b030",
+    "mock": false
+  },
+  {
+    "event_id": "53f5d95ad764",
+    "run_id": "20260822-083854-da0f61b6",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:41:53.969593+00:00",
+    "ended_at": "2026-08-22T08:41:56.129787+00:00",
+    "duration_ms": 2160,
+    "input_summary": "{\"question_item\": {\"id\": \"Q049\", \"domain\": \"Astronomy\", \"question\": \"Why don’t the orbits of planets decay and cause them to crash into each other?\", \"source_page\": 21, \"booklet_excerpt\": \"Gravity keeps planets in stable orbits around the sun. Yet orbits do decay very gradually. Eventually, the planets will swirl into the sun.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not ResearchPlan. SchemaValidator requires a ResearchPlan object to validate structure and evidence traceability.\", \"MissingResearchPlan: Cannot perform validation without a structured ResearchPlan containing hypotheses, experiments, datasets, and references.\"], \"warnings\": [\"InputMismatch: The input JSON represents a question definition (Q049) rather than the expected ResearchPlan schema.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_check\": \"failed\", \"evidence_traceability\": \"not_appl",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "31fc2bf5d53b",
+    "mock": false
+  }
+]

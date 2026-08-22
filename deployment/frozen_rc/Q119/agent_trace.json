@@ -1,0 +1,1629 @@
+[
+  {
+    "event_id": "a31df0a0020a",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:03.142094+00:00",
+    "ended_at": "2026-08-22T09:16:03.143136+00:00",
+    "duration_ms": 1,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "71fc12b05166",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:03.143136+00:00",
+    "ended_at": "2026-08-22T09:16:06.547745+00:00",
+    "duration_ms": 3404,
+    "input_summary": "{\"question_item\": {\"id\": \"Q119\", \"domain\": \"Artificial Intelligence\", \"question\": \"Is there a limit to human intelligence?\", \"source_page\": 41, \"booklet_excerpt\": \"IQ test scores appear to have increased by about points during the 20th century, according to experts interviewed in a recent BBC documentary. Overall, increased quality of nutrition, better education, and greater exposure to new technologies have all contributed to our intelligence increasing. Some scientists purport that we will never hit a limit to our intelligence because there will always be new problems to solve and challenges",
+    "output_summary": "{\"domain\": \"Artificial Intelligence\", \"core_question\": \"是否存在人类智能的上限？\", \"keywords\": [\"human intelligence\", \"IQ test scores\", \"limit\", \"Tenelle Porter\", \"BBC documentary\"], \"entities\": [\"Tenelle Porter\", \"BBC documentary\", \"IQ test scores\", \"nutrition\", \"education\", \"technologies\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"基于提供的片段，讨论范围限于20世纪IQ分数的上升趋势、营养/教育/技术对智力的潜在影响，以及专家关于“智能循环”和“未知上限”的观点。不能推断具体的生理极限数值或生物学机制。\", \"what_not_to_claim\": [\"人类智能存在确切的数值上限（如具体IQ分数）。\", \"人类智能无限增长已被证实为事实（仅作为部分科学家的观点提出）。\", \"IQ分数增加直接等同于生物性智力提升（片段中提及的是相关性及多种因素贡献）。\", \"任何未在片段中引用的具体实验数据或长期纵向研究结果。\"],",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "fd2305e83097",
+    "mock": false
+  },
+  {
+    "event_id": "b787af81649a",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:06.547745+00:00",
+    "ended_at": "2026-08-22T09:16:27.465245+00:00",
+    "duration_ms": 20917,
+    "input_summary": "{\"question_item\": {\"id\": \"Q119\", \"domain\": \"Artificial Intelligence\", \"question\": \"Is there a limit to human intelligence?\", \"source_page\": 41, \"booklet_excerpt\": \"IQ test scores appear to have increased by about points during the 20th century, according to experts interviewed in a recent BBC documentary. Overall, increased quality of nutrition, better education, and greater exposure to new technologies have all contributed to our intelligence increasing. Some scientists purport that we will never hit a limit to our intelligence because there will always be new problems to solve and challenges",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the specific claims regarding IQ score increases and expert opinions mentioned in the BBC documentary excerpt.\", \"query\": \"\\\"Tenelle Porter\\\" \\\"BBC documentary\\\" human intelligence limit IQ scores increase\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Confirmation of the quote attribution to Tenelle Porter and the context of the BBC documentary mentioned in the source booklet.\", \"priority\": \"high\"}, {\"purpose\": \"Identify the specific factors (nutrition, education, technology) cited as contributors to rising IQ scores in the provided text.\", \"query\":",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "422d5569162e",
+    "mock": false
+  },
+  {
+    "event_id": "88bc5a2dbb8a",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:27.492232+00:00",
+    "ended_at": "2026-08-22T09:16:38.308233+00:00",
+    "duration_ms": 10816,
+    "input_summary": "{\"question_item\": {\"id\": \"Q119\", \"domain\": \"Artificial Intelligence\", \"question\": \"Is there a limit to human intelligence?\", \"source_page\": 41, \"booklet_excerpt\": \"IQ test scores appear to have increased by about points during the 20th century, according to experts interviewed in a recent BBC documentary. Overall, increased quality of nutrition, better education, and greater exposure to new technologies have all contributed to our intelligence increasing. Some scientists purport that we will never hit a limit to our intelligence because there will always be new problems to solve and challenges",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"是否存在人类智力的生物学或认知上限\", \"why_it_matters\": \"该问题涉及对人类认知潜力、教育政策及人工智能发展边界的根本理解，但当前提供的证据库中缺乏神经科学、心理学或进化生物学领域的相关实证研究。\", \"evidence_ids\": [], \"validation_need\": \"需要引入关于人类大脑结构限制、遗传力研究、弗林效应（Flynn effect）的长期追踪数据或认知心理学实验的证据。\"}, {\"gap\": \"智力测试（如IQ）与一般智力（g factor）之间的映射关系及其极限\", \"why_it_matters\": \" booklet 提到 IQ 分数上升，但需验证这是否代表真实智力提升还是测试效应，且现有证据未涉及智力测量的效度问题。\", \"evidence_ids\": [], \"validation_need\": \"需要心理测量学文献支持，以区分测试分数变化与潜在认知能力的变化。\"}], \"possible_datasets\": [], \"methodological_constraints\": [\"提供的 EvidenceCards (EV-Q119-e71fb096535bd446786f4",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "28b83c2a09db",
+    "mock": false
+  },
+  {
+    "event_id": "d6d9f9a6ab6a",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:38.309137+00:00",
+    "ended_at": "2026-08-22T09:16:56.893840+00:00",
+    "duration_ms": 18584,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q119\", \"domain\": \"Artificial Intelligence\", \"question\": \"Is there a limit to human intelligence?\", \"source_page\": 41, \"booklet_excerpt\": \"IQ test scores appear to have increased by about points during the 20th century, according to experts interviewed in a recent BBC documentary. Overall, increased quality of nutrition, better education, and greater exposure to new technologies have all contributed to our intelligence increasing. Some scientists purport that we will never hit a limit to our intelligence because there will always be new problem",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。\", \"mechanism\": \"该陈述并非因果机制假设，而是对当前证据库领域错配（CS vs. Psychology/Neuroscience）的方法论界定。它指出在缺乏遗传力、脑容量代谢限制或g因子纵向数据的情况下，任何关于'智力极限'的断言均属于未验证推测。\", \"falsifiable_prediction\": \"若在后续迭代中引入包含人类认知能力生物学约束（如神经元传导速度、突触可塑性阈值）或长期心理测量学追踪数据的EvidenceCard，则该'insufficient_evidence'状态将被证伪。\", \"required_observations\": [\"检索并验证是否存在涵盖人类智力遗传力、神经解剖学限制或弗林效应长期趋势的合格EvidenceCard\", \"确认现有CS领域证据（EV-Q119-*）是否被错误标记为与人类智力相关\"], \"risk_of_being_wrong\": \"若存在跨学科证据（如计算神经科学或AI认知建模）被遗漏，则过早声明证据不足可能阻碍有效假设生成。但基于当前allowed_evidence_ids列表，此风险可控。\"",
+    "evidence_ids": [
+      "EV-Q119-2652d091e68e78953e36523e"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8e712c5fa9f5",
+    "mock": false
+  },
+  {
+    "event_id": "e084f251ba34",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:16:56.893840+00:00",
+    "ended_at": "2026-08-22T09:17:24.685606+00:00",
+    "duration_ms": 27791,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q119\", \"domain\": \"Artificial Intelligence\", \"question\": \"Is there a limit to human intelligence?\", \"source_page\": 41, \"booklet_excerpt\": \"IQ test scores appear to have increased by about points during the 20th century, according to experts interviewed in a recent BBC documentary. Overall, increased quality of nutrition, better education, and greater exposure to new technologies have all contributed to our intelligence increasing. Some scientists purport that we will never hit a limit to our intelligence because there will always be new problem",
+    "output_summary": "{\"technical_details\": \"本实验设计旨在验证推荐假设：'由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。' \\n\\n核心逻辑是进行领域相关性审计与证据映射分析。我们将把允许的EvidenceCards（EV-Q119-*系列）的内容特征提取为向量，并与标准的人类智力研究关键词库（如'neuroscience', 'psychometrics', 'g-factor', 'heritability', 'Flynn effect'）进行语义相似度计算。同时，我们将分析这些CS领域证据在回答'人类智力上限'这一科学问题时的逻辑断裂点。\\n\\n技术栈包括：\\n1. NLP文本嵌入模型（使用Qwen-Embedding或类似架构）计算证据内容与目标领域关键词的余弦相似度。\\n2. 逻辑一致性检查框架，评估从'软件测试/图灵测试批判'到'人类生物智力上限'的推论有效性。\\n3. 知识图谱构建，可视化现有证据节点与目标问题节点之间的连接缺失情况。\", \"datasets\": {\"source\": [{\"id\": \"EV-Q119-e71fb096535bd446786f4dbe\", \"description\": \"arXiv:1807.10953 - 关于软件测试中突变",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0c98ff6aceba",
+    "mock": false
+  },
+  {
+    "event_id": "0788314c003b",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:17:24.687215+00:00",
+    "ended_at": "2026-08-22T09:17:32.110080+00:00",
+    "duration_ms": 7422,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q119\", \"domain\": \"Artificial Intelligence\", \"question\": \"Is there a limit to human intelligence?\", \"source_page\": 41, \"booklet_excerpt\": \"IQ test scores appear to have increased by about points during the 20th century, according to experts interviewed in a recent BBC documentary. Overall, increased quality of nutrition, better education, and greater exposure to new technologies have all contributed to our intelligence increasing. Some scientists purport that we will never hit a limit to our intelligence because there will always be new problem",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"候选假设正确识别了输入证据（CS/软件测试）与科学问题（人类智力生物学上限）之间的领域错配，严格遵守了'无证据不构建事实'的原则。\", \"实验设计将'证据不足'转化为可计算的语义相似度与逻辑审计任务，具备方法论上的可证伪性。\", \"Results字段明确标记为pending，未伪造任何分析结果。\", \"引用的Evidence IDs均在allowed列表中，且准确反映了其内容局限性。\", \"拒绝方向合理，有效避免了将booklet观点或跨域类比作为事实依据的常见错误。\"], \"critical_issues\": [], \"required_revisions\": [\"在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。\", \"建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。\"], \"risk_level\": \"low\", \"evidence_grounding_score\": 1.0, \"falsifiability_score\": 0.9, \"reproducibility_score\": 0.9, \"ref",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2b56fe206f19",
+    "mock": false
+  },
+  {
+    "event_id": "0fad0f7f234e",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:17:32.116208+00:00",
+    "ended_at": "2026-08-22T09:17:57.738035+00:00",
+    "duration_ms": 25621,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"候选假设正确识别了输入证据（CS/软件测试）与科学问题（人类智力生物学上限）之间的领域错配，严格遵守了'无证据不构建事实'的原则。\", \"实验设计将'证据不足'转化为可计算的语义相似度与逻辑审计任务，具备方法论上的可证伪性。\", \"Results字段明确标记为pending，未伪造任何分析结果。\", \"引用的Evidence IDs均在allowed列表中，且准确反映了其内容局限性。\", \"拒绝方向合理，有效避免了将booklet观点或跨域类比作为事实依据的常见错误。\"], \"critical_issues\": [], \"required_revisions\": [\"在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。\", \"建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。\"], \"risk_level\": \"low\", \"evidence_grounding_score\": 1.0, \"falsifiability_scor",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"当前允许的EvidenceCards（EV-Q119-*）与'人类智力生物学上限'这一科学问题之间存在显著的语义与逻辑断层，无法作为构建或验证该问题因果机制的事实基础；该证据集仅支持对'智能测试方法论'的元分析，而非对'人类认知极限'的本体论探究。\", \"mechanism\": \"基于EV-Q119-2652d091e68e78953e36523e中关于图灵测试测量的是'人性模式'而非'智能本质'的论述，结合EV-Q119-e71fb096535bd446786f4dbe、EV-Q119-70df9c6ca8b62a082f57dc83及EV-Q119-3a50fd36f4edef4bef3eda20中纯粹的软件工程与统计特征选择内容，形成如下推断链：现有证据全部聚焦于人工系统（软件/AI）的验证与优化技术，缺乏生物神经系统约束（如代谢率、神经元密度、遗传力）的实证数据。因此，从这些证据到'人类智力上限'的任何推论均构成范畴错误（Category Error）。\", \"falsifiable_prediction\": \"若使用经神经科学/心理学专家校验的标准术语库（如'g-factor heritability', 'synaptic plasticity ceiling', 'metabolic constraint",
+    "evidence_ids": [
+      "EV-Q119-2652d091e68e78953e36523e",
+      "EV-Q119-e71fb096535bd446786f4dbe",
+      "EV-Q119-70df9c6ca8b62a082f57dc83",
+      "EV-Q119-3a50fd36f4edef4bef3eda20"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ed4e6990870d",
+    "mock": false
+  },
+  {
+    "event_id": "3ec470db908f",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:17:57.739111+00:00",
+    "ended_at": "2026-08-22T09:18:27.475974+00:00",
+    "duration_ms": 29736,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"候选假设正确识别了输入证据（CS/软件测试）与科学问题（人类智力生物学上限）之间的领域错配，严格遵守了'无证据不构建事实'的原则。\", \"实验设计将'证据不足'转化为可计算的语义相似度与逻辑审计任务，具备方法论上的可证伪性。\", \"Results字段明确标记为pending，未伪造任何分析结果。\", \"引用的Evidence IDs均在allowed列表中，且准确反映了其内容局限性。\", \"拒绝方向合理，有效避免了将booklet观点或跨域类比作为事实依据的常见错误。\"], \"critical_issues\": [], \"required_revisions\": [\"在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。\", \"建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。\"], \"risk_level\": \"low\", \"evidence_grounding_score\": 1.0, \"falsifiability_scor",
+    "output_summary": "{\"technical_details\": \"本实验旨在验证推荐假设：'当前允许的EvidenceCards（EV-Q119-*）与人类智力生物学上限问题存在显著的语义与逻辑断层'。实验核心是通过计算语义相似度与逻辑审计，量化证据集在目标领域（神经科学/心理测量学）的覆盖缺失。\\n\\n技术实现包括：\\n1. **语义嵌入与相似度计算**：使用 Qwen-Embedding 模型（具体版本需锁定，如 qwen-embed-v1.5）将四个 EvidenceCard 的全文文本及专家校验后的目标领域关键词库（Target Domain Keywords）映射到同一高维向量空间。计算每个 EvidenceCard 向量与目标领域质心向量的余弦相似度。\\n2. **逻辑推导审计**：构建形式化逻辑树，尝试从 EvidenceCard 的前提（如'图灵测试测人性'、'GUI测试方法'）推导至结论'人类智力存在/不存在生物学上限'。记录推导链条中的逻辑断裂点（Non-sequitur）数量。\\n3. **关键词库校验机制**：引入专家校验环节，确保目标关键词库（如 'g-factor heritability', 'synaptic plasticity ceiling'）覆盖认知神经科学核心概念，以排除因术语偏差导致的假阴性。\\n4. **基线对比**：设置随机 CS 论文基线与简单关键词匹",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "de85cbc72201",
+    "mock": false
+  },
+  {
+    "event_id": "ec6709d8425c",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T09:18:27.478078+00:00",
+    "ended_at": "2026-08-22T09:18:37.380526+00:00",
+    "duration_ms": 9902,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"候选假设正确识别了输入证据（CS/软件测试）与科学问题（人类智力生物学上限）之间的领域错配，严格遵守了'无证据不构建事实'的原则。\", \"实验设计将'证据不足'转化为可计算的语义相似度与逻辑审计任务，具备方法论上的可证伪性。\", \"Results字段明确标记为pending，未伪造任何分析结果。\", \"引用的Evidence IDs均在allowed列表中，且准确反映了其内容局限性。\", \"拒绝方向合理，有效避免了将booklet观点或跨域类比作为事实依据的常见错误。\"], \"critical_issues\": [], \"required_revisions\": [\"在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。\", \"建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。\"], \"risk_level\": \"low\", \"evidence_grounding_score\": 1.0, \"falsifiability_scor",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"修订版v2已成功整合上一轮评审的所有required_revisions：目标关键词库增加了专家校验环节（expert_validation_status: Pending），且Reproducibility Checklist明确锁定了Qwen-Embedding版本号与推理参数。\", \"假设Hypothesis 0严格限定在allowed_evidence_ids范围内，将'证据不足'转化为可计算的语义断层验证任务，未引入任何外部神经科学事实作为既定前提，符合规则3与规则10。\", \"Results字段保持为'待执行验证实验'状态，未伪造任何相似度数值或逻辑审计结果，符合规则6。\", \"实验设计包含明确的Baselines（Random CS, Keyword Co-occurrence）与Metrics（Mean Cosine Similarity, Logical Validity Score），且数据集定义清晰区分了Source（4个EV-Q119-*）与Target（Domain Keywords），满足可证伪性与可复现性要求。\", \"引用的Evidence IDs（EV-Q119-2652d091e68e78953e36523e等）均存在于输入EvidenceCatalog中，且quote",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "7d27bb07113f",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:39f3387165bc5f05",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。",
+              "mechanism": "该陈述并非因果机制假设，而是对当前证据库领域错配（CS vs. Psychology/Neuroscience）的方法论界定。它指出在缺乏遗传力、脑容量代谢限制或g因子纵向数据的情况下，任何关于'智力极限'的断言均属于未验证推测。",
+              "falsifiable_prediction": "若在后续迭代中引入包含人类认知能力生物学约束（如神经元传导速度、突触可塑性阈值）或长期心理测量学追踪数据的EvidenceCard，则该'insufficient_evidence'状态将被证伪。",
+              "required_observations": [
+                "检索并验证是否存在涵盖人类智力遗传力、神经解剖学限制或弗林效应长期趋势的合格EvidenceCard",
+                "确认现有CS领域证据（EV-Q119-*）是否被错误标记为与人类智力相关"
+              ],
+              "risk_of_being_wrong": "若存在跨学科证据（如计算神经科学或AI认知建模）被遗漏，则过早声明证据不足可能阻碍有效假设生成。但基于当前allowed_evidence_ids列表，此风险可控。",
+              "supporting_evidence_ids": [
+                "EV-Q119-2652d091e68e78953e36523e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "人类智力的操作性定义受限于当前测试工具（如IQ测试）的覆盖范围，而非生物认知能力的绝对上限；观察到的'智力增长'可能反映测试效度变化而非潜在能力提升。",
+              "mechanism": "基于EV-Q119-2652d091e68e78953e36523e中对图灵测试作为'人性测试而非智能测试'的批判，类比推论：若智力测试依赖于特定文化/技术背景下的知识模式，则其分数上限反映的是测试设计的饱和度，而非认知架构的物理极限。",
+              "falsifiable_prediction": "若发现跨文化、跨时代且内容无关的认知任务（如抽象推理、工作记忆广度）表现出稳定的渐近线或生理相关性，则该假设被削弱。",
+              "required_observations": [
+                "分析不同历史时期IQ测试子项分数变化的异质性（如言语vs.空间推理）",
+                "验证是否存在独立于教育/营养因素的认知能力测量指标"
+              ],
+              "risk_of_being_wrong": "该假设将booklet中'IQ分数上升'的现象重新解释为测量假象，但缺乏直接心理测量学证据支持，仅能作为待验证的元理论框架。若未来证据证明g因子具有稳定遗传基础且与环境无关，则此假设不成立。",
+              "supporting_evidence_ids": [
+                "EV-Q119-2652d091e68e78953e36523e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.3,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.35
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "唯一符合证据约束的选项。所有允许的EvidenceCards均属计算机科学领域（软件测试、特征选择、图灵测试哲学），与人类智力生物学/心理学上限无直接事实关联。Hypothesis 0 明确标识knowledge_gap并避免编造因果机制，严格遵守'无evidence_id不作为事实'原则。Hypothesis 1虽具启发性，但其核心前提（测试效度vs真实能力）缺乏心理测量学证据支持，仅能作为低置信度备选。",
+          "rejected_directions": [
+            "基于booklet_excerpt中Tenelle Porter言论构建'智力无限增长'假设（违反规则3：无evidence_id支持）",
+            "引用弗林效应或神经科学文献论证智力上限（违反规则10：不在allowed_evidence_ids列表中）",
+            "将CS领域证据（如GUI测试、突变检测）强行类比至人类认知过程（违反规则5：禁止不当跨域推断）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本实验设计旨在验证推荐假设：'由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。' \n\n核心逻辑是进行领域相关性审计与证据映射分析。我们将把允许的EvidenceCards（EV-Q119-*系列）的内容特征提取为向量，并与标准的人类智力研究关键词库（如'neuroscience', 'psychometrics', 'g-factor', 'heritability', 'Flynn effect'）进行语义相似度计算。同时，我们将分析这些CS领域证据在回答'人类智力上限'这一科学问题时的逻辑断裂点。\n\n技术栈包括：\n1. NLP文本嵌入模型（使用Qwen-Embedding或类似架构）计算证据内容与目标领域关键词的余弦相似度。\n2. 逻辑一致性检查框架，评估从'软件测试/图灵测试批判'到'人类生物智力上限'的推论有效性。\n3. 知识图谱构建，可视化现有证据节点与目标问题节点之间的连接缺失情况。",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q119-e71fb096535bd446786f4dbe",
+                "description": "arXiv:1807.10953 - 关于软件测试中突变检测的研究，涉及测试用例覆盖率。",
+                "domain": "Computer Science / Software Engineering"
+              },
+              {
+                "id": "EV-Q119-70df9c6ca8b62a082f57dc83",
+                "description": "arXiv:1202.4527 - 关于GUI测试的方法论，涉及人工与自动化测试对比。",
+                "domain": "Computer Science / Software Testing"
+              },
+              {
+                "id": "EV-Q119-3a50fd36f4edef4bef3eda20",
+                "description": "arXiv:2311.05033 - 关于分类和回归中无损特征选择的分布自由测试。",
+                "domain": "Computer Science / Machine Learning Statistics"
+              },
+              {
+                "id": "EV-Q119-2652d091e68e78953e36523e",
+                "description": "arXiv:0712.3825 - 对图灵测试的哲学批判，认为其测试的是'人性'而非'智能'。",
+                "domain": "Computer Science / Philosophy of AI"
+              }
+            ],
+            "target": {
+              "domain_keywords": [
+                "human intelligence upper limit",
+                "biological constraints on cognition",
+                "psychometric g-factor limits",
+                "neuroscience of intelligence",
+                "Flynn effect biological basis"
+              ],
+              "required_evidence_type": "Empirical studies in neuroscience, psychology, or evolutionary biology providing data on cognitive ceilings."
+            }
+          },
+          "methods": "1. **语义空间映射**：使用预训练语言模型将四个允许的EvidenceCards全文嵌入到高维向量空间。同时，将目标领域关键词（Target Domain Keywords）也嵌入同一空间。计算每个EvidenceCard向量与目标领域质心向量的余弦相似度。预期结果应为低相似度（<0.3），证明领域错配。\n\n2. **命题逻辑分析**：提取每个EvidenceCard的核心主张（例如：'图灵测试测试的是人性而非智能'）。构建逻辑树，尝试从这些主张推导出'人类智力存在/不存在生物学上限'的结论。记录推导过程中的逻辑跳跃（Non-sequitur）。\n\n3. **证据覆盖度量化**：定义'智力上限研究'的必要证据组件集合（如：遗传力数据、脑代谢率数据、长期追踪数据）。检查允许的证据集是否包含任何这些组件。计算覆盖率为0%。\n\n4. **反事实模拟**：假设存在一个理想的神经科学证据卡，模拟将其加入后对假设支持度的变化，以此量化当前证据缺失的影响程度。",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: 随机选择计算机科学领域的其他论文（非AI/测试相关），预期其与心理学领域的相似度同样极低，用于确认并非特定于这些论文，而是整个CS领域与神经科学的天然距离。",
+              "Keyword Matching Baseline: 简单的关键词共现统计。检查允许的证据文本中是否包含'brain', 'neuron', 'IQ', 'cognition'等词。预期结果为极少或无语境相关出现。"
+            ],
+            "metrics": [
+              "Semantic Similarity Score (Cosine Similarity): 衡量证据内容与目标领域关键词的语义接近程度。",
+              "Logical Validity Index: 专家评分（1-5分），评估从证据到结论的逻辑连贯性。预期得分低。",
+              "Evidence Coverage Ratio: 目标领域必要证据组件在允许证据集中的存在比例。预期为0。",
+              "Domain Mismatch Confidence: 基于分类器判断证据属于'CS'而非'Psych/Neuro'的概率。"
+            ],
+            "ablation": "移除EV-Q119-2652d091e68e78953e36523e（唯一涉及'智能'定义的哲学讨论），观察剩余纯技术文档（测试、特征选择）与目标问题的相关性是否进一步降低。预期相关性降至接近零，证明即使是哲学批判也不足以构成生物学上限的证据。",
+            "validation_protocol": "1. 由两名独立研究员盲评逻辑推导过程的有效性。\n2. 使用不同的嵌入模型（如BGE, E5）重复语义相似度计算，确保结果稳健。\n3. 交叉验证关键词列表，确保未遗漏关键的跨学科术语。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "提供所有使用的EvidenceCard的完整文本内容哈希值（SHA-256）。",
+            "公开语义嵌入模型的版本及参数设置。",
+            "列出目标领域关键词的完整清单及其来源依据。",
+            "提供逻辑分析的结构化模板，以便他人复现推导过程。",
+            "代码仓库需包含数据预处理、嵌入计算及相似度分析的完整Pipeline。"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Pending allocation for embedding model inference.",
+            "data_availability": "All source EvidenceCards are provided in the input context.",
+            "estimated_runtime": "2-4 hours for full pipeline execution including manual logical review.",
+            "version_control": "Experiment design v1.0 generated by SAGE125 ExperimentDesigner Agent."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-091603-ec8ccc03",
+        "version_number": 1,
+        "version_id": "20260822-091603-ec8ccc03:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。",
+              "mechanism": "该陈述并非因果机制假设，而是对当前证据库领域错配（CS vs. Psychology/Neuroscience）的方法论界定。它指出在缺乏遗传力、脑容量代谢限制或g因子纵向数据的情况下，任何关于'智力极限'的断言均属于未验证推测。",
+              "falsifiable_prediction": "若在后续迭代中引入包含人类认知能力生物学约束（如神经元传导速度、突触可塑性阈值）或长期心理测量学追踪数据的EvidenceCard，则该'insufficient_evidence'状态将被证伪。",
+              "required_observations": [
+                "检索并验证是否存在涵盖人类智力遗传力、神经解剖学限制或弗林效应长期趋势的合格EvidenceCard",
+                "确认现有CS领域证据（EV-Q119-*）是否被错误标记为与人类智力相关"
+              ],
+              "risk_of_being_wrong": "若存在跨学科证据（如计算神经科学或AI认知建模）被遗漏，则过早声明证据不足可能阻碍有效假设生成。但基于当前allowed_evidence_ids列表，此风险可控。",
+              "supporting_evidence_ids": [
+                "EV-Q119-2652d091e68e78953e36523e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "人类智力的操作性定义受限于当前测试工具（如IQ测试）的覆盖范围，而非生物认知能力的绝对上限；观察到的'智力增长'可能反映测试效度变化而非潜在能力提升。",
+              "mechanism": "基于EV-Q119-2652d091e68e78953e36523e中对图灵测试作为'人性测试而非智能测试'的批判，类比推论：若智力测试依赖于特定文化/技术背景下的知识模式，则其分数上限反映的是测试设计的饱和度，而非认知架构的物理极限。",
+              "falsifiable_prediction": "若发现跨文化、跨时代且内容无关的认知任务（如抽象推理、工作记忆广度）表现出稳定的渐近线或生理相关性，则该假设被削弱。",
+              "required_observations": [
+                "分析不同历史时期IQ测试子项分数变化的异质性（如言语vs.空间推理）",
+                "验证是否存在独立于教育/营养因素的认知能力测量指标"
+              ],
+              "risk_of_being_wrong": "该假设将booklet中'IQ分数上升'的现象重新解释为测量假象，但缺乏直接心理测量学证据支持，仅能作为待验证的元理论框架。若未来证据证明g因子具有稳定遗传基础且与环境无关，则此假设不成立。",
+              "supporting_evidence_ids": [
+                "EV-Q119-2652d091e68e78953e36523e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.3,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.35
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "唯一符合证据约束的选项。所有允许的EvidenceCards均属计算机科学领域（软件测试、特征选择、图灵测试哲学），与人类智力生物学/心理学上限无直接事实关联。Hypothesis 0 明确标识knowledge_gap并避免编造因果机制，严格遵守'无evidence_id不作为事实'原则。Hypothesis 1虽具启发性，但其核心前提（测试效度vs真实能力）缺乏心理测量学证据支持，仅能作为低置信度备选。",
+          "rejected_directions": [
+            "基于booklet_excerpt中Tenelle Porter言论构建'智力无限增长'假设（违反规则3：无evidence_id支持）",
+            "引用弗林效应或神经科学文献论证智力上限（违反规则10：不在allowed_evidence_ids列表中）",
+            "将CS领域证据（如GUI测试、突变检测）强行类比至人类认知过程（违反规则5：禁止不当跨域推断）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本实验设计旨在验证推荐假设：'由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。' \n\n核心逻辑是进行领域相关性审计与证据映射分析。我们将把允许的EvidenceCards（EV-Q119-*系列）的内容特征提取为向量，并与标准的人类智力研究关键词库（如'neuroscience', 'psychometrics', 'g-factor', 'heritability', 'Flynn effect'）进行语义相似度计算。同时，我们将分析这些CS领域证据在回答'人类智力上限'这一科学问题时的逻辑断裂点。\n\n技术栈包括：\n1. NLP文本嵌入模型（使用Qwen-Embedding或类似架构）计算证据内容与目标领域关键词的余弦相似度。\n2. 逻辑一致性检查框架，评估从'软件测试/图灵测试批判'到'人类生物智力上限'的推论有效性。\n3. 知识图谱构建，可视化现有证据节点与目标问题节点之间的连接缺失情况。",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q119-e71fb096535bd446786f4dbe",
+                "description": "arXiv:1807.10953 - 关于软件测试中突变检测的研究，涉及测试用例覆盖率。",
+                "domain": "Computer Science / Software Engineering"
+              },
+              {
+                "id": "EV-Q119-70df9c6ca8b62a082f57dc83",
+                "description": "arXiv:1202.4527 - 关于GUI测试的方法论，涉及人工与自动化测试对比。",
+                "domain": "Computer Science / Software Testing"
+              },
+              {
+                "id": "EV-Q119-3a50fd36f4edef4bef3eda20",
+                "description": "arXiv:2311.05033 - 关于分类和回归中无损特征选择的分布自由测试。",
+                "domain": "Computer Science / Machine Learning Statistics"
+              },
+              {
+                "id": "EV-Q119-2652d091e68e78953e36523e",
+                "description": "arXiv:0712.3825 - 对图灵测试的哲学批判，认为其测试的是'人性'而非'智能'。",
+                "domain": "Computer Science / Philosophy of AI"
+              }
+            ],
+            "target": {
+              "domain_keywords": [
+                "human intelligence upper limit",
+                "biological constraints on cognition",
+                "psychometric g-factor limits",
+                "neuroscience of intelligence",
+                "Flynn effect biological basis"
+              ],
+              "required_evidence_type": "Empirical studies in neuroscience, psychology, or evolutionary biology providing data on cognitive ceilings."
+            }
+          },
+          "methods": "1. **语义空间映射**：使用预训练语言模型将四个允许的EvidenceCards全文嵌入到高维向量空间。同时，将目标领域关键词（Target Domain Keywords）也嵌入同一空间。计算每个EvidenceCard向量与目标领域质心向量的余弦相似度。预期结果应为低相似度（<0.3），证明领域错配。\n\n2. **命题逻辑分析**：提取每个EvidenceCard的核心主张（例如：'图灵测试测试的是人性而非智能'）。构建逻辑树，尝试从这些主张推导出'人类智力存在/不存在生物学上限'的结论。记录推导过程中的逻辑跳跃（Non-sequitur）。\n\n3. **证据覆盖度量化**：定义'智力上限研究'的必要证据组件集合（如：遗传力数据、脑代谢率数据、长期追踪数据）。检查允许的证据集是否包含任何这些组件。计算覆盖率为0%。\n\n4. **反事实模拟**：假设存在一个理想的神经科学证据卡，模拟将其加入后对假设支持度的变化，以此量化当前证据缺失的影响程度。",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: 随机选择计算机科学领域的其他论文（非AI/测试相关），预期其与心理学领域的相似度同样极低，用于确认并非特定于这些论文，而是整个CS领域与神经科学的天然距离。",
+              "Keyword Matching Baseline: 简单的关键词共现统计。检查允许的证据文本中是否包含'brain', 'neuron', 'IQ', 'cognition'等词。预期结果为极少或无语境相关出现。"
+            ],
+            "metrics": [
+              "Semantic Similarity Score (Cosine Similarity): 衡量证据内容与目标领域关键词的语义接近程度。",
+              "Logical Validity Index: 专家评分（1-5分），评估从证据到结论的逻辑连贯性。预期得分低。",
+              "Evidence Coverage Ratio: 目标领域必要证据组件在允许证据集中的存在比例。预期为0。",
+              "Domain Mismatch Confidence: 基于分类器判断证据属于'CS'而非'Psych/Neuro'的概率。"
+            ],
+            "ablation": "移除EV-Q119-2652d091e68e78953e36523e（唯一涉及'智能'定义的哲学讨论），观察剩余纯技术文档（测试、特征选择）与目标问题的相关性是否进一步降低。预期相关性降至接近零，证明即使是哲学批判也不足以构成生物学上限的证据。",
+            "validation_protocol": "1. 由两名独立研究员盲评逻辑推导过程的有效性。\n2. 使用不同的嵌入模型（如BGE, E5）重复语义相似度计算，确保结果稳健。\n3. 交叉验证关键词列表，确保未遗漏关键的跨学科术语。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "提供所有使用的EvidenceCard的完整文本内容哈希值（SHA-256）。",
+            "公开语义嵌入模型的版本及参数设置。",
+            "列出目标领域关键词的完整清单及其来源依据。",
+            "提供逻辑分析的结构化模板，以便他人复现推导过程。",
+            "代码仓库需包含数据预处理、嵌入计算及相似度分析的完整Pipeline。"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Pending allocation for embedding model inference.",
+            "data_availability": "All source EvidenceCards are provided in the input context.",
+            "estimated_runtime": "2-4 hours for full pipeline execution including manual logical review.",
+            "version_control": "Experiment design v1.0 generated by SAGE125 ExperimentDesigner Agent."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "候选假设正确识别了输入证据（CS/软件测试）与科学问题（人类智力生物学上限）之间的领域错配，严格遵守了'无证据不构建事实'的原则。",
+            "实验设计将'证据不足'转化为可计算的语义相似度与逻辑审计任务，具备方法论上的可证伪性。",
+            "Results字段明确标记为pending，未伪造任何分析结果。",
+            "引用的Evidence IDs均在allowed列表中，且准确反映了其内容局限性。",
+            "拒绝方向合理，有效避免了将booklet观点或跨域类比作为事实依据的常见错误。"
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+            "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。"
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:819c5741fd8b",
+            "category": "required_revision",
+            "description": "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:11a8854d682a",
+            "category": "required_revision",
+            "description": "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "85c7cad0f527c34c982060a6dcfe714d27ba1016d54b3178f0a1c061f93497e6",
+          "experiment_designer": "0810591bf5bec2072d606220a7e54dd6944f55919d795822d9c79819ffa000c1",
+          "scientific_reviewer": "17aad97e3abddd857ea3a3dab5c133bdedb881dd59630201cb903010a6cb69e0"
+        }
+      },
+      "parent_version_id": "20260822-091603-ec8ccc03:v1",
+      "lineage": [
+        "20260822-091603-ec8ccc03:v1",
+        "20260822-091603-ec8ccc03:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "候选假设正确识别了输入证据（CS/软件测试）与科学问题（人类智力生物学上限）之间的领域错配，严格遵守了'无证据不构建事实'的原则。",
+          "实验设计将'证据不足'转化为可计算的语义相似度与逻辑审计任务，具备方法论上的可证伪性。",
+          "Results字段明确标记为pending，未伪造任何分析结果。",
+          "引用的Evidence IDs均在allowed列表中，且准确反映了其内容局限性。",
+          "拒绝方向合理，有效避免了将booklet观点或跨域类比作为事实依据的常见错误。"
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+          "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。"
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.9,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "修订版v2已成功整合上一轮评审的所有required_revisions：目标关键词库增加了专家校验环节（expert_validation_status: Pending），且Reproducibility Checklist明确锁定了Qwen-Embedding版本号与推理参数。",
+          "假设Hypothesis 0严格限定在allowed_evidence_ids范围内，将'证据不足'转化为可计算的语义断层验证任务，未引入任何外部神经科学事实作为既定前提，符合规则3与规则10。",
+          "Results字段保持为'待执行验证实验'状态，未伪造任何相似度数值或逻辑审计结果，符合规则6。",
+          "实验设计包含明确的Baselines（Random CS, Keyword Co-occurrence）与Metrics（Mean Cosine Similarity, Logical Validity Score），且数据集定义清晰区分了Source（4个EV-Q119-*）与Target（Domain Keywords），满足可证伪性与可复现性要求。",
+          "引用的Evidence IDs（EV-Q119-2652d091e68e78953e36523e等）均存在于输入EvidenceCatalog中，且quoted_text内容与假设机制描述一致，无虚构引用。"
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "在执行阶段，必须记录并报告专家校验关键词库的具体修订版本与校验人资质，否则'专家校验'仅停留在计划层面，无法实际排除假阴性风险。",
+          "建议在validation_protocol中补充对'逻辑断裂点'的操作性定义示例（如：从'GUI测试覆盖率'推导至'神经元密度限制'视为无效跳跃），以确保两名盲审专家的评分标准一致，提高Inter-rater Reliability的可信度。"
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:a40836aad2e4760e",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+          "issue_id": "required_revision:819c5741fd8b"
+        },
+        {
+          "failure_id": "failure:6a7d01232d25e6cf",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。",
+          "issue_id": "required_revision:11a8854d682a"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:6f03a9ab27cc3d5e",
+          "issue_id": "required_revision:11a8854d682a",
+          "reason": "Reviewer item required_revision:11a8854d682a requested '建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。'. V2 changes methods; deterministic correlation evidence tokens=['embed', 'qwen'], coverage=0.500.",
+          "before": "1. **语义空间映射**：使用预训练语言模型将四个允许的EvidenceCards全文嵌入到高维向量空间。同时，将目标领域关键词（Target Domain Keywords）也嵌入同一空间。计算每个EvidenceCard向量与目标领域质心向量的余弦相似度。预期结果应为低相似度（<0.3），证明领域错配。\n\n2. **命题逻辑分析**：提取每个EvidenceCard的核心主张（例如：'图灵测试测试的是人性而非智能'）。构建逻辑树，尝试从这些主张推导出'人类智力存在/不存在生物学上限'的结论。记录推导过程中的逻辑跳跃（Non-sequitur）。\n\n3. **证据覆盖度量化**：定义'智力上限研究'的必要证据组件集合（如：遗传力数据、脑代谢率数据、长期追踪数据）。检查允许的证据集是否包含任何这些组件。计算覆盖率为0%。\n\n4. **反事实模拟**：假设存在一个理想的神经科学证据卡，模拟将其加入后对假设支持度的变化，以此量化当前证据缺失的影响程度。",
+          "after": "1. **预处理与嵌入**：清洗 EvidenceCard 文本，移除引用标记。使用锁定的 Qwen-Embedding 模型生成固定维度向量。对目标关键词库进行同样处理，并计算其质心向量。\n2. **相似度度量**：计算每个 Source Evidence 向量与 Target Keyword Centroid 的余弦相似度。设定阈值 <0.3 为显著不相关。\n3. **逻辑审计协议**：由两名独立领域专家（盲审）评估从证据前提到目标结论的逻辑路径有效性。使用结构化模板记录每一步推理的合理性评分（1-5分）。\n4. **消融实验**：移除唯一涉及智能定义的 EV-Q119-2652d091e68e78953e36523e，观察剩余纯技术文档的相似度变化，验证哲学批判是否提供了任何实质性关联。",
+          "evidence_refs": [
+            "EV-Q119-2652d091e68e78953e36523e",
+            "EV-Q119-3a50fd36f4edef4bef3eda20",
+            "EV-Q119-70df9c6ca8b62a082f57dc83",
+            "EV-Q119-e71fb096535bd446786f4dbe"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:1d1b1d78c359c13d",
+          "issue_id": "required_revision:11a8854d682a",
+          "reason": "Reviewer item required_revision:11a8854d682a requested '建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。'. V2 changes technical_details; deterministic correlation evidence tokens=['embed', 'qwen'], coverage=0.500.",
+          "before": "本实验设计旨在验证推荐假设：'由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。' \n\n核心逻辑是进行领域相关性审计与证据映射分析。我们将把允许的EvidenceCards（EV-Q119-*系列）的内容特征提取为向量，并与标准的人类智力研究关键词库（如'neuroscience', 'psychometrics', 'g-factor', 'heritability', 'Flynn effect'）进行语义相似度计算。同时，我们将分析这些CS领域证据在回答'人类智力上限'这一科学问题时的逻辑断裂点。\n\n技术栈包括：\n1. NLP文本嵌入模型（使用Qwen-Embedding或类似架构）计算证据内容与目标领域关键词的余弦相似度。\n2. 逻辑一致性检查框架，评估从'软件测试/图灵测试批判'到'人类生物智力上限'的推论有效性。\n3. 知识图谱构建，可视化现有证据节点与目标问题节点之间的连接缺失情况。",
+          "after": "本实验旨在验证推荐假设：'当前允许的EvidenceCards（EV-Q119-*）与人类智力生物学上限问题存在显著的语义与逻辑断层'。实验核心是通过计算语义相似度与逻辑审计，量化证据集在目标领域（神经科学/心理测量学）的覆盖缺失。\n\n技术实现包括：\n1. **语义嵌入与相似度计算**：使用 Qwen-Embedding 模型（具体版本需锁定，如 qwen-embed-v1.5）将四个 EvidenceCard 的全文文本及专家校验后的目标领域关键词库（Target Domain Keywords）映射到同一高维向量空间。计算每个 EvidenceCard 向量与目标领域质心向量的余弦相似度。\n2. **逻辑推导审计**：构建形式化逻辑树，尝试从 EvidenceCard 的前提（如'图灵测试测人性'、'GUI测试方法'）推导至结论'人类智力存在/不存在生物学上限'。记录推导链条中的逻辑断裂点（Non-sequitur）数量。\n3. **关键词库校验机制**：引入专家校验环节，确保目标关键词库（如 'g-factor heritability', 'synaptic plasticity ceiling'）覆盖认知神经科学核心概念，以排除因术语偏差导致的假阴性。\n4. **基线对比**：设置随机 CS 论文基线与简单关键词匹配基线，以确认低相似度是领域错配而非模型偏差所致。",
+          "evidence_refs": [
+            "EV-Q119-2652d091e68e78953e36523e",
+            "EV-Q119-3a50fd36f4edef4bef3eda20",
+            "EV-Q119-70df9c6ca8b62a082f57dc83",
+            "EV-Q119-e71fb096535bd446786f4dbe"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:8bac41a1194848b6",
+          "issue_id": "required_revision:11a8854d682a",
+          "reason": "Reviewer item required_revision:11a8854d682a requested '建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['checklist', 'embed', 'qwen', 'reproducibility'], coverage=1.000.",
+          "before": [
+            "提供所有使用的EvidenceCard的完整文本内容哈希值（SHA-256）。",
+            "公开语义嵌入模型的版本及参数设置。",
+            "列出目标领域关键词的完整清单及其来源依据。",
+            "提供逻辑分析的结构化模板，以便他人复现推导过程。",
+            "代码仓库需包含数据预处理、嵌入计算及相似度分析的完整Pipeline。"
+          ],
+          "after": [
+            "锁定 Qwen-Embedding 模型的具体版本号（如 qwen-embed-v1.5）及推理参数（temperature=0, top_p=1.0）。",
+            "提供所有 EvidenceCard 的 SHA-256 内容哈希值，确保文本源一致。",
+            "公开经专家校验的目标领域关键词库完整列表及其修订历史。",
+            "提供逻辑审计的结构化评分模板与专家资质说明。",
+            "代码仓库包含完整的预处理、嵌入计算、相似度分析及统计检验 Pipeline。"
+          ],
+          "evidence_refs": [
+            "EV-Q119-2652d091e68e78953e36523e",
+            "EV-Q119-3a50fd36f4edef4bef3eda20",
+            "EV-Q119-70df9c6ca8b62a082f57dc83",
+            "EV-Q119-e71fb096535bd446786f4dbe"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:819c5741fd8b",
+          "category": "required_revision",
+          "description": "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:11a8854d682a",
+          "category": "required_revision",
+          "description": "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:6f03a9ab27cc3d5e,change:1d1b1d78c359c13d,change:8bac41a1194848b6; evidence=EV-Q119-2652d091e68e78953e36523e,EV-Q119-3a50fd36f4edef4bef3eda20,EV-Q119-70df9c6ca8b62a082f57dc83,EV-Q119-e71fb096535bd446786f4dbe; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:669a47d6234b",
+          "category": "required_revision",
+          "description": "在执行阶段，必须记录并报告专家校验关键词库的具体修订版本与校验人资质，否则'专家校验'仅停留在计划层面，无法实际排除假阴性风险。",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:702fb264a37d",
+          "category": "required_revision",
+          "description": "建议在validation_protocol中补充对'逻辑断裂点'的操作性定义示例（如：从'GUI测试覆盖率'推导至'神经元密度限制'视为无效跳跃），以确保两名盲审专家的评分标准一致，提高Inter-rater Reliability的可信度。",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "当前允许的EvidenceCards（EV-Q119-*）与'人类智力生物学上限'这一科学问题之间存在显著的语义与逻辑断层，无法作为构建或验证该问题因果机制的事实基础；该证据集仅支持对'智能测试方法论'的元分析，而非对'人类认知极限'的本体论探究。",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "人类智力的操作性定义受限于测试工具的文化与技术依赖性，而非生物认知能力的绝对上限；观察到的智力分数变化可能反映测试效度漂移，但该假设在当前证据下仅为待验证的元理论推测，缺乏直接心理测量学实证支持。",
+          "overall_score": 0.45,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 1,
+      "blocking_reasons": [
+        "required_revision_without_change:required_revision:819c5741fd8b",
+        "unresolved_issue:required_revision:819c5741fd8b",
+        "unresolved_issue:required_revision:669a47d6234b",
+        "unresolved_issue:required_revision:702fb264a37d",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:819c5741fd8b: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:669a47d6234b: 在执行阶段，必须记录并报告专家校验关键词库的具体修订版本与校验人资质，否则'专家校验'仅停留在计划层面，无法实际排除假阴性风险。",
+        "required_revision:702fb264a37d: 建议在validation_protocol中补充对'逻辑断裂点'的操作性定义示例（如：从'GUI测试覆盖率'推导至'神经元密度限制'视为无效跳跃），以确保两名盲审专家的评分标准一致，提高Inter-rater Reliability的可信度。"
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-091603-ec8ccc03",
+        "version_number": 1,
+        "version_id": "20260822-091603-ec8ccc03:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。",
+              "mechanism": "该陈述并非因果机制假设，而是对当前证据库领域错配（CS vs. Psychology/Neuroscience）的方法论界定。它指出在缺乏遗传力、脑容量代谢限制或g因子纵向数据的情况下，任何关于'智力极限'的断言均属于未验证推测。",
+              "falsifiable_prediction": "若在后续迭代中引入包含人类认知能力生物学约束（如神经元传导速度、突触可塑性阈值）或长期心理测量学追踪数据的EvidenceCard，则该'insufficient_evidence'状态将被证伪。",
+              "required_observations": [
+                "检索并验证是否存在涵盖人类智力遗传力、神经解剖学限制或弗林效应长期趋势的合格EvidenceCard",
+                "确认现有CS领域证据（EV-Q119-*）是否被错误标记为与人类智力相关"
+              ],
+              "risk_of_being_wrong": "若存在跨学科证据（如计算神经科学或AI认知建模）被遗漏，则过早声明证据不足可能阻碍有效假设生成。但基于当前allowed_evidence_ids列表，此风险可控。",
+              "supporting_evidence_ids": [
+                "EV-Q119-2652d091e68e78953e36523e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.7
+            },
+            {
+              "hypothesis": "人类智力的操作性定义受限于当前测试工具（如IQ测试）的覆盖范围，而非生物认知能力的绝对上限；观察到的'智力增长'可能反映测试效度变化而非潜在能力提升。",
+              "mechanism": "基于EV-Q119-2652d091e68e78953e36523e中对图灵测试作为'人性测试而非智能测试'的批判，类比推论：若智力测试依赖于特定文化/技术背景下的知识模式，则其分数上限反映的是测试设计的饱和度，而非认知架构的物理极限。",
+              "falsifiable_prediction": "若发现跨文化、跨时代且内容无关的认知任务（如抽象推理、工作记忆广度）表现出稳定的渐近线或生理相关性，则该假设被削弱。",
+              "required_observations": [
+                "分析不同历史时期IQ测试子项分数变化的异质性（如言语vs.空间推理）",
+                "验证是否存在独立于教育/营养因素的认知能力测量指标"
+              ],
+              "risk_of_being_wrong": "该假设将booklet中'IQ分数上升'的现象重新解释为测量假象，但缺乏直接心理测量学证据支持，仅能作为待验证的元理论框架。若未来证据证明g因子具有稳定遗传基础且与环境无关，则此假设不成立。",
+              "supporting_evidence_ids": [
+                "EV-Q119-2652d091e68e78953e36523e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.4,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.3,
+              "evidence_support_score": 0.2,
+              "overall_score": 0.35
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "唯一符合证据约束的选项。所有允许的EvidenceCards均属计算机科学领域（软件测试、特征选择、图灵测试哲学），与人类智力生物学/心理学上限无直接事实关联。Hypothesis 0 明确标识knowledge_gap并避免编造因果机制，严格遵守'无evidence_id不作为事实'原则。Hypothesis 1虽具启发性，但其核心前提（测试效度vs真实能力）缺乏心理测量学证据支持，仅能作为低置信度备选。",
+          "rejected_directions": [
+            "基于booklet_excerpt中Tenelle Porter言论构建'智力无限增长'假设（违反规则3：无evidence_id支持）",
+            "引用弗林效应或神经科学文献论证智力上限（违反规则10：不在allowed_evidence_ids列表中）",
+            "将CS领域证据（如GUI测试、突变检测）强行类比至人类认知过程（违反规则5：禁止不当跨域推断）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本实验设计旨在验证推荐假设：'由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。' \n\n核心逻辑是进行领域相关性审计与证据映射分析。我们将把允许的EvidenceCards（EV-Q119-*系列）的内容特征提取为向量，并与标准的人类智力研究关键词库（如'neuroscience', 'psychometrics', 'g-factor', 'heritability', 'Flynn effect'）进行语义相似度计算。同时，我们将分析这些CS领域证据在回答'人类智力上限'这一科学问题时的逻辑断裂点。\n\n技术栈包括：\n1. NLP文本嵌入模型（使用Qwen-Embedding或类似架构）计算证据内容与目标领域关键词的余弦相似度。\n2. 逻辑一致性检查框架，评估从'软件测试/图灵测试批判'到'人类生物智力上限'的推论有效性。\n3. 知识图谱构建，可视化现有证据节点与目标问题节点之间的连接缺失情况。",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q119-e71fb096535bd446786f4dbe",
+                "description": "arXiv:1807.10953 - 关于软件测试中突变检测的研究，涉及测试用例覆盖率。",
+                "domain": "Computer Science / Software Engineering"
+              },
+              {
+                "id": "EV-Q119-70df9c6ca8b62a082f57dc83",
+                "description": "arXiv:1202.4527 - 关于GUI测试的方法论，涉及人工与自动化测试对比。",
+                "domain": "Computer Science / Software Testing"
+              },
+              {
+                "id": "EV-Q119-3a50fd36f4edef4bef3eda20",
+                "description": "arXiv:2311.05033 - 关于分类和回归中无损特征选择的分布自由测试。",
+                "domain": "Computer Science / Machine Learning Statistics"
+              },
+              {
+                "id": "EV-Q119-2652d091e68e78953e36523e",
+                "description": "arXiv:0712.3825 - 对图灵测试的哲学批判，认为其测试的是'人性'而非'智能'。",
+                "domain": "Computer Science / Philosophy of AI"
+              }
+            ],
+            "target": {
+              "domain_keywords": [
+                "human intelligence upper limit",
+                "biological constraints on cognition",
+                "psychometric g-factor limits",
+                "neuroscience of intelligence",
+                "Flynn effect biological basis"
+              ],
+              "required_evidence_type": "Empirical studies in neuroscience, psychology, or evolutionary biology providing data on cognitive ceilings."
+            }
+          },
+          "methods": "1. **语义空间映射**：使用预训练语言模型将四个允许的EvidenceCards全文嵌入到高维向量空间。同时，将目标领域关键词（Target Domain Keywords）也嵌入同一空间。计算每个EvidenceCard向量与目标领域质心向量的余弦相似度。预期结果应为低相似度（<0.3），证明领域错配。\n\n2. **命题逻辑分析**：提取每个EvidenceCard的核心主张（例如：'图灵测试测试的是人性而非智能'）。构建逻辑树，尝试从这些主张推导出'人类智力存在/不存在生物学上限'的结论。记录推导过程中的逻辑跳跃（Non-sequitur）。\n\n3. **证据覆盖度量化**：定义'智力上限研究'的必要证据组件集合（如：遗传力数据、脑代谢率数据、长期追踪数据）。检查允许的证据集是否包含任何这些组件。计算覆盖率为0%。\n\n4. **反事实模拟**：假设存在一个理想的神经科学证据卡，模拟将其加入后对假设支持度的变化，以此量化当前证据缺失的影响程度。",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: 随机选择计算机科学领域的其他论文（非AI/测试相关），预期其与心理学领域的相似度同样极低，用于确认并非特定于这些论文，而是整个CS领域与神经科学的天然距离。",
+              "Keyword Matching Baseline: 简单的关键词共现统计。检查允许的证据文本中是否包含'brain', 'neuron', 'IQ', 'cognition'等词。预期结果为极少或无语境相关出现。"
+            ],
+            "metrics": [
+              "Semantic Similarity Score (Cosine Similarity): 衡量证据内容与目标领域关键词的语义接近程度。",
+              "Logical Validity Index: 专家评分（1-5分），评估从证据到结论的逻辑连贯性。预期得分低。",
+              "Evidence Coverage Ratio: 目标领域必要证据组件在允许证据集中的存在比例。预期为0。",
+              "Domain Mismatch Confidence: 基于分类器判断证据属于'CS'而非'Psych/Neuro'的概率。"
+            ],
+            "ablation": "移除EV-Q119-2652d091e68e78953e36523e（唯一涉及'智能'定义的哲学讨论），观察剩余纯技术文档（测试、特征选择）与目标问题的相关性是否进一步降低。预期相关性降至接近零，证明即使是哲学批判也不足以构成生物学上限的证据。",
+            "validation_protocol": "1. 由两名独立研究员盲评逻辑推导过程的有效性。\n2. 使用不同的嵌入模型（如BGE, E5）重复语义相似度计算，确保结果稳健。\n3. 交叉验证关键词列表，确保未遗漏关键的跨学科术语。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "提供所有使用的EvidenceCard的完整文本内容哈希值（SHA-256）。",
+            "公开语义嵌入模型的版本及参数设置。",
+            "列出目标领域关键词的完整清单及其来源依据。",
+            "提供逻辑分析的结构化模板，以便他人复现推导过程。",
+            "代码仓库需包含数据预处理、嵌入计算及相似度分析的完整Pipeline。"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Pending allocation for embedding model inference.",
+            "data_availability": "All source EvidenceCards are provided in the input context.",
+            "estimated_runtime": "2-4 hours for full pipeline execution including manual logical review.",
+            "version_control": "Experiment design v1.0 generated by SAGE125 ExperimentDesigner Agent."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "候选假设正确识别了输入证据（CS/软件测试）与科学问题（人类智力生物学上限）之间的领域错配，严格遵守了'无证据不构建事实'的原则。",
+            "实验设计将'证据不足'转化为可计算的语义相似度与逻辑审计任务，具备方法论上的可证伪性。",
+            "Results字段明确标记为pending，未伪造任何分析结果。",
+            "引用的Evidence IDs均在allowed列表中，且准确反映了其内容局限性。",
+            "拒绝方向合理，有效避免了将booklet观点或跨域类比作为事实依据的常见错误。"
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+            "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。"
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.9,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:819c5741fd8b",
+            "category": "required_revision",
+            "description": "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:11a8854d682a",
+            "category": "required_revision",
+            "description": "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "85c7cad0f527c34c982060a6dcfe714d27ba1016d54b3178f0a1c061f93497e6",
+          "experiment_designer": "0810591bf5bec2072d606220a7e54dd6944f55919d795822d9c79819ffa000c1",
+          "scientific_reviewer": "17aad97e3abddd857ea3a3dab5c133bdedb881dd59630201cb903010a6cb69e0"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-091603-ec8ccc03",
+        "version_number": 2,
+        "version_id": "20260822-091603-ec8ccc03:v2",
+        "parent_version_id": "20260822-091603-ec8ccc03:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "当前允许的EvidenceCards（EV-Q119-*）与'人类智力生物学上限'这一科学问题之间存在显著的语义与逻辑断层，无法作为构建或验证该问题因果机制的事实基础；该证据集仅支持对'智能测试方法论'的元分析，而非对'人类认知极限'的本体论探究。",
+              "mechanism": "基于EV-Q119-2652d091e68e78953e36523e中关于图灵测试测量的是'人性模式'而非'智能本质'的论述，结合EV-Q119-e71fb096535bd446786f4dbe、EV-Q119-70df9c6ca8b62a082f57dc83及EV-Q119-3a50fd36f4edef4bef3eda20中纯粹的软件工程与统计特征选择内容，形成如下推断链：现有证据全部聚焦于人工系统（软件/AI）的验证与优化技术，缺乏生物神经系统约束（如代谢率、神经元密度、遗传力）的实证数据。因此，从这些证据到'人类智力上限'的任何推论均构成范畴错误（Category Error）。",
+              "falsifiable_prediction": "若使用经神经科学/心理学专家校验的标准术语库（如'g-factor heritability', 'synaptic plasticity ceiling', 'metabolic constraint on cognition'）与允许证据进行语义相似度计算，其平均余弦相似度将显著低于跨学科关联阈值（<0.3）；且逻辑审计显示从证据前提推导至'人类智力上限'结论的有效推理路径数量为0。",
+              "required_observations": [
+                "使用Qwen-Embedding模型（锁定具体版本号及推理参数）计算四个EvidenceCards与专家校验后的目标领域关键词集的语义相似度分布",
+                "由两名独立领域专家对'证据->结论'的逻辑推导链进行盲审，记录逻辑断裂点数量",
+                "验证目标关键词库是否覆盖了认知神经科学与心理测量学的核心概念，以排除假阴性风险"
+              ],
+              "risk_of_being_wrong": "若存在未被识别的计算神经科学或AI认知建模文献被错误归类为纯CS软件测试文献，则可能低估证据的实际相关性。但基于当前quoted_text内容分析，此风险较低。主要风险在于语义嵌入模型对高度专业化术语的对齐能力不足，导致假阴性，需通过专家校验关键词库来缓解。",
+              "supporting_evidence_ids": [
+                "EV-Q119-2652d091e68e78953e36523e",
+                "EV-Q119-e71fb096535bd446786f4dbe",
+                "EV-Q119-70df9c6ca8b62a082f57dc83",
+                "EV-Q119-3a50fd36f4edef4bef3eda20"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.2,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "人类智力的操作性定义受限于测试工具的文化与技术依赖性，而非生物认知能力的绝对上限；观察到的智力分数变化可能反映测试效度漂移，但该假设在当前证据下仅为待验证的元理论推测，缺乏直接心理测量学实证支持。",
+              "mechanism": "延伸EV-Q119-2652d091e68e78953e36523e中对图灵测试'测人性而非智能'的批判逻辑：若所有智能测试（包括IQ测试）都依赖于特定历史时期的知识模式与技术环境，则测试分数的上限反映的是测试设计的饱和度或文化适应性，而非大脑生理极限。然而，此机制链条缺少关键环节——即证明IQ测试确实存在类似图灵测试的'人性/文化偏差'而非'认知能力测量'的心理测量学证据。",
+              "falsifiable_prediction": "若未来引入的EvidenceCard包含跨文化、跨时代且内容无关的认知任务（如抽象推理、工作记忆广度）表现出稳定的渐近线或与生理指标（如脑容量、神经传导速度）显著相关，则该'测试效度假象'假设被削弱。",
+              "required_observations": [
+                "检索并验证是否存在涵盖心理测量学效度分析、g因子稳定性或弗林效应异质性的合格EvidenceCard",
+                "分析现有CS证据中是否有任何关于'测试偏差'或'测量饱和'的可迁移方法论洞见"
+              ],
+              "risk_of_being_wrong": "该假设本质上是将booklet中的观点（IQ上升）与唯一相关的哲学证据（EV-Q119-2652d091e68e78953e36523e）进行弱类比，缺乏直接事实支撑。若g因子被证明具有高度遗传稳定性且与环境无关，则此假设不成立。当前仅能作为低置信度的备选解释框架。",
+              "supporting_evidence_ids": [
+                "EV-Q119-2652d091e68e78953e36523e"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.6,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.3,
+              "overall_score": 0.45
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 是唯一严格遵循'无证据不构建事实'原则且具备高可证伪性的选项。它直接将评审反馈中要求的'专家校验关键词库'和'锁定Qwen-Embedding版本'整合进验证协议，把'证据不足'转化为可计算的语义与逻辑审计任务。相比之下，Hypothesis 1 虽然更具理论吸引力，但其核心前提缺乏allowed_evidence_ids的直接支持，仅依赖单一哲学证据的弱类比，证据支持度过低（0.3），不适合作为推荐假设。Hypothesis 0 的overall_score（0.85）显著高于Hypothesis 1（0.45），且完全符合当前证据约束与方法论修订要求。",
+          "rejected_directions": [
+            "基于booklet_excerpt中Tenelle Porter言论构建'智力无限增长循环'假设（违反规则3：无evidence_id支持，且属于用户反馈/背景信息而非事实证据）",
+            "引用弗林效应、神经解剖学或遗传学文献论证智力生物学上限（违反规则10：不在allowed_evidence_ids列表中）",
+            "将软件测试中的'突变检测'或'GUI测试覆盖率'强行类比为人类认知发展的限制因素（违反规则5：禁止不当跨域推断，缺乏映射依据）",
+            "声称'人类智力没有上限'或'已有上限'作为既定事实（违反规则1 & 6：未执行实验，Results必须为pending）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本实验旨在验证推荐假设：'当前允许的EvidenceCards（EV-Q119-*）与人类智力生物学上限问题存在显著的语义与逻辑断层'。实验核心是通过计算语义相似度与逻辑审计，量化证据集在目标领域（神经科学/心理测量学）的覆盖缺失。\n\n技术实现包括：\n1. **语义嵌入与相似度计算**：使用 Qwen-Embedding 模型（具体版本需锁定，如 qwen-embed-v1.5）将四个 EvidenceCard 的全文文本及专家校验后的目标领域关键词库（Target Domain Keywords）映射到同一高维向量空间。计算每个 EvidenceCard 向量与目标领域质心向量的余弦相似度。\n2. **逻辑推导审计**：构建形式化逻辑树，尝试从 EvidenceCard 的前提（如'图灵测试测人性'、'GUI测试方法'）推导至结论'人类智力存在/不存在生物学上限'。记录推导链条中的逻辑断裂点（Non-sequitur）数量。\n3. **关键词库校验机制**：引入专家校验环节，确保目标关键词库（如 'g-factor heritability', 'synaptic plasticity ceiling'）覆盖认知神经科学核心概念，以排除因术语偏差导致的假阴性。\n4. **基线对比**：设置随机 CS 论文基线与简单关键词匹配基线，以确认低相似度是领域错配而非模型偏差所致。",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q119-e71fb096535bd446786f4dbe",
+                "description": "arXiv:1807.10953 - 软件测试突变检测研究",
+                "domain": "Computer Science / Software Engineering"
+              },
+              {
+                "id": "EV-Q119-70df9c6ca8b62a082f57dc83",
+                "description": "arXiv:1202.4527 - GUI测试方法论",
+                "domain": "Computer Science / Software Testing"
+              },
+              {
+                "id": "EV-Q119-3a50fd36f4edef4bef3eda20",
+                "description": "arXiv:2311.05033 - 无损特征选择统计测试",
+                "domain": "Computer Science / Machine Learning Statistics"
+              },
+              {
+                "id": "EV-Q119-2652d091e68e78953e36523e",
+                "description": "arXiv:0712.3825 - 图灵测试哲学批判",
+                "domain": "Computer Science / Philosophy of AI"
+              }
+            ],
+            "target": {
+              "domain_keywords": [
+                "g-factor heritability",
+                "synaptic plasticity ceiling",
+                "metabolic constraint on cognition",
+                "neural density limits",
+                "psychometric validity saturation"
+              ],
+              "expert_validation_status": "Pending expert review to ensure coverage of core neuroscience/psychometrics concepts."
+            }
+          },
+          "methods": "1. **预处理与嵌入**：清洗 EvidenceCard 文本，移除引用标记。使用锁定的 Qwen-Embedding 模型生成固定维度向量。对目标关键词库进行同样处理，并计算其质心向量。\n2. **相似度度量**：计算每个 Source Evidence 向量与 Target Keyword Centroid 的余弦相似度。设定阈值 <0.3 为显著不相关。\n3. **逻辑审计协议**：由两名独立领域专家（盲审）评估从证据前提到目标结论的逻辑路径有效性。使用结构化模板记录每一步推理的合理性评分（1-5分）。\n4. **消融实验**：移除唯一涉及智能定义的 EV-Q119-2652d091e68e78953e36523e，观察剩余纯技术文档的相似度变化，验证哲学批判是否提供了任何实质性关联。",
+          "experiments": {
+            "baselines": [
+              "Random CS Baseline: 随机选取非AI/测试领域的CS论文，预期相似度同样极低，确认领域间天然距离。",
+              "Keyword Co-occurrence Baseline: 统计 EvidenceCard 中是否直接出现目标关键词（如 'brain', 'neuron'），预期频次接近零。"
+            ],
+            "metrics": [
+              "Mean Cosine Similarity: 证据与目标领域关键词质的平均余弦相似度。",
+              "Logical Validity Score: 专家对逻辑推导链有效性的平均评分（1-5）。",
+              "Evidence Coverage Ratio: 目标领域必要证据组件在允许证据集中的存在比例（预期为0）。",
+              "False Negative Rate Estimate: 通过专家校验关键词库后，重新计算相似度以评估初始术语选择的偏差风险。"
+            ],
+            "ablation": "移除 EV-Q119-2652d091e68e78953e36523e（图灵测试批判），仅保留纯软件工程证据（EV-Q119-e71fb096535bd446786f4dbe, EV-Q119-70df9c6ca8b62a082f57dc83, EV-Q119-3a50fd36f4edef4bef3eda20），观察语义相似度是否进一步降低至接近随机噪声水平。",
+            "validation_protocol": "1. 双盲逻辑审计：两名专家独立评分，计算 Inter-rater Reliability (Kappa系数)。\n2. 模型稳健性检查：使用备用嵌入模型（如 BGE-M3）复现相似度计算，确保结果不依赖于单一模型架构。\n3. 关键词库迭代：邀请神经科学专家对目标关键词库进行两轮修订，确保无重大遗漏。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "锁定 Qwen-Embedding 模型的具体版本号（如 qwen-embed-v1.5）及推理参数（temperature=0, top_p=1.0）。",
+            "提供所有 EvidenceCard 的 SHA-256 内容哈希值，确保文本源一致。",
+            "公开经专家校验的目标领域关键词库完整列表及其修订历史。",
+            "提供逻辑审计的结构化评分模板与专家资质说明。",
+            "代码仓库包含完整的预处理、嵌入计算、相似度分析及统计检验 Pipeline。"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Pending allocation for Qwen-Embedding inference and expert review coordination.",
+            "data_availability": "All source EvidenceCards are provided in the input context; target keywords require expert curation.",
+            "estimated_runtime": "4-6 hours (including expert review time).",
+            "version_control": "Experiment design v2.0 generated by SAGE125 ExperimentDesigner Agent, incorporating reviewer feedback on keyword validation and model locking."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "修订版v2已成功整合上一轮评审的所有required_revisions：目标关键词库增加了专家校验环节（expert_validation_status: Pending），且Reproducibility Checklist明确锁定了Qwen-Embedding版本号与推理参数。",
+            "假设Hypothesis 0严格限定在allowed_evidence_ids范围内，将'证据不足'转化为可计算的语义断层验证任务，未引入任何外部神经科学事实作为既定前提，符合规则3与规则10。",
+            "Results字段保持为'待执行验证实验'状态，未伪造任何相似度数值或逻辑审计结果，符合规则6。",
+            "实验设计包含明确的Baselines（Random CS, Keyword Co-occurrence）与Metrics（Mean Cosine Similarity, Logical Validity Score），且数据集定义清晰区分了Source（4个EV-Q119-*）与Target（Domain Keywords），满足可证伪性与可复现性要求。",
+            "引用的Evidence IDs（EV-Q119-2652d091e68e78953e36523e等）均存在于输入EvidenceCatalog中，且quoted_text内容与假设机制描述一致，无虚构引用。"
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "在执行阶段，必须记录并报告专家校验关键词库的具体修订版本与校验人资质，否则'专家校验'仅停留在计划层面，无法实际排除假阴性风险。",
+            "建议在validation_protocol中补充对'逻辑断裂点'的操作性定义示例（如：从'GUI测试覆盖率'推导至'神经元密度限制'视为无效跳跃），以确保两名盲审专家的评分标准一致，提高Inter-rater Reliability的可信度。"
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:819c5741fd8b",
+            "category": "required_revision",
+            "description": "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:11a8854d682a",
+            "category": "required_revision",
+            "description": "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:6f03a9ab27cc3d5e,change:1d1b1d78c359c13d,change:8bac41a1194848b6; evidence=EV-Q119-2652d091e68e78953e36523e,EV-Q119-3a50fd36f4edef4bef3eda20,EV-Q119-70df9c6ca8b62a082f57dc83,EV-Q119-e71fb096535bd446786f4dbe; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:669a47d6234b",
+            "category": "required_revision",
+            "description": "在执行阶段，必须记录并报告专家校验关键词库的具体修订版本与校验人资质，否则'专家校验'仅停留在计划层面，无法实际排除假阴性风险。",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:702fb264a37d",
+            "category": "required_revision",
+            "description": "建议在validation_protocol中补充对'逻辑断裂点'的操作性定义示例（如：从'GUI测试覆盖率'推导至'神经元密度限制'视为无效跳跃），以确保两名盲审专家的评分标准一致，提高Inter-rater Reliability的可信度。",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "d66c6123cbcb418e4e47de022475610518cc52f0578a2d4b725dcbe0427a702d",
+          "experiment_designer": "66ffd301ef5964fe5be05682ace7c6738c3ae41f8536352a18fb57eaa604f0d9",
+          "scientific_reviewer": "78c2e09a7323226e593adff8b5b1f9ec799632c165163abf1d57c028c5657dae"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-091603-ec8ccc03",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-091603-ec8ccc03:review:v1",
+        "20260822-091603-ec8ccc03:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-091603-ec8ccc03:v1",
+        "20260822-091603-ec8ccc03:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-091603-ec8ccc03",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-091603-ec8ccc03:review:v1",
+          "20260822-091603-ec8ccc03:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-091603-ec8ccc03:v1",
+          "20260822-091603-ec8ccc03:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-091603-ec8ccc03",
+          "version_number": 1,
+          "version_id": "20260822-091603-ec8ccc03:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。",
+                "mechanism": "该陈述并非因果机制假设，而是对当前证据库领域错配（CS vs. Psychology/Neuroscience）的方法论界定。它指出在缺乏遗传力、脑容量代谢限制或g因子纵向数据的情况下，任何关于'智力极限'的断言均属于未验证推测。",
+                "falsifiable_prediction": "若在后续迭代中引入包含人类认知能力生物学约束（如神经元传导速度、突触可塑性阈值）或长期心理测量学追踪数据的EvidenceCard，则该'insufficient_evidence'状态将被证伪。",
+                "required_observations": [
+                  "检索并验证是否存在涵盖人类智力遗传力、神经解剖学限制或弗林效应长期趋势的合格EvidenceCard",
+                  "确认现有CS领域证据（EV-Q119-*）是否被错误标记为与人类智力相关"
+                ],
+                "risk_of_being_wrong": "若存在跨学科证据（如计算神经科学或AI认知建模）被遗漏，则过早声明证据不足可能阻碍有效假设生成。但基于当前allowed_evidence_ids列表，此风险可控。",
+                "supporting_evidence_ids": [
+                  "EV-Q119-2652d091e68e78953e36523e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.7
+              },
+              {
+                "hypothesis": "人类智力的操作性定义受限于当前测试工具（如IQ测试）的覆盖范围，而非生物认知能力的绝对上限；观察到的'智力增长'可能反映测试效度变化而非潜在能力提升。",
+                "mechanism": "基于EV-Q119-2652d091e68e78953e36523e中对图灵测试作为'人性测试而非智能测试'的批判，类比推论：若智力测试依赖于特定文化/技术背景下的知识模式，则其分数上限反映的是测试设计的饱和度，而非认知架构的物理极限。",
+                "falsifiable_prediction": "若发现跨文化、跨时代且内容无关的认知任务（如抽象推理、工作记忆广度）表现出稳定的渐近线或生理相关性，则该假设被削弱。",
+                "required_observations": [
+                  "分析不同历史时期IQ测试子项分数变化的异质性（如言语vs.空间推理）",
+                  "验证是否存在独立于教育/营养因素的认知能力测量指标"
+                ],
+                "risk_of_being_wrong": "该假设将booklet中'IQ分数上升'的现象重新解释为测量假象，但缺乏直接心理测量学证据支持，仅能作为待验证的元理论框架。若未来证据证明g因子具有稳定遗传基础且与环境无关，则此假设不成立。",
+                "supporting_evidence_ids": [
+                  "EV-Q119-2652d091e68e78953e36523e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.4,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.3,
+                "evidence_support_score": 0.2,
+                "overall_score": 0.35
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "唯一符合证据约束的选项。所有允许的EvidenceCards均属计算机科学领域（软件测试、特征选择、图灵测试哲学），与人类智力生物学/心理学上限无直接事实关联。Hypothesis 0 明确标识knowledge_gap并避免编造因果机制，严格遵守'无evidence_id不作为事实'原则。Hypothesis 1虽具启发性，但其核心前提（测试效度vs真实能力）缺乏心理测量学证据支持，仅能作为低置信度备选。",
+            "rejected_directions": [
+              "基于booklet_excerpt中Tenelle Porter言论构建'智力无限增长'假设（违反规则3：无evidence_id支持）",
+              "引用弗林效应或神经科学文献论证智力上限（违反规则10：不在allowed_evidence_ids列表中）",
+              "将CS领域证据（如GUI测试、突变检测）强行类比至人类认知过程（违反规则5：禁止不当跨域推断）"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "本实验设计旨在验证推荐假设：'由于缺乏神经科学与心理测量学证据，当前无法构建关于人类智力生物学上限的可验证假设；现有允许证据仅涉及软件测试与图灵测试哲学批判，与人类认知极限无实证关联。' \n\n核心逻辑是进行领域相关性审计与证据映射分析。我们将把允许的EvidenceCards（EV-Q119-*系列）的内容特征提取为向量，并与标准的人类智力研究关键词库（如'neuroscience', 'psychometrics', 'g-factor', 'heritability', 'Flynn effect'）进行语义相似度计算。同时，我们将分析这些CS领域证据在回答'人类智力上限'这一科学问题时的逻辑断裂点。\n\n技术栈包括：\n1. NLP文本嵌入模型（使用Qwen-Embedding或类似架构）计算证据内容与目标领域关键词的余弦相似度。\n2. 逻辑一致性检查框架，评估从'软件测试/图灵测试批判'到'人类生物智力上限'的推论有效性。\n3. 知识图谱构建，可视化现有证据节点与目标问题节点之间的连接缺失情况。",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q119-e71fb096535bd446786f4dbe",
+                  "description": "arXiv:1807.10953 - 关于软件测试中突变检测的研究，涉及测试用例覆盖率。",
+                  "domain": "Computer Science / Software Engineering"
+                },
+                {
+                  "id": "EV-Q119-70df9c6ca8b62a082f57dc83",
+                  "description": "arXiv:1202.4527 - 关于GUI测试的方法论，涉及人工与自动化测试对比。",
+                  "domain": "Computer Science / Software Testing"
+                },
+                {
+                  "id": "EV-Q119-3a50fd36f4edef4bef3eda20",
+                  "description": "arXiv:2311.05033 - 关于分类和回归中无损特征选择的分布自由测试。",
+                  "domain": "Computer Science / Machine Learning Statistics"
+                },
+                {
+                  "id": "EV-Q119-2652d091e68e78953e36523e",
+                  "description": "arXiv:0712.3825 - 对图灵测试的哲学批判，认为其测试的是'人性'而非'智能'。",
+                  "domain": "Computer Science / Philosophy of AI"
+                }
+              ],
+              "target": {
+                "domain_keywords": [
+                  "human intelligence upper limit",
+                  "biological constraints on cognition",
+                  "psychometric g-factor limits",
+                  "neuroscience of intelligence",
+                  "Flynn effect biological basis"
+                ],
+                "required_evidence_type": "Empirical studies in neuroscience, psychology, or evolutionary biology providing data on cognitive ceilings."
+              }
+            },
+            "methods": "1. **语义空间映射**：使用预训练语言模型将四个允许的EvidenceCards全文嵌入到高维向量空间。同时，将目标领域关键词（Target Domain Keywords）也嵌入同一空间。计算每个EvidenceCard向量与目标领域质心向量的余弦相似度。预期结果应为低相似度（<0.3），证明领域错配。\n\n2. **命题逻辑分析**：提取每个EvidenceCard的核心主张（例如：'图灵测试测试的是人性而非智能'）。构建逻辑树，尝试从这些主张推导出'人类智力存在/不存在生物学上限'的结论。记录推导过程中的逻辑跳跃（Non-sequitur）。\n\n3. **证据覆盖度量化**：定义'智力上限研究'的必要证据组件集合（如：遗传力数据、脑代谢率数据、长期追踪数据）。检查允许的证据集是否包含任何这些组件。计算覆盖率为0%。\n\n4. **反事实模拟**：假设存在一个理想的神经科学证据卡，模拟将其加入后对假设支持度的变化，以此量化当前证据缺失的影响程度。",
+            "experiments": {
+              "baselines": [
+                "Random Baseline: 随机选择计算机科学领域的其他论文（非AI/测试相关），预期其与心理学领域的相似度同样极低，用于确认并非特定于这些论文，而是整个CS领域与神经科学的天然距离。",
+                "Keyword Matching Baseline: 简单的关键词共现统计。检查允许的证据文本中是否包含'brain', 'neuron', 'IQ', 'cognition'等词。预期结果为极少或无语境相关出现。"
+              ],
+              "metrics": [
+                "Semantic Similarity Score (Cosine Similarity): 衡量证据内容与目标领域关键词的语义接近程度。",
+                "Logical Validity Index: 专家评分（1-5分），评估从证据到结论的逻辑连贯性。预期得分低。",
+                "Evidence Coverage Ratio: 目标领域必要证据组件在允许证据集中的存在比例。预期为0。",
+                "Domain Mismatch Confidence: 基于分类器判断证据属于'CS'而非'Psych/Neuro'的概率。"
+              ],
+              "ablation": "移除EV-Q119-2652d091e68e78953e36523e（唯一涉及'智能'定义的哲学讨论），观察剩余纯技术文档（测试、特征选择）与目标问题的相关性是否进一步降低。预期相关性降至接近零，证明即使是哲学批判也不足以构成生物学上限的证据。",
+              "validation_protocol": "1. 由两名独立研究员盲评逻辑推导过程的有效性。\n2. 使用不同的嵌入模型（如BGE, E5）重复语义相似度计算，确保结果稳健。\n3. 交叉验证关键词列表，确保未遗漏关键的跨学科术语。"
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "提供所有使用的EvidenceCard的完整文本内容哈希值（SHA-256）。",
+              "公开语义嵌入模型的版本及参数设置。",
+              "列出目标领域关键词的完整清单及其来源依据。",
+              "提供逻辑分析的结构化模板，以便他人复现推导过程。",
+              "代码仓库需包含数据预处理、嵌入计算及相似度分析的完整Pipeline。"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Pending allocation for embedding model inference.",
+              "data_availability": "All source EvidenceCards are provided in the input context.",
+              "estimated_runtime": "2-4 hours for full pipeline execution including manual logical review.",
+              "version_control": "Experiment design v1.0 generated by SAGE125 ExperimentDesigner Agent."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "候选假设正确识别了输入证据（CS/软件测试）与科学问题（人类智力生物学上限）之间的领域错配，严格遵守了'无证据不构建事实'的原则。",
+              "实验设计将'证据不足'转化为可计算的语义相似度与逻辑审计任务，具备方法论上的可证伪性。",
+              "Results字段明确标记为pending，未伪造任何分析结果。",
+              "引用的Evidence IDs均在allowed列表中，且准确反映了其内容局限性。",
+              "拒绝方向合理，有效避免了将booklet观点或跨域类比作为事实依据的常见错误。"
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+              "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。"
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.9,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:819c5741fd8b",
+              "category": "required_revision",
+              "description": "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:11a8854d682a",
+              "category": "required_revision",
+              "description": "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "85c7cad0f527c34c982060a6dcfe714d27ba1016d54b3178f0a1c061f93497e6",
+            "experiment_designer": "0810591bf5bec2072d606220a7e54dd6944f55919d795822d9c79819ffa000c1",
+            "scientific_reviewer": "17aad97e3abddd857ea3a3dab5c133bdedb881dd59630201cb903010a6cb69e0"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-091603-ec8ccc03",
+          "version_number": 2,
+          "version_id": "20260822-091603-ec8ccc03:v2",
+          "parent_version_id": "20260822-091603-ec8ccc03:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "当前允许的EvidenceCards（EV-Q119-*）与'人类智力生物学上限'这一科学问题之间存在显著的语义与逻辑断层，无法作为构建或验证该问题因果机制的事实基础；该证据集仅支持对'智能测试方法论'的元分析，而非对'人类认知极限'的本体论探究。",
+                "mechanism": "基于EV-Q119-2652d091e68e78953e36523e中关于图灵测试测量的是'人性模式'而非'智能本质'的论述，结合EV-Q119-e71fb096535bd446786f4dbe、EV-Q119-70df9c6ca8b62a082f57dc83及EV-Q119-3a50fd36f4edef4bef3eda20中纯粹的软件工程与统计特征选择内容，形成如下推断链：现有证据全部聚焦于人工系统（软件/AI）的验证与优化技术，缺乏生物神经系统约束（如代谢率、神经元密度、遗传力）的实证数据。因此，从这些证据到'人类智力上限'的任何推论均构成范畴错误（Category Error）。",
+                "falsifiable_prediction": "若使用经神经科学/心理学专家校验的标准术语库（如'g-factor heritability', 'synaptic plasticity ceiling', 'metabolic constraint on cognition'）与允许证据进行语义相似度计算，其平均余弦相似度将显著低于跨学科关联阈值（<0.3）；且逻辑审计显示从证据前提推导至'人类智力上限'结论的有效推理路径数量为0。",
+                "required_observations": [
+                  "使用Qwen-Embedding模型（锁定具体版本号及推理参数）计算四个EvidenceCards与专家校验后的目标领域关键词集的语义相似度分布",
+                  "由两名独立领域专家对'证据->结论'的逻辑推导链进行盲审，记录逻辑断裂点数量",
+                  "验证目标关键词库是否覆盖了认知神经科学与心理测量学的核心概念，以排除假阴性风险"
+                ],
+                "risk_of_being_wrong": "若存在未被识别的计算神经科学或AI认知建模文献被错误归类为纯CS软件测试文献，则可能低估证据的实际相关性。但基于当前quoted_text内容分析，此风险较低。主要风险在于语义嵌入模型对高度专业化术语的对齐能力不足，导致假阴性，需通过专家校验关键词库来缓解。",
+                "supporting_evidence_ids": [
+                  "EV-Q119-2652d091e68e78953e36523e",
+                  "EV-Q119-e71fb096535bd446786f4dbe",
+                  "EV-Q119-70df9c6ca8b62a082f57dc83",
+                  "EV-Q119-3a50fd36f4edef4bef3eda20"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.2,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "人类智力的操作性定义受限于测试工具的文化与技术依赖性，而非生物认知能力的绝对上限；观察到的智力分数变化可能反映测试效度漂移，但该假设在当前证据下仅为待验证的元理论推测，缺乏直接心理测量学实证支持。",
+                "mechanism": "延伸EV-Q119-2652d091e68e78953e36523e中对图灵测试'测人性而非智能'的批判逻辑：若所有智能测试（包括IQ测试）都依赖于特定历史时期的知识模式与技术环境，则测试分数的上限反映的是测试设计的饱和度或文化适应性，而非大脑生理极限。然而，此机制链条缺少关键环节——即证明IQ测试确实存在类似图灵测试的'人性/文化偏差'而非'认知能力测量'的心理测量学证据。",
+                "falsifiable_prediction": "若未来引入的EvidenceCard包含跨文化、跨时代且内容无关的认知任务（如抽象推理、工作记忆广度）表现出稳定的渐近线或与生理指标（如脑容量、神经传导速度）显著相关，则该'测试效度假象'假设被削弱。",
+                "required_observations": [
+                  "检索并验证是否存在涵盖心理测量学效度分析、g因子稳定性或弗林效应异质性的合格EvidenceCard",
+                  "分析现有CS证据中是否有任何关于'测试偏差'或'测量饱和'的可迁移方法论洞见"
+                ],
+                "risk_of_being_wrong": "该假设本质上是将booklet中的观点（IQ上升）与唯一相关的哲学证据（EV-Q119-2652d091e68e78953e36523e）进行弱类比，缺乏直接事实支撑。若g因子被证明具有高度遗传稳定性且与环境无关，则此假设不成立。当前仅能作为低置信度的备选解释框架。",
+                "supporting_evidence_ids": [
+                  "EV-Q119-2652d091e68e78953e36523e"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.6,
+                "feasibility_score": 0.4,
+                "evidence_support_score": 0.3,
+                "overall_score": 0.45
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 是唯一严格遵循'无证据不构建事实'原则且具备高可证伪性的选项。它直接将评审反馈中要求的'专家校验关键词库'和'锁定Qwen-Embedding版本'整合进验证协议，把'证据不足'转化为可计算的语义与逻辑审计任务。相比之下，Hypothesis 1 虽然更具理论吸引力，但其核心前提缺乏allowed_evidence_ids的直接支持，仅依赖单一哲学证据的弱类比，证据支持度过低（0.3），不适合作为推荐假设。Hypothesis 0 的overall_score（0.85）显著高于Hypothesis 1（0.45），且完全符合当前证据约束与方法论修订要求。",
+            "rejected_directions": [
+              "基于booklet_excerpt中Tenelle Porter言论构建'智力无限增长循环'假设（违反规则3：无evidence_id支持，且属于用户反馈/背景信息而非事实证据）",
+              "引用弗林效应、神经解剖学或遗传学文献论证智力生物学上限（违反规则10：不在allowed_evidence_ids列表中）",
+              "将软件测试中的'突变检测'或'GUI测试覆盖率'强行类比为人类认知发展的限制因素（违反规则5：禁止不当跨域推断，缺乏映射依据）",
+              "声称'人类智力没有上限'或'已有上限'作为既定事实（违反规则1 & 6：未执行实验，Results必须为pending）"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "本实验旨在验证推荐假设：'当前允许的EvidenceCards（EV-Q119-*）与人类智力生物学上限问题存在显著的语义与逻辑断层'。实验核心是通过计算语义相似度与逻辑审计，量化证据集在目标领域（神经科学/心理测量学）的覆盖缺失。\n\n技术实现包括：\n1. **语义嵌入与相似度计算**：使用 Qwen-Embedding 模型（具体版本需锁定，如 qwen-embed-v1.5）将四个 EvidenceCard 的全文文本及专家校验后的目标领域关键词库（Target Domain Keywords）映射到同一高维向量空间。计算每个 EvidenceCard 向量与目标领域质心向量的余弦相似度。\n2. **逻辑推导审计**：构建形式化逻辑树，尝试从 EvidenceCard 的前提（如'图灵测试测人性'、'GUI测试方法'）推导至结论'人类智力存在/不存在生物学上限'。记录推导链条中的逻辑断裂点（Non-sequitur）数量。\n3. **关键词库校验机制**：引入专家校验环节，确保目标关键词库（如 'g-factor heritability', 'synaptic plasticity ceiling'）覆盖认知神经科学核心概念，以排除因术语偏差导致的假阴性。\n4. **基线对比**：设置随机 CS 论文基线与简单关键词匹配基线，以确认低相似度是领域错配而非模型偏差所致。",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q119-e71fb096535bd446786f4dbe",
+                  "description": "arXiv:1807.10953 - 软件测试突变检测研究",
+                  "domain": "Computer Science / Software Engineering"
+                },
+                {
+                  "id": "EV-Q119-70df9c6ca8b62a082f57dc83",
+                  "description": "arXiv:1202.4527 - GUI测试方法论",
+                  "domain": "Computer Science / Software Testing"
+                },
+                {
+                  "id": "EV-Q119-3a50fd36f4edef4bef3eda20",
+                  "description": "arXiv:2311.05033 - 无损特征选择统计测试",
+                  "domain": "Computer Science / Machine Learning Statistics"
+                },
+                {
+                  "id": "EV-Q119-2652d091e68e78953e36523e",
+                  "description": "arXiv:0712.3825 - 图灵测试哲学批判",
+                  "domain": "Computer Science / Philosophy of AI"
+                }
+              ],
+              "target": {
+                "domain_keywords": [
+                  "g-factor heritability",
+                  "synaptic plasticity ceiling",
+                  "metabolic constraint on cognition",
+                  "neural density limits",
+                  "psychometric validity saturation"
+                ],
+                "expert_validation_status": "Pending expert review to ensure coverage of core neuroscience/psychometrics concepts."
+              }
+            },
+            "methods": "1. **预处理与嵌入**：清洗 EvidenceCard 文本，移除引用标记。使用锁定的 Qwen-Embedding 模型生成固定维度向量。对目标关键词库进行同样处理，并计算其质心向量。\n2. **相似度度量**：计算每个 Source Evidence 向量与 Target Keyword Centroid 的余弦相似度。设定阈值 <0.3 为显著不相关。\n3. **逻辑审计协议**：由两名独立领域专家（盲审）评估从证据前提到目标结论的逻辑路径有效性。使用结构化模板记录每一步推理的合理性评分（1-5分）。\n4. **消融实验**：移除唯一涉及智能定义的 EV-Q119-2652d091e68e78953e36523e，观察剩余纯技术文档的相似度变化，验证哲学批判是否提供了任何实质性关联。",
+            "experiments": {
+              "baselines": [
+                "Random CS Baseline: 随机选取非AI/测试领域的CS论文，预期相似度同样极低，确认领域间天然距离。",
+                "Keyword Co-occurrence Baseline: 统计 EvidenceCard 中是否直接出现目标关键词（如 'brain', 'neuron'），预期频次接近零。"
+              ],
+              "metrics": [
+                "Mean Cosine Similarity: 证据与目标领域关键词质的平均余弦相似度。",
+                "Logical Validity Score: 专家对逻辑推导链有效性的平均评分（1-5）。",
+                "Evidence Coverage Ratio: 目标领域必要证据组件在允许证据集中的存在比例（预期为0）。",
+                "False Negative Rate Estimate: 通过专家校验关键词库后，重新计算相似度以评估初始术语选择的偏差风险。"
+              ],
+              "ablation": "移除 EV-Q119-2652d091e68e78953e36523e（图灵测试批判），仅保留纯软件工程证据（EV-Q119-e71fb096535bd446786f4dbe, EV-Q119-70df9c6ca8b62a082f57dc83, EV-Q119-3a50fd36f4edef4bef3eda20），观察语义相似度是否进一步降低至接近随机噪声水平。",
+              "validation_protocol": "1. 双盲逻辑审计：两名专家独立评分，计算 Inter-rater Reliability (Kappa系数)。\n2. 模型稳健性检查：使用备用嵌入模型（如 BGE-M3）复现相似度计算，确保结果不依赖于单一模型架构。\n3. 关键词库迭代：邀请神经科学专家对目标关键词库进行两轮修订，确保无重大遗漏。"
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "锁定 Qwen-Embedding 模型的具体版本号（如 qwen-embed-v1.5）及推理参数（temperature=0, top_p=1.0）。",
+              "提供所有 EvidenceCard 的 SHA-256 内容哈希值，确保文本源一致。",
+              "公开经专家校验的目标领域关键词库完整列表及其修订历史。",
+              "提供逻辑审计的结构化评分模板与专家资质说明。",
+              "代码仓库包含完整的预处理、嵌入计算、相似度分析及统计检验 Pipeline。"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Pending allocation for Qwen-Embedding inference and expert review coordination.",
+              "data_availability": "All source EvidenceCards are provided in the input context; target keywords require expert curation.",
+              "estimated_runtime": "4-6 hours (including expert review time).",
+              "version_control": "Experiment design v2.0 generated by SAGE125 ExperimentDesigner Agent, incorporating reviewer feedback on keyword validation and model locking."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "修订版v2已成功整合上一轮评审的所有required_revisions：目标关键词库增加了专家校验环节（expert_validation_status: Pending），且Reproducibility Checklist明确锁定了Qwen-Embedding版本号与推理参数。",
+              "假设Hypothesis 0严格限定在allowed_evidence_ids范围内，将'证据不足'转化为可计算的语义断层验证任务，未引入任何外部神经科学事实作为既定前提，符合规则3与规则10。",
+              "Results字段保持为'待执行验证实验'状态，未伪造任何相似度数值或逻辑审计结果，符合规则6。",
+              "实验设计包含明确的Baselines（Random CS, Keyword Co-occurrence）与Metrics（Mean Cosine Similarity, Logical Validity Score），且数据集定义清晰区分了Source（4个EV-Q119-*）与Target（Domain Keywords），满足可证伪性与可复现性要求。",
+              "引用的Evidence IDs（EV-Q119-2652d091e68e78953e36523e等）均存在于输入EvidenceCatalog中，且quoted_text内容与假设机制描述一致，无虚构引用。"
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "在执行阶段，必须记录并报告专家校验关键词库的具体修订版本与校验人资质，否则'专家校验'仅停留在计划层面，无法实际排除假阴性风险。",
+              "建议在validation_protocol中补充对'逻辑断裂点'的操作性定义示例（如：从'GUI测试覆盖率'推导至'神经元密度限制'视为无效跳跃），以确保两名盲审专家的评分标准一致，提高Inter-rater Reliability的可信度。"
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:819c5741fd8b",
+              "category": "required_revision",
+              "description": "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:11a8854d682a",
+              "category": "required_revision",
+              "description": "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:6f03a9ab27cc3d5e,change:1d1b1d78c359c13d,change:8bac41a1194848b6; evidence=EV-Q119-2652d091e68e78953e36523e,EV-Q119-3a50fd36f4edef4bef3eda20,EV-Q119-70df9c6ca8b62a082f57dc83,EV-Q119-e71fb096535bd446786f4dbe; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:669a47d6234b",
+              "category": "required_revision",
+              "description": "在执行阶段，必须记录并报告专家校验关键词库的具体修订版本与校验人资质，否则'专家校验'仅停留在计划层面，无法实际排除假阴性风险。",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:702fb264a37d",
+              "category": "required_revision",
+              "description": "建议在validation_protocol中补充对'逻辑断裂点'的操作性定义示例（如：从'GUI测试覆盖率'推导至'神经元密度限制'视为无效跳跃），以确保两名盲审专家的评分标准一致，提高Inter-rater Reliability的可信度。",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "d66c6123cbcb418e4e47de022475610518cc52f0578a2d4b725dcbe0427a702d",
+            "experiment_designer": "66ffd301ef5964fe5be05682ace7c6738c3ae41f8536352a18fb57eaa604f0d9",
+            "scientific_reviewer": "78c2e09a7323226e593adff8b5b1f9ec799632c165163abf1d57c028c5657dae"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-091603-ec8ccc03:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-091603-ec8ccc03:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-091603-ec8ccc03:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-091603-ec8ccc03:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:819c5741fd8b",
+          "category": "required_revision",
+          "description": "在执行语义相似度实验时，需确保目标领域关键词库经过神经科学/心理学专家校验，避免因术语选择偏差导致假阴性（即误判存在关联的证据为不相关）。",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:11a8854d682a",
+          "category": "required_revision",
+          "description": "建议在Reproducibility Checklist中增加对Qwen-Embedding模型具体版本号及推理参数的锁定要求，以确保语义空间映射的可复现性。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:6f03a9ab27cc3d5e,change:1d1b1d78c359c13d,change:8bac41a1194848b6; evidence=EV-Q119-2652d091e68e78953e36523e,EV-Q119-3a50fd36f4edef4bef3eda20,EV-Q119-70df9c6ca8b62a082f57dc83,EV-Q119-e71fb096535bd446786f4dbe; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:669a47d6234b",
+          "category": "required_revision",
+          "description": "在执行阶段，必须记录并报告专家校验关键词库的具体修订版本与校验人资质，否则'专家校验'仅停留在计划层面，无法实际排除假阴性风险。",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:702fb264a37d",
+          "category": "required_revision",
+          "description": "建议在validation_protocol中补充对'逻辑断裂点'的操作性定义示例（如：从'GUI测试覆盖率'推导至'神经元密度限制'视为无效跳跃），以确保两名盲审专家的评分标准一致，提高Inter-rater Reliability的可信度。",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "44e14a976751c67ae4f61fb7a9f0bf487497278305df1bb7a06d2197a2b10c94"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-091603-ec8ccc03:wave-b-two-round",
+      "run_id": "20260822-091603-ec8ccc03",
+      "v1_version_id": "20260822-091603-ec8ccc03:v1",
+      "v2_version_id": "20260822-091603-ec8ccc03:v2",
+      "input_fingerprints": {
+        "v1": "0810591bf5bec2072d606220a7e54dd6944f55919d795822d9c79819ffa000c1",
+        "v2": "66ffd301ef5964fe5be05682ace7c6738c3ae41f8536352a18fb57eaa604f0d9"
+      },
+      "responded_issue_count": 1,
+      "issue_ids": [
+        "required_revision:11a8854d682a"
+      ],
+      "change_ids": [
+        "change:6f03a9ab27cc3d5e",
+        "change:1d1b1d78c359c13d",
+        "change:8bac41a1194848b6"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "当前允许的EvidenceCards（EV-Q119-*）与'人类智力生物学上限'这一科学问题之间存在显著的语义与逻辑断层，无法作为构建或验证该问题因果机制的事实基础；该证据集仅支持对'智能测试方法论'的元分析，而非对'人类认知极限'的本体论探究。",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "人类智力的操作性定义受限于测试工具的文化与技术依赖性，而非生物认知能力的绝对上限；观察到的智力分数变化可能反映测试效度漂移，但该假设在当前证据下仅为待验证的元理论推测，缺乏直接心理测量学实证支持。",
+          "overall_score": 0.45,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "f0e1664b6cdf",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T09:18:37.412088+00:00",
+    "ended_at": "2026-08-22T09:19:10.382517+00:00",
+    "duration_ms": 32970,
+    "input_summary": "{\"question_item\": {\"id\": \"Q119\", \"domain\": \"Artificial Intelligence\", \"question\": \"Is there a limit to human intelligence?\", \"source_page\": 41, \"booklet_excerpt\": \"IQ test scores appear to have increased by about points during the 20th century, according to experts interviewed in a recent BBC documentary. Overall, increased quality of nutrition, better education, and greater exposure to new technologies have all contributed to our intelligence increasing. Some scientists purport that we will never hit a limit to our intelligence because there will always be new problems to solve and challenges",
+    "output_summary": "{\"input_question\": \"Is there a limit to human intelligence?\", \"domain\": \"Artificial Intelligence\", \"problem_statement\": \"The question asks whether human intelligence has an inherent biological or cognitive upper bound. The provided booklet excerpt cites rising IQ scores (Flynn effect) and expert opinions suggesting no known limit, but lacks empirical evidence from neuroscience or psychometrics. The available EvidenceCards are exclusively from Computer Science (software testing, GUI testing, feature selection, and philosophy of AI), creating a domain mismatch that prevents direct biological inf",
+    "evidence_ids": [
+      "EV-Q119-e71fb096535bd446786f4dbe",
+      "EV-Q119-70df9c6ca8b62a082f57dc83",
+      "EV-Q119-3a50fd36f4edef4bef3eda20",
+      "EV-Q119-2652d091e68e78953e36523e"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "85bde998887f",
+    "mock": false
+  },
+  {
+    "event_id": "0446ed3b17c8",
+    "run_id": "20260822-091603-ec8ccc03",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T09:19:10.382517+00:00",
+    "ended_at": "2026-08-22T09:19:12.463247+00:00",
+    "duration_ms": 2080,
+    "input_summary": "{\"question_item\": {\"id\": \"Q119\", \"domain\": \"Artificial Intelligence\", \"question\": \"Is there a limit to human intelligence?\", \"source_page\": 41, \"booklet_excerpt\": \"IQ test scores appear to have increased by about points during the 20th century, according to experts interviewed in a recent BBC documentary. Overall, increased quality of nutrition, better education, and greater exposure to new technologies have all contributed to our intelligence increasing. Some scientists purport that we will never hit a limit to our intelligence because there will always be new problems to solve and challenges",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required field 'ResearchPlan'.\", \"Missing required field 'EvidenceCards'.\", \"Missing required field 'AgentTrace'.\", \"Missing required field 'execution_metadata'.\"], \"warnings\": [], \"validation_status\": \"needs_data\", \"quality_gate_results\": {}}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "8d64cb67b291",
+    "mock": false
+  }
+]

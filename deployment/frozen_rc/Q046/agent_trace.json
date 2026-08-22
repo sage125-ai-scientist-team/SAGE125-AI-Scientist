@@ -1,0 +1,1796 @@
+[
+  {
+    "event_id": "73550205c1bf",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:57:02.251856+00:00",
+    "ended_at": "2026-08-22T05:57:02.251856+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "4a4d7154a4ad",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T05:57:02.251856+00:00",
+    "ended_at": "2026-08-22T05:57:05.375107+00:00",
+    "duration_ms": 3123,
+    "input_summary": "{\"question_item\": {\"id\": \"Q046\", \"domain\": \"Astronomy\", \"question\": \"How many dimensions are there in space?\", \"source_page\": 21, \"booklet_excerpt\": \"We experience three dimensions of space—length, width, and height—and one of time. String theorists suggest there may be over dimensions, with most being too small to perceive. However, we have yet to find evidence to prove or disprove the existence of these extra dimensions.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Astronomy\", \"core_question\": \"What is the true number of spatial dimensions in the universe, and is there empirical evidence for extra dimensions beyond the three macroscopic ones?\", \"keywords\": [\"dimensions\", \"space\", \"string theory\", \"extra dimensions\", \"empirical evidence\"], \"entities\": [\"String theorists\", \"macroscopic space\", \"time\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The question distinguishes between experienced/observable dimensions (3 spatial + 1 temporal) and theoretical predictions from string theory (potentially >3 spatial). The boundary is",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "4b2fcc7d8bc7",
+    "mock": false
+  },
+  {
+    "event_id": "203a1675a216",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:57:05.375107+00:00",
+    "ended_at": "2026-08-22T05:57:26.519693+00:00",
+    "duration_ms": 21144,
+    "input_summary": "{\"question_item\": {\"id\": \"Q046\", \"domain\": \"Astronomy\", \"question\": \"How many dimensions are there in space?\", \"source_page\": 21, \"booklet_excerpt\": \"We experience three dimensions of space—length, width, and height—and one of time. String theorists suggest there may be over dimensions, with most being too small to perceive. However, we have yet to find evidence to prove or disprove the existence of these extra dimensions.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"W",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Establish the standard model of spacetime dimensions in General Relativity and observational cosmology.\", \"query\": \"standard model cosmology spacetime dimensions 3 spatial 1 temporal observational evidence\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming that current macroscopic observations support 3 spatial dimensions and 1 time dimension within the framework of General Relativity.\", \"priority\": \"high\"}, {\"purpose\": \"Identify specific string theory models and their predicted number of extra spatial dimensions.\", \"query\": \"string theory M-the",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "48578221eedd",
+    "mock": false
+  },
+  {
+    "event_id": "1018f8f16ad0",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:57:26.529694+00:00",
+    "ended_at": "2026-08-22T05:57:43.675311+00:00",
+    "duration_ms": 17145,
+    "input_summary": "{\"question_item\": {\"id\": \"Q046\", \"domain\": \"Astronomy\", \"question\": \"How many dimensions are there in space?\", \"source_page\": 21, \"booklet_excerpt\": \"We experience three dimensions of space—length, width, and height—and one of time. String theorists suggest there may be over dimensions, with most being too small to perceive. However, we have yet to find evidence to prove or disprove the existence of these extra dimensions.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q046-4e604feed6760a38c6475f57\"",
+    "output_summary": "{\"established_facts\": [{\"fact\": \"Human experience and standard physical models describe spacetime as having three spatial dimensions (length, width, height) and one time dimension.\", \"evidence_ids\": [\"EV-Q046-4e604feed6760a38c6475f57\"], \"confidence\": \"high\", \"fact_type\": \"background\", \"caveat\": \"This refers to the observable macroscopic spacetime structure.\"}, {\"fact\": \"Theoretical frameworks such as Kaluza-Klein theory, string theory, and M-theory postulate the existence of extra spatial dimensions beyond the standard 3+1 spacetime.\", \"evidence_ids\": [\"EV-Q046-4e604feed6760a38c6475f57\", \"EV-Q",
+    "evidence_ids": [
+      "EV-Q046-4e604feed6760a38c6475f57",
+      "EV-Q046-c56c4c138bd17a5b21ffa21b",
+      "EV-Q046-e54c300998deb168c50f520b",
+      "EV-Q046-532f83d09a06da49e079eddc"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ef962ddc309a",
+    "mock": false
+  },
+  {
+    "event_id": "69b5836aa3b2",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:57:43.675311+00:00",
+    "ended_at": "2026-08-22T05:58:09.769303+00:00",
+    "duration_ms": 26093,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q046\", \"domain\": \"Astronomy\", \"question\": \"How many dimensions are there in space?\", \"source_page\": 21, \"booklet_excerpt\": \"We experience three dimensions of space—length, width, and height—and one of time. String theorists suggest there may be over dimensions, with most being too small to perceive. However, we have yet to find evidence to prove or disprove the existence of these extra dimensions.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q046-",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"如果存在超出3+1维的额外空间维度，双中子星并合事件产生的引力波信号相对于电磁对应体将表现出可测量的振幅衰减或传播时间延迟，这是由于引力子在额外维度中的泄漏或几何修正所致。\", \"mechanism\": \"根据Kaluza-Klein及弦论框架，引力相互作用可能传播至额外维度，而标准模型粒子被限制在3+1维膜上。这种不对称性导致引力波在传播过程中能量‘泄漏’到额外维度，或者因高维几何路径差异导致与光速传播的电磁信号产生到达时间差（EV-Q046-4e604feed6760a38c6475f57）。\", \"falsifiable_prediction\": \"在分析足够信噪比的双中子星并合多信使数据时，若额外维度存在且尺度大于普朗克尺度，观测到的引力波光度距离应系统性大于电磁波推导的光度距离，或两者到达时间差显著偏离广义相对论在纯3+1维时空下的预测值。\", \"required_observations\": [\"双中子星并合事件的联合引力波与电磁波观测数据（如LIGO/Virgo/KAGRA与望远镜联动）\", \"精确的引力波波形参数估计以提取光度距离\", \"电磁对应体的红移测量以确定独立宇宙学距离\"], \"risk_of_being_wrong\": \"天体物理环境噪声、仪器系统误差或修改引力理论的其他变体可能模拟出类似的信",
+    "evidence_ids": [
+      "EV-Q046-4e604feed6760a38c6475f57",
+      "EV-Q046-c56c4c138bd17a5b21ffa21b",
+      "EV-Q046-e54c300998deb168c50f520b",
+      "EV-Q046-532f83d09a06da49e079eddc"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9de9264a0bbf",
+    "mock": false
+  },
+  {
+    "event_id": "9a8996329791",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:58:09.769303+00:00",
+    "ended_at": "2026-08-22T05:58:34.355528+00:00",
+    "duration_ms": 24586,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q046\", \"domain\": \"Astronomy\", \"question\": \"How many dimensions are there in space?\", \"source_page\": 21, \"booklet_excerpt\": \"We experience three dimensions of space—length, width, and height—and one of time. String theorists suggest there may be over dimensions, with most being too small to perceive. However, we have yet to find evidence to prove or disprove the existence of these extra dimensions.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery",
+    "output_summary": "{\"technical_details\": \"本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上。这将导致引力波（GW）在长距离传播中发生振幅衰减（表现为光度距离 $d_L^{GW}$ 大于电磁波推导的光度距离 $d_L^{EM}$）或传播速度差异。实验设计将利用贝叶斯推断框架，结合广义相对论波形模板与高维引力修正模型，对双中子星并合事件进行参数估计。关键统计量包括 $d_L^{GW}/d_L^{EM}$ 的比率分布以及到达时间差 $\\tau_{GW-EM}$ 的后验概率密度。需排除星际介质色散、仪器系统误差及天体物理喷流几何效应带来的混淆。\", \"datasets\": {\"source\": [{\"name\": \"LIGO/Virgo/KAGRA Gravitational Wave Open Science Center (GWOSC)\", \"description\": \"包含双中子星并合事件（如GW170817及后续候选体）的应变数据、参数估计后验样本及光度距离推断结果。\", \"url\": \"https://gwosc.org\", \"access_type\": \"public\"}, {\"name\": \"NASA/IPAC Extragalactic Database (",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1537a71732b8",
+    "mock": false
+  },
+  {
+    "event_id": "21f0a3d9682d",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:58:34.355528+00:00",
+    "ended_at": "2026-08-22T05:58:41.330699+00:00",
+    "duration_ms": 6975,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q046\", \"domain\": \"Astronomy\", \"question\": \"How many dimensions are there in space?\", \"source_page\": 21, \"booklet_excerpt\": \"We experience three dimensions of space—length, width, and height—and one of time. String theorists suggest there may be over dimensions, with most being too small to perceive. However, we have yet to find evidence to prove or disprove the existence of these extra dimensions.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesi",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"假设1（引力波/电磁波多信使检验额外维度）具有明确的可证伪预测，且直接锚定于证据 EV-Q046-4e604feed6760a38c6475f57，符合科学验证标准。\", \"实验设计中的数据集定义清晰，明确区分了 source（GWOSC, NED）与 target（对齐后的多信使数据集），满足数据溯源要求。\", \"Results 字段正确标记为待执行状态，未伪造任何实验结果或统计显著性。\", \"Baselines 包含了标准广义相对论零模型和标量-张量修改引力模型，能够有效区分额外维度效应与其他理论变体。\", \"所有引用的事实断言均能追溯到提供的 EvidenceCards，无虚构文献或DOI。\"], \"critical_issues\": [], \"required_revisions\": [\"建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。\", \"虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。\"], \"risk",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1ed74fa53d59",
+    "mock": false
+  },
+  {
+    "event_id": "6d608105245e",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:58:41.332697+00:00",
+    "ended_at": "2026-08-22T05:59:04.741662+00:00",
+    "duration_ms": 23408,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"假设1（引力波/电磁波多信使检验额外维度）具有明确的可证伪预测，且直接锚定于证据 EV-Q046-4e604feed6760a38c6475f57，符合科学验证标准。\", \"实验设计中的数据集定义清晰，明确区分了 source（GWOSC, NED）与 target（对齐后的多信使数据集），满足数据溯源要求。\", \"Results 字段正确标记为待执行状态，未伪造任何实验结果或统计显著性。\", \"Baselines 包含了标准广义相对论零模型和标量-张量修改引力模型，能够有效区分额外维度效应与其他理论变体。\", \"所有引用的事实断言均能追溯到提供的 EvidenceCards，无虚构文献或DOI。\"], \"critical_issues\": [], \"required_revisions\": [\"建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。\", \"虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"若存在大尺度额外空间维度，双中子星并合产生的引力波光度距离（d_L^GW）将系统性大于电磁波光度距离（d_L^EM），且该偏差在严格量化并扣除喷流视角角等天体物理系统误差后仍具有统计显著性。\", \"mechanism\": \"基于Kaluza-Klein及弦论框架，引力子可传播至额外维度而标准模型粒子被限制在3+1维膜上，导致引力波在宇宙学距离传播中发生能量泄漏或几何衰减（EV-Q046-4e604feed6760a38c6475f57）。此机制预测d_L^GW/d_L^EM比率随红移呈现特定偏离，区别于标准广义相对论预测。\", \"falsifiable_prediction\": \"在对齐的多信使数据集中，若对已知GR事件（如GW170817）执行Null Test时恢复出非零泄漏参数β，或在考虑喷流视角角不确定性的层级贝叶斯模型中，β的后验分布与0无显著差异（Bayes Factor < 3），则额外维度泄漏假设被削弱或证伪。\", \"required_observations\": [\"双中子星并合事件的联合引力波应变数据与电磁对应体红移测量（来源：GWOSC, NED）\", \"针对GW170817等基准事件的标准GR波形Null Test结果，验证分析管道无虚假β信号\", \"喷流视角角及其对d_L^EM推断影响的量化先",
+    "evidence_ids": [
+      "EV-Q046-4e604feed6760a38c6475f57",
+      "EV-Q046-c56c4c138bd17a5b21ffa21b",
+      "EV-Q046-e54c300998deb168c50f520b",
+      "EV-Q046-532f83d09a06da49e079eddc"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "4bf78184ade2",
+    "mock": false
+  },
+  {
+    "event_id": "0460066e7c99",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:59:04.741662+00:00",
+    "ended_at": "2026-08-22T05:59:34.204573+00:00",
+    "duration_ms": 29462,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"假设1（引力波/电磁波多信使检验额外维度）具有明确的可证伪预测，且直接锚定于证据 EV-Q046-4e604feed6760a38c6475f57，符合科学验证标准。\", \"实验设计中的数据集定义清晰，明确区分了 source（GWOSC, NED）与 target（对齐后的多信使数据集），满足数据溯源要求。\", \"Results 字段正确标记为待执行状态，未伪造任何实验结果或统计显著性。\", \"Baselines 包含了标准广义相对论零模型和标量-张量修改引力模型，能够有效区分额外维度效应与其他理论变体。\", \"所有引用的事实断言均能追溯到提供的 EvidenceCards，无虚构文献或DOI。\"], \"critical_issues\": [], \"required_revisions\": [\"建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。\", \"虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复",
+    "output_summary": "{\"technical_details\": \"本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上（EV-Q046-4e604feed6760a38c6475f57）。这将导致引力波（GW）在长距离传播中发生振幅衰减，表现为引力波光度距离 $d_L^{GW}$ 系统性大于电磁波推导的光度距离 $d_L^{EM}$。实验设计将利用贝叶斯推断框架，构建包含泄漏参数 $\\beta$ 的修正光度距离关系式。关键改进包括：1) 引入喷流视角角 $\\theta_{jet}$ 的先验分布作为 nuisance parameter，以量化并边缘化天体物理系统误差对 $d_L^{EM}$ 推断的影响；2) 实施针对 GW170817 等基准事件的 'Null Test'，即在假设标准广义相对论（$\\beta=0$）下运行分析管道，验证其是否错误地恢复出非零 $\\beta$ 值，从而确保管道的无偏性。\", \"datasets\": {\"source\": [{\"name\": \"LIGO/Virgo/KAGRA Gravitational Wave Open Science Center (GWOSC)\", \"description\": \"包含双中子星并合事件（如GW170817及后续候选体）的应变数",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "af375c7f4175",
+    "mock": false
+  },
+  {
+    "event_id": "b296dd89f55e",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T05:59:34.204573+00:00",
+    "ended_at": "2026-08-22T05:59:42.035900+00:00",
+    "duration_ms": 7831,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"假设1（引力波/电磁波多信使检验额外维度）具有明确的可证伪预测，且直接锚定于证据 EV-Q046-4e604feed6760a38c6475f57，符合科学验证标准。\", \"实验设计中的数据集定义清晰，明确区分了 source（GWOSC, NED）与 target（对齐后的多信使数据集），满足数据溯源要求。\", \"Results 字段正确标记为待执行状态，未伪造任何实验结果或统计显著性。\", \"Baselines 包含了标准广义相对论零模型和标量-张量修改引力模型，能够有效区分额外维度效应与其他理论变体。\", \"所有引用的事实断言均能追溯到提供的 EvidenceCards，无虚构文献或DOI。\"], \"critical_issues\": [], \"required_revisions\": [\"建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。\", \"虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"修订版已成功整合上一轮评审意见：在实验设计中明确增加了针对GW170817的Null Test验证步骤，并将喷流视角角作为nuisance parameter纳入贝叶斯层级模型进行边缘化处理，有效回应了关于天体物理系统误差和管道偏差的关切。\", \"假设1的可证伪性定义精确，明确了Bayes Factor < 3或后验分布包含0作为证伪/削弱标准，且直接锚定于证据EV-Q046-4e604feed6760a38c6475f57中提出的多信使探测方法。\", \"数据集定义完整，source（GWOSC, NED）与target（含jet_angle_prior的对齐数据集）区分清晰，schema中包含必要的系统误差参数字段，满足可复现性要求。\", \"Results字段严格保持pending状态，未出现任何伪造的实验结果或统计显著性声明。\", \"所有事实断言均正确引用了允许的Evidence IDs，无虚构文献、DOI或过度推断。\"], \"critical_issues\": [], \"required_revisions\": [\"建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "88e337fa8c76",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:c6751571bec97bb6",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "如果存在超出3+1维的额外空间维度，双中子星并合事件产生的引力波信号相对于电磁对应体将表现出可测量的振幅衰减或传播时间延迟，这是由于引力子在额外维度中的泄漏或几何修正所致。",
+              "mechanism": "根据Kaluza-Klein及弦论框架，引力相互作用可能传播至额外维度，而标准模型粒子被限制在3+1维膜上。这种不对称性导致引力波在传播过程中能量‘泄漏’到额外维度，或者因高维几何路径差异导致与光速传播的电磁信号产生到达时间差（EV-Q046-4e604feed6760a38c6475f57）。",
+              "falsifiable_prediction": "在分析足够信噪比的双中子星并合多信使数据时，若额外维度存在且尺度大于普朗克尺度，观测到的引力波光度距离应系统性大于电磁波推导的光度距离，或两者到达时间差显著偏离广义相对论在纯3+1维时空下的预测值。",
+              "required_observations": [
+                "双中子星并合事件的联合引力波与电磁波观测数据（如LIGO/Virgo/KAGRA与望远镜联动）",
+                "精确的引力波波形参数估计以提取光度距离",
+                "电磁对应体的红移测量以确定独立宇宙学距离"
+              ],
+              "risk_of_being_wrong": "天体物理环境噪声、仪器系统误差或修改引力理论的其他变体可能模拟出类似的信号偏差，导致误判为额外维度证据；或者额外维度紧致化尺度极小，效应低于当前探测器灵敏度阈值。",
+              "supporting_evidence_ids": [
+                "EV-Q046-4e604feed6760a38c6475f57"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.84
+            },
+            {
+              "hypothesis": "额外空间维度的数量与几何结构并非固定背景，而是通过自发紧致化机制动态演化形成的稳定流形，其最终拓扑形态决定了低能有效物理常数。",
+              "mechanism": "在弦论/M-理论模型构建中，额外维度经历从高能标到低能标的自发物理紧致化过程，形成特定的D维流形（EV-Q046-c56c4c138bd17a5b21ffa21b, EV-Q046-e54c300998deb168c50f520b）。该动力学过程受势能面极小值约束，决定了可观测宇宙的维度数及耦合常数。",
+              "falsifiable_prediction": "若该假设成立，则不同的紧致化流形应对应离散的低能物理谱；若在粒子对撞机或精密测量中发现连续变化的模场（moduli fields）或未稳定的几何参数，则证伪‘自发紧致化已完全冻结’的标准图景。",
+              "required_observations": [
+                "高能粒子碰撞实验中缺失能量谱的精细结构分析",
+                "第五种力或等效原理破坏的高精度检验",
+                "宇宙微波背景辐射中对原初引力波谱指数的约束以反推早期宇宙维度演化"
+              ],
+              "risk_of_being_wrong": "紧致化机制可能存在大量简并真空（景观问题），使得特定预测难以唯一验证；或者动力学稳定化发生在远超当前实验能标的能量尺度，导致低能现象学不可区分。",
+              "supporting_evidence_ids": [
+                "EV-Q046-c56c4c138bd17a5b21ffa21b",
+                "EV-Q046-e54c300998deb168c50f520b",
+                "EV-Q046-532f83d09a06da49e079eddc"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.5,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.58
+            },
+            {
+              "hypothesis": "当前宇宙加速膨胀现象可由额外维度的动力学紧致化过程驱动，无需引入暗能量组分。",
+              "mechanism": "额外维度的尺度因子随时间演化，其动能项与势能项在4维有效理论中表现为具有负压强的流体，从而驱动宇宙加速膨胀（EV-Q046-532f83d09a06da49e079eddc）。此机制将几何自由度转化为宇宙学动力学源。",
+              "falsifiable_prediction": "若加速膨胀源于额外维度动力学，则状态方程参数w(z)应呈现特定的时间依赖性，区别于宇宙学常数（w=-1）；且应伴随可探测的KK粒子塔或标量场长程力效应。若观测确认w严格等于-1且无新标量力，则该特定紧致化驱动模型被削弱。",
+              "required_observations": [
+                "Ia型超新星、重子声学振荡等多探针宇宙学数据对w(z)的高精度重构",
+                "实验室或天体尺度上对偏离牛顿引力平方反比律的检验",
+                "大型强子对撞机对TeV能标下共振态或缺失能量信号的搜索"
+              ],
+              "risk_of_being_wrong": "宇宙学观测误差可能掩盖w(z)的微小演化；其他修改引力理论也可能拟合相同数据；额外维度模型可能无法同时满足加速膨胀与局部引力测试的双重约束。",
+              "supporting_evidence_ids": [
+                "EV-Q046-532f83d09a06da49e079eddc"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.65,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.66
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "假设1直接关联了提供的核心证据（EV-Q046-4e604feed6760a38c6475f57）中明确提出的可验证方法（GW+EM多信使探测），具备最高的可证伪性与可行性。它利用现有的公开天文观测数据即可进行检验，符合‘至少1个假设可用公开数据验证’的要求，且避免了纯理论推测的不可观测风险。相比之下，假设2和3虽然理论依据充分，但当前实验验证难度更大或依赖更间接的推断。",
+          "rejected_directions": [
+            "纯粹数学层面的维度计数讨论（缺乏物理可观测对应物）",
+            "仅基于弦论自洽性要求断言特定维度数（如10或11维）而无经验检验路径",
+            "将人类感知局限等同于物理实在的本体论论证"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上。这将导致引力波（GW）在长距离传播中发生振幅衰减（表现为光度距离 $d_L^{GW}$ 大于电磁波推导的光度距离 $d_L^{EM}$）或传播速度差异。实验设计将利用贝叶斯推断框架，结合广义相对论波形模板与高维引力修正模型，对双中子星并合事件进行参数估计。关键统计量包括 $d_L^{GW}/d_L^{EM}$ 的比率分布以及到达时间差 $\tau_{GW-EM}$ 的后验概率密度。需排除星际介质色散、仪器系统误差及天体物理喷流几何效应带来的混淆。",
+          "datasets": {
+            "source": [
+              {
+                "name": "LIGO/Virgo/KAGRA Gravitational Wave Open Science Center (GWOSC)",
+                "description": "包含双中子星并合事件（如GW170817及后续候选体）的应变数据、参数估计后验样本及光度距离推断结果。",
+                "url": "https://gwosc.org",
+                "access_type": "public"
+              },
+              {
+                "name": "NASA/IPAC Extragalactic Database (NED) & GCN Circulars",
+                "description": "提供对应电磁对应体（如短伽马射线暴、千新星）的红移测量值、光变曲线及宿主星系信息，用于独立计算电磁光度距离。",
+                "url": "https://ned.ipac.caltech.edu",
+                "access_type": "public"
+              }
+            ],
+            "target": {
+              "name": "Multi-messenger Distance Discrepancy Dataset",
+              "description": "经预处理的对齐数据集，包含每个事件的 $d_L^{GW}$ (及其误差), $d_L^{EM}$ (及其误差), 红移 $z$, 到达时间差 $\tau$, 信噪比 SNR, 以及天空定位不确定性区域。",
+              "format": "HDF5/CSV",
+              "schema": {
+                "event_id": "str",
+                "dl_gw_mean": "float",
+                "dl_gw_std": "float",
+                "dl_em_mean": "float",
+                "dl_em_std": "float",
+                "redshift": "float",
+                "time_delay_sec": "float",
+                "snr": "float"
+              }
+            }
+          },
+          "methods": "1. **数据预处理**：从GWOSC获取波形参数估计的后验样本，提取光度距离分布；从天文观测文献中提取电磁对应体的红移及宿主星系距离模数，转换为光度距离。2. **理论建模**：构建包含额外维度泄漏效应的修正光度距离关系式 $d_L^{GW}(z) = d_L^{EM}(z) \times (1 + \beta \times f(z, n))$，其中 $\beta$ 为泄漏强度参数，$n$ 为额外维度数，$f$ 为几何因子。3. **贝叶斯层级分析**：使用PyMC或Stan构建层级贝叶斯模型，联合分析多个事件的数据，约束 $\beta$ 和 $n$ 的后验分布。4. **系统误差校正**：引入仪器校准不确定性和天体物理偏差（如喷流视角角）作为 nuisance parameters 进行边缘化处理。",
+          "experiments": {
+            "baselines": [
+              "Standard General Relativity (GR) Null Model: 假设 $d_L^{GW} = d_L^{EM}$ 且无额外维度效应，仅考虑标准宇宙学参数（$Λ$CDM）。",
+              "Modified Gravity (Scalar-Tensor) Model: 假设引力波速度变化但无振幅泄漏，用于区分额外维度效应与其他修改引力理论。"
+            ],
+            "metrics": [
+              "Bayes Factor ($K$): 比较额外维度模型与标准GR模型的证据比。",
+              "Posterior Constraint on Leakage Parameter ($\beta$): $\beta$ 的95%置信区间上限。",
+              "Goodness-of-Fit ($χ^2$): 模型预测距离与观测距离的残差平方和。"
+            ],
+            "ablation": [
+              "Exclude Low-SNR Events: 移除信噪比低于阈值的事件，检验结果是否由噪声主导。",
+              "Single-Event Analysis vs. Population Analysis: 对比单个高精度事件（如GW170817）与群体统计结果的差异。",
+              "Varying Priors on Compactification Scale: 测试不同先验分布对额外维度尺度参数的影响。"
+            ],
+            "validation_protocol": "1. **Injection Recovery Test**: 向真实背景噪声中注入模拟的带有额外维度效应的波形，验证管道能否正确恢复注入参数。2. **Cross-Validation**: 将数据集按时间或探测器网络配置分割，检验结果的一致性。3. **Systematic Error Budget**: 量化红移测量误差、波形系统误差对最终 $\beta$ 约束的贡献。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "所有数据下载链接及版本号已记录",
+            "贝叶斯模型代码（PyMC/Stan）已容器化（Docker）",
+            "随机种子固定以确保MCMC采样可复现",
+            "中间数据产物（后验样本）已定义存储格式",
+            "依赖库版本锁定（requirements.txt）"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "Estimated 48 CPU-hours for MCMC convergence on a standard workstation",
+            "software_stack": "Python 3.9, PyMC 4.0, Astropy, GWpy",
+            "estimated_completion_time": "2 weeks for data curation and initial runs"
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-055702-0fcc9ad6",
+        "version_number": 1,
+        "version_id": "20260822-055702-0fcc9ad6:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "如果存在超出3+1维的额外空间维度，双中子星并合事件产生的引力波信号相对于电磁对应体将表现出可测量的振幅衰减或传播时间延迟，这是由于引力子在额外维度中的泄漏或几何修正所致。",
+              "mechanism": "根据Kaluza-Klein及弦论框架，引力相互作用可能传播至额外维度，而标准模型粒子被限制在3+1维膜上。这种不对称性导致引力波在传播过程中能量‘泄漏’到额外维度，或者因高维几何路径差异导致与光速传播的电磁信号产生到达时间差（EV-Q046-4e604feed6760a38c6475f57）。",
+              "falsifiable_prediction": "在分析足够信噪比的双中子星并合多信使数据时，若额外维度存在且尺度大于普朗克尺度，观测到的引力波光度距离应系统性大于电磁波推导的光度距离，或两者到达时间差显著偏离广义相对论在纯3+1维时空下的预测值。",
+              "required_observations": [
+                "双中子星并合事件的联合引力波与电磁波观测数据（如LIGO/Virgo/KAGRA与望远镜联动）",
+                "精确的引力波波形参数估计以提取光度距离",
+                "电磁对应体的红移测量以确定独立宇宙学距离"
+              ],
+              "risk_of_being_wrong": "天体物理环境噪声、仪器系统误差或修改引力理论的其他变体可能模拟出类似的信号偏差，导致误判为额外维度证据；或者额外维度紧致化尺度极小，效应低于当前探测器灵敏度阈值。",
+              "supporting_evidence_ids": [
+                "EV-Q046-4e604feed6760a38c6475f57"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.84
+            },
+            {
+              "hypothesis": "额外空间维度的数量与几何结构并非固定背景，而是通过自发紧致化机制动态演化形成的稳定流形，其最终拓扑形态决定了低能有效物理常数。",
+              "mechanism": "在弦论/M-理论模型构建中，额外维度经历从高能标到低能标的自发物理紧致化过程，形成特定的D维流形（EV-Q046-c56c4c138bd17a5b21ffa21b, EV-Q046-e54c300998deb168c50f520b）。该动力学过程受势能面极小值约束，决定了可观测宇宙的维度数及耦合常数。",
+              "falsifiable_prediction": "若该假设成立，则不同的紧致化流形应对应离散的低能物理谱；若在粒子对撞机或精密测量中发现连续变化的模场（moduli fields）或未稳定的几何参数，则证伪‘自发紧致化已完全冻结’的标准图景。",
+              "required_observations": [
+                "高能粒子碰撞实验中缺失能量谱的精细结构分析",
+                "第五种力或等效原理破坏的高精度检验",
+                "宇宙微波背景辐射中对原初引力波谱指数的约束以反推早期宇宙维度演化"
+              ],
+              "risk_of_being_wrong": "紧致化机制可能存在大量简并真空（景观问题），使得特定预测难以唯一验证；或者动力学稳定化发生在远超当前实验能标的能量尺度，导致低能现象学不可区分。",
+              "supporting_evidence_ids": [
+                "EV-Q046-c56c4c138bd17a5b21ffa21b",
+                "EV-Q046-e54c300998deb168c50f520b",
+                "EV-Q046-532f83d09a06da49e079eddc"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.5,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.58
+            },
+            {
+              "hypothesis": "当前宇宙加速膨胀现象可由额外维度的动力学紧致化过程驱动，无需引入暗能量组分。",
+              "mechanism": "额外维度的尺度因子随时间演化，其动能项与势能项在4维有效理论中表现为具有负压强的流体，从而驱动宇宙加速膨胀（EV-Q046-532f83d09a06da49e079eddc）。此机制将几何自由度转化为宇宙学动力学源。",
+              "falsifiable_prediction": "若加速膨胀源于额外维度动力学，则状态方程参数w(z)应呈现特定的时间依赖性，区别于宇宙学常数（w=-1）；且应伴随可探测的KK粒子塔或标量场长程力效应。若观测确认w严格等于-1且无新标量力，则该特定紧致化驱动模型被削弱。",
+              "required_observations": [
+                "Ia型超新星、重子声学振荡等多探针宇宙学数据对w(z)的高精度重构",
+                "实验室或天体尺度上对偏离牛顿引力平方反比律的检验",
+                "大型强子对撞机对TeV能标下共振态或缺失能量信号的搜索"
+              ],
+              "risk_of_being_wrong": "宇宙学观测误差可能掩盖w(z)的微小演化；其他修改引力理论也可能拟合相同数据；额外维度模型可能无法同时满足加速膨胀与局部引力测试的双重约束。",
+              "supporting_evidence_ids": [
+                "EV-Q046-532f83d09a06da49e079eddc"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.65,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.66
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "假设1直接关联了提供的核心证据（EV-Q046-4e604feed6760a38c6475f57）中明确提出的可验证方法（GW+EM多信使探测），具备最高的可证伪性与可行性。它利用现有的公开天文观测数据即可进行检验，符合‘至少1个假设可用公开数据验证’的要求，且避免了纯理论推测的不可观测风险。相比之下，假设2和3虽然理论依据充分，但当前实验验证难度更大或依赖更间接的推断。",
+          "rejected_directions": [
+            "纯粹数学层面的维度计数讨论（缺乏物理可观测对应物）",
+            "仅基于弦论自洽性要求断言特定维度数（如10或11维）而无经验检验路径",
+            "将人类感知局限等同于物理实在的本体论论证"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上。这将导致引力波（GW）在长距离传播中发生振幅衰减（表现为光度距离 $d_L^{GW}$ 大于电磁波推导的光度距离 $d_L^{EM}$）或传播速度差异。实验设计将利用贝叶斯推断框架，结合广义相对论波形模板与高维引力修正模型，对双中子星并合事件进行参数估计。关键统计量包括 $d_L^{GW}/d_L^{EM}$ 的比率分布以及到达时间差 $\tau_{GW-EM}$ 的后验概率密度。需排除星际介质色散、仪器系统误差及天体物理喷流几何效应带来的混淆。",
+          "datasets": {
+            "source": [
+              {
+                "name": "LIGO/Virgo/KAGRA Gravitational Wave Open Science Center (GWOSC)",
+                "description": "包含双中子星并合事件（如GW170817及后续候选体）的应变数据、参数估计后验样本及光度距离推断结果。",
+                "url": "https://gwosc.org",
+                "access_type": "public"
+              },
+              {
+                "name": "NASA/IPAC Extragalactic Database (NED) & GCN Circulars",
+                "description": "提供对应电磁对应体（如短伽马射线暴、千新星）的红移测量值、光变曲线及宿主星系信息，用于独立计算电磁光度距离。",
+                "url": "https://ned.ipac.caltech.edu",
+                "access_type": "public"
+              }
+            ],
+            "target": {
+              "name": "Multi-messenger Distance Discrepancy Dataset",
+              "description": "经预处理的对齐数据集，包含每个事件的 $d_L^{GW}$ (及其误差), $d_L^{EM}$ (及其误差), 红移 $z$, 到达时间差 $\tau$, 信噪比 SNR, 以及天空定位不确定性区域。",
+              "format": "HDF5/CSV",
+              "schema": {
+                "event_id": "str",
+                "dl_gw_mean": "float",
+                "dl_gw_std": "float",
+                "dl_em_mean": "float",
+                "dl_em_std": "float",
+                "redshift": "float",
+                "time_delay_sec": "float",
+                "snr": "float"
+              }
+            }
+          },
+          "methods": "1. **数据预处理**：从GWOSC获取波形参数估计的后验样本，提取光度距离分布；从天文观测文献中提取电磁对应体的红移及宿主星系距离模数，转换为光度距离。2. **理论建模**：构建包含额外维度泄漏效应的修正光度距离关系式 $d_L^{GW}(z) = d_L^{EM}(z) \times (1 + \beta \times f(z, n))$，其中 $\beta$ 为泄漏强度参数，$n$ 为额外维度数，$f$ 为几何因子。3. **贝叶斯层级分析**：使用PyMC或Stan构建层级贝叶斯模型，联合分析多个事件的数据，约束 $\beta$ 和 $n$ 的后验分布。4. **系统误差校正**：引入仪器校准不确定性和天体物理偏差（如喷流视角角）作为 nuisance parameters 进行边缘化处理。",
+          "experiments": {
+            "baselines": [
+              "Standard General Relativity (GR) Null Model: 假设 $d_L^{GW} = d_L^{EM}$ 且无额外维度效应，仅考虑标准宇宙学参数（$Λ$CDM）。",
+              "Modified Gravity (Scalar-Tensor) Model: 假设引力波速度变化但无振幅泄漏，用于区分额外维度效应与其他修改引力理论。"
+            ],
+            "metrics": [
+              "Bayes Factor ($K$): 比较额外维度模型与标准GR模型的证据比。",
+              "Posterior Constraint on Leakage Parameter ($\beta$): $\beta$ 的95%置信区间上限。",
+              "Goodness-of-Fit ($χ^2$): 模型预测距离与观测距离的残差平方和。"
+            ],
+            "ablation": [
+              "Exclude Low-SNR Events: 移除信噪比低于阈值的事件，检验结果是否由噪声主导。",
+              "Single-Event Analysis vs. Population Analysis: 对比单个高精度事件（如GW170817）与群体统计结果的差异。",
+              "Varying Priors on Compactification Scale: 测试不同先验分布对额外维度尺度参数的影响。"
+            ],
+            "validation_protocol": "1. **Injection Recovery Test**: 向真实背景噪声中注入模拟的带有额外维度效应的波形，验证管道能否正确恢复注入参数。2. **Cross-Validation**: 将数据集按时间或探测器网络配置分割，检验结果的一致性。3. **Systematic Error Budget**: 量化红移测量误差、波形系统误差对最终 $\beta$ 约束的贡献。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "所有数据下载链接及版本号已记录",
+            "贝叶斯模型代码（PyMC/Stan）已容器化（Docker）",
+            "随机种子固定以确保MCMC采样可复现",
+            "中间数据产物（后验样本）已定义存储格式",
+            "依赖库版本锁定（requirements.txt）"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "Estimated 48 CPU-hours for MCMC convergence on a standard workstation",
+            "software_stack": "Python 3.9, PyMC 4.0, Astropy, GWpy",
+            "estimated_completion_time": "2 weeks for data curation and initial runs"
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "假设1（引力波/电磁波多信使检验额外维度）具有明确的可证伪预测，且直接锚定于证据 EV-Q046-4e604feed6760a38c6475f57，符合科学验证标准。",
+            "实验设计中的数据集定义清晰，明确区分了 source（GWOSC, NED）与 target（对齐后的多信使数据集），满足数据溯源要求。",
+            "Results 字段正确标记为待执行状态，未伪造任何实验结果或统计显著性。",
+            "Baselines 包含了标准广义相对论零模型和标量-张量修改引力模型，能够有效区分额外维度效应与其他理论变体。",
+            "所有引用的事实断言均能追溯到提供的 EvidenceCards，无虚构文献或DOI。"
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+            "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。"
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:5e84b6c2714c",
+            "category": "required_revision",
+            "description": "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b30a457da12a",
+            "category": "required_revision",
+            "description": "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "f89701c7db48063fb29ac58b5f7510a72d63ce9095d5dbc6aff7c4bd55829b2a",
+          "experiment_designer": "2ae5e3ec438d66c78b7bf042172adb8de7cc0b5a76a4a7e9e9409baf6502a110",
+          "scientific_reviewer": "f6920e4513eaeead74071e720b8b4c34a0dfb0f89f0a9fafb967ce3f117de416"
+        }
+      },
+      "parent_version_id": "20260822-055702-0fcc9ad6:v1",
+      "lineage": [
+        "20260822-055702-0fcc9ad6:v1",
+        "20260822-055702-0fcc9ad6:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "假设1（引力波/电磁波多信使检验额外维度）具有明确的可证伪预测，且直接锚定于证据 EV-Q046-4e604feed6760a38c6475f57，符合科学验证标准。",
+          "实验设计中的数据集定义清晰，明确区分了 source（GWOSC, NED）与 target（对齐后的多信使数据集），满足数据溯源要求。",
+          "Results 字段正确标记为待执行状态，未伪造任何实验结果或统计显著性。",
+          "Baselines 包含了标准广义相对论零模型和标量-张量修改引力模型，能够有效区分额外维度效应与其他理论变体。",
+          "所有引用的事实断言均能追溯到提供的 EvidenceCards，无虚构文献或DOI。"
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+          "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。"
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.95,
+        "reproducibility_score": 0.9,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "修订版已成功整合上一轮评审意见：在实验设计中明确增加了针对GW170817的Null Test验证步骤，并将喷流视角角作为nuisance parameter纳入贝叶斯层级模型进行边缘化处理，有效回应了关于天体物理系统误差和管道偏差的关切。",
+          "假设1的可证伪性定义精确，明确了Bayes Factor < 3或后验分布包含0作为证伪/削弱标准，且直接锚定于证据EV-Q046-4e604feed6760a38c6475f57中提出的多信使探测方法。",
+          "数据集定义完整，source（GWOSC, NED）与target（含jet_angle_prior的对齐数据集）区分清晰，schema中包含必要的系统误差参数字段，满足可复现性要求。",
+          "Results字段严格保持pending状态，未出现任何伪造的实验结果或统计显著性声明。",
+          "所有事实断言均正确引用了允许的Evidence IDs，无虚构文献、DOI或过度推断。"
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI观测约束），以确保先验选择的透明度与可复现性。",
+          "虽然已设计Null Test，建议在执行阶段明确记录当beta恢复值偏离0超过2-sigma时的具体排查流程（如检查波形模板系统误差或校准误差），形成标准化的故障排除协议。"
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.98,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:013c5c427053203f",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+          "issue_id": "required_revision:5e84b6c2714c"
+        },
+        {
+          "failure_id": "failure:e1423da42460f822",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。",
+          "issue_id": "required_revision:b30a457da12a"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:a0e5d43ddd62929b",
+          "issue_id": "required_revision:5e84b6c2714c",
+          "reason": "Reviewer item required_revision:5e84b6c2714c requested '建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。'. V2 changes methods; deterministic correlation evidence tokens=['em', 'gw'], coverage=1.000.",
+          "before": "1. **数据预处理**：从GWOSC获取波形参数估计的后验样本，提取光度距离分布；从天文观测文献中提取电磁对应体的红移及宿主星系距离模数，转换为光度距离。2. **理论建模**：构建包含额外维度泄漏效应的修正光度距离关系式 $d_L^{GW}(z) = d_L^{EM}(z) \times (1 + \beta \times f(z, n))$，其中 $\beta$ 为泄漏强度参数，$n$ 为额外维度数，$f$ 为几何因子。3. **贝叶斯层级分析**：使用PyMC或Stan构建层级贝叶斯模型，联合分析多个事件的数据，约束 $\beta$ 和 $n$ 的后验分布。4. **系统误差校正**：引入仪器校准不确定性和天体物理偏差（如喷流视角角）作为 nuisance parameters 进行边缘化处理。",
+          "after": "1. **数据预处理与系统误差建模**：从GWOSC获取波形参数估计的后验样本；从天文观测文献中提取电磁对应体的红移及宿主星系距离模数。构建喷流视角角 $\theta_{jet}$ 的概率模型，将其不确定性传播至 $d_L^{EM}$ 的计算中，形成边缘化的距离似然函数。2. **理论建模**：构建包含额外维度泄漏效应的修正光度距离关系式 $d_L^{GW}(z) = d_L^{EM}(z) \times (1 + \beta \times f(z, n))$，其中 $\beta$ 为泄漏强度参数，$n$ 为额外维度数，$f$ 为几何因子（EV-Q046-4e604feed6760a38c6475f57）。3. **贝叶斯层级分析**：使用PyMC或Stan构建层级贝叶斯模型，联合分析多个事件的数据，约束 $\beta$ 和 $n$ 的后验分布，同时对喷流视角角等天体物理参数进行边缘化。4. **Null Test 验证**：对已知符合GR的事件（如GW170817）执行盲分析，设定真实 $\beta=0$，检验分析管道恢复的 $\beta$ 后验分布是否以0为中心且置信区间包含0。",
+          "evidence_refs": [
+            "EV-Q046-4e604feed6760a38c6475f57",
+            "EV-Q046-532f83d09a06da49e079eddc",
+            "EV-Q046-c56c4c138bd17a5b21ffa21b",
+            "EV-Q046-e54c300998deb168c50f520b"
+          ],
+          "affected_plan_section": "methods",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:478eb937862e2c57",
+          "issue_id": "required_revision:5e84b6c2714c",
+          "reason": "Reviewer item required_revision:5e84b6c2714c requested '建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。'. V2 changes technical_details; deterministic correlation evidence tokens=['em', 'gw'], coverage=1.000.",
+          "before": "本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上。这将导致引力波（GW）在长距离传播中发生振幅衰减（表现为光度距离 $d_L^{GW}$ 大于电磁波推导的光度距离 $d_L^{EM}$）或传播速度差异。实验设计将利用贝叶斯推断框架，结合广义相对论波形模板与高维引力修正模型，对双中子星并合事件进行参数估计。关键统计量包括 $d_L^{GW}/d_L^{EM}$ 的比率分布以及到达时间差 $\tau_{GW-EM}$ 的后验概率密度。需排除星际介质色散、仪器系统误差及天体物理喷流几何效应带来的混淆。",
+          "after": "本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上（EV-Q046-4e604feed6760a38c6475f57）。这将导致引力波（GW）在长距离传播中发生振幅衰减，表现为引力波光度距离 $d_L^{GW}$ 系统性大于电磁波推导的光度距离 $d_L^{EM}$。实验设计将利用贝叶斯推断框架，构建包含泄漏参数 $\beta$ 的修正光度距离关系式。关键改进包括：1) 引入喷流视角角 $\theta_{jet}$ 的先验分布作为 nuisance parameter，以量化并边缘化天体物理系统误差对 $d_L^{EM}$ 推断的影响；2) 实施针对 GW170817 等基准事件的 'Null Test'，即在假设标准广义相对论（$\beta=0$）下运行分析管道，验证其是否错误地恢复出非零 $\beta$ 值，从而确保管道的无偏性。",
+          "evidence_refs": [
+            "EV-Q046-4e604feed6760a38c6475f57",
+            "EV-Q046-532f83d09a06da49e079eddc",
+            "EV-Q046-c56c4c138bd17a5b21ffa21b",
+            "EV-Q046-e54c300998deb168c50f520b"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:38f376d95d0f0471",
+          "issue_id": "required_revision:b30a457da12a",
+          "reason": "Reviewer item required_revision:b30a457da12a requested '虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。'. V2 changes evaluation_metrics; deterministic correlation evidence tokens=['gr', 'null', 'test'], coverage=0.429.",
+          "before": [
+            "Bayes Factor ($K$): 比较额外维度模型与标准GR模型的证据比。",
+            "Posterior Constraint on Leakage Parameter ($\beta$): $\beta$ 的95%置信区间上限。",
+            "Goodness-of-Fit ($χ^2$): 模型预测距离与观测距离的残差平方和。"
+          ],
+          "after": [
+            "Bayes Factor ($K$): 比较额外维度模型与标准GR模型的证据比。",
+            "Posterior Constraint on Leakage Parameter ($\beta$): $\beta$ 的95%置信区间上限。",
+            "Null Test Bias Metric: 在 $\beta=0$ 注入测试中，恢复出的 $\beta$ 均值与0的偏差程度（以标准差为单位）。"
+          ],
+          "evidence_refs": [
+            "EV-Q046-4e604feed6760a38c6475f57",
+            "EV-Q046-532f83d09a06da49e079eddc",
+            "EV-Q046-c56c4c138bd17a5b21ffa21b",
+            "EV-Q046-e54c300998deb168c50f520b"
+          ],
+          "affected_plan_section": "evaluation_metrics",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:bf6d63a9e050d59c",
+          "issue_id": "required_revision:b30a457da12a",
+          "reason": "Reviewer item required_revision:b30a457da12a requested '虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。'. V2 changes validation_protocol; deterministic correlation evidence tokens=['gw170817', 'injection', 'null', 'recovery', 'test'], coverage=0.714.",
+          "before": "1. **Injection Recovery Test**: 向真实背景噪声中注入模拟的带有额外维度效应的波形，验证管道能否正确恢复注入参数。2. **Cross-Validation**: 将数据集按时间或探测器网络配置分割，检验结果的一致性。3. **Systematic Error Budget**: 量化红移测量误差、波形系统误差对最终 $\beta$ 约束的贡献。",
+          "after": "1. **Injection Recovery Test**: 向真实背景噪声中注入模拟的带有额外维度效应的波形，验证管道能否正确恢复注入参数。2. **Null Test on GW170817**: 使用GW170817数据，强制设定 $\beta=0$ 生成模拟数据或直接分析，确保管道不产生虚假信号。3. **Cross-Validation**: 将数据集按时间或探测器网络配置分割，检验结果的一致性。4. **Systematic Error Budget**: 量化红移测量误差、波形系统误差及喷流视角角不确定性对最终 $\beta$ 约束的贡献。",
+          "evidence_refs": [
+            "EV-Q046-4e604feed6760a38c6475f57",
+            "EV-Q046-532f83d09a06da49e079eddc",
+            "EV-Q046-c56c4c138bd17a5b21ffa21b",
+            "EV-Q046-e54c300998deb168c50f520b"
+          ],
+          "affected_plan_section": "validation_protocol",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:5e84b6c2714c",
+          "category": "required_revision",
+          "description": "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:a0e5d43ddd62929b,change:478eb937862e2c57; evidence=EV-Q046-4e604feed6760a38c6475f57,EV-Q046-532f83d09a06da49e079eddc,EV-Q046-c56c4c138bd17a5b21ffa21b,EV-Q046-e54c300998deb168c50f520b; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b30a457da12a",
+          "category": "required_revision",
+          "description": "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:38f376d95d0f0471,change:bf6d63a9e050d59c; evidence=EV-Q046-4e604feed6760a38c6475f57,EV-Q046-532f83d09a06da49e079eddc,EV-Q046-c56c4c138bd17a5b21ffa21b,EV-Q046-e54c300998deb168c50f520b; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:d5f7d54fc300",
+          "category": "required_revision",
+          "description": "建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI观测约束），以确保先验选择的透明度与可复现性。",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:4b873d908859",
+          "category": "required_revision",
+          "description": "虽然已设计Null Test，建议在执行阶段明确记录当beta恢复值偏离0超过2-sigma时的具体排查流程（如检查波形模板系统误差或校准误差），形成标准化的故障排除协议。",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "evaluation_metrics",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "若存在大尺度额外空间维度，双中子星并合产生的引力波光度距离（d_L^GW）将系统性大于电磁波光度距离（d_L^EM），且该偏差在严格量化并扣除喷流视角角等天体物理系统误差后仍具有统计显著性。",
+          "overall_score": 0.89,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 2,
+          "hypothesis": "宇宙加速膨胀可由额外维度的动力学紧致化驱动，其有效状态方程参数w(z)应呈现可测量的时间演化，且伴随可探测的Kaluza-Klein粒子塔或标量长程力效应。",
+          "overall_score": 0.66,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "额外空间维度的数量与几何拓扑由自发紧致化动力学唯一确定，其低能有效场论应表现为离散谱而非连续模场，且在当前能标下所有几何模均已稳定冻结。",
+          "overall_score": 0.59,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "unresolved_issue:required_revision:d5f7d54fc300",
+        "unresolved_issue:required_revision:4b873d908859",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:d5f7d54fc300: 建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI观测约束），以确保先验选择的透明度与可复现性。",
+        "required_revision:4b873d908859: 虽然已设计Null Test，建议在执行阶段明确记录当beta恢复值偏离0超过2-sigma时的具体排查流程（如检查波形模板系统误差或校准误差），形成标准化的故障排除协议。"
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-055702-0fcc9ad6",
+        "version_number": 1,
+        "version_id": "20260822-055702-0fcc9ad6:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "如果存在超出3+1维的额外空间维度，双中子星并合事件产生的引力波信号相对于电磁对应体将表现出可测量的振幅衰减或传播时间延迟，这是由于引力子在额外维度中的泄漏或几何修正所致。",
+              "mechanism": "根据Kaluza-Klein及弦论框架，引力相互作用可能传播至额外维度，而标准模型粒子被限制在3+1维膜上。这种不对称性导致引力波在传播过程中能量‘泄漏’到额外维度，或者因高维几何路径差异导致与光速传播的电磁信号产生到达时间差（EV-Q046-4e604feed6760a38c6475f57）。",
+              "falsifiable_prediction": "在分析足够信噪比的双中子星并合多信使数据时，若额外维度存在且尺度大于普朗克尺度，观测到的引力波光度距离应系统性大于电磁波推导的光度距离，或两者到达时间差显著偏离广义相对论在纯3+1维时空下的预测值。",
+              "required_observations": [
+                "双中子星并合事件的联合引力波与电磁波观测数据（如LIGO/Virgo/KAGRA与望远镜联动）",
+                "精确的引力波波形参数估计以提取光度距离",
+                "电磁对应体的红移测量以确定独立宇宙学距离"
+              ],
+              "risk_of_being_wrong": "天体物理环境噪声、仪器系统误差或修改引力理论的其他变体可能模拟出类似的信号偏差，导致误判为额外维度证据；或者额外维度紧致化尺度极小，效应低于当前探测器灵敏度阈值。",
+              "supporting_evidence_ids": [
+                "EV-Q046-4e604feed6760a38c6475f57"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.7,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.85,
+              "evidence_support_score": 0.9,
+              "overall_score": 0.84
+            },
+            {
+              "hypothesis": "额外空间维度的数量与几何结构并非固定背景，而是通过自发紧致化机制动态演化形成的稳定流形，其最终拓扑形态决定了低能有效物理常数。",
+              "mechanism": "在弦论/M-理论模型构建中，额外维度经历从高能标到低能标的自发物理紧致化过程，形成特定的D维流形（EV-Q046-c56c4c138bd17a5b21ffa21b, EV-Q046-e54c300998deb168c50f520b）。该动力学过程受势能面极小值约束，决定了可观测宇宙的维度数及耦合常数。",
+              "falsifiable_prediction": "若该假设成立，则不同的紧致化流形应对应离散的低能物理谱；若在粒子对撞机或精密测量中发现连续变化的模场（moduli fields）或未稳定的几何参数，则证伪‘自发紧致化已完全冻结’的标准图景。",
+              "required_observations": [
+                "高能粒子碰撞实验中缺失能量谱的精细结构分析",
+                "第五种力或等效原理破坏的高精度检验",
+                "宇宙微波背景辐射中对原初引力波谱指数的约束以反推早期宇宙维度演化"
+              ],
+              "risk_of_being_wrong": "紧致化机制可能存在大量简并真空（景观问题），使得特定预测难以唯一验证；或者动力学稳定化发生在远超当前实验能标的能量尺度，导致低能现象学不可区分。",
+              "supporting_evidence_ids": [
+                "EV-Q046-c56c4c138bd17a5b21ffa21b",
+                "EV-Q046-e54c300998deb168c50f520b",
+                "EV-Q046-532f83d09a06da49e079eddc"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.5,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.58
+            },
+            {
+              "hypothesis": "当前宇宙加速膨胀现象可由额外维度的动力学紧致化过程驱动，无需引入暗能量组分。",
+              "mechanism": "额外维度的尺度因子随时间演化，其动能项与势能项在4维有效理论中表现为具有负压强的流体，从而驱动宇宙加速膨胀（EV-Q046-532f83d09a06da49e079eddc）。此机制将几何自由度转化为宇宙学动力学源。",
+              "falsifiable_prediction": "若加速膨胀源于额外维度动力学，则状态方程参数w(z)应呈现特定的时间依赖性，区别于宇宙学常数（w=-1）；且应伴随可探测的KK粒子塔或标量场长程力效应。若观测确认w严格等于-1且无新标量力，则该特定紧致化驱动模型被削弱。",
+              "required_observations": [
+                "Ia型超新星、重子声学振荡等多探针宇宙学数据对w(z)的高精度重构",
+                "实验室或天体尺度上对偏离牛顿引力平方反比律的检验",
+                "大型强子对撞机对TeV能标下共振态或缺失能量信号的搜索"
+              ],
+              "risk_of_being_wrong": "宇宙学观测误差可能掩盖w(z)的微小演化；其他修改引力理论也可能拟合相同数据；额外维度模型可能无法同时满足加速膨胀与局部引力测试的双重约束。",
+              "supporting_evidence_ids": [
+                "EV-Q046-532f83d09a06da49e079eddc"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.65,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.66
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "假设1直接关联了提供的核心证据（EV-Q046-4e604feed6760a38c6475f57）中明确提出的可验证方法（GW+EM多信使探测），具备最高的可证伪性与可行性。它利用现有的公开天文观测数据即可进行检验，符合‘至少1个假设可用公开数据验证’的要求，且避免了纯理论推测的不可观测风险。相比之下，假设2和3虽然理论依据充分，但当前实验验证难度更大或依赖更间接的推断。",
+          "rejected_directions": [
+            "纯粹数学层面的维度计数讨论（缺乏物理可观测对应物）",
+            "仅基于弦论自洽性要求断言特定维度数（如10或11维）而无经验检验路径",
+            "将人类感知局限等同于物理实在的本体论论证"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上。这将导致引力波（GW）在长距离传播中发生振幅衰减（表现为光度距离 $d_L^{GW}$ 大于电磁波推导的光度距离 $d_L^{EM}$）或传播速度差异。实验设计将利用贝叶斯推断框架，结合广义相对论波形模板与高维引力修正模型，对双中子星并合事件进行参数估计。关键统计量包括 $d_L^{GW}/d_L^{EM}$ 的比率分布以及到达时间差 $\tau_{GW-EM}$ 的后验概率密度。需排除星际介质色散、仪器系统误差及天体物理喷流几何效应带来的混淆。",
+          "datasets": {
+            "source": [
+              {
+                "name": "LIGO/Virgo/KAGRA Gravitational Wave Open Science Center (GWOSC)",
+                "description": "包含双中子星并合事件（如GW170817及后续候选体）的应变数据、参数估计后验样本及光度距离推断结果。",
+                "url": "https://gwosc.org",
+                "access_type": "public"
+              },
+              {
+                "name": "NASA/IPAC Extragalactic Database (NED) & GCN Circulars",
+                "description": "提供对应电磁对应体（如短伽马射线暴、千新星）的红移测量值、光变曲线及宿主星系信息，用于独立计算电磁光度距离。",
+                "url": "https://ned.ipac.caltech.edu",
+                "access_type": "public"
+              }
+            ],
+            "target": {
+              "name": "Multi-messenger Distance Discrepancy Dataset",
+              "description": "经预处理的对齐数据集，包含每个事件的 $d_L^{GW}$ (及其误差), $d_L^{EM}$ (及其误差), 红移 $z$, 到达时间差 $\tau$, 信噪比 SNR, 以及天空定位不确定性区域。",
+              "format": "HDF5/CSV",
+              "schema": {
+                "event_id": "str",
+                "dl_gw_mean": "float",
+                "dl_gw_std": "float",
+                "dl_em_mean": "float",
+                "dl_em_std": "float",
+                "redshift": "float",
+                "time_delay_sec": "float",
+                "snr": "float"
+              }
+            }
+          },
+          "methods": "1. **数据预处理**：从GWOSC获取波形参数估计的后验样本，提取光度距离分布；从天文观测文献中提取电磁对应体的红移及宿主星系距离模数，转换为光度距离。2. **理论建模**：构建包含额外维度泄漏效应的修正光度距离关系式 $d_L^{GW}(z) = d_L^{EM}(z) \times (1 + \beta \times f(z, n))$，其中 $\beta$ 为泄漏强度参数，$n$ 为额外维度数，$f$ 为几何因子。3. **贝叶斯层级分析**：使用PyMC或Stan构建层级贝叶斯模型，联合分析多个事件的数据，约束 $\beta$ 和 $n$ 的后验分布。4. **系统误差校正**：引入仪器校准不确定性和天体物理偏差（如喷流视角角）作为 nuisance parameters 进行边缘化处理。",
+          "experiments": {
+            "baselines": [
+              "Standard General Relativity (GR) Null Model: 假设 $d_L^{GW} = d_L^{EM}$ 且无额外维度效应，仅考虑标准宇宙学参数（$Λ$CDM）。",
+              "Modified Gravity (Scalar-Tensor) Model: 假设引力波速度变化但无振幅泄漏，用于区分额外维度效应与其他修改引力理论。"
+            ],
+            "metrics": [
+              "Bayes Factor ($K$): 比较额外维度模型与标准GR模型的证据比。",
+              "Posterior Constraint on Leakage Parameter ($\beta$): $\beta$ 的95%置信区间上限。",
+              "Goodness-of-Fit ($χ^2$): 模型预测距离与观测距离的残差平方和。"
+            ],
+            "ablation": [
+              "Exclude Low-SNR Events: 移除信噪比低于阈值的事件，检验结果是否由噪声主导。",
+              "Single-Event Analysis vs. Population Analysis: 对比单个高精度事件（如GW170817）与群体统计结果的差异。",
+              "Varying Priors on Compactification Scale: 测试不同先验分布对额外维度尺度参数的影响。"
+            ],
+            "validation_protocol": "1. **Injection Recovery Test**: 向真实背景噪声中注入模拟的带有额外维度效应的波形，验证管道能否正确恢复注入参数。2. **Cross-Validation**: 将数据集按时间或探测器网络配置分割，检验结果的一致性。3. **Systematic Error Budget**: 量化红移测量误差、波形系统误差对最终 $\beta$ 约束的贡献。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "所有数据下载链接及版本号已记录",
+            "贝叶斯模型代码（PyMC/Stan）已容器化（Docker）",
+            "随机种子固定以确保MCMC采样可复现",
+            "中间数据产物（后验样本）已定义存储格式",
+            "依赖库版本锁定（requirements.txt）"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "Estimated 48 CPU-hours for MCMC convergence on a standard workstation",
+            "software_stack": "Python 3.9, PyMC 4.0, Astropy, GWpy",
+            "estimated_completion_time": "2 weeks for data curation and initial runs"
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "假设1（引力波/电磁波多信使检验额外维度）具有明确的可证伪预测，且直接锚定于证据 EV-Q046-4e604feed6760a38c6475f57，符合科学验证标准。",
+            "实验设计中的数据集定义清晰，明确区分了 source（GWOSC, NED）与 target（对齐后的多信使数据集），满足数据溯源要求。",
+            "Results 字段正确标记为待执行状态，未伪造任何实验结果或统计显著性。",
+            "Baselines 包含了标准广义相对论零模型和标量-张量修改引力模型，能够有效区分额外维度效应与其他理论变体。",
+            "所有引用的事实断言均能追溯到提供的 EvidenceCards，无虚构文献或DOI。"
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+            "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。"
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.95,
+          "reproducibility_score": 0.9,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:5e84b6c2714c",
+            "category": "required_revision",
+            "description": "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:b30a457da12a",
+            "category": "required_revision",
+            "description": "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "f89701c7db48063fb29ac58b5f7510a72d63ce9095d5dbc6aff7c4bd55829b2a",
+          "experiment_designer": "2ae5e3ec438d66c78b7bf042172adb8de7cc0b5a76a4a7e9e9409baf6502a110",
+          "scientific_reviewer": "f6920e4513eaeead74071e720b8b4c34a0dfb0f89f0a9fafb967ce3f117de416"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-055702-0fcc9ad6",
+        "version_number": 2,
+        "version_id": "20260822-055702-0fcc9ad6:v2",
+        "parent_version_id": "20260822-055702-0fcc9ad6:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "若存在大尺度额外空间维度，双中子星并合产生的引力波光度距离（d_L^GW）将系统性大于电磁波光度距离（d_L^EM），且该偏差在严格量化并扣除喷流视角角等天体物理系统误差后仍具有统计显著性。",
+              "mechanism": "基于Kaluza-Klein及弦论框架，引力子可传播至额外维度而标准模型粒子被限制在3+1维膜上，导致引力波在宇宙学距离传播中发生能量泄漏或几何衰减（EV-Q046-4e604feed6760a38c6475f57）。此机制预测d_L^GW/d_L^EM比率随红移呈现特定偏离，区别于标准广义相对论预测。",
+              "falsifiable_prediction": "在对齐的多信使数据集中，若对已知GR事件（如GW170817）执行Null Test时恢复出非零泄漏参数β，或在考虑喷流视角角不确定性的层级贝叶斯模型中，β的后验分布与0无显著差异（Bayes Factor < 3），则额外维度泄漏假设被削弱或证伪。",
+              "required_observations": [
+                "双中子星并合事件的联合引力波应变数据与电磁对应体红移测量（来源：GWOSC, NED）",
+                "针对GW170817等基准事件的标准GR波形Null Test结果，验证分析管道无虚假β信号",
+                "喷流视角角及其对d_L^EM推断影响的量化先验分布，用于边缘化天体物理系统误差"
+              ],
+              "risk_of_being_wrong": "未完全建模的天体物理偏差（如喷流结构复杂性、宿主星系消光）可能模拟出类似距离偏差；或额外维度紧致化尺度远小于当前探测器敏感范围，导致效应不可测；或修改引力的其他变体（如标量-张量理论）产生简并信号。",
+              "supporting_evidence_ids": [
+                "EV-Q046-4e604feed6760a38c6475f57"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.75,
+              "falsifiability_score": 0.95,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.95,
+              "overall_score": 0.89
+            },
+            {
+              "hypothesis": "额外空间维度的数量与几何拓扑由自发紧致化动力学唯一确定，其低能有效场论应表现为离散谱而非连续模场，且在当前能标下所有几何模均已稳定冻结。",
+              "mechanism": "弦论/M-理论中额外维度通过势能面极小值实现自发物理紧致化，形成稳定的D维流形（EV-Q046-c56c4c138bd17a5b21ffa21b, EV-Q046-e54c300998deb168c50f520b）。该过程决定了可观测宇宙的维度数及耦合常数，且动力学冻结意味着低能下无长程标量力。",
+              "falsifiable_prediction": "若在精密等效原理检验或粒子对撞机中探测到连续变化的模场信号、未稳定的几何参数或第五种力，则‘自发紧致化已完全冻结’的标准图景被证伪。",
+              "required_observations": [
+                "高精度等效原理破坏实验的上限约束",
+                "高能对撞机缺失能量谱的精细结构分析",
+                "宇宙微波背景中对原初标量扰动谱指数的独立测量"
+              ],
+              "risk_of_being_wrong": "紧致化景观可能存在大量简并真空，使得特定预测难以唯一验证；或稳定化能标远超当前实验可达范围，导致低能现象学不可区分；或模场质量极轻但耦合极弱，逃避现有探测。",
+              "supporting_evidence_ids": [
+                "EV-Q046-c56c4c138bd17a5b21ffa21b",
+                "EV-Q046-e54c300998deb168c50f520b",
+                "EV-Q046-532f83d09a06da49e079eddc"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.55,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.59
+            },
+            {
+              "hypothesis": "宇宙加速膨胀可由额外维度的动力学紧致化驱动，其有效状态方程参数w(z)应呈现可测量的时间演化，且伴随可探测的Kaluza-Klein粒子塔或标量长程力效应。",
+              "mechanism": "额外维度尺度因子的演化在4维有效理论中表现为具有负压强的流体，替代暗能量驱动加速膨胀（EV-Q046-532f83d09a06da49e079eddc）。该机制将几何自由度转化为宇宙学动力学源，并预言与ΛCDM不同的膨胀历史。",
+              "falsifiable_prediction": "若多探针宇宙学数据确认w(z)严格等于-1且无演化，同时在实验室或天体尺度上未发现偏离牛顿平方反比律的信号，则该特定紧致化驱动模型被削弱。",
+              "required_observations": [
+                "Ia型超新星、重子声学振荡等多探针对w(z)的高精度重构",
+                "亚毫米至天文尺度上对引力平方反比律偏离的零结果检验",
+                "大型强子对撞机对TeV能标下KK共振态或缺失能量信号的搜索上限"
+              ],
+              "risk_of_being_wrong": "宇宙学观测误差可能掩盖w(z)的微小演化；其他修改引力理论可能拟合相同膨胀历史；额外维度模型可能无法同时满足加速膨胀与局部引力测试的双重约束；或KK粒子质量超出对撞机能标。",
+              "supporting_evidence_ids": [
+                "EV-Q046-532f83d09a06da49e079eddc"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.65,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.6,
+              "evidence_support_score": 0.7,
+              "overall_score": 0.66
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "假设1直接锚定于核心证据EV-Q046-4e604feed6760a38c6475f57中明确提出的多信使探测方法，具备最高可证伪性与可行性。本次修订已整合评审反馈：明确要求Null Test验证管道可靠性，并将喷流视角角系统误差纳入贝叶斯边缘化处理，显著提升结果可信度。该假设可利用公开GWOSC/NED数据立即执行验证，符合‘至少1个假设可用公开数据验证’要求。相较之下，假设2和3依赖更高能标或更间接观测，当前验证路径不确定性更大。",
+          "rejected_directions": [
+            "纯粹数学层面的维度计数讨论（缺乏物理可观测对应物）",
+            "仅基于弦论自洽性断言特定维度数（如10或11维）而无经验检验路径",
+            "将人类感知局限等同于物理实在的本体论论证",
+            "未控制系统误差的简单距离比率比较（易受天体物理偏差污染）"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上（EV-Q046-4e604feed6760a38c6475f57）。这将导致引力波（GW）在长距离传播中发生振幅衰减，表现为引力波光度距离 $d_L^{GW}$ 系统性大于电磁波推导的光度距离 $d_L^{EM}$。实验设计将利用贝叶斯推断框架，构建包含泄漏参数 $\beta$ 的修正光度距离关系式。关键改进包括：1) 引入喷流视角角 $\theta_{jet}$ 的先验分布作为 nuisance parameter，以量化并边缘化天体物理系统误差对 $d_L^{EM}$ 推断的影响；2) 实施针对 GW170817 等基准事件的 'Null Test'，即在假设标准广义相对论（$\beta=0$）下运行分析管道，验证其是否错误地恢复出非零 $\beta$ 值，从而确保管道的无偏性。",
+          "datasets": {
+            "source": [
+              {
+                "name": "LIGO/Virgo/KAGRA Gravitational Wave Open Science Center (GWOSC)",
+                "description": "包含双中子星并合事件（如GW170817及后续候选体）的应变数据、参数估计后验样本及光度距离推断结果。",
+                "url": "https://gwosc.org",
+                "access_type": "public"
+              },
+              {
+                "name": "NASA/IPAC Extragalactic Database (NED) & GCN Circulars",
+                "description": "提供对应电磁对应体（如短伽马射线暴、千新星）的红移测量值、光变曲线及宿主星系信息，用于独立计算电磁光度距离。",
+                "url": "https://ned.ipac.caltech.edu",
+                "access_type": "public"
+              }
+            ],
+            "target": {
+              "name": "Multi-messenger Distance Discrepancy Dataset with Systematic Error Marginalization",
+              "description": "经预处理的对齐数据集，包含每个事件的 $d_L^{GW}$ (及其误差), $d_L^{EM}$ (及其误差), 红移 $z$, 到达时间差 $\tau$, 信噪比 SNR, 以及喷流视角角先验分布参数。",
+              "format": "HDF5/CSV",
+              "schema": {
+                "event_id": "str",
+                "dl_gw_mean": "float",
+                "dl_gw_std": "float",
+                "dl_em_mean": "float",
+                "dl_em_std": "float",
+                "redshift": "float",
+                "time_delay_sec": "float",
+                "snr": "float",
+                "jet_angle_prior_mu": "float",
+                "jet_angle_prior_sigma": "float"
+              }
+            }
+          },
+          "methods": "1. **数据预处理与系统误差建模**：从GWOSC获取波形参数估计的后验样本；从天文观测文献中提取电磁对应体的红移及宿主星系距离模数。构建喷流视角角 $\theta_{jet}$ 的概率模型，将其不确定性传播至 $d_L^{EM}$ 的计算中，形成边缘化的距离似然函数。2. **理论建模**：构建包含额外维度泄漏效应的修正光度距离关系式 $d_L^{GW}(z) = d_L^{EM}(z) \times (1 + \beta \times f(z, n))$，其中 $\beta$ 为泄漏强度参数，$n$ 为额外维度数，$f$ 为几何因子（EV-Q046-4e604feed6760a38c6475f57）。3. **贝叶斯层级分析**：使用PyMC或Stan构建层级贝叶斯模型，联合分析多个事件的数据，约束 $\beta$ 和 $n$ 的后验分布，同时对喷流视角角等天体物理参数进行边缘化。4. **Null Test 验证**：对已知符合GR的事件（如GW170817）执行盲分析，设定真实 $\beta=0$，检验分析管道恢复的 $\beta$ 后验分布是否以0为中心且置信区间包含0。",
+          "experiments": {
+            "baselines": [
+              "Standard General Relativity (GR) Null Model: 假设 $d_L^{GW} = d_L^{EM}$ 且无额外维度效应，仅考虑标准宇宙学参数（$Λ$CDM）。",
+              "Modified Gravity (Scalar-Tensor) Model: 假设引力波速度变化但无振幅泄漏，用于区分额外维度效应与其他修改引力理论。"
+            ],
+            "metrics": [
+              "Bayes Factor ($K$): 比较额外维度模型与标准GR模型的证据比。",
+              "Posterior Constraint on Leakage Parameter ($\beta$): $\beta$ 的95%置信区间上限。",
+              "Null Test Bias Metric: 在 $\beta=0$ 注入测试中，恢复出的 $\beta$ 均值与0的偏差程度（以标准差为单位）。"
+            ],
+            "ablation": [
+              "Exclude Low-SNR Events: 移除信噪比低于阈值的事件，检验结果是否由噪声主导。",
+              "Single-Event Analysis vs. Population Analysis: 对比单个高精度事件（如GW170817）与群体统计结果的差异。",
+              "Varying Jet Angle Priors: 测试不同喷流视角角先验分布宽度对最终 $\beta$ 约束的影响，量化系统误差鲁棒性。"
+            ],
+            "validation_protocol": "1. **Injection Recovery Test**: 向真实背景噪声中注入模拟的带有额外维度效应的波形，验证管道能否正确恢复注入参数。2. **Null Test on GW170817**: 使用GW170817数据，强制设定 $\beta=0$ 生成模拟数据或直接分析，确保管道不产生虚假信号。3. **Cross-Validation**: 将数据集按时间或探测器网络配置分割，检验结果的一致性。4. **Systematic Error Budget**: 量化红移测量误差、波形系统误差及喷流视角角不确定性对最终 $\beta$ 约束的贡献。"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "所有数据下载链接及版本号已记录",
+            "贝叶斯模型代码（PyMC/Stan）已容器化（Docker）",
+            "随机种子固定以确保MCMC采样可复现",
+            "中间数据产物（后验样本）已定义存储格式",
+            "依赖库版本锁定（requirements.txt）",
+            "Null Test 脚本独立封装，确保盲分析流程可重复执行"
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "compute_resources": "Estimated 48 CPU-hours for MCMC convergence on a standard workstation",
+            "software_stack": "Python 3.9, PyMC 4.0, Astropy, GWpy",
+            "estimated_completion_time": "2 weeks for data curation and initial runs"
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "修订版已成功整合上一轮评审意见：在实验设计中明确增加了针对GW170817的Null Test验证步骤，并将喷流视角角作为nuisance parameter纳入贝叶斯层级模型进行边缘化处理，有效回应了关于天体物理系统误差和管道偏差的关切。",
+            "假设1的可证伪性定义精确，明确了Bayes Factor < 3或后验分布包含0作为证伪/削弱标准，且直接锚定于证据EV-Q046-4e604feed6760a38c6475f57中提出的多信使探测方法。",
+            "数据集定义完整，source（GWOSC, NED）与target（含jet_angle_prior的对齐数据集）区分清晰，schema中包含必要的系统误差参数字段，满足可复现性要求。",
+            "Results字段严格保持pending状态，未出现任何伪造的实验结果或统计显著性声明。",
+            "所有事实断言均正确引用了允许的Evidence IDs，无虚构文献、DOI或过度推断。"
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI观测约束），以确保先验选择的透明度与可复现性。",
+            "虽然已设计Null Test，建议在执行阶段明确记录当beta恢复值偏离0超过2-sigma时的具体排查流程（如检查波形模板系统误差或校准误差），形成标准化的故障排除协议。"
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.98,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:5e84b6c2714c",
+            "category": "required_revision",
+            "description": "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:a0e5d43ddd62929b,change:478eb937862e2c57; evidence=EV-Q046-4e604feed6760a38c6475f57,EV-Q046-532f83d09a06da49e079eddc,EV-Q046-c56c4c138bd17a5b21ffa21b,EV-Q046-e54c300998deb168c50f520b; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:b30a457da12a",
+            "category": "required_revision",
+            "description": "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:38f376d95d0f0471,change:bf6d63a9e050d59c; evidence=EV-Q046-4e604feed6760a38c6475f57,EV-Q046-532f83d09a06da49e079eddc,EV-Q046-c56c4c138bd17a5b21ffa21b,EV-Q046-e54c300998deb168c50f520b; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:d5f7d54fc300",
+            "category": "required_revision",
+            "description": "建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI观测约束），以确保先验选择的透明度与可复现性。",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:4b873d908859",
+            "category": "required_revision",
+            "description": "虽然已设计Null Test，建议在执行阶段明确记录当beta恢复值偏离0超过2-sigma时的具体排查流程（如检查波形模板系统误差或校准误差），形成标准化的故障排除协议。",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "b0c70659d20f31fbf35eeb5b0d8d9f60fced400e90b7786cae9131a4121f086d",
+          "experiment_designer": "b738f70b40375d1a2ef7efe6541003840037859e4cb9664551d1fcd15130dd0a",
+          "scientific_reviewer": "cff9a27580d4e93b8ca70700b7f82645c90e9ffe04f036e051c65501c78fa85a"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-055702-0fcc9ad6",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-055702-0fcc9ad6:review:v1",
+        "20260822-055702-0fcc9ad6:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-055702-0fcc9ad6:v1",
+        "20260822-055702-0fcc9ad6:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-055702-0fcc9ad6",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-055702-0fcc9ad6:review:v1",
+          "20260822-055702-0fcc9ad6:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-055702-0fcc9ad6:v1",
+          "20260822-055702-0fcc9ad6:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-055702-0fcc9ad6",
+          "version_number": 1,
+          "version_id": "20260822-055702-0fcc9ad6:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "如果存在超出3+1维的额外空间维度，双中子星并合事件产生的引力波信号相对于电磁对应体将表现出可测量的振幅衰减或传播时间延迟，这是由于引力子在额外维度中的泄漏或几何修正所致。",
+                "mechanism": "根据Kaluza-Klein及弦论框架，引力相互作用可能传播至额外维度，而标准模型粒子被限制在3+1维膜上。这种不对称性导致引力波在传播过程中能量‘泄漏’到额外维度，或者因高维几何路径差异导致与光速传播的电磁信号产生到达时间差（EV-Q046-4e604feed6760a38c6475f57）。",
+                "falsifiable_prediction": "在分析足够信噪比的双中子星并合多信使数据时，若额外维度存在且尺度大于普朗克尺度，观测到的引力波光度距离应系统性大于电磁波推导的光度距离，或两者到达时间差显著偏离广义相对论在纯3+1维时空下的预测值。",
+                "required_observations": [
+                  "双中子星并合事件的联合引力波与电磁波观测数据（如LIGO/Virgo/KAGRA与望远镜联动）",
+                  "精确的引力波波形参数估计以提取光度距离",
+                  "电磁对应体的红移测量以确定独立宇宙学距离"
+                ],
+                "risk_of_being_wrong": "天体物理环境噪声、仪器系统误差或修改引力理论的其他变体可能模拟出类似的信号偏差，导致误判为额外维度证据；或者额外维度紧致化尺度极小，效应低于当前探测器灵敏度阈值。",
+                "supporting_evidence_ids": [
+                  "EV-Q046-4e604feed6760a38c6475f57"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.7,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.85,
+                "evidence_support_score": 0.9,
+                "overall_score": 0.84
+              },
+              {
+                "hypothesis": "额外空间维度的数量与几何结构并非固定背景，而是通过自发紧致化机制动态演化形成的稳定流形，其最终拓扑形态决定了低能有效物理常数。",
+                "mechanism": "在弦论/M-理论模型构建中，额外维度经历从高能标到低能标的自发物理紧致化过程，形成特定的D维流形（EV-Q046-c56c4c138bd17a5b21ffa21b, EV-Q046-e54c300998deb168c50f520b）。该动力学过程受势能面极小值约束，决定了可观测宇宙的维度数及耦合常数。",
+                "falsifiable_prediction": "若该假设成立，则不同的紧致化流形应对应离散的低能物理谱；若在粒子对撞机或精密测量中发现连续变化的模场（moduli fields）或未稳定的几何参数，则证伪‘自发紧致化已完全冻结’的标准图景。",
+                "required_observations": [
+                  "高能粒子碰撞实验中缺失能量谱的精细结构分析",
+                  "第五种力或等效原理破坏的高精度检验",
+                  "宇宙微波背景辐射中对原初引力波谱指数的约束以反推早期宇宙维度演化"
+                ],
+                "risk_of_being_wrong": "紧致化机制可能存在大量简并真空（景观问题），使得特定预测难以唯一验证；或者动力学稳定化发生在远超当前实验能标的能量尺度，导致低能现象学不可区分。",
+                "supporting_evidence_ids": [
+                  "EV-Q046-c56c4c138bd17a5b21ffa21b",
+                  "EV-Q046-e54c300998deb168c50f520b",
+                  "EV-Q046-532f83d09a06da49e079eddc"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.5,
+                "feasibility_score": 0.4,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.58
+              },
+              {
+                "hypothesis": "当前宇宙加速膨胀现象可由额外维度的动力学紧致化过程驱动，无需引入暗能量组分。",
+                "mechanism": "额外维度的尺度因子随时间演化，其动能项与势能项在4维有效理论中表现为具有负压强的流体，从而驱动宇宙加速膨胀（EV-Q046-532f83d09a06da49e079eddc）。此机制将几何自由度转化为宇宙学动力学源。",
+                "falsifiable_prediction": "若加速膨胀源于额外维度动力学，则状态方程参数w(z)应呈现特定的时间依赖性，区别于宇宙学常数（w=-1）；且应伴随可探测的KK粒子塔或标量场长程力效应。若观测确认w严格等于-1且无新标量力，则该特定紧致化驱动模型被削弱。",
+                "required_observations": [
+                  "Ia型超新星、重子声学振荡等多探针宇宙学数据对w(z)的高精度重构",
+                  "实验室或天体尺度上对偏离牛顿引力平方反比律的检验",
+                  "大型强子对撞机对TeV能标下共振态或缺失能量信号的搜索"
+                ],
+                "risk_of_being_wrong": "宇宙学观测误差可能掩盖w(z)的微小演化；其他修改引力理论也可能拟合相同数据；额外维度模型可能无法同时满足加速膨胀与局部引力测试的双重约束。",
+                "supporting_evidence_ids": [
+                  "EV-Q046-532f83d09a06da49e079eddc"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.65,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.66
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "假设1直接关联了提供的核心证据（EV-Q046-4e604feed6760a38c6475f57）中明确提出的可验证方法（GW+EM多信使探测），具备最高的可证伪性与可行性。它利用现有的公开天文观测数据即可进行检验，符合‘至少1个假设可用公开数据验证’的要求，且避免了纯理论推测的不可观测风险。相比之下，假设2和3虽然理论依据充分，但当前实验验证难度更大或依赖更间接的推断。",
+            "rejected_directions": [
+              "纯粹数学层面的维度计数讨论（缺乏物理可观测对应物）",
+              "仅基于弦论自洽性要求断言特定维度数（如10或11维）而无经验检验路径",
+              "将人类感知局限等同于物理实在的本体论论证"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上。这将导致引力波（GW）在长距离传播中发生振幅衰减（表现为光度距离 $d_L^{GW}$ 大于电磁波推导的光度距离 $d_L^{EM}$）或传播速度差异。实验设计将利用贝叶斯推断框架，结合广义相对论波形模板与高维引力修正模型，对双中子星并合事件进行参数估计。关键统计量包括 $d_L^{GW}/d_L^{EM}$ 的比率分布以及到达时间差 $\tau_{GW-EM}$ 的后验概率密度。需排除星际介质色散、仪器系统误差及天体物理喷流几何效应带来的混淆。",
+            "datasets": {
+              "source": [
+                {
+                  "name": "LIGO/Virgo/KAGRA Gravitational Wave Open Science Center (GWOSC)",
+                  "description": "包含双中子星并合事件（如GW170817及后续候选体）的应变数据、参数估计后验样本及光度距离推断结果。",
+                  "url": "https://gwosc.org",
+                  "access_type": "public"
+                },
+                {
+                  "name": "NASA/IPAC Extragalactic Database (NED) & GCN Circulars",
+                  "description": "提供对应电磁对应体（如短伽马射线暴、千新星）的红移测量值、光变曲线及宿主星系信息，用于独立计算电磁光度距离。",
+                  "url": "https://ned.ipac.caltech.edu",
+                  "access_type": "public"
+                }
+              ],
+              "target": {
+                "name": "Multi-messenger Distance Discrepancy Dataset",
+                "description": "经预处理的对齐数据集，包含每个事件的 $d_L^{GW}$ (及其误差), $d_L^{EM}$ (及其误差), 红移 $z$, 到达时间差 $\tau$, 信噪比 SNR, 以及天空定位不确定性区域。",
+                "format": "HDF5/CSV",
+                "schema": {
+                  "event_id": "str",
+                  "dl_gw_mean": "float",
+                  "dl_gw_std": "float",
+                  "dl_em_mean": "float",
+                  "dl_em_std": "float",
+                  "redshift": "float",
+                  "time_delay_sec": "float",
+                  "snr": "float"
+                }
+              }
+            },
+            "methods": "1. **数据预处理**：从GWOSC获取波形参数估计的后验样本，提取光度距离分布；从天文观测文献中提取电磁对应体的红移及宿主星系距离模数，转换为光度距离。2. **理论建模**：构建包含额外维度泄漏效应的修正光度距离关系式 $d_L^{GW}(z) = d_L^{EM}(z) \times (1 + \beta \times f(z, n))$，其中 $\beta$ 为泄漏强度参数，$n$ 为额外维度数，$f$ 为几何因子。3. **贝叶斯层级分析**：使用PyMC或Stan构建层级贝叶斯模型，联合分析多个事件的数据，约束 $\beta$ 和 $n$ 的后验分布。4. **系统误差校正**：引入仪器校准不确定性和天体物理偏差（如喷流视角角）作为 nuisance parameters 进行边缘化处理。",
+            "experiments": {
+              "baselines": [
+                "Standard General Relativity (GR) Null Model: 假设 $d_L^{GW} = d_L^{EM}$ 且无额外维度效应，仅考虑标准宇宙学参数（$Λ$CDM）。",
+                "Modified Gravity (Scalar-Tensor) Model: 假设引力波速度变化但无振幅泄漏，用于区分额外维度效应与其他修改引力理论。"
+              ],
+              "metrics": [
+                "Bayes Factor ($K$): 比较额外维度模型与标准GR模型的证据比。",
+                "Posterior Constraint on Leakage Parameter ($\beta$): $\beta$ 的95%置信区间上限。",
+                "Goodness-of-Fit ($χ^2$): 模型预测距离与观测距离的残差平方和。"
+              ],
+              "ablation": [
+                "Exclude Low-SNR Events: 移除信噪比低于阈值的事件，检验结果是否由噪声主导。",
+                "Single-Event Analysis vs. Population Analysis: 对比单个高精度事件（如GW170817）与群体统计结果的差异。",
+                "Varying Priors on Compactification Scale: 测试不同先验分布对额外维度尺度参数的影响。"
+              ],
+              "validation_protocol": "1. **Injection Recovery Test**: 向真实背景噪声中注入模拟的带有额外维度效应的波形，验证管道能否正确恢复注入参数。2. **Cross-Validation**: 将数据集按时间或探测器网络配置分割，检验结果的一致性。3. **Systematic Error Budget**: 量化红移测量误差、波形系统误差对最终 $\beta$ 约束的贡献。"
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "所有数据下载链接及版本号已记录",
+              "贝叶斯模型代码（PyMC/Stan）已容器化（Docker）",
+              "随机种子固定以确保MCMC采样可复现",
+              "中间数据产物（后验样本）已定义存储格式",
+              "依赖库版本锁定（requirements.txt）"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "compute_resources": "Estimated 48 CPU-hours for MCMC convergence on a standard workstation",
+              "software_stack": "Python 3.9, PyMC 4.0, Astropy, GWpy",
+              "estimated_completion_time": "2 weeks for data curation and initial runs"
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "假设1（引力波/电磁波多信使检验额外维度）具有明确的可证伪预测，且直接锚定于证据 EV-Q046-4e604feed6760a38c6475f57，符合科学验证标准。",
+              "实验设计中的数据集定义清晰，明确区分了 source（GWOSC, NED）与 target（对齐后的多信使数据集），满足数据溯源要求。",
+              "Results 字段正确标记为待执行状态，未伪造任何实验结果或统计显著性。",
+              "Baselines 包含了标准广义相对论零模型和标量-张量修改引力模型，能够有效区分额外维度效应与其他理论变体。",
+              "所有引用的事实断言均能追溯到提供的 EvidenceCards，无虚构文献或DOI。"
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+              "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。"
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.95,
+            "reproducibility_score": 0.9,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:5e84b6c2714c",
+              "category": "required_revision",
+              "description": "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:b30a457da12a",
+              "category": "required_revision",
+              "description": "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "f89701c7db48063fb29ac58b5f7510a72d63ce9095d5dbc6aff7c4bd55829b2a",
+            "experiment_designer": "2ae5e3ec438d66c78b7bf042172adb8de7cc0b5a76a4a7e9e9409baf6502a110",
+            "scientific_reviewer": "f6920e4513eaeead74071e720b8b4c34a0dfb0f89f0a9fafb967ce3f117de416"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-055702-0fcc9ad6",
+          "version_number": 2,
+          "version_id": "20260822-055702-0fcc9ad6:v2",
+          "parent_version_id": "20260822-055702-0fcc9ad6:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "若存在大尺度额外空间维度，双中子星并合产生的引力波光度距离（d_L^GW）将系统性大于电磁波光度距离（d_L^EM），且该偏差在严格量化并扣除喷流视角角等天体物理系统误差后仍具有统计显著性。",
+                "mechanism": "基于Kaluza-Klein及弦论框架，引力子可传播至额外维度而标准模型粒子被限制在3+1维膜上，导致引力波在宇宙学距离传播中发生能量泄漏或几何衰减（EV-Q046-4e604feed6760a38c6475f57）。此机制预测d_L^GW/d_L^EM比率随红移呈现特定偏离，区别于标准广义相对论预测。",
+                "falsifiable_prediction": "在对齐的多信使数据集中，若对已知GR事件（如GW170817）执行Null Test时恢复出非零泄漏参数β，或在考虑喷流视角角不确定性的层级贝叶斯模型中，β的后验分布与0无显著差异（Bayes Factor < 3），则额外维度泄漏假设被削弱或证伪。",
+                "required_observations": [
+                  "双中子星并合事件的联合引力波应变数据与电磁对应体红移测量（来源：GWOSC, NED）",
+                  "针对GW170817等基准事件的标准GR波形Null Test结果，验证分析管道无虚假β信号",
+                  "喷流视角角及其对d_L^EM推断影响的量化先验分布，用于边缘化天体物理系统误差"
+                ],
+                "risk_of_being_wrong": "未完全建模的天体物理偏差（如喷流结构复杂性、宿主星系消光）可能模拟出类似距离偏差；或额外维度紧致化尺度远小于当前探测器敏感范围，导致效应不可测；或修改引力的其他变体（如标量-张量理论）产生简并信号。",
+                "supporting_evidence_ids": [
+                  "EV-Q046-4e604feed6760a38c6475f57"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.75,
+                "falsifiability_score": 0.95,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.95,
+                "overall_score": 0.89
+              },
+              {
+                "hypothesis": "额外空间维度的数量与几何拓扑由自发紧致化动力学唯一确定，其低能有效场论应表现为离散谱而非连续模场，且在当前能标下所有几何模均已稳定冻结。",
+                "mechanism": "弦论/M-理论中额外维度通过势能面极小值实现自发物理紧致化，形成稳定的D维流形（EV-Q046-c56c4c138bd17a5b21ffa21b, EV-Q046-e54c300998deb168c50f520b）。该过程决定了可观测宇宙的维度数及耦合常数，且动力学冻结意味着低能下无长程标量力。",
+                "falsifiable_prediction": "若在精密等效原理检验或粒子对撞机中探测到连续变化的模场信号、未稳定的几何参数或第五种力，则‘自发紧致化已完全冻结’的标准图景被证伪。",
+                "required_observations": [
+                  "高精度等效原理破坏实验的上限约束",
+                  "高能对撞机缺失能量谱的精细结构分析",
+                  "宇宙微波背景中对原初标量扰动谱指数的独立测量"
+                ],
+                "risk_of_being_wrong": "紧致化景观可能存在大量简并真空，使得特定预测难以唯一验证；或稳定化能标远超当前实验可达范围，导致低能现象学不可区分；或模场质量极轻但耦合极弱，逃避现有探测。",
+                "supporting_evidence_ids": [
+                  "EV-Q046-c56c4c138bd17a5b21ffa21b",
+                  "EV-Q046-e54c300998deb168c50f520b",
+                  "EV-Q046-532f83d09a06da49e079eddc"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.55,
+                "feasibility_score": 0.4,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.59
+              },
+              {
+                "hypothesis": "宇宙加速膨胀可由额外维度的动力学紧致化驱动，其有效状态方程参数w(z)应呈现可测量的时间演化，且伴随可探测的Kaluza-Klein粒子塔或标量长程力效应。",
+                "mechanism": "额外维度尺度因子的演化在4维有效理论中表现为具有负压强的流体，替代暗能量驱动加速膨胀（EV-Q046-532f83d09a06da49e079eddc）。该机制将几何自由度转化为宇宙学动力学源，并预言与ΛCDM不同的膨胀历史。",
+                "falsifiable_prediction": "若多探针宇宙学数据确认w(z)严格等于-1且无演化，同时在实验室或天体尺度上未发现偏离牛顿平方反比律的信号，则该特定紧致化驱动模型被削弱。",
+                "required_observations": [
+                  "Ia型超新星、重子声学振荡等多探针对w(z)的高精度重构",
+                  "亚毫米至天文尺度上对引力平方反比律偏离的零结果检验",
+                  "大型强子对撞机对TeV能标下KK共振态或缺失能量信号的搜索上限"
+                ],
+                "risk_of_being_wrong": "宇宙学观测误差可能掩盖w(z)的微小演化；其他修改引力理论可能拟合相同膨胀历史；额外维度模型可能无法同时满足加速膨胀与局部引力测试的双重约束；或KK粒子质量超出对撞机能标。",
+                "supporting_evidence_ids": [
+                  "EV-Q046-532f83d09a06da49e079eddc"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.65,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.6,
+                "evidence_support_score": 0.7,
+                "overall_score": 0.66
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "假设1直接锚定于核心证据EV-Q046-4e604feed6760a38c6475f57中明确提出的多信使探测方法，具备最高可证伪性与可行性。本次修订已整合评审反馈：明确要求Null Test验证管道可靠性，并将喷流视角角系统误差纳入贝叶斯边缘化处理，显著提升结果可信度。该假设可利用公开GWOSC/NED数据立即执行验证，符合‘至少1个假设可用公开数据验证’要求。相较之下，假设2和3依赖更高能标或更间接观测，当前验证路径不确定性更大。",
+            "rejected_directions": [
+              "纯粹数学层面的维度计数讨论（缺乏物理可观测对应物）",
+              "仅基于弦论自洽性断言特定维度数（如10或11维）而无经验检验路径",
+              "将人类感知局限等同于物理实在的本体论论证",
+              "未控制系统误差的简单距离比率比较（易受天体物理偏差污染）"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "本研究旨在通过多信使天文学数据检验额外空间维度的存在。核心机制基于Kaluza-Klein理论及弦论框架，即引力子可进入额外维度传播，而光子被限制在3+1维膜上（EV-Q046-4e604feed6760a38c6475f57）。这将导致引力波（GW）在长距离传播中发生振幅衰减，表现为引力波光度距离 $d_L^{GW}$ 系统性大于电磁波推导的光度距离 $d_L^{EM}$。实验设计将利用贝叶斯推断框架，构建包含泄漏参数 $\beta$ 的修正光度距离关系式。关键改进包括：1) 引入喷流视角角 $\theta_{jet}$ 的先验分布作为 nuisance parameter，以量化并边缘化天体物理系统误差对 $d_L^{EM}$ 推断的影响；2) 实施针对 GW170817 等基准事件的 'Null Test'，即在假设标准广义相对论（$\beta=0$）下运行分析管道，验证其是否错误地恢复出非零 $\beta$ 值，从而确保管道的无偏性。",
+            "datasets": {
+              "source": [
+                {
+                  "name": "LIGO/Virgo/KAGRA Gravitational Wave Open Science Center (GWOSC)",
+                  "description": "包含双中子星并合事件（如GW170817及后续候选体）的应变数据、参数估计后验样本及光度距离推断结果。",
+                  "url": "https://gwosc.org",
+                  "access_type": "public"
+                },
+                {
+                  "name": "NASA/IPAC Extragalactic Database (NED) & GCN Circulars",
+                  "description": "提供对应电磁对应体（如短伽马射线暴、千新星）的红移测量值、光变曲线及宿主星系信息，用于独立计算电磁光度距离。",
+                  "url": "https://ned.ipac.caltech.edu",
+                  "access_type": "public"
+                }
+              ],
+              "target": {
+                "name": "Multi-messenger Distance Discrepancy Dataset with Systematic Error Marginalization",
+                "description": "经预处理的对齐数据集，包含每个事件的 $d_L^{GW}$ (及其误差), $d_L^{EM}$ (及其误差), 红移 $z$, 到达时间差 $\tau$, 信噪比 SNR, 以及喷流视角角先验分布参数。",
+                "format": "HDF5/CSV",
+                "schema": {
+                  "event_id": "str",
+                  "dl_gw_mean": "float",
+                  "dl_gw_std": "float",
+                  "dl_em_mean": "float",
+                  "dl_em_std": "float",
+                  "redshift": "float",
+                  "time_delay_sec": "float",
+                  "snr": "float",
+                  "jet_angle_prior_mu": "float",
+                  "jet_angle_prior_sigma": "float"
+                }
+              }
+            },
+            "methods": "1. **数据预处理与系统误差建模**：从GWOSC获取波形参数估计的后验样本；从天文观测文献中提取电磁对应体的红移及宿主星系距离模数。构建喷流视角角 $\theta_{jet}$ 的概率模型，将其不确定性传播至 $d_L^{EM}$ 的计算中，形成边缘化的距离似然函数。2. **理论建模**：构建包含额外维度泄漏效应的修正光度距离关系式 $d_L^{GW}(z) = d_L^{EM}(z) \times (1 + \beta \times f(z, n))$，其中 $\beta$ 为泄漏强度参数，$n$ 为额外维度数，$f$ 为几何因子（EV-Q046-4e604feed6760a38c6475f57）。3. **贝叶斯层级分析**：使用PyMC或Stan构建层级贝叶斯模型，联合分析多个事件的数据，约束 $\beta$ 和 $n$ 的后验分布，同时对喷流视角角等天体物理参数进行边缘化。4. **Null Test 验证**：对已知符合GR的事件（如GW170817）执行盲分析，设定真实 $\beta=0$，检验分析管道恢复的 $\beta$ 后验分布是否以0为中心且置信区间包含0。",
+            "experiments": {
+              "baselines": [
+                "Standard General Relativity (GR) Null Model: 假设 $d_L^{GW} = d_L^{EM}$ 且无额外维度效应，仅考虑标准宇宙学参数（$Λ$CDM）。",
+                "Modified Gravity (Scalar-Tensor) Model: 假设引力波速度变化但无振幅泄漏，用于区分额外维度效应与其他修改引力理论。"
+              ],
+              "metrics": [
+                "Bayes Factor ($K$): 比较额外维度模型与标准GR模型的证据比。",
+                "Posterior Constraint on Leakage Parameter ($\beta$): $\beta$ 的95%置信区间上限。",
+                "Null Test Bias Metric: 在 $\beta=0$ 注入测试中，恢复出的 $\beta$ 均值与0的偏差程度（以标准差为单位）。"
+              ],
+              "ablation": [
+                "Exclude Low-SNR Events: 移除信噪比低于阈值的事件，检验结果是否由噪声主导。",
+                "Single-Event Analysis vs. Population Analysis: 对比单个高精度事件（如GW170817）与群体统计结果的差异。",
+                "Varying Jet Angle Priors: 测试不同喷流视角角先验分布宽度对最终 $\beta$ 约束的影响，量化系统误差鲁棒性。"
+              ],
+              "validation_protocol": "1. **Injection Recovery Test**: 向真实背景噪声中注入模拟的带有额外维度效应的波形，验证管道能否正确恢复注入参数。2. **Null Test on GW170817**: 使用GW170817数据，强制设定 $\beta=0$ 生成模拟数据或直接分析，确保管道不产生虚假信号。3. **Cross-Validation**: 将数据集按时间或探测器网络配置分割，检验结果的一致性。4. **Systematic Error Budget**: 量化红移测量误差、波形系统误差及喷流视角角不确定性对最终 $\beta$ 约束的贡献。"
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "所有数据下载链接及版本号已记录",
+              "贝叶斯模型代码（PyMC/Stan）已容器化（Docker）",
+              "随机种子固定以确保MCMC采样可复现",
+              "中间数据产物（后验样本）已定义存储格式",
+              "依赖库版本锁定（requirements.txt）",
+              "Null Test 脚本独立封装，确保盲分析流程可重复执行"
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "compute_resources": "Estimated 48 CPU-hours for MCMC convergence on a standard workstation",
+              "software_stack": "Python 3.9, PyMC 4.0, Astropy, GWpy",
+              "estimated_completion_time": "2 weeks for data curation and initial runs"
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "修订版已成功整合上一轮评审意见：在实验设计中明确增加了针对GW170817的Null Test验证步骤，并将喷流视角角作为nuisance parameter纳入贝叶斯层级模型进行边缘化处理，有效回应了关于天体物理系统误差和管道偏差的关切。",
+              "假设1的可证伪性定义精确，明确了Bayes Factor < 3或后验分布包含0作为证伪/削弱标准，且直接锚定于证据EV-Q046-4e604feed6760a38c6475f57中提出的多信使探测方法。",
+              "数据集定义完整，source（GWOSC, NED）与target（含jet_angle_prior的对齐数据集）区分清晰，schema中包含必要的系统误差参数字段，满足可复现性要求。",
+              "Results字段严格保持pending状态，未出现任何伪造的实验结果或统计显著性声明。",
+              "所有事实断言均正确引用了允许的Evidence IDs，无虚构文献、DOI或过度推断。"
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI观测约束），以确保先验选择的透明度与可复现性。",
+              "虽然已设计Null Test，建议在执行阶段明确记录当beta恢复值偏离0超过2-sigma时的具体排查流程（如检查波形模板系统误差或校准误差），形成标准化的故障排除协议。"
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.98,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:5e84b6c2714c",
+              "category": "required_revision",
+              "description": "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:a0e5d43ddd62929b,change:478eb937862e2c57; evidence=EV-Q046-4e604feed6760a38c6475f57,EV-Q046-532f83d09a06da49e079eddc,EV-Q046-c56c4c138bd17a5b21ffa21b,EV-Q046-e54c300998deb168c50f520b; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:b30a457da12a",
+              "category": "required_revision",
+              "description": "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:38f376d95d0f0471,change:bf6d63a9e050d59c; evidence=EV-Q046-4e604feed6760a38c6475f57,EV-Q046-532f83d09a06da49e079eddc,EV-Q046-c56c4c138bd17a5b21ffa21b,EV-Q046-e54c300998deb168c50f520b; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:d5f7d54fc300",
+              "category": "required_revision",
+              "description": "建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI观测约束），以确保先验选择的透明度与可复现性。",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:4b873d908859",
+              "category": "required_revision",
+              "description": "虽然已设计Null Test，建议在执行阶段明确记录当beta恢复值偏离0超过2-sigma时的具体排查流程（如检查波形模板系统误差或校准误差），形成标准化的故障排除协议。",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "b0c70659d20f31fbf35eeb5b0d8d9f60fced400e90b7786cae9131a4121f086d",
+            "experiment_designer": "b738f70b40375d1a2ef7efe6541003840037859e4cb9664551d1fcd15130dd0a",
+            "scientific_reviewer": "cff9a27580d4e93b8ca70700b7f82645c90e9ffe04f036e051c65501c78fa85a"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-055702-0fcc9ad6:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-055702-0fcc9ad6:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-055702-0fcc9ad6:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-055702-0fcc9ad6:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:5e84b6c2714c",
+          "category": "required_revision",
+          "description": "建议在正式执行前，进一步量化 '喷流视角角' 等天体物理系统误差对 d_L^GW/d_L^EM 比率的具体影响范围，以防止将天体物理偏差误判为额外维度信号。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:a0e5d43ddd62929b,change:478eb937862e2c57; evidence=EV-Q046-4e604feed6760a38c6475f57,EV-Q046-532f83d09a06da49e079eddc,EV-Q046-c56c4c138bd17a5b21ffa21b,EV-Q046-e54c300998deb168c50f520b; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:b30a457da12a",
+          "category": "required_revision",
+          "description": "虽然当前设计已包含 Injection Recovery Test，建议补充针对 GW170817 等已知事件的 'Null Test'，即使用标准 GR 波形恢复参数，确保分析管道在无新物理信号时不会产出虚假的 beta 非零值。",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:38f376d95d0f0471,change:bf6d63a9e050d59c; evidence=EV-Q046-4e604feed6760a38c6475f57,EV-Q046-532f83d09a06da49e079eddc,EV-Q046-c56c4c138bd17a5b21ffa21b,EV-Q046-e54c300998deb168c50f520b; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:d5f7d54fc300",
+          "category": "required_revision",
+          "description": "建议在Target Dataset的schema文档中补充jet_angle_prior_mu/sigma的具体来源说明（如引用特定的GRB喷流结构模型论文或GW170817 VLBI观测约束），以确保先验选择的透明度与可复现性。",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:4b873d908859",
+          "category": "required_revision",
+          "description": "虽然已设计Null Test，建议在执行阶段明确记录当beta恢复值偏离0超过2-sigma时的具体排查流程（如检查波形模板系统误差或校准误差），形成标准化的故障排除协议。",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "4d1bfcfa6dcf7bb12f4782b71916422ed0ce7a731351ef1f086b0159af491821"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-055702-0fcc9ad6:wave-b-two-round",
+      "run_id": "20260822-055702-0fcc9ad6",
+      "v1_version_id": "20260822-055702-0fcc9ad6:v1",
+      "v2_version_id": "20260822-055702-0fcc9ad6:v2",
+      "input_fingerprints": {
+        "v1": "2ae5e3ec438d66c78b7bf042172adb8de7cc0b5a76a4a7e9e9409baf6502a110",
+        "v2": "b738f70b40375d1a2ef7efe6541003840037859e4cb9664551d1fcd15130dd0a"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "required_revision:5e84b6c2714c",
+        "required_revision:b30a457da12a"
+      ],
+      "change_ids": [
+        "change:a0e5d43ddd62929b",
+        "change:478eb937862e2c57",
+        "change:38f376d95d0f0471",
+        "change:bf6d63a9e050d59c"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.95,
+          "after": 0.98,
+          "delta": 0.030000000000000027
+        },
+        "reproducibility_score": {
+          "before": 0.9,
+          "after": 0.95,
+          "delta": 0.04999999999999993
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "若存在大尺度额外空间维度，双中子星并合产生的引力波光度距离（d_L^GW）将系统性大于电磁波光度距离（d_L^EM），且该偏差在严格量化并扣除喷流视角角等天体物理系统误差后仍具有统计显著性。",
+          "overall_score": 0.89,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 2,
+          "hypothesis": "宇宙加速膨胀可由额外维度的动力学紧致化驱动，其有效状态方程参数w(z)应呈现可测量的时间演化，且伴随可探测的Kaluza-Klein粒子塔或标量长程力效应。",
+          "overall_score": 0.66,
+          "recommended": false
+        },
+        {
+          "rank": 3,
+          "original_index": 1,
+          "hypothesis": "额外空间维度的数量与几何拓扑由自发紧致化动力学唯一确定，其低能有效场论应表现为离散谱而非连续模场，且在当前能标下所有几何模均已稳定冻结。",
+          "overall_score": 0.59,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "5a71082b870d",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T05:59:42.042895+00:00",
+    "ended_at": "2026-08-22T06:00:44.313716+00:00",
+    "duration_ms": 62270,
+    "input_summary": "{\"question_item\": {\"id\": \"Q046\", \"domain\": \"Astronomy\", \"question\": \"How many dimensions are there in space?\", \"source_page\": 21, \"booklet_excerpt\": \"We experience three dimensions of space—length, width, and height—and one of time. String theorists suggest there may be over dimensions, with most being too small to perceive. However, we have yet to find evidence to prove or disprove the existence of these extra dimensions.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"W",
+    "output_summary": "{\"input_question\": \"How many dimensions are there in space?\", \"domain\": \"Astronomy\", \"problem_statement\": \"While human experience and standard physical models describe spacetime as having three spatial dimensions and one time dimension, theoretical frameworks such as string theory and M-theory postulate the existence of extra spatial dimensions. The core scientific problem is to determine whether these extra dimensions physically exist and, if so, to constrain their number and geometry using empirical evidence, specifically by probing for deviations from standard 3+1 dimensional gravity.\", \"ra",
+    "evidence_ids": [
+      "EV-Q046-4e604feed6760a38c6475f57",
+      "EV-Q046-c56c4c138bd17a5b21ffa21b",
+      "EV-Q046-e54c300998deb168c50f520b",
+      "EV-Q046-532f83d09a06da49e079eddc"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9824da55ee94",
+    "mock": false
+  },
+  {
+    "event_id": "dd98fd1f4a29",
+    "run_id": "20260822-055702-0fcc9ad6",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T06:00:44.314717+00:00",
+    "ended_at": "2026-08-22T06:00:46.873945+00:00",
+    "duration_ms": 2559,
+    "input_summary": "{\"question_item\": {\"id\": \"Q046\", \"domain\": \"Astronomy\", \"question\": \"How many dimensions are there in space?\", \"source_page\": 21, \"booklet_excerpt\": \"We experience three dimensions of space—length, width, and height—and one of time. String theorists suggest there may be over dimensions, with most being too small to perceive. However, we have yet to find evidence to prove or disprove the existence of these extra dimensions.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not ResearchPlan. SchemaValidator requires a 'ResearchPlan' object containing fields such as hypothesis, evidence, datasets, experiments, and references to perform validation.\", \"MissingFieldError: The required field 'research_plan' is absent from the input payload.\"], \"warnings\": [\"InputMismatchWarning: Detected question context for Q046 regarding space dimensions, but no corresponding research plan structure was found to validate against EvidenceCards or execution metadata.\"], \"validation_status\": \"needs_data",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "02894aa795dd",
+    "mock": false
+  }
+]

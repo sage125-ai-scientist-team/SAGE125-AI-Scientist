@@ -1,0 +1,126 @@
+# Conditional Global Regularity of 3D Navier-Stokes Equations via Extended Lagrangian Maximal Regularity Estimates
+
+## Input Question
+Will the Navier–Stokes problem ever be solved?
+
+## Domain
+Mathematical Sciences
+
+## Validation Status
+needs_data
+
+## Problem Statement
+Do global classical solutions to the Navier-Stokes equations exist for all points in a 3D space, and can their applicability be proven for all times? Specifically, does the existence of global weak solutions imply or preclude the existence of smooth, unique solutions for arbitrary initial data?
+
+## Rationale
+While global existence of weak solutions is established (EV-Q002-6819c186db509830ff3f3f9b), the regularity and uniqueness of these solutions in 3D remain an open problem. Understanding whether maximal regularity estimates in Lagrangian coordinates can be extended globally provides a specific analytical pathway to address this gap, distinguishing between coordinate singularities and physical blow-up.
+
+## Generated Hypotheses
+
+### Hypothesis 1
+- **Hypothesis**: It is hypothesized that if maximal regularity estimates in Lagrangian coordinates (EV-Q002-765c8e6fdd97f3df6955408d) can be rigorously extended to control the inverse flow map Jacobian and pressure coupling globally in time, then global classical solutions to the 3D Navier-Stokes equations exist; conversely, failure to bound these geometric terms constitutes a specific obstruction to this approach.
+- **Mechanism**: While Lagrangian coordinates formally remove the advection term u·∇u, the nonlinearity is transferred to the deformation tensor and the pressure Poisson equation via the inverse flow map. Current evidence supports maximal regularity estimates locally or in restricted settings (EV-Q002-765c8e6fdd97f3df6955408d). The unproven gap is whether these estimates can uniformly bound the Jacobian determinant and pressure Hessian for all t > 0, preventing coordinate singularity formation even when Eulerian norms might remain bounded. This hypothesis treats global existence as a conditional outcome of closing this specific analytic gap, not as an established fact.
+- **Falsifiable Prediction**: If this research program succeeds, uniform a priori bounds for the Lagrangian deformation tensor and pressure must be derivable for arbitrary smooth initial data. If it can be proven that the Jacobian of the Lagrangian flow map necessarily degenerates (approaches zero or infinity) in finite time for some smooth initial data despite bounded Eulerian energy, or if maximal regularity estimates provably fail to close due to pressure-Jacobian coupling, then this specific pathway to global regularity is falsified.
+- **Required Observations**: Derivation of time-global a priori bounds specifically for the inverse flow map Jacobian and pressure Hessian in Lagrangian coordinates；Rigorous analysis determining whether local maximal regularity estimates (EV-Q002-765c8e6fdd97f3df6955408d) can be bootstrapped globally without loss of derivatives；Verification of compatibility between hypothetical global Lagrangian bounds and known global weak solution existence (EV-Q002-6819c186db509830ff3f3f9b)
+- **Risk of Being Wrong**: Very High. The transfer of nonlinearity to geometric terms (Jacobian/Pressure) is the fundamental barrier; there is no current evidence that Lagrangian maximal regularity overcomes this globally. Evidence EV-Q002-765c8e6fdd97f3df6955408d only validates the methodology locally. The vortex stretching mechanism (EV-Q002-25af4646ad7578f193aa6288) may manifest as coordinate singularity in the Lagrangian frame even if Eulerian quantities are regular.
+
+### Hypothesis 2
+- **Hypothesis**: Finite-time blow-up in 3D Navier-Stokes occurs via critical vortex stretching (EV-Q002-25af4646ad7578f193aa6288), and constructing a stable self-similar profile in the rescaled vorticity system will provide a counterexample to global regularity.
+- **Mechanism**: The vorticity equation contains a scaling-critical vortex stretching term identified as central to potential singularity formation (EV-Q002-25af4646ad7578f193aa6288). If this term dominates viscous dissipation at small scales, enstrophy may diverge in finite time. This hypothesis posits that such blow-up, if it exists, must manifest as a self-similar attractor in appropriately rescaled variables. Global weak solutions are known to exist (EV-Q002-6819c186db509830ff3f3f9b), implying any singularity must be compatible with weak continuation.
+- **Falsifiable Prediction**: If global regularity holds, no stable self-similar blow-up profile exists in the critical regime. Specifically, if rigorous analysis proves that vortex stretching is always dominated by nonlinear depletion or viscous effects for all possible configurations, or if all candidate self-similar profiles are shown to be unstable or non-existent, this constructive disproof strategy is invalidated as a resolution path.
+- **Required Observations**: Rigorous construction or impossibility proof of self-similar solutions to the 3D vorticity equation with critical stretching；Stability analysis of candidate blow-up profiles under generic perturbations；Demonstration that any constructed singularity satisfies the definition of classical solution breakdown consistent with the open problem status (EV-Q002-6819c186db509830ff3f3f9b)
+- **Risk of Being Wrong**: Extremely High. No rigorous blow-up has been constructed despite decades of effort. Vortex stretching may be dynamically suppressed by mechanisms not captured by criticality analysis (EV-Q002-25af4646ad7578f193aa6288). Weak solutions exist globally (EV-Q002-6819c186db509830ff3f3f9b), suggesting singularities—if they exist—may be too subtle for standard self-similar ansätze.
+
+## Technical Details
+This research plan investigates the conditional hypothesis that global classical solutions to the 3D Navier-Stokes equations can be established if maximal regularity estimates in Lagrangian coordinates are rigorously extended to control the inverse flow map Jacobian and pressure coupling globally in time. The core technical challenge lies in the fact that while Lagrangian coordinates formally remove the advection term $u \cdot \nabla u$, the nonlinearity is transferred to the deformation tensor and the pressure Poisson equation via the inverse flow map. Current evidence (EV-Q002-765c8e6fdd97f3df6955408d) supports maximal regularity estimates only locally or in restricted settings. The unproven gap is whether these estimates can uniformly bound the Jacobian determinant and pressure Hessian for all $t > 0$, preventing coordinate singularity formation even when Eulerian norms might remain bounded. This plan treats global existence as a conditional outcome of closing this specific analytic gap, explicitly acknowledging that evidence EV-Q002-6819c186db509830ff3f3f9b confirms the problem remains unsolved for classical solutions.
+
+## Datasets
+### Source
+
+
+```json
+[
+  {
+    "name": "Maximal Regularity Estimates in Lagrangian Coordinates",
+    "description": "Theoretical framework providing local maximal regularity estimates in Lagrangian coordinates for the whole R3.",
+    "evidence_id": "EV-Q002-765c8e6fdd97f3df6955408d",
+    "url": "https://arxiv.org/pdf/1803.06056.pdf"
+  },
+  {
+    "name": "Global Existence of Weak Solutions Context",
+    "description": "Foundational results confirming global weak solutions exist, establishing that the open problem is specifically about classical/smooth solutions.",
+    "evidence_id": "EV-Q002-6819c186db509830ff3f3f9b",
+    "url": "https://arxiv.org/pdf/1806.10081.pdf"
+  }
+]
+```
+
+
+### Target
+Rigorous mathematical derivation determining whether local maximal regularity estimates can be bootstrapped globally without loss of derivatives, specifically focusing on the bounds of the inverse flow map Jacobian and pressure Hessian.
+
+## Paper Abstract
+Background: The existence and smoothness of solutions to the 3D Navier-Stokes equations remains one of the most significant open problems in mathematical physics. While global weak solutions are known to exist (EV-Q002-6819c186db509830ff3f3f9b), the question of global classical solutions persists. Methods: This study proposes a rigorous analytical framework based on Lagrangian coordinates, leveraging local maximal regularity estimates (EV-Q002-765c8e6fdd97f3df6955408d). We aim to extend these local estimates to global time intervals by controlling the inverse flow map Jacobian and pressure Hessian. Validation Plan: The validity of this approach will be tested by attempting to derive uniform a priori bounds for arbitrary smooth initial data. Results: Pending execution of rigorous mathematical verification. The outcome will determine whether Lagrangian maximal regularity provides a viable pathway to proving global existence or if geometric obstructions prevent such a proof.
+
+## Methods
+1. Lagrangian Reformulation: Transform the 3D Navier-Stokes equations into Lagrangian coordinates to isolate the advection term. 2. Local-to-Global Extension Analysis: Attempt to extend local maximal regularity estimates from EV-Q002-765c8e6fdd97f3df6955408d to global time intervals. 3. Geometric Term Control: Derive a priori bounds for the inverse flow map Jacobian and pressure Hessian. 4. Singularity Obstruction Identification: Identify mechanisms preventing global extension if uniform bounds fail. 5. Consistency Verification: Ensure derived conditions are consistent with known global weak solutions (EV-Q002-6819c186db509830ff3f3f9b).
+
+## Experiments
+### Baselines
+
+
+```json
+[
+  "Standard Eulerian energy estimates which fail to provide global bounds for 3D classical solutions due to the supercritical nature of the nonlinearity.",
+  "Existing weak solution frameworks (Leray-Hopf) which guarantee existence but not uniqueness or smoothness (EV-Q002-6819c186db509830ff3f3f9b)."
+]
+```
+
+
+### Metrics
+
+
+```json
+[
+  "Derivability of time-global a priori bounds for the inverse flow map Jacobian.",
+  "Derivability of time-global a priori bounds for the pressure Hessian.",
+  "Logical consistency of the extended estimates with the local results in EV-Q002-765c8e6fdd97f3df6955408d."
+]
+```
+
+
+### Ablation
+Assess the necessity of the Lagrangian transformation by comparing the difficulty of controlling nonlinear terms in Eulerian vs. Lagrangian frames; isolate the contribution of pressure-Jacobian coupling by analyzing simplified models where pressure effects are neglected or linearized.
+
+### Validation Protocol
+Rigorous mathematical peer review of the derived a priori bounds. The validation criterion is whether the proof successfully demonstrates uniform bounds for arbitrary smooth initial data for all $t > 0$. Failure to derive such bounds, or proof that they necessarily blow up, falsifies the specific pathway that Lagrangian maximal regularity alone can resolve global regularity.
+
+## Results
+当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。
+
+## References
+- **EV-Q002-765c8e6fdd97f3df6955408d** · arxiv · arXiv:1803.06056
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/1803.06056.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=e7892e7ec2a29b8dd4e9fa6df46d486c3f64402e94b0f3c7ffce0e13f45c48bd
+- **EV-Q002-6819c186db509830ff3f3f9b** · arxiv · arXiv:1806.10081
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/1806.10081.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:2|section:page-2|paragraph:1; content_sha256=70d0e1e89f8f3ea3dd6bf3cec8a38964422809015c991a927d00b1657567cd2f
+
+## Reviewer Comments
+- The revised hypothesis correctly reframes the Millennium problem as a conditional conjecture ('It is hypothesized that if... then...'), resolving the previous critical issue of asserting global existence as a fact.
+- The evidence_support_score has been appropriately reduced to 0.3, accurately reflecting that EV-Q002-765c8e6fdd97f3df6955408d only supports the local methodology, not the global outcome.
+- The mechanism description now rigorously acknowledges the transfer of nonlinearity to the inverse flow map Jacobian and pressure Poisson equation, avoiding the previous oversimplification regarding advection decoupling.
+- Irrelevant evidence regarding compressible drifting solutions (EV-Q002-39e0e90f95adfe241d1921cd) has been successfully filtered out from the active hypothesis set.
+- Experiment design results are correctly marked as pending, with no fabrication of mathematical proofs or simulation data.
+
+## Revision History
+- auto_revision_1: 依据评审意见重做假设与实验设计。
+
+## Reproducibility Checklist
+- Verify the exact formulation of the Lagrangian coordinate transformation and the resulting expression for the pressure Poisson equation.
+- Confirm that the maximal regularity theorems applied are valid for the specific function spaces used in the 3D whole space context.
+- Ensure the derivation explicitly accounts for the nonlinearity transferred to the Jacobian and pressure terms, avoiding the oversimplification that advection removal solves the problem.
+- Check that the analysis respects the distinction between weak and classical solutions as defined in EV-Q002-6819c186db509830ff3f3f9b.
+

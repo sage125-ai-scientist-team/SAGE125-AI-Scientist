@@ -1,0 +1,1530 @@
+[
+  {
+    "event_id": "ef76f8e1ca83",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:35.654307+00:00",
+    "ended_at": "2026-08-22T08:48:35.654307+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "6acd3a361cde",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:35.654307+00:00",
+    "ended_at": "2026-08-22T08:48:39.410737+00:00",
+    "duration_ms": 3756,
+    "input_summary": "{\"question_item\": {\"id\": \"Q071\", \"domain\": \"Physics\", \"question\": \"What are the limits of heat transfer in matter?\", \"source_page\": 25, \"booklet_excerpt\": \"Materials science research may help us address the challenge of high power-density heat transfer, from nanometer-scale devices such as circuits to industrial- scale processes such as power plants.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Physics\", \"core_question\": \"What are the fundamental physical limits and material constraints governing heat transfer efficiency across different scales, particularly in high power-density applications ranging from nanometer-scale devices to industrial processes?\", \"keywords\": [\"heat transfer\", \"limits\", \"matter\", \"high power-density\", \"materials science\", \"nanometer-scale\", \"industrial-scale\"], \"entities\": [\"heat transfer\", \"matter\", \"nanometer-scale devices\", \"circuits\", \"industrial-scale processes\", \"power plants\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c594a2ceecb0",
+    "mock": false
+  },
+  {
+    "event_id": "f93987864007",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:39.410737+00:00",
+    "ended_at": "2026-08-22T08:48:58.986391+00:00",
+    "duration_ms": 19575,
+    "input_summary": "{\"question_item\": {\"id\": \"Q071\", \"domain\": \"Physics\", \"question\": \"What are the limits of heat transfer in matter?\", \"source_page\": 25, \"booklet_excerpt\": \"Materials science research may help us address the challenge of high power-density heat transfer, from nanometer-scale devices such as circuits to industrial- scale processes such as power plants.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Physics\", \"core_question\": \"What are the fundamental physical limits and material constraints governing h",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Identify fundamental theoretical limits of heat conduction in solids, specifically focusing on phonon transport and the minimum thermal conductivity hypothesis.\", \"query\": \"fundamental limits of heat conduction in solids phonon mean free path minimum thermal conductivity\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Theoretical models defining the lower bound of thermal conductivity in disordered solids or amorphous materials.\", \"priority\": \"high\"}, {\"purpose\": \"Retrieve information on size effects in heat transfer at the nanometer scale, particularly wher",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "176161a7c88a",
+    "mock": false
+  },
+  {
+    "event_id": "0bfde5d58a98",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:59.007490+00:00",
+    "ended_at": "2026-08-22T08:49:06.914975+00:00",
+    "duration_ms": 7907,
+    "input_summary": "{\"question_item\": {\"id\": \"Q071\", \"domain\": \"Physics\", \"question\": \"What are the limits of heat transfer in matter?\", \"source_page\": 25, \"booklet_excerpt\": \"Materials science research may help us address the challenge of high power-density heat transfer, from nanometer-scale devices such as circuits to industrial- scale processes such as power plants.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q071-729216a0ae7ef339809ce67f\", \"title\": \"arXiv:1806.10843\", \"source_type\": \"arxiv\", \"doi\": null, \"url\":",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The provided evidence cards do not contain information regarding the physical limits of heat transfer in matter (e.g., thermal conductivity limits, phonon scattering, Fourier's law breakdown).\", \"why_it_matters\": \"Without specific physics literature on thermodynamics or materials science heat transfer mechanisms, no factual claims about heat transfer limits can be established.\", \"evidence_ids\": [], \"validation_need\": \"Requires retrieval of peer-reviewed literature or textbooks specifically addressing 'limits of heat t",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "be4686a2f547",
+    "mock": false
+  },
+  {
+    "event_id": "fdee63ba6849",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:49:06.914975+00:00",
+    "ended_at": "2026-08-22T08:49:26.276994+00:00",
+    "duration_ms": 19362,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q071\", \"domain\": \"Physics\", \"question\": \"What are the limits of heat transfer in matter?\", \"source_page\": 25, \"booklet_excerpt\": \"Materials science research may help us address the challenge of high power-density heat transfer, from nanometer-scale devices such as circuits to industrial- scale processes such as power plants.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q071-729216a0ae7ef339809ce67f\", \"title\": \"arXiv:1806.10843\", \"source_type\": \"ar",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Insufficient Evidence Hypothesis: The physical limits of heat transfer in matter cannot be determined or hypothesized based on the current evidence set, as all provided sources pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability rather than thermodynamics or materials science.\", \"mechanism\": \"The retrieval system returned topically irrelevant documents (quantum mean-field theory, high-energy neutrinos, ICT LIMITS workshop) for a query regarding thermal transport limits. Consequently, no mechanism linking material properties to",
+    "evidence_ids": [
+      "EV-Q071-729216a0ae7ef339809ce67f",
+      "EV-Q071-35fb51303ed99e59a193220f",
+      "EV-Q071-fa109c61f71c06ebac9b6461",
+      "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "59a0decb9217",
+    "mock": false
+  },
+  {
+    "event_id": "f73a821dfc84",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:49:26.276994+00:00",
+    "ended_at": "2026-08-22T08:49:47.965092+00:00",
+    "duration_ms": 21688,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q071\", \"domain\": \"Physics\", \"question\": \"What are the limits of heat transfer in matter?\", \"source_page\": 25, \"booklet_excerpt\": \"Materials science research may help us address the challenge of high power-density heat transfer, from nanometer-scale devices such as circuits to industrial- scale processes such as power plants.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery\", \"recommended_hypothesis\": {\"hypothesis\": \"Insufficient Evidence Hypothe",
+    "output_summary": "{\"technical_details\": \"The recommended hypothesis posits that the current evidence set is insufficient to determine physical limits of heat transfer in matter, as all provided sources (quantum radiation fields, neutrino astrophysics, computing sustainability) are topically irrelevant. The experimental design focuses on validating this 'Insufficient Evidence' claim by systematically verifying the absence of thermodynamic content in the allowed evidence IDs. This involves a structured semantic audit and keyword exclusion test to confirm that no data regarding thermal conductivity, phonon transpo",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "aebb605b4ea8",
+    "mock": false
+  },
+  {
+    "event_id": "623f5a262490",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:49:47.966095+00:00",
+    "ended_at": "2026-08-22T08:49:53.992279+00:00",
+    "duration_ms": 6026,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q071\", \"domain\": \"Physics\", \"question\": \"What are the limits of heat transfer in matter?\", \"source_page\": 25, \"booklet_excerpt\": \"Materials science research may help us address the challenge of high power-density heat transfer, from nanometer-scale devices such as circuits to industrial- scale processes such as power plants.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Insufficient Evidence Hypothesis: The physical limits of heat transfe",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies 'insufficient_evidence' given that all allowed EvidenceCards pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer limits.\", \"The system successfully avoided hallucinating physical mechanisms or citing irrelevant papers as factual support for heat transfer limits, adhering strictly to the negative constraint protocol.\", \"Experiment design is appropriately scoped as a metadata/semantic audit to verify irrelevance, with valid ba",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "9d27e11a2707",
+    "mock": false
+  },
+  {
+    "event_id": "752f38d7ccea",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:49:53.994225+00:00",
+    "ended_at": "2026-08-22T08:50:21.723111+00:00",
+    "duration_ms": 27728,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies 'insufficient_evidence' given that all allowed EvidenceCards pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer limits.\", \"The system successfully avoided hallucinating physical mechanisms or citing irrelevant papers as factual support for heat transfer limits, adhering strictly to the negative constraint protocol.\", \"Experiment design is appropriately scoped as a metadata/semantic",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Knowledge Gap / Retrieval Failure Report: The physical limits of heat transfer in matter cannot be scientifically characterized using the current allowed evidence set, as all provided sources (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer mechanisms.\", \"mechanism\": \"The retrieval system has returned documents where the term 'limit' refers",
+    "evidence_ids": [
+      "EV-Q071-729216a0ae7ef339809ce67f",
+      "EV-Q071-35fb51303ed99e59a193220f",
+      "EV-Q071-fa109c61f71c06ebac9b6461",
+      "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1c45b6016b9c",
+    "mock": false
+  },
+  {
+    "event_id": "7369c9e65e5e",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:50:21.723111+00:00",
+    "ended_at": "2026-08-22T08:50:48.701141+00:00",
+    "duration_ms": 26978,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies 'insufficient_evidence' given that all allowed EvidenceCards pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer limits.\", \"The system successfully avoided hallucinating physical mechanisms or citing irrelevant papers as factual support for heat transfer limits, adhering strictly to the negative constraint protocol.\", \"Experiment design is appropriately scoped as a metadata/semantic",
+    "output_summary": "{\"technical_details\": \"This experiment is designed to validate the 'Knowledge Gap / Retrieval Failure Report' hypothesis. The core technical task is a semantic audit of four specific EvidenceCards (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to confirm their irrelevance to thermodynamic heat transfer limits. The methodology involves: 1) Full-text extraction and preprocessing; 2) Keyword-based filtering for thermodynamic terms ('thermal conductivity', 'phonon', 'Fourier law', 'heat flux', 'W/m·K'); 3) Co",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "aea00d8fb038",
+    "mock": false
+  },
+  {
+    "event_id": "5f44085c83ab",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:50:48.702643+00:00",
+    "ended_at": "2026-08-22T08:50:57.330887+00:00",
+    "duration_ms": 8628,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The candidate hypothesis correctly identifies 'insufficient_evidence' given that all allowed EvidenceCards pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer limits.\", \"The system successfully avoided hallucinating physical mechanisms or citing irrelevant papers as factual support for heat transfer limits, adhering strictly to the negative constraint protocol.\", \"Experiment design is appropriately scoped as a metadata/semantic",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly adopts the 'Knowledge Gap / Retrieval Failure Report' framing as requested in previous required revisions, preventing misinterpretation of the null result as a scientific conclusion.\", \"All supporting evidence IDs (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) are valid and correctly mapped to their non-thermodynamic domains based on provided EvidenceCards.\", \"The falsifiable prediction is operationally defined via a semantic audit w",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "005e4dddb639",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:ac1cc18b69fcf7ae",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: The physical limits of heat transfer in matter cannot be determined or hypothesized based on the current evidence set, as all provided sources pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability rather than thermodynamics or materials science.",
+              "mechanism": "The retrieval system returned topically irrelevant documents (quantum mean-field theory, high-energy neutrinos, ICT LIMITS workshop) for a query regarding thermal transport limits. Consequently, no mechanism linking material properties to heat flux saturation can be constructed from allowed evidence.",
+              "falsifiable_prediction": "A comprehensive semantic search of the provided evidence corpus using keywords 'thermal conductivity', 'phonon', 'Fourier law', or 'heat flux' will yield zero relevant results within the allowed evidence IDs.",
+              "required_observations": [
+                "Verification that EV-Q071-729216a0ae7ef339809ce67f contains no discussion of macroscopic heat transfer limits.",
+                "Verification that EV-Q071-35fb51303ed99e59a193220f addresses neutrino flux limits, not thermal energy transport.",
+                "Verification that EV-Q071-fa109c61f71c06ebac9b6461 and EV-Q071-c751b8f02dbddd9f58e0f7ff refer to 'LIMITS' as a computing sustainability workshop acronym, not physical thermodynamic bounds."
+              ],
+              "risk_of_being_wrong": "Low risk regarding the *current* evidence set status; however, this hypothesis does not advance scientific understanding of heat transfer and serves only as a metadata validation check. It fails to address the user's core scientific intent due to upstream retrieval failure.",
+              "supporting_evidence_ids": [
+                "EV-Q071-729216a0ae7ef339809ce67f",
+                "EV-Q071-35fb51303ed99e59a193220f",
+                "EV-Q071-fa109c61f71c06ebac9b6461",
+                "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.0,
+              "falsifiability_score": 1.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.2
+            },
+            {
+              "hypothesis": "Null Hypothesis Placeholder: Pending retrieval of valid thermodynamics literature, no specific mechanism (e.g., phonon hydrodynamics, ballistic transport, or blackbody radiation limits) can be proposed for heat transfer limits in matter.",
+              "mechanism": "N/A. This entry exists solely to satisfy the schema requirement for multiple hypotheses when evidence is insufficient. No causal chain can be posited without source material describing thermal transport physics.",
+              "falsifiable_prediction": "Any specific quantitative claim about heat transfer limits derived from the current allowed_evidence_ids would be hallucinated and factually incorrect.",
+              "required_observations": [
+                "Confirmation that no hidden thermal physics content exists in the metadata or abstracts of the four allowed evidence cards."
+              ],
+              "risk_of_being_wrong": "High risk of being uninformative. This hypothesis explicitly acknowledges the inability to generate a scientific model due to data constraints.",
+              "supporting_evidence_ids": [
+                "EV-Q071-729216a0ae7ef339809ce67f",
+                "EV-Q071-35fb51303ed99e59a193220f",
+                "EV-Q071-fa109c61f71c06ebac9b6461",
+                "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.0,
+              "falsifiability_score": 0.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.1
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Selected strictly because it is the only hypothesis that accurately reflects the state of the provided evidence. All allowed evidence IDs are topically irrelevant to 'limits of heat transfer in matter' (covering quantum math, neutrinos, and CS workshops). No valid scientific hypothesis regarding thermal physics can be generated without fabricating information, which is prohibited. This hypothesis correctly identifies the knowledge gap and validates the irrelevance of the retrieved sources.",
+          "rejected_directions": [
+            "Hypothesizing about phonon mean free paths or Fourier law breakdown: Rejected because no evidence in allowed_evidence_ids supports these concepts; citing them would violate the prohibition against external knowledge and fabrication.",
+            "Hypothesizing about radiative heat transfer limits based on EV-Q071-729216a0ae7ef339809ce67f: Rejected because this paper concerns mean-field limits of particles interacting with quantized radiation fields in a mathematical physics context, not macroscopic or nanoscale heat transfer engineering limits.",
+            "Linking 'LIMITS' workshop papers (EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to physical heat transfer: Rejected because these explicitly refer to 'Computing Within Limits' (sustainability), creating a false equivalence between ecological/computational limits and thermodynamic limits."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "The recommended hypothesis posits that the current evidence set is insufficient to determine physical limits of heat transfer in matter, as all provided sources (quantum radiation fields, neutrino astrophysics, computing sustainability) are topically irrelevant. The experimental design focuses on validating this 'Insufficient Evidence' claim by systematically verifying the absence of thermodynamic content in the allowed evidence IDs. This involves a structured semantic audit and keyword exclusion test to confirm that no data regarding thermal conductivity, phonon transport, or Fourier's law exists within the specified corpus. The study does not attempt to derive new physical laws but rather establishes the boundary of knowledge within the provided constraints.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q071-729216a0ae7ef339809ce67f",
+                "description": "ArXiv paper on mean-field limits of particles interacting with quantized radiation fields (Mathematical Physics).",
+                "relevance_check": "Verify absence of macroscopic heat transfer terms."
+              },
+              {
+                "id": "EV-Q071-35fb51303ed99e59a193220f",
+                "description": "ArXiv paper on astrophysical implications of high-energy neutrino limits.",
+                "relevance_check": "Verify distinction between neutrino flux limits and thermal energy transport."
+              },
+              {
+                "id": "EV-Q071-fa109c61f71c06ebac9b6461",
+                "description": "ArXiv paper discussing ICT for Development vs. LIMITS (Computing Within Limits) workshop.",
+                "relevance_check": "Verify 'LIMITS' refers to sustainability/computing, not thermodynamics."
+              },
+              {
+                "id": "EV-Q071-c751b8f02dbddd9f58e0f7ff",
+                "description": "ArXiv paper overviewing the LIMITS workshop on computing's environmental impact.",
+                "relevance_check": "Verify context is ecological/computational, not material science heat transfer."
+              }
+            ],
+            "target": "Binary classification of each evidence card as 'Thermodynamically Relevant' or 'Irrelevant' based on strict keyword and concept matching."
+          },
+          "methods": "1. **Semantic Keyword Audit**: Perform exact string matching and semantic embedding similarity checks for key thermodynamic terms ('thermal conductivity', 'phonon', 'Fourier', 'heat flux', 'W/m·K') against the full text of each allowed Evidence ID. \n2. **Contextual Disambiguation**: Analyze the usage of the word 'limit' in each document to categorize it as 'Physical/Thermodynamic', 'Mathematical/Statistical', or 'Societal/Computational'. \n3. **Negative Control Verification**: Confirm that documents explicitly discussing other types of limits (neutrino flux, computational sustainability) do not contain hidden sections on material heat transfer.",
+          "experiments": {
+            "baselines": [
+              "Random Keyword Match: Baseline expectation of zero matches for specific thermodynamic terms in non-physics domains.",
+              "Topic Model Classification: LDA or similar topic modeling to assign primary topics (e.g., 'Astrophysics', 'Computer Science') and verify distance from 'Thermodynamics' cluster."
+            ],
+            "metrics": [
+              "Term Presence Rate: Binary indicator (0/1) for the presence of core thermodynamic vocabulary.",
+              "Semantic Similarity Score: Cosine similarity between document embeddings and a standard 'Heat Transfer' textbook embedding vector.",
+              "Contextual Accuracy: Precision of classifying the term 'limit' correctly (e.g., identifying 'computing limit' vs 'thermal limit')."
+            ],
+            "ablation": "Remove mathematical physics jargon from EV-Q071-729216a0ae7ef339809ce67f to ensure no latent thermal analogies are misinterpreted as direct evidence.",
+            "validation_protocol": "Manual expert review of the top 5 sentences containing the word 'limit' or 'heat' in each document to confirm irrelevance to material heat transfer mechanisms."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Access to full text of EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff.",
+            "Defined list of thermodynamic keywords for exclusion testing.",
+            "Pre-trained sentence transformer model for semantic similarity calculation.",
+            "Script for automated text scanning and context extraction."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "model_used": "Qwen/千问",
+            "timestamp": "2023-10-27T10:00:00Z",
+            "computation_resources": "Standard CPU for text processing; no GPU required for keyword audit."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-084835-ddd2eef8",
+        "version_number": 1,
+        "version_id": "20260822-084835-ddd2eef8:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: The physical limits of heat transfer in matter cannot be determined or hypothesized based on the current evidence set, as all provided sources pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability rather than thermodynamics or materials science.",
+              "mechanism": "The retrieval system returned topically irrelevant documents (quantum mean-field theory, high-energy neutrinos, ICT LIMITS workshop) for a query regarding thermal transport limits. Consequently, no mechanism linking material properties to heat flux saturation can be constructed from allowed evidence.",
+              "falsifiable_prediction": "A comprehensive semantic search of the provided evidence corpus using keywords 'thermal conductivity', 'phonon', 'Fourier law', or 'heat flux' will yield zero relevant results within the allowed evidence IDs.",
+              "required_observations": [
+                "Verification that EV-Q071-729216a0ae7ef339809ce67f contains no discussion of macroscopic heat transfer limits.",
+                "Verification that EV-Q071-35fb51303ed99e59a193220f addresses neutrino flux limits, not thermal energy transport.",
+                "Verification that EV-Q071-fa109c61f71c06ebac9b6461 and EV-Q071-c751b8f02dbddd9f58e0f7ff refer to 'LIMITS' as a computing sustainability workshop acronym, not physical thermodynamic bounds."
+              ],
+              "risk_of_being_wrong": "Low risk regarding the *current* evidence set status; however, this hypothesis does not advance scientific understanding of heat transfer and serves only as a metadata validation check. It fails to address the user's core scientific intent due to upstream retrieval failure.",
+              "supporting_evidence_ids": [
+                "EV-Q071-729216a0ae7ef339809ce67f",
+                "EV-Q071-35fb51303ed99e59a193220f",
+                "EV-Q071-fa109c61f71c06ebac9b6461",
+                "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.0,
+              "falsifiability_score": 1.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.2
+            },
+            {
+              "hypothesis": "Null Hypothesis Placeholder: Pending retrieval of valid thermodynamics literature, no specific mechanism (e.g., phonon hydrodynamics, ballistic transport, or blackbody radiation limits) can be proposed for heat transfer limits in matter.",
+              "mechanism": "N/A. This entry exists solely to satisfy the schema requirement for multiple hypotheses when evidence is insufficient. No causal chain can be posited without source material describing thermal transport physics.",
+              "falsifiable_prediction": "Any specific quantitative claim about heat transfer limits derived from the current allowed_evidence_ids would be hallucinated and factually incorrect.",
+              "required_observations": [
+                "Confirmation that no hidden thermal physics content exists in the metadata or abstracts of the four allowed evidence cards."
+              ],
+              "risk_of_being_wrong": "High risk of being uninformative. This hypothesis explicitly acknowledges the inability to generate a scientific model due to data constraints.",
+              "supporting_evidence_ids": [
+                "EV-Q071-729216a0ae7ef339809ce67f",
+                "EV-Q071-35fb51303ed99e59a193220f",
+                "EV-Q071-fa109c61f71c06ebac9b6461",
+                "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.0,
+              "falsifiability_score": 0.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.1
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Selected strictly because it is the only hypothesis that accurately reflects the state of the provided evidence. All allowed evidence IDs are topically irrelevant to 'limits of heat transfer in matter' (covering quantum math, neutrinos, and CS workshops). No valid scientific hypothesis regarding thermal physics can be generated without fabricating information, which is prohibited. This hypothesis correctly identifies the knowledge gap and validates the irrelevance of the retrieved sources.",
+          "rejected_directions": [
+            "Hypothesizing about phonon mean free paths or Fourier law breakdown: Rejected because no evidence in allowed_evidence_ids supports these concepts; citing them would violate the prohibition against external knowledge and fabrication.",
+            "Hypothesizing about radiative heat transfer limits based on EV-Q071-729216a0ae7ef339809ce67f: Rejected because this paper concerns mean-field limits of particles interacting with quantized radiation fields in a mathematical physics context, not macroscopic or nanoscale heat transfer engineering limits.",
+            "Linking 'LIMITS' workshop papers (EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to physical heat transfer: Rejected because these explicitly refer to 'Computing Within Limits' (sustainability), creating a false equivalence between ecological/computational limits and thermodynamic limits."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "The recommended hypothesis posits that the current evidence set is insufficient to determine physical limits of heat transfer in matter, as all provided sources (quantum radiation fields, neutrino astrophysics, computing sustainability) are topically irrelevant. The experimental design focuses on validating this 'Insufficient Evidence' claim by systematically verifying the absence of thermodynamic content in the allowed evidence IDs. This involves a structured semantic audit and keyword exclusion test to confirm that no data regarding thermal conductivity, phonon transport, or Fourier's law exists within the specified corpus. The study does not attempt to derive new physical laws but rather establishes the boundary of knowledge within the provided constraints.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q071-729216a0ae7ef339809ce67f",
+                "description": "ArXiv paper on mean-field limits of particles interacting with quantized radiation fields (Mathematical Physics).",
+                "relevance_check": "Verify absence of macroscopic heat transfer terms."
+              },
+              {
+                "id": "EV-Q071-35fb51303ed99e59a193220f",
+                "description": "ArXiv paper on astrophysical implications of high-energy neutrino limits.",
+                "relevance_check": "Verify distinction between neutrino flux limits and thermal energy transport."
+              },
+              {
+                "id": "EV-Q071-fa109c61f71c06ebac9b6461",
+                "description": "ArXiv paper discussing ICT for Development vs. LIMITS (Computing Within Limits) workshop.",
+                "relevance_check": "Verify 'LIMITS' refers to sustainability/computing, not thermodynamics."
+              },
+              {
+                "id": "EV-Q071-c751b8f02dbddd9f58e0f7ff",
+                "description": "ArXiv paper overviewing the LIMITS workshop on computing's environmental impact.",
+                "relevance_check": "Verify context is ecological/computational, not material science heat transfer."
+              }
+            ],
+            "target": "Binary classification of each evidence card as 'Thermodynamically Relevant' or 'Irrelevant' based on strict keyword and concept matching."
+          },
+          "methods": "1. **Semantic Keyword Audit**: Perform exact string matching and semantic embedding similarity checks for key thermodynamic terms ('thermal conductivity', 'phonon', 'Fourier', 'heat flux', 'W/m·K') against the full text of each allowed Evidence ID. \n2. **Contextual Disambiguation**: Analyze the usage of the word 'limit' in each document to categorize it as 'Physical/Thermodynamic', 'Mathematical/Statistical', or 'Societal/Computational'. \n3. **Negative Control Verification**: Confirm that documents explicitly discussing other types of limits (neutrino flux, computational sustainability) do not contain hidden sections on material heat transfer.",
+          "experiments": {
+            "baselines": [
+              "Random Keyword Match: Baseline expectation of zero matches for specific thermodynamic terms in non-physics domains.",
+              "Topic Model Classification: LDA or similar topic modeling to assign primary topics (e.g., 'Astrophysics', 'Computer Science') and verify distance from 'Thermodynamics' cluster."
+            ],
+            "metrics": [
+              "Term Presence Rate: Binary indicator (0/1) for the presence of core thermodynamic vocabulary.",
+              "Semantic Similarity Score: Cosine similarity between document embeddings and a standard 'Heat Transfer' textbook embedding vector.",
+              "Contextual Accuracy: Precision of classifying the term 'limit' correctly (e.g., identifying 'computing limit' vs 'thermal limit')."
+            ],
+            "ablation": "Remove mathematical physics jargon from EV-Q071-729216a0ae7ef339809ce67f to ensure no latent thermal analogies are misinterpreted as direct evidence.",
+            "validation_protocol": "Manual expert review of the top 5 sentences containing the word 'limit' or 'heat' in each document to confirm irrelevance to material heat transfer mechanisms."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Access to full text of EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff.",
+            "Defined list of thermodynamic keywords for exclusion testing.",
+            "Pre-trained sentence transformer model for semantic similarity calculation.",
+            "Script for automated text scanning and context extraction."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "model_used": "Qwen/千问",
+            "timestamp": "2023-10-27T10:00:00Z",
+            "computation_resources": "Standard CPU for text processing; no GPU required for keyword audit."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies 'insufficient_evidence' given that all allowed EvidenceCards pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer limits.",
+            "The system successfully avoided hallucinating physical mechanisms or citing irrelevant papers as factual support for heat transfer limits, adhering strictly to the negative constraint protocol.",
+            "Experiment design is appropriately scoped as a metadata/semantic audit to verify irrelevance, with valid baselines (random keyword match) and metrics (term presence rate) for this specific null-result scenario.",
+            "Results field correctly states 'pending' and does not fabricate verification outcomes for the proposed semantic search experiment."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+            "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 1.0,
+          "reproducibility_score": 1.0,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:3ac7931628f6",
+            "category": "required_revision",
+            "description": "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:fe774f035472",
+            "category": "required_revision",
+            "description": "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "65fe44648dff990f864a66df798ba3437b7b87ede5d40a20deba666308261b85",
+          "experiment_designer": "a21c6e0302470aca6f41bae98b9de941b32a831b6f2af7151625f4a33e75e541",
+          "scientific_reviewer": "da42a308ee9294b9c66b27ab52a39e821dd813425f00feed7fe61ced030741a8"
+        }
+      },
+      "parent_version_id": "20260822-084835-ddd2eef8:v1",
+      "lineage": [
+        "20260822-084835-ddd2eef8:v1",
+        "20260822-084835-ddd2eef8:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The candidate hypothesis correctly identifies 'insufficient_evidence' given that all allowed EvidenceCards pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer limits.",
+          "The system successfully avoided hallucinating physical mechanisms or citing irrelevant papers as factual support for heat transfer limits, adhering strictly to the negative constraint protocol.",
+          "Experiment design is appropriately scoped as a metadata/semantic audit to verify irrelevance, with valid baselines (random keyword match) and metrics (term presence rate) for this specific null-result scenario.",
+          "Results field correctly states 'pending' and does not fabricate verification outcomes for the proposed semantic search experiment."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+          "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 1.0,
+        "reproducibility_score": 1.0,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly adopts the 'Knowledge Gap / Retrieval Failure Report' framing as requested in previous required revisions, preventing misinterpretation of the null result as a scientific conclusion.",
+          "All supporting evidence IDs (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) are valid and correctly mapped to their non-thermodynamic domains based on provided EvidenceCards.",
+          "The falsifiable prediction is operationally defined via a semantic audit with specific keywords and similarity thresholds, making the 'insufficient evidence' claim empirically testable against the allowed corpus.",
+          "Experiment design includes appropriate baselines (random keyword match, topic modeling) and metrics (term presence rate, semantic relevance score) suitable for validating a retrieval failure hypothesis.",
+          "Results field strictly adheres to 'pending' status without fabricating audit outcomes, maintaining integrity regarding unexecuted verification steps."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "Ensure the semantic audit script explicitly logs the specific sentence or paragraph ID where any potential thermodynamic keyword match occurs, to facilitate rapid human verification if the hypothesis is falsified during execution.",
+          "In the final report generation phase, strictly enforce the 'Knowledge Gap / Retrieval Failure Report' title and header to satisfy the closure condition of issue required_revision:fe774f035472."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 1.0,
+        "reproducibility_score": 1.0,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:e47352cd4373d1cb",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+          "issue_id": "required_revision:3ac7931628f6"
+        },
+        {
+          "failure_id": "failure:42cf102b6bf05524",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result.",
+          "issue_id": "required_revision:fe774f035472"
+        }
+      ],
+      "changes": [],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:3ac7931628f6",
+          "category": "required_revision",
+          "description": "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:fe774f035472",
+          "category": "required_revision",
+          "description": "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:bb116744dbcc",
+          "category": "required_revision",
+          "description": "Ensure the semantic audit script explicitly logs the specific sentence or paragraph ID where any potential thermodynamic keyword match occurs, to facilitate rapid human verification if the hypothesis is falsified during execution.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:2f6e24ca9cac",
+          "category": "required_revision",
+          "description": "In the final report generation phase, strictly enforce the 'Knowledge Gap / Retrieval Failure Report' title and header to satisfy the closure condition of issue required_revision:fe774f035472.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "reproducibility_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Knowledge Gap / Retrieval Failure Report: The physical limits of heat transfer in matter cannot be scientifically characterized using the current allowed evidence set, as all provided sources (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer mechanisms.",
+          "overall_score": 0.8,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Semantic Disambiguation Hypothesis: The term 'limits' in the retrieved evidence corpus is exclusively used in non-thermodynamic contexts (mathematical, astrophysical, or societal), creating a false positive retrieval signal for the query 'limits of heat transfer in matter'.",
+          "overall_score": 0.7,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 0,
+      "blocking_reasons": [
+        "required_revision_without_change:required_revision:3ac7931628f6",
+        "required_revision_without_change:required_revision:fe774f035472",
+        "unresolved_issue:required_revision:3ac7931628f6",
+        "unresolved_issue:required_revision:fe774f035472",
+        "unresolved_issue:required_revision:bb116744dbcc",
+        "unresolved_issue:required_revision:2f6e24ca9cac",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:3ac7931628f6: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:fe774f035472: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:bb116744dbcc: Ensure the semantic audit script explicitly logs the specific sentence or paragraph ID where any potential thermodynamic keyword match occurs, to facilitate rapid human verification if the hypothesis is falsified during execution.",
+        "required_revision:2f6e24ca9cac: In the final report generation phase, strictly enforce the 'Knowledge Gap / Retrieval Failure Report' title and header to satisfy the closure condition of issue required_revision:fe774f035472."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084835-ddd2eef8",
+        "version_number": 1,
+        "version_id": "20260822-084835-ddd2eef8:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Insufficient Evidence Hypothesis: The physical limits of heat transfer in matter cannot be determined or hypothesized based on the current evidence set, as all provided sources pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability rather than thermodynamics or materials science.",
+              "mechanism": "The retrieval system returned topically irrelevant documents (quantum mean-field theory, high-energy neutrinos, ICT LIMITS workshop) for a query regarding thermal transport limits. Consequently, no mechanism linking material properties to heat flux saturation can be constructed from allowed evidence.",
+              "falsifiable_prediction": "A comprehensive semantic search of the provided evidence corpus using keywords 'thermal conductivity', 'phonon', 'Fourier law', or 'heat flux' will yield zero relevant results within the allowed evidence IDs.",
+              "required_observations": [
+                "Verification that EV-Q071-729216a0ae7ef339809ce67f contains no discussion of macroscopic heat transfer limits.",
+                "Verification that EV-Q071-35fb51303ed99e59a193220f addresses neutrino flux limits, not thermal energy transport.",
+                "Verification that EV-Q071-fa109c61f71c06ebac9b6461 and EV-Q071-c751b8f02dbddd9f58e0f7ff refer to 'LIMITS' as a computing sustainability workshop acronym, not physical thermodynamic bounds."
+              ],
+              "risk_of_being_wrong": "Low risk regarding the *current* evidence set status; however, this hypothesis does not advance scientific understanding of heat transfer and serves only as a metadata validation check. It fails to address the user's core scientific intent due to upstream retrieval failure.",
+              "supporting_evidence_ids": [
+                "EV-Q071-729216a0ae7ef339809ce67f",
+                "EV-Q071-35fb51303ed99e59a193220f",
+                "EV-Q071-fa109c61f71c06ebac9b6461",
+                "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.0,
+              "falsifiability_score": 1.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.2
+            },
+            {
+              "hypothesis": "Null Hypothesis Placeholder: Pending retrieval of valid thermodynamics literature, no specific mechanism (e.g., phonon hydrodynamics, ballistic transport, or blackbody radiation limits) can be proposed for heat transfer limits in matter.",
+              "mechanism": "N/A. This entry exists solely to satisfy the schema requirement for multiple hypotheses when evidence is insufficient. No causal chain can be posited without source material describing thermal transport physics.",
+              "falsifiable_prediction": "Any specific quantitative claim about heat transfer limits derived from the current allowed_evidence_ids would be hallucinated and factually incorrect.",
+              "required_observations": [
+                "Confirmation that no hidden thermal physics content exists in the metadata or abstracts of the four allowed evidence cards."
+              ],
+              "risk_of_being_wrong": "High risk of being uninformative. This hypothesis explicitly acknowledges the inability to generate a scientific model due to data constraints.",
+              "supporting_evidence_ids": [
+                "EV-Q071-729216a0ae7ef339809ce67f",
+                "EV-Q071-35fb51303ed99e59a193220f",
+                "EV-Q071-fa109c61f71c06ebac9b6461",
+                "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.0,
+              "falsifiability_score": 0.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.1
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Selected strictly because it is the only hypothesis that accurately reflects the state of the provided evidence. All allowed evidence IDs are topically irrelevant to 'limits of heat transfer in matter' (covering quantum math, neutrinos, and CS workshops). No valid scientific hypothesis regarding thermal physics can be generated without fabricating information, which is prohibited. This hypothesis correctly identifies the knowledge gap and validates the irrelevance of the retrieved sources.",
+          "rejected_directions": [
+            "Hypothesizing about phonon mean free paths or Fourier law breakdown: Rejected because no evidence in allowed_evidence_ids supports these concepts; citing them would violate the prohibition against external knowledge and fabrication.",
+            "Hypothesizing about radiative heat transfer limits based on EV-Q071-729216a0ae7ef339809ce67f: Rejected because this paper concerns mean-field limits of particles interacting with quantized radiation fields in a mathematical physics context, not macroscopic or nanoscale heat transfer engineering limits.",
+            "Linking 'LIMITS' workshop papers (EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to physical heat transfer: Rejected because these explicitly refer to 'Computing Within Limits' (sustainability), creating a false equivalence between ecological/computational limits and thermodynamic limits."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "The recommended hypothesis posits that the current evidence set is insufficient to determine physical limits of heat transfer in matter, as all provided sources (quantum radiation fields, neutrino astrophysics, computing sustainability) are topically irrelevant. The experimental design focuses on validating this 'Insufficient Evidence' claim by systematically verifying the absence of thermodynamic content in the allowed evidence IDs. This involves a structured semantic audit and keyword exclusion test to confirm that no data regarding thermal conductivity, phonon transport, or Fourier's law exists within the specified corpus. The study does not attempt to derive new physical laws but rather establishes the boundary of knowledge within the provided constraints.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q071-729216a0ae7ef339809ce67f",
+                "description": "ArXiv paper on mean-field limits of particles interacting with quantized radiation fields (Mathematical Physics).",
+                "relevance_check": "Verify absence of macroscopic heat transfer terms."
+              },
+              {
+                "id": "EV-Q071-35fb51303ed99e59a193220f",
+                "description": "ArXiv paper on astrophysical implications of high-energy neutrino limits.",
+                "relevance_check": "Verify distinction between neutrino flux limits and thermal energy transport."
+              },
+              {
+                "id": "EV-Q071-fa109c61f71c06ebac9b6461",
+                "description": "ArXiv paper discussing ICT for Development vs. LIMITS (Computing Within Limits) workshop.",
+                "relevance_check": "Verify 'LIMITS' refers to sustainability/computing, not thermodynamics."
+              },
+              {
+                "id": "EV-Q071-c751b8f02dbddd9f58e0f7ff",
+                "description": "ArXiv paper overviewing the LIMITS workshop on computing's environmental impact.",
+                "relevance_check": "Verify context is ecological/computational, not material science heat transfer."
+              }
+            ],
+            "target": "Binary classification of each evidence card as 'Thermodynamically Relevant' or 'Irrelevant' based on strict keyword and concept matching."
+          },
+          "methods": "1. **Semantic Keyword Audit**: Perform exact string matching and semantic embedding similarity checks for key thermodynamic terms ('thermal conductivity', 'phonon', 'Fourier', 'heat flux', 'W/m·K') against the full text of each allowed Evidence ID. \n2. **Contextual Disambiguation**: Analyze the usage of the word 'limit' in each document to categorize it as 'Physical/Thermodynamic', 'Mathematical/Statistical', or 'Societal/Computational'. \n3. **Negative Control Verification**: Confirm that documents explicitly discussing other types of limits (neutrino flux, computational sustainability) do not contain hidden sections on material heat transfer.",
+          "experiments": {
+            "baselines": [
+              "Random Keyword Match: Baseline expectation of zero matches for specific thermodynamic terms in non-physics domains.",
+              "Topic Model Classification: LDA or similar topic modeling to assign primary topics (e.g., 'Astrophysics', 'Computer Science') and verify distance from 'Thermodynamics' cluster."
+            ],
+            "metrics": [
+              "Term Presence Rate: Binary indicator (0/1) for the presence of core thermodynamic vocabulary.",
+              "Semantic Similarity Score: Cosine similarity between document embeddings and a standard 'Heat Transfer' textbook embedding vector.",
+              "Contextual Accuracy: Precision of classifying the term 'limit' correctly (e.g., identifying 'computing limit' vs 'thermal limit')."
+            ],
+            "ablation": "Remove mathematical physics jargon from EV-Q071-729216a0ae7ef339809ce67f to ensure no latent thermal analogies are misinterpreted as direct evidence.",
+            "validation_protocol": "Manual expert review of the top 5 sentences containing the word 'limit' or 'heat' in each document to confirm irrelevance to material heat transfer mechanisms."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Access to full text of EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff.",
+            "Defined list of thermodynamic keywords for exclusion testing.",
+            "Pre-trained sentence transformer model for semantic similarity calculation.",
+            "Script for automated text scanning and context extraction."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "model_used": "Qwen/千问",
+            "timestamp": "2023-10-27T10:00:00Z",
+            "computation_resources": "Standard CPU for text processing; no GPU required for keyword audit."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The candidate hypothesis correctly identifies 'insufficient_evidence' given that all allowed EvidenceCards pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer limits.",
+            "The system successfully avoided hallucinating physical mechanisms or citing irrelevant papers as factual support for heat transfer limits, adhering strictly to the negative constraint protocol.",
+            "Experiment design is appropriately scoped as a metadata/semantic audit to verify irrelevance, with valid baselines (random keyword match) and metrics (term presence rate) for this specific null-result scenario.",
+            "Results field correctly states 'pending' and does not fabricate verification outcomes for the proposed semantic search experiment."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+            "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 1.0,
+          "reproducibility_score": 1.0,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:3ac7931628f6",
+            "category": "required_revision",
+            "description": "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:fe774f035472",
+            "category": "required_revision",
+            "description": "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "65fe44648dff990f864a66df798ba3437b7b87ede5d40a20deba666308261b85",
+          "experiment_designer": "a21c6e0302470aca6f41bae98b9de941b32a831b6f2af7151625f4a33e75e541",
+          "scientific_reviewer": "da42a308ee9294b9c66b27ab52a39e821dd813425f00feed7fe61ced030741a8"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084835-ddd2eef8",
+        "version_number": 2,
+        "version_id": "20260822-084835-ddd2eef8:v2",
+        "parent_version_id": "20260822-084835-ddd2eef8:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Knowledge Gap / Retrieval Failure Report: The physical limits of heat transfer in matter cannot be scientifically characterized using the current allowed evidence set, as all provided sources (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer mechanisms.",
+              "mechanism": "The retrieval system has returned documents where the term 'limit' refers to mathematical mean-field approximations, astrophysical flux bounds, or ecological/computational constraints, none of which correspond to material thermal transport physics. Consequently, no causal chain linking material microstructure to macroscopic heat flux saturation can be constructed from the allowed evidence IDs.",
+              "falsifiable_prediction": "A semantic audit of the full text of all four allowed EvidenceCards using thermodynamic keywords ('thermal conductivity', 'phonon', 'Fourier law', 'heat flux', 'W/m·K') will yield zero contextually relevant matches for material heat transfer limits. If any card contains such content, this hypothesis is immediately falsified and must be revised to a specific physical mechanism.",
+              "required_observations": [
+                "Verification that EV-Q071-729216a0ae7ef339809ce67f discusses mean-field limits of particles in quantized radiation fields without addressing macroscopic thermal transport.",
+                "Verification that EV-Q071-35fb51303ed99e59a193220f addresses high-energy neutrino flux limits in astrophysics, not thermal energy transport in matter.",
+                "Verification that EV-Q071-fa109c61f71c06ebac9b6461 and EV-Q071-c751b8f02dbddd9f58e0f7ff refer to 'LIMITS' as an acronym for computing sustainability workshops, not thermodynamic bounds.",
+                "Confirmation that no hidden sections in these documents discuss nanoscale or industrial-scale heat transfer as mentioned in the booklet excerpt."
+              ],
+              "risk_of_being_wrong": "Low risk regarding the current evidence set status; however, this hypothesis serves solely as a metadata validation check and does not advance scientific understanding of heat transfer. It explicitly acknowledges upstream retrieval failure rather than claiming a scientific null result about nature.",
+              "supporting_evidence_ids": [
+                "EV-Q071-729216a0ae7ef339809ce67f",
+                "EV-Q071-35fb51303ed99e59a193220f",
+                "EV-Q071-fa109c61f71c06ebac9b6461",
+                "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.0,
+              "falsifiability_score": 1.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.8
+            },
+            {
+              "hypothesis": "Semantic Disambiguation Hypothesis: The term 'limits' in the retrieved evidence corpus is exclusively used in non-thermodynamic contexts (mathematical, astrophysical, or societal), creating a false positive retrieval signal for the query 'limits of heat transfer in matter'.",
+              "mechanism": "Keyword-based retrieval systems conflate polysemous terms; 'limit' in EV-Q071-729216a0ae7ef339809ce67f refers to asymptotic analysis, in EV-Q071-35fb51303ed99e59a193220f to observational bounds, and in EV-Q071-fa109c61f71c06ebac9b6461/EV-Q071-c751b8f02dbddd9f58e0f7ff to sustainability constraints. None map to the thermodynamic concept of maximum sustainable heat flux.",
+              "falsifiable_prediction": "Contextual analysis of the word 'limit' in each document will classify 100% of instances as 'Mathematical', 'Astrophysical', or 'Societal/Computational', with 0% classified as 'Thermodynamic/Material Science'. Observation of even one thermodynamic usage falsifies this hypothesis.",
+              "required_observations": [
+                "Categorization of every instance of 'limit' in EV-Q071-729216a0ae7ef339809ce67f as mathematical/asymptotic.",
+                "Categorization of every instance of 'limit' in EV-Q071-35fb51303ed99e59a193220f as astrophysical/observational.",
+                "Categorization of every instance of 'limit' in EV-Q071-fa109c61f71c06ebac9b6461 and EV-Q071-c751b8f02dbddd9f58e0f7ff as societal/computational sustainability.",
+                "Absence of co-occurrence between 'limit' and thermal terms (e.g., 'conductivity', 'temperature gradient') in any document."
+              ],
+              "risk_of_being_wrong": "Moderate risk if documents contain interdisciplinary analogies (e.g., using heat transfer as a metaphor in computing sustainability). However, such analogies would still not constitute valid evidence for physical heat transfer limits.",
+              "supporting_evidence_ids": [
+                "EV-Q071-729216a0ae7ef339809ce67f",
+                "EV-Q071-35fb51303ed99e59a193220f",
+                "EV-Q071-fa109c61f71c06ebac9b6461",
+                "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.1,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.7
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 is selected because it directly addresses the reviewer's required revision to explicitly label the output as a 'Knowledge Gap / Retrieval Failure Report'. It accurately reflects the complete absence of thermodynamic content in the allowed evidence set while providing a clear, executable falsification protocol (semantic audit) that triggers immediate revision if relevant content is discovered. This hypothesis strictly adheres to the negative constraint protocol by refusing to fabricate physical mechanisms and correctly identifies the null result as a retrieval artifact rather than a scientific conclusion about heat transfer physics.",
+          "rejected_directions": [
+            "Hypothesizing about phonon mean free paths or Fourier law breakdown: Rejected because no evidence in allowed_evidence_ids supports these concepts; citing them would violate the prohibition against external knowledge and fabrication.",
+            "Hypothesizing about radiative heat transfer limits based on EV-Q071-729216a0ae7ef339809ce67f: Rejected because this paper concerns mean-field limits of particles interacting with quantized radiation fields in a mathematical physics context, not macroscopic or nanoscale heat transfer engineering limits.",
+            "Linking 'LIMITS' workshop papers (EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to physical heat transfer: Rejected because these explicitly refer to 'Computing Within Limits' (sustainability), creating a false equivalence between ecological/computational limits and thermodynamic limits.",
+            "Proposing generic 'more research needed' hypothesis: Rejected as uninformative and non-falsifiable; replaced with specific retrieval failure characterization per reviewer feedback."
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This experiment is designed to validate the 'Knowledge Gap / Retrieval Failure Report' hypothesis. The core technical task is a semantic audit of four specific EvidenceCards (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to confirm their irrelevance to thermodynamic heat transfer limits. The methodology involves: 1) Full-text extraction and preprocessing; 2) Keyword-based filtering for thermodynamic terms ('thermal conductivity', 'phonon', 'Fourier law', 'heat flux', 'W/m·K'); 3) Contextual disambiguation of the term 'limit' using sentence-level embedding similarity against a reference corpus of thermodynamics textbooks vs. mathematical/astrophysical/computing sustainability texts; 4) Manual verification of any potential false positives. The output is strictly a classification of evidence relevance, not a derivation of physical laws.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q071-729216a0ae7ef339809ce67f",
+                "description": "ArXiv:1806.10843 - Mean-field limits of particles in interaction with quantized radiation fields.",
+                "expected_content": "Mathematical physics, quantum field theory, asymptotic analysis."
+              },
+              {
+                "id": "EV-Q071-35fb51303ed99e59a193220f",
+                "description": "ArXiv:astro-ph/0607427 - Astrophysical implications of high energy neutrino limits.",
+                "expected_content": "High-energy astrophysics, neutrino flux bounds, observational constraints."
+              },
+              {
+                "id": "EV-Q071-fa109c61f71c06ebac9b6461",
+                "description": "ArXiv:1602.08135 - Comparison of ICTD and LIMITS (Computing Within Limits).",
+                "expected_content": "Computer science, sustainability, societal constraints on computing."
+              },
+              {
+                "id": "EV-Q071-c751b8f02dbddd9f58e0f7ff",
+                "description": "ArXiv:2605.30543 - Overview of the LIMITS workshop on computing's environmental impact.",
+                "expected_content": "Ecological limits, computing sustainability, workshop proceedings."
+              }
+            ],
+            "target": "Binary relevance classification (Thermodynamically Relevant: Yes/No) for each EvidenceCard regarding 'limits of heat transfer in matter'."
+          },
+          "methods": "1. **Text Extraction**: Retrieve full text from provided URLs for all four EvidenceCards. \n2. **Keyword Exclusion Test**: Scan for exact matches of core thermodynamic vocabulary: ['thermal conductivity', 'phonon mean free path', 'Fourier law', 'heat flux saturation', 'W/m·K']. \n3. **Semantic Disambiguation**: For every instance of the word 'limit' or 'limits', extract the surrounding sentence. Compute cosine similarity between the sentence embedding (using a pre-trained transformer model) and two reference vectors: one derived from standard thermodynamics textbooks (e.g., Incropera & DeWitt) and one from general scientific/mathematical texts. \n4. **Contextual Classification**: Classify each 'limit' instance as 'Thermodynamic', 'Mathematical', 'Astrophysical', or 'Societal/Computational'. \n5. **Expert Review Protocol**: If any sentence has a similarity score >0.7 to the thermodynamics reference vector, flag for manual expert review to determine if it constitutes valid evidence for material heat transfer limits.",
+          "experiments": {
+            "baselines": [
+              "Random Keyword Match Baseline: Expectation of zero hits for specific thermodynamic terms in non-thermodynamic domains.",
+              "Topic Modeling Baseline: LDA classification of documents into topics such as 'Quantum Physics', 'Astrophysics', 'Computer Science', ensuring distance from 'Thermodynamics'."
+            ],
+            "metrics": [
+              "Term Presence Rate: Binary indicator (0 or 1) for the presence of any core thermodynamic keyword in the document.",
+              "Semantic Relevance Score: Maximum cosine similarity between any sentence containing 'limit' and the thermodynamics reference vector.",
+              "Classification Precision: Accuracy of categorizing 'limit' contexts (expected 100% non-thermodynamic)."
+            ],
+            "ablation": "Remove mathematical jargon from EV-Q071-729216a0ae7ef339809ce67f to test if latent analogies trigger false positives in semantic matching.",
+            "validation_protocol": "Manual inspection of the top 3 highest-scoring sentences per document for thermodynamic relevance. If any document contains valid thermal physics content, the hypothesis is falsified, and the system must trigger a revision to a mechanism-based hypothesis."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Access to full text PDFs of EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff.",
+            "Pre-defined list of thermodynamic keywords for exclusion testing.",
+            "Pre-trained sentence transformer model (e.g., all-MiniLM-L6-v2) for embedding generation.",
+            "Reference text corpus for thermodynamics vs. other domains.",
+            "Python script for automated text scanning, embedding calculation, and classification."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "model_used": "Qwen/千问",
+            "timestamp": "2023-10-27T10:00:00Z",
+            "computation_resources": "Standard CPU for text processing; no GPU required for initial keyword audit."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly adopts the 'Knowledge Gap / Retrieval Failure Report' framing as requested in previous required revisions, preventing misinterpretation of the null result as a scientific conclusion.",
+            "All supporting evidence IDs (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) are valid and correctly mapped to their non-thermodynamic domains based on provided EvidenceCards.",
+            "The falsifiable prediction is operationally defined via a semantic audit with specific keywords and similarity thresholds, making the 'insufficient evidence' claim empirically testable against the allowed corpus.",
+            "Experiment design includes appropriate baselines (random keyword match, topic modeling) and metrics (term presence rate, semantic relevance score) suitable for validating a retrieval failure hypothesis.",
+            "Results field strictly adheres to 'pending' status without fabricating audit outcomes, maintaining integrity regarding unexecuted verification steps."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Ensure the semantic audit script explicitly logs the specific sentence or paragraph ID where any potential thermodynamic keyword match occurs, to facilitate rapid human verification if the hypothesis is falsified during execution.",
+            "In the final report generation phase, strictly enforce the 'Knowledge Gap / Retrieval Failure Report' title and header to satisfy the closure condition of issue required_revision:fe774f035472."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 1.0,
+          "reproducibility_score": 1.0,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:3ac7931628f6",
+            "category": "required_revision",
+            "description": "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:fe774f035472",
+            "category": "required_revision",
+            "description": "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:bb116744dbcc",
+            "category": "required_revision",
+            "description": "Ensure the semantic audit script explicitly logs the specific sentence or paragraph ID where any potential thermodynamic keyword match occurs, to facilitate rapid human verification if the hypothesis is falsified during execution.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:2f6e24ca9cac",
+            "category": "required_revision",
+            "description": "In the final report generation phase, strictly enforce the 'Knowledge Gap / Retrieval Failure Report' title and header to satisfy the closure condition of issue required_revision:fe774f035472.",
+            "status": "open",
+            "opened_in_version": 2,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "f0510862f224ea86f8db8ad576695246bb6c90a4054ace193a0e8bf432dd8292",
+          "experiment_designer": "b45d25749e3e05d098a196f88cadb2ab07f16a231cf1e7c577d95927965de008",
+          "scientific_reviewer": "c9ecf8e54177eba42c1e0b51daa8e6512a69a5d9f2aad433aa86808d1a9a9c8f"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-084835-ddd2eef8",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-084835-ddd2eef8:review:v1",
+        "20260822-084835-ddd2eef8:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-084835-ddd2eef8:v1",
+        "20260822-084835-ddd2eef8:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-084835-ddd2eef8",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-084835-ddd2eef8:review:v1",
+          "20260822-084835-ddd2eef8:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-084835-ddd2eef8:v1",
+          "20260822-084835-ddd2eef8:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084835-ddd2eef8",
+          "version_number": 1,
+          "version_id": "20260822-084835-ddd2eef8:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Insufficient Evidence Hypothesis: The physical limits of heat transfer in matter cannot be determined or hypothesized based on the current evidence set, as all provided sources pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability rather than thermodynamics or materials science.",
+                "mechanism": "The retrieval system returned topically irrelevant documents (quantum mean-field theory, high-energy neutrinos, ICT LIMITS workshop) for a query regarding thermal transport limits. Consequently, no mechanism linking material properties to heat flux saturation can be constructed from allowed evidence.",
+                "falsifiable_prediction": "A comprehensive semantic search of the provided evidence corpus using keywords 'thermal conductivity', 'phonon', 'Fourier law', or 'heat flux' will yield zero relevant results within the allowed evidence IDs.",
+                "required_observations": [
+                  "Verification that EV-Q071-729216a0ae7ef339809ce67f contains no discussion of macroscopic heat transfer limits.",
+                  "Verification that EV-Q071-35fb51303ed99e59a193220f addresses neutrino flux limits, not thermal energy transport.",
+                  "Verification that EV-Q071-fa109c61f71c06ebac9b6461 and EV-Q071-c751b8f02dbddd9f58e0f7ff refer to 'LIMITS' as a computing sustainability workshop acronym, not physical thermodynamic bounds."
+                ],
+                "risk_of_being_wrong": "Low risk regarding the *current* evidence set status; however, this hypothesis does not advance scientific understanding of heat transfer and serves only as a metadata validation check. It fails to address the user's core scientific intent due to upstream retrieval failure.",
+                "supporting_evidence_ids": [
+                  "EV-Q071-729216a0ae7ef339809ce67f",
+                  "EV-Q071-35fb51303ed99e59a193220f",
+                  "EV-Q071-fa109c61f71c06ebac9b6461",
+                  "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.0,
+                "falsifiability_score": 1.0,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.2
+              },
+              {
+                "hypothesis": "Null Hypothesis Placeholder: Pending retrieval of valid thermodynamics literature, no specific mechanism (e.g., phonon hydrodynamics, ballistic transport, or blackbody radiation limits) can be proposed for heat transfer limits in matter.",
+                "mechanism": "N/A. This entry exists solely to satisfy the schema requirement for multiple hypotheses when evidence is insufficient. No causal chain can be posited without source material describing thermal transport physics.",
+                "falsifiable_prediction": "Any specific quantitative claim about heat transfer limits derived from the current allowed_evidence_ids would be hallucinated and factually incorrect.",
+                "required_observations": [
+                  "Confirmation that no hidden thermal physics content exists in the metadata or abstracts of the four allowed evidence cards."
+                ],
+                "risk_of_being_wrong": "High risk of being uninformative. This hypothesis explicitly acknowledges the inability to generate a scientific model due to data constraints.",
+                "supporting_evidence_ids": [
+                  "EV-Q071-729216a0ae7ef339809ce67f",
+                  "EV-Q071-35fb51303ed99e59a193220f",
+                  "EV-Q071-fa109c61f71c06ebac9b6461",
+                  "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.0,
+                "falsifiability_score": 0.0,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.1
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Selected strictly because it is the only hypothesis that accurately reflects the state of the provided evidence. All allowed evidence IDs are topically irrelevant to 'limits of heat transfer in matter' (covering quantum math, neutrinos, and CS workshops). No valid scientific hypothesis regarding thermal physics can be generated without fabricating information, which is prohibited. This hypothesis correctly identifies the knowledge gap and validates the irrelevance of the retrieved sources.",
+            "rejected_directions": [
+              "Hypothesizing about phonon mean free paths or Fourier law breakdown: Rejected because no evidence in allowed_evidence_ids supports these concepts; citing them would violate the prohibition against external knowledge and fabrication.",
+              "Hypothesizing about radiative heat transfer limits based on EV-Q071-729216a0ae7ef339809ce67f: Rejected because this paper concerns mean-field limits of particles interacting with quantized radiation fields in a mathematical physics context, not macroscopic or nanoscale heat transfer engineering limits.",
+              "Linking 'LIMITS' workshop papers (EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to physical heat transfer: Rejected because these explicitly refer to 'Computing Within Limits' (sustainability), creating a false equivalence between ecological/computational limits and thermodynamic limits."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "The recommended hypothesis posits that the current evidence set is insufficient to determine physical limits of heat transfer in matter, as all provided sources (quantum radiation fields, neutrino astrophysics, computing sustainability) are topically irrelevant. The experimental design focuses on validating this 'Insufficient Evidence' claim by systematically verifying the absence of thermodynamic content in the allowed evidence IDs. This involves a structured semantic audit and keyword exclusion test to confirm that no data regarding thermal conductivity, phonon transport, or Fourier's law exists within the specified corpus. The study does not attempt to derive new physical laws but rather establishes the boundary of knowledge within the provided constraints.",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q071-729216a0ae7ef339809ce67f",
+                  "description": "ArXiv paper on mean-field limits of particles interacting with quantized radiation fields (Mathematical Physics).",
+                  "relevance_check": "Verify absence of macroscopic heat transfer terms."
+                },
+                {
+                  "id": "EV-Q071-35fb51303ed99e59a193220f",
+                  "description": "ArXiv paper on astrophysical implications of high-energy neutrino limits.",
+                  "relevance_check": "Verify distinction between neutrino flux limits and thermal energy transport."
+                },
+                {
+                  "id": "EV-Q071-fa109c61f71c06ebac9b6461",
+                  "description": "ArXiv paper discussing ICT for Development vs. LIMITS (Computing Within Limits) workshop.",
+                  "relevance_check": "Verify 'LIMITS' refers to sustainability/computing, not thermodynamics."
+                },
+                {
+                  "id": "EV-Q071-c751b8f02dbddd9f58e0f7ff",
+                  "description": "ArXiv paper overviewing the LIMITS workshop on computing's environmental impact.",
+                  "relevance_check": "Verify context is ecological/computational, not material science heat transfer."
+                }
+              ],
+              "target": "Binary classification of each evidence card as 'Thermodynamically Relevant' or 'Irrelevant' based on strict keyword and concept matching."
+            },
+            "methods": "1. **Semantic Keyword Audit**: Perform exact string matching and semantic embedding similarity checks for key thermodynamic terms ('thermal conductivity', 'phonon', 'Fourier', 'heat flux', 'W/m·K') against the full text of each allowed Evidence ID. \n2. **Contextual Disambiguation**: Analyze the usage of the word 'limit' in each document to categorize it as 'Physical/Thermodynamic', 'Mathematical/Statistical', or 'Societal/Computational'. \n3. **Negative Control Verification**: Confirm that documents explicitly discussing other types of limits (neutrino flux, computational sustainability) do not contain hidden sections on material heat transfer.",
+            "experiments": {
+              "baselines": [
+                "Random Keyword Match: Baseline expectation of zero matches for specific thermodynamic terms in non-physics domains.",
+                "Topic Model Classification: LDA or similar topic modeling to assign primary topics (e.g., 'Astrophysics', 'Computer Science') and verify distance from 'Thermodynamics' cluster."
+              ],
+              "metrics": [
+                "Term Presence Rate: Binary indicator (0/1) for the presence of core thermodynamic vocabulary.",
+                "Semantic Similarity Score: Cosine similarity between document embeddings and a standard 'Heat Transfer' textbook embedding vector.",
+                "Contextual Accuracy: Precision of classifying the term 'limit' correctly (e.g., identifying 'computing limit' vs 'thermal limit')."
+              ],
+              "ablation": "Remove mathematical physics jargon from EV-Q071-729216a0ae7ef339809ce67f to ensure no latent thermal analogies are misinterpreted as direct evidence.",
+              "validation_protocol": "Manual expert review of the top 5 sentences containing the word 'limit' or 'heat' in each document to confirm irrelevance to material heat transfer mechanisms."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Access to full text of EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff.",
+              "Defined list of thermodynamic keywords for exclusion testing.",
+              "Pre-trained sentence transformer model for semantic similarity calculation.",
+              "Script for automated text scanning and context extraction."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "model_used": "Qwen/千问",
+              "timestamp": "2023-10-27T10:00:00Z",
+              "computation_resources": "Standard CPU for text processing; no GPU required for keyword audit."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The candidate hypothesis correctly identifies 'insufficient_evidence' given that all allowed EvidenceCards pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer limits.",
+              "The system successfully avoided hallucinating physical mechanisms or citing irrelevant papers as factual support for heat transfer limits, adhering strictly to the negative constraint protocol.",
+              "Experiment design is appropriately scoped as a metadata/semantic audit to verify irrelevance, with valid baselines (random keyword match) and metrics (term presence rate) for this specific null-result scenario.",
+              "Results field correctly states 'pending' and does not fabricate verification outcomes for the proposed semantic search experiment."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+              "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 1.0,
+            "reproducibility_score": 1.0,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:3ac7931628f6",
+              "category": "required_revision",
+              "description": "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:fe774f035472",
+              "category": "required_revision",
+              "description": "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "65fe44648dff990f864a66df798ba3437b7b87ede5d40a20deba666308261b85",
+            "experiment_designer": "a21c6e0302470aca6f41bae98b9de941b32a831b6f2af7151625f4a33e75e541",
+            "scientific_reviewer": "da42a308ee9294b9c66b27ab52a39e821dd813425f00feed7fe61ced030741a8"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084835-ddd2eef8",
+          "version_number": 2,
+          "version_id": "20260822-084835-ddd2eef8:v2",
+          "parent_version_id": "20260822-084835-ddd2eef8:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Knowledge Gap / Retrieval Failure Report: The physical limits of heat transfer in matter cannot be scientifically characterized using the current allowed evidence set, as all provided sources (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer mechanisms.",
+                "mechanism": "The retrieval system has returned documents where the term 'limit' refers to mathematical mean-field approximations, astrophysical flux bounds, or ecological/computational constraints, none of which correspond to material thermal transport physics. Consequently, no causal chain linking material microstructure to macroscopic heat flux saturation can be constructed from the allowed evidence IDs.",
+                "falsifiable_prediction": "A semantic audit of the full text of all four allowed EvidenceCards using thermodynamic keywords ('thermal conductivity', 'phonon', 'Fourier law', 'heat flux', 'W/m·K') will yield zero contextually relevant matches for material heat transfer limits. If any card contains such content, this hypothesis is immediately falsified and must be revised to a specific physical mechanism.",
+                "required_observations": [
+                  "Verification that EV-Q071-729216a0ae7ef339809ce67f discusses mean-field limits of particles in quantized radiation fields without addressing macroscopic thermal transport.",
+                  "Verification that EV-Q071-35fb51303ed99e59a193220f addresses high-energy neutrino flux limits in astrophysics, not thermal energy transport in matter.",
+                  "Verification that EV-Q071-fa109c61f71c06ebac9b6461 and EV-Q071-c751b8f02dbddd9f58e0f7ff refer to 'LIMITS' as an acronym for computing sustainability workshops, not thermodynamic bounds.",
+                  "Confirmation that no hidden sections in these documents discuss nanoscale or industrial-scale heat transfer as mentioned in the booklet excerpt."
+                ],
+                "risk_of_being_wrong": "Low risk regarding the current evidence set status; however, this hypothesis serves solely as a metadata validation check and does not advance scientific understanding of heat transfer. It explicitly acknowledges upstream retrieval failure rather than claiming a scientific null result about nature.",
+                "supporting_evidence_ids": [
+                  "EV-Q071-729216a0ae7ef339809ce67f",
+                  "EV-Q071-35fb51303ed99e59a193220f",
+                  "EV-Q071-fa109c61f71c06ebac9b6461",
+                  "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.0,
+                "falsifiability_score": 1.0,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.8
+              },
+              {
+                "hypothesis": "Semantic Disambiguation Hypothesis: The term 'limits' in the retrieved evidence corpus is exclusively used in non-thermodynamic contexts (mathematical, astrophysical, or societal), creating a false positive retrieval signal for the query 'limits of heat transfer in matter'.",
+                "mechanism": "Keyword-based retrieval systems conflate polysemous terms; 'limit' in EV-Q071-729216a0ae7ef339809ce67f refers to asymptotic analysis, in EV-Q071-35fb51303ed99e59a193220f to observational bounds, and in EV-Q071-fa109c61f71c06ebac9b6461/EV-Q071-c751b8f02dbddd9f58e0f7ff to sustainability constraints. None map to the thermodynamic concept of maximum sustainable heat flux.",
+                "falsifiable_prediction": "Contextual analysis of the word 'limit' in each document will classify 100% of instances as 'Mathematical', 'Astrophysical', or 'Societal/Computational', with 0% classified as 'Thermodynamic/Material Science'. Observation of even one thermodynamic usage falsifies this hypothesis.",
+                "required_observations": [
+                  "Categorization of every instance of 'limit' in EV-Q071-729216a0ae7ef339809ce67f as mathematical/asymptotic.",
+                  "Categorization of every instance of 'limit' in EV-Q071-35fb51303ed99e59a193220f as astrophysical/observational.",
+                  "Categorization of every instance of 'limit' in EV-Q071-fa109c61f71c06ebac9b6461 and EV-Q071-c751b8f02dbddd9f58e0f7ff as societal/computational sustainability.",
+                  "Absence of co-occurrence between 'limit' and thermal terms (e.g., 'conductivity', 'temperature gradient') in any document."
+                ],
+                "risk_of_being_wrong": "Moderate risk if documents contain interdisciplinary analogies (e.g., using heat transfer as a metaphor in computing sustainability). However, such analogies would still not constitute valid evidence for physical heat transfer limits.",
+                "supporting_evidence_ids": [
+                  "EV-Q071-729216a0ae7ef339809ce67f",
+                  "EV-Q071-35fb51303ed99e59a193220f",
+                  "EV-Q071-fa109c61f71c06ebac9b6461",
+                  "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.1,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.7
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 is selected because it directly addresses the reviewer's required revision to explicitly label the output as a 'Knowledge Gap / Retrieval Failure Report'. It accurately reflects the complete absence of thermodynamic content in the allowed evidence set while providing a clear, executable falsification protocol (semantic audit) that triggers immediate revision if relevant content is discovered. This hypothesis strictly adheres to the negative constraint protocol by refusing to fabricate physical mechanisms and correctly identifies the null result as a retrieval artifact rather than a scientific conclusion about heat transfer physics.",
+            "rejected_directions": [
+              "Hypothesizing about phonon mean free paths or Fourier law breakdown: Rejected because no evidence in allowed_evidence_ids supports these concepts; citing them would violate the prohibition against external knowledge and fabrication.",
+              "Hypothesizing about radiative heat transfer limits based on EV-Q071-729216a0ae7ef339809ce67f: Rejected because this paper concerns mean-field limits of particles interacting with quantized radiation fields in a mathematical physics context, not macroscopic or nanoscale heat transfer engineering limits.",
+              "Linking 'LIMITS' workshop papers (EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to physical heat transfer: Rejected because these explicitly refer to 'Computing Within Limits' (sustainability), creating a false equivalence between ecological/computational limits and thermodynamic limits.",
+              "Proposing generic 'more research needed' hypothesis: Rejected as uninformative and non-falsifiable; replaced with specific retrieval failure characterization per reviewer feedback."
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This experiment is designed to validate the 'Knowledge Gap / Retrieval Failure Report' hypothesis. The core technical task is a semantic audit of four specific EvidenceCards (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) to confirm their irrelevance to thermodynamic heat transfer limits. The methodology involves: 1) Full-text extraction and preprocessing; 2) Keyword-based filtering for thermodynamic terms ('thermal conductivity', 'phonon', 'Fourier law', 'heat flux', 'W/m·K'); 3) Contextual disambiguation of the term 'limit' using sentence-level embedding similarity against a reference corpus of thermodynamics textbooks vs. mathematical/astrophysical/computing sustainability texts; 4) Manual verification of any potential false positives. The output is strictly a classification of evidence relevance, not a derivation of physical laws.",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q071-729216a0ae7ef339809ce67f",
+                  "description": "ArXiv:1806.10843 - Mean-field limits of particles in interaction with quantized radiation fields.",
+                  "expected_content": "Mathematical physics, quantum field theory, asymptotic analysis."
+                },
+                {
+                  "id": "EV-Q071-35fb51303ed99e59a193220f",
+                  "description": "ArXiv:astro-ph/0607427 - Astrophysical implications of high energy neutrino limits.",
+                  "expected_content": "High-energy astrophysics, neutrino flux bounds, observational constraints."
+                },
+                {
+                  "id": "EV-Q071-fa109c61f71c06ebac9b6461",
+                  "description": "ArXiv:1602.08135 - Comparison of ICTD and LIMITS (Computing Within Limits).",
+                  "expected_content": "Computer science, sustainability, societal constraints on computing."
+                },
+                {
+                  "id": "EV-Q071-c751b8f02dbddd9f58e0f7ff",
+                  "description": "ArXiv:2605.30543 - Overview of the LIMITS workshop on computing's environmental impact.",
+                  "expected_content": "Ecological limits, computing sustainability, workshop proceedings."
+                }
+              ],
+              "target": "Binary relevance classification (Thermodynamically Relevant: Yes/No) for each EvidenceCard regarding 'limits of heat transfer in matter'."
+            },
+            "methods": "1. **Text Extraction**: Retrieve full text from provided URLs for all four EvidenceCards. \n2. **Keyword Exclusion Test**: Scan for exact matches of core thermodynamic vocabulary: ['thermal conductivity', 'phonon mean free path', 'Fourier law', 'heat flux saturation', 'W/m·K']. \n3. **Semantic Disambiguation**: For every instance of the word 'limit' or 'limits', extract the surrounding sentence. Compute cosine similarity between the sentence embedding (using a pre-trained transformer model) and two reference vectors: one derived from standard thermodynamics textbooks (e.g., Incropera & DeWitt) and one from general scientific/mathematical texts. \n4. **Contextual Classification**: Classify each 'limit' instance as 'Thermodynamic', 'Mathematical', 'Astrophysical', or 'Societal/Computational'. \n5. **Expert Review Protocol**: If any sentence has a similarity score >0.7 to the thermodynamics reference vector, flag for manual expert review to determine if it constitutes valid evidence for material heat transfer limits.",
+            "experiments": {
+              "baselines": [
+                "Random Keyword Match Baseline: Expectation of zero hits for specific thermodynamic terms in non-thermodynamic domains.",
+                "Topic Modeling Baseline: LDA classification of documents into topics such as 'Quantum Physics', 'Astrophysics', 'Computer Science', ensuring distance from 'Thermodynamics'."
+              ],
+              "metrics": [
+                "Term Presence Rate: Binary indicator (0 or 1) for the presence of any core thermodynamic keyword in the document.",
+                "Semantic Relevance Score: Maximum cosine similarity between any sentence containing 'limit' and the thermodynamics reference vector.",
+                "Classification Precision: Accuracy of categorizing 'limit' contexts (expected 100% non-thermodynamic)."
+              ],
+              "ablation": "Remove mathematical jargon from EV-Q071-729216a0ae7ef339809ce67f to test if latent analogies trigger false positives in semantic matching.",
+              "validation_protocol": "Manual inspection of the top 3 highest-scoring sentences per document for thermodynamic relevance. If any document contains valid thermal physics content, the hypothesis is falsified, and the system must trigger a revision to a mechanism-based hypothesis."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Access to full text PDFs of EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff.",
+              "Pre-defined list of thermodynamic keywords for exclusion testing.",
+              "Pre-trained sentence transformer model (e.g., all-MiniLM-L6-v2) for embedding generation.",
+              "Reference text corpus for thermodynamics vs. other domains.",
+              "Python script for automated text scanning, embedding calculation, and classification."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "model_used": "Qwen/千问",
+              "timestamp": "2023-10-27T10:00:00Z",
+              "computation_resources": "Standard CPU for text processing; no GPU required for initial keyword audit."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly adopts the 'Knowledge Gap / Retrieval Failure Report' framing as requested in previous required revisions, preventing misinterpretation of the null result as a scientific conclusion.",
+              "All supporting evidence IDs (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) are valid and correctly mapped to their non-thermodynamic domains based on provided EvidenceCards.",
+              "The falsifiable prediction is operationally defined via a semantic audit with specific keywords and similarity thresholds, making the 'insufficient evidence' claim empirically testable against the allowed corpus.",
+              "Experiment design includes appropriate baselines (random keyword match, topic modeling) and metrics (term presence rate, semantic relevance score) suitable for validating a retrieval failure hypothesis.",
+              "Results field strictly adheres to 'pending' status without fabricating audit outcomes, maintaining integrity regarding unexecuted verification steps."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "Ensure the semantic audit script explicitly logs the specific sentence or paragraph ID where any potential thermodynamic keyword match occurs, to facilitate rapid human verification if the hypothesis is falsified during execution.",
+              "In the final report generation phase, strictly enforce the 'Knowledge Gap / Retrieval Failure Report' title and header to satisfy the closure condition of issue required_revision:fe774f035472."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 1.0,
+            "reproducibility_score": 1.0,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:3ac7931628f6",
+              "category": "required_revision",
+              "description": "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:fe774f035472",
+              "category": "required_revision",
+              "description": "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:bb116744dbcc",
+              "category": "required_revision",
+              "description": "Ensure the semantic audit script explicitly logs the specific sentence or paragraph ID where any potential thermodynamic keyword match occurs, to facilitate rapid human verification if the hypothesis is falsified during execution.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:2f6e24ca9cac",
+              "category": "required_revision",
+              "description": "In the final report generation phase, strictly enforce the 'Knowledge Gap / Retrieval Failure Report' title and header to satisfy the closure condition of issue required_revision:fe774f035472.",
+              "status": "open",
+              "opened_in_version": 2,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "f0510862f224ea86f8db8ad576695246bb6c90a4054ace193a0e8bf432dd8292",
+            "experiment_designer": "b45d25749e3e05d098a196f88cadb2ab07f16a231cf1e7c577d95927965de008",
+            "scientific_reviewer": "c9ecf8e54177eba42c1e0b51daa8e6512a69a5d9f2aad433aa86808d1a9a9c8f"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-084835-ddd2eef8:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-084835-ddd2eef8:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-084835-ddd2eef8:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-084835-ddd2eef8:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:3ac7931628f6",
+          "category": "required_revision",
+          "description": "Upon execution of the semantic audit, if any allowed EvidenceCard is found to contain relevant thermal physics content, the hypothesis must be immediately revised from 'Insufficient Evidence' to a specific physical mechanism supported by that card.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:fe774f035472",
+          "category": "required_revision",
+          "description": "Ensure the final report explicitly labels the output as a 'Knowledge Gap / Retrieval Failure Report' rather than a scientific conclusion on heat transfer, to prevent user misinterpretation of the null result.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:bb116744dbcc",
+          "category": "required_revision",
+          "description": "Ensure the semantic audit script explicitly logs the specific sentence or paragraph ID where any potential thermodynamic keyword match occurs, to facilitate rapid human verification if the hypothesis is falsified during execution.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        },
+        {
+          "issue_id": "required_revision:2f6e24ca9cac",
+          "category": "required_revision",
+          "description": "In the final report generation phase, strictly enforce the 'Knowledge Gap / Retrieval Failure Report' title and header to satisfy the closure condition of issue required_revision:fe774f035472.",
+          "status": "open",
+          "opened_in_version": 2,
+          "closed_in_version": null,
+          "resolution_note": null
+        }
+      ],
+      "checkpoint_hash": "ec71799f828cc3f67c1e38c5aae84b523dfc1adcbaf7d9d92eb8a980a3456ad2"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-084835-ddd2eef8:wave-b-two-round",
+      "run_id": "20260822-084835-ddd2eef8",
+      "v1_version_id": "20260822-084835-ddd2eef8:v1",
+      "v2_version_id": "20260822-084835-ddd2eef8:v2",
+      "input_fingerprints": {
+        "v1": "a21c6e0302470aca6f41bae98b9de941b32a831b6f2af7151625f4a33e75e541",
+        "v2": "b45d25749e3e05d098a196f88cadb2ab07f16a231cf1e7c577d95927965de008"
+      },
+      "responded_issue_count": 0,
+      "issue_ids": [],
+      "change_ids": [],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "reproducibility_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Knowledge Gap / Retrieval Failure Report: The physical limits of heat transfer in matter cannot be scientifically characterized using the current allowed evidence set, as all provided sources (EV-Q071-729216a0ae7ef339809ce67f, EV-Q071-35fb51303ed99e59a193220f, EV-Q071-fa109c61f71c06ebac9b6461, EV-Q071-c751b8f02dbddd9f58e0f7ff) pertain to quantum radiation fields, neutrino astrophysics, or computing sustainability workshops rather than thermodynamic heat transfer mechanisms.",
+          "overall_score": 0.8,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Semantic Disambiguation Hypothesis: The term 'limits' in the retrieved evidence corpus is exclusively used in non-thermodynamic contexts (mathematical, astrophysical, or societal), creating a false positive retrieval signal for the query 'limits of heat transfer in matter'.",
+          "overall_score": 0.7,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "6e0d66f38f27",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:50:57.339814+00:00",
+    "ended_at": "2026-08-22T08:51:30.848870+00:00",
+    "duration_ms": 33509,
+    "input_summary": "{\"question_item\": {\"id\": \"Q071\", \"domain\": \"Physics\", \"question\": \"What are the limits of heat transfer in matter?\", \"source_page\": 25, \"booklet_excerpt\": \"Materials science research may help us address the challenge of high power-density heat transfer, from nanometer-scale devices such as circuits to industrial- scale processes such as power plants.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Physics\", \"core_question\": \"What are the fundamental physical limits and material constraints governing h",
+    "output_summary": "{\"input_question\": \"What are the limits of heat transfer in matter?\", \"domain\": \"Physics\", \"problem_statement\": \"The inquiry seeks to identify fundamental physical and material constraints governing heat transfer efficiency across scales, from nanometer-scale devices to industrial processes. However, the provided evidence corpus contains no literature on thermodynamics, thermal conductivity, or materials science heat transfer mechanisms.\", \"rationale\": \"A rigorous scientific answer requires evidence linking material properties to thermal transport limits. The allowed evidence set consists excl",
+    "evidence_ids": [
+      "EV-Q071-729216a0ae7ef339809ce67f",
+      "EV-Q071-35fb51303ed99e59a193220f",
+      "EV-Q071-fa109c61f71c06ebac9b6461",
+      "EV-Q071-c751b8f02dbddd9f58e0f7ff"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "52dada4b5c11",
+    "mock": false
+  },
+  {
+    "event_id": "b8eb5863fc59",
+    "run_id": "20260822-084835-ddd2eef8",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:51:30.849870+00:00",
+    "ended_at": "2026-08-22T08:51:32.952015+00:00",
+    "duration_ms": 2102,
+    "input_summary": "{\"question_item\": {\"id\": \"Q071\", \"domain\": \"Physics\", \"question\": \"What are the limits of heat transfer in matter?\", \"source_page\": 25, \"booklet_excerpt\": \"Materials science research may help us address the challenge of high power-density heat transfer, from nanometer-scale devices such as circuits to industrial- scale processes such as power plants.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"Missing required input fields: EvidenceCards, AgentTrace, execution_metadata.\", \"Cannot validate ResearchPlan structure or evidence traceability without provided inputs.\", \"Insufficient evidence to support any factual claims regarding limits of heat transfer in matter.\"], \"warnings\": [\"Input contains only a question item; validation cannot proceed without the corresponding ResearchPlan and EvidenceCards.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_check\": \"failed\", \"evidence_traceability\": \"not_applicable\", \"factuality_check\": \"not_applic",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e94c4ca7ee94",
+    "mock": false
+  }
+]

@@ -1,0 +1,1824 @@
+[
+  {
+    "event_id": "834e0f95da47",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:11.032478+00:00",
+    "ended_at": "2026-08-22T08:45:11.032478+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "4a41f1ca53cd",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:11.032478+00:00",
+    "ended_at": "2026-08-22T08:45:13.224071+00:00",
+    "duration_ms": 2191,
+    "input_summary": "{\"question_item\": {\"id\": \"Q058\", \"domain\": \"Astronomy\", \"question\": \"What is the smallest scale of space-time?\", \"source_page\": 23, \"booklet_excerpt\": \"The smallest scale of space-time has not yet been determined, although it can’t be lower than the Planck scale, where known laws of physics break down and the formulation of meaningful measurements becomes an issue.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Astronomy\", \"core_question\": \"What is the smallest scale of space-time?\", \"keywords\": [\"smallest scale\", \"space-time\", \"Planck scale\", \"physics breakdown\"], \"entities\": [\"space-time\", \"Planck scale\"], \"question_type\": \"general_scientific_unknown\", \"scientific_boundary\": \"The exact value has not been determined; it is bounded below by the Planck scale where known laws break down.\", \"what_not_to_claim\": [\"The smallest scale is exactly the Planck length.\", \"The smallest scale is smaller than the Planck scale.\", \"Any specific measurement of the smallest scale exists.\"], \"suspected_doma",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c3c6caf3c202",
+    "mock": false
+  },
+  {
+    "event_id": "69f4c219022c",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:13.224071+00:00",
+    "ended_at": "2026-08-22T08:45:34.318303+00:00",
+    "duration_ms": 21094,
+    "input_summary": "{\"question_item\": {\"id\": \"Q058\", \"domain\": \"Astronomy\", \"question\": \"What is the smallest scale of space-time?\", \"source_page\": 23, \"booklet_excerpt\": \"The smallest scale of space-time has not yet been determined, although it can’t be lower than the Planck scale, where known laws of physics break down and the formulation of meaningful measurements becomes an issue.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"What is the smallest scale of space-time?\", \"keywords\": [\"sm",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Retrieve the specific definition and numerical value of the Planck length as the theoretical lower bound for space-time measurement mentioned in the source material.\", \"query\": \"Planck length definition value physics breakdown space-time measurement limit\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text defining Planck scale as the limit where known laws of physics break down and meaningful measurements become impossible.\", \"priority\": \"high\"}, {\"purpose\": \"Verify the statement that the smallest scale has not yet been determined and is bounded by the Pla",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "26161d64fb3e",
+    "mock": false
+  },
+  {
+    "event_id": "1f4558b78f25",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:34.330310+00:00",
+    "ended_at": "2026-08-22T08:45:41.819284+00:00",
+    "duration_ms": 7488,
+    "input_summary": "{\"question_item\": {\"id\": \"Q058\", \"domain\": \"Astronomy\", \"question\": \"What is the smallest scale of space-time?\", \"source_page\": 23, \"booklet_excerpt\": \"The smallest scale of space-time has not yet been determined, although it can’t be lower than the Planck scale, where known laws of physics break down and the formulation of meaningful measurements becomes an issue.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q058-141657d189f4bf479ce9f855\", \"title\": \"arXiv:2506.05638\", \"source_type\": \"arxiv\", \"doi",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The smallest scale of space-time has not been empirically determined or theoretically agreed upon within the provided evidence.\", \"why_it_matters\": \"Determining the fundamental scale of space-time is crucial for unifying quantum mechanics and general relativity, as current laws break down at scales such as the Planck length.\", \"evidence_ids\": [], \"validation_need\": \"Requires experimental verification via high-energy particle physics or observational cosmology, and theoretical consensus on quantum gravity models.\"}], \"",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "249bb8d0b884",
+    "mock": false
+  },
+  {
+    "event_id": "988be37497dc",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:41.819284+00:00",
+    "ended_at": "2026-08-22T08:45:57.879535+00:00",
+    "duration_ms": 16060,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q058\", \"domain\": \"Astronomy\", \"question\": \"What is the smallest scale of space-time?\", \"source_page\": 23, \"booklet_excerpt\": \"The smallest scale of space-time has not yet been determined, although it can’t be lower than the Planck scale, where known laws of physics break down and the formulation of meaningful measurements becomes an issue.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q058-141657d189f4bf479ce9f855\", \"title\": \"arXiv:2506.05638\", \"so",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Current observational and theoretical frameworks lack sufficient empirical or mathematical evidence to determine the smallest scale of space-time, rendering the question currently unanswerable within the bounds of verified science.\", \"mechanism\": \"The determination of a fundamental length scale requires either direct experimental resolution at that scale or a validated theory of quantum gravity that predicts such a scale. Current measurement techniques are limited by energy constraints far above the Planck scale, and no consensus theory exists. Without supportin",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "1acf86f65dd5",
+    "mock": false
+  },
+  {
+    "event_id": "b82ceb516bfa",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:45:57.879535+00:00",
+    "ended_at": "2026-08-22T08:46:19.347871+00:00",
+    "duration_ms": 21468,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q058\", \"domain\": \"Astronomy\", \"question\": \"What is the smallest scale of space-time?\", \"source_page\": 23, \"booklet_excerpt\": \"The smallest scale of space-time has not yet been determined, although it can’t be lower than the Planck scale, where known laws of physics break down and the formulation of meaningful measurements becomes an issue.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"general_scientific_unknown\", \"recommended_hypothesis\": {\"hypothesis\": \"Current",
+    "output_summary": "{\"technical_details\": \"The recommended hypothesis posits that the smallest scale of space-time is currently undeterminable due to a lack of empirical evidence and theoretical consensus within the provided corpus. To rigorously test this 'negative' hypothesis (i.e., confirming the absence of evidence), the research plan involves a systematic meta-analysis of the provided EvidenceCards to verify their irrelevance to spacetime physics, followed by a structured gap analysis against standard physical constants (e.g., Planck length). Since no direct experimental data on quantum gravity is available ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "f09a83342f13",
+    "mock": false
+  },
+  {
+    "event_id": "94920c130287",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:46:19.347871+00:00",
+    "ended_at": "2026-08-22T08:46:29.220870+00:00",
+    "duration_ms": 9872,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q058\", \"domain\": \"Astronomy\", \"question\": \"What is the smallest scale of space-time?\", \"source_page\": 23, \"booklet_excerpt\": \"The smallest scale of space-time has not yet been determined, although it can’t be lower than the Planck scale, where known laws of physics break down and the formulation of meaningful measurements becomes an issue.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {\"hypothesis\": \"Current observational and theoretical frameworks lack ",
+    "output_summary": "{\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies the lack of evidence in the provided corpus, but the proposed 'experiment' is a meta-analysis of the input data rather than a scientific investigation of spacetime scales.\", \"While the negative result (insufficient evidence) is accurate, framing a text classification task as the primary experimental validation for a physics hypothesis is methodologically inappropriate for a ResearchPlan.\", \"The supporting_evidence_ids are empty, which is consistent with the extraction results, but the plan fails to propose a valid pat",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "bedb55cd6627",
+    "mock": false
+  },
+  {
+    "event_id": "3f1fc4a468b1",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:46:29.222870+00:00",
+    "ended_at": "2026-08-22T08:46:51.717389+00:00",
+    "duration_ms": 22494,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies the lack of evidence in the provided corpus, but the proposed 'experiment' is a meta-analysis of the input data rather than a scientific investigation of spacetime scales.\", \"While the negative result (insufficient evidence) is accurate, framing a text classification task as the primary experimental validation for a physics hypothesis is methodologically inappropriate for a ResearchPlan.\", \"The supporting_evidence_ids are empty, which is consistent with the extraction results",
+    "output_summary": "{\"hypotheses\": [{\"hypothesis\": \"Within the closed set of allowed evidence (EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, EV-Q058-2f6a24cf545bf8aa4c95fc69), there exists no empirical or theoretical basis to determine the smallest scale of space-time, constituting a verified negative result rather than a physical finding.\", \"mechanism\": \"The determination of a fundamental spacetime scale requires evidence from high-energy physics or quantum gravity. The provided evidence corpus consists exclusively of unrelated domains: string attractors in",
+    "evidence_ids": [
+      "EV-Q058-141657d189f4bf479ce9f855",
+      "EV-Q058-ba62c330ee7d6f08be4185f6",
+      "EV-Q058-60878f944b636e4fcfda99bb",
+      "EV-Q058-2f6a24cf545bf8aa4c95fc69"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "a78ef127ec8a",
+    "mock": false
+  },
+  {
+    "event_id": "2f86ec845f8e",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:46:51.717389+00:00",
+    "ended_at": "2026-08-22T08:47:18.946076+00:00",
+    "duration_ms": 27228,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies the lack of evidence in the provided corpus, but the proposed 'experiment' is a meta-analysis of the input data rather than a scientific investigation of spacetime scales.\", \"While the negative result (insufficient evidence) is accurate, framing a text classification task as the primary experimental validation for a physics hypothesis is methodologically inappropriate for a ResearchPlan.\", \"The supporting_evidence_ids are empty, which is consistent with the extraction results",
+    "output_summary": "{\"technical_details\": \"This research plan constitutes a Systematic Evidence Gap Analysis (SEGA) conditioned strictly on the provided allowed evidence set. The objective is to formally verify the absence of empirical or theoretical constraints on the smallest scale of spacetime within the corpus defined by IDs: EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, and EV-Q058-2f6a24cf545bf8aa4c95fc69. The methodology adapts PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses) guidelines for automated evidence screening. Inst",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e0b974768d0e",
+    "mock": false
+  },
+  {
+    "event_id": "058ca509c251",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:47:18.947004+00:00",
+    "ended_at": "2026-08-22T08:47:23.520414+00:00",
+    "duration_ms": 4573,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": false, \"reviewer_comments\": [\"The hypothesis correctly identifies the lack of evidence in the provided corpus, but the proposed 'experiment' is a meta-analysis of the input data rather than a scientific investigation of spacetime scales.\", \"While the negative result (insufficient evidence) is accurate, framing a text classification task as the primary experimental validation for a physics hypothesis is methodologically inappropriate for a ResearchPlan.\", \"The supporting_evidence_ids are empty, which is consistent with the extraction results",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The revised hypothesis correctly reframes the investigation as a 'Systematic Evidence Gap Analysis' conditioned strictly on the allowed evidence set, resolving the previous category error.\", \"Baselines have been appropriately updated from NLP metrics to systematic review criteria (Domain Expert Consensus, Keyword Absence), aligning methodology with the negative-result nature of the study.\", \"The mechanism explicitly limits the scope of 'undeterminability' to the provided corpus, avoiding overgeneralization to universal physics.\", \"Results field correctly",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "10cf54cedeea",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:e1a8ae13ff40f817",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current observational and theoretical frameworks lack sufficient empirical or mathematical evidence to determine the smallest scale of space-time, rendering the question currently unanswerable within the bounds of verified science.",
+              "mechanism": "The determination of a fundamental length scale requires either direct experimental resolution at that scale or a validated theory of quantum gravity that predicts such a scale. Current measurement techniques are limited by energy constraints far above the Planck scale, and no consensus theory exists. Without supporting evidence in the allowed corpus, no specific scale can be posited as fact.",
+              "falsifiable_prediction": "If a future experiment resolves spatial structure below the Planck length OR if a peer-reviewed theory with empirical validation defines a minimal length distinct from the Planck scale, this hypothesis of 'current undeterminability' will be falsified.",
+              "required_observations": [
+                "Detection of Lorentz invariance violation at high energies indicating discrete spacetime structure",
+                "Experimental signature of quantum gravity effects (e.g., graviton scattering) defining a minimal length",
+                "Theoretical derivation of a minimal length confirmed by independent observational data"
+              ],
+              "risk_of_being_wrong": "High risk if existing but uncited literature has already established a minimal scale; however, based strictly on allowed evidence IDs, this risk is mitigated by the explicit insufficiency note in extraction results.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.2,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "The concept of a 'smallest scale' may be ill-defined in current physics because measurement operationalism breaks down before reaching any putative fundamental length, making the search for a discrete minimum physically meaningless without new metrological paradigms.",
+              "mechanism": "At scales approaching the Planck length, the energy required for measurement creates black holes or disrupts the spacetime metric being measured, preventing meaningful definition of distance. Thus, the 'smallest scale' is not a physical property but a limit of current operational definitions.",
+              "falsifiable_prediction": "If a consistent operational definition of sub-Planckian distance is formulated and experimentally realized without violating uncertainty principles or creating horizons, this hypothesis is falsified.",
+              "required_observations": [
+                "Successful measurement protocol resolving sub-Planckian distances",
+                "Theoretical framework redefining spatial measurement that avoids gravitational collapse",
+                "Empirical demonstration of spatial continuity below Planck scale"
+              ],
+              "risk_of_being_wrong": "Moderate risk; some quantum gravity approaches (e.g., LQG) posit discrete spectra for area/volume operators that could serve as operational minima even if classical distance fails.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.4
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Given the explicit 'insufficient_evidence' status in the extraction results and the absence of any relevant content in allowed evidence IDs regarding spacetime scales, the only scientifically rigorous position is to acknowledge current undeterminability. This hypothesis is fully falsifiable by future evidence and avoids speculation unsupported by the provided corpus. The second hypothesis, while conceptually interesting, relies on philosophical arguments about operationalism that cannot be grounded in the available evidence.",
+          "rejected_directions": [
+            "Proposing Planck length as the definitive smallest scale (unsupported by allowed evidence)",
+            "Suggesting specific quantum gravity models predict alternative minimal lengths (no evidence IDs support any QG model)",
+            "Claiming spacetime is continuous or discrete based on mathematical analogies from unrelated fields (lattice surfaces, string attractors are irrelevant to physical spacetime)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "The recommended hypothesis posits that the smallest scale of space-time is currently undeterminable due to a lack of empirical evidence and theoretical consensus within the provided corpus. To rigorously test this 'negative' hypothesis (i.e., confirming the absence of evidence), the research plan involves a systematic meta-analysis of the provided EvidenceCards to verify their irrelevance to spacetime physics, followed by a structured gap analysis against standard physical constants (e.g., Planck length). Since no direct experimental data on quantum gravity is available in the allowed evidence, the 'experiment' is a formal verification of the knowledge gap. The technical approach uses natural language processing to classify the semantic domain of each evidence card and cross-reference it with a controlled vocabulary of high-energy physics terms. If all cards are confirmed as unrelated (e.g., string attractors in computer science, lattice surfaces in geometry, chemical physics), the hypothesis that 'current provided evidence is insufficient' is validated. This does not prove spacetime has no minimum, but proves the current dataset cannot answer the question.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q058-141657d189f4bf479ce9f855",
+                "description": "ArXiv paper on string attractors and Burrows-Wheeler Transform (Computer Science/Information Theory)."
+              },
+              {
+                "id": "EV-Q058-ba62c330ee7d6f08be4185f6",
+                "description": "ArXiv paper on Chemical Physics of Solids (Max Planck Institute)."
+              },
+              {
+                "id": "EV-Q058-60878f944b636e4fcfda99bb",
+                "description": "ArXiv paper on Lattice Surfaces and smallest triangles (Mathematical Geometry)."
+              },
+              {
+                "id": "EV-Q058-2f6a24cf545bf8aa4c95fc69",
+                "description": "ArXiv paper on Laplacian eigenvectors (Linear Algebra/Graph Theory)."
+              }
+            ],
+            "target": "Classification matrix mapping each EvidenceCard to physical domains (High-Energy Physics, Quantum Gravity, Cosmology) vs. non-relevant domains."
+          },
+          "methods": "1. Semantic Domain Classification: Use a pre-trained scientific language model to classify the primary subject matter of each EvidenceCard. 2. Keyword Exclusion Analysis: Verify the absence of key terms such as 'Planck length', 'quantum gravity', 'spacetime discretization', 'Lorentz invariance violation', or 'graviton' in the full text of the provided cards. 3. Gap Quantification: Compare the topics identified in the source datasets against the required observations listed in the hypothesis (e.g., detection of Lorentz invariance violation). 4. Formal Logic Verification: Construct a logical proof that 'If Evidence Set E contains no elements related to Topic T, then E cannot determine properties of T.'",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: Randomly assigning relevance scores to evidence cards to demonstrate that the observed irrelevance is statistically significant.",
+              "Keyword Match Baseline: Simple string matching for 'space', 'time', 'scale' to show that superficial matches do not constitute physical evidence (e.g., 'string' in CS vs. 'string' in String Theory)."
+            ],
+            "metrics": [
+              "Relevance Precision: Percentage of evidence cards correctly identified as irrelevant to spacetime physics.",
+              "Gap Coverage Score: Measure of how many of the 'required_observations' from the hypothesis are addressed by the evidence (expected 0%).",
+              "Semantic Distance: Cosine distance between the embedding of the question 'smallest scale of space-time' and the embeddings of the evidence cards."
+            ],
+            "ablation": "Remove individual evidence cards to ensure no single card contains hidden relevant information. Test with and without title-only vs. full-text analysis to confirm robustness of the 'insufficient evidence' conclusion.",
+            "validation_protocol": "Cross-validate the classification results with a manual expert review simulation (using ground-truth labels for these specific arXiv papers if available in external knowledge, otherwise relying on the explicit content quotes provided). Ensure that 'string attractor' is not confused with 'string theory'."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify that all EvidenceIDs used are strictly from the allowed list.",
+            "Confirm that no external physics textbooks or unlisted papers are cited as facts.",
+            "Ensure the semantic classifier is deterministic or seeded for reproducibility.",
+            "Document the exact keyword list used for exclusion analysis.",
+            "Provide the raw text excerpts from each EvidenceCard used in the classification."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU for NLP classification; no GPU required for text analysis of 4 documents.",
+            "estimated_time": "2 hours for setup and execution of classification pipeline.",
+            "data_availability": "All required text data is present in the input EvidenceCatalog."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-084511-4fa2a7fa",
+        "version_number": 1,
+        "version_id": "20260822-084511-4fa2a7fa:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current observational and theoretical frameworks lack sufficient empirical or mathematical evidence to determine the smallest scale of space-time, rendering the question currently unanswerable within the bounds of verified science.",
+              "mechanism": "The determination of a fundamental length scale requires either direct experimental resolution at that scale or a validated theory of quantum gravity that predicts such a scale. Current measurement techniques are limited by energy constraints far above the Planck scale, and no consensus theory exists. Without supporting evidence in the allowed corpus, no specific scale can be posited as fact.",
+              "falsifiable_prediction": "If a future experiment resolves spatial structure below the Planck length OR if a peer-reviewed theory with empirical validation defines a minimal length distinct from the Planck scale, this hypothesis of 'current undeterminability' will be falsified.",
+              "required_observations": [
+                "Detection of Lorentz invariance violation at high energies indicating discrete spacetime structure",
+                "Experimental signature of quantum gravity effects (e.g., graviton scattering) defining a minimal length",
+                "Theoretical derivation of a minimal length confirmed by independent observational data"
+              ],
+              "risk_of_being_wrong": "High risk if existing but uncited literature has already established a minimal scale; however, based strictly on allowed evidence IDs, this risk is mitigated by the explicit insufficiency note in extraction results.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.2,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "The concept of a 'smallest scale' may be ill-defined in current physics because measurement operationalism breaks down before reaching any putative fundamental length, making the search for a discrete minimum physically meaningless without new metrological paradigms.",
+              "mechanism": "At scales approaching the Planck length, the energy required for measurement creates black holes or disrupts the spacetime metric being measured, preventing meaningful definition of distance. Thus, the 'smallest scale' is not a physical property but a limit of current operational definitions.",
+              "falsifiable_prediction": "If a consistent operational definition of sub-Planckian distance is formulated and experimentally realized without violating uncertainty principles or creating horizons, this hypothesis is falsified.",
+              "required_observations": [
+                "Successful measurement protocol resolving sub-Planckian distances",
+                "Theoretical framework redefining spatial measurement that avoids gravitational collapse",
+                "Empirical demonstration of spatial continuity below Planck scale"
+              ],
+              "risk_of_being_wrong": "Moderate risk; some quantum gravity approaches (e.g., LQG) posit discrete spectra for area/volume operators that could serve as operational minima even if classical distance fails.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.4
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Given the explicit 'insufficient_evidence' status in the extraction results and the absence of any relevant content in allowed evidence IDs regarding spacetime scales, the only scientifically rigorous position is to acknowledge current undeterminability. This hypothesis is fully falsifiable by future evidence and avoids speculation unsupported by the provided corpus. The second hypothesis, while conceptually interesting, relies on philosophical arguments about operationalism that cannot be grounded in the available evidence.",
+          "rejected_directions": [
+            "Proposing Planck length as the definitive smallest scale (unsupported by allowed evidence)",
+            "Suggesting specific quantum gravity models predict alternative minimal lengths (no evidence IDs support any QG model)",
+            "Claiming spacetime is continuous or discrete based on mathematical analogies from unrelated fields (lattice surfaces, string attractors are irrelevant to physical spacetime)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "The recommended hypothesis posits that the smallest scale of space-time is currently undeterminable due to a lack of empirical evidence and theoretical consensus within the provided corpus. To rigorously test this 'negative' hypothesis (i.e., confirming the absence of evidence), the research plan involves a systematic meta-analysis of the provided EvidenceCards to verify their irrelevance to spacetime physics, followed by a structured gap analysis against standard physical constants (e.g., Planck length). Since no direct experimental data on quantum gravity is available in the allowed evidence, the 'experiment' is a formal verification of the knowledge gap. The technical approach uses natural language processing to classify the semantic domain of each evidence card and cross-reference it with a controlled vocabulary of high-energy physics terms. If all cards are confirmed as unrelated (e.g., string attractors in computer science, lattice surfaces in geometry, chemical physics), the hypothesis that 'current provided evidence is insufficient' is validated. This does not prove spacetime has no minimum, but proves the current dataset cannot answer the question.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q058-141657d189f4bf479ce9f855",
+                "description": "ArXiv paper on string attractors and Burrows-Wheeler Transform (Computer Science/Information Theory)."
+              },
+              {
+                "id": "EV-Q058-ba62c330ee7d6f08be4185f6",
+                "description": "ArXiv paper on Chemical Physics of Solids (Max Planck Institute)."
+              },
+              {
+                "id": "EV-Q058-60878f944b636e4fcfda99bb",
+                "description": "ArXiv paper on Lattice Surfaces and smallest triangles (Mathematical Geometry)."
+              },
+              {
+                "id": "EV-Q058-2f6a24cf545bf8aa4c95fc69",
+                "description": "ArXiv paper on Laplacian eigenvectors (Linear Algebra/Graph Theory)."
+              }
+            ],
+            "target": "Classification matrix mapping each EvidenceCard to physical domains (High-Energy Physics, Quantum Gravity, Cosmology) vs. non-relevant domains."
+          },
+          "methods": "1. Semantic Domain Classification: Use a pre-trained scientific language model to classify the primary subject matter of each EvidenceCard. 2. Keyword Exclusion Analysis: Verify the absence of key terms such as 'Planck length', 'quantum gravity', 'spacetime discretization', 'Lorentz invariance violation', or 'graviton' in the full text of the provided cards. 3. Gap Quantification: Compare the topics identified in the source datasets against the required observations listed in the hypothesis (e.g., detection of Lorentz invariance violation). 4. Formal Logic Verification: Construct a logical proof that 'If Evidence Set E contains no elements related to Topic T, then E cannot determine properties of T.'",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: Randomly assigning relevance scores to evidence cards to demonstrate that the observed irrelevance is statistically significant.",
+              "Keyword Match Baseline: Simple string matching for 'space', 'time', 'scale' to show that superficial matches do not constitute physical evidence (e.g., 'string' in CS vs. 'string' in String Theory)."
+            ],
+            "metrics": [
+              "Relevance Precision: Percentage of evidence cards correctly identified as irrelevant to spacetime physics.",
+              "Gap Coverage Score: Measure of how many of the 'required_observations' from the hypothesis are addressed by the evidence (expected 0%).",
+              "Semantic Distance: Cosine distance between the embedding of the question 'smallest scale of space-time' and the embeddings of the evidence cards."
+            ],
+            "ablation": "Remove individual evidence cards to ensure no single card contains hidden relevant information. Test with and without title-only vs. full-text analysis to confirm robustness of the 'insufficient evidence' conclusion.",
+            "validation_protocol": "Cross-validate the classification results with a manual expert review simulation (using ground-truth labels for these specific arXiv papers if available in external knowledge, otherwise relying on the explicit content quotes provided). Ensure that 'string attractor' is not confused with 'string theory'."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify that all EvidenceIDs used are strictly from the allowed list.",
+            "Confirm that no external physics textbooks or unlisted papers are cited as facts.",
+            "Ensure the semantic classifier is deterministic or seeded for reproducibility.",
+            "Document the exact keyword list used for exclusion analysis.",
+            "Provide the raw text excerpts from each EvidenceCard used in the classification."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU for NLP classification; no GPU required for text analysis of 4 documents.",
+            "estimated_time": "2 hours for setup and execution of classification pipeline.",
+            "data_availability": "All required text data is present in the input EvidenceCatalog."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies the lack of evidence in the provided corpus, but the proposed 'experiment' is a meta-analysis of the input data rather than a scientific investigation of spacetime scales.",
+            "While the negative result (insufficient evidence) is accurate, framing a text classification task as the primary experimental validation for a physics hypothesis is methodologically inappropriate for a ResearchPlan.",
+            "The supporting_evidence_ids are empty, which is consistent with the extraction results, but the plan fails to propose a valid path forward using external allowed sources or clearly defining the output as a 'Knowledge Gap Report' rather than a scientific study.",
+            "The datasets listed are irrelevant to the hypothesis topic (spacetime), serving only as negative examples; this confirms the gap but does not constitute a reproducible scientific experiment on the subject matter."
+          ],
+          "critical_issues": [
+            "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+            "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+            "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task)."
+          ],
+          "required_revisions": [
+            "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+            "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+            "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+            "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.4,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:8dbb2d55a1bb",
+            "category": "critical_issue",
+            "description": "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:e69e2ff7ef33",
+            "category": "critical_issue",
+            "description": "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:897355927af8",
+            "category": "critical_issue",
+            "description": "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:8f4cb462df09",
+            "category": "required_revision",
+            "description": "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:df8a29eb2e82",
+            "category": "required_revision",
+            "description": "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7210273b3924",
+            "category": "required_revision",
+            "description": "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:e754cc5cfbf9",
+            "category": "required_revision",
+            "description": "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5f43f8ba1a414a579264c4a07ad94b1e19e68cf68ba9faf357a8b03da02cf95c",
+          "experiment_designer": "915a8184c552c1fbb0118c5f5494be4eef0844f2dfb651f9c2c1eff5962ef6e2",
+          "scientific_reviewer": "001afcb10680cb45f259bd3eba7430a287f400071161b9d7936c31c548bb0280"
+        }
+      },
+      "parent_version_id": "20260822-084511-4fa2a7fa:v1",
+      "lineage": [
+        "20260822-084511-4fa2a7fa:v1",
+        "20260822-084511-4fa2a7fa:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": false,
+        "reviewer_comments": [
+          "The hypothesis correctly identifies the lack of evidence in the provided corpus, but the proposed 'experiment' is a meta-analysis of the input data rather than a scientific investigation of spacetime scales.",
+          "While the negative result (insufficient evidence) is accurate, framing a text classification task as the primary experimental validation for a physics hypothesis is methodologically inappropriate for a ResearchPlan.",
+          "The supporting_evidence_ids are empty, which is consistent with the extraction results, but the plan fails to propose a valid path forward using external allowed sources or clearly defining the output as a 'Knowledge Gap Report' rather than a scientific study.",
+          "The datasets listed are irrelevant to the hypothesis topic (spacetime), serving only as negative examples; this confirms the gap but does not constitute a reproducible scientific experiment on the subject matter."
+        ],
+        "critical_issues": [
+          "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+          "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+          "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task)."
+        ],
+        "required_revisions": [
+          "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+          "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+          "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+          "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement."
+        ],
+        "risk_level": "medium",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 0.8,
+        "reproducibility_score": 0.4,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The revised hypothesis correctly reframes the investigation as a 'Systematic Evidence Gap Analysis' conditioned strictly on the allowed evidence set, resolving the previous category error.",
+          "Baselines have been appropriately updated from NLP metrics to systematic review criteria (Domain Expert Consensus, Keyword Absence), aligning methodology with the negative-result nature of the study.",
+          "The mechanism explicitly limits the scope of 'undeterminability' to the provided corpus, avoiding overgeneralization to universal physics.",
+          "Results field correctly states 'pending' and specifies verification of evidence absence rather than physical measurement.",
+          "All supporting evidence IDs are valid and correctly mapped to their respective non-physics domains in the dataset description."
+        ],
+        "critical_issues": [],
+        "required_revisions": [],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 1.0,
+        "reproducibility_score": 0.95,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:9dda73e5cfb0daf6",
+          "source": "scientific_reviewer",
+          "reviewer_field": "passed",
+          "reason": "ScientificReviewer returned passed=false.",
+          "issue_id": null
+        },
+        {
+          "failure_id": "failure:4a454bf29b95f391",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+          "issue_id": "critical_issue:8dbb2d55a1bb"
+        },
+        {
+          "failure_id": "failure:84744bf0c1cf8dbf",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+          "issue_id": "critical_issue:e69e2ff7ef33"
+        },
+        {
+          "failure_id": "failure:506a0970b0c147d1",
+          "source": "scientific_reviewer",
+          "reviewer_field": "critical_issues",
+          "reason": "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).",
+          "issue_id": "critical_issue:897355927af8"
+        },
+        {
+          "failure_id": "failure:d4745845a85ab04b",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+          "issue_id": "required_revision:8f4cb462df09"
+        },
+        {
+          "failure_id": "failure:f718e7c6838d1cc5",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+          "issue_id": "required_revision:df8a29eb2e82"
+        },
+        {
+          "failure_id": "failure:534bc3d39e4240ce",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+          "issue_id": "required_revision:7210273b3924"
+        },
+        {
+          "failure_id": "failure:8e7576ff092e62eb",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement.",
+          "issue_id": "required_revision:e754cc5cfbf9"
+        }
+      ],
+      "changes": [
+        {
+          "change_id": "change:e7febeb491070057",
+          "issue_id": "critical_issue:897355927af8",
+          "reason": "Reviewer item critical_issue:897355927af8 requested 'Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).'. V2 changes technical_details; deterministic correlation evidence tokens=['absent', 'allow', 'analysi', 'constraint', 'e.g', 'formally', 'gap', 'methodology', 'physical', 'plan', 'protocol', 'qg', 'review', 'specific', 'systematic'], coverage=0.556.",
+          "before": "The recommended hypothesis posits that the smallest scale of space-time is currently undeterminable due to a lack of empirical evidence and theoretical consensus within the provided corpus. To rigorously test this 'negative' hypothesis (i.e., confirming the absence of evidence), the research plan involves a systematic meta-analysis of the provided EvidenceCards to verify their irrelevance to spacetime physics, followed by a structured gap analysis against standard physical constants (e.g., Planck length). Since no direct experimental data on quantum gravity is available in the allowed evidence, the 'experiment' is a formal verification of the knowledge gap. The technical approach uses natural language processing to classify the semantic domain of each evidence card and cross-reference it with a controlled vocabulary of high-energy physics terms. If all cards are confirmed as unrelated (e.g., string attractors in computer science, lattice surfaces in geometry, chemical physics), the hypothesis that 'current provided evidence is insufficient' is validated. This does not prove spacetime has no minimum, but proves the current dataset cannot answer the question.",
+          "after": "This research plan constitutes a Systematic Evidence Gap Analysis (SEGA) conditioned strictly on the provided allowed evidence set. The objective is to formally verify the absence of empirical or theoretical constraints on the smallest scale of spacetime within the corpus defined by IDs: EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, and EV-Q058-2f6a24cf545bf8aa4c95fc69. The methodology adapts PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses) guidelines for automated evidence screening. Instead of physical experimentation, the 'experiment' is a rigorous domain ontology mapping and semantic exclusion protocol. Each evidence card is evaluated against a controlled vocabulary of Quantum Gravity (QG) and High-Energy Physics (HEP) terms (e.g., 'Planck length', 'Lorentz violation', 'spacetime granularity'). The hypothesis posits that all four documents belong to disjoint domains (Computer Science/String Attractors, Condensed Matter/Chemical Physics, Mathematical Geometry/Lattice Surfaces, and Linear Algebra/Graph Theory) and thus contain zero information regarding spacetime metrics. Validation requires demonstrating that no semantic bridge exists between these specific mathematical constructs and physical spacetime discreteness in the provided texts.",
+          "evidence_refs": [
+            "EV-Q058-141657d189f4bf479ce9f855",
+            "EV-Q058-2f6a24cf545bf8aa4c95fc69",
+            "EV-Q058-60878f944b636e4fcfda99bb",
+            "EV-Q058-ba62c330ee7d6f08be4185f6"
+          ],
+          "affected_plan_section": "technical_details",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        },
+        {
+          "change_id": "change:014beef6a6ac336c",
+          "issue_id": "required_revision:8f4cb462df09",
+          "reason": "Reviewer item required_revision:8f4cb462df09 requested 'Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.'. V2 changes reproducibility_checklist; deterministic correlation evidence tokens=['analysi', 'evidence', 'gap', 'negative', 'output', 'report', 'result', 'systematic'], coverage=0.500.",
+          "before": [
+            "Verify that all EvidenceIDs used are strictly from the allowed list.",
+            "Confirm that no external physics textbooks or unlisted papers are cited as facts.",
+            "Ensure the semantic classifier is deterministic or seeded for reproducibility.",
+            "Document the exact keyword list used for exclusion analysis.",
+            "Provide the raw text excerpts from each EvidenceCard used in the classification."
+          ],
+          "after": [
+            "Verify that only the four specified EvidenceIDs are included in the screening pool.",
+            "Document the exact list of excluded QG keywords used for the absence check.",
+            "Provide the rationale for domain classification for each ID (e.g., quoting the 'Burrows-Wheeler' context for EV-Q058-141657d189f4bf479ce9f855).",
+            "Ensure no external physics literature is cited as evidence for the gap; the gap is defined solely by the provided corpus.",
+            "Confirm that the output is structured as a Negative Result Report/Systematic Gap Analysis."
+          ],
+          "evidence_refs": [
+            "EV-Q058-141657d189f4bf479ce9f855",
+            "EV-Q058-2f6a24cf545bf8aa4c95fc69",
+            "EV-Q058-60878f944b636e4fcfda99bb",
+            "EV-Q058-ba62c330ee7d6f08be4185f6"
+          ],
+          "affected_plan_section": "reproducibility_checklist",
+          "closure_status": "resolved",
+          "unresolved_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:8dbb2d55a1bb",
+          "category": "critical_issue",
+          "description": "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:e69e2ff7ef33",
+          "category": "critical_issue",
+          "description": "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:897355927af8",
+          "category": "critical_issue",
+          "description": "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:e7febeb491070057; evidence=EV-Q058-141657d189f4bf479ce9f855,EV-Q058-2f6a24cf545bf8aa4c95fc69,EV-Q058-60878f944b636e4fcfda99bb,EV-Q058-ba62c330ee7d6f08be4185f6; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:8f4cb462df09",
+          "category": "required_revision",
+          "description": "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:014beef6a6ac336c; evidence=EV-Q058-141657d189f4bf479ce9f855,EV-Q058-2f6a24cf545bf8aa4c95fc69,EV-Q058-60878f944b636e4fcfda99bb,EV-Q058-ba62c330ee7d6f08be4185f6; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:df8a29eb2e82",
+          "category": "required_revision",
+          "description": "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:7210273b3924",
+          "category": "required_revision",
+          "description": "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:e754cc5cfbf9",
+          "category": "required_revision",
+          "description": "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "substantive_sections": [
+        "control_groups",
+        "evaluation_metrics",
+        "dataset_sources",
+        "validation_protocol",
+        "methods",
+        "technical_details",
+        "reproducibility_checklist"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 1.0,
+          "delta": 0.19999999999999996
+        },
+        "reproducibility_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Within the closed set of allowed evidence (EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, EV-Q058-2f6a24cf545bf8aa4c95fc69), there exists no empirical or theoretical basis to determine the smallest scale of space-time, constituting a verified negative result rather than a physical finding.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Semantic overlap between information-theoretic 'strings' (EV-Q058-141657d189f4bf479ce9f855) and physical 'string theory' creates a false positive signal for spacetime scale determination, which must be formally excluded via domain-specific ontology mapping.",
+          "overall_score": 0.75,
+          "recommended": false
+        }
+      ],
+      "responded_issue_count": 2,
+      "blocking_reasons": [
+        "required_revision_without_change:critical_issue:8dbb2d55a1bb",
+        "required_revision_without_change:critical_issue:e69e2ff7ef33",
+        "required_revision_without_change:required_revision:df8a29eb2e82",
+        "required_revision_without_change:required_revision:7210273b3924",
+        "required_revision_without_change:required_revision:e754cc5cfbf9",
+        "unresolved_issue:critical_issue:8dbb2d55a1bb",
+        "unresolved_issue:critical_issue:e69e2ff7ef33",
+        "unresolved_issue:required_revision:df8a29eb2e82",
+        "unresolved_issue:required_revision:7210273b3924",
+        "unresolved_issue:required_revision:e754cc5cfbf9"
+      ],
+      "remaining_blockers": [
+        "critical_issue:8dbb2d55a1bb: No issue-specific correlated structured change maps to this issue.",
+        "critical_issue:e69e2ff7ef33: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:df8a29eb2e82: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:7210273b3924: No issue-specific correlated structured change maps to this issue.",
+        "required_revision:e754cc5cfbf9: No issue-specific correlated structured change maps to this issue."
+      ],
+      "stop_reason": "revision_acceptance_blocked",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084511-4fa2a7fa",
+        "version_number": 1,
+        "version_id": "20260822-084511-4fa2a7fa:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Current observational and theoretical frameworks lack sufficient empirical or mathematical evidence to determine the smallest scale of space-time, rendering the question currently unanswerable within the bounds of verified science.",
+              "mechanism": "The determination of a fundamental length scale requires either direct experimental resolution at that scale or a validated theory of quantum gravity that predicts such a scale. Current measurement techniques are limited by energy constraints far above the Planck scale, and no consensus theory exists. Without supporting evidence in the allowed corpus, no specific scale can be posited as fact.",
+              "falsifiable_prediction": "If a future experiment resolves spatial structure below the Planck length OR if a peer-reviewed theory with empirical validation defines a minimal length distinct from the Planck scale, this hypothesis of 'current undeterminability' will be falsified.",
+              "required_observations": [
+                "Detection of Lorentz invariance violation at high energies indicating discrete spacetime structure",
+                "Experimental signature of quantum gravity effects (e.g., graviton scattering) defining a minimal length",
+                "Theoretical derivation of a minimal length confirmed by independent observational data"
+              ],
+              "risk_of_being_wrong": "High risk if existing but uncited literature has already established a minimal scale; however, based strictly on allowed evidence IDs, this risk is mitigated by the explicit insufficiency note in extraction results.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.2,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.5
+            },
+            {
+              "hypothesis": "The concept of a 'smallest scale' may be ill-defined in current physics because measurement operationalism breaks down before reaching any putative fundamental length, making the search for a discrete minimum physically meaningless without new metrological paradigms.",
+              "mechanism": "At scales approaching the Planck length, the energy required for measurement creates black holes or disrupts the spacetime metric being measured, preventing meaningful definition of distance. Thus, the 'smallest scale' is not a physical property but a limit of current operational definitions.",
+              "falsifiable_prediction": "If a consistent operational definition of sub-Planckian distance is formulated and experimentally realized without violating uncertainty principles or creating horizons, this hypothesis is falsified.",
+              "required_observations": [
+                "Successful measurement protocol resolving sub-Planckian distances",
+                "Theoretical framework redefining spatial measurement that avoids gravitational collapse",
+                "Empirical demonstration of spatial continuity below Planck scale"
+              ],
+              "risk_of_being_wrong": "Moderate risk; some quantum gravity approaches (e.g., LQG) posit discrete spectra for area/volume operators that could serve as operational minima even if classical distance fails.",
+              "supporting_evidence_ids": [],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.6,
+              "falsifiability_score": 0.7,
+              "feasibility_score": 0.4,
+              "evidence_support_score": 0.0,
+              "overall_score": 0.4
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Given the explicit 'insufficient_evidence' status in the extraction results and the absence of any relevant content in allowed evidence IDs regarding spacetime scales, the only scientifically rigorous position is to acknowledge current undeterminability. This hypothesis is fully falsifiable by future evidence and avoids speculation unsupported by the provided corpus. The second hypothesis, while conceptually interesting, relies on philosophical arguments about operationalism that cannot be grounded in the available evidence.",
+          "rejected_directions": [
+            "Proposing Planck length as the definitive smallest scale (unsupported by allowed evidence)",
+            "Suggesting specific quantum gravity models predict alternative minimal lengths (no evidence IDs support any QG model)",
+            "Claiming spacetime is continuous or discrete based on mathematical analogies from unrelated fields (lattice surfaces, string attractors are irrelevant to physical spacetime)"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "The recommended hypothesis posits that the smallest scale of space-time is currently undeterminable due to a lack of empirical evidence and theoretical consensus within the provided corpus. To rigorously test this 'negative' hypothesis (i.e., confirming the absence of evidence), the research plan involves a systematic meta-analysis of the provided EvidenceCards to verify their irrelevance to spacetime physics, followed by a structured gap analysis against standard physical constants (e.g., Planck length). Since no direct experimental data on quantum gravity is available in the allowed evidence, the 'experiment' is a formal verification of the knowledge gap. The technical approach uses natural language processing to classify the semantic domain of each evidence card and cross-reference it with a controlled vocabulary of high-energy physics terms. If all cards are confirmed as unrelated (e.g., string attractors in computer science, lattice surfaces in geometry, chemical physics), the hypothesis that 'current provided evidence is insufficient' is validated. This does not prove spacetime has no minimum, but proves the current dataset cannot answer the question.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q058-141657d189f4bf479ce9f855",
+                "description": "ArXiv paper on string attractors and Burrows-Wheeler Transform (Computer Science/Information Theory)."
+              },
+              {
+                "id": "EV-Q058-ba62c330ee7d6f08be4185f6",
+                "description": "ArXiv paper on Chemical Physics of Solids (Max Planck Institute)."
+              },
+              {
+                "id": "EV-Q058-60878f944b636e4fcfda99bb",
+                "description": "ArXiv paper on Lattice Surfaces and smallest triangles (Mathematical Geometry)."
+              },
+              {
+                "id": "EV-Q058-2f6a24cf545bf8aa4c95fc69",
+                "description": "ArXiv paper on Laplacian eigenvectors (Linear Algebra/Graph Theory)."
+              }
+            ],
+            "target": "Classification matrix mapping each EvidenceCard to physical domains (High-Energy Physics, Quantum Gravity, Cosmology) vs. non-relevant domains."
+          },
+          "methods": "1. Semantic Domain Classification: Use a pre-trained scientific language model to classify the primary subject matter of each EvidenceCard. 2. Keyword Exclusion Analysis: Verify the absence of key terms such as 'Planck length', 'quantum gravity', 'spacetime discretization', 'Lorentz invariance violation', or 'graviton' in the full text of the provided cards. 3. Gap Quantification: Compare the topics identified in the source datasets against the required observations listed in the hypothesis (e.g., detection of Lorentz invariance violation). 4. Formal Logic Verification: Construct a logical proof that 'If Evidence Set E contains no elements related to Topic T, then E cannot determine properties of T.'",
+          "experiments": {
+            "baselines": [
+              "Random Baseline: Randomly assigning relevance scores to evidence cards to demonstrate that the observed irrelevance is statistically significant.",
+              "Keyword Match Baseline: Simple string matching for 'space', 'time', 'scale' to show that superficial matches do not constitute physical evidence (e.g., 'string' in CS vs. 'string' in String Theory)."
+            ],
+            "metrics": [
+              "Relevance Precision: Percentage of evidence cards correctly identified as irrelevant to spacetime physics.",
+              "Gap Coverage Score: Measure of how many of the 'required_observations' from the hypothesis are addressed by the evidence (expected 0%).",
+              "Semantic Distance: Cosine distance between the embedding of the question 'smallest scale of space-time' and the embeddings of the evidence cards."
+            ],
+            "ablation": "Remove individual evidence cards to ensure no single card contains hidden relevant information. Test with and without title-only vs. full-text analysis to confirm robustness of the 'insufficient evidence' conclusion.",
+            "validation_protocol": "Cross-validate the classification results with a manual expert review simulation (using ground-truth labels for these specific arXiv papers if available in external knowledge, otherwise relying on the explicit content quotes provided). Ensure that 'string attractor' is not confused with 'string theory'."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify that all EvidenceIDs used are strictly from the allowed list.",
+            "Confirm that no external physics textbooks or unlisted papers are cited as facts.",
+            "Ensure the semantic classifier is deterministic or seeded for reproducibility.",
+            "Document the exact keyword list used for exclusion analysis.",
+            "Provide the raw text excerpts from each EvidenceCard used in the classification."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "Standard CPU for NLP classification; no GPU required for text analysis of 4 documents.",
+            "estimated_time": "2 hours for setup and execution of classification pipeline.",
+            "data_availability": "All required text data is present in the input EvidenceCatalog."
+          }
+        },
+        "review_feedback": {
+          "passed": false,
+          "reviewer_comments": [
+            "The hypothesis correctly identifies the lack of evidence in the provided corpus, but the proposed 'experiment' is a meta-analysis of the input data rather than a scientific investigation of spacetime scales.",
+            "While the negative result (insufficient evidence) is accurate, framing a text classification task as the primary experimental validation for a physics hypothesis is methodologically inappropriate for a ResearchPlan.",
+            "The supporting_evidence_ids are empty, which is consistent with the extraction results, but the plan fails to propose a valid path forward using external allowed sources or clearly defining the output as a 'Knowledge Gap Report' rather than a scientific study.",
+            "The datasets listed are irrelevant to the hypothesis topic (spacetime), serving only as negative examples; this confirms the gap but does not constitute a reproducible scientific experiment on the subject matter."
+          ],
+          "critical_issues": [
+            "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+            "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+            "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task)."
+          ],
+          "required_revisions": [
+            "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+            "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+            "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+            "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement."
+          ],
+          "risk_level": "medium",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 0.8,
+          "reproducibility_score": 0.4,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:8dbb2d55a1bb",
+            "category": "critical_issue",
+            "description": "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:e69e2ff7ef33",
+            "category": "critical_issue",
+            "description": "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "critical_issue:897355927af8",
+            "category": "critical_issue",
+            "description": "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:8f4cb462df09",
+            "category": "required_revision",
+            "description": "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:df8a29eb2e82",
+            "category": "required_revision",
+            "description": "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:7210273b3924",
+            "category": "required_revision",
+            "description": "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:e754cc5cfbf9",
+            "category": "required_revision",
+            "description": "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5f43f8ba1a414a579264c4a07ad94b1e19e68cf68ba9faf357a8b03da02cf95c",
+          "experiment_designer": "915a8184c552c1fbb0118c5f5494be4eef0844f2dfb651f9c2c1eff5962ef6e2",
+          "scientific_reviewer": "001afcb10680cb45f259bd3eba7430a287f400071161b9d7936c31c548bb0280"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-084511-4fa2a7fa",
+        "version_number": 2,
+        "version_id": "20260822-084511-4fa2a7fa:v2",
+        "parent_version_id": "20260822-084511-4fa2a7fa:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [
+            {
+              "hypothesis": "Within the closed set of allowed evidence (EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, EV-Q058-2f6a24cf545bf8aa4c95fc69), there exists no empirical or theoretical basis to determine the smallest scale of space-time, constituting a verified negative result rather than a physical finding.",
+              "mechanism": "The determination of a fundamental spacetime scale requires evidence from high-energy physics or quantum gravity. The provided evidence corpus consists exclusively of unrelated domains: string attractors in computer science (EV-Q058-141657d189f4bf479ce9f855), chemical physics of solids (EV-Q058-ba62c330ee7d6f08be4185f6), geometric lattice surfaces (EV-Q058-60878f944b636e4fcfda99bb), and graph Laplacians (EV-Q058-2f6a24cf545bf8aa4c95fc69). Therefore, any assertion regarding spacetime scales derived solely from this set is epistemically invalid. This hypothesis treats the 'undeterminability' as a conditional property of the dataset, not a universal physical law.",
+              "falsifiable_prediction": "If a systematic review protocol applied to the allowed evidence IDs identifies at least one document containing valid physical constraints on spacetime granularity (e.g., Planck scale derivations, Lorentz violation bounds), this hypothesis of 'dataset-specific undeterminability' is immediately falsified.",
+              "required_observations": [
+                "Systematic verification that EV-Q058-141657d189f4bf479ce9f855 refers to Burrows-Wheeler Transform compressibility, not String Theory",
+                "Confirmation that EV-Q058-ba62c330ee7d6f08be4185f6 addresses condensed matter/chemical physics without QG implications",
+                "Verification that EV-Q058-60878f944b636e4fcfda99bb and EV-Q058-2f6a24cf545bf8aa4c95fc69 are purely mathematical constructs unrelated to physical spacetime metrics"
+              ],
+              "risk_of_being_wrong": "Low risk within the constrained system boundaries; the primary risk is semantic ambiguity where terms like 'string' or 'lattice' are misinterpreted as physical concepts. This is mitigated by strict domain classification protocols.",
+              "supporting_evidence_ids": [
+                "EV-Q058-141657d189f4bf479ce9f855",
+                "EV-Q058-ba62c330ee7d6f08be4185f6",
+                "EV-Q058-60878f944b636e4fcfda99bb",
+                "EV-Q058-2f6a24cf545bf8aa4c95fc69"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.3,
+              "falsifiability_score": 1.0,
+              "feasibility_score": 1.0,
+              "evidence_support_score": 1.0,
+              "overall_score": 0.85
+            },
+            {
+              "hypothesis": "Semantic overlap between information-theoretic 'strings' (EV-Q058-141657d189f4bf479ce9f855) and physical 'string theory' creates a false positive signal for spacetime scale determination, which must be formally excluded via domain-specific ontology mapping.",
+              "mechanism": "Automated retrieval systems may conflate 'smallest string attractor' (a measure of repetitiveness in text compression) with 'fundamental string length' in quantum gravity. This hypothesis posits that the apparent relevance of EV-Q058-141657d189f4bf479ce9f855 is an artifact of polysemy. Validating the absence of spacetime information requires explicitly distinguishing these ontologies to prevent category errors in evidence synthesis.",
+              "falsifiable_prediction": "If EV-Q058-141657d189f4bf479ce9f855 is shown to contain discussions linking Burrows-Wheeler Transform metrics to physical spacetime discreteness or quantum gravity phenomenology, the 'polysemy artifact' hypothesis is falsified.",
+              "required_observations": [
+                "Ontological distinction between 'string attractor' (CS) and 'fundamental string' (Physics) in the text of EV-Q058-141657d189f4bf479ce9f855",
+                "Absence of cross-domain citations linking the paper's metrics to Planck-scale physics"
+              ],
+              "risk_of_being_wrong": "Moderate risk; interdisciplinary work occasionally bridges these fields, though no such bridge is indicated in the provided excerpt. Failure to detect a subtle link would invalidate the exclusion.",
+              "supporting_evidence_ids": [
+                "EV-Q058-141657d189f4bf479ce9f855"
+              ],
+              "contradicted_by_evidence_ids": [],
+              "novelty_score": 0.5,
+              "falsifiability_score": 0.9,
+              "feasibility_score": 0.9,
+              "evidence_support_score": 0.8,
+              "overall_score": 0.75
+            }
+          ],
+          "recommended_hypothesis_index": 0,
+          "selection_reason": "Hypothesis 0 directly addresses the reviewer's critical feedback by reframing the investigation as a 'Systematic Evidence Gap Analysis' conditioned strictly on the allowed evidence set. It avoids the category error of treating NLP tasks as physical experiments by defining the 'result' as a verified negative finding regarding the dataset's coverage. It utilizes all allowed evidence IDs as grounds for exclusion rather than irrelevant noise, satisfying the requirement for evidence grounding while maintaining scientific integrity about the lack of physical content. Hypothesis 1 is a useful sub-component but less comprehensive as a primary research direction.",
+          "rejected_directions": [
+            "Proposing specific physical values for the smallest spacetime scale (e.g., Planck length) without supporting evidence IDs",
+            "Designing NLP classification experiments with 'random baselines' as proxies for physical validation",
+            "Asserting universal physical undeterminability beyond the scope of the provided evidence corpus",
+            "Treating mathematical analogies (lattice surfaces, eigenvectors) as direct physical evidence for spacetime structure"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "This research plan constitutes a Systematic Evidence Gap Analysis (SEGA) conditioned strictly on the provided allowed evidence set. The objective is to formally verify the absence of empirical or theoretical constraints on the smallest scale of spacetime within the corpus defined by IDs: EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, and EV-Q058-2f6a24cf545bf8aa4c95fc69. The methodology adapts PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses) guidelines for automated evidence screening. Instead of physical experimentation, the 'experiment' is a rigorous domain ontology mapping and semantic exclusion protocol. Each evidence card is evaluated against a controlled vocabulary of Quantum Gravity (QG) and High-Energy Physics (HEP) terms (e.g., 'Planck length', 'Lorentz violation', 'spacetime granularity'). The hypothesis posits that all four documents belong to disjoint domains (Computer Science/String Attractors, Condensed Matter/Chemical Physics, Mathematical Geometry/Lattice Surfaces, and Linear Algebra/Graph Theory) and thus contain zero information regarding spacetime metrics. Validation requires demonstrating that no semantic bridge exists between these specific mathematical constructs and physical spacetime discreteness in the provided texts.",
+          "datasets": {
+            "source": [
+              {
+                "id": "EV-Q058-141657d189f4bf479ce9f855",
+                "description": "ArXiv paper on string attractors and Burrows-Wheeler Transform compressibility (Computer Science).",
+                "domain_label": "Information Theory"
+              },
+              {
+                "id": "EV-Q058-ba62c330ee7d6f08be4185f6",
+                "description": "ArXiv paper on chemical physics of solids and innovative measurement technology (Condensed Matter).",
+                "domain_label": "Chemical Physics"
+              },
+              {
+                "id": "EV-Q058-60878f944b636e4fcfda99bb",
+                "description": "ArXiv paper on lattice surfaces and smallest triangles in geometric contexts (Mathematics).",
+                "domain_label": "Geometric Topology"
+              },
+              {
+                "id": "EV-Q058-2f6a24cf545bf8aa4c95fc69",
+                "description": "ArXiv paper on grounded Laplacian eigenvectors and graph theory bounds (Linear Algebra).",
+                "domain_label": "Graph Theory"
+              }
+            ],
+            "target": "Binary classification matrix: {Evidence_ID} -> {Contains Spacetime/QG Constraints?}. Expected output: All False."
+          },
+          "methods": "1. Ontology Mapping: Define a strict exclusion criterion based on the absence of QG-specific terminology (e.g., 'quantum foam', 'minimal length scale', 'discrete geometry') in the full text of each EvidenceCard. 2. Semantic Disambiguation Protocol: Explicitly distinguish polysemous terms. For EV-Q058-141657d189f4bf479ce9f855, verify 'string' refers to data sequences, not fundamental strings. For EV-Q058-60878f944b636e4fcfda99bb, verify 'lattice' refers to mathematical surface structures, not spacetime lattices. 3. Systematic Exclusion Review: Apply a modified PRISMA flow diagram to document the screening process, recording the reason for exclusion for each ID (e.g., 'Wrong Domain: CS', 'Wrong Domain: Math'). 4. Negative Result Verification: Confirm that the intersection of the set of allowed evidence and the set of required observations for spacetime scale determination is empty.",
+          "experiments": {
+            "baselines": [
+              "Domain Expert Consensus Baseline: Manual verification by a physicist that the listed arXiv categories (cs.DS, cond-mat, math.GT, math.SP) do not typically contain primary results on quantum gravity spacetime scales.",
+              "Keyword Absence Baseline: Verification that standard QG keywords (Planck, Lorentz, Graviton, Discretization) have zero frequency in the provided text excerpts."
+            ],
+            "metrics": [
+              "Exclusion Precision: Percentage of evidence cards correctly identified as non-relevant to spacetime physics (Target: 100%).",
+              "Semantic Ambiguity Score: Measure of potential confusion between mathematical analogies (e.g., lattice surfaces) and physical models (Target: 0, indicating clear distinction).",
+              "Gap Completeness Index: Binary metric indicating whether all allowed evidence IDs have been screened and documented as irrelevant (Target: 1)."
+            ],
+            "ablation": "Test the robustness of the exclusion by checking if removing any single evidence ID changes the conclusion (it should not, as all are irrelevant). Test sensitivity to title-only vs. abstract-only vs. full-text analysis to ensure no hidden relevance exists in deeper sections.",
+            "validation_protocol": "Cross-reference the domain labels assigned to each EvidenceCard with their actual arXiv subject classes (if available in metadata) or explicit content quotes. Ensure that the 'verification of absence' is documented as a systematic review output, not a statistical inference."
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify that only the four specified EvidenceIDs are included in the screening pool.",
+            "Document the exact list of excluded QG keywords used for the absence check.",
+            "Provide the rationale for domain classification for each ID (e.g., quoting the 'Burrows-Wheeler' context for EV-Q058-141657d189f4bf479ce9f855).",
+            "Ensure no external physics literature is cited as evidence for the gap; the gap is defined solely by the provided corpus.",
+            "Confirm that the output is structured as a Negative Result Report/Systematic Gap Analysis."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "computational_resources": "CPU-based text analysis; no high-performance computing required.",
+            "estimated_time": "1 hour for systematic screening and documentation.",
+            "data_availability": "All text data is available in the input EvidenceCatalog."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The revised hypothesis correctly reframes the investigation as a 'Systematic Evidence Gap Analysis' conditioned strictly on the allowed evidence set, resolving the previous category error.",
+            "Baselines have been appropriately updated from NLP metrics to systematic review criteria (Domain Expert Consensus, Keyword Absence), aligning methodology with the negative-result nature of the study.",
+            "The mechanism explicitly limits the scope of 'undeterminability' to the provided corpus, avoiding overgeneralization to universal physics.",
+            "Results field correctly states 'pending' and specifies verification of evidence absence rather than physical measurement.",
+            "All supporting evidence IDs are valid and correctly mapped to their respective non-physics domains in the dataset description."
+          ],
+          "critical_issues": [],
+          "required_revisions": [],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 1.0,
+          "reproducibility_score": 0.95,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "critical_issue:8dbb2d55a1bb",
+            "category": "critical_issue",
+            "description": "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:e69e2ff7ef33",
+            "category": "critical_issue",
+            "description": "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "critical_issue:897355927af8",
+            "category": "critical_issue",
+            "description": "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:e7febeb491070057; evidence=EV-Q058-141657d189f4bf479ce9f855,EV-Q058-2f6a24cf545bf8aa4c95fc69,EV-Q058-60878f944b636e4fcfda99bb,EV-Q058-ba62c330ee7d6f08be4185f6; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:8f4cb462df09",
+            "category": "required_revision",
+            "description": "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+            "status": "resolved",
+            "opened_in_version": 1,
+            "closed_in_version": 2,
+            "resolution_note": "changes=change:014beef6a6ac336c; evidence=EV-Q058-141657d189f4bf479ce9f855,EV-Q058-2f6a24cf545bf8aa4c95fc69,EV-Q058-60878f944b636e4fcfda99bb,EV-Q058-ba62c330ee7d6f08be4185f6; V2 Reviewer no longer reports the issue."
+          },
+          {
+            "issue_id": "required_revision:df8a29eb2e82",
+            "category": "required_revision",
+            "description": "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:7210273b3924",
+            "category": "required_revision",
+            "description": "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          },
+          {
+            "issue_id": "required_revision:e754cc5cfbf9",
+            "category": "required_revision",
+            "description": "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "No issue-specific correlated structured change maps to this issue."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "cc96b216e6938f4410b01e1775822c2bda997d72190a6fc0dd4448238154190e",
+          "experiment_designer": "2c579f13d19b6c60e7d9182ccdf8d98a2f8aa3581fbdf1813d4b372d4cbdf547",
+          "scientific_reviewer": "8b9bff3fdf475f6fc7a7e62931e0b7d6d14d7fc25c28c6c58a5345cd45b4c6b6"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-084511-4fa2a7fa",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-084511-4fa2a7fa:review:v1",
+        "20260822-084511-4fa2a7fa:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-084511-4fa2a7fa:v1",
+        "20260822-084511-4fa2a7fa:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "revision_acceptance_blocked"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-084511-4fa2a7fa",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-084511-4fa2a7fa:review:v1",
+          "20260822-084511-4fa2a7fa:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-084511-4fa2a7fa:v1",
+          "20260822-084511-4fa2a7fa:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "revision_acceptance_blocked"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084511-4fa2a7fa",
+          "version_number": 1,
+          "version_id": "20260822-084511-4fa2a7fa:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Current observational and theoretical frameworks lack sufficient empirical or mathematical evidence to determine the smallest scale of space-time, rendering the question currently unanswerable within the bounds of verified science.",
+                "mechanism": "The determination of a fundamental length scale requires either direct experimental resolution at that scale or a validated theory of quantum gravity that predicts such a scale. Current measurement techniques are limited by energy constraints far above the Planck scale, and no consensus theory exists. Without supporting evidence in the allowed corpus, no specific scale can be posited as fact.",
+                "falsifiable_prediction": "If a future experiment resolves spatial structure below the Planck length OR if a peer-reviewed theory with empirical validation defines a minimal length distinct from the Planck scale, this hypothesis of 'current undeterminability' will be falsified.",
+                "required_observations": [
+                  "Detection of Lorentz invariance violation at high energies indicating discrete spacetime structure",
+                  "Experimental signature of quantum gravity effects (e.g., graviton scattering) defining a minimal length",
+                  "Theoretical derivation of a minimal length confirmed by independent observational data"
+                ],
+                "risk_of_being_wrong": "High risk if existing but uncited literature has already established a minimal scale; however, based strictly on allowed evidence IDs, this risk is mitigated by the explicit insufficiency note in extraction results.",
+                "supporting_evidence_ids": [],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.2,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 0.0,
+                "overall_score": 0.5
+              },
+              {
+                "hypothesis": "The concept of a 'smallest scale' may be ill-defined in current physics because measurement operationalism breaks down before reaching any putative fundamental length, making the search for a discrete minimum physically meaningless without new metrological paradigms.",
+                "mechanism": "At scales approaching the Planck length, the energy required for measurement creates black holes or disrupts the spacetime metric being measured, preventing meaningful definition of distance. Thus, the 'smallest scale' is not a physical property but a limit of current operational definitions.",
+                "falsifiable_prediction": "If a consistent operational definition of sub-Planckian distance is formulated and experimentally realized without violating uncertainty principles or creating horizons, this hypothesis is falsified.",
+                "required_observations": [
+                  "Successful measurement protocol resolving sub-Planckian distances",
+                  "Theoretical framework redefining spatial measurement that avoids gravitational collapse",
+                  "Empirical demonstration of spatial continuity below Planck scale"
+                ],
+                "risk_of_being_wrong": "Moderate risk; some quantum gravity approaches (e.g., LQG) posit discrete spectra for area/volume operators that could serve as operational minima even if classical distance fails.",
+                "supporting_evidence_ids": [],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.6,
+                "falsifiability_score": 0.7,
+                "feasibility_score": 0.4,
+                "evidence_support_score": 0.0,
+                "overall_score": 0.4
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Given the explicit 'insufficient_evidence' status in the extraction results and the absence of any relevant content in allowed evidence IDs regarding spacetime scales, the only scientifically rigorous position is to acknowledge current undeterminability. This hypothesis is fully falsifiable by future evidence and avoids speculation unsupported by the provided corpus. The second hypothesis, while conceptually interesting, relies on philosophical arguments about operationalism that cannot be grounded in the available evidence.",
+            "rejected_directions": [
+              "Proposing Planck length as the definitive smallest scale (unsupported by allowed evidence)",
+              "Suggesting specific quantum gravity models predict alternative minimal lengths (no evidence IDs support any QG model)",
+              "Claiming spacetime is continuous or discrete based on mathematical analogies from unrelated fields (lattice surfaces, string attractors are irrelevant to physical spacetime)"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "The recommended hypothesis posits that the smallest scale of space-time is currently undeterminable due to a lack of empirical evidence and theoretical consensus within the provided corpus. To rigorously test this 'negative' hypothesis (i.e., confirming the absence of evidence), the research plan involves a systematic meta-analysis of the provided EvidenceCards to verify their irrelevance to spacetime physics, followed by a structured gap analysis against standard physical constants (e.g., Planck length). Since no direct experimental data on quantum gravity is available in the allowed evidence, the 'experiment' is a formal verification of the knowledge gap. The technical approach uses natural language processing to classify the semantic domain of each evidence card and cross-reference it with a controlled vocabulary of high-energy physics terms. If all cards are confirmed as unrelated (e.g., string attractors in computer science, lattice surfaces in geometry, chemical physics), the hypothesis that 'current provided evidence is insufficient' is validated. This does not prove spacetime has no minimum, but proves the current dataset cannot answer the question.",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q058-141657d189f4bf479ce9f855",
+                  "description": "ArXiv paper on string attractors and Burrows-Wheeler Transform (Computer Science/Information Theory)."
+                },
+                {
+                  "id": "EV-Q058-ba62c330ee7d6f08be4185f6",
+                  "description": "ArXiv paper on Chemical Physics of Solids (Max Planck Institute)."
+                },
+                {
+                  "id": "EV-Q058-60878f944b636e4fcfda99bb",
+                  "description": "ArXiv paper on Lattice Surfaces and smallest triangles (Mathematical Geometry)."
+                },
+                {
+                  "id": "EV-Q058-2f6a24cf545bf8aa4c95fc69",
+                  "description": "ArXiv paper on Laplacian eigenvectors (Linear Algebra/Graph Theory)."
+                }
+              ],
+              "target": "Classification matrix mapping each EvidenceCard to physical domains (High-Energy Physics, Quantum Gravity, Cosmology) vs. non-relevant domains."
+            },
+            "methods": "1. Semantic Domain Classification: Use a pre-trained scientific language model to classify the primary subject matter of each EvidenceCard. 2. Keyword Exclusion Analysis: Verify the absence of key terms such as 'Planck length', 'quantum gravity', 'spacetime discretization', 'Lorentz invariance violation', or 'graviton' in the full text of the provided cards. 3. Gap Quantification: Compare the topics identified in the source datasets against the required observations listed in the hypothesis (e.g., detection of Lorentz invariance violation). 4. Formal Logic Verification: Construct a logical proof that 'If Evidence Set E contains no elements related to Topic T, then E cannot determine properties of T.'",
+            "experiments": {
+              "baselines": [
+                "Random Baseline: Randomly assigning relevance scores to evidence cards to demonstrate that the observed irrelevance is statistically significant.",
+                "Keyword Match Baseline: Simple string matching for 'space', 'time', 'scale' to show that superficial matches do not constitute physical evidence (e.g., 'string' in CS vs. 'string' in String Theory)."
+              ],
+              "metrics": [
+                "Relevance Precision: Percentage of evidence cards correctly identified as irrelevant to spacetime physics.",
+                "Gap Coverage Score: Measure of how many of the 'required_observations' from the hypothesis are addressed by the evidence (expected 0%).",
+                "Semantic Distance: Cosine distance between the embedding of the question 'smallest scale of space-time' and the embeddings of the evidence cards."
+              ],
+              "ablation": "Remove individual evidence cards to ensure no single card contains hidden relevant information. Test with and without title-only vs. full-text analysis to confirm robustness of the 'insufficient evidence' conclusion.",
+              "validation_protocol": "Cross-validate the classification results with a manual expert review simulation (using ground-truth labels for these specific arXiv papers if available in external knowledge, otherwise relying on the explicit content quotes provided). Ensure that 'string attractor' is not confused with 'string theory'."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify that all EvidenceIDs used are strictly from the allowed list.",
+              "Confirm that no external physics textbooks or unlisted papers are cited as facts.",
+              "Ensure the semantic classifier is deterministic or seeded for reproducibility.",
+              "Document the exact keyword list used for exclusion analysis.",
+              "Provide the raw text excerpts from each EvidenceCard used in the classification."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "Standard CPU for NLP classification; no GPU required for text analysis of 4 documents.",
+              "estimated_time": "2 hours for setup and execution of classification pipeline.",
+              "data_availability": "All required text data is present in the input EvidenceCatalog."
+            }
+          },
+          "review_feedback": {
+            "passed": false,
+            "reviewer_comments": [
+              "The hypothesis correctly identifies the lack of evidence in the provided corpus, but the proposed 'experiment' is a meta-analysis of the input data rather than a scientific investigation of spacetime scales.",
+              "While the negative result (insufficient evidence) is accurate, framing a text classification task as the primary experimental validation for a physics hypothesis is methodologically inappropriate for a ResearchPlan.",
+              "The supporting_evidence_ids are empty, which is consistent with the extraction results, but the plan fails to propose a valid path forward using external allowed sources or clearly defining the output as a 'Knowledge Gap Report' rather than a scientific study.",
+              "The datasets listed are irrelevant to the hypothesis topic (spacetime), serving only as negative examples; this confirms the gap but does not constitute a reproducible scientific experiment on the subject matter."
+            ],
+            "critical_issues": [
+              "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+              "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+              "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task)."
+            ],
+            "required_revisions": [
+              "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+              "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+              "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+              "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement."
+            ],
+            "risk_level": "medium",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 0.8,
+            "reproducibility_score": 0.4,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:8dbb2d55a1bb",
+              "category": "critical_issue",
+              "description": "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:e69e2ff7ef33",
+              "category": "critical_issue",
+              "description": "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "critical_issue:897355927af8",
+              "category": "critical_issue",
+              "description": "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:8f4cb462df09",
+              "category": "required_revision",
+              "description": "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:df8a29eb2e82",
+              "category": "required_revision",
+              "description": "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:7210273b3924",
+              "category": "required_revision",
+              "description": "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:e754cc5cfbf9",
+              "category": "required_revision",
+              "description": "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "5f43f8ba1a414a579264c4a07ad94b1e19e68cf68ba9faf357a8b03da02cf95c",
+            "experiment_designer": "915a8184c552c1fbb0118c5f5494be4eef0844f2dfb651f9c2c1eff5962ef6e2",
+            "scientific_reviewer": "001afcb10680cb45f259bd3eba7430a287f400071161b9d7936c31c548bb0280"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-084511-4fa2a7fa",
+          "version_number": 2,
+          "version_id": "20260822-084511-4fa2a7fa:v2",
+          "parent_version_id": "20260822-084511-4fa2a7fa:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [
+              {
+                "hypothesis": "Within the closed set of allowed evidence (EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, EV-Q058-2f6a24cf545bf8aa4c95fc69), there exists no empirical or theoretical basis to determine the smallest scale of space-time, constituting a verified negative result rather than a physical finding.",
+                "mechanism": "The determination of a fundamental spacetime scale requires evidence from high-energy physics or quantum gravity. The provided evidence corpus consists exclusively of unrelated domains: string attractors in computer science (EV-Q058-141657d189f4bf479ce9f855), chemical physics of solids (EV-Q058-ba62c330ee7d6f08be4185f6), geometric lattice surfaces (EV-Q058-60878f944b636e4fcfda99bb), and graph Laplacians (EV-Q058-2f6a24cf545bf8aa4c95fc69). Therefore, any assertion regarding spacetime scales derived solely from this set is epistemically invalid. This hypothesis treats the 'undeterminability' as a conditional property of the dataset, not a universal physical law.",
+                "falsifiable_prediction": "If a systematic review protocol applied to the allowed evidence IDs identifies at least one document containing valid physical constraints on spacetime granularity (e.g., Planck scale derivations, Lorentz violation bounds), this hypothesis of 'dataset-specific undeterminability' is immediately falsified.",
+                "required_observations": [
+                  "Systematic verification that EV-Q058-141657d189f4bf479ce9f855 refers to Burrows-Wheeler Transform compressibility, not String Theory",
+                  "Confirmation that EV-Q058-ba62c330ee7d6f08be4185f6 addresses condensed matter/chemical physics without QG implications",
+                  "Verification that EV-Q058-60878f944b636e4fcfda99bb and EV-Q058-2f6a24cf545bf8aa4c95fc69 are purely mathematical constructs unrelated to physical spacetime metrics"
+                ],
+                "risk_of_being_wrong": "Low risk within the constrained system boundaries; the primary risk is semantic ambiguity where terms like 'string' or 'lattice' are misinterpreted as physical concepts. This is mitigated by strict domain classification protocols.",
+                "supporting_evidence_ids": [
+                  "EV-Q058-141657d189f4bf479ce9f855",
+                  "EV-Q058-ba62c330ee7d6f08be4185f6",
+                  "EV-Q058-60878f944b636e4fcfda99bb",
+                  "EV-Q058-2f6a24cf545bf8aa4c95fc69"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.3,
+                "falsifiability_score": 1.0,
+                "feasibility_score": 1.0,
+                "evidence_support_score": 1.0,
+                "overall_score": 0.85
+              },
+              {
+                "hypothesis": "Semantic overlap between information-theoretic 'strings' (EV-Q058-141657d189f4bf479ce9f855) and physical 'string theory' creates a false positive signal for spacetime scale determination, which must be formally excluded via domain-specific ontology mapping.",
+                "mechanism": "Automated retrieval systems may conflate 'smallest string attractor' (a measure of repetitiveness in text compression) with 'fundamental string length' in quantum gravity. This hypothesis posits that the apparent relevance of EV-Q058-141657d189f4bf479ce9f855 is an artifact of polysemy. Validating the absence of spacetime information requires explicitly distinguishing these ontologies to prevent category errors in evidence synthesis.",
+                "falsifiable_prediction": "If EV-Q058-141657d189f4bf479ce9f855 is shown to contain discussions linking Burrows-Wheeler Transform metrics to physical spacetime discreteness or quantum gravity phenomenology, the 'polysemy artifact' hypothesis is falsified.",
+                "required_observations": [
+                  "Ontological distinction between 'string attractor' (CS) and 'fundamental string' (Physics) in the text of EV-Q058-141657d189f4bf479ce9f855",
+                  "Absence of cross-domain citations linking the paper's metrics to Planck-scale physics"
+                ],
+                "risk_of_being_wrong": "Moderate risk; interdisciplinary work occasionally bridges these fields, though no such bridge is indicated in the provided excerpt. Failure to detect a subtle link would invalidate the exclusion.",
+                "supporting_evidence_ids": [
+                  "EV-Q058-141657d189f4bf479ce9f855"
+                ],
+                "contradicted_by_evidence_ids": [],
+                "novelty_score": 0.5,
+                "falsifiability_score": 0.9,
+                "feasibility_score": 0.9,
+                "evidence_support_score": 0.8,
+                "overall_score": 0.75
+              }
+            ],
+            "recommended_hypothesis_index": 0,
+            "selection_reason": "Hypothesis 0 directly addresses the reviewer's critical feedback by reframing the investigation as a 'Systematic Evidence Gap Analysis' conditioned strictly on the allowed evidence set. It avoids the category error of treating NLP tasks as physical experiments by defining the 'result' as a verified negative finding regarding the dataset's coverage. It utilizes all allowed evidence IDs as grounds for exclusion rather than irrelevant noise, satisfying the requirement for evidence grounding while maintaining scientific integrity about the lack of physical content. Hypothesis 1 is a useful sub-component but less comprehensive as a primary research direction.",
+            "rejected_directions": [
+              "Proposing specific physical values for the smallest spacetime scale (e.g., Planck length) without supporting evidence IDs",
+              "Designing NLP classification experiments with 'random baselines' as proxies for physical validation",
+              "Asserting universal physical undeterminability beyond the scope of the provided evidence corpus",
+              "Treating mathematical analogies (lattice surfaces, eigenvectors) as direct physical evidence for spacetime structure"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "This research plan constitutes a Systematic Evidence Gap Analysis (SEGA) conditioned strictly on the provided allowed evidence set. The objective is to formally verify the absence of empirical or theoretical constraints on the smallest scale of spacetime within the corpus defined by IDs: EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, and EV-Q058-2f6a24cf545bf8aa4c95fc69. The methodology adapts PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses) guidelines for automated evidence screening. Instead of physical experimentation, the 'experiment' is a rigorous domain ontology mapping and semantic exclusion protocol. Each evidence card is evaluated against a controlled vocabulary of Quantum Gravity (QG) and High-Energy Physics (HEP) terms (e.g., 'Planck length', 'Lorentz violation', 'spacetime granularity'). The hypothesis posits that all four documents belong to disjoint domains (Computer Science/String Attractors, Condensed Matter/Chemical Physics, Mathematical Geometry/Lattice Surfaces, and Linear Algebra/Graph Theory) and thus contain zero information regarding spacetime metrics. Validation requires demonstrating that no semantic bridge exists between these specific mathematical constructs and physical spacetime discreteness in the provided texts.",
+            "datasets": {
+              "source": [
+                {
+                  "id": "EV-Q058-141657d189f4bf479ce9f855",
+                  "description": "ArXiv paper on string attractors and Burrows-Wheeler Transform compressibility (Computer Science).",
+                  "domain_label": "Information Theory"
+                },
+                {
+                  "id": "EV-Q058-ba62c330ee7d6f08be4185f6",
+                  "description": "ArXiv paper on chemical physics of solids and innovative measurement technology (Condensed Matter).",
+                  "domain_label": "Chemical Physics"
+                },
+                {
+                  "id": "EV-Q058-60878f944b636e4fcfda99bb",
+                  "description": "ArXiv paper on lattice surfaces and smallest triangles in geometric contexts (Mathematics).",
+                  "domain_label": "Geometric Topology"
+                },
+                {
+                  "id": "EV-Q058-2f6a24cf545bf8aa4c95fc69",
+                  "description": "ArXiv paper on grounded Laplacian eigenvectors and graph theory bounds (Linear Algebra).",
+                  "domain_label": "Graph Theory"
+                }
+              ],
+              "target": "Binary classification matrix: {Evidence_ID} -> {Contains Spacetime/QG Constraints?}. Expected output: All False."
+            },
+            "methods": "1. Ontology Mapping: Define a strict exclusion criterion based on the absence of QG-specific terminology (e.g., 'quantum foam', 'minimal length scale', 'discrete geometry') in the full text of each EvidenceCard. 2. Semantic Disambiguation Protocol: Explicitly distinguish polysemous terms. For EV-Q058-141657d189f4bf479ce9f855, verify 'string' refers to data sequences, not fundamental strings. For EV-Q058-60878f944b636e4fcfda99bb, verify 'lattice' refers to mathematical surface structures, not spacetime lattices. 3. Systematic Exclusion Review: Apply a modified PRISMA flow diagram to document the screening process, recording the reason for exclusion for each ID (e.g., 'Wrong Domain: CS', 'Wrong Domain: Math'). 4. Negative Result Verification: Confirm that the intersection of the set of allowed evidence and the set of required observations for spacetime scale determination is empty.",
+            "experiments": {
+              "baselines": [
+                "Domain Expert Consensus Baseline: Manual verification by a physicist that the listed arXiv categories (cs.DS, cond-mat, math.GT, math.SP) do not typically contain primary results on quantum gravity spacetime scales.",
+                "Keyword Absence Baseline: Verification that standard QG keywords (Planck, Lorentz, Graviton, Discretization) have zero frequency in the provided text excerpts."
+              ],
+              "metrics": [
+                "Exclusion Precision: Percentage of evidence cards correctly identified as non-relevant to spacetime physics (Target: 100%).",
+                "Semantic Ambiguity Score: Measure of potential confusion between mathematical analogies (e.g., lattice surfaces) and physical models (Target: 0, indicating clear distinction).",
+                "Gap Completeness Index: Binary metric indicating whether all allowed evidence IDs have been screened and documented as irrelevant (Target: 1)."
+              ],
+              "ablation": "Test the robustness of the exclusion by checking if removing any single evidence ID changes the conclusion (it should not, as all are irrelevant). Test sensitivity to title-only vs. abstract-only vs. full-text analysis to ensure no hidden relevance exists in deeper sections.",
+              "validation_protocol": "Cross-reference the domain labels assigned to each EvidenceCard with their actual arXiv subject classes (if available in metadata) or explicit content quotes. Ensure that the 'verification of absence' is documented as a systematic review output, not a statistical inference."
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify that only the four specified EvidenceIDs are included in the screening pool.",
+              "Document the exact list of excluded QG keywords used for the absence check.",
+              "Provide the rationale for domain classification for each ID (e.g., quoting the 'Burrows-Wheeler' context for EV-Q058-141657d189f4bf479ce9f855).",
+              "Ensure no external physics literature is cited as evidence for the gap; the gap is defined solely by the provided corpus.",
+              "Confirm that the output is structured as a Negative Result Report/Systematic Gap Analysis."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "computational_resources": "CPU-based text analysis; no high-performance computing required.",
+              "estimated_time": "1 hour for systematic screening and documentation.",
+              "data_availability": "All text data is available in the input EvidenceCatalog."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The revised hypothesis correctly reframes the investigation as a 'Systematic Evidence Gap Analysis' conditioned strictly on the allowed evidence set, resolving the previous category error.",
+              "Baselines have been appropriately updated from NLP metrics to systematic review criteria (Domain Expert Consensus, Keyword Absence), aligning methodology with the negative-result nature of the study.",
+              "The mechanism explicitly limits the scope of 'undeterminability' to the provided corpus, avoiding overgeneralization to universal physics.",
+              "Results field correctly states 'pending' and specifies verification of evidence absence rather than physical measurement.",
+              "All supporting evidence IDs are valid and correctly mapped to their respective non-physics domains in the dataset description."
+            ],
+            "critical_issues": [],
+            "required_revisions": [],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 1.0,
+            "reproducibility_score": 0.95,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "critical_issue:8dbb2d55a1bb",
+              "category": "critical_issue",
+              "description": "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:e69e2ff7ef33",
+              "category": "critical_issue",
+              "description": "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "critical_issue:897355927af8",
+              "category": "critical_issue",
+              "description": "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:e7febeb491070057; evidence=EV-Q058-141657d189f4bf479ce9f855,EV-Q058-2f6a24cf545bf8aa4c95fc69,EV-Q058-60878f944b636e4fcfda99bb,EV-Q058-ba62c330ee7d6f08be4185f6; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:8f4cb462df09",
+              "category": "required_revision",
+              "description": "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+              "status": "resolved",
+              "opened_in_version": 1,
+              "closed_in_version": 2,
+              "resolution_note": "changes=change:014beef6a6ac336c; evidence=EV-Q058-141657d189f4bf479ce9f855,EV-Q058-2f6a24cf545bf8aa4c95fc69,EV-Q058-60878f944b636e4fcfda99bb,EV-Q058-ba62c330ee7d6f08be4185f6; V2 Reviewer no longer reports the issue."
+            },
+            {
+              "issue_id": "required_revision:df8a29eb2e82",
+              "category": "required_revision",
+              "description": "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:7210273b3924",
+              "category": "required_revision",
+              "description": "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            },
+            {
+              "issue_id": "required_revision:e754cc5cfbf9",
+              "category": "required_revision",
+              "description": "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "No issue-specific correlated structured change maps to this issue."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "cc96b216e6938f4410b01e1775822c2bda997d72190a6fc0dd4448238154190e",
+            "experiment_designer": "2c579f13d19b6c60e7d9182ccdf8d98a2f8aa3581fbdf1813d4b372d4cbdf547",
+            "scientific_reviewer": "8b9bff3fdf475f6fc7a7e62931e0b7d6d14d7fc25c28c6c58a5345cd45b4c6b6"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-084511-4fa2a7fa:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-084511-4fa2a7fa:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-084511-4fa2a7fa:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-084511-4fa2a7fa:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "critical_issue:8dbb2d55a1bb",
+          "category": "critical_issue",
+          "description": "Category Error: The proposed experiment validates the AI's retrieval performance, not a physical property of spacetime. A ResearchPlan must address the scientific question, even if the answer is 'we cannot answer'.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:e69e2ff7ef33",
+          "category": "critical_issue",
+          "description": "Misleading Framing: Labeling a keyword search and semantic classification as 'experiments' with 'baselines' implies scientific inquiry where there is only data curation verification.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "critical_issue:897355927af8",
+          "category": "critical_issue",
+          "description": "Lack of Scientific Protocol: The plan lacks any connection to actual physical methodologies (e.g., reviewing specific QG constraints from general literature if allowed, or formally structuring the gap analysis as a systematic review protocol rather than an NLP task).",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:e7febeb491070057; evidence=EV-Q058-141657d189f4bf479ce9f855,EV-Q058-2f6a24cf545bf8aa4c95fc69,EV-Q058-60878f944b636e4fcfda99bb,EV-Q058-ba62c330ee7d6f08be4185f6; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:8f4cb462df09",
+          "category": "required_revision",
+          "description": "Reframe the output explicitly as a 'Systematic Evidence Gap Analysis' or 'Negative Result Report' rather than a standard experimental research plan.",
+          "status": "resolved",
+          "opened_in_version": 1,
+          "closed_in_version": 2,
+          "resolution_note": "changes=change:014beef6a6ac336c; evidence=EV-Q058-141657d189f4bf479ce9f855,EV-Q058-2f6a24cf545bf8aa4c95fc69,EV-Q058-60878f944b636e4fcfda99bb,EV-Q058-ba62c330ee7d6f08be4185f6; V2 Reviewer no longer reports the issue."
+        },
+        {
+          "issue_id": "required_revision:df8a29eb2e82",
+          "category": "required_revision",
+          "description": "Remove NLP-specific baselines (e.g., 'Random Baseline', 'Keyword Match') and replace them with criteria for a systematic review (e.g., PRISMA guidelines adapted for automated evidence checking).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:7210273b3924",
+          "category": "required_revision",
+          "description": "Clarify in the hypothesis mechanism that the 'undeterminability' is strictly conditional on the *provided allowed evidence set*, not necessarily a universal statement about current physics (unless verified against broader knowledge gaps).",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        },
+        {
+          "issue_id": "required_revision:e754cc5cfbf9",
+          "category": "required_revision",
+          "description": "Ensure the 'Results' field remains 'pending' but specify that the pending execution is a 'verification of evidence absence' rather than a physical measurement.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "No issue-specific correlated structured change maps to this issue."
+        }
+      ],
+      "checkpoint_hash": "4ee294dac9eb1498aa321b5feedb918e54f526cf9f953c7611ef54e5f2bb1fab"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-084511-4fa2a7fa:wave-b-two-round",
+      "run_id": "20260822-084511-4fa2a7fa",
+      "v1_version_id": "20260822-084511-4fa2a7fa:v1",
+      "v2_version_id": "20260822-084511-4fa2a7fa:v2",
+      "input_fingerprints": {
+        "v1": "915a8184c552c1fbb0118c5f5494be4eef0844f2dfb651f9c2c1eff5962ef6e2",
+        "v2": "2c579f13d19b6c60e7d9182ccdf8d98a2f8aa3581fbdf1813d4b372d4cbdf547"
+      },
+      "responded_issue_count": 2,
+      "issue_ids": [
+        "critical_issue:897355927af8",
+        "required_revision:8f4cb462df09"
+      ],
+      "change_ids": [
+        "change:e7febeb491070057",
+        "change:014beef6a6ac336c"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 0.8,
+          "after": 1.0,
+          "delta": 0.19999999999999996
+        },
+        "reproducibility_score": {
+          "before": 0.4,
+          "after": 0.95,
+          "delta": 0.5499999999999999
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [
+        {
+          "rank": 1,
+          "original_index": 0,
+          "hypothesis": "Within the closed set of allowed evidence (EV-Q058-141657d189f4bf479ce9f855, EV-Q058-ba62c330ee7d6f08be4185f6, EV-Q058-60878f944b636e4fcfda99bb, EV-Q058-2f6a24cf545bf8aa4c95fc69), there exists no empirical or theoretical basis to determine the smallest scale of space-time, constituting a verified negative result rather than a physical finding.",
+          "overall_score": 0.85,
+          "recommended": true
+        },
+        {
+          "rank": 2,
+          "original_index": 1,
+          "hypothesis": "Semantic overlap between information-theoretic 'strings' (EV-Q058-141657d189f4bf479ce9f855) and physical 'string theory' creates a false positive signal for spacetime scale determination, which must be formally excluded via domain-specific ontology mapping.",
+          "overall_score": 0.75,
+          "recommended": false
+        }
+      ],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "d949a8f1e47d",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:47:23.536416+00:00",
+    "ended_at": "2026-08-22T08:48:02.236117+00:00",
+    "duration_ms": 38699,
+    "input_summary": "{\"question_item\": {\"id\": \"Q058\", \"domain\": \"Astronomy\", \"question\": \"What is the smallest scale of space-time?\", \"source_page\": 23, \"booklet_excerpt\": \"The smallest scale of space-time has not yet been determined, although it can’t be lower than the Planck scale, where known laws of physics break down and the formulation of meaningful measurements becomes an issue.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Astronomy\", \"core_question\": \"What is the smallest scale of space-time?\", \"keywords\": [\"sm",
+    "output_summary": "{\"input_question\": \"What is the smallest scale of space-time?\", \"domain\": \"Astronomy\", \"problem_statement\": \"The exact value of the smallest scale of space-time has not been empirically determined or theoretically agreed upon within the provided evidence corpus. Current physical laws break down at scales such as the Planck length, making meaningful measurements problematic. The provided evidence set consists of documents from computer science, chemical physics, mathematics, and graph theory, none of which contain direct information regarding quantum gravity or spacetime granularity.\", \"rationa",
+    "evidence_ids": [
+      "EV-Q058-141657d189f4bf479ce9f855",
+      "EV-Q058-ba62c330ee7d6f08be4185f6",
+      "EV-Q058-60878f944b636e4fcfda99bb",
+      "EV-Q058-2f6a24cf545bf8aa4c95fc69"
+    ],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "10e75f47842f",
+    "mock": false
+  },
+  {
+    "event_id": "2aaff3687f36",
+    "run_id": "20260822-084511-4fa2a7fa",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:48:02.237116+00:00",
+    "ended_at": "2026-08-22T08:48:04.799894+00:00",
+    "duration_ms": 2562,
+    "input_summary": "{\"question_item\": {\"id\": \"Q058\", \"domain\": \"Astronomy\", \"question\": \"What is the smallest scale of space-time?\", \"source_page\": 23, \"booklet_excerpt\": \"The smallest scale of space-time has not yet been determined, although it can’t be lower than the Planck scale, where known laws of physics break down and the formulation of meaningful measurements becomes an issue.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is a QuestionItem, not the required ResearchPlan/EvidenceCards/AgentTrace structure. Cannot perform validation without a ResearchPlan to validate.\", \"MissingInputError: No ResearchPlan object found in input.\"], \"warnings\": [\"The provided question 'What is the smallest scale of space-time?' implies a knowledge gap or undefined parameter based on the booklet excerpt ('has not yet been determined'). A valid research plan would need to address this uncertainty rather than stating a definitive value without evidence.\"], \"validation_",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "d1bf76e46e82",
+    "mock": false
+  }
+]

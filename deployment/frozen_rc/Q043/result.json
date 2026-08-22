@@ -1,0 +1,127 @@
+{
+  "question_id": "Q043",
+  "input_question": "How might genome editing be used to cure disease?",
+  "domain": "Biology",
+  "problem_statement": "The inquiry seeks to understand the mechanism by which genome editing (specifically CRISPR-Cas9) cures disease. However, the available evidence corpus consists exclusively of statistical literature regarding 'cure models' in survival analysis (defining cure fractions and follow-up sufficiency), rather than biological literature detailing the molecular mechanisms of CRISPR-Cas9. Consequently, a direct biological answer cannot be supported by the provided EvidenceCards.",
+  "rationale": "Given the constraint that all factual claims must trace to allowed EvidenceCards, and no card contains biological data on CRISPR, this research plan reframes the question as a methodological validation problem. It proposes using the statistical frameworks found in the evidence (semiparametric transformation models for cure fractions) to establish how one would statistically validate a 'cure' claim in future genome editing trials, rather than asserting the biological mechanism itself.",
+  "generated_hypotheses": [
+    {
+      "hypothesis": "Semiparametric transformation models for competing risks with cure fraction provide a valid statistical framework to distinguish theoretical curative genome editing outcomes from non-curative survival extension, contingent on sufficient follow-up time.",
+      "mechanism": "Theoretical mapping (unverified biological link): If genome editing eliminates disease etiology, the resulting survival data should exhibit a plateau where hazard becomes negligible. Statistical mechanism (evidence-grounded): Semiparametric transformation models (EV-Q043-e08a726728afebc46f5775bc) explicitly parameterize this 'cure fraction' as long-term survivorship rather than absolute immunity (EV-Q043-54c611c2ba17f190e98e322e). The validity of detecting this signal depends on applying parametric frameworks to assess whether follow-up duration is sufficient to identify the plateau (EV-Q043-0b8bbb4d0dca689e65bad382), distinguishing it from censoring artifacts.",
+      "falsifiable_prediction": "If applied to synthetic datasets simulating curative vs. non-curative gene therapy outcomes, the semiparametric model will correctly recover the injected cure fraction only when the sufficient follow-up criteria (EV-Q043-0b8bbb4d0dca689e65bad382) are met; if follow-up is insufficient, the model will fail to distinguish cure from extended remission regardless of the underlying biological truth.",
+      "required_observations": [
+        "Simulation of time-to-event data with known cure fractions and competing risks structures",
+        "Application of semiparametric transformation cure models (EV-Q043-e08a726728afebc46f5775bc) to estimate parameters",
+        "Assessment of follow-up sufficiency using parametric frameworks (EV-Q043-0b8bbb4d0dca689e65bad382)",
+        "Comparison of estimated cure fractions against ground truth in synthetic data"
+      ],
+      "risk_of_being_wrong": "High risk regarding biological applicability: No allowed evidence confirms genome editing achieves statistical cure in practice. The hypothesis validates the *statistical tool's* capacity to detect cure *if present*, not the existence of cure itself. Failure could stem from model misspecification or insufficient follow-up metrics rather than biological impossibility.",
+      "supporting_evidence_ids": [
+        "EV-Q043-e08a726728afebc46f5775bc",
+        "EV-Q043-54c611c2ba17f190e98e322e",
+        "EV-Q043-0b8bbb4d0dca689e65bad382"
+      ],
+      "contradicted_by_evidence_ids": []
+    },
+    {
+      "hypothesis": "Standard survival models lacking cure fraction parameters are structurally incapable of validating curative claims in genome editing trials, leading to systematic misinterpretation of long-term survivorship.",
+      "mechanism": "Statistical limitation mechanism: Standard Cox or Kaplan-Meier approaches assume hazards remain positive indefinitely. In contrast, cure models define a subpopulation with negligible hazard after sufficient duration (EV-Q043-54c611c2ba17f190e98e322e). Without explicit cure fraction parameterization via semiparametric transformation models (EV-Q043-e08a726728afebc46f5775bc), any observed plateau in gene therapy trials would be indistinguishable from heavy censoring or temporary remission, rendering 'cure' claims statistically unverifiable under current methodological standards.",
+      "falsifiable_prediction": "When analyzing identical synthetic datasets containing a true cure fraction, standard survival models will produce significantly different long-term survival estimates compared to cure models (EV-Q043-e08a726728afebc46f5775bc), and will fail to converge to the true cure proportion even with infinite sample size, whereas cure models will converge provided follow-up sufficiency (EV-Q043-0b8bbb4d0dca689e65bad382) is satisfied.",
+      "required_observations": [
+        "Side-by-side fitting of standard survival models and cure models to identical synthetic gene therapy data",
+        "Quantification of estimation bias in long-term survival probabilities",
+        "Verification that cure model convergence aligns with sufficient follow-up assessment (EV-Q043-0b8bbb4d0dca689e65bad382)"
+      ],
+      "risk_of_being_wrong": "Moderate risk: While mathematically demonstrable, this hypothesis addresses methodological adequacy rather than biological reality. It assumes future gene therapy data will resemble the structural assumptions of current cure models. If gene therapy produces complex hazard patterns not captured by existing cure formulations (EV-Q043-e08a726728afebc46f5775bc), even cure models may fail.",
+      "supporting_evidence_ids": [
+        "EV-Q043-e08a726728afebc46f5775bc",
+        "EV-Q043-54c611c2ba17f190e98e322e",
+        "EV-Q043-0b8bbb4d0dca689e65bad382"
+      ],
+      "contradicted_by_evidence_ids": []
+    }
+  ],
+  "technical_details": "This experiment design validates the statistical applicability of semiparametric transformation models for competing risks with cure fraction (EV-Q043-e08a726728afebc46f5775bc) to hypothetical genome editing trial data. It explicitly treats the link between genome editing and 'cure' as a theoretical mapping to be validated, not an established biological fact. The model parameterizes the 'cure fraction' as long-term survivorship where hazard becomes negligible after sufficient duration (EV-Q043-54c611c2ba17f190e98e322e). A critical component is the assessment of follow-up sufficiency using parametric frameworks (EV-Q043-0b8bbb4d0dca689e65bad382) to distinguish true statistical plateaus from censoring artifacts. No biological mechanism of CRISPR is asserted; instead, the study tests whether the statistical tool can correctly identify injected cure signals in synthetic data under varying follow-up conditions.",
+  "datasets": {
+    "source": "Synthetic time-to-event datasets generated to simulate hypothetical genome editing trials. Two scenarios are created: (1) Curative scenario with a known non-zero cure fraction (π > 0) and competing risks (relapse vs. death), and (2) Non-curative scenario with π = 0 but extended survival. Data generation parameters are derived from methodological descriptions in EV-Q043-e08a726728afebc46f5775bc and EV-Q043-0b8bbb4d0dca689e65bad382.",
+    "target": "Estimated cure fraction (π), model convergence status, and follow-up sufficiency metrics. The target is to verify if the model recovers the ground-truth π only when follow-up is deemed sufficient by the framework in EV-Q043-0b8bbb4d0dca689e65bad382."
+  },
+  "paper_title": "Statistical Validation Frameworks for Hypothetical Curative Outcomes in Genome Editing Trials: A Semiparametric Approach",
+  "paper_abstract": "Background: While genome editing technologies like CRISPR-Cas9 are hypothesized to cure genetic diseases by altering DNA sequences, clinical validation requires robust statistical methods to distinguish true cures from long-term remission. Current evidence lacks biological confirmation of cure rates but provides advanced statistical 'cure models'. Methods: We propose using semiparametric transformation models for competing risks with cure fraction (EV-Q043-e08a726728afebc46f5775bc) to analyze synthetic data simulating genome editing trials. We define 'cure' strictly as long-term survivorship with negligible hazard (EV-Q043-54c611c2ba17f190e98e322e). Validation Plan: We apply parametric frameworks to assess sufficient follow-up time (EV-Q043-0b8bbb4d0dca689e65bad382) to ensure observed plateaus are not artifacts of censoring. Results: pending (待执行验证实验). This study establishes the statistical prerequisites for validating future genome editing cures.",
+  "methods": "1. Synthetic Data Generation: Create survival data with competing risks and known cure fractions using Python/R. 2. Model Application: Fit semiparametric transformation models for competing risks with cure fraction (EV-Q043-e08a726728afebc46f5775bc). 3. Follow-up Assessment: Apply the parametric framework for assessing sufficient follow-up time (EV-Q043-0b8bbb4d0dca689e65bad382) to each dataset. 4. Validation: Compare estimated cure fractions against ground truth, stratified by whether follow-up was assessed as 'sufficient' or 'insufficient'. 5. Interpretation: Define cure strictly as long-term survivorship with negligible hazard (EV-Q043-54c611c2ba17f190e98e322e), avoiding claims of absolute biological immunity.",
+  "experiments": {
+    "baselines": [
+      "Standard Cox Proportional Hazards Model (assumes no cure fraction)",
+      "Kaplan-Meier Estimator (non-parametric, does not model cure fraction explicitly)"
+    ],
+    "metrics": [
+      "Bias in Estimated Cure Fraction (|π_estimated - π_true|)",
+      "Coverage Probability of 95% Confidence Intervals for π",
+      "Brier Score for long-term survival prediction accuracy"
+    ],
+    "ablation": "Vary the length of follow-up time to test the sensitivity of the cure fraction estimate to the sufficiency criteria defined in EV-Q043-0b8bbb4d0dca689e65bad382. Remove competing risks structure to assess bias in π estimation.",
+    "validation_protocol": "Perform 100 bootstrap replications for each synthetic dataset configuration. Validate that the model correctly identifies π ≈ 0 in non-curative scenarios and π > 0 in curative scenarios ONLY when the follow-up sufficiency test (EV-Q043-0b8bbb4d0dca689e65bad382) passes. If follow-up is insufficient, the model should fail to distinguish cure from remission, confirming the hypothesis scope."
+  },
+  "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+  "references": [
+    {
+      "id": "EV-Q043-e08a726728afebc46f5775bc",
+      "source_type": "arxiv",
+      "title": "arXiv:2007.02305",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2007.02305.pdf",
+      "doi": null,
+      "quoted_text": "SEMIP ARAMETRIC TRANSFORMA TION MODELS FOR COMPETING RISKS DA T A WITH CURE FRACTION Sudheesh K. Kattumannil a,†, Sreedevi E. P. b and Sankaran P. G.c aIndian Statistical Institute, Chennai, India, bSNGS College, Pattambi, India, cCochin University of Science and Technology, Kochi, India.",
+      "summary": "SEMIP ARAMETRIC TRANSFORMA TION MODELS FOR COMPETING RISKS DA T A WITH CURE FRACTION Sudheesh K. Kattumannil a,†, Sreedevi E. P. b and Sankaran P. G.c aIndian Statistical Institute",
+      "relevance_score": 0.75,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=3c5947f761c295c9f370731e2b89f30149942a0f1f3827ec7a8b8d44c31e17b3"
+    },
+    {
+      "id": "EV-Q043-54c611c2ba17f190e98e322e",
+      "source_type": "arxiv",
+      "title": "arXiv:2605.04999",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2605.04999.pdf",
+      "doi": null,
+      "quoted_text": "Even for event-free survival endpoints, individuals may avoid some components of a composite outcome (e.g., disease relapse) but not death itself. In these settings, cure models are best understood as capturing long-term survivorship rather than absolute immunity: the cure fraction is interpreted as the proportion of the population whose event hazard becomes negligible after a sufficient duration of follow-up.",
+      "summary": "Even for event-free survival endpoints, individuals may avoid some components of a composite outcome (e.g., disease relapse) but not death itself. In these settings, cure models ar",
+      "relevance_score": 0.55,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:4|section:page-4|paragraph:1; content_sha256=57852e16382d009cc198922f21d3fe7f84cb29ef24c448b6bad6ed252d9c2943"
+    },
+    {
+      "id": "EV-Q043-0b8bbb4d0dca689e65bad382",
+      "source_type": "arxiv",
+      "title": "arXiv:2608.11029",
+      "authors": [],
+      "year": null,
+      "url": "https://arxiv.org/pdf/2608.11029.pdf",
+      "doi": null,
+      "quoted_text": "APARAMETRIC FRAMEWORK FOR ASSESSING AND ESTIMATING SUFFICIENT FOLLOW-UP TIME IN CURE MODELS Luiz Silva-Resende Department of Statistics Federal University of São Carlos São Carlos, Brazil luizfsr@ufscar.br Dionisio Alves-Neto Institute of Mathematics and Computer Sciences University of São Paulo São Carlos, Brazil dionisioneto@usp.br Danilo Alvares MRC Biostatistics Unit University of Cambridge Cambridge, UK danilo.alvares@mrc-bsu.cam.ac.uk Vera Tomazella Department of Statistics Federal University of São Carlos São Carlos, Brazil vera@ufscar.br ABSTRACT Reliable estimation of cure fractions depends critically on adequate follow-up.",
+      "summary": "APARAMETRIC FRAMEWORK FOR ASSESSING AND ESTIMATING SUFFICIENT FOLLOW-UP TIME IN CURE MODELS Luiz Silva-Resende Department of Statistics Federal University of São Carlos São Carlos,",
+      "relevance_score": 0.55,
+      "reliability_note": "eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=2f5004864d9c1dcd4d63f8bc2f1b7e509b760f06af5b3366ba50ef6f2f280b37"
+    }
+  ],
+  "reviewer_comments": [
+    "The revised hypothesis successfully reframes the inquiry from a biological claim to a methodological validation proposal, strictly adhering to the constraint that only allowed EvidenceCards can support factual assertions.",
+    "All references to 'booklet excerpt' as evidence for CRISPR mechanisms have been removed; the biological link is now correctly labeled as a 'theoretical mapping to be validated' rather than an established fact.",
+    "The experiment design explicitly clarifies that synthetic data validates the statistical tool's applicability to hypothetical gene therapy data, not the efficacy of gene therapy itself, resolving the previous critical issue regarding scope mismatch.",
+    "Evidence grounding is now robust (0.9) because all mechanistic claims about cure fractions and follow-up sufficiency are directly traceable to EV-Q043-e08a726728afebc46f5775bc, EV-Q043-54c611c2ba17f190e98e322e, and EV-Q043-0b8bbb4d0dca689e65bad382.",
+    "The falsifiable prediction is correctly scoped to conditional model performance ('If genome editing data were available...') rather than asserting biological reality, making it testable within the current evidence boundaries.",
+    "Results field remains 'pending' with no fabrication, and the reproducibility checklist confirms that code and parameters will be archived for replication."
+  ],
+  "revision_history": [
+    "auto_revision_1: 依据评审意见重做假设与实验设计。"
+  ],
+  "reproducibility_checklist": [
+    "Synthetic data generation code includes fixed random seeds",
+    "Implementation of semiparametric transformation model follows EV-Q043-e08a726728afebc46f5775bc",
+    "Follow-up sufficiency assessment implements EV-Q043-0b8bbb4d0dca689e65bad382",
+    "No biological claims about CRISPR efficacy are made; all conclusions are scoped to statistical model performance",
+    "Full code and parameter logs are archived for replication"
+  ],
+  "validation_status": "needs_data",
+  "actual_execution": false
+}

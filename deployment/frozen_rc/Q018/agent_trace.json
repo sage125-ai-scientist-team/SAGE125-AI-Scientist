@@ -1,0 +1,1005 @@
+[
+  {
+    "event_id": "a1173a6a447f",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 0,
+    "agent_name": "supervisor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:15:39.396035+00:00",
+    "ended_at": "2026-08-22T08:15:39.396035+00:00",
+    "duration_ms": 0,
+    "input_summary": "{\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}",
+    "output_summary": "{\"execution_plan\": {\"use_local_rag\": false, \"use_deep_research\": false, \"use_open_literature\": false, \"reviewer_auto_revision\": true, \"mock_mode\": false}, \"enabled_agents\": [\"question_parser\", \"query_planner\", \"evidence_extractor\", \"hypothesis_generator\", \"experiment_designer\", \"scientific_reviewer\", \"report_writer\", \"schema_validator\"], \"skipped_agents\": [], \"risk_flags\": []}",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "3646189dafbf",
+    "mock": false
+  },
+  {
+    "event_id": "39104ae6dcbf",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 1,
+    "agent_name": "question_parser",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:15:39.396035+00:00",
+    "ended_at": "2026-08-22T08:15:43.192802+00:00",
+    "duration_ms": 3796,
+    "input_summary": "{\"question_item\": {\"id\": \"Q018\", \"domain\": \"Medicine & Health\", \"question\": \"How will the next generation of vaccines be made?\", \"source_page\": 12, \"booklet_excerpt\": \"Next-generation vaccine platforms accelerate vaccine development by sequencing viral proteins. Today we are seeing viral vector vaccines, nucleic acid–based vaccines, and antigen-presenting cells being leveraged to fight COVID-19.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"user_feedback\": null}",
+    "output_summary": "{\"domain\": \"Medicine & Health\", \"core_question\": \"What are the specific mechanisms and technological platforms defining next-generation vaccine development, particularly in contrast to traditional methods?\", \"keywords\": [\"next-generation vaccines\", \"vaccine platforms\", \"viral vector vaccines\", \"nucleic acid-based vaccines\", \"antigen-presenting cells\", \"viral protein sequencing\"], \"entities\": [\"vaccines\", \"viral proteins\", \"COVID-19\"], \"question_type\": \"mechanism_discovery\", \"scientific_boundary\": \"The analysis is strictly limited to the platforms mentioned in the excerpt: viral vector vaccines",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e139ef377423",
+    "mock": false
+  },
+  {
+    "event_id": "03ef6e6b680d",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 2,
+    "agent_name": "query_planner",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:15:43.192802+00:00",
+    "ended_at": "2026-08-22T08:16:03.187602+00:00",
+    "duration_ms": 19994,
+    "input_summary": "{\"question_item\": {\"id\": \"Q018\", \"domain\": \"Medicine & Health\", \"question\": \"How will the next generation of vaccines be made?\", \"source_page\": 12, \"booklet_excerpt\": \"Next-generation vaccine platforms accelerate vaccine development by sequencing viral proteins. Today we are seeing viral vector vaccines, nucleic acid–based vaccines, and antigen-presenting cells being leveraged to fight COVID-19.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Medicine & Health\", \"core_question\": \"What ar",
+    "output_summary": "{\"queries\": [{\"purpose\": \"Verify the role of viral protein sequencing in accelerating next-generation vaccine development as stated in the excerpt.\", \"query\": \"viral protein sequencing acceleration vaccine development mechanism\", \"source_preference\": \"local_rag\", \"expected_evidence\": \"Text confirming that sequencing viral proteins is a key step in accelerating the development of next-generation vaccines.\", \"priority\": \"high\"}, {\"purpose\": \"Identify specific details on viral vector vaccines mentioned in the context of fighting COVID-19.\", \"query\": \"viral vector vaccines COVID-19 mechanism platf",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "c02abbfa6771",
+    "mock": false
+  },
+  {
+    "event_id": "aef2fda24695",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 3,
+    "agent_name": "evidence_extractor",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:16:03.199525+00:00",
+    "ended_at": "2026-08-22T08:16:09.294238+00:00",
+    "duration_ms": 6094,
+    "input_summary": "{\"question_item\": {\"id\": \"Q018\", \"domain\": \"Medicine & Health\", \"question\": \"How will the next generation of vaccines be made?\", \"source_page\": 12, \"booklet_excerpt\": \"Next-generation vaccine platforms accelerate vaccine development by sequencing viral proteins. Today we are seeing viral vector vaccines, nucleic acid–based vaccines, and antigen-presenting cells being leveraged to fight COVID-19.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q018-a281780f595ce9ffafbe7da1\", \"title\": \"ar",
+    "output_summary": "{\"established_facts\": [], \"disputed_points\": [], \"knowledge_gaps\": [{\"gap\": \"The provided evidence cards discuss next-generation Xenon experiments (particle physics/astrophysics) and do not contain information regarding the manufacturing processes of next-generation medical vaccines.\", \"why_it_matters\": \"Without relevant evidence on vaccine platforms (e.g., viral vectors, nucleic acid-based vaccines), no factual claims about vaccine manufacturing can be established or verified against the provided sources.\", \"evidence_ids\": [], \"validation_need\": \"Requires retrieval of medical literature speci",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "58fec24d0d5e",
+    "mock": false
+  },
+  {
+    "event_id": "0a2099006fee",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 4,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:16:09.294238+00:00",
+    "ended_at": "2026-08-22T08:16:14.698002+00:00",
+    "duration_ms": 5403,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q018\", \"domain\": \"Medicine & Health\", \"question\": \"How will the next generation of vaccines be made?\", \"source_page\": 12, \"booklet_excerpt\": \"Next-generation vaccine platforms accelerate vaccine development by sequencing viral proteins. Today we are seeing viral vector vaccines, nucleic acid–based vaccines, and antigen-presenting cells being leveraged to fight COVID-19.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"evidence_catalog\": [{\"id\": \"EV-Q018-a281780f595ce9",
+    "output_summary": "{\"hypotheses\": [], \"recommended_hypothesis_index\": -1, \"selection_reason\": \"insufficient_evidence: All allowed evidence IDs (EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15) pertain to particle physics (Xenon detectors, NeXT mission) and are irrelevant to medical vaccine manufacturing. No valid supporting_evidence_ids exist for any hypothesis regarding next-generation vaccines. Generating hypotheses without evidence support would violate strict grounding constraints.\", \"rejected_directions\": [\"Hypothesizing ",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "ac7011c5e5f2",
+    "mock": false
+  },
+  {
+    "event_id": "9ea599381c01",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 5,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:16:14.698002+00:00",
+    "ended_at": "2026-08-22T08:16:27.849203+00:00",
+    "duration_ms": 13151,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q018\", \"domain\": \"Medicine & Health\", \"question\": \"How will the next generation of vaccines be made?\", \"source_page\": 12, \"booklet_excerpt\": \"Next-generation vaccine platforms accelerate vaccine development by sequencing viral proteins. Today we are seeing viral vector vaccines, nucleic acid–based vaccines, and antigen-presenting cells being leveraged to fight COVID-19.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"question_type\": \"mechanism_discovery\", \"recommende",
+    "output_summary": "{\"technical_details\": \"由于提供的允许证据列表（EV-Q018-*）完全涉及高能物理（氙探测器、NeXT任务）和天体物理学，与医学疫苗制造领域无相关性，因此无法基于现有证据构建关于下一代疫苗制造机制的科学假设。根据SAGE125原则，严禁在无相关证据支持的情况下编造事实或假设。本实验设计旨在验证‘现有证据库是否包含疫苗制造相关信息’这一元问题，并明确指出当前数据缺口。\", \"datasets\": {\"source\": \"Allowed Evidence IDs: EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15\", \"target\": \"N/A (No relevant medical/vaccine manufacturing data found in source)\"}, \"methods\": \"系统性文献审查与证据相关性过滤。对每个允许的Evidence ID进行主题分类，确认其所属学科领域（粒子物理/天体物理 vs. 生物医学/疫苗学）。\", \"experiments\": {\"baselines\": [\"Random baseline",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "61de73e01d59",
+    "mock": false
+  },
+  {
+    "event_id": "b5de997482cd",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 6,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:16:27.850248+00:00",
+    "ended_at": "2026-08-22T08:16:32.844304+00:00",
+    "duration_ms": 4994,
+    "input_summary": "{\"revision_iteration\": 1, \"question_item\": {\"id\": \"Q018\", \"domain\": \"Medicine & Health\", \"question\": \"How will the next generation of vaccines be made?\", \"source_page\": 12, \"booklet_excerpt\": \"Next-generation vaccine platforms accelerate vaccine development by sequencing viral proteins. Today we are seeing viral vector vaccines, nucleic acid–based vaccines, and antigen-presenting cells being leveraged to fight COVID-19.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"recommended_hypothesis\": {}, \"hypothesis_generatio",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The system correctly identified a total domain mismatch between the user query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).\", \"Adherence to negative constraints is exemplary: no hallucinated vaccine mechanisms, no fabricated references, and no misuse of irrelevant evidence IDs.\", \"The 'insufficient_evidence' declaration is fully grounded in the content verification of the provided EvidenceCards.\", \"Experiment design was appropriately pivoted to a meta-validation of evidence relevance rather than forcing a biological h",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "94866bd289ef",
+    "mock": false
+  },
+  {
+    "event_id": "9f980cbdd929",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 7,
+    "agent_name": "hypothesis_generator",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:16:32.845302+00:00",
+    "ended_at": "2026-08-22T08:16:38.540213+00:00",
+    "duration_ms": 5694,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The system correctly identified a total domain mismatch between the user query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).\", \"Adherence to negative constraints is exemplary: no hallucinated vaccine mechanisms, no fabricated references, and no misuse of irrelevant evidence IDs.\", \"The 'insufficient_evidence' declaration is fully grounded in the content verification of the provided EvidenceCards.\", \"Experiment design was appropriately pivoted to a meta-validation of evidence r",
+    "output_summary": "{\"hypotheses\": [], \"recommended_hypothesis_index\": -1, \"selection_reason\": \"insufficient_evidence: All allowed evidence IDs (EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15) pertain exclusively to particle physics (Xenon detectors, NeXT mission) and astrophysics. None contain information relevant to next-generation vaccine manufacturing. Per SAGE125 strict grounding constraints, no scientific hypothesis regarding vaccine platforms can be generated without valid supporting evidence IDs from the medical/biolog",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "0f95ab3bc1a5",
+    "mock": false
+  },
+  {
+    "event_id": "5402219d3f8a",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 8,
+    "agent_name": "experiment_designer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:16:38.540213+00:00",
+    "ended_at": "2026-08-22T08:16:52.440992+00:00",
+    "duration_ms": 13900,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The system correctly identified a total domain mismatch between the user query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).\", \"Adherence to negative constraints is exemplary: no hallucinated vaccine mechanisms, no fabricated references, and no misuse of irrelevant evidence IDs.\", \"The 'insufficient_evidence' declaration is fully grounded in the content verification of the provided EvidenceCards.\", \"Experiment design was appropriately pivoted to a meta-validation of evidence r",
+    "output_summary": "{\"technical_details\": \"由于允许的 EvidenceCards (EV-Q018-*) 仅包含粒子物理（氙探测器、NeXT 任务）和天体物理学内容，与用户查询的‘下一代疫苗制造’完全领域不匹配。根据 SAGE125 严格接地原则，无法基于现有证据生成任何关于疫苗机制的科学假设。本实验设计旨在执行元验证：确认现有证据库中不存在与疫苗制造相关的信息，并量化领域不匹配程度。这是一种负向验证实验，旨在防止幻觉并明确知识缺口。\", \"datasets\": {\"source\": [\"EV-Q018-a281780f595ce9ffafbe7da1\", \"EV-Q018-b6cf0af6ecd4f6748af15124\", \"EV-Q018-8772f24afae1c3b1a89c7463\", \"EV-Q018-59b5974983448ce9ba8c8c15\"], \"target\": \"N/A (No relevant medical/vaccine manufacturing data found in source)\"}, \"methods\": \"系统性文献审查与证据相关性过滤。对每个允许的 Evidence ID 进行主题分类，确认其所属学科领域（粒子物理/天体物理 vs. 生物医学/疫苗学）。使用关键词匹配（'vaccine', 'mRNA', 'antigen'",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "08f99cfdbc30",
+    "mock": false
+  },
+  {
+    "event_id": "aa07b95d672c",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 9,
+    "agent_name": "scientific_reviewer",
+    "model_name": "qwen3.7-max",
+    "status": "completed",
+    "started_at": "2026-08-22T08:16:52.442004+00:00",
+    "ended_at": "2026-08-22T08:16:57.342659+00:00",
+    "duration_ms": 4900,
+    "input_summary": "{\"revision_iteration\": 2, \"review_result\": {\"passed\": true, \"reviewer_comments\": [\"The system correctly identified a total domain mismatch between the user query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).\", \"Adherence to negative constraints is exemplary: no hallucinated vaccine mechanisms, no fabricated references, and no misuse of irrelevant evidence IDs.\", \"The 'insufficient_evidence' declaration is fully grounded in the content verification of the provided EvidenceCards.\", \"Experiment design was appropriately pivoted to a meta-validation of evidence r",
+    "output_summary": "{\"passed\": true, \"reviewer_comments\": [\"The system correctly maintains the 'insufficient_evidence' stance given the total domain mismatch between the query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).\", \"No hallucinated vaccine mechanisms or fabricated references were introduced in this revision.\", \"The experiment design appropriately focuses on meta-validation of evidence relevance rather than forcing a biological hypothesis onto physics data.\", \"Results field correctly remains 'pending' as no valid experiments can be executed with the current evidence set",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "2bd7451f2920",
+    "mock": false,
+    "revision_iteration": 2,
+    "revision_audit_hash": "revision-audit:fe0499972a87a6fd",
+    "revision_audit": {
+      "schema_version": 1,
+      "previous_plan": {
+        "hypothesis_generation": {
+          "hypotheses": [],
+          "recommended_hypothesis_index": -1,
+          "selection_reason": "insufficient_evidence: All allowed evidence IDs (EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15) pertain to particle physics (Xenon detectors, NeXT mission) and are irrelevant to medical vaccine manufacturing. No valid supporting_evidence_ids exist for any hypothesis regarding next-generation vaccines. Generating hypotheses without evidence support would violate strict grounding constraints.",
+          "rejected_directions": [
+            "Hypothesizing specific mechanisms for mRNA or viral vector vaccine manufacturing based solely on booklet excerpt without corroborating evidence IDs",
+            "Inferring vaccine development trends from unrelated high-energy physics literature",
+            "Generating generic 'next-gen vaccine' hypotheses that cannot be linked to any allowed evidence ID"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "由于提供的允许证据列表（EV-Q018-*）完全涉及高能物理（氙探测器、NeXT任务）和天体物理学，与医学疫苗制造领域无相关性，因此无法基于现有证据构建关于下一代疫苗制造机制的科学假设。根据SAGE125原则，严禁在无相关证据支持的情况下编造事实或假设。本实验设计旨在验证‘现有证据库是否包含疫苗制造相关信息’这一元问题，并明确指出当前数据缺口。",
+          "datasets": {
+            "source": "Allowed Evidence IDs: EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15",
+            "target": "N/A (No relevant medical/vaccine manufacturing data found in source)"
+          },
+          "methods": "系统性文献审查与证据相关性过滤。对每个允许的Evidence ID进行主题分类，确认其所属学科领域（粒子物理/天体物理 vs. 生物医学/疫苗学）。",
+          "experiments": {
+            "baselines": [
+              "Random baseline: Assuming any scientific paper might contain vaccine info.",
+              "Keyword matching baseline: Searching for 'vaccine', 'mRNA', 'antigen' in provided texts."
+            ],
+            "metrics": [
+              "Relevance Precision: Proportion of evidence cards actually related to vaccine manufacturing.",
+              "Coverage Gap Index: Measure of missing domain-specific literature.",
+              "False Positive Rate: Rate of incorrectly identifying physics papers as medical literature."
+            ],
+            "ablation": "Remove physics-specific terms (Xenon, Dark Matter, NeXT) to see if any residual text relates to biology (expected result: null).",
+            "validation_protocol": "Manual expert review of quoted text from each Evidence ID to confirm irrelevance to the question 'How will the next generation of vaccines be made?'"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify that all cited Evidence IDs are strictly from the allowed list.",
+            "Confirm that no external medical literature was introduced as fact.",
+            "Ensure that the conclusion of 'insufficient evidence' is derived solely from the content of the provided physics papers.",
+            "Check that no hallucinated vaccine mechanisms (e.g., lipid nanoparticles, viral vectors) were asserted as facts."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "reason_for_non_execution": "Input evidence is domain-mismatched (Physics vs. Medicine). No valid hypothesis can be formed without relevant evidence. Further retrieval of medical literature is required before experimental design for vaccine mechanisms can proceed.",
+            "required_next_step": "Retrieve new Evidence Cards related to mRNA, viral vector, or protein subunit vaccine manufacturing technologies."
+          }
+        }
+      },
+      "previous_plan_version": {
+        "schema_version": 1,
+        "run_id": "20260822-081539-9b0c27dd",
+        "version_number": 1,
+        "version_id": "20260822-081539-9b0c27dd:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [],
+          "recommended_hypothesis_index": -1,
+          "selection_reason": "insufficient_evidence: All allowed evidence IDs (EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15) pertain to particle physics (Xenon detectors, NeXT mission) and are irrelevant to medical vaccine manufacturing. No valid supporting_evidence_ids exist for any hypothesis regarding next-generation vaccines. Generating hypotheses without evidence support would violate strict grounding constraints.",
+          "rejected_directions": [
+            "Hypothesizing specific mechanisms for mRNA or viral vector vaccine manufacturing based solely on booklet excerpt without corroborating evidence IDs",
+            "Inferring vaccine development trends from unrelated high-energy physics literature",
+            "Generating generic 'next-gen vaccine' hypotheses that cannot be linked to any allowed evidence ID"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "由于提供的允许证据列表（EV-Q018-*）完全涉及高能物理（氙探测器、NeXT任务）和天体物理学，与医学疫苗制造领域无相关性，因此无法基于现有证据构建关于下一代疫苗制造机制的科学假设。根据SAGE125原则，严禁在无相关证据支持的情况下编造事实或假设。本实验设计旨在验证‘现有证据库是否包含疫苗制造相关信息’这一元问题，并明确指出当前数据缺口。",
+          "datasets": {
+            "source": "Allowed Evidence IDs: EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15",
+            "target": "N/A (No relevant medical/vaccine manufacturing data found in source)"
+          },
+          "methods": "系统性文献审查与证据相关性过滤。对每个允许的Evidence ID进行主题分类，确认其所属学科领域（粒子物理/天体物理 vs. 生物医学/疫苗学）。",
+          "experiments": {
+            "baselines": [
+              "Random baseline: Assuming any scientific paper might contain vaccine info.",
+              "Keyword matching baseline: Searching for 'vaccine', 'mRNA', 'antigen' in provided texts."
+            ],
+            "metrics": [
+              "Relevance Precision: Proportion of evidence cards actually related to vaccine manufacturing.",
+              "Coverage Gap Index: Measure of missing domain-specific literature.",
+              "False Positive Rate: Rate of incorrectly identifying physics papers as medical literature."
+            ],
+            "ablation": "Remove physics-specific terms (Xenon, Dark Matter, NeXT) to see if any residual text relates to biology (expected result: null).",
+            "validation_protocol": "Manual expert review of quoted text from each Evidence ID to confirm irrelevance to the question 'How will the next generation of vaccines be made?'"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify that all cited Evidence IDs are strictly from the allowed list.",
+            "Confirm that no external medical literature was introduced as fact.",
+            "Ensure that the conclusion of 'insufficient evidence' is derived solely from the content of the provided physics papers.",
+            "Check that no hallucinated vaccine mechanisms (e.g., lipid nanoparticles, viral vectors) were asserted as facts."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "reason_for_non_execution": "Input evidence is domain-mismatched (Physics vs. Medicine). No valid hypothesis can be formed without relevant evidence. Further retrieval of medical literature is required before experimental design for vaccine mechanisms can proceed.",
+            "required_next_step": "Retrieve new Evidence Cards related to mRNA, viral vector, or protein subunit vaccine manufacturing technologies."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The system correctly identified a total domain mismatch between the user query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).",
+            "Adherence to negative constraints is exemplary: no hallucinated vaccine mechanisms, no fabricated references, and no misuse of irrelevant evidence IDs.",
+            "The 'insufficient_evidence' declaration is fully grounded in the content verification of the provided EvidenceCards.",
+            "Experiment design was appropriately pivoted to a meta-validation of evidence relevance rather than forcing a biological hypothesis onto physics data.",
+            "Results field correctly states 'pending' as no biological experiments could be executed."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+            "Maintain current strict rejection logic for domain-mismatched evidence in future iterations."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 1.0,
+          "reproducibility_score": 1.0,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:1d904c2512bb",
+            "category": "required_revision",
+            "description": "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:015a232dc3e3",
+            "category": "required_revision",
+            "description": "Maintain current strict rejection logic for domain-mismatched evidence in future iterations.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5246db19ae4dadb0cc212d8f22ed44e4cbd7baeaeb45d80d9ee8dd4f6891a799",
+          "experiment_designer": "32866bf814801637d1af84afad4500432fd08f81152a0411b53b70625b3008a9",
+          "scientific_reviewer": "d1740dbc81eea9968d39fd54e62c953aeacb779d9fc30fb15f1caa15cfeefb99"
+        }
+      },
+      "parent_version_id": "20260822-081539-9b0c27dd:v1",
+      "lineage": [
+        "20260822-081539-9b0c27dd:v1",
+        "20260822-081539-9b0c27dd:v2"
+      ],
+      "reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The system correctly identified a total domain mismatch between the user query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).",
+          "Adherence to negative constraints is exemplary: no hallucinated vaccine mechanisms, no fabricated references, and no misuse of irrelevant evidence IDs.",
+          "The 'insufficient_evidence' declaration is fully grounded in the content verification of the provided EvidenceCards.",
+          "Experiment design was appropriately pivoted to a meta-validation of evidence relevance rather than forcing a biological hypothesis onto physics data.",
+          "Results field correctly states 'pending' as no biological experiments could be executed."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+          "Maintain current strict rejection logic for domain-mismatched evidence in future iterations."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 1.0,
+        "reproducibility_score": 1.0,
+        "reference_reliability_score": 1.0
+      },
+      "final_reviewer_feedback": {
+        "passed": true,
+        "reviewer_comments": [
+          "The system correctly maintains the 'insufficient_evidence' stance given the total domain mismatch between the query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).",
+          "No hallucinated vaccine mechanisms or fabricated references were introduced in this revision.",
+          "The experiment design appropriately focuses on meta-validation of evidence relevance rather than forcing a biological hypothesis onto physics data.",
+          "Results field correctly remains 'pending' as no valid experiments can be executed with the current evidence set.",
+          "Adherence to negative constraints is exemplary; the system successfully avoided the trap of generating plausible-sounding but ungrounded vaccine hypotheses."
+        ],
+        "critical_issues": [],
+        "required_revisions": [
+          "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+          "Maintain current strict rejection logic for domain-mismatched evidence in future iterations."
+        ],
+        "risk_level": "low",
+        "evidence_grounding_score": 1.0,
+        "falsifiability_score": 1.0,
+        "reproducibility_score": 1.0,
+        "reference_reliability_score": 1.0
+      },
+      "failure_reasons": [
+        {
+          "failure_id": "failure:b586d8dafd433c35",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+          "issue_id": "required_revision:1d904c2512bb"
+        },
+        {
+          "failure_id": "failure:d701fc40fbb113a9",
+          "source": "scientific_reviewer",
+          "reviewer_field": "required_revisions",
+          "reason": "Maintain current strict rejection logic for domain-mismatched evidence in future iterations.",
+          "issue_id": "required_revision:015a232dc3e3"
+        }
+      ],
+      "changes": [],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:1d904c2512bb",
+          "category": "required_revision",
+          "description": "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:1d904c2512bb."
+        },
+        {
+          "issue_id": "required_revision:015a232dc3e3",
+          "category": "required_revision",
+          "description": "Maintain current strict rejection logic for domain-mismatched evidence in future iterations.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:015a232dc3e3."
+        }
+      ],
+      "substantive_sections": [
+        "dataset_sources",
+        "methods",
+        "technical_details"
+      ],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "reproducibility_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [],
+      "responded_issue_count": 0,
+      "blocking_reasons": [
+        "required_revision_without_change:required_revision:1d904c2512bb",
+        "required_revision_without_change:required_revision:015a232dc3e3",
+        "unresolved_issue:required_revision:1d904c2512bb",
+        "unresolved_issue:required_revision:015a232dc3e3",
+        "final_reviewer_feedback_blocks"
+      ],
+      "remaining_blockers": [
+        "required_revision:1d904c2512bb: V2 Reviewer reports semantic_continuation:required_revision:1d904c2512bb.",
+        "required_revision:015a232dc3e3: V2 Reviewer reports semantic_continuation:required_revision:015a232dc3e3."
+      ],
+      "stop_reason": "max_revision_iterations_exhausted",
+      "accepted": false
+    },
+    "plan_versions": [
+      {
+        "schema_version": 1,
+        "run_id": "20260822-081539-9b0c27dd",
+        "version_number": 1,
+        "version_id": "20260822-081539-9b0c27dd:v1",
+        "parent_version_id": null,
+        "revision_iteration": 1,
+        "hypothesis_generation": {
+          "hypotheses": [],
+          "recommended_hypothesis_index": -1,
+          "selection_reason": "insufficient_evidence: All allowed evidence IDs (EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15) pertain to particle physics (Xenon detectors, NeXT mission) and are irrelevant to medical vaccine manufacturing. No valid supporting_evidence_ids exist for any hypothesis regarding next-generation vaccines. Generating hypotheses without evidence support would violate strict grounding constraints.",
+          "rejected_directions": [
+            "Hypothesizing specific mechanisms for mRNA or viral vector vaccine manufacturing based solely on booklet excerpt without corroborating evidence IDs",
+            "Inferring vaccine development trends from unrelated high-energy physics literature",
+            "Generating generic 'next-gen vaccine' hypotheses that cannot be linked to any allowed evidence ID"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "由于提供的允许证据列表（EV-Q018-*）完全涉及高能物理（氙探测器、NeXT任务）和天体物理学，与医学疫苗制造领域无相关性，因此无法基于现有证据构建关于下一代疫苗制造机制的科学假设。根据SAGE125原则，严禁在无相关证据支持的情况下编造事实或假设。本实验设计旨在验证‘现有证据库是否包含疫苗制造相关信息’这一元问题，并明确指出当前数据缺口。",
+          "datasets": {
+            "source": "Allowed Evidence IDs: EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15",
+            "target": "N/A (No relevant medical/vaccine manufacturing data found in source)"
+          },
+          "methods": "系统性文献审查与证据相关性过滤。对每个允许的Evidence ID进行主题分类，确认其所属学科领域（粒子物理/天体物理 vs. 生物医学/疫苗学）。",
+          "experiments": {
+            "baselines": [
+              "Random baseline: Assuming any scientific paper might contain vaccine info.",
+              "Keyword matching baseline: Searching for 'vaccine', 'mRNA', 'antigen' in provided texts."
+            ],
+            "metrics": [
+              "Relevance Precision: Proportion of evidence cards actually related to vaccine manufacturing.",
+              "Coverage Gap Index: Measure of missing domain-specific literature.",
+              "False Positive Rate: Rate of incorrectly identifying physics papers as medical literature."
+            ],
+            "ablation": "Remove physics-specific terms (Xenon, Dark Matter, NeXT) to see if any residual text relates to biology (expected result: null).",
+            "validation_protocol": "Manual expert review of quoted text from each Evidence ID to confirm irrelevance to the question 'How will the next generation of vaccines be made?'"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify that all cited Evidence IDs are strictly from the allowed list.",
+            "Confirm that no external medical literature was introduced as fact.",
+            "Ensure that the conclusion of 'insufficient evidence' is derived solely from the content of the provided physics papers.",
+            "Check that no hallucinated vaccine mechanisms (e.g., lipid nanoparticles, viral vectors) were asserted as facts."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "reason_for_non_execution": "Input evidence is domain-mismatched (Physics vs. Medicine). No valid hypothesis can be formed without relevant evidence. Further retrieval of medical literature is required before experimental design for vaccine mechanisms can proceed.",
+            "required_next_step": "Retrieve new Evidence Cards related to mRNA, viral vector, or protein subunit vaccine manufacturing technologies."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The system correctly identified a total domain mismatch between the user query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).",
+            "Adherence to negative constraints is exemplary: no hallucinated vaccine mechanisms, no fabricated references, and no misuse of irrelevant evidence IDs.",
+            "The 'insufficient_evidence' declaration is fully grounded in the content verification of the provided EvidenceCards.",
+            "Experiment design was appropriately pivoted to a meta-validation of evidence relevance rather than forcing a biological hypothesis onto physics data.",
+            "Results field correctly states 'pending' as no biological experiments could be executed."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+            "Maintain current strict rejection logic for domain-mismatched evidence in future iterations."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 1.0,
+          "reproducibility_score": 1.0,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:1d904c2512bb",
+            "category": "required_revision",
+            "description": "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          },
+          {
+            "issue_id": "required_revision:015a232dc3e3",
+            "category": "required_revision",
+            "description": "Maintain current strict rejection logic for domain-mismatched evidence in future iterations.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": null
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "5246db19ae4dadb0cc212d8f22ed44e4cbd7baeaeb45d80d9ee8dd4f6891a799",
+          "experiment_designer": "32866bf814801637d1af84afad4500432fd08f81152a0411b53b70625b3008a9",
+          "scientific_reviewer": "d1740dbc81eea9968d39fd54e62c953aeacb779d9fc30fb15f1caa15cfeefb99"
+        }
+      },
+      {
+        "schema_version": 1,
+        "run_id": "20260822-081539-9b0c27dd",
+        "version_number": 2,
+        "version_id": "20260822-081539-9b0c27dd:v2",
+        "parent_version_id": "20260822-081539-9b0c27dd:v1",
+        "revision_iteration": 2,
+        "hypothesis_generation": {
+          "hypotheses": [],
+          "recommended_hypothesis_index": -1,
+          "selection_reason": "insufficient_evidence: All allowed evidence IDs (EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15) pertain exclusively to particle physics (Xenon detectors, NeXT mission) and astrophysics. None contain information relevant to next-generation vaccine manufacturing. Per SAGE125 strict grounding constraints, no scientific hypothesis regarding vaccine platforms can be generated without valid supporting evidence IDs from the medical/biological domain. The required revision to acquire new EvidenceCards for vaccine platforms remains open.",
+          "rejected_directions": [
+            "Generating hypotheses about mRNA or viral vector vaccine mechanisms using only booklet excerpts without corroborating evidence IDs",
+            "Attempting to map particle physics detector technologies (e.g., Xenon TPCs) to vaccine manufacturing processes via metaphorical or non-causal analogies",
+            "Creating generic 'next-generation vaccine' hypotheses that cannot be linked to any allowed evidence ID in the current catalog"
+          ]
+        },
+        "experiment_design": {
+          "technical_details": "由于允许的 EvidenceCards (EV-Q018-*) 仅包含粒子物理（氙探测器、NeXT 任务）和天体物理学内容，与用户查询的‘下一代疫苗制造’完全领域不匹配。根据 SAGE125 严格接地原则，无法基于现有证据生成任何关于疫苗机制的科学假设。本实验设计旨在执行元验证：确认现有证据库中不存在与疫苗制造相关的信息，并量化领域不匹配程度。这是一种负向验证实验，旨在防止幻觉并明确知识缺口。",
+          "datasets": {
+            "source": [
+              "EV-Q018-a281780f595ce9ffafbe7da1",
+              "EV-Q018-b6cf0af6ecd4f6748af15124",
+              "EV-Q018-8772f24afae1c3b1a89c7463",
+              "EV-Q018-59b5974983448ce9ba8c8c15"
+            ],
+            "target": "N/A (No relevant medical/vaccine manufacturing data found in source)"
+          },
+          "methods": "系统性文献审查与证据相关性过滤。对每个允许的 Evidence ID 进行主题分类，确认其所属学科领域（粒子物理/天体物理 vs. 生物医学/疫苗学）。使用关键词匹配（'vaccine', 'mRNA', 'antigen', 'manufacturing'）和语义相似度计算来量化证据与目标问题的相关性。",
+          "experiments": {
+            "baselines": [
+              "Random baseline: Assuming any scientific paper might contain vaccine info.",
+              "Keyword matching baseline: Searching for 'vaccine', 'mRNA', 'antigen' in provided texts."
+            ],
+            "metrics": [
+              "Relevance Precision: Proportion of evidence cards actually related to vaccine manufacturing.",
+              "Coverage Gap Index: Measure of missing domain-specific literature.",
+              "False Positive Rate: Rate of incorrectly identifying physics papers as medical literature."
+            ],
+            "ablation": "Remove physics-specific terms (Xenon, Dark Matter, NeXT) to see if any residual text relates to biology (expected result: null).",
+            "validation_protocol": "Manual expert review of quoted text from each Evidence ID to confirm irrelevance to the question 'How will the next generation of vaccines be made?'"
+          },
+          "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+          "reproducibility_checklist": [
+            "Verify that all cited Evidence IDs are strictly from the allowed list.",
+            "Confirm that no external medical literature was introduced as fact.",
+            "Ensure that the conclusion of 'insufficient evidence' is derived solely from the content of the provided physics papers.",
+            "Check that no hallucinated vaccine mechanisms (e.g., lipid nanoparticles, viral vectors) were asserted as facts."
+          ],
+          "execution_metadata": {
+            "actual_execution": false,
+            "reason_for_non_execution": "Input evidence is domain-mismatched (Physics vs. Medicine). No valid hypothesis can be formed without relevant evidence. Further retrieval of medical literature is required before experimental design for vaccine mechanisms can proceed.",
+            "required_next_step": "Retrieve new Evidence Cards related to mRNA, viral vector, or protein subunit vaccine manufacturing technologies."
+          }
+        },
+        "review_feedback": {
+          "passed": true,
+          "reviewer_comments": [
+            "The system correctly maintains the 'insufficient_evidence' stance given the total domain mismatch between the query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).",
+            "No hallucinated vaccine mechanisms or fabricated references were introduced in this revision.",
+            "The experiment design appropriately focuses on meta-validation of evidence relevance rather than forcing a biological hypothesis onto physics data.",
+            "Results field correctly remains 'pending' as no valid experiments can be executed with the current evidence set.",
+            "Adherence to negative constraints is exemplary; the system successfully avoided the trap of generating plausible-sounding but ungrounded vaccine hypotheses."
+          ],
+          "critical_issues": [],
+          "required_revisions": [
+            "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+            "Maintain current strict rejection logic for domain-mismatched evidence in future iterations."
+          ],
+          "risk_level": "low",
+          "evidence_grounding_score": 1.0,
+          "falsifiability_score": 1.0,
+          "reproducibility_score": 1.0,
+          "reference_reliability_score": 1.0
+        },
+        "issue_closures": [
+          {
+            "issue_id": "required_revision:1d904c2512bb",
+            "category": "required_revision",
+            "description": "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:1d904c2512bb."
+          },
+          {
+            "issue_id": "required_revision:015a232dc3e3",
+            "category": "required_revision",
+            "description": "Maintain current strict rejection logic for domain-mismatched evidence in future iterations.",
+            "status": "open",
+            "opened_in_version": 1,
+            "closed_in_version": null,
+            "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:015a232dc3e3."
+          }
+        ],
+        "prompt_fingerprints": {
+          "hypothesis_generator": "0755807c878adb93abdc9a5912bd728d08800c4810a4d0c9736b5a09c8e74fc6",
+          "experiment_designer": "3b1b2594a29ba6136fed8d2c3c04a21f2e49d3e23aae5c7e0da4539e373e0f1a",
+          "scientific_reviewer": "c31e2ae90f7fa67bbe87b1758b66c6765da4c098ff737c2f4904eea477857146"
+        }
+      }
+    ],
+    "revision_control": {
+      "schema_version": 1,
+      "run_id": "20260822-081539-9b0c27dd",
+      "max_iterations": 2,
+      "max_retries": 1,
+      "current_iteration": 2,
+      "retry_count": 0,
+      "status": "stopped",
+      "processed_event_ids": [
+        "20260822-081539-9b0c27dd:review:v1",
+        "20260822-081539-9b0c27dd:revision:v2"
+      ],
+      "version_ids": [
+        "20260822-081539-9b0c27dd:v1",
+        "20260822-081539-9b0c27dd:v2"
+      ],
+      "failure_reasons": [],
+      "pause_reason": null,
+      "stop_reason": "max_revision_iterations_exhausted"
+    },
+    "revision_recovery_checkpoint": {
+      "schema_version": 1,
+      "controller": {
+        "schema_version": 1,
+        "run_id": "20260822-081539-9b0c27dd",
+        "max_iterations": 2,
+        "max_retries": 1,
+        "current_iteration": 2,
+        "retry_count": 0,
+        "status": "stopped",
+        "processed_event_ids": [
+          "20260822-081539-9b0c27dd:review:v1",
+          "20260822-081539-9b0c27dd:revision:v2"
+        ],
+        "version_ids": [
+          "20260822-081539-9b0c27dd:v1",
+          "20260822-081539-9b0c27dd:v2"
+        ],
+        "failure_reasons": [],
+        "pause_reason": null,
+        "stop_reason": "max_revision_iterations_exhausted"
+      },
+      "versions": [
+        {
+          "schema_version": 1,
+          "run_id": "20260822-081539-9b0c27dd",
+          "version_number": 1,
+          "version_id": "20260822-081539-9b0c27dd:v1",
+          "parent_version_id": null,
+          "revision_iteration": 1,
+          "hypothesis_generation": {
+            "hypotheses": [],
+            "recommended_hypothesis_index": -1,
+            "selection_reason": "insufficient_evidence: All allowed evidence IDs (EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15) pertain to particle physics (Xenon detectors, NeXT mission) and are irrelevant to medical vaccine manufacturing. No valid supporting_evidence_ids exist for any hypothesis regarding next-generation vaccines. Generating hypotheses without evidence support would violate strict grounding constraints.",
+            "rejected_directions": [
+              "Hypothesizing specific mechanisms for mRNA or viral vector vaccine manufacturing based solely on booklet excerpt without corroborating evidence IDs",
+              "Inferring vaccine development trends from unrelated high-energy physics literature",
+              "Generating generic 'next-gen vaccine' hypotheses that cannot be linked to any allowed evidence ID"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "由于提供的允许证据列表（EV-Q018-*）完全涉及高能物理（氙探测器、NeXT任务）和天体物理学，与医学疫苗制造领域无相关性，因此无法基于现有证据构建关于下一代疫苗制造机制的科学假设。根据SAGE125原则，严禁在无相关证据支持的情况下编造事实或假设。本实验设计旨在验证‘现有证据库是否包含疫苗制造相关信息’这一元问题，并明确指出当前数据缺口。",
+            "datasets": {
+              "source": "Allowed Evidence IDs: EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15",
+              "target": "N/A (No relevant medical/vaccine manufacturing data found in source)"
+            },
+            "methods": "系统性文献审查与证据相关性过滤。对每个允许的Evidence ID进行主题分类，确认其所属学科领域（粒子物理/天体物理 vs. 生物医学/疫苗学）。",
+            "experiments": {
+              "baselines": [
+                "Random baseline: Assuming any scientific paper might contain vaccine info.",
+                "Keyword matching baseline: Searching for 'vaccine', 'mRNA', 'antigen' in provided texts."
+              ],
+              "metrics": [
+                "Relevance Precision: Proportion of evidence cards actually related to vaccine manufacturing.",
+                "Coverage Gap Index: Measure of missing domain-specific literature.",
+                "False Positive Rate: Rate of incorrectly identifying physics papers as medical literature."
+              ],
+              "ablation": "Remove physics-specific terms (Xenon, Dark Matter, NeXT) to see if any residual text relates to biology (expected result: null).",
+              "validation_protocol": "Manual expert review of quoted text from each Evidence ID to confirm irrelevance to the question 'How will the next generation of vaccines be made?'"
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify that all cited Evidence IDs are strictly from the allowed list.",
+              "Confirm that no external medical literature was introduced as fact.",
+              "Ensure that the conclusion of 'insufficient evidence' is derived solely from the content of the provided physics papers.",
+              "Check that no hallucinated vaccine mechanisms (e.g., lipid nanoparticles, viral vectors) were asserted as facts."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "reason_for_non_execution": "Input evidence is domain-mismatched (Physics vs. Medicine). No valid hypothesis can be formed without relevant evidence. Further retrieval of medical literature is required before experimental design for vaccine mechanisms can proceed.",
+              "required_next_step": "Retrieve new Evidence Cards related to mRNA, viral vector, or protein subunit vaccine manufacturing technologies."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The system correctly identified a total domain mismatch between the user query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).",
+              "Adherence to negative constraints is exemplary: no hallucinated vaccine mechanisms, no fabricated references, and no misuse of irrelevant evidence IDs.",
+              "The 'insufficient_evidence' declaration is fully grounded in the content verification of the provided EvidenceCards.",
+              "Experiment design was appropriately pivoted to a meta-validation of evidence relevance rather than forcing a biological hypothesis onto physics data.",
+              "Results field correctly states 'pending' as no biological experiments could be executed."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+              "Maintain current strict rejection logic for domain-mismatched evidence in future iterations."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 1.0,
+            "reproducibility_score": 1.0,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:1d904c2512bb",
+              "category": "required_revision",
+              "description": "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            },
+            {
+              "issue_id": "required_revision:015a232dc3e3",
+              "category": "required_revision",
+              "description": "Maintain current strict rejection logic for domain-mismatched evidence in future iterations.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": null
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "5246db19ae4dadb0cc212d8f22ed44e4cbd7baeaeb45d80d9ee8dd4f6891a799",
+            "experiment_designer": "32866bf814801637d1af84afad4500432fd08f81152a0411b53b70625b3008a9",
+            "scientific_reviewer": "d1740dbc81eea9968d39fd54e62c953aeacb779d9fc30fb15f1caa15cfeefb99"
+          }
+        },
+        {
+          "schema_version": 1,
+          "run_id": "20260822-081539-9b0c27dd",
+          "version_number": 2,
+          "version_id": "20260822-081539-9b0c27dd:v2",
+          "parent_version_id": "20260822-081539-9b0c27dd:v1",
+          "revision_iteration": 2,
+          "hypothesis_generation": {
+            "hypotheses": [],
+            "recommended_hypothesis_index": -1,
+            "selection_reason": "insufficient_evidence: All allowed evidence IDs (EV-Q018-a281780f595ce9ffafbe7da1, EV-Q018-b6cf0af6ecd4f6748af15124, EV-Q018-8772f24afae1c3b1a89c7463, EV-Q018-59b5974983448ce9ba8c8c15) pertain exclusively to particle physics (Xenon detectors, NeXT mission) and astrophysics. None contain information relevant to next-generation vaccine manufacturing. Per SAGE125 strict grounding constraints, no scientific hypothesis regarding vaccine platforms can be generated without valid supporting evidence IDs from the medical/biological domain. The required revision to acquire new EvidenceCards for vaccine platforms remains open.",
+            "rejected_directions": [
+              "Generating hypotheses about mRNA or viral vector vaccine mechanisms using only booklet excerpts without corroborating evidence IDs",
+              "Attempting to map particle physics detector technologies (e.g., Xenon TPCs) to vaccine manufacturing processes via metaphorical or non-causal analogies",
+              "Creating generic 'next-generation vaccine' hypotheses that cannot be linked to any allowed evidence ID in the current catalog"
+            ]
+          },
+          "experiment_design": {
+            "technical_details": "由于允许的 EvidenceCards (EV-Q018-*) 仅包含粒子物理（氙探测器、NeXT 任务）和天体物理学内容，与用户查询的‘下一代疫苗制造’完全领域不匹配。根据 SAGE125 严格接地原则，无法基于现有证据生成任何关于疫苗机制的科学假设。本实验设计旨在执行元验证：确认现有证据库中不存在与疫苗制造相关的信息，并量化领域不匹配程度。这是一种负向验证实验，旨在防止幻觉并明确知识缺口。",
+            "datasets": {
+              "source": [
+                "EV-Q018-a281780f595ce9ffafbe7da1",
+                "EV-Q018-b6cf0af6ecd4f6748af15124",
+                "EV-Q018-8772f24afae1c3b1a89c7463",
+                "EV-Q018-59b5974983448ce9ba8c8c15"
+              ],
+              "target": "N/A (No relevant medical/vaccine manufacturing data found in source)"
+            },
+            "methods": "系统性文献审查与证据相关性过滤。对每个允许的 Evidence ID 进行主题分类，确认其所属学科领域（粒子物理/天体物理 vs. 生物医学/疫苗学）。使用关键词匹配（'vaccine', 'mRNA', 'antigen', 'manufacturing'）和语义相似度计算来量化证据与目标问题的相关性。",
+            "experiments": {
+              "baselines": [
+                "Random baseline: Assuming any scientific paper might contain vaccine info.",
+                "Keyword matching baseline: Searching for 'vaccine', 'mRNA', 'antigen' in provided texts."
+              ],
+              "metrics": [
+                "Relevance Precision: Proportion of evidence cards actually related to vaccine manufacturing.",
+                "Coverage Gap Index: Measure of missing domain-specific literature.",
+                "False Positive Rate: Rate of incorrectly identifying physics papers as medical literature."
+              ],
+              "ablation": "Remove physics-specific terms (Xenon, Dark Matter, NeXT) to see if any residual text relates to biology (expected result: null).",
+              "validation_protocol": "Manual expert review of quoted text from each Evidence ID to confirm irrelevance to the question 'How will the next generation of vaccines be made?'"
+            },
+            "results": "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。",
+            "reproducibility_checklist": [
+              "Verify that all cited Evidence IDs are strictly from the allowed list.",
+              "Confirm that no external medical literature was introduced as fact.",
+              "Ensure that the conclusion of 'insufficient evidence' is derived solely from the content of the provided physics papers.",
+              "Check that no hallucinated vaccine mechanisms (e.g., lipid nanoparticles, viral vectors) were asserted as facts."
+            ],
+            "execution_metadata": {
+              "actual_execution": false,
+              "reason_for_non_execution": "Input evidence is domain-mismatched (Physics vs. Medicine). No valid hypothesis can be formed without relevant evidence. Further retrieval of medical literature is required before experimental design for vaccine mechanisms can proceed.",
+              "required_next_step": "Retrieve new Evidence Cards related to mRNA, viral vector, or protein subunit vaccine manufacturing technologies."
+            }
+          },
+          "review_feedback": {
+            "passed": true,
+            "reviewer_comments": [
+              "The system correctly maintains the 'insufficient_evidence' stance given the total domain mismatch between the query (vaccine manufacturing) and the allowed evidence (particle physics/astrophysics).",
+              "No hallucinated vaccine mechanisms or fabricated references were introduced in this revision.",
+              "The experiment design appropriately focuses on meta-validation of evidence relevance rather than forcing a biological hypothesis onto physics data.",
+              "Results field correctly remains 'pending' as no valid experiments can be executed with the current evidence set.",
+              "Adherence to negative constraints is exemplary; the system successfully avoided the trap of generating plausible-sounding but ungrounded vaccine hypotheses."
+            ],
+            "critical_issues": [],
+            "required_revisions": [
+              "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+              "Maintain current strict rejection logic for domain-mismatched evidence in future iterations."
+            ],
+            "risk_level": "low",
+            "evidence_grounding_score": 1.0,
+            "falsifiability_score": 1.0,
+            "reproducibility_score": 1.0,
+            "reference_reliability_score": 1.0
+          },
+          "issue_closures": [
+            {
+              "issue_id": "required_revision:1d904c2512bb",
+              "category": "required_revision",
+              "description": "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:1d904c2512bb."
+            },
+            {
+              "issue_id": "required_revision:015a232dc3e3",
+              "category": "required_revision",
+              "description": "Maintain current strict rejection logic for domain-mismatched evidence in future iterations.",
+              "status": "open",
+              "opened_in_version": 1,
+              "closed_in_version": null,
+              "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:015a232dc3e3."
+            }
+          ],
+          "prompt_fingerprints": {
+            "hypothesis_generator": "0755807c878adb93abdc9a5912bd728d08800c4810a4d0c9736b5a09c8e74fc6",
+            "experiment_designer": "3b1b2594a29ba6136fed8d2c3c04a21f2e49d3e23aae5c7e0da4539e373e0f1a",
+            "scientific_reviewer": "c31e2ae90f7fa67bbe87b1758b66c6765da4c098ff737c2f4904eea477857146"
+          }
+        }
+      ],
+      "events": [
+        {
+          "event_id": "20260822-081539-9b0c27dd:review:v1",
+          "event_type": "reviewer_callback",
+          "status": "completed",
+          "version_id": "20260822-081539-9b0c27dd:v1",
+          "failure_reason": null
+        },
+        {
+          "event_id": "20260822-081539-9b0c27dd:revision:v2",
+          "event_type": "revision_event",
+          "status": "completed",
+          "version_id": "20260822-081539-9b0c27dd:v2",
+          "failure_reason": null
+        }
+      ],
+      "issue_closures": [
+        {
+          "issue_id": "required_revision:1d904c2512bb",
+          "category": "required_revision",
+          "description": "Acquire new EvidenceCards specifically related to next-generation vaccine platforms (e.g., mRNA, viral vectors, protein subunits) before attempting hypothesis generation for this query.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:1d904c2512bb."
+        },
+        {
+          "issue_id": "required_revision:015a232dc3e3",
+          "category": "required_revision",
+          "description": "Maintain current strict rejection logic for domain-mismatched evidence in future iterations.",
+          "status": "open",
+          "opened_in_version": 1,
+          "closed_in_version": null,
+          "resolution_note": "V2 Reviewer reports semantic_continuation:required_revision:015a232dc3e3."
+        }
+      ],
+      "checkpoint_hash": "4c61b9f3713633f92ef5be98a1a81d7e836ddb6e4af4b82eba41b9e4bdf65b54"
+    },
+    "two_round_case_report": {
+      "schema_version": 1,
+      "metric_id": "T02-METRIC-003",
+      "case_id": "20260822-081539-9b0c27dd:wave-b-two-round",
+      "run_id": "20260822-081539-9b0c27dd",
+      "v1_version_id": "20260822-081539-9b0c27dd:v1",
+      "v2_version_id": "20260822-081539-9b0c27dd:v2",
+      "input_fingerprints": {
+        "v1": "32866bf814801637d1af84afad4500432fd08f81152a0411b53b70625b3008a9",
+        "v2": "3b1b2594a29ba6136fed8d2c3c04a21f2e49d3e23aae5c7e0da4539e373e0f1a"
+      },
+      "responded_issue_count": 0,
+      "issue_ids": [],
+      "change_ids": [],
+      "score_changes": {
+        "evidence_grounding_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "falsifiability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "reproducibility_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        },
+        "reference_reliability_score": {
+          "before": 1.0,
+          "after": 1.0,
+          "delta": 0.0
+        }
+      },
+      "candidate_hypothesis_ranking": [],
+      "passed": false
+    }
+  },
+  {
+    "event_id": "f99374cbd163",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 10,
+    "agent_name": "report_writer",
+    "model_name": "qwen3.7-plus",
+    "status": "completed",
+    "started_at": "2026-08-22T08:16:57.355232+00:00",
+    "ended_at": "2026-08-22T08:17:21.715761+00:00",
+    "duration_ms": 24360,
+    "input_summary": "{\"question_item\": {\"id\": \"Q018\", \"domain\": \"Medicine & Health\", \"question\": \"How will the next generation of vaccines be made?\", \"source_page\": 12, \"booklet_excerpt\": \"Next-generation vaccine platforms accelerate vaccine development by sequencing viral proteins. Today we are seeing viral vector vaccines, nucleic acid–based vaccines, and antigen-presenting cells being leveraged to fight COVID-19.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}, \"parsed_question\": {\"domain\": \"Medicine & Health\", \"core_question\": \"What ar",
+    "output_summary": "{\"input_question\": \"How will the next generation of vaccines be made?\", \"domain\": \"Medicine & Health\", \"problem_statement\": \"The user inquiry seeks to understand the manufacturing mechanisms and technological platforms of next-generation vaccines. However, the provided evidence corpus (EV-Q018-*) consists exclusively of literature related to particle physics (Xenon detectors, NeXT mission) and astrophysics. There is a total domain mismatch between the question (Biomedical/Vaccineology) and the available evidence (High-Energy Physics). Consequently, no factual claims regarding vaccine manufactu",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "97e2085d5f0b",
+    "mock": false
+  },
+  {
+    "event_id": "c66ff3630fd9",
+    "run_id": "20260822-081539-9b0c27dd",
+    "step_index": 11,
+    "agent_name": "schema_validator",
+    "model_name": "qwen3.6-flash",
+    "status": "completed",
+    "started_at": "2026-08-22T08:17:21.715761+00:00",
+    "ended_at": "2026-08-22T08:17:23.973265+00:00",
+    "duration_ms": 2257,
+    "input_summary": "{\"question_item\": {\"id\": \"Q018\", \"domain\": \"Medicine & Health\", \"question\": \"How will the next generation of vaccines be made?\", \"source_page\": 12, \"booklet_excerpt\": \"Next-generation vaccine platforms accelerate vaccine development by sequencing viral proteins. Today we are seeing viral vector vaccines, nucleic acid–based vaccines, and antigen-presenting cells being leveraged to fight COVID-19.\", \"metadata\": {\"confidence\": 0.9, \"extraction_method\": \"hybrid_layout_repair\", \"source_file\": \"data/raw/sjtu-booklet.pdf\"}}}",
+    "output_summary": "{\"valid\": false, \"errors\": [\"SchemaValidationError: Input provided is QuestionItem, not ResearchPlan. SchemaValidator requires a 'ResearchPlan' object containing fields such as 'hypothesis', 'evidence', 'datasets', 'experiments', and 'references'.\", \"MissingFieldError: The input lacks the required 'ResearchPlan' structure for validation.\"], \"warnings\": [\"InputMismatchWarning: Provided data appears to be a source question/excerpt rather than a generated research plan.\"], \"validation_status\": \"needs_data\", \"quality_gate_results\": {\"schema_compliance\": false, \"evidence_tracing\": null, \"factual_ac",
+    "evidence_ids": [],
+    "warnings": [],
+    "errors": [],
+    "prompt_hash": "e71f006dd081",
+    "mock": false
+  }
+]

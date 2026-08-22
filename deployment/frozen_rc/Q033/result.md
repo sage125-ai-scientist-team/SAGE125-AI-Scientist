@@ -1,0 +1,140 @@
+# Verification of Evidence Gap: Absence of Evolutionary Biology Mechanisms in Provided Computational and Engineering Literature
+
+## Input Question
+How do organisms evolve?
+
+## Domain
+Biology
+
+## Validation Status
+needs_data
+
+## Problem Statement
+The user asks for the mechanisms of organismal evolution, specifically referencing natural selection and complex organs. However, the provided evidence cards (EV-Q033-ab0ae9cf824e361d5c58fde3, EV-Q033-24d505c12eacb029eedb944e, EV-Q033-f754f6d89fcce46386dca85b) are topically irrelevant to evolutionary biology, covering cell reprogramming mathematics, digital twin networks, and epidemic modeling respectively. The core problem is the total absence of valid biological evidence to support any factual claim regarding evolutionary mechanisms.
+
+## Rationale
+Per SAGE125 protocols, factual claims must be traced to allowed EvidenceCards. Since none of the allowed cards contain information on natural selection, genetic drift, or phylogenetic changes, it is impossible to construct a standard scientific answer. The only scientifically rigorous response is to formalize the 'insufficient evidence' state as a verifiable hypothesis: that the provided documents do not contain the necessary biological data. This prevents hallucination and adheres to strict evidence grounding.
+
+## Generated Hypotheses
+
+### Hypothesis 1
+- **Hypothesis**: Insufficient Evidence: No valid scientific hypothesis regarding organismal evolution can be generated from the provided evidence cards.
+- **Mechanism**: The allowed evidence IDs (EV-Q033-ab0ae9cf824e361d5c58fde3, EV-Q033-24d505c12eacb029eedb944e, EV-Q033-f754f6d89fcce46386dca85b) pertain to cell reprogramming mathematics, digital twin networks, and epidemic modeling respectively. None contain biological data or theoretical frameworks relevant to natural selection, genetic drift, or other evolutionary mechanisms required to answer 'How do organisms evolve?'.
+- **Falsifiable Prediction**: A comprehensive semantic search of the full text of the three allowed evidence cards will yield zero mentions of 'natural selection', 'allele frequency', 'phylogeny', or 'adaptation' in a biological context.
+- **Required Observations**: Full-text verification of EV-Q033-ab0ae9cf824e361d5c58fde3 confirming absence of evolutionary biology content；Full-text verification of EV-Q033-24d505c12eacb029eedb944e confirming focus on network engineering；Full-text verification of EV-Q033-f754f6d89fcce46386dca85b confirming focus on epidemiological parameters
+- **Risk of Being Wrong**: Low risk. The evidence extraction result explicitly identifies a total knowledge gap and topical irrelevance. The only risk is if the quoted text snippets are misleading and the full papers actually contain relevant evolutionary biology content, which is statistically improbable given the titles and relevance scores.
+
+### Hypothesis 2
+- **Hypothesis**: Mathematical models of cell reprogramming (EV-Q033-ab0ae9cf824e361d5c58fde3) can serve as a proxy for understanding evolutionary transitions in pluripotency.
+- **Mechanism**: Assumes that the mathematical critical points in cell reprogramming models described in the evidence card are homologous to evolutionary bifurcation points in organismal development.
+- **Falsifiable Prediction**: Parameters defining critical points in the reprogramming model will correlate with known evolutionary conserved gene regulatory network motifs.
+- **Required Observations**: Extraction of specific mathematical parameters from EV-Q033-ab0ae9cf824e361d5c58fde3；Mapping of these parameters to biological evolutionary datasets (not present in allowed evidence)
+- **Risk of Being Wrong**: Extremely High. The evidence card discusses a mathematical model of cell reprogramming, not organismal evolution. Equating cellular state transitions with species-level evolution without explicit supporting evidence is a category error and violates the constraint against unsupported factual claims.
+
+## Technical Details
+The recommended hypothesis asserts 'Insufficient Evidence' because the provided EvidenceCards (EV-Q033-ab0ae9cf824e361d5c58fde3, EV-Q033-24d505c12eacb029eedb944e, EV-Q033-f754f6d89fcce46386dca85b) are topically irrelevant to organismal evolution. EV-Q033-ab0ae9cf824e361d5c58fde3 discusses cell reprogramming mathematics; EV-Q033-24d505c12eacb029eedb944e discusses digital twin networks for traffic; EV-Q033-f754f6d89fcce46386dca85b discusses epidemic modeling. To verify this hypothesis, we design a text-mining experiment to confirm the absence of key evolutionary biology terminology (e.g., 'natural selection', 'allele frequency', 'phylogeny') within the full text of these specific documents. This validates the knowledge gap claim rather than attempting to derive biological mechanisms from non-biological sources.
+
+## Datasets
+### Source
+
+
+```json
+[
+  {
+    "id": "EV-Q033-ab0ae9cf824e361d5c58fde3",
+    "type": "arxiv_paper",
+    "description": "Full text of arXiv:1606.03884 regarding cell reprogramming models."
+  },
+  {
+    "id": "EV-Q033-24d505c12eacb029eedb944e",
+    "type": "arxiv_paper",
+    "description": "Full text of arXiv:2411.00681 regarding Digital Twin Networks."
+  },
+  {
+    "id": "EV-Q033-f754f6d89fcce46386dca85b",
+    "type": "arxiv_paper",
+    "description": "Full text of arXiv:2004.11372 regarding epidemic modeling parameters."
+  }
+]
+```
+
+
+### Target
+
+
+```json
+{
+  "type": "text_analysis_result",
+  "description": "Binary classification of each document as 'Contains Evolutionary Biology Mechanisms' or 'Does Not Contain Evolutionary Biology Mechanisms' based on keyword presence and semantic context."
+}
+```
+
+
+## Paper Abstract
+Background: The question 'How do organisms evolve?' requires evidence of biological mechanisms such as natural selection and genetic change. However, the available evidence corpus consists of computational and engineering papers. Methods: We propose a systematic text-mining protocol to verify the topical relevance of three specific arXiv papers (EV-Q033-ab0ae9cf824e361d5c58fde3, EV-Q033-24d505c12eacb029eedb944e, EV-Q033-f754f6d89fcce46386dca85b). Validation Plan: The study will scan for key evolutionary terminology and assess semantic context to confirm the absence of relevant biological data. Results: pending (待执行验证实验). This report formalizes the knowledge gap rather than fabricating an answer from irrelevant sources.
+
+## Methods
+Automated Text Mining and Semantic Verification. We will perform a full-text scan of the three allowed EvidenceCards. The method involves: 1) Tokenization and preprocessing of the PDF/text content of each ID. 2) Keyword search for a predefined list of evolutionary biology terms: ['natural selection', 'genetic drift', 'allele frequency', 'phylogeny', 'adaptation', 'speciation', 'mutation rate']. 3) Contextual verification using a lightweight NLP model to ensure terms are not used in metaphorical or unrelated contexts (e.g., 'selection' in computer science algorithms). 4) Aggregation of results to confirm the total absence of relevant biological evolutionary content.
+
+## Experiments
+### Baselines
+
+
+```json
+[
+  "Random Control: A set of known evolutionary biology textbooks (external reference, not part of evidence IDs) to establish baseline keyword density for valid evolutionary texts.",
+  "Null Model: A set of random physics/math papers to establish baseline keyword density for non-biological scientific texts."
+]
+```
+
+
+### Metrics
+
+
+```json
+[
+  "Keyword Presence Count: Number of occurrences of target evolutionary terms per document.",
+  "Semantic Relevance Score: Cosine similarity between document embeddings and a standard 'Evolutionary Biology' query vector.",
+  "False Positive Rate: Percentage of documents incorrectly flagged as containing evolutionary content if they are known non-biological texts."
+]
+```
+
+
+### Ablation
+Remove contextual verification step to test if simple keyword matching yields false positives (e.g., 'selection' in 'feature selection').
+
+### Validation Protocol
+Manual inspection of any document flagged with >0 keyword hits to determine if the usage is biological. If all three target documents have 0 biologically-contextualized hits, the hypothesis is supported.
+
+## Results
+当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。
+
+## References
+- **EV-Q033-ab0ae9cf824e361d5c58fde3** · arxiv · arXiv:1606.03884
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/1606.03884.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=0fc46b5c31d726ae36c18bfc2a8a52bf5ee7a722bf8de3c4e65e2778ae874d54
+- **EV-Q033-24d505c12eacb029eedb944e** · arxiv · arXiv:2411.00681
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/2411.00681.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=112dcd15a3619701101d986858cbf66ca68a90f8e21c534f6555e8178793e3ea
+- **EV-Q033-f754f6d89fcce46386dca85b** · arxiv · arXiv:2004.11372
+  - authors: Not available · year: Not available
+  - url: https://arxiv.org/pdf/2004.11372.pdf · doi: Not available
+  - reliability_note: eligibility_status=FULLTEXT_VERIFIED; topic_relevance_status=DIRECT_QUESTION_CORE; locator=page:1|section:page-1|paragraph:1; content_sha256=29cc24a0efa1505904624afa243b36b740e9dc5813bbdc44e81b20cad55a9f17
+
+## Reviewer Comments
+- The candidate hypothesis correctly identifies 'insufficient_evidence' given the topical mismatch between the user query (organismal evolution) and the allowed evidence cards (cell reprogramming math, digital twin networks, epidemic modeling).
+- The system strictly adhered to negative constraints by refusing to fabricate biological mechanisms from non-biological sources.
+- The proposed experiment is a valid meta-verification step to confirm the knowledge gap via text mining, rather than a hallucinated biological assay.
+- Results field correctly states 'pending' and does not claim verification has occurred.
+- All referenced evidence IDs exist in the provided catalog and are used appropriately to demonstrate irrelevance.
+
+## Revision History
+
+## Reproducibility Checklist
+- Access to full text of EV-Q033-ab0ae9cf824e361d5c58fde3, EV-Q033-24d505c12eacb029eedb944e, and EV-Q033-f754f6d89fcce46386dca85b.
+- Defined list of evolutionary biology keywords.
+- NLP pipeline for context verification.
+- Script for embedding calculation and similarity scoring.
+
