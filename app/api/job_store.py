@@ -98,6 +98,22 @@ class JobRecord:
     timed_out_at: str | None
     requested_by: str
     request_payload: dict[str, Any]
+    job_type: str = "FULL_RESEARCH_PIPELINE"
+    client_id: str | None = None
+    progress_percent: int | None = None
+    progress_current: int | None = None
+    progress_total: int | None = None
+    progress_mode: str = "indeterminate"
+    message: str | None = None
+    checkpoint_uri: str | None = None
+    result_uri: str | None = None
+    provider_call_count: int = 0
+    retry_of_job_id: str | None = None
+    input_digest: str | None = None
+    worker_id: str | None = None
+    heartbeat_at: str | None = None
+    cancel_requested: bool = False
+    model_alias: str | None = None
 
 
 class JobStore(Protocol):
@@ -141,7 +157,48 @@ class JobStore(Protocol):
         increment_attempt: bool = False,
     ) -> JobRecord: ...
     def begin_attempt(self, job_id: str) -> JobRecord: ...
-    def update_progress(self, job_id: str, stage: str) -> JobRecord: ...
+    def update_progress(
+        self,
+        job_id: str,
+        stage: str,
+        *,
+        progress_current: int | None = None,
+        progress_total: int | None = None,
+        progress_percent: int | None = None,
+        progress_mode: str | None = None,
+        message: str | None = None,
+        checkpoint_uri: str | None = None,
+        result_uri: str | None = None,
+        provider_call_count: int | None = None,
+        model_alias: str | None = None,
+    ) -> JobRecord: ...
+    def list_events(
+        self, job_id: str, *, after_sequence: int = 0
+    ) -> list[dict[str, Any]]: ...
+    def find_active_job(
+        self,
+        *,
+        client_id: str,
+        question_id: str,
+        job_type: str | None = None,
+        requested_by: str | None = None,
+    ) -> JobRecord | None: ...
+    def find_latest_job(
+        self,
+        *,
+        client_id: str | None = None,
+        question_id: str,
+        job_type: str | None = None,
+        requested_by: str | None = None,
+    ) -> JobRecord | None: ...
+    def create_retry(
+        self,
+        job_id: str,
+        *,
+        correlation_id: str,
+        requested_by: str,
+        client_id: str | None = None,
+    ) -> tuple[JobRecord, bool]: ...
     def recover_interrupted_jobs(self) -> list[str]: ...
 
 
@@ -291,6 +348,63 @@ class SQLiteJobStore:
             "INSERT OR IGNORE INTO api_schema_migrations(version, applied_at) VALUES (2, ?)",
             (_now(),),
         )
+        columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(jobs)").fetchall()
+        }
+        v3_additions = {
+            "job_type": "TEXT",
+            "client_id": "TEXT",
+            "progress_percent": "INTEGER",
+            "progress_current": "INTEGER",
+            "progress_total": "INTEGER",
+            "progress_mode": "TEXT",
+            "message": "TEXT",
+            "checkpoint_uri": "TEXT",
+            "result_uri": "TEXT",
+            "provider_call_count": "INTEGER",
+            "retry_of_job_id": "TEXT",
+            "input_digest": "TEXT",
+            "worker_id": "TEXT",
+            "heartbeat_at": "TEXT",
+            "cancel_requested": "INTEGER",
+            "model_alias": "TEXT",
+        }
+        for name, column_type in v3_additions.items():
+            if name not in columns:
+                connection.execute(f"ALTER TABLE jobs ADD COLUMN {name} {column_type}")
+        connection.execute(
+            """
+            UPDATE jobs
+            SET job_type = COALESCE(NULLIF(job_type, ''), 'FULL_RESEARCH_PIPELINE'),
+                progress_mode = COALESCE(NULLIF(progress_mode, ''), 'indeterminate'),
+                provider_call_count = COALESCE(provider_call_count, 0),
+                cancel_requested = COALESCE(cancel_requested, 0)
+            """
+        )
+        connection.execute(
+            """
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_jobs_active_client_type
+            ON jobs(client_id, question_id, job_type)
+            WHERE status IN ('queued', 'running', 'retrying')
+              AND client_id IS NOT NULL
+              AND TRIM(client_id) != ''
+            """
+        )
+        connection.execute(
+            "INSERT OR IGNORE INTO api_schema_migrations(version, applied_at) VALUES (3, ?)",
+            (_now(),),
+        )
+
+    @staticmethod
+    def _col(row: sqlite3.Row, name: str, default: Any = None) -> Any:
+        try:
+            keys = row.keys()
+        except Exception:
+            keys = []
+        if name not in keys:
+            return default
+        value = row[name]
+        return default if value is None else value
 
     @staticmethod
     def _record(row: sqlite3.Row) -> JobRecord:
@@ -328,6 +442,42 @@ class SQLiteJobStore:
             timed_out_at=row["timed_out_at"],
             requested_by=row["requested_by"],
             request_payload=json.loads(row["request_json"]),
+            job_type=str(
+                SQLiteJobStore._col(row, "job_type", "FULL_RESEARCH_PIPELINE")
+                or "FULL_RESEARCH_PIPELINE"
+            ),
+            client_id=SQLiteJobStore._col(row, "client_id"),
+            progress_percent=(
+                int(SQLiteJobStore._col(row, "progress_percent"))
+                if SQLiteJobStore._col(row, "progress_percent") is not None
+                else None
+            ),
+            progress_current=(
+                int(SQLiteJobStore._col(row, "progress_current"))
+                if SQLiteJobStore._col(row, "progress_current") is not None
+                else None
+            ),
+            progress_total=(
+                int(SQLiteJobStore._col(row, "progress_total"))
+                if SQLiteJobStore._col(row, "progress_total") is not None
+                else None
+            ),
+            progress_mode=str(
+                SQLiteJobStore._col(row, "progress_mode", "indeterminate")
+                or "indeterminate"
+            ),
+            message=SQLiteJobStore._col(row, "message"),
+            checkpoint_uri=SQLiteJobStore._col(row, "checkpoint_uri"),
+            result_uri=SQLiteJobStore._col(row, "result_uri"),
+            provider_call_count=int(
+                SQLiteJobStore._col(row, "provider_call_count", 0) or 0
+            ),
+            retry_of_job_id=SQLiteJobStore._col(row, "retry_of_job_id"),
+            input_digest=SQLiteJobStore._col(row, "input_digest"),
+            worker_id=SQLiteJobStore._col(row, "worker_id"),
+            heartbeat_at=SQLiteJobStore._col(row, "heartbeat_at"),
+            cancel_requested=bool(SQLiteJobStore._col(row, "cancel_requested", 0)),
+            model_alias=SQLiteJobStore._col(row, "model_alias"),
         )
 
     @staticmethod
@@ -378,6 +528,10 @@ class SQLiteJobStore:
         max_attempts = 2 if request.mode == "mock" else 1
         timeout_seconds = 300 if request.mode == "mock" else 7200
 
+        job_type = getattr(request, "job_type", None) or "FULL_RESEARCH_PIPELINE"
+        client_id = getattr(request, "client_id", None)
+        input_digest = getattr(request, "input_digest", None)
+
         with self._write_transaction() as connection:
             if idempotency_hash:
                 existing = connection.execute(
@@ -394,30 +548,68 @@ class SQLiteJobStore:
                         )
                     return self._record(existing), True
 
-            connection.execute(
-                """
-                INSERT INTO jobs(
-                    job_id, correlation_id, kind, question_id, mode, status,
-                    stage, created_at, updated_at, attempt, max_attempts,
-                    idempotency_key_hash, request_hash, request_json, requested_by,
-                    timeout_seconds
-                ) VALUES (?, ?, 'research_run', ?, ?, 'queued', 'queued', ?, ?, 0, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    job_id,
-                    correlation_id,
-                    request.question_id,
-                    request.mode,
-                    created_at,
-                    created_at,
-                    max_attempts,
-                    idempotency_hash,
-                    request_hash,
-                    request_json,
-                    requested_by,
-                    timeout_seconds,
-                ),
-            )
+            if client_id:
+                active = connection.execute(
+                    """
+                    SELECT * FROM jobs
+                    WHERE client_id = ?
+                      AND question_id = ?
+                      AND COALESCE(job_type, 'FULL_RESEARCH_PIPELINE') = ?
+                      AND status IN ('queued', 'running', 'retrying')
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                    """,
+                    (client_id, request.question_id, job_type),
+                ).fetchone()
+                if active:
+                    return self._record(active), True
+
+            try:
+                connection.execute(
+                    """
+                    INSERT INTO jobs(
+                        job_id, correlation_id, kind, question_id, mode, status,
+                        stage, created_at, updated_at, attempt, max_attempts,
+                        idempotency_key_hash, request_hash, request_json, requested_by,
+                        timeout_seconds, job_type, client_id, input_digest,
+                        progress_mode, provider_call_count, cancel_requested
+                    ) VALUES (?, ?, 'research_run', ?, ?, 'queued', 'queued', ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'indeterminate', 0, 0)
+                    """,
+                    (
+                        job_id,
+                        correlation_id,
+                        request.question_id,
+                        request.mode,
+                        created_at,
+                        created_at,
+                        max_attempts,
+                        idempotency_hash,
+                        request_hash,
+                        request_json,
+                        requested_by,
+                        timeout_seconds,
+                        job_type,
+                        client_id,
+                        input_digest,
+                    ),
+                )
+            except sqlite3.IntegrityError:
+                if client_id:
+                    raced = connection.execute(
+                        """
+                        SELECT * FROM jobs
+                        WHERE client_id = ?
+                          AND question_id = ?
+                          AND COALESCE(job_type, 'FULL_RESEARCH_PIPELINE') = ?
+                          AND status IN ('queued', 'running', 'retrying')
+                        ORDER BY created_at DESC
+                        LIMIT 1
+                        """,
+                        (client_id, request.question_id, job_type),
+                    ).fetchone()
+                    if raced:
+                        return self._record(raced), True
+                raise
             self._insert_event(
                 connection,
                 job_id=job_id,
@@ -601,20 +793,142 @@ class SQLiteJobStore:
             ).fetchall()
         return [self._record(row) for row in rows]
 
-    def list_events(self, job_id: str) -> list[dict[str, Any]]:
+    def list_events(
+        self, job_id: str, *, after_sequence: int = 0
+    ) -> list[dict[str, Any]]:
         self.get_job(job_id)
+        after = max(0, int(after_sequence or 0))
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT * FROM job_events WHERE job_id = ? ORDER BY event_id",
-                (job_id,),
+                """
+                SELECT * FROM job_events
+                WHERE job_id = ? AND event_id > ?
+                ORDER BY event_id
+                """,
+                (job_id, after),
             ).fetchall()
-        return [
-            {
-                **dict(row),
-                "details": json.loads(row["details_json"]),
-            }
-            for row in rows
+        items: list[dict[str, Any]] = []
+        for row in rows:
+            details = json.loads(row["details_json"] or "{}")
+            items.append(
+                {
+                    **dict(row),
+                    "details": details,
+                    "sequence": int(row["event_id"]),
+                    "payload_json": details,
+                }
+            )
+        return items
+
+    def find_active_job(
+        self,
+        *,
+        client_id: str,
+        question_id: str,
+        job_type: str | None = None,
+        requested_by: str | None = None,
+    ) -> JobRecord | None:
+        clauses = [
+            "question_id = ?",
+            "status IN ('queued', 'running', 'retrying')",
         ]
+        params: list[Any] = [question_id]
+        if client_id:
+            clauses.append("client_id = ?")
+            params.append(client_id)
+        if job_type:
+            clauses.append("COALESCE(job_type, 'FULL_RESEARCH_PIPELINE') = ?")
+            params.append(job_type)
+        if requested_by:
+            clauses.append("requested_by = ?")
+            params.append(requested_by)
+        where = " AND ".join(clauses)
+        with self._connect() as connection:
+            row = connection.execute(
+                f"SELECT * FROM jobs WHERE {where} ORDER BY updated_at DESC LIMIT 1",
+                params,
+            ).fetchone()
+        return self._record(row) if row else None
+
+    def find_latest_job(
+        self,
+        *,
+        client_id: str | None = None,
+        question_id: str,
+        job_type: str | None = None,
+        requested_by: str | None = None,
+    ) -> JobRecord | None:
+        clauses = ["question_id = ?"]
+        params: list[Any] = [question_id]
+        if client_id:
+            clauses.append("client_id = ?")
+            params.append(client_id)
+        if job_type:
+            clauses.append("COALESCE(job_type, 'FULL_RESEARCH_PIPELINE') = ?")
+            params.append(job_type)
+        if requested_by:
+            clauses.append("requested_by = ?")
+            params.append(requested_by)
+        where = " AND ".join(clauses)
+        with self._connect() as connection:
+            row = connection.execute(
+                f"SELECT * FROM jobs WHERE {where} ORDER BY updated_at DESC LIMIT 1",
+                params,
+            ).fetchone()
+        return self._record(row) if row else None
+
+    def create_retry(
+        self,
+        job_id: str,
+        *,
+        correlation_id: str,
+        requested_by: str,
+        client_id: str | None = None,
+    ) -> tuple[JobRecord, bool]:
+        original = self.get_job(job_id)
+        if original.status in {"queued", "running", "retrying"}:
+            return original, True
+        payload = dict(original.request_payload or {})
+        payload["client_id"] = client_id or original.client_id
+        payload["job_type"] = original.job_type
+        payload["input_digest"] = original.input_digest
+        request = JobCreateRequest.model_validate(payload)
+        record, reused = self.create_job(
+            request=request,
+            correlation_id=correlation_id,
+            requested_by=requested_by,
+        )
+        if reused:
+            return record, True
+        with self._write_transaction() as connection:
+            connection.execute(
+                """
+                UPDATE jobs
+                SET retry_of_job_id = ?,
+                    checkpoint_uri = COALESCE(checkpoint_uri, ?),
+                    updated_at = ?
+                WHERE job_id = ?
+                """,
+                (original.job_id, original.checkpoint_uri, _now(), record.job_id),
+            )
+            self._insert_event(
+                connection,
+                job_id=record.job_id,
+                event_type="retry_created",
+                from_status=None,
+                to_status=record.status,
+                stage=record.stage,
+                actor=requested_by,
+                source="api",
+                details={
+                    "retry_of_job_id": original.job_id,
+                    "checkpoint_uri": original.checkpoint_uri,
+                },
+            )
+            row = connection.execute(
+                "SELECT * FROM jobs WHERE job_id = ?", (record.job_id,)
+            ).fetchone()
+        return self._record(row), False
 
     def transition(
         self,
@@ -758,7 +1072,21 @@ class SQLiteJobStore:
             increment_attempt=True,
         )
 
-    def update_progress(self, job_id: str, stage: str) -> JobRecord:
+    def update_progress(
+        self,
+        job_id: str,
+        stage: str,
+        *,
+        progress_current: int | None = None,
+        progress_total: int | None = None,
+        progress_percent: int | None = None,
+        progress_mode: str | None = None,
+        message: str | None = None,
+        checkpoint_uri: str | None = None,
+        result_uri: str | None = None,
+        provider_call_count: int | None = None,
+        model_alias: str | None = None,
+    ) -> JobRecord:
         stage = str(stage or "running")[:128]
         with self._write_transaction() as connection:
             row = connection.execute(
@@ -769,20 +1097,92 @@ class SQLiteJobStore:
             if row["status"] != JobStatus.RUNNING.value:
                 return self._record(row)
             timestamp = _now()
-            if row["stage"] != stage:
-                connection.execute(
-                    "UPDATE jobs SET stage = ?, updated_at = ? WHERE job_id = ?",
-                    (stage, timestamp, job_id),
-                )
+            next_current = (
+                int(progress_current)
+                if progress_current is not None
+                else self._col(row, "progress_current")
+            )
+            next_total = (
+                int(progress_total)
+                if progress_total is not None
+                else self._col(row, "progress_total")
+            )
+            next_percent = (
+                int(progress_percent)
+                if progress_percent is not None
+                else self._col(row, "progress_percent")
+            )
+            next_mode = progress_mode or self._col(row, "progress_mode", "indeterminate")
+            if next_total and next_current is not None:
+                next_mode = "determinate"
+            next_message = message if message is not None else self._col(row, "message")
+            next_checkpoint = checkpoint_uri or self._col(row, "checkpoint_uri")
+            next_result = result_uri or self._col(row, "result_uri")
+            next_calls = (
+                int(provider_call_count)
+                if provider_call_count is not None
+                else int(self._col(row, "provider_call_count", 0) or 0)
+            )
+            next_alias = (
+                str(model_alias)[:32]
+                if model_alias
+                else self._col(row, "model_alias")
+            )
+            changed = (
+                row["stage"] != stage
+                or self._col(row, "progress_current") != next_current
+                or self._col(row, "message") != next_message
+                or self._col(row, "model_alias") != next_alias
+                or bool(checkpoint_uri)
+            )
+            connection.execute(
+                """
+                UPDATE jobs
+                SET stage = ?, updated_at = ?, heartbeat_at = ?,
+                    progress_current = ?, progress_total = ?,
+                    progress_percent = ?, progress_mode = ?,
+                    message = ?, checkpoint_uri = ?, result_uri = ?,
+                    provider_call_count = ?, model_alias = ?
+                WHERE job_id = ?
+                """,
+                (
+                    stage,
+                    timestamp,
+                    timestamp,
+                    next_current,
+                    next_total,
+                    next_percent,
+                    next_mode,
+                    next_message,
+                    next_checkpoint,
+                    next_result,
+                    next_calls,
+                    next_alias,
+                    job_id,
+                ),
+            )
+            event_type = "progress"
+            if checkpoint_uri:
+                event_type = "checkpoint_written"
+            if changed:
                 self._insert_event(
                     connection,
                     job_id=job_id,
-                    event_type="progress",
+                    event_type=event_type,
                     from_status=row["status"],
                     to_status=row["status"],
                     stage=stage,
                     actor="worker",
                     source="upstream_progress",
+                    details={
+                        "progress_current": next_current,
+                        "progress_total": next_total,
+                        "progress_percent": next_percent,
+                        "progress_mode": next_mode,
+                        "message": next_message,
+                        "checkpoint_uri": next_checkpoint,
+                        "model_alias": next_alias,
+                    },
                 )
             updated = connection.execute(
                 "SELECT * FROM jobs WHERE job_id = ?", (job_id,)

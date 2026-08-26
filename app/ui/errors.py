@@ -94,7 +94,7 @@ def render_user_error(
         key_ns:       向后兼容别名（等同 key）。
     """
     ns = key or key_ns or "err"
-    icon = {"error": "⛔", "warning": "⚠️", "info": "ℹ️"}.get(severity, "⛔")
+    icon = {"error": "×", "warning": "!", "info": "i"}.get(severity, "×")
     border = {"error": "#F87171", "warning": "#FBBF24", "info": "#22D3EE"}.get(severity, "#F87171")
     st.markdown(
         f"""<div class="user-error-card" style="border-left:4px solid {border}">

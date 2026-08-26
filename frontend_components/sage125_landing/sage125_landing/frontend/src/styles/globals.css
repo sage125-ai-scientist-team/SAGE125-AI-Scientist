@@ -1,0 +1,324 @@
+/* isolate_styles=False 时 CSS 进入 light DOM：不引入 Tailwind preflight，
+ * 避免重置 Streamlit 全局元素。仅保留 theme + utilities。 */
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+/*
+ * 字体：Fontsource 本地字重包（MIT，随 npm 依赖打包进构建产物，无运行期
+ * CDN 请求）。中文正文用 Noto Sans SC Variable，品牌/英文/数字/状态指标用
+ * Geist Variable。见 THIRD_PARTY_NOTICES.md。
+ */
+@import "@fontsource-variable/noto-sans-sc";
+@import "@fontsource-variable/geist/wght.css";
+
+/* 自定义 1440px 断点：Bento 网格在 1440px 以下用两列/7-5 比例缩放，
+   在 1024px 以下单列。Tailwind 默认断点没有 1440，这里补一个 3xl。 */
+@theme {
+  --breakpoint-3xl: 1440px;
+}
+
+/*
+ * SAGE125 首页组件的局部主题变量（深色玻璁主题，任务规格
+ * CAPTAIN-LOCAL-...-05 固定色板）。
+ */
+:host,
+.sage125-landing-root {
+  --sage-blue: #4d7fff;
+  --sage-cyan: #2cc4d6;
+  --sage-blue-light: #6a91ff;
+  --sage-mist: rgba(235, 244, 255, 0.28);
+
+  /* 玻璁卡片背景/边框/阴影（§6 固定数值，不得改用纯白）。 */
+  --glass-bg: rgba(8, 23, 41, 0.52);
+  --glass-border: rgba(112, 156, 211, 0.22);
+  --glass-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+  --glass-radius: 24px;
+
+  /* 文字色板（§7 固定数值：深色玻璁上必须用亮色文字，禁止浅灰字）。 */
+  --text-primary: #f3f7ff;
+  --text-body: #b7c5d8;
+  --text-muted: #8192a9;
+  --accent-blue: #71a4ff;
+  --accent-cyan: #50d3db;
+
+  /* 字体变量（§4 固定）。 */
+  --font-cn: "Noto Sans SC Variable", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+  --font-latin: "Geist Variable", "Noto Sans SC Variable", sans-serif;
+
+  color-scheme: dark;
+}
+
+.sage125-landing-root {
+  position: relative;
+  width: 100%;
+  font-family: var(--font-cn);
+  color: var(--text-body);
+}
+
+/* 品牌英文 / 数字 / 状态指标统一走拉丁字体（§4）。 */
+.font-latin {
+  font-family: var(--font-latin);
+}
+
+/* ---- 玻璁卡片：isolation + ::before 分层，避免 backdrop-filter 模糊到文字（§7） ---- */
+.glass-card {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--glass-radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+/* backdrop-filter 在极少数环境下不受支持时的降级：提高纯色不透明度，
+   保证卡片依然可读，不依赖模糊也能呈现"深色磨砂"质感。 */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-card::before {
+    background: rgba(9, 20, 35, 0.86);
+  }
+}
+.glass-card-content {
+  position: relative;
+  z-index: 2;
+  filter: none;
+  backdrop-filter: none;
+}
+
+/* ---- Hero 动态背景图层结构（CAPTAIN-LOCAL-...-06 §2/§3/§9 固定要求） ----
+ * .hero-section
+ * ├─ .particles-layer        z-index: 0  （tsParticles canvas，opacity:1，
+ * │                                        pointer-events:none，完整覆盖）
+ * ├─ .ambient-light-layer    z-index: 1  （极弱静态网格纹理，纯装饰，不
+ * │                                        参与任何压暗/交互）
+ * ├─ .readability-mask       z-index: 2  （唯一的分层可读性遮罩，等效
+ * │                                        总不透明度 ≤0.42，见下）
+ * └─ .hero-content           z-index: 3  （标题/说明/按钮）
+ *
+ * 硬性约束：不得在 .hero-section 整体设置 opacity；不得在 .particles-layer
+ * 上设置 opacity<1；不得再叠加第二个整体压暗层（此前 mask-image +
+ * radialGradientMask 双重压暗是"背景几乎不可见"的根因之一，现已合并为
+ * 下面唯一的 .readability-mask）。
+ */
+.sage125-hero,
+.hero-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  min-height: 700px;
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      #0b1b31 0%,
+      #071426 56%,
+      #050f1d 100%
+    );
+}
+
+.sage125-particle-layer,
+.particles-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  visibility: visible;
+  display: block;
+  pointer-events: none;
+}
+
+.sage125-particle-layer > div,
+.sage125-particle-layer canvas,
+.particles-layer > div,
+.particles-layer canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+
+.sage125-hero-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.sage125-hero-readability {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sage125-hero-content {
+  position: relative;
+  z-index: 3;
+}
+
+.ambient-light-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.05;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(180, 200, 230, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(180, 200, 230, 0.5) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* 分层可读性遮罩：中心稍暗（标题正后方）、四周动态节点更明显，
+ * 不对整个 Canvas 统一变暗。两个渐变叠加后的等效不透明度峰值
+ * ≈0.36+0.16×(1-0.36)≈0.42，满足"总等效不透明度不得超过 0.42"。 */
+.readability-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(5, 16, 31, 0.36) 0%,
+      rgba(5, 16, 31, 0.2) 34%,
+      rgba(5, 16, 31, 0.08) 62%,
+      transparent 82%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(4, 14, 27, 0.06) 0%,
+      rgba(4, 14, 27, 0.16) 72%,
+      rgba(4, 14, 27, 0.32) 100%
+    );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+}
+
+/* §9：中央文字区域额外的弱可读性区域，只局部覆盖标题+说明文字所在的
+ * 矩形范围（用椭圆径向渐变，不用不透明矩形），不把动画和文字重新
+ * 分成左右两栏。 */
+.hero-content::before {
+  content: "";
+  position: absolute;
+  left: -80px;
+  right: -80px;
+  top: -40px;
+  height: 68%;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(5, 16, 31, 0.38) 0%,
+    rgba(5, 16, 31, 0.18) 46%,
+    transparent 76%
+  );
+  pointer-events: none;
+}
+
+.hero-actions {
+  position: relative;
+  z-index: 3;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+.hero-cta {
+  height: 54px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  filter: none;
+}
+.hero-cta-primary {
+  width: 224px;
+  color: #f7faff;
+  background: rgba(55, 113, 234, 0.42);
+  border-color: rgba(129, 181, 255, 0.44);
+}
+.hero-cta-secondary {
+  width: 208px;
+  color: #e7eefb;
+  background: rgba(13, 36, 60, 0.46);
+  border-color: rgba(124, 164, 217, 0.32);
+}
+.hero-cta:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+@media (max-width: 1439px) {
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .metric-grid { grid-template-columns: 1fr; }
+}
+.metric-card {
+  position: relative;
+  isolation: isolate;
+  min-height: 150px;
+  max-height: 172px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(112, 156, 211, 0.22);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+}
+.metric-card-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(8, 23, 41, 0.56);
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
+}
+.metric-card-noise { opacity: 0.035; mix-blend-mode: soft-light; z-index: 1; }
+.metric-card-highlight { z-index: 1; }
+.metric-card-content {
+  position: relative;
+  z-index: 2;
+  filter: none;
+  backdrop-filter: none;
+}
+.metric-skeleton {
+  display: block;
+  width: 72px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(113,164,255,0.12), rgba(113,164,255,0.28), rgba(113,164,255,0.12));
+  background-size: 200% 100%;
+  animation: metric-shimmer 1.1s linear infinite;
+}
+@keyframes metric-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* 尊重用户的"减少动态效果"偏好：所有由本组件引入的动画一律静止。 */
+@media (prefers-reduced-motion: reduce) {
+  .sage125-landing-root * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -80,7 +80,8 @@ def set_value(key: str, value: Any) -> None:
 
 def select_question(qid: str, qtext: str) -> None:
     """
-    设置当前选中问题；若问题发生变化，则清空 active run（防止旧报告串线）。
+    设置当前选中问题；若问题发生变化，则清空会话中的 active run 展示
+    （防止旧报告串线）。不得取消或删除任何 Job / active_job_ids。
 
     参数：
         qid:   选中问题 ID。
@@ -90,7 +91,7 @@ def select_question(qid: str, qtext: str) -> None:
     st.session_state[KEY_SELECTED_QID] = qid
     st.session_state[KEY_SELECTED_QTEXT] = qtext
     if prev is not None and prev != qid:
-        # 切换问题：清空当前运行结果，不自动加载旧 run，不套用 demo。
+        # 只清当前会话展示用 run_result；Job Store 与按题分桶的指针保持不变。
         clear_run()
 
 

@@ -33,8 +33,10 @@ def test_dockerfile_uses_allowlisted_copy_and_non_root_runtime() -> None:
     assert "FROM python:3.12-slim-bookworm" in dockerfile
     assert "COPY requirements.txt ./requirements.txt" in dockerfile
     assert "COPY --chown=10001:10001 app ./app" in dockerfile
-    assert "COPY --chown=10001:10001 frontend ./frontend" in dockerfile
     assert "COPY --chown=10001:10001 scripts ./scripts" in dockerfile
+    # frontend/ 已删除；正式 Streamlit 入口迁移至 app/ui/streamlit_app.py，
+    # 随 `COPY app ./app` 一起进入镜像，不再需要单独的 frontend COPY 指令。
+    assert "COPY --chown=10001:10001 frontend ./frontend" not in dockerfile
     assert "COPY . " not in instructions
     assert "COPY .\n" not in instructions
     assert "USER 10001:10001" in dockerfile
@@ -68,8 +70,10 @@ def test_compose_binds_persistent_stores_and_hardened_b4_services() -> None:
     """Require persistent API state and the API-only Streamlit entrypoint."""
     compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
 
-    assert "frontend/streamlit_app.py" in compose
-    assert "app/ui/streamlit_app.py" not in compose
+    # 正式 Streamlit 入口已从 frontend/streamlit_app.py 迁移至
+    # app/ui/streamlit_app.py（科学首页 + 工作区导航），frontend/ 已删除。
+    assert "app/ui/streamlit_app.py" in compose
+    assert "frontend/streamlit_app.py" not in compose
     assert 'user: "10001:10001"' in compose
     assert "read_only: true" in compose
     assert "no-new-privileges:true" in compose

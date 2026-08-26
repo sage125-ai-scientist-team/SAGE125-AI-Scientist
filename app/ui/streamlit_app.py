@@ -1,15 +1,13 @@
 """
-app.ui.streamlit_app —— 科研发现控制台（Science Exploration Console）。
+app.ui.streamlit_app —— SAGE125 AI Scientist 正式前端入口。
 
-专业 AI Scientist 工作台，页面区域：
-System Hero / First Run Wizard / Select Scientific Question / Data & RAG Workspace /
-AI Scientist Run Console / Agent Observatory / Evidence Wall / ResearchPlan Studio /
-Human Feedback Bench / ResearchPlan Export Center / Developer Diagnostics。
+默认打开科学产品首页，经「进入研究工作区」进入完整科研工作区。
+旧单页控制台保留为回退页，并由 app/ui/streamlit_app_legacy.py 独立启动。
 
 核心保证：
     - 用户选择哪个问题，系统就只围绕该问题生成/展示 ResearchPlan（防串线）；
     - mock / real 模式严格区分；real 模式不 silent fallback 到 mock；
-    - 运行进度展示友好的千问型号名称；内部请求信息仅在 Developer Diagnostics 展示；
+    - 切页不重复触发模型调用、不自动重跑任务；
     - 全程深色科学主题；所有 widget key 唯一。
 
 启动：streamlit run app/ui/streamlit_app.py
@@ -17,23 +15,31 @@ Human Feedback Bench / ResearchPlan Export Center / Developer Diagnostics。
 
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import Path
 
-# 确保项目根在 sys.path。
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import streamlit as st
 
-from app.ui import api_client, charts, components, errors, state, validators
+from app.ui import api_client, charts, components, errors, state
+from app.ui import workspace_pages
+from app.ui.i18n import PRESET_KEYWORDS, preset_label, ui_text
 
-# 页面配置：宽屏 + 科学图标 + 展开侧栏。
-st.set_page_config(page_title="SAGE125 AI Scientist", page_icon="🔬", layout="wide", initial_sidebar_state="expanded")
+try:
+    st.set_page_config(
+        page_title="SAGE125 AI Scientist",
+        page_icon=":material/science:",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+except Exception:
+    pass
 
 
-def _find_qid(questions: list[dict], keywords: list[str]) -> str | None:
-    """按关键词匹配一个 question_id（用于 Demo Presets 显式切换）。"""
+def _find_qid_for_preset(questions: list[dict], preset_key: str) -> str | None:
+    """按快速示例内部 key 对应的关键词匹配一个 question_id。"""
+    keywords = PRESET_KEYWORDS.get(preset_key, [preset_key])
     for q in questions:
         text = q.get("question", "").lower()
         if all(k in text for k in keywords):
@@ -85,8 +91,6 @@ def _execute_run(qid: str, run_mode: str, switches: dict) -> dict:
             latest_progress: dict = {}
 
             def _update_progress(payload: dict) -> None:
-                # Reuse one placeholder so progress updates do not alter the page
-                # structure or append an ever-growing list of cards.
                 latest_progress.clear()
                 latest_progress.update(payload or {})
                 progress_slot.empty()
@@ -112,8 +116,6 @@ def _execute_run(qid: str, run_mode: str, switches: dict) -> dict:
                 status_box.update(label=label, state="complete", expanded=True)
             else:
                 err_text = "; ".join(str(x) for x in (run_result.get("errors") or []))
-                # Preserve the last real stage/model on failure. If Reviewer or
-                # ReportWriter fails, the card must not jump back to 1%/“准备中”.
                 failed_progress = dict(latest_progress)
                 if run_result.get("error_type") == "preflight_failed":
                     failed_progress.update({"stage": "preflight", "percent": 4})
@@ -154,7 +156,12 @@ def _handle_run_result(qid: str, run_mode: str, run_result: dict) -> None:
             st.warning("部分步骤失败（如 DeepResearch），请查看 warnings 与 Developer Diagnostics。")
     else:
         state.fail_run(run_result.get("run_id"))
-        errs = run_result.get("errors") or [run_result.get("message", "未知错误")]
+        errs = run_result.get("errors") or []
+        if not errs and isinstance(run_result.get("detail"), dict):
+            detail = run_result["detail"]
+            errs = detail.get("errors") or [detail.get("message") or "未知错误"]
+        if not errs:
+            errs = [run_result.get("message") or "未知错误"]
         errors.run_failed(
             "; ".join(str(e) for e in errs),
             run_id=run_result.get("run_id"),
@@ -165,7 +172,6 @@ def _handle_run_result(qid: str, run_mode: str, run_result: dict) -> None:
 
 def _activate_loaded_run(loaded: dict, questions: list[dict]) -> bool:
     """Atomically bind a loaded artifact, canonical question state and selector."""
-
     plan = loaded.get("plan") or {}
     qid = plan.get("question_id") or loaded.get("question_id")
     if not qid:
@@ -179,144 +185,42 @@ def _activate_loaded_run(loaded: dict, questions: list[dict]) -> bool:
     return True
 
 
-def main() -> None:
-    """页面主入口。"""
-    # 每次 rerun 都注入 CSS（防止交互后主背景变白），并重置 key 登记表。
-    components.load_css()
-    state.init_state()
+def handle_presets(questions: list[dict]) -> None:
+    """快速示例：空题库或未命中时显式报错。"""
+    preset_key = components.render_quick_presets(questions)
+    if not preset_key:
+        return
+    if not questions:
+        errors.questions_missing(
+            details=f"快速示例「{preset_label(preset_key)}」需要先加载问题清单。"
+        )
+        return
+    preset_qid = _find_qid_for_preset(questions, preset_key)
+    if preset_qid:
+        state.queue_question_selection(preset_qid)
+    else:
+        errors.question_not_selected(
+            details=(
+                f"快速示例「{preset_label(preset_key)}」未命中任何问题"
+                f"（关键词：{', '.join(PRESET_KEYWORDS.get(preset_key, [preset_key]))}）。"
+            )
+        )
 
-    health = api_client.get_health()
-    diag = api_client.get_diagnostics()
-    api_connected = api_client.api_available()
-    q_resp = api_client.get_questions()
-    questions = q_resp.get("questions", []) if q_resp.get("status") == "ok" else []
 
-    # 当前运行结果与 Qwen 调用摘要（用于 Hero/徽标）。
-    result = state.get_run_result()
-    llm_summary = result.get("llm_call_summary", {}) or {}
-    qwen_calls = llm_summary.get("qwen_call_count")
-    last_run_mode = "mock" if result.get("mock") else ("real" if result.get("mock") is False else None)
-
-    mode = state.current_mode()
-
-    # ---- 0) System Hero ----
-    hero_status = {
-        "qwen": health.get("qwen_config_loaded", False),
-        "deep_research": health.get("deep_research_config_loaded", False),
-        "rag_ready": health.get("rag_index_status") in {"ready", "empty"},
-        "rag_status": health.get("rag_index_status"),
-        "questions_ok": len(questions) == 125,
-        "mode": mode,
-        "qwen_calls": qwen_calls,
-    }
-    components.render_hero(hero_status, {"questions": len(questions), "agents": 10})
-    components.render_mode_badges(mode, api_connected, last_run_mode, qwen_calls)
-    if health.get("storage", {}).get("mode") == "ephemeral":
-        st.warning("当前为临时预览环境；重新部署、休眠或重启后，任务历史与上传资料可能重置。")
-
-    # ---- Sidebar ----
-    with st.sidebar:
-        st.markdown("### 🎛 Mode Control")
-        mode_choice = st.radio("运行模式", ["Mock Mode（模拟）", "Real Mode（真实）"], index=0 if mode == "mock" else 1,
-                               key="mode_control_radio")
-        state.set_value(state.KEY_MODE, "mock" if mode_choice.startswith("Mock") else "real")
-        mode = state.current_mode()
-        st.caption("Mock：不调用真实 Qwen，用于演示。Real：调用 Qwen/百炼，需配置 Key，且不会静默降级。")
-
-        components.render_system_status(health, llm_summary)
-        switches = components.render_pipeline_switches()
-
-        st.markdown("### 🎯 Demo Presets")
-        st.caption("点击后仅切换到对应问题，不会污染其它问题的运行。")
-        presets = {
-            "Prime Numbers": ["prime"], "Pandemic Prediction": ["pandemic"], "Climate Change": ["climate"],
-            "AI Creativity": ["creativity"], "Quantum Computing": ["quantum"],
-        }
-        for label, kws in presets.items():
-            if st.button(label, width="stretch", key=f"preset_{label}"):
-                if not questions:
-                    errors.questions_missing(
-                        details=f"Demo Preset「{label}」需要先加载问题清单。"
-                    )
-                else:
-                    pid = _find_qid(questions, kws)
-                    if pid:
-                        state.queue_question_selection(pid)
-                    else:
-                        errors.question_not_selected(
-                            details=(
-                                f"Demo Preset「{label}」未命中任何问题"
-                                f"（关键词：{', '.join(kws)}）。"
-                            )
-                        )
-        components.render_security_note()
-
-    # ---- 1) First Run Wizard ----
-    components.section_title("SETUP", "First Run Wizard", "第一次打开？按向导确认系统就绪并一键演示。")
-    wiz_action = components.render_first_run_wizard(_wizard_checks(diag, api_connected))
-
-    # ---- 2) Select Scientific Question ----
-    components.section_title("STEP 01", "Select a Scientific Question", "从 125 个前沿科学问题中选择研究起点。")
-    # Preset/history selections are consumed before any selector widget exists.
-    # Reset conflicting filters and synchronize the widget's stable QID value.
-    pending_qid = state.consume_question_selection()
-    if pending_qid and any(str(q.get("id")) == pending_qid for q in questions):
-        st.session_state[components.QUESTION_KEYWORD_WIDGET_KEY] = ""
-        st.session_state[components.QUESTION_DOMAIN_WIDGET_KEY] = "全部"
-        st.session_state[components.QUESTION_CHOICE_WIDGET_KEY] = pending_qid
-        pending_item = next(q for q in questions if str(q.get("id")) == pending_qid)
-        state.select_question(pending_qid, pending_item.get("question", ""))
-    if questions:
-        st.plotly_chart(charts.make_domain_coverage_chart(questions), width="stretch",
-                        key=components.make_widget_key("chart", "domain_cov"))
-    qid = components.render_question_selector(
-        questions, selected_qid=state.get(state.KEY_SELECTED_QID)
-    )
-    selected_q = next((q for q in questions if q.get("id") == qid), None)
-    # 写入唯一选题状态（切题会自动清空旧 run）。
-    if qid:
-        state.select_question(qid, (selected_q or {}).get("question", ""))
-
-    # ---- 3) Data & RAG Workspace ----
-    ephemeral_storage = health.get("storage", {}).get("mode") == "ephemeral"
-    workspace_subtitle = (
-        "当前预览使用临时存储；原文与索引在 API 实例存续期间可跨问题复用。"
-        if ephemeral_storage
-        else "原文与向量索引保存在项目数据目录；真实嵌入按当前配置调用百炼。"
-    )
-    components.section_title(
-        "STEP 02",
-        "Data & RAG Workspace",
-        workspace_subtitle,
-    )
-    library_status = api_client.get_library_status()
-    components.render_upload_panel(
-        api_client.ingest_files,
-        library_status=library_status,
-        delete_fn=api_client.delete_library_document,
-        validate_fn=api_client.validate_upload_batch,
-        ephemeral_storage=ephemeral_storage,
-    )
-
-    # ---- 4) AI Scientist Run Console ----
-    components.section_title("STEP 03", "AI Scientist Run Console", "一键运行多智能体流水线生成《科学假设与研究计划》。")
-    if mode == "real":
-        pf_banner = api_client.run_preflight(switches.get("use_local_rag", True), switches.get("use_deep_research", True))
-        if pf_banner.get("ok") and pf_banner.get("warnings"):
-            st.caption("preflight 提示：" + "；".join(pf_banner.get("warnings", [])))
-        elif not pf_banner.get("ok"):
-            st.caption("⚠ preflight 未通过，真实模式运行将被阻止。请查看下方修复建议。")
-    action = components.render_run_console(selected_q, switches, mode=mode)
-    bc1, bc2 = st.columns(2)
-    load_latest = bc1.button("📂 加载历史运行", width="stretch", key="btn_load_latest")
-    if bc2.button("🧹 清空当前结果", width="stretch", key="btn_clear_run"):
-        state.clear_run()
-
-    # ---- 处理动作 ----
-    trigger_mock = (wiz_action == "mock") or (action == "mock")
-    trigger_generate = action == "generate"
-    trigger_latest = load_latest or (wiz_action == "latest")
-
+def process_run_triggers(
+    *,
+    trigger_generate: bool,
+    trigger_mock: bool,
+    questions: list[dict],
+    qid: str | None,
+    selected_q: dict | None,
+    switches: dict,
+    mode: str,
+    trigger_latest: bool,
+    diag: dict,
+) -> None:
+    """处理生成 / Mock / 加载历史；守卫必须留在本文件以满足源码契约。"""
+    del selected_q
     if trigger_generate or trigger_mock:
         if not questions:
             errors.questions_missing(
@@ -328,7 +232,6 @@ def main() -> None:
             )
         else:
             run_mode = "mock" if trigger_mock else mode
-            # 真实模式：preflight 不通过则禁止启动（不 silent fallback mock）。
             if run_mode == "real":
                 pf = api_client.run_preflight(
                     switches.get("use_local_rag", True),
@@ -346,14 +249,26 @@ def main() -> None:
                             "preflight 未通过：\n- " + "\n- ".join(pf.get("errors", [])),
                             fix_commands=pf.get("fix_commands"),
                         )
+                    submit_ok = False
                 else:
-                    state.begin_run()
-                    run_result = _execute_run(qid, run_mode, switches)
-                    _handle_run_result(qid, run_mode, run_result)
+                    submit_ok = True
             else:
-                state.begin_run()
-                run_result = _execute_run(qid, run_mode, switches)
-                _handle_run_result(qid, run_mode, run_result)
+                submit_ok = True
+            if submit_ok:
+                from app.ui.job_state import JOB_TYPE_DEMO, JOB_TYPE_FULL, submit_or_reuse_job
+
+                accepted = submit_or_reuse_job(
+                    question_id=str(qid),
+                    job_type=JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL,
+                    mode=run_mode,
+                    switches=switches,
+                )
+                if accepted.get("status") == "failed" or accepted.get("errors"):
+                    errors.render_user_error(
+                        "无法启动后台任务",
+                        "\n".join(str(item) for item in (accepted.get("errors") or ["Job API 调用失败"])),
+                        key_ns="job_submit_failed",
+                    )
 
     if trigger_latest:
         latest = (diag.get("latest_run") or {}).get("run_id")
@@ -386,7 +301,166 @@ def main() -> None:
                     key_ns="latest_bind_failed",
                 )
 
-    # 读取当前运行结果。
+
+def main() -> None:
+    """页面主入口。"""
+    components.load_css()
+    state.init_state()
+
+    landing = st.Page(workspace_pages.page_landing, title="首页", icon=":material/home:", default=True)
+    overview = st.Page(workspace_pages.page_overview, title="概览", icon=":material/space_dashboard:", url_path="workspace")
+    questions = st.Page(workspace_pages.page_questions, title="科学问题", icon=":material/quiz:", url_path="workspace-questions")
+    evidence = st.Page(workspace_pages.page_evidence, title="文献证据", icon=":material/menu_book:", url_path="workspace-evidence")
+    hypotheses = st.Page(workspace_pages.page_hypotheses, title="候选假设", icon=":material/account_tree:", url_path="workspace-hypotheses")
+    plan = st.Page(workspace_pages.page_plan, title="研究计划", icon=":material/science:", url_path="workspace-plan")
+    execution = st.Page(workspace_pages.page_execution, title="实验与运行", icon=":material/play_circle:", url_path="workspace-execution")
+    versions = st.Page(workspace_pages.page_versions, title="版本与反馈", icon=":material/difference:", url_path="workspace-versions")
+    history = st.Page(workspace_pages.page_history, title="历史运行", icon=":material/history:", url_path="workspace-history")
+    results = st.Page(workspace_pages.page_results, title="结果与导出", icon=":material/download:", url_path="workspace-results")
+    knowledge = st.Page(workspace_pages.page_knowledge, title="知识库", icon=":material/database:", url_path="workspace-knowledge")
+    settings = st.Page(workspace_pages.page_settings, title="设置", icon=":material/settings:", url_path="workspace-settings")
+    legacy = st.Page(workspace_pages.page_legacy, title="完整控制台（回退）", icon=":material/view_list:", url_path="legacy")
+
+    workspace_pages.bind_hooks(
+        process_run_triggers=process_run_triggers,
+        handle_presets=handle_presets,
+        wizard_checks=_wizard_checks,
+        activate_loaded_run=_activate_loaded_run,
+        render_legacy_workspace=render_legacy_workspace,
+        page_overview=overview,
+        page_questions=questions,
+        page_plan=plan,
+        page_execution=execution,
+        page_history=history,
+        page_evidence=evidence,
+        page_versions=versions,
+        page_results=results,
+        page_legacy=legacy,
+    )
+    # 分组按视觉校准 V2 §5.1：研究工作区 / 数据与运行 / 系统。
+    # “兼容”分组仍需保留在 st.navigation() 中才能通过 URL 路由到 /legacy，
+    # 但通过 style.css 的结构选择器在正式界面中隐藏该分组标题与链接，
+    # 只在“设置 → 高级选项”中提供一个可发现的入口（见 page_settings）。
+    st.navigation(
+        {
+            "SAGE125": [landing],
+            "研究工作区": [questions, evidence, hypotheses, plan],
+            "数据与运行": [execution, versions, history, results, knowledge],
+            "系统": [settings],
+            "兼容": [legacy, overview],
+        },
+        position="sidebar",
+    ).run()
+
+
+def render_legacy_workspace() -> None:
+    """完整单页控制台（回退）。保留 render_hero、一致性守卫与导出中心。"""
+    health = api_client.get_health()
+    diag = api_client.get_diagnostics()
+    api_connected = api_client.api_available()
+    q_resp = api_client.get_questions()
+    questions = q_resp.get("questions", []) if q_resp.get("status") == "ok" else []
+
+    result = state.get_run_result()
+    llm_summary = result.get("llm_call_summary", {}) or {}
+    qwen_calls = llm_summary.get("qwen_call_count")
+    last_run_mode = "mock" if result.get("mock") else ("real" if result.get("mock") is False else None)
+    mode = state.current_mode()
+
+    hero_status = {
+        "qwen": health.get("qwen_config_loaded", False),
+        "deep_research": health.get("deep_research_config_loaded", False),
+        "rag_ready": health.get("rag_index_status") in {"ready", "empty"},
+        "rag_status": health.get("rag_index_status"),
+        "questions_ok": len(questions) == 125,
+        "mode": mode,
+        "qwen_calls": qwen_calls,
+    }
+    components.render_hero(hero_status, {"questions": len(questions), "agents": 10})
+    components.render_mode_badges(mode, api_connected, last_run_mode, qwen_calls)
+    if health.get("storage", {}).get("mode") == "ephemeral":
+        st.warning("当前为临时预览环境；重新部署、休眠或重启后，任务历史与上传资料可能重置。")
+
+    with st.sidebar:
+        mode = components.render_mode_control(mode)
+        state.set_value(state.KEY_MODE, mode)
+        mode = state.current_mode()
+        components.render_system_status(health, llm_summary)
+        handle_presets(questions)
+        switches = components.render_pipeline_switches()
+        components.render_security_note()
+
+    components.section_title(ui_text("step_setup"), ui_text("first_run_wizard"), ui_text("first_run_wizard_subtitle"))
+    wiz_action = components.render_first_run_wizard(_wizard_checks(diag, api_connected))
+
+    components.section_title(ui_text("step_01"), ui_text("select_a_scientific_question"), ui_text("select_a_scientific_question_subtitle"))
+    pending_qid = state.consume_question_selection()
+    if pending_qid and any(str(q.get("id")) == pending_qid for q in questions):
+        st.session_state[components.QUESTION_KEYWORD_WIDGET_KEY] = ""
+        st.session_state[components.QUESTION_DOMAIN_WIDGET_KEY] = "全部"
+        st.session_state[components.QUESTION_CHOICE_WIDGET_KEY] = pending_qid
+        pending_item = next(q for q in questions if str(q.get("id")) == pending_qid)
+        state.select_question(pending_qid, pending_item.get("question", ""))
+    if questions:
+        charts.render_plotly_chart(
+            charts.make_domain_coverage_chart(questions),
+            key=components.make_widget_key("chart", "domain_cov_legacy"),
+        )
+    qid = components.render_question_selector(
+        questions, selected_qid=state.get(state.KEY_SELECTED_QID)
+    )
+    selected_q = next((q for q in questions if q.get("id") == qid), None)
+    if qid:
+        state.select_question(qid, (selected_q or {}).get("question", ""))
+
+    ephemeral_storage = health.get("storage", {}).get("mode") == "ephemeral"
+    workspace_subtitle = (
+        "当前预览使用临时存储；原文与索引在 API 实例存续期间可跨问题复用。"
+        if ephemeral_storage
+        else "原文与向量索引保存在项目数据目录；真实嵌入按当前配置调用百炼。"
+    )
+    components.section_title(
+        ui_text("step_02"),
+        ui_text("data_rag_workspace"),
+        workspace_subtitle,
+    )
+    library_status = api_client.get_library_status()
+    components.render_upload_panel(
+        api_client.ingest_files,
+        library_status=library_status,
+        delete_fn=api_client.delete_library_document,
+        validate_fn=api_client.validate_upload_batch,
+        ephemeral_storage=ephemeral_storage,
+    )
+
+    components.section_title(ui_text("step_03"), ui_text("ai_scientist_run_console"), "一键运行多智能体流水线生成《科学假设与研究计划》。")
+    if mode == "real":
+        pf_banner = api_client.run_preflight(switches.get("use_local_rag", True), switches.get("use_deep_research", True))
+        if pf_banner.get("ok") and pf_banner.get("warnings"):
+            st.caption("preflight 提示：" + "；".join(pf_banner.get("warnings", [])))
+        elif not pf_banner.get("ok"):
+            st.caption("preflight 未通过，真实模式运行将被阻止。请查看下方修复建议。")
+    action = components.render_run_console(selected_q, switches, mode=mode)
+    bc1, bc2 = st.columns(2)
+    load_latest = bc1.button("加载历史运行", width="stretch", key="btn_load_latest")
+    if bc2.button("清空当前结果", width="stretch", key="btn_clear_run"):
+        state.clear_run()
+
+    trigger_mock = (wiz_action == "mock") or (action == "mock")
+    trigger_generate = action == "generate"
+    trigger_latest = load_latest or (wiz_action == "latest")
+    process_run_triggers(
+        trigger_generate=trigger_generate,
+        trigger_mock=trigger_mock,
+        questions=questions,
+        qid=qid,
+        selected_q=selected_q,
+        switches=switches,
+        mode=mode,
+        trigger_latest=trigger_latest,
+        diag=diag,
+    )
+
     result = state.get_run_result()
     plan = result.get("plan")
     evidence_cards = result.get("evidence_cards", []) or []
@@ -396,8 +470,7 @@ def main() -> None:
     llm_summary = result.get("llm_call_summary", {}) or {}
     offline = bool(state.get(state.KEY_OFFLINE))
 
-    # ---- Artifact Browser ----
-    with st.expander("📚 Artifact Browser · 历史运行", expanded=False):
+    with st.expander("Artifact Browser · 历史运行", expanded=False):
         runs = api_client.get_runs(limit=10)
         chosen = components.render_run_browser(runs)
         if chosen:
@@ -405,15 +478,17 @@ def main() -> None:
             if _activate_loaded_run(loaded, questions):
                 st.rerun()
 
-    # ---- 选题-报告一致性校验（P0-1 阻断串线）----
     consistent = state.is_run_consistent()
 
-    # ---- 5) Agent Observatory ----
-    components.section_title("STEP 04", "Agent Observatory", "多智能体执行时间线、关系网络与追踪。")
-    components.render_agent_pipeline(agent_trace, evidence_cards, plan or {})
+    # V2 regions: Agent Observatory / Evidence Wall / ResearchPlan Studio / ResearchPlan Export Center
+    components.section_title(ui_text("step_04"), ui_text("agent_observatory"), "多智能体执行时间线、关系网络与追踪。")
+    exp_result_state = st.session_state.get(components.make_widget_key("exp_run_result", qid)) if qid else None
+    components.render_agent_pipeline(
+        agent_trace, evidence_cards, plan or {},
+        question=selected_q, is_mock=is_mock_run, experiment_result=exp_result_state,
+    )
 
-    # ---- 6) Evidence Wall ----
-    components.section_title("STEP 05", "Evidence Wall", "可追溯证据墙：来源、原文引用、相关性与可靠性。")
+    components.section_title(ui_text("step_05"), ui_text("evidence_wall"), "可追溯证据墙：来源、原文引用、相关性与可靠性。")
     referenced_ids = {
         str(ref.get("id"))
         for ref in ((plan or {}).get("references", []) or [])
@@ -421,8 +496,7 @@ def main() -> None:
     }
     components.render_evidence_wall(evidence_cards, referenced_ids=referenced_ids)
 
-    # ---- 7) ResearchPlan Studio ----
-    components.section_title("STEP 06", "ResearchPlan Studio", "结构化《科学假设与研究计划》，适合截图。")
+    components.section_title(ui_text("step_06"), ui_text("researchplan_studio"), "结构化《科学假设与研究计划》，适合截图。")
     if plan:
         binding_label = "历史报告对应问题" if offline else "当前报告对应问题"
         st.markdown(
@@ -441,7 +515,7 @@ def main() -> None:
         st.info("请点击「启动 AI Scientist」为当前问题重新运行，或在 Artifact Browser 选择对应的历史运行。")
     elif state.run_status() == "failed":
         st.markdown(
-            '<div class="user-error-card"><div class="ue-title">📭 运行失败</div>'
+            '<div class="user-error-card"><div class="ue-title">运行失败</div>'
             '<div class="ue-message">上次运行未成功，未生成可展示的报告。请修复问题后重试，或加载历史运行。</div></div>',
             unsafe_allow_html=True,
         )
@@ -454,18 +528,15 @@ def main() -> None:
             is_mock=is_mock_run, llm_summary=llm_summary,
         )
 
-    # ---- 8) Human Feedback Bench ----
-    components.section_title("STEP 07", "Human Feedback Bench", "输入反馈触发一轮修订（不覆盖原始 run）。")
+    components.section_title(ui_text("step_07"), ui_text("human_feedback_bench"), "输入反馈触发一轮修订（不覆盖原始 run）。")
     components.render_feedback_panel(run_id if consistent else None, api_client.revise_run)
 
-    # ---- 9) ResearchPlan Export Center ----
-    components.section_title("STEP 08", "ResearchPlan Export Center", "导出当前运行的研究计划及其证据链、追踪与质量门。")
+    components.section_title(ui_text("step_08"), ui_text("researchplan_export_center"), "导出当前运行的研究计划及其证据链、追踪与质量门。")
+    st.caption("导出格式包含 Markdown / JSON；文献条目保留 DOI。Real 模式与 Mock 模式的产物均按当前运行下载。")
     components.render_researchplan_export_center(run_id if consistent else None, api_client.read_local_file)
 
-    # ---- 10) Developer Diagnostics（默认折叠，唯一展示模型代号处）----
     llm_calls = api_client.get_llm_calls(run_id) if run_id else {}
     components.render_developer_diagnostics(health, result, llm_calls)
-
     components.render_footer()
 
 

@@ -1,0 +1,124 @@
+name: sage125-local
+
+# 本地常驻运行配置（对应队长任务 CAPTAIN-LOCAL-SAGE125-FIXED-OPEN-SOURCE-UI-RUNTIME-PERFORMANCE-05
+# 第十七节）。与 `compose.yaml`（生产/演示镶嵌硬化配置）共用同一个 Dockerfile 与镜像构建逻辑，
+# 区别仅在于服务命名（sage125-api / sage125-ui）与本地默认端口，方便队长用固定命令启动：
+#
+#   docker compose -f compose.local.yaml up -d --build
+#
+# 两个服务都配置 `restart: unless-stopped`：关闭终端、关闭 Cursor 后容器仍在 Docker Desktop /
+# dockerd 后台持续运行；只有显式 `docker compose -f compose.local.yaml down` 才会停止。
+
+x-runtime-hardening: &runtime-hardening
+  image: sage125-ai-scientist:local
+  build:
+    context: .
+    dockerfile: Dockerfile
+  user: "10001:10001"
+  init: true
+  read_only: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  tmpfs:
+    - /tmp:rw,nosuid,nodev,noexec,size=256m
+  restart: unless-stopped
+
+services:
+  sage125-api:
+    <<: *runtime-hardening
+    container_name: sage125-api
+    command: ["python", "-m", "scripts.start_api"]
+    environment:
+      APP_ENV: local
+      PORT: "8000"
+      DATA_DIR: /opt/sage125/data
+      EXPORT_DIR: /var/lib/sage125/exports
+      T06_MULTIMODAL_STORE_DIR: /var/lib/sage125/multimodal
+      PREVIEW_EPHEMERAL_STORAGE: "false"
+      SAGE125_PREVIEW_SEED: "1"
+      LOG_LEVEL: INFO
+      CORS_ALLOW_ORIGINS: http://127.0.0.1:8501,http://localhost:8501
+      SAGE125_RESULTS_ROOT: "${SAGE125_RESULTS_ROOT:-D:/SAGE125_Local_Runs/formal_125_release_candidate_zh_paper_20260822-232920}"
+      SAGE_API_KEYS_JSON: '{"local-demo":"${SAGE125_DEMO_API_KEY:-local-demo-key-change-me}"}'
+      DASHSCOPE_API_KEY: "${DASHSCOPE_API_KEY:-}"
+      WORKSPACE_ID: "${WORKSPACE_ID:-}"
+      HOME: /tmp/sage-home
+      XDG_CACHE_HOME: /tmp/sage-home/.cache
+      XDG_CONFIG_HOME: /tmp/sage-home/.config
+    ports:
+      - "127.0.0.1:${SAGE125_API_PORT:-8000}:8000"
+    volumes:
+      - sage125-local-data:/opt/sage125/data
+      - sage125-local-exports:/var/lib/sage125/exports
+      - sage125-local-multimodal:/var/lib/sage125/multimodal
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          import json
+          import sys
+          import urllib.request
+          body = json.load(urllib.request.urlopen("http://127.0.0.1:8000/health", timeout=5))
+          sys.exit(0 if body.get("status") == "ok" else 1)
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 60s
+    stop_grace_period: 30s
+
+  sage125-ui:
+    <<: *runtime-hardening
+    container_name: sage125-ui
+    command:
+      - python
+      - -m
+      - streamlit
+      - run
+      - app/ui/streamlit_app.py
+      - --server.address
+      - 0.0.0.0
+      - --server.port
+      - "8501"
+      - --server.headless
+      - "true"
+      - --client.showErrorDetails
+      - "false"
+      - --browser.gatherUsageStats
+      - "false"
+    environment:
+      FRONTEND_API_BASE_URL: http://sage125-api:8000
+      FRONTEND_RUN_VIA_API: "1"
+      SAGE125_RESULTS_ROOT: "${SAGE125_RESULTS_ROOT:-D:/SAGE125_Local_Runs/formal_125_release_candidate_zh_paper_20260822-232920}"
+      HOME: /tmp/sage-home
+      XDG_CACHE_HOME: /tmp/sage-home/.cache
+      XDG_CONFIG_HOME: /tmp/sage-home/.config
+    depends_on:
+      sage125-api:
+        condition: service_healthy
+        restart: true
+    ports:
+      - "127.0.0.1:${SAGE125_UI_PORT:-8501}:8501"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          import sys
+          import urllib.request
+          response = urllib.request.urlopen("http://127.0.0.1:8501/_stcore/health", timeout=5)
+          sys.exit(0 if response.status == 200 else 1)
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 45s
+    stop_grace_period: 20s
+
+volumes:
+  sage125-local-data:
+  sage125-local-exports:
+  sage125-local-multimodal:

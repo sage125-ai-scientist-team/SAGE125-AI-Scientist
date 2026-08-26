@@ -478,7 +478,21 @@ def test_committed_round1_oracle(case: str) -> None:
         assert selection["catalog_redistributed"] is False
         assert selection["original_question_text_embedded"] is False
         assert plan["formal_round2_executed"] is False
-        assert not ROUND2_PACKAGE.exists()
+        if ROUND2_PACKAGE.exists():
+            # Formal Round 2 has since been executed via run_formal_round2().
+            # This branch no longer asserts absence; it asserts the produced
+            # package is a genuine, verified, lineage-correct execution and
+            # never a fabricated or copied result.
+            round2_result = _load_json(ROUND2_PACKAGE / "execution_result.json")
+            metadata_round2 = _load_json(ROUND2_PACKAGE / "run_metadata.json")
+            assert round2_result["actual_execution"] is True
+            assert round2_result["runner_verified"] is True
+            assert round2_result["status"] == "succeeded"
+            assert round2_result["round_index"] == 2
+            assert round2_result["parent_execution_id"] == ROUND1_EXECUTION_ID
+            assert round2_result["environment_fingerprint"]["git_dirty"] is False
+            assert metadata_round2["formal_round2_executed"] is True
+            assert metadata_round2["controls"]["question_id"] == "Q028"
 
 
 CONFIG_CASES = [

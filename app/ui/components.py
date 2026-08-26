@@ -22,6 +22,15 @@ import streamlit as st
 
 from app.core.evidence_links import canonical_evidence_link, evidence_verification_note
 from app.ui import charts, progress as progress_ui, theme
+from app.ui.i18n import (
+    PRESET_KEYWORDS,
+    PRESET_DISPLAY_ZH,
+    domain_label,
+    preset_label,
+    source_type_label,
+    status_label,
+    ui_text,
+)
 from app.ui.key_factory import make_widget_key
 
 # style.css 路径。
@@ -31,7 +40,10 @@ _CSS_PATH = Path(__file__).parent / "style.css"
 # preset/history selection *before* the widgets are instantiated.
 QUESTION_KEYWORD_WIDGET_KEY = make_widget_key("qsel", "keyword")
 QUESTION_DOMAIN_WIDGET_KEY = make_widget_key("qsel", "domain")
-QUESTION_CHOICE_WIDGET_KEY = make_widget_key("qsel", "choice")
+SELECTOR_WIDGET_KEY = "_question_selector"
+AUTHORITATIVE_QUESTION_SELECTOR_KEY = SELECTOR_WIDGET_KEY
+QUESTION_CHOICE_WIDGET_KEY = SELECTOR_WIDGET_KEY
+PICKER_EXPANDED_KEY = "question_picker_expanded"
 
 # 标准 pending 说明（与 mock_outputs.PENDING_RESULTS 一致，用于前端提示）。
 PENDING_TEXT = "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。"
@@ -99,9 +111,11 @@ def _status_chip(label: str, ok: bool, ok_text: str = "已配置", bad_text: str
 
 def render_hero(status: dict, metrics: dict) -> None:
     """
-    渲染 Hero（科研发现控制台顶部）。
+    渲染 Hero（科研发现控制台顶部）：克制的科研产品风格。
 
-    只展示"系统完成了什么"与运行状态，**不展示任何具体模型代号**。
+    只展示"系统完成了什么"与运行状态，**不展示任何具体模型代号 / endpoint /
+    token / API Key / 环境变量 / 本机路径**。不使用大量英文徽章、无意义 KPI、
+    过多模式 chip、网格背景、强烈霓虹渐变、超大阴影或大量 emoji。
 
     参数：
         status:  {qwen, deep_research, rag_ready, questions_ok, mode, qwen_calls,
@@ -111,22 +125,21 @@ def render_hero(status: dict, metrics: dict) -> None:
     qwen_calls = status.get("qwen_calls")
     qwen_call_text = "未调用" if not qwen_calls else f"已调用 {qwen_calls} 次"
     chips = (
-        _status_chip("Qwen / 百炼", status.get("qwen", False))
-        + _status_chip("Qwen 调用", bool(qwen_calls), qwen_call_text, "未调用")
-        + _status_chip("DeepResearch", status.get("deep_research", False), "已启用", "未启用")
+        _status_chip("百炼 Qwen", status.get("qwen", False))
+        + _status_chip("本次调用", bool(qwen_calls), qwen_call_text, "未调用")
+        + _status_chip("深度调研", status.get("deep_research", False), "已启用", "未启用")
         + _status_chip(
-            "RAG Index",
+            "文献索引",
             status.get("rag_ready", False),
-            "Empty" if status.get("rag_status") == "empty" else "Ready",
-            "Unavailable",
+            "空库可用" if status.get("rag_status") == "empty" else "就绪",
+            "不可用",
         )
-        + _status_chip("Questions", status.get("questions_ok", False), f"{metrics.get('questions', 0)}", "Warning")
     )
+    # 最多保留三条简洁价值信息（不展示无意义 KPI/模型代号/内部路径）。
     kpis = [
-        (metrics.get("questions", 0), "Questions"),
-        (metrics.get("agents", 10), "Agents"),
-        ("RAG + DeepResearch", "Evidence Engine"),
-        ("MD / JSON / HTML / PDF", "Export Formats"),
+        (f"{metrics.get('questions', 0)} 个", "科学问题"),
+        ("可追溯", "文献证据"),
+        ("多智能体", "科研闭环"),
     ]
     kpi_html = "".join(
         f'<div class="kpi-card"><div class="kpi-value">{esc(v)}</div><div class="kpi-label">{esc(l)}</div></div>'
@@ -136,15 +149,11 @@ def render_hero(status: dict, metrics: dict) -> None:
         f"""<div class="science-hero">
             <div style="display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;">
               <div style="flex:1 1 520px; min-width:320px;">
-                <h1>🔬 {esc(theme.APP_TITLE)}</h1>
-                <div class="hero-sub">{esc(theme.APP_SUBTITLE)}</div>
-                <div class="hero-zh">从 125 个前沿科学问题中选择一个，系统自动完成文献检索、证据抽取、假设生成、实验设计与审稿校验，输出可验证《科学假设与研究计划》。</div>
-                <div class="hero-badges">
-                  <span class="hero-badge">125 Questions</span>
-                  <span class="hero-badge">Qwen / 阿里云百炼</span>
-                  <span class="hero-badge">Multi-Agent Pipeline</span>
-                  <span class="hero-badge">Evidence Cards</span>
-                  <span class="hero-badge">Human-in-the-loop</span>
+                <h1>{esc(theme.APP_TITLE)}</h1>
+                <div class="hero-zh">从科学问题到可验证研究计划</div>
+                <div class="hero-desc">
+                  选择一个前沿科学问题，系统将组织文献证据、生成科学假设、
+                  设计实验方案并完成审稿校验。
                 </div>
               </div>
               <div style="flex:0 1 300px; min-width:260px;">{chips}</div>
@@ -195,7 +204,7 @@ def render_system_status(health: dict, llm_summary: dict | None = None) -> None:
         health:      /health 返回的 dict。
         llm_summary: 当前运行的 llm_call_summary（可选）。
     """
-    st.markdown("### 🧭 System Status")
+    st.markdown(f"### {esc(ui_text('system_status'))}")
     st.markdown(_status_chip("百炼 Qwen 配置", health.get("qwen_config_loaded", False)), unsafe_allow_html=True)
     dr_cfg = health.get("deep_research_config_loaded", False)
     st.markdown(_status_chip("DeepResearch 配置", dr_cfg, "已配置", "未配置"), unsafe_allow_html=True)
@@ -217,30 +226,131 @@ def render_system_status(health: dict, llm_summary: dict | None = None) -> None:
 
 
 def render_pipeline_switches() -> dict:
-    """渲染侧边栏 Pipeline 能力开关（不含 mock 开关，模式由顶部 Mode Control 决定）。"""
-    st.markdown("### ⚙️ Pipeline Switches")
-    return {
-        "use_local_rag": st.checkbox("启用 Local RAG", value=True, key=make_widget_key("sw", "local_rag")),
-        "use_deep_research": st.checkbox(
-            "启用 DeepResearch（较慢，可能耗时数分钟）",
-            value=False,
-            key=make_widget_key("sw", "deep_research"),
-        ),
-        "use_open_literature": st.checkbox("启用 Open Literature APIs", value=True, key=make_widget_key("sw", "open_lit")),
-        "reviewer_auto_revision": st.checkbox("启用 Reviewer Auto-Revision", value=True, key=make_widget_key("sw", "auto_rev")),
-    }
+    """渲染侧边栏「高级能力设置」（不含 mock 开关，模式由顶部运行模式决定）。"""
+    with st.expander(f"{esc(ui_text('pipeline_switches'))}", expanded=False):
+        switches = {
+            "use_local_rag": st.checkbox("启用本地文献检索（RAG）", value=True, key=make_widget_key("sw", "local_rag")),
+            "use_deep_research": st.checkbox(
+                "启用深度调研（DeepResearch，较慢，可能耗时数分钟）",
+                value=False,
+                key=make_widget_key("sw", "deep_research"),
+            ),
+            "use_open_literature": st.checkbox("启用开放文献接口（Open Literature APIs）", value=True, key=make_widget_key("sw", "open_lit")),
+            "reviewer_auto_revision": st.checkbox("启用评审意见自动修订（Reviewer Auto-Revision）", value=True, key=make_widget_key("sw", "auto_rev")),
+        }
+    return switches
 
 
 def render_security_note() -> None:
-    """渲染侧边栏安全提示（不在前端输入/显示/上传 Key）。"""
+    """渲染侧边栏安全说明（紧凑信息条；不在前端输入/显示/上传 Key）。"""
+    st.markdown(f'<div class="sidebar-caption">{esc(ui_text("security_note_title"))}</div>', unsafe_allow_html=True)
     st.markdown(
-        '<div class="safe-warning">API Key 只允许配置在本地 .env 文件中。前端不会读取、显示或上传你的 Key。</div>',
+        '<div class="safe-warning safe-warning-compact">密钥仅从服务端环境变量读取，页面不会显示、保存或上传密钥。</div>',
         unsafe_allow_html=True,
     )
 
 
+def render_mode_control(current_mode: str) -> str:
+    """
+    渲染「运行模式」控件（优先 st.segmented_control，内部稳定值 mock/real）。
+
+    不通过显示文字（如 startswith("Mock")）解析业务状态；显示文案与内部值
+    通过 format_func 分离。若当前环境不支持 segmented_control，回退为紧凑
+    selectbox，同样通过 format_func 映射显示文案。
+
+    参数：
+        current_mode: 当前模式 "mock" | "real"。
+
+    返回：
+        用户选择后的模式 "mock" | "real"。
+    """
+    st.markdown(f"### {esc(ui_text('mode_control'))}")
+    options = ["mock", "real"]
+    display = {"mock": ui_text("mock_mode"), "real": ui_text("real_mode")}
+    default_index = options.index(current_mode) if current_mode in options else 0
+    segmented_control = getattr(st, "segmented_control", None)
+    if callable(segmented_control):
+        selected = segmented_control(
+            ui_text("mode_control"),
+            options,
+            format_func=lambda v: display.get(v, v),
+            default=options[default_index],
+            key=make_widget_key("mode", "control"),
+            label_visibility="collapsed",
+        )
+        mode = selected if selected in options else options[default_index]
+    else:
+        mode = st.selectbox(
+            ui_text("mode_control"),
+            options,
+            index=default_index,
+            format_func=lambda v: display.get(v, v),
+            key=make_widget_key("mode", "control_fallback"),
+            label_visibility="collapsed",
+        )
+    st.caption("模拟演示：不调用真实 Qwen，用于演示。真实运行：调用 Qwen/百炼，需配置 Key，且不会静默降级。")
+    return mode
+
+
+def render_quick_presets(questions: list[dict], *, compact: bool = False) -> Optional[str]:
+    """
+    渲染「快速示例」控件（优先 st.pills 单选；不再使用五个纵向大按钮）。
+
+    内部稳定值为英文 key（prime/pandemic/climate/creativity/quantum），显示为
+    中文。只在本次是“新的一次选择”（与上次消费值不同）时才返回该内部 key，
+    避免每次 rerun 都强制把主选择器拉回预设题目，污染用户随后手动做出的其它
+    选题。是否命中题目、命中失败时的错误提示，由调用方（streamlit_app）负责，
+    以便复用既有的 errors.questions_missing / errors.question_not_selected 守卫。
+
+    参数：
+        questions: 问题 dict 列表（仅用于判断题库是否已加载，不在本函数内匹配）。
+
+    返回：
+        本次新选择的内部 key（如 "prime"）；无新选择时返回 None。
+    """
+    if not compact:
+        st.markdown(f"### {esc(ui_text('demo_presets'))}")
+        st.caption("点击后仅切换到对应问题，不会污染其它问题的运行。")
+    else:
+        st.markdown('<div class="picker-presets-label">快速示例</div>', unsafe_allow_html=True)
+    preset_keys = list(PRESET_DISPLAY_ZH.keys())
+    display = {k: preset_label(k) for k in preset_keys}
+    pills = getattr(st, "pills", None)
+    if callable(pills):
+        chosen = pills(
+            ui_text("demo_presets"),
+            preset_keys,
+            format_func=lambda v: display.get(v, v),
+            selection_mode="single",
+            default=None,
+            key=make_widget_key("preset", "pills"),
+            label_visibility="collapsed",
+        )
+    else:
+        chosen = st.selectbox(
+            ui_text("demo_presets"),
+            ["-"] + preset_keys,
+            format_func=lambda v: "（未选择）" if v == "-" else display.get(v, v),
+            key=make_widget_key("preset", "select_fallback"),
+            label_visibility="collapsed",
+        )
+        chosen = None if chosen == "-" else chosen
+    # st.pills/segmented_control 的选中值在未手动清空前会在每次 rerun 中持续
+    # 返回同一个值；只在“本次选择与上次消费值不同”时才下发一次新选择，
+    # 避免每次 rerun 都强制把主选择器拉回预设题目，污染用户随后手动做出的
+    # 其它选题。
+    last_key = make_widget_key("preset", "last_consumed")
+    if chosen is None:
+        st.session_state[last_key] = None
+        return None
+    if st.session_state.get(last_key) == chosen:
+        return None
+    st.session_state[last_key] = chosen
+    return chosen
+
+
 def render_question_selector(
-    questions: list[dict], selected_qid: Optional[str] = None
+    questions: list[dict], selected_qid: Optional[str] = None, summary: Optional[dict] = None
 ) -> Optional[str]:
     """
     渲染 Step 01：科学问题选择（搜索 + 领域过滤 + 大卡片）。
@@ -259,18 +369,26 @@ def render_question_selector(
 
     if len(questions) != 125:
         st.markdown(
-            f'<div class="user-error-card"><div class="ue-title">⚠️ 问题数量异常</div>'
+            f'<div class="user-error-card"><div class="ue-title">问题数量异常</div>'
             f'<div class="ue-message">当前问题数量为 {len(questions)}（不是 125），请检查 extract_125_questions.py 输出。</div></div>',
             unsafe_allow_html=True,
         )
 
     col1, col2 = st.columns([2, 1])
     with col1:
-        keyword = st.text_input("🔍 关键词搜索", value="", placeholder="如 prime / gravity / pandemic",
-                                key=QUESTION_KEYWORD_WIDGET_KEY)
+        keyword = st.text_input(
+            f"{esc(ui_text('keyword_search'))}", value="",
+            placeholder="输入英文关键词，如 prime、gravity、pandemic",
+            key=QUESTION_KEYWORD_WIDGET_KEY,
+        )
     with col2:
-        domains = ["全部"] + sorted({q.get("domain", "Unknown") for q in questions})
-        domain_sel = st.selectbox("领域过滤", domains, key=QUESTION_DOMAIN_WIDGET_KEY)
+        domain_keys = ["全部"] + sorted({q.get("domain", "Unknown") for q in questions})
+        domain_sel = st.selectbox(
+            ui_text("domain_filter"),
+            domain_keys,
+            format_func=lambda d: ui_text("all_domains") if d == "全部" else domain_label(d),
+            key=QUESTION_DOMAIN_WIDGET_KEY,
+        )
 
     filtered = questions
     if keyword.strip():
@@ -286,37 +404,59 @@ def render_question_selector(
     # This prevents Q024 from silently becoming Q001 after filters/presets/history
     # reorder the options.
     by_id = {str(q.get("id")): q for q in filtered if q.get("id")}
-    option_ids = list(by_id)
-    preferred = str(selected_qid) if selected_qid and str(selected_qid) in by_id else option_ids[0]
-    existing = st.session_state.get(QUESTION_CHOICE_WIDGET_KEY)
-    if existing is not None and str(existing) not in by_id:
-        # The prior QID is outside the new filter. Removing it before widget
-        # creation lets Streamlit safely use the preferred/default option.
-        del st.session_state[QUESTION_CHOICE_WIDGET_KEY]
+    current = str(selected_qid) if selected_qid else ""
+    if current and current not in by_id:
+        original = next((q for q in questions if str(q.get("id")) == current), None)
+        if original:
+            by_id[current] = original
+    option_ids = [""] + list(by_id)
+    preferred = current if current in by_id else ""
+    existing = st.session_state.get(AUTHORITATIVE_QUESTION_SELECTOR_KEY)
+    if existing not in (None, "") and str(existing) not in by_id and str(existing) != preferred:
+        del st.session_state[AUTHORITATIVE_QUESTION_SELECTOR_KEY]
     qid = st.selectbox(
         "选择一个科学问题",
         option_ids,
-        format_func=lambda item: f"{item} · {by_id[item].get('question', '')[:70]}",
-        index=option_ids.index(preferred),
-        key=QUESTION_CHOICE_WIDGET_KEY,
+        format_func=lambda item: "选择科学问题" if not item else f"{item} · {by_id[item].get('question', '')[:70]}",
+        index=option_ids.index(preferred) if preferred in option_ids else 0,
+        key=SELECTOR_WIDGET_KEY,
     )
+    if not qid or qid not in by_id:
+        return None
     selected = by_id[str(qid)]
+    _render_question_detail_card(selected, summary)
+    return qid
 
+
+def _render_question_detail_card(selected: dict, summary: dict | None = None) -> None:
+    """只读详情卡，不承担题目选择。"""
+    summary = summary or {}
     dcolor = theme.domain_color(selected.get("domain", ""))
-    excerpt = (selected.get("booklet_excerpt") or "")[:420]
+    excerpt = (selected.get("booklet_excerpt") or selected.get("official_background") or "")[:420]
+    english = selected.get("question_en") or selected.get("official_en") or selected.get("english")
+    evidence_n = summary.get("evidence_count")
+    hyp_n = summary.get("hypothesis_count")
+    plan_status = summary.get("plan_status") or summary.get("status") or "—"
     st.markdown(
-        f"""<div class="glass-card">
-            <span class="status-pill" style="background:{dcolor}">{esc(selected.get('domain'))}</span>
+        f"""<div class="glass-card" id="question-detail-card">
+            <div class="qsel-section-label">{esc(ui_text('current_research_question'))}</div>
+            <span class="status-pill" style="background:{dcolor}">{esc(domain_label(selected.get('domain')))}</span>
             <span style="color:#93A4BE;margin-left:8px">{esc(selected.get('id'))} · p{esc(selected.get('source_page'))}</span>
             <div class="question-card-title">{esc(selected.get('question'))}</div>
+            {f'<div style="color:#93A4BE;font-size:0.84rem;margin:6px 0">{esc(english)}</div>' if english else ''}
             <div style="color:#B6C4DA;font-size:0.86rem;line-height:1.6">{esc(excerpt)}</div>
+            <div style="margin-top:10px;font-size:0.82rem;color:#B6C4DA">
+              当前状态 {esc(str(summary.get('status') or '尚未开始'))}
+              · Evidence {esc(str(evidence_n if evidence_n is not None else '—'))}
+              · Hypothesis {esc(str(hyp_n if hyp_n is not None else '—'))}
+              · ResearchPlan {esc(str(plan_status))}
+            </div>
             <div style="margin-top:10px;font-size:0.82rem;color:#67E8F9;font-weight:600">
               本系统将为该问题生成可验证研究计划，而不是直接回答问题。
             </div>
         </div>""",
         unsafe_allow_html=True,
     )
-    return qid
 
 
 def _format_bytes(value: Any) -> str:
@@ -385,7 +525,7 @@ def render_upload_panel(
     # 不改变原有深色 glass-card 视觉语言。
     st.markdown(
         f"""<div class="glass-card">
-            <div style="font-weight:700;color:#F8FAFC">🗂️ 本地文献库治理</div>
+            <div style="font-weight:700;color:#F8FAFC">本地文献库治理</div>
             <div style="color:#B6C4DA;font-size:0.84rem;line-height:1.75;margin-top:7px">
               {storage_copy}
               题源 <code>sjtu-booklet.pdf</code> <strong style="color:#A7F3D0">不参与用户文献检索</strong>。
@@ -399,7 +539,7 @@ def render_upload_panel(
     with col1:
         uploaded = st.file_uploader("上传资料（PDF/TXT/MD/CSV）", type=["pdf", "txt", "md", "csv"],
                                     accept_multiple_files=True, key=make_widget_key("upload", "files"))
-        if st.button("📥 加入本地 RAG 索引", width="stretch", key=make_widget_key("upload", "btn")):
+        if st.button("加入本地 RAG 索引", width="stretch", key=make_widget_key("upload", "btn")):
             if not uploaded:
                 st.info("请先选择文件。")
             else:
@@ -477,7 +617,7 @@ def render_upload_panel(
             unsafe_allow_html=True,
         )
 
-    st.markdown("#### 📊 文献库配额与清单")
+    st.markdown("#### 文献库配额与清单")
     used_documents = int(usage.get("document_count") or len(documents) or 0)
     used_bytes = int(usage.get("total_bytes") or 0)
     max_documents = quota.get("max_documents")
@@ -507,7 +647,7 @@ def render_upload_panel(
         chunks = int(document.get("chunk_count") or document.get("chunks") or 0)
         document_status = str(document.get("status") or "unknown")
         with st.expander(
-            f"📄 {name} · {size_text} · {chunks} chunks · {document_status}",
+            f"{name} · {size_text} · {chunks} chunks · {document_status}",
             expanded=False,
         ):
             created_at = document.get("created_at") or document.get("uploaded_at") or "未记录"
@@ -525,7 +665,7 @@ def render_upload_panel(
                 value=False,
                 key=confirm_key,
             )
-            if st.button("🗑️ 显式确认删除", key=delete_key, disabled=not confirmed):
+            if st.button("显式确认删除", key=delete_key, disabled=not confirmed):
                 with st.spinner(f"正在删除 {name}…"):
                     result = delete_fn(document_id)
                 if str(result.get("status", "")).lower() in {"ok", "success", "deleted", "completed"}:
@@ -573,12 +713,29 @@ def render_run_console(selected_question: Optional[dict], switches: dict, mode: 
     )
     col1, col2 = st.columns([1, 1])
     action = None
+    from app.ui.job_state import JOB_TYPE_DEMO, JOB_TYPE_FULL, render_job_action_button
+    from app.ui import state as ui_state
+
+    qid = (selected_question or {}).get("id") or ui_state.get(ui_state.KEY_SELECTED_QID)
     with col1:
-        primary_label = "🚀 启动 AI Scientist（真实）" if mode == "real" else "🚀 生成 ResearchPlan"
-        if st.button(primary_label, type="primary", width="stretch", key=make_widget_key("run", "generate")):
+        primary_label = "启动 AI Scientist（真实）" if mode == "real" else "生成 ResearchPlan"
+        gen_action = render_job_action_button(
+            primary_label,
+            job_type=JOB_TYPE_FULL,
+            question_id=qid,
+            key=make_widget_key("run", "generate"),
+        )
+        if gen_action == "submit":
             action = "generate"
     with col2:
-        if st.button("🧪 运行模拟演示", width="stretch", key=make_widget_key("run", "mock")):
+        mock_action = render_job_action_button(
+            "运行模拟演示",
+            job_type=JOB_TYPE_DEMO,
+            question_id=qid,
+            key=make_widget_key("run", "mock"),
+            primary=False,
+        )
+        if mock_action == "submit":
             action = "mock"
     if mode == "real":
         st.caption("真实模式将调用 Qwen/百炼 API，不会静默降级为模拟。")
@@ -608,7 +765,7 @@ def render_run_progress(
         "connecting": "◌",
         "waiting": "◌",
         "running": "●",
-        "completed": "✓",
+        "completed": "◆",
         "failed": "!",
     }[snapshot.status]
     is_live = snapshot.status in {"queued", "connecting", "waiting", "running"}
@@ -677,30 +834,201 @@ def _agent_chip(status: str) -> str:
     return f'<span class="agent-chip" style="background:{color}">{esc(label)}</span>'
 
 
-def render_agent_pipeline(agent_trace: list[dict], evidence_cards: list[dict], plan: dict) -> None:
+def _rf_stage(stage_key: str, title_zh: str, body_html: str) -> str:
+    """构造科研证据链单个阶段的 HTML 片段（阶段名为次要说明，非视觉最大文字）。"""
+    return (
+        f'<div class="rf-stage" data-stage="{esc(stage_key)}">'
+        f'<div class="rf-stage-head"><span class="rf-stage-index">{esc(stage_key)}</span>'
+        f'<span class="rf-stage-title">{esc(title_zh)}</span></div>'
+        f'<div class="rf-stage-body">{body_html}</div>'
+        f'</div>'
+    )
+
+
+def render_research_flow(
+    *,
+    question: Optional[dict] = None,
+    evidence_cards: Optional[list[dict]] = None,
+    hypotheses: Optional[list[dict]] = None,
+    plan: Optional[dict] = None,
+    is_mock: bool = False,
+    experiment_result: Optional[dict] = None,
+) -> None:
+    """
+    渲染固定五阶段科研证据链：科学问题 → 文献证据 → 科学假设 → 实验方案 → 研究报告。
+
+    替代旧版基于 ``networkx.spring_layout`` 的随机力导向知识图。纯 Streamlit +
+    HTML/CSS 实现（不引入 JS/CDN/iframe/React/新依赖）；所有动态文本（题目原文、
+    文献标题、假设正文等）均先经 :func:`esc` 转义，绝不直接拼入 unsafe HTML。
+
+    诚实性约束：
+        - 无数据的阶段展示明确空状态文案，不使用假节点填充；
+        - Mock 身份必须显式标注，不得与真实成功状态使用相同配色语义；
+        - “已实际执行”只在 ``plan.actual_execution`` 或 ``experiment_result``
+          明确证明时才展示，不根据 mode/是否有数值/是否存在报告文件自行推断。
+
+    参数：
+        question:          当前选中问题 dict（含 id / question / domain）。
+        evidence_cards:    证据 dict 列表。
+        hypotheses:        候选假设 dict 列表。
+        plan:              ResearchPlan dict。
+        is_mock:           当前运行是否为 Mock。
+        experiment_result: 真实实验运行结果 dict（若有，来自「运行真实实验」按钮）。
+    """
+    question = question or {}
+    plan = plan or {}
+    evidence_cards = evidence_cards or []
+    hypotheses = hypotheses or []
+
+    mock_banner = f'<div class="rf-mock-banner">{esc("模拟演示数据")}</div>' if is_mock else ""
+
+    # ---- 阶段 1：科学问题 ----
+    qid = question.get("id") or plan.get("question_id")
+    qtext = question.get("question") or plan.get("input_question") or ""
+    domain = question.get("domain") or plan.get("domain") or ""
+    if qtext:
+        body1 = (
+            f'<div class="rf-id">{esc(qid or "-")}</div>'
+            f'<div class="rf-question-text">{esc(qtext)}</div>'
+            f'<div class="rf-domain-pill" style="background:{theme.domain_color(domain)}">{esc(domain_label(domain))}</div>'
+        )
+    else:
+        body1 = '<div class="rf-empty">尚未选择科学问题</div>'
+    stage1 = _rf_stage("01", ui_text("flow_question"), body1)
+
+    # ---- 阶段 2：文献证据（最多 4 条，超出显示“另有 N 条证据”）----
+    if evidence_cards:
+        items = []
+        for card in evidence_cards[:4]:
+            is_mock_ev = "mock_for_testing" in (card.get("reliability_note") or "")
+            mock_tag = '<span class="rf-badge-mock">模拟证据</span>' if is_mock_ev else ""
+            items.append(
+                '<div class="rf-evidence-item">'
+                f'<div class="rf-ev-title">{esc(card.get("title"))}</div>'
+                f'<div class="rf-ev-meta">{esc(source_type_label(card.get("source_type")))}'
+                f' · {esc(evidence_verification_note(card))}</div>'
+                f'<div class="rf-id">{esc(card.get("id") or "-")}</div>{mock_tag}'
+                '</div>'
+            )
+        extra = ""
+        if len(evidence_cards) > 4:
+            extra = f'<div class="rf-more">另有 {len(evidence_cards) - 4} 条证据</div>'
+        body2 = "".join(items) + extra
+    else:
+        body2 = '<div class="rf-empty">暂无文献证据</div>'
+    stage2 = _rf_stage("02", ui_text("flow_evidence"), body2)
+
+    # ---- 阶段 3：科学假设（最多 3 个）----
+    if hypotheses:
+        items = []
+        for i, h in enumerate(hypotheses[:3]):
+            fals = "可证伪" if h.get("falsifiable_prediction") else "可证伪信息待补充"
+            support_n = len(h.get("supporting_evidence_ids") or [])
+            items.append(
+                '<div class="rf-hypothesis-item">'
+                f'<div class="rf-hy-label">假设 {i + 1}</div>'
+                f'<div class="rf-hy-text">{esc(h.get("hypothesis"))}</div>'
+                f'<div class="rf-ev-meta">支撑证据 {support_n} 条 · {esc(fals)}</div>'
+                '</div>'
+            )
+        body3 = "".join(items)
+    else:
+        body3 = '<div class="rf-empty">尚未生成科学假设</div>'
+    stage3 = _rf_stage("03", ui_text("flow_hypothesis"), body3)
+
+    # ---- 阶段 4：实验方案 ----
+    experiments = plan.get("experiments") or {}
+    datasets = plan.get("datasets") or {}
+    methods = plan.get("methods")
+    has_experiment_design = bool(methods or experiments or datasets)
+    if has_experiment_design:
+        exec_meta = plan.get("actual_execution")
+        er = experiment_result or {}
+        if er.get("available") and er.get("status") == "succeeded":
+            status_key = "actual"
+        elif er.get("available") and er.get("status") not in (None, "succeeded"):
+            status_key = "failed"
+        elif exec_meta:
+            status_key = "actual"
+        elif is_mock:
+            status_key = "mock"
+        else:
+            status_key = "planned"
+        metrics_val = experiments.get("metrics") if isinstance(experiments, dict) else None
+        dataset_val = datasets.get("source") if isinstance(datasets, dict) else None
+        body4 = (
+            f'<div class="rf-field"><b>方法：</b>{esc(methods) if methods else "Not available"}</div>'
+            f'<div class="rf-field"><b>数据集：</b>{esc(dataset_val) if dataset_val else "Not available"}</div>'
+            f'<div class="rf-field"><b>主要指标：</b>{esc(metrics_val) if metrics_val else "Not available"}</div>'
+            f'<div class="rf-status-pill rf-status-{status_key}">{esc(status_label(status_key))}</div>'
+        )
+    else:
+        body4 = '<div class="rf-empty">尚未设计实验</div>'
+    stage4 = _rf_stage("04", ui_text("flow_experiment"), body4)
+
+    # ---- 阶段 5：研究报告 ----
+    validation_status = plan.get("validation_status")
+    if plan:
+        body5 = (
+            f'<div class="rf-field"><b>报告状态：</b>{esc(status_label(validation_status) if validation_status else "草稿")}</div>'
+            f'<div class="rf-field"><b>校验状态：</b>{esc(status_label(validation_status) if validation_status else "待验证")}</div>'
+            f'<div class="rf-field"><b>可导出格式：</b>MD / JSON / HTML / PDF</div>'
+        )
+    else:
+        body5 = '<div class="rf-empty">尚未生成研究报告</div>'
+    stage5 = _rf_stage("05", ui_text("flow_report"), body5)
+
+    arrow = '<div class="rf-arrow" aria-hidden="true">→</div>'
+    st.markdown(
+        f'<div class="research-flow">{mock_banner}'
+        f'<div class="rf-track">{stage1}{arrow}{stage2}{arrow}{stage3}{arrow}{stage4}{arrow}{stage5}</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def render_agent_pipeline(
+    agent_trace: list[dict],
+    evidence_cards: list[dict],
+    plan: dict,
+    *,
+    question: Optional[dict] = None,
+    is_mock: bool = False,
+    experiment_result: Optional[dict] = None,
+) -> None:
     """
     渲染 Step 04：多智能体工作流可视化（不展示模型代号）。
 
     参数：
-        agent_trace:    AgentTraceEvent dict 列表。
-        evidence_cards: 证据 dict 列表。
-        plan:           ResearchPlan dict。
+        agent_trace:       AgentTraceEvent dict 列表。
+        evidence_cards:    证据 dict 列表。
+        plan:              ResearchPlan dict。
+        question:          当前选中问题 dict（用于科研证据链第一阶段）。
+        is_mock:           当前运行是否为 Mock。
+        experiment_result: 真实实验运行结果（若有），用于诚实标注执行状态。
     """
     if not agent_trace:
         st.info("运行后展示 Agent 工作流。")
         return
-    st.plotly_chart(charts.make_agent_timeline(agent_trace), width="stretch",
-                    key=make_widget_key("chart", "agent_timeline"))
+    charts.render_plotly_chart(charts.make_agent_timeline(agent_trace), key=make_widget_key("chart", "agent_timeline"))
+
+    st.markdown(f'<div class="rf-section-title">{esc(ui_text("knowledge_graph"))}</div>', unsafe_allow_html=True)
     hyps = (plan or {}).get("generated_hypotheses", []) if plan else []
-    st.plotly_chart(charts.make_knowledge_graph(evidence_cards, hyps, plan or {}), width="stretch",
-                    key=make_widget_key("chart", "knowledge_graph"))
+    render_research_flow(
+        question=question,
+        evidence_cards=evidence_cards,
+        hypotheses=hyps,
+        plan=plan or {},
+        is_mock=is_mock,
+        experiment_result=experiment_result,
+    )
 
     for ev in agent_trace:
         name = ev.get("agent_name", "")
         cn, en = AGENT_DISPLAY.get(name, (name, ""))
         status_html = _agent_chip(ev.get("status", "pending"))
         dur = f'{ev.get("duration_ms")} ms' if ev.get("duration_ms") is not None else ""
-        warn = ("⚠ " + esc(", ".join(ev["warnings"]))) if ev.get("warnings") else ""
+        warn = ("警告：" + esc(", ".join(ev["warnings"]))) if ev.get("warnings") else ""
         out_summary = esc((ev.get("output_summary") or "")[:120])
         st.markdown(
             f"""<div class="agent-row">
@@ -766,11 +1094,9 @@ def render_evidence_wall(
 
     c1, c2 = st.columns([1, 1])
     with c1:
-        st.plotly_chart(charts.make_evidence_distribution(evidence_cards), width="stretch",
-                        key=make_widget_key("chart", "ev_dist"))
+        charts.render_plotly_chart(charts.make_evidence_distribution(evidence_cards), key=make_widget_key("chart", "ev_dist"))
     with c2:
-        st.plotly_chart(charts.make_relevance_histogram(evidence_cards), width="stretch",
-                        key=make_widget_key("chart", "ev_relhist"))
+        charts.render_plotly_chart(charts.make_relevance_histogram(evidence_cards), key=make_widget_key("chart", "ev_relhist"))
 
     left, right = st.columns([1, 3])
     with left:
@@ -903,8 +1229,7 @@ def render_research_plan_tabs(
         )
         if llm_summary is not None:
             render_qwen_invocation_summary(llm_summary, is_mock)
-        st.plotly_chart(charts.make_readiness_radar(plan), width="stretch",
-                        key=make_widget_key("chart", "readiness", run_id))
+        charts.render_plotly_chart(charts.make_readiness_radar(plan), key=make_widget_key("chart", "readiness", run_id))
 
     with tabs[1]:
         render_hypothesis_cards(plan)
@@ -980,7 +1305,6 @@ def render_empty_state(title: str, hint: str) -> None:
     """渲染统一的空状态卡片（深色）。"""
     st.markdown(
         f"""<div class="glass-card" style="text-align:center;padding:28px">
-            <div style="font-size:2rem">🔬</div>
             <div style="font-weight:700;color:#F8FAFC;margin:6px 0">{esc(title)}</div>
             <div style="color:#93A4BE;font-size:0.86rem">{esc(hint)}</div>
         </div>""",
@@ -1024,6 +1348,8 @@ def _render_plan_body(plan: dict) -> None:
         st.markdown(f'<div class="report-panel"><h3>Results</h3><div>{esc(results)}</div></div>', unsafe_allow_html=True)
     st.caption("未执行真实实验时，Results 只能显示待验证状态，不能编造指标。")
 
+    _render_experiment_run_control(plan)
+
     st.markdown("<div class='report-panel'><h3>References（来自 EvidenceCards）</h3>", unsafe_allow_html=True)
     if refs:
         for r in refs:
@@ -1035,6 +1361,201 @@ def _render_plan_body(plan: dict) -> None:
     else:
         st.markdown('<div class="field-block">references 待检索/待验证。</div>', unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+def _render_experiment_run_control(plan: dict) -> None:
+    """
+    渲染"运行真实实验"入口。
+
+    每个题目都展示同一个按钮；目前只有 Q028 注册了可执行的科学入口
+    （WDBC 旗舰案例），其它题目点击后会诚实提示暂无可执行入口，绝不
+    编造实验结果。
+    """
+    from app.ui import api_client
+
+    qid = str(plan.get("question_id") or "")
+    state_key = make_widget_key("exp_run_result", qid)
+    button_key = make_widget_key("btn_run_experiment", qid)
+
+    st.markdown("<div class='report-panel'><h3>运行真实实验</h3>", unsafe_allow_html=True)
+    if qid == "Q028":
+        st.caption(
+            "此按钮执行的是团队预先注册、可独立复现的固定实验协议（UCI WDBC 数据集 → "
+            "标准化逻辑回归 → balanced_accuracy / malignant_recall），与上方由生成式流水线"
+            "写出的研究计划文字可能不完全逐句一致；本次运行不会读取、也不会执行上方文字本身。"
+        )
+    if st.button("▶ 运行真实实验", width="stretch", key=button_key):
+        with st.spinner("正在尝试执行真实实验（若该题暂无可执行入口，会诚实提示，不编造结果）…"):
+            st.session_state[state_key] = api_client.run_experiment(qid)
+
+    result = st.session_state.get(state_key)
+    if result is None:
+        st.caption("点击上方按钮，尝试运行该题目对应的真实科学实验（目前仅 Q028 有可执行入口）。")
+    elif not result.get("available"):
+        st.warning(result.get("reason") or "该题目当前没有可执行的真实科学实验入口。")
+    elif result.get("status") != "succeeded":
+        reason = result.get("reason") or (result.get("error") or {}).get("message") or result.get("status")
+        st.error(f"真实实验执行未成功：{esc(str(reason))}")
+    else:
+        _render_q028_result(result)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if qid == "Q028":
+        _render_flagship_canonical_status(qid)
+
+
+_CANON_CATEGORY_LABELS = {
+    "selection": "选择与科学边界",
+    "dataset": "数据集",
+    "round1": "Round 1",
+    "reviewer": "Reviewer / RevisionContext",
+    "round2": "Round 2",
+    "closure": "structured diff / stop reason",
+    "identity": "跨文件一致性",
+}
+
+
+def _render_flagship_canonical_status(qid: str) -> None:
+    """
+    只读展示旗舰案例 canonical package / 原子发布状态。
+
+    数据完全来自 GET /experiments/{qid}/canonical-status（真实磁盘证据 +
+    真实 canonical pointer），本函数不编造、不猜测、不填充占位指标。
+    """
+    from app.ui import api_client
+
+    status_key = make_widget_key("flagship_canonical_status", qid)
+    if st.button("刷新旗舰案例 canonical / 发布状态", key=make_widget_key("btn_refresh_canonical", qid)):
+        st.session_state[status_key] = api_client.get_experiment_canonical_status(qid)
+    status = st.session_state.get(status_key)
+    if status is None:
+        status = api_client.get_experiment_canonical_status(qid)
+        st.session_state[status_key] = status
+
+    st.markdown("<div class='report-panel'><h3>旗舰案例 Canonical Package / 原子发布状态</h3>", unsafe_allow_html=True)
+
+    if not status.get("available"):
+        st.warning(status.get("reason") or "该题目未接入 canonical 发布流水线。")
+        st.markdown("</div>", unsafe_allow_html=True)
+        return
+    if status.get("status") == "error":
+        st.error(status.get("reason") or "读取 canonical 状态失败。")
+        st.markdown("</div>", unsafe_allow_html=True)
+        return
+
+    semantic_status = status.get("semantic_validation_status")
+    published = bool(status.get("canonical_published"))
+    round2_blocked = bool(status.get("round2_blocked"))
+
+    badge = "PASS" if semantic_status == "PASS" else "FAIL"
+    badge_class = "real" if semantic_status == "PASS" else "warn"
+    st.markdown(
+        f"""<div class="field-block">
+            <div><b>案例 ID：</b>{esc(status.get('case_id'))}</div>
+            <div><b>语义校验状态：</b><span class="mode-badge {badge_class}">{esc(badge)}</span></div>
+            <div><b>Round 2 阻断（ROUND2_BLOCKED）：</b>{esc('是' if round2_blocked else '否')}</div>
+            <div><b>Canonical 已发布（PUBLISHED_VERIFIED）：</b>{esc('是' if published else '否')}</div>
+        </div>""",
+        unsafe_allow_html=True,
+    )
+
+    pointer = status.get("canonical_pointer")
+    if published and pointer:
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>attempt_id：</b>{esc(pointer.get('attempt_id'))}</div>
+                <div><b>manifest_hash：</b>{esc(pointer.get('manifest_hash'))}</div>
+                <div><b>policy_version：</b>{esc(pointer.get('policy_version'))}</div>
+                <div><b>updated_at：</b>{esc(pointer.get('updated_at'))}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+    else:
+        st.caption("尚未发布为 PUBLISHED_VERIFIED canonical package（或已发布但校验状态非 PASS，consumer 会拒绝读取）。")
+
+    checks = status.get("checks") or []
+    if checks:
+        by_category: dict[str, list[dict]] = {}
+        for item in checks:
+            by_category.setdefault(item.get("category", "?"), []).append(item)
+        with st.expander(f"逐项校验清单（{status.get('check_count', len(checks))} 项，失败 {status.get('failed_count', 0)} 项）", expanded=not published):
+            for category, items in by_category.items():
+                label = _CANON_CATEGORY_LABELS.get(category, category)
+                all_pass = all(i.get("status") == "PASS" for i in items)
+                st.markdown(f"**{esc(label)}** — {'全部通过' if all_pass else '存在未通过项'}")
+                for item in items:
+                    icon = "◆" if item.get("status") == "PASS" else "×"
+                    st.markdown(
+                        f"<div class='field-block'>{icon} `{esc(item.get('requirement_id'))}` {esc(item.get('detail'))}</div>",
+                        unsafe_allow_html=True,
+                    )
+
+    fail_closed_reasons = status.get("fail_closed_reasons") or []
+    if fail_closed_reasons:
+        st.error("Fail-closed 原因：\n" + "\n".join(f"- {reason}" for reason in fail_closed_reasons))
+
+    st.caption(
+        "科学边界：本案例为受控二分类实验，用于验证 AI Scientist 的计划—执行—反馈—修订工作流；"
+        "不证明能够治愈癌症，不构成临床有效性验证或医疗建议，不能外推到所有癌症，"
+        "不替代领域专家与真实临床研究。"
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
+def _render_q028_result(result: dict) -> None:
+    """渲染一次成功的 Q028 真实实验结果：人话结论 + 图表，技术细节折叠展示。"""
+    metrics = result.get("metrics") or {}
+    confusion = result.get("confusion") or {}
+    split = result.get("split") or {}
+    balanced = metrics.get("balanced_accuracy")
+    recall = metrics.get("malignant_recall")
+
+    plain_summary = "本次真实运行已完成，但未取得可解读指标。"
+    if balanced is not None and recall is not None and confusion:
+        test_count = split.get("test_count", sum(confusion.values()))
+        malignant_total = confusion.get("true_positive", 0) + confusion.get("false_negative", 0)
+        plain_summary = (
+            f"模型在 {test_count} 例留出测试样本上：平衡准确率 {balanced:.1%}，"
+            f"{malignant_total} 例真实恶性肿瘤样本中正确识别出 "
+            f"{confusion.get('true_positive', 0)} 例（召回率 {recall:.1%}），"
+            f"漏诊 {confusion.get('false_negative', 0)} 例、误报 {confusion.get('false_positive', 0)} 例。"
+        )
+    st.markdown(
+        f"""<div class="field-block">
+            <span class="mode-badge real">真实 Real</span>
+            <div style="margin-top:6px">{esc(plain_summary)}</div>
+        </div>""",
+        unsafe_allow_html=True,
+    )
+
+    if balanced is not None and recall is not None:
+        charts.render_plotly_chart(
+            charts.make_experiment_metrics_bar(metrics),
+            key=make_widget_key("chart", "exp_metrics", result.get("execution_id", "")),
+        )
+    if confusion:
+        charts.render_plotly_chart(
+            charts.make_confusion_matrix_heatmap(confusion),
+            key=make_widget_key("chart", "exp_confusion", result.get("execution_id", "")),
+        )
+
+    if result.get("git_dirty"):
+        st.caption("当前工作区存在未提交改动：本次为演示性真实执行，非正式 Gate/PR 证据。")
+
+    with st.expander("技术细节 / 可复现信息", expanded=False):
+        st.markdown(
+            f"""<div class="field-block">
+                <div><b>执行状态：</b>{esc(result.get('status'))}</div>
+                <div><b>execution_id：</b>{esc(result.get('execution_id'))}</div>
+                <div><b>训练/测试样本数：</b>{esc(split.get('train_count'))} / {esc(split.get('test_count'))}</div>
+                <div><b>数据集 SHA-256：</b>{esc(result.get('dataset_sha256'))}</div>
+                <div><b>Git SHA：</b>{esc(result.get('git_sha'))}</div>
+                <div><b>耗时：</b>{esc(result.get('duration_seconds'))} 秒</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        if result.get("note"):
+            st.caption(result["note"])
 
 
 def _render_reviewer(plan: dict) -> None:
@@ -1062,7 +1583,7 @@ def render_feedback_panel(run_id: Optional[str], revise_fn) -> None:
     feedback = st.text_area("你的反馈（仅作修订偏好，不作为事实来源）", value=st.session_state.get("feedback_text", ""),
                             key=make_widget_key("fb", run_id, "text"))
     st.caption("用户反馈不能成为事实来源；要求编造结果、去掉引用或强行标记 validated 会被系统拒绝。")
-    if st.button("🔁 依据反馈修订", type="primary", key=make_widget_key("fb", run_id, "submit")):
+    if st.button("依据反馈修订", type="primary", key=make_widget_key("fb", run_id, "submit")):
         if not feedback.strip():
             st.info("请输入反馈内容。")
             return
@@ -1132,7 +1653,7 @@ def render_researchplan_export_center(run_id: Optional[str], file_reader) -> Non
 
 def _wizard_icon(status: str) -> str:
     """返回检查项状态图标。"""
-    return {"ok": "✅", "warning": "⚠️", "missing": "❌"}.get(status, "•")
+    return {"ok": "◆", "warning": "!", "missing": "×"}.get(status, "•")
 
 
 def render_first_run_wizard(checks: list[dict]) -> Optional[str]:
@@ -1145,7 +1666,7 @@ def render_first_run_wizard(checks: list[dict]) -> Optional[str]:
     返回：
         用户触发的动作："mock" / "refresh" / "latest" / None。
     """
-    with st.expander("🧭 First Run Wizard · 首次运行向导", expanded=False):
+    with st.expander("First Run Wizard · 首次运行向导", expanded=False):
         st.caption("确认系统是否就绪；所有修复命令均在本地终端运行，前端不读取/输入任何 API Key。")
         for c in checks:
             cols = st.columns([0.5, 3, 5])
@@ -1159,11 +1680,11 @@ def render_first_run_wizard(checks: list[dict]) -> Optional[str]:
                 cols[2].markdown(detail)
         b1, b2, b3 = st.columns(3)
         action = None
-        if b1.button("🧪 运行 Mock 演示", width="stretch", key=make_widget_key("wiz", "mock")):
+        if b1.button("运行 Mock 演示", width="stretch", key=make_widget_key("wiz", "mock")):
             action = "mock"
-        if b2.button("🔄 刷新诊断", width="stretch", key=make_widget_key("wiz", "refresh")):
+        if b2.button("刷新诊断", width="stretch", key=make_widget_key("wiz", "refresh")):
             action = "refresh"
-        if b3.button("📂 打开最近运行", width="stretch", key=make_widget_key("wiz", "latest")):
+        if b3.button("打开最近运行", width="stretch", key=make_widget_key("wiz", "latest")):
             action = "latest"
         return action
 
@@ -1191,7 +1712,7 @@ def render_run_browser(runs: list[dict]) -> Optional[str]:
     })
     labels = [f"{r.get('run_id')} · [{r.get('question_id')}] {(r.get('question') or '')[:36]}" for r in runs]
     idx = st.selectbox("选择历史运行", range(len(runs)), format_func=lambda i: labels[i], key=make_widget_key("runbrowser", "sel"))
-    if st.button("📥 加载所选运行（历史结果浏览）", key=make_widget_key("runbrowser", "load")):
+    if st.button("加载所选运行（历史结果浏览）", key=make_widget_key("runbrowser", "load")):
         return runs[idx].get("run_id")
     return None
 
@@ -1208,7 +1729,7 @@ def render_developer_diagnostics(health: dict, run_result: dict, llm_calls: Opti
         run_result: 当前运行结果 dict。
         llm_calls:  llm 调用审计（含 records）。
     """
-    with st.expander("🛠 Developer Diagnostics · 开发者诊断（默认折叠）", expanded=False):
+    with st.expander("Developer Diagnostics · 开发者诊断（默认折叠）", expanded=False):
         st.markdown('<div class="dev-note">以下为内部调试信息（模型代号、调用审计等），普通用户无需关心；不含任何 API Key。</div>',
                     unsafe_allow_html=True)
         # 模型档位 -> 内部模型名。

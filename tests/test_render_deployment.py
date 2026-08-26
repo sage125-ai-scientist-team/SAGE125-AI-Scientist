@@ -105,6 +105,35 @@ def test_api_only_ui_never_runs_pipeline_inprocess(monkeypatch):
     assert result["error_type"] == "api_unavailable"
 
 
+def test_http_run_unwraps_fastapi_detail_errors(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+    monkeypatch.setattr(api_client, "api_available", lambda: True)
+
+    class Response:
+        status_code = 503
+        headers = {"content-type": "application/json"}
+        text = ""
+
+        @staticmethod
+        def json():
+            return {
+                "detail": {
+                    "status": "failed",
+                    "message": "preflight 未通过",
+                    "errors": ["百炼连通性检查失败：网络超时"],
+                    "preflight": {"ok": False},
+                }
+            }
+
+    monkeypatch.setattr(api_client.requests, "post", lambda *args, **kwargs: Response())
+
+    result = api_client.start_run("Q001", "", {"use_deep_research": False}, mode="real")
+
+    assert result["status"] == "failed"
+    assert result["error_type"] == "preflight_failed"
+    assert "百炼连通性检查失败" in result["errors"][0]
+
+
 def test_render_ui_health_probe_allows_cold_start(monkeypatch):
     monkeypatch.setenv("FRONTEND_API_WAKE_TIMEOUT_SECONDS", "75")
     observed = {}

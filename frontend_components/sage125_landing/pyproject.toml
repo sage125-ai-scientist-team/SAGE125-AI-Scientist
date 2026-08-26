@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# 注意：这个名字规范化后（'-' -> '_'）必须严格等于实际可导入的包目录名
+# "sage125_landing"，否则 Streamlit CCv2 的 manifest 扫描器（用
+# importlib.util.find_spec 兜底定位 pyproject.toml）会找不到本组件，
+# 表现为运行时报 "must be declared in pyproject.toml with asset_dir"。
+name = "sage125-landing"
+version = "0.1.0"
+description = "SAGE125 首页 Streamlit Custom Component v2：tsParticles 动态背景 + Magic UI Bento Grid 能力区（基于官方 streamlit/component-template v2 结构）。"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "SAGE125 AI Scientist Team" }]
+dependencies = ["streamlit >= 1.51"]
+
+[tool.setuptools.packages.find]
+include = ["sage125_landing*"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+sage125_landing = ["frontend/build/**/*", "pyproject.toml"]

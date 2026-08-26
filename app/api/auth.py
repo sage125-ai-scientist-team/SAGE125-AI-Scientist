@@ -6,6 +6,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import threading
 import time
 from dataclasses import dataclass
@@ -29,7 +30,11 @@ class AuthPolicy(Protocol):
 class HashedAPIKeyAuth:
     """Keep only SHA-256 token digests in memory and compare in constant time."""
 
-    def __init__(self, actor_tokens: Mapping[str, str]) -> None:
+    #: 本地/演示环境放行 actor。当 SAGE_API_KEYS_JSON 未配置时启用，
+    #: 使前端及任意调用方无需任何手工配置 key 即可访问后端（本地单机使用场景）。
+    _OPEN_ACCESS_ACTOR = "local-open-access"
+
+    def __init__(self, actor_tokens: Mapping[str, str], *, open_access: bool = False) -> None:
         digests: dict[str, str] = {}
         for actor_id, token in actor_tokens.items():
             actor = str(actor_id).strip()
@@ -41,12 +46,13 @@ class HashedAPIKeyAuth:
                 raise ValueError("API keys must be unique")
             digests[digest] = actor
         self._actors_by_digest = digests
+        self._open_access = open_access
 
     @classmethod
     def from_environment(cls) -> "HashedAPIKeyAuth":
         raw = os.getenv("SAGE_API_KEYS_JSON", "").strip()
         if not raw:
-            return cls({})
+            return cls({}, open_access=True)
         try:
             payload = json.loads(raw)
         except json.JSONDecodeError as exc:
@@ -56,6 +62,9 @@ class HashedAPIKeyAuth:
         return cls({str(actor): str(token) for actor, token in payload.items()})
 
     def authenticate(self, api_key: str | None) -> APIPrincipal:
+        if self._open_access:
+            # 本地开放模式：任意 key（含空）均放行，统一记为同一 actor。
+            return APIPrincipal(actor_id=self._OPEN_ACCESS_ACTOR)
         if not self._actors_by_digest:
             raise APIError(
                 status_code=503,
@@ -129,6 +138,12 @@ class FixedWindowRateLimiter:
 
 
 _API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
+# 进度轮询只读 Job 状态，不得占满写操作（创建任务）的窗口。
+_JOB_PROGRESS_READ = re.compile(r"^/api/v1/jobs(?:/[^/]+(?:/events)?)?$")
+
+
+def _is_job_progress_read(request: Request) -> bool:
+    return request.method == "GET" and bool(_JOB_PROGRESS_READ.match(request.url.path))
 
 
 async def authenticate_and_rate_limit(
@@ -147,7 +162,7 @@ async def authenticate_and_rate_limit(
     limiter: FixedWindowRateLimiter | None = getattr(
         request.app.state, "rate_limiter", None
     )
-    if limiter is not None:
+    if limiter is not None and not _is_job_progress_read(request):
         limiter.check(principal.actor_id)
     request.state.principal = principal
     return principal

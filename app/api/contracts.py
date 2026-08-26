@@ -31,6 +31,19 @@ class RunOptions(BaseModel):
     reviewer_auto_revision: bool = True
 
 
+JOB_TYPE_FULL_RESEARCH_PIPELINE = "FULL_RESEARCH_PIPELINE"
+JOB_TYPE_RESEARCH_PLAN = "RESEARCH_PLAN"
+JOB_TYPE_LITERATURE_RESEARCH = "LITERATURE_RESEARCH"
+JOB_TYPE_CONTROLLED_DEMO = "CONTROLLED_DEMO"
+
+KNOWN_JOB_TYPES = {
+    JOB_TYPE_FULL_RESEARCH_PIPELINE,
+    JOB_TYPE_RESEARCH_PLAN,
+    JOB_TYPE_LITERATURE_RESEARCH,
+    JOB_TYPE_CONTROLLED_DEMO,
+}
+
+
 class JobCreateRequest(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
@@ -50,6 +63,25 @@ class JobCreateRequest(BaseModel):
     question_id: str = Field(min_length=1, max_length=64)
     mode: Literal["mock", "real"] = "mock"
     options: RunOptions = Field(default_factory=RunOptions)
+    client_id: str | None = Field(default=None, max_length=128)
+    job_type: str = Field(default=JOB_TYPE_FULL_RESEARCH_PIPELINE, max_length=64)
+    input_digest: str | None = Field(default=None, max_length=128)
+
+    @field_validator("job_type")
+    @classmethod
+    def _known_job_type(cls, value: str) -> str:
+        normalized = (value or JOB_TYPE_FULL_RESEARCH_PIPELINE).strip() or JOB_TYPE_FULL_RESEARCH_PIPELINE
+        if normalized not in KNOWN_JOB_TYPES:
+            raise ValueError("unsupported job_type")
+        return normalized
+
+    @field_validator("client_id")
+    @classmethod
+    def _clean_client_id(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        cleaned = value.strip()
+        return cleaned or None
 
 
 class ErrorResponse(BaseModel):
@@ -97,6 +129,8 @@ class JobAccepted(BaseModel):
     created_at: datetime
     status_url: str
     reused: bool = False
+    created: bool = True
+    stage: str | None = None
 
 
 class JobStatusResponse(BaseModel):
@@ -118,11 +152,49 @@ class JobStatusResponse(BaseModel):
     upstream_run_id: str | None = None
     error: JobError | None = None
     links: JobLinks
+    job_type: str = JOB_TYPE_FULL_RESEARCH_PIPELINE
+    client_id: str | None = None
+    progress_percent: int | None = None
+    progress_current: int | None = None
+    progress_total: int | None = None
+    progress_mode: str = "indeterminate"
+    message: str | None = None
+    checkpoint_uri: str | None = None
+    result_uri: str | None = None
+    provider_call_count: int = 0
+    retry_of_job_id: str | None = None
+    input_digest: str | None = None
+    model_alias: str | None = None
 
 
 class JobListResponse(BaseModel):
     items: list[JobStatusResponse]
     count: int
+
+
+class JobEventItem(BaseModel):
+    event_id: int
+    job_id: str
+    sequence: int
+    event_type: str
+    status: str | None = None
+    stage: str | None = None
+    progress_current: int | None = None
+    progress_total: int | None = None
+    progress_percent: int | None = None
+    message: str | None = None
+    payload_json: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime
+
+
+class JobEventListResponse(BaseModel):
+    job_id: str
+    items: list[JobEventItem]
+    count: int
+
+
+class JobRetryRequest(BaseModel):
+    client_id: str | None = Field(default=None, max_length=128)
 
 
 class QuestionSummary(BaseModel):

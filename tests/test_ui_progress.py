@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from app.ui import components
+from app.ui.job_state import run_progress_payload
 from app.ui.progress import PIPELINE_STAGES, PIPELINE_STAGE_ORDER, normalize_progress
 
 
@@ -95,3 +98,25 @@ def test_component_can_show_internal_name_only_in_diagnostics(monkeypatch):
     assert "state-failed" in html
     assert "开发者诊断（默认折叠）" in html
     assert "private-model-id" in html
+
+
+def test_run_progress_payload_maps_job_to_model_card():
+    payload = run_progress_payload({
+        "status": "running",
+        "stage": "question_parser",
+        "progress_percent": 16,
+        "message": "正在连接 千问 3.6 Flash",
+        "model_alias": "fast",
+    })
+    snapshot = normalize_progress(payload)
+    assert payload["percent"] == 16
+    assert payload["model_alias"] == "fast"
+    assert snapshot.stage_label == "解析科学问题"
+    assert "千问 3.6 Flash" in snapshot.message
+
+
+def test_questions_page_uses_model_progress_not_pipeline_kpi():
+    source = Path("app/ui/workspace_pages.py").read_text(encoding="utf-8")
+    assert "_render_model_progress" in source
+    assert 'ws-kpi-label">当前流程进度' not in source
+    assert "流水线执行中" not in source
