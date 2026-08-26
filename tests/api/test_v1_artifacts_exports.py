@@ -106,6 +106,19 @@ def test_v1_requires_authentication_and_rate_limits_by_actor(tmp_path):
     ] == [{"APIKeyHeader": []}]
 
 
+def test_job_status_reads_do_not_exhaust_rate_limit(tmp_path):
+    app, store, _registry = _app(tmp_path, rate_limit=1)
+    with TestClient(app) as client:
+        job = _job(store)
+        for _ in range(3):
+            status = client.get(f"/api/v1/jobs/{job.job_id}", headers=OWNER_HEADERS)
+            assert status.status_code == 200
+        first = client.get("/api/v1/questions", headers=OWNER_HEADERS)
+        limited = client.get("/api/v1/questions", headers=OWNER_HEADERS)
+    assert first.status_code in {200, 503}
+    assert limited.status_code == 429
+
+
 def test_v1_rejects_oversized_json_before_parsing(tmp_path):
     app, _store, _registry = _app(tmp_path)
     with TestClient(app) as client:

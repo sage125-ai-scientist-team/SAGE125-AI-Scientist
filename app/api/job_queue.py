@@ -275,7 +275,26 @@ class InProcessJobQueue:
             if _deadline_exceeded(job):
                 raise JobDeadlineExceeded("job execution deadline exceeded")
             stage = str(payload.get("stage") or "running")
-            self.store.update_progress(job_id, stage)
+            current = payload.get("progress_current", payload.get("current"))
+            total = payload.get("progress_total", payload.get("total"))
+            self.store.update_progress(
+                job_id,
+                stage,
+                progress_current=int(current) if current is not None else None,
+                progress_total=int(total) if total is not None else None,
+                progress_percent=(
+                    int(payload["percent"]) if payload.get("percent") is not None else None
+                ),
+                message=payload.get("message"),
+                checkpoint_uri=payload.get("checkpoint_uri"),
+                result_uri=payload.get("result_uri"),
+                provider_call_count=(
+                    int(payload["provider_call_count"])
+                    if payload.get("provider_call_count") is not None
+                    else None
+                ),
+                model_alias=payload.get("model_alias"),
+            )
 
         try:
             result = _normalize_run_result(self.runner.run(job, progress))

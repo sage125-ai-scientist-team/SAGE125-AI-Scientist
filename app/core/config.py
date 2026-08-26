@@ -237,6 +237,7 @@ class Settings(BaseSettings):
     )
     export_dir: str = Field(default="exports", alias="EXPORT_DIR")
     data_dir: str = Field(default="data", alias="DATA_DIR")
+    sage125_results_root: str = Field(default="", alias="SAGE125_RESULTS_ROOT")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     cors_allow_origins: str = Field(
         default="http://127.0.0.1:8501,http://localhost:8501",

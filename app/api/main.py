@@ -113,7 +113,9 @@ def create_app(
         application.state.auth_policy = (
             auth_policy or HashedAPIKeyAuth.from_environment()
         )
-        application.state.rate_limiter = rate_limiter or FixedWindowRateLimiter()
+        application.state.rate_limiter = rate_limiter or FixedWindowRateLimiter(
+            limit=180, window_seconds=60
+        )
         application.state.artifact_registry = registry
         application.state.feedback_submit_port = (
             feedback_submit_port

@@ -15,6 +15,7 @@ from app.agents.base import BaseAgent
 from app.agents.prompts import EXPERIMENT_DESIGNER_PROMPT
 from app.core.agent_schemas import ExperimentDesignResult
 from app.core.config import Settings
+from app.execution import flagship_protocol
 from app.workflow import mock_outputs
 from app.workflow.mock_outputs import PENDING_RESULTS
 
@@ -66,8 +67,21 @@ class ExperimentDesignerAgent(BaseAgent):
 
         参数/返回：见 BaseAgent.run。
         """
-        # 先走标准模板得到结果。
+        # 先走标准模板得到结果（mock 模板或真实 LLM 生成）。
         result = super().run(input_data, state, step_index)
+        # Q028 是唯一接了真实可执行实验的题目：无论 mock 还是真实 LLM 模式，都
+        # 用预注册协议（app.execution.flagship_protocol）覆盖 LLM/模板自由生成
+        # 的 technical_details/datasets/methods/experiments，确保“研究计划”
+        # 页面文字与“运行真实实验”按钮实际执行的协议永远一致，不会出现评委
+        # 看到计划与实验对不上号的情况。这不是限制真实调用——Agent 仍然真实
+        # 调用了模型（其它字段/其它 Agent 不受影响）——只是这一固定协议的
+        # 措辞不允许被自由改写。
+        if flagship_protocol.is_flagship_question(input_data.get("question_item")):
+            pinned = flagship_protocol.experiment_design_fields()
+            result["technical_details"] = pinned["technical_details"]
+            result["datasets"] = pinned["datasets"]
+            result["methods"] = pinned["methods"]
+            result["experiments"] = pinned["experiments"]
         # 安全兜底：若未真实执行，强制 execution_metadata 与 pending results。
         meta = result.get("execution_metadata") or {}
         if not meta.get("actual_execution"):

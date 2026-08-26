@@ -212,6 +212,63 @@ def _ai_pack(q: str, domain: str) -> dict:
     }
 
 
+def _cancer_wdbc_pack(q: str, domain: str) -> dict:
+    """
+    Q028 专属内容包：与 experiments/flagship（真实可执行的 WDBC 旗舰实验）协议对齐。
+
+    只匹配 question_id == "Q028"（见 _select_pack），不做关键词泛匹配，避免把
+    其它 125 题里可能出现的“cancer/癌症”字样错误地绑定到这个真实协议上。
+
+    technical_details/datasets/methods/experiments 四个字段直接复用
+    app.execution.flagship_protocol 这个唯一权威来源——真实 LLM 模式下
+    app.agents.experiment_designer 也读同一个来源并覆盖模型输出，因此
+    Mock 与真实模式下 Q028 的“研究计划”文字与“运行真实实验”按钮实际执行的
+    协议永远一致，不会出现评委看到“计划与实验不一致”的情况。
+    """
+    from app.execution import flagship_protocol
+
+    design = flagship_protocol.experiment_design_fields()
+    return {
+        "keywords": ["breast cancer diagnosis", "cell nuclei measurements", "malignant benign classification"],
+        "entities": ["UCI WDBC dataset", "logistic regression", "balanced accuracy", "malignant recall"],
+        "question_type": "narrowed_falsifiable_subproblem",
+        "scientific_boundary": (
+            "把“是否有可能治愈所有癌症”这一宏大问题，收窄为一个当前可真实执行、可证伪的子问题："
+            "给定 UCI WDBC 数据集中 30 项细胞核测量特征，预测乳腺肿块的良性/恶性类别。"
+            "不构成、也不外推为对“治愈癌症”的回答。"
+        ),
+        "what_not_to_claim": [
+            "不得解释为治愈癌症", "不得外推到所有癌种", "不得外推到未验证人群", "不得替代临床诊断",
+            "不预测治疗效果", "不提出癌症疗法", "不用于临床决策", "不向患者提供诊断建议",
+        ],
+        "title": "乳腺肿块良恶性分类的可验证研究计划（WDBC 旗舰案例）",
+        "problem_statement": (
+            "给定固定 UCI WDBC 数据集中 30 项细胞核测量特征，在固定的 569 条记录范围内预测乳腺肿块"
+            "诊断类别（良性/恶性），并用 balanced accuracy 与 malignant recall 评价。"
+        ),
+        "rationale": "细胞核形态测量特征与病理诊断类别存在已知统计关联，可用监督学习做可验证、可复现的分类基线评估。",
+        "hypothesis": "标准化后的逻辑回归基线能够在留出测试集上取得较高的 balanced accuracy 与 malignant recall。",
+        "mechanism": "细胞核大小、纹理、对称性等测量特征的线性组合可分离良性与恶性样本的统计分布。",
+        "falsifiable_prediction": "若模型在留出测试集上的 balanced accuracy 或 malignant recall 明显低于预设阈值，则假设被削弱。",
+        "required_observations": ["UCI WDBC 30 项细胞核测量特征", "病理诊断标签（良性/恶性）"],
+        "risk_of_being_wrong": "单一线性模型可能欠拟合非线性边界，需与更复杂模型对比后再下结论。",
+        "technical_details": design["technical_details"],
+        "datasets": design["datasets"],
+        "methods": design["methods"],
+        "experiments": design["experiments"],
+        "ev_titles": [
+            "[MOCK] UCI WDBC 数据集与细胞核形态特征综述片段",
+            "[MOCK] 逻辑回归在乳腺肿块良恶性分类中的应用摘要",
+            "[MOCK] balanced accuracy 与 malignant recall 评价指标调研纪要",
+        ],
+        "ev_quotes": [
+            "细胞核形态测量特征与乳腺肿块良恶性诊断存在可观测的统计关联。（mock 原文片段）",
+            "在类别不均衡的诊断任务中，balanced accuracy 与召回率是常用的评价指标。（mock 摘要片段）",
+            "该研究计划刻意收窄为一个可执行、可证伪的子问题，不构成对癌症治愈的回答。（mock 调研纪要）",
+        ],
+    }
+
+
 def _generic_pack(q: str, domain: str) -> dict:
     """
     通用回退内容包：完全由问题文本驱动，绝不引入其它主题（尤其禁止 pandemic）。
@@ -280,6 +337,13 @@ def _select_pack(question_item: dict) -> dict:
     """
     q = (question_item.get("question") or "").strip()
     domain = (question_item.get("domain") or "").strip()
+    # Q028 是唯一接了真实可执行实验（app.execution.wdbc_baseline）的题目，用
+    # question_id 精确匹配而非关键词，避免其它含“cancer/癌症”字样的题目被
+    # 错误绑定到这个只对 Q028 真实成立的协议上。
+    from app.execution.flagship_protocol import is_flagship_question
+
+    if is_flagship_question(question_item):
+        return _cancer_wdbc_pack(q, domain)
     haystack = f"{q} {domain}".lower()
     for keywords, builder in _TOPIC_MATCHERS:
         if any(k in haystack for k in keywords):

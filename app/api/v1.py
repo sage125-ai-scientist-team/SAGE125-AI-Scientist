@@ -30,11 +30,15 @@ from app.api.contracts import (
     ExportCreateRequest,
     ExportResponse,
     FeedbackCreateRequest,
+    JOB_TYPE_FULL_RESEARCH_PIPELINE,
     JobAccepted,
     JobCreateRequest,
     JobError,
+    JobEventItem,
+    JobEventListResponse,
     JobLinks,
     JobListResponse,
+    JobRetryRequest,
     JobStatus,
     JobStatusResponse,
     MultimodalDetailListResponse,
@@ -288,6 +292,8 @@ _JOB_ACCEPTED_EXAMPLE = {
     "created_at": "2026-07-28T06:30:00Z",
     "status_url": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977",
     "reused": False,
+    "created": True,
+    "stage": "queued",
 }
 _JOB_STATUS_EXAMPLE = {
     "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
@@ -325,6 +331,27 @@ _JOB_STATUS_EXAMPLE = {
         "versions": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977/versions",
         "feedback": "/api/v1/jobs/c4ef4580-e351-4b44-b9a2-19edac5ec977/feedback",
     },
+}
+
+_JOB_EVENT_LIST_EXAMPLE = {
+    "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
+    "count": 1,
+    "items": [
+        {
+            "event_id": 1,
+            "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
+            "sequence": 1,
+            "event_type": "JOB_QUEUED",
+            "status": "queued",
+            "stage": "queued",
+            "progress_current": None,
+            "progress_total": None,
+            "progress_percent": None,
+            "message": None,
+            "payload_json": {},
+            "created_at": "2026-07-28T06:30:00Z",
+        }
+    ],
 }
 
 
@@ -471,6 +498,19 @@ def _status(record: JobRecord) -> JobStatusResponse:
         upstream_run_id=record.upstream_run_id,
         error=error,
         links=_links(record.job_id),
+        job_type=record.job_type or JOB_TYPE_FULL_RESEARCH_PIPELINE,
+        client_id=record.client_id,
+        progress_percent=record.progress_percent,
+        progress_current=record.progress_current,
+        progress_total=record.progress_total,
+        progress_mode=record.progress_mode or "indeterminate",
+        message=record.message,
+        checkpoint_uri=record.checkpoint_uri,
+        result_uri=record.result_uri,
+        provider_call_count=record.provider_call_count,
+        retry_of_job_id=record.retry_of_job_id,
+        input_digest=record.input_digest,
+        model_alias=record.model_alias,
     )
 
 
@@ -879,6 +919,8 @@ def create_job(
         created_at=datetime.fromisoformat(record.created_at),
         status_url=f"/api/v1/jobs/{record.job_id}",
         reused=reused,
+        created=not reused,
+        stage=record.stage,
     )
 
 
@@ -910,6 +952,142 @@ def list_jobs(
     return JobListResponse(items=items, count=len(items))
 
 
+def _adapt_event_type(event_type: str, to_status: str | None) -> str:
+    raw = str(event_type or "")
+    mapped = {
+        "created": "JOB_QUEUED",
+        "progress": "STAGE_PROGRESS",
+        "checkpoint_written": "CHECKPOINT_WRITTEN",
+        "retry_created": "JOB_QUEUED",
+    }
+    if raw in mapped:
+        return mapped[raw]
+    if raw == "transition":
+        return {
+            "running": "JOB_STARTED",
+            "completed": "JOB_SUCCEEDED",
+            "waiting_feedback": "JOB_SUCCEEDED",
+            "failed": "JOB_FAILED",
+            "cancelled": "JOB_CANCELLED",
+            "timed_out": "JOB_FAILED",
+            "queued": "JOB_INTERRUPTED",
+            "retrying": "JOB_INTERRUPTED",
+        }.get(str(to_status or ""), "STAGE_PROGRESS")
+    return raw.upper() or "STAGE_PROGRESS"
+
+
+def _event_item(job_id: str, row: dict) -> JobEventItem:
+    details = row.get("details") or row.get("payload_json") or {}
+    created = row.get("created_at")
+    created_at = (
+        datetime.fromisoformat(created) if isinstance(created, str) else datetime.now()
+    )
+    return JobEventItem(
+        event_id=int(row["event_id"]),
+        job_id=job_id,
+        sequence=int(row.get("sequence") or row["event_id"]),
+        event_type=_adapt_event_type(row.get("event_type"), row.get("to_status")),
+        status=row.get("to_status") or row.get("from_status"),
+        stage=row.get("stage"),
+        progress_current=details.get("progress_current"),
+        progress_total=details.get("progress_total"),
+        progress_percent=details.get("progress_percent"),
+        message=details.get("message"),
+        payload_json=details if isinstance(details, dict) else {},
+        created_at=created_at,
+    )
+
+
+@router.get(
+    "/jobs/active",
+    response_model=JobStatusResponse,
+    responses={
+        200: _documented_response("活动任务", _JOB_STATUS_EXAMPLE),
+        **_ERROR_RESPONSES,
+    },
+    summary="查询当前活动任务",
+)
+def get_active_job(
+    request: Request,
+    client_id: str | None = Query(default=None, max_length=128),
+    question_id: str = Query(min_length=1, max_length=64),
+    job_type: str | None = Query(default=None, max_length=64),
+) -> JobStatusResponse:
+    record = _store(request).find_active_job(
+        client_id=client_id or "",
+        question_id=question_id,
+        job_type=job_type,
+        requested_by=principal(request).actor_id,
+    )
+    if record is None and client_id:
+        record = _store(request).find_active_job(
+            client_id=client_id,
+            question_id=question_id,
+            job_type=job_type,
+        )
+    if record is None:
+        raise APIError(
+            status_code=404,
+            code="JOB_NOT_FOUND",
+            message="没有活动任务。",
+            details={"question_id": question_id, "job_type": job_type},
+        )
+    if record.requested_by != principal(request).actor_id:
+        raise APIError(
+            status_code=403,
+            code="FORBIDDEN",
+            message="无权访问该任务。",
+            details={"job_id": record.job_id},
+            retryable=False,
+        )
+    return _status(record)
+
+
+@router.get(
+    "/jobs/latest",
+    response_model=JobStatusResponse,
+    responses={
+        200: _documented_response("最近任务", _JOB_STATUS_EXAMPLE),
+        **_ERROR_RESPONSES,
+    },
+    summary="查询最近一次任务",
+)
+def get_latest_job(
+    request: Request,
+    client_id: str | None = Query(default=None, max_length=128),
+    question_id: str = Query(min_length=1, max_length=64),
+    job_type: str | None = Query(default=None, max_length=64),
+) -> JobStatusResponse:
+    record = _store(request).find_latest_job(
+        client_id=client_id,
+        question_id=question_id,
+        job_type=job_type,
+        requested_by=principal(request).actor_id,
+    )
+    if record is None and client_id:
+        record = _store(request).find_latest_job(
+            client_id=client_id,
+            question_id=question_id,
+            job_type=job_type,
+        )
+    if record is None:
+        raise APIError(
+            status_code=404,
+            code="JOB_NOT_FOUND",
+            message="没有历史任务。",
+            details={"question_id": question_id},
+        )
+    if record.requested_by != principal(request).actor_id:
+        raise APIError(
+            status_code=403,
+            code="FORBIDDEN",
+            message="无权访问该任务。",
+            details={"job_id": record.job_id},
+            retryable=False,
+        )
+    return _status(record)
+
+
 @router.get(
     "/jobs/{job_id}",
     response_model=JobStatusResponse,
@@ -921,6 +1099,82 @@ def list_jobs(
 )
 def get_job(job_id: str, request: Request) -> JobStatusResponse:
     return _status(_get_job(request, job_id))
+
+
+@router.get(
+    "/jobs/{job_id}/events",
+    response_model=JobEventListResponse,
+    responses={
+        200: _documented_response("任务事件", _JOB_EVENT_LIST_EXAMPLE),
+        **_ERROR_RESPONSES,
+    },
+    summary="读取任务事件流",
+)
+def list_job_events(
+    job_id: str,
+    request: Request,
+    after_sequence: int = Query(default=0, ge=0),
+) -> JobEventListResponse:
+    record = _get_job(request, job_id)
+    rows = _store(request).list_events(record.job_id, after_sequence=after_sequence)
+    items = [_event_item(record.job_id, row) for row in rows]
+    return JobEventListResponse(job_id=record.job_id, items=items, count=len(items))
+
+
+@router.post(
+    "/jobs/{job_id}/retry",
+    response_model=JobAccepted,
+    status_code=202,
+    responses={
+        202: _documented_response("重试已入队", _JOB_ACCEPTED_EXAMPLE),
+        **_ERROR_RESPONSES,
+    },
+    summary="从检查点创建重试任务",
+)
+def retry_job(
+    job_id: str,
+    request: Request,
+    payload: JobRetryRequest | None = None,
+) -> JobAccepted:
+    original = _get_job(request, job_id)
+    try:
+        record, reused = _store(request).create_retry(
+            original.job_id,
+            correlation_id=correlation_id(request),
+            requested_by=principal(request).actor_id,
+            client_id=(payload.client_id if payload else None) or original.client_id,
+        )
+    except IdempotencyConflict:
+        raise APIError(
+            status_code=409,
+            code="IDEMPOTENCY_CONFLICT",
+            message="无法创建重试任务。",
+        ) from None
+    if not reused:
+        try:
+            _queue(request).submit(record.job_id)
+        except QueueCapacityError:
+            rejected = _store(request).transition(
+                record.job_id,
+                JobStatus.FAILED,
+                stage="queue_rejected",
+                actor="api",
+                source="queue",
+                error_code="QUEUE_CAPACITY_EXCEEDED",
+                error_message="任务队列已满，请稍后重试。",
+                retryable=True,
+            )
+            _raise_queue_capacity(rejected)
+    return JobAccepted(
+        job_id=record.job_id,
+        correlation_id=record.correlation_id,
+        status=JobStatus(record.status),
+        created_at=datetime.fromisoformat(record.created_at),
+        status_url=f"/api/v1/jobs/{record.job_id}",
+        reused=reused,
+        created=not reused,
+        stage=record.stage,
+    )
 
 
 @router.get(

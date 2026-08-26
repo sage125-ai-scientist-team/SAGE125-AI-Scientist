@@ -75,7 +75,7 @@ services:
       - -m
       - streamlit
       - run
-      - frontend/streamlit_app.py
+      - app/ui/streamlit_app.py
       - --server.address
       - 0.0.0.0
       - --server.port
@@ -87,9 +87,7 @@ services:
       - --browser.gatherUsageStats
       - "false"
     environment:
-      SAGE_UI_API_BASE_URL: http://api:8000
-      SAGE_UI_API_KEY: "${SAGE125_DEMO_API_KEY:-local-demo-key-change-me}"
-      SAGE_UI_TIMEOUT_SECONDS: "10"
+      FRONTEND_API_BASE_URL: http://api:8000
       HOME: /tmp/sage-home
       XDG_CACHE_HOME: /tmp/sage-home/.cache
       XDG_CONFIG_HOME: /tmp/sage-home/.config

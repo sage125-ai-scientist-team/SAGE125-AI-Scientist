@@ -13,11 +13,13 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 from pathlib import Path
 from typing import Any, Callable, Optional
 from urllib.parse import quote
 
 import requests
+import streamlit as st
 
 from app.workflow.artifacts import resolve_artifact_base
 
@@ -83,6 +85,28 @@ def _run_timeout_seconds(mode: str = "mock", use_deep_research: bool = False) ->
     return 120
 
 
+def _coerce_run_payload(body: Any) -> dict:
+    """把 FastAPI `{detail: RunResponse}` 或字符串 detail 收成前端可用的运行结果。"""
+    if not isinstance(body, dict):
+        text = str(body or "未知错误")
+        return {"status": "failed", "errors": [text], "message": text}
+    detail = body.get("detail")
+    if isinstance(detail, dict):
+        payload = dict(detail)
+        if not payload.get("errors") and isinstance(detail.get("details"), dict):
+            nested = detail.get("details") or {}
+            if nested.get("errors"):
+                payload["errors"] = list(nested["errors"])
+        if not payload.get("errors") and detail.get("message"):
+            payload["errors"] = [str(detail["message"])]
+        if body.get("status") and not payload.get("status"):
+            payload["status"] = body["status"]
+        return payload
+    if isinstance(detail, str) and not body.get("errors"):
+        return {**body, "status": body.get("status", "failed"), "errors": [detail], "message": body.get("message") or detail}
+    return body
+
+
 def _prefer_inprocess_run() -> bool:
     """
     是否优先在 Streamlit 进程内直接跑 pipeline（默认 True，避免 HTTP 读超时）。
@@ -102,25 +126,58 @@ def api_base() -> str:
     return os.getenv("FRONTEND_API_BASE_URL", "http://localhost:8000").rstrip("/")
 
 
-def api_available() -> bool:
-    """探测 API 是否可达，并为托管环境冷启动预留时间。"""
+@st.cache_resource(show_spinner=False)
+def _http_session() -> requests.Session:
+    """全进程共享的 HTTP 连接池（st.cache_resource）。
+
+    避免每次页面交互都新建 TCP/TLS 连接；同一 Session 在多次 rerun 间
+    复用底层连接，显著降低本地 API 往返延迟。
+    """
+    s = requests.Session()
+    s.headers.update({"Connection": "keep-alive"})
+    return s
+
+
+# 健康/诊断结果的短 TTL 缓存。TTL 故意保持很短（而不是 0），既能吸收同一次
+# rerun 内的重复调用与切页抖动，又不会让「服务刚恢复」这类状态长时间失真。
+_HEALTH_CACHE_TTL_SECONDS = 6
+_DIAG_CACHE_TTL_SECONDS = 6
+_QUESTIONS_CACHE_TTL_SECONDS = 300
+
+
+@st.cache_data(ttl=_HEALTH_CACHE_TTL_SECONDS, show_spinner=False)
+def _fetch_health_cached(_cache_bust: int) -> tuple[bool, dict]:
+    """实际发起一次健康检查 HTTP 请求；返回 (api_connected, health_json)。
+
+    `_cache_bust` 仅用于让调用方能主动失效缓存（传入变化的整数），
+    st.cache_data 本身按参数值区分缓存条目。
+    """
     try:
         r = requests.get(f"{api_base()}/health", timeout=_wake_timeout_seconds())
-        return r.status_code == 200
+        if r.status_code != 200:
+            return False, {}
+        try:
+            payload = r.json() if callable(getattr(r, "json", None)) else {}
+        except (TypeError, ValueError, AttributeError):
+            payload = {}
+        return True, payload if isinstance(payload, dict) else {}
     except requests.RequestException:
-        return False
+        return False, {}
+
+
+def api_available() -> bool:
+    """探测 API 是否可达（复用健康检查缓存，不再发起独立的第二次请求）。"""
+    connected, _ = _fetch_health_cached(0)
+    return connected
 
 
 # ---- 各接口：HTTP 优先，失败回退进程内 ----
 
 def get_health() -> dict:
-    """获取健康状态（HTTP 优先，首次加载允许托管 API 唤醒）。"""
-    try:
-        r = requests.get(f"{api_base()}/health", timeout=_wake_timeout_seconds())
-        if r.status_code == 200:
-            return r.json()
-    except requests.RequestException:
-        pass
+    """获取健康状态（HTTP 优先并短 TTL 缓存，首次加载允许托管 API 唤醒）。"""
+    connected, payload = _fetch_health_cached(0)
+    if connected and payload:
+        return payload
     if _api_only():
         return {
             "status": "unavailable",
@@ -140,14 +197,22 @@ def get_health() -> dict:
     return _health()
 
 
-def get_diagnostics() -> dict:
-    """获取系统诊断（HTTP 优先，回退进程内）。"""
+@st.cache_data(ttl=_DIAG_CACHE_TTL_SECONDS, show_spinner=False)
+def _fetch_diagnostics_cached(_cache_bust: int) -> dict | None:
     try:
-        r = requests.get(f"{api_base()}/diagnostics", timeout=_short_timeout_seconds())
+        r = _http_session().get(f"{api_base()}/diagnostics", timeout=_short_timeout_seconds())
         if r.status_code == 200:
             return r.json()
     except requests.RequestException:
         pass
+    return None
+
+
+def get_diagnostics() -> dict:
+    """获取系统诊断（HTTP 优先并短 TTL 缓存，回退进程内）。"""
+    cached = _fetch_diagnostics_cached(0)
+    if cached is not None:
+        return cached
     if _api_only():
         return {
             "status": "error",
@@ -165,9 +230,9 @@ def get_diagnostics() -> dict:
 
 
 def get_runs(limit: int = 20) -> list[dict]:
-    """获取最近运行列表（HTTP 优先，回退进程内 run_browser）。"""
+    """获取最近运行列表（HTTP 优先，复用连接池，回退进程内 run_browser）。"""
     try:
-        r = requests.get(
+        r = _http_session().get(
             f"{api_base()}/runs",
             params={"limit": limit},
             timeout=_short_timeout_seconds(),
@@ -183,14 +248,34 @@ def get_runs(limit: int = 20) -> list[dict]:
     return list_runs(limit=limit)
 
 
-def get_questions() -> dict:
-    """获取 125 问题清单（HTTP 优先，回退读取本地文件）。"""
+def _questions_file_fingerprint() -> float:
+    """125 题清单文件的 mtime；作为缓存键的一部分，文件变化即自动失效缓存。"""
     try:
-        r = requests.get(f"{api_base()}/questions", timeout=_short_timeout_seconds())
+        return QUESTIONS_PATH.stat().st_mtime
+    except OSError:
+        return 0.0
+
+
+@st.cache_data(ttl=_QUESTIONS_CACHE_TTL_SECONDS, show_spinner=False)
+def _fetch_questions_cached(_fingerprint: float) -> dict | None:
+    try:
+        r = _http_session().get(f"{api_base()}/questions", timeout=_short_timeout_seconds())
         if r.status_code == 200:
             return r.json()
     except requests.RequestException:
         pass
+    return None
+
+
+def get_questions() -> dict:
+    """获取 125 问题清单（HTTP 优先并缓存，回退读取本地文件）。
+
+    缓存键包含 `questions_125.json` 的 mtime：manifest 更新后自动失效，
+    不依赖固定 TTL 也能拿到新数据；不必每次 rerun 都重新遍历/请求。
+    """
+    cached = _fetch_questions_cached(_questions_file_fingerprint())
+    if cached is not None:
+        return cached
     if _api_only():
         return {"status": "unavailable", "message": "sage125-api 暂不可用。"}
     # 回退：直接读文件。
@@ -859,9 +944,22 @@ def start_run(
             if progress_callback:
                 progress_callback({"stage": "completed", "status": "completed", "percent": 100,
                                    "message": "AI Scientist 运行完成"})
-            return {**r.json(), "mock": mode == "mock"}
-        body = r.json() if r.headers.get("content-type", "").startswith("application/json") else {"errors": [r.text]}
-        return {**body, "status": body.get("status", "failed"), "mock": mode == "mock", "error_type": "http_error"}
+            return {**_coerce_run_payload(r.json()), "mock": mode == "mock"}
+        try:
+            raw_body = r.json() if "json" in r.headers.get("content-type", "") else {"errors": [r.text]}
+        except ValueError:
+            raw_body = {"errors": [r.text or f"HTTP {r.status_code}"]}
+        body = _coerce_run_payload(raw_body)
+        error_type = body.get("error_type") or "http_error"
+        if body.get("preflight") or body.get("message") == "preflight 未通过":
+            error_type = "preflight_failed"
+        return {
+            **body,
+            "status": body.get("status", "failed"),
+            "errors": body.get("errors") or [body.get("message") or f"HTTP {r.status_code}"],
+            "mock": mode == "mock",
+            "error_type": error_type,
+        }
     except requests.exceptions.ReadTimeout:
         recovered = recover_run_after_timeout(question_id, min_mtime=started_at - 5)
         if recovered:
@@ -887,6 +985,64 @@ def start_run(
                 "error_type": "read_timeout",
             }
         return {"status": "failed", "errors": [err], "mock": mode == "mock", "error_type": "connection_error"}
+
+
+def run_experiment(question_id: str) -> dict:
+    """
+    触发一次真实实验执行（HTTP 优先，回退进程内）。
+
+    目前仅 Q028 有可执行的科学入口；其它题目服务端会诚实返回
+    ``available=False``，前端不编造结果。
+    """
+    qid = str(question_id or "").strip()
+    try:
+        r = requests.post(
+            f"{api_base()}/experiments/{quote(qid, safe='')}/run",
+            timeout=max(_short_timeout_seconds(), 60),
+        )
+        if r.status_code == 200:
+            return r.json()
+    except requests.RequestException:
+        pass
+    if _api_only():
+        return {
+            "question_id": qid,
+            "available": False,
+            "status": "not_available",
+            "reason": "sage125-api 暂不可用，无法运行真实实验。",
+        }
+    from app.api.routes import run_experiment as _run_experiment
+
+    return _run_experiment(qid)
+
+
+def get_experiment_canonical_status(question_id: str) -> dict:
+    """
+    只读地获取旗舰案例 canonical package / 原子发布状态（HTTP 优先，回退进程内）。
+
+    绝不在此调用中触发实验执行或发布动作；仅读取现有磁盘证据与已发布的
+    canonical pointer（如有）。
+    """
+    qid = str(question_id or "").strip()
+    try:
+        r = requests.get(
+            f"{api_base()}/experiments/{quote(qid, safe='')}/canonical-status",
+            timeout=_short_timeout_seconds(),
+        )
+        if r.status_code == 200:
+            return r.json()
+    except requests.RequestException:
+        pass
+    if _api_only():
+        return {
+            "question_id": qid,
+            "available": False,
+            "status": "not_available",
+            "reason": "sage125-api 暂不可用，无法读取 canonical 状态。",
+        }
+    from app.api.routes import get_experiment_canonical_status as _get_status
+
+    return _get_status(qid)
 
 
 def get_llm_calls(run_id: str) -> dict:
@@ -980,3 +1136,223 @@ def read_local_file(run_id: str, file_name: str) -> Optional[bytes]:
     """读取某运行产物文件内容字节（不存在返回 None）。"""
     p = local_file_path(run_id, file_name)
     return p.read_bytes() if p else None
+
+
+def _job_headers() -> dict[str, str]:
+    return {"Accept": "application/json"}
+
+
+def _job_error_payload(response: requests.Response) -> dict[str, Any]:
+    try:
+        body = response.json()
+    except ValueError:
+        body = {"message": response.text}
+    detail = body.get("detail") if isinstance(body, dict) else None
+    if isinstance(detail, dict):
+        body = {**body, **detail}
+    return body if isinstance(body, dict) else {"message": str(body)}
+
+
+def create_job(
+    *,
+    question_id: str,
+    mode: str,
+    job_type: str,
+    client_id: str,
+    input_digest: str,
+    idempotency_key: str,
+    options: dict | None = None,
+) -> dict[str, Any]:
+    """创建或复用后台 Job；不执行科学流水线。"""
+    if not api_available():
+        return {
+            "status": "failed",
+            "error_type": "api_unavailable",
+            "errors": ["sage125-api 暂不可用，无法在后台启动长任务。"],
+        }
+    payload = {
+        "question_id": question_id,
+        "mode": mode,
+        "job_type": job_type,
+        "client_id": client_id,
+        "input_digest": input_digest,
+        "options": options
+        or {
+            "use_deep_research": True,
+            "use_open_literature": True,
+            "use_local_rag": True,
+            "reviewer_auto_revision": True,
+        },
+    }
+    try:
+        response = _http_session().post(
+            f"{api_base()}/api/v1/jobs",
+            json=payload,
+            headers={**_job_headers(), "Idempotency-Key": idempotency_key},
+            timeout=_short_timeout_seconds(),
+        )
+    except requests.RequestException as exc:
+        return {"status": "failed", "error_type": "network", "errors": [str(exc)]}
+    if response.status_code not in (200, 202):
+        body = _job_error_payload(response)
+        return {
+            "status": "failed",
+            "error_type": body.get("code") or "http_error",
+            "errors": [body.get("message") or f"HTTP {response.status_code}"],
+            **body,
+        }
+    data = response.json()
+    data["created"] = bool(data.get("created", not data.get("reused")))
+    return data
+
+
+_JOB_STATUS_MEMO: dict[str, tuple[float, dict[str, Any]]] = {}
+
+
+def get_job(job_id: str) -> dict[str, Any] | None:
+    if not job_id:
+        return None
+    now = time.monotonic()
+    cached = _JOB_STATUS_MEMO.get(job_id)
+    if cached and now - cached[0] < 1.0:
+        return cached[1]
+    try:
+        response = _http_session().get(
+            f"{api_base()}/api/v1/jobs/{job_id}",
+            headers=_job_headers(),
+            timeout=_short_timeout_seconds(),
+        )
+    except requests.RequestException:
+        return cached[1] if cached else None
+    if response.status_code == 429 and cached:
+        return cached[1]
+    if response.status_code != 200:
+        return cached[1] if cached else None
+    payload = response.json()
+    if isinstance(payload, dict):
+        _JOB_STATUS_MEMO[job_id] = (now, payload)
+        return payload
+    return None
+
+
+def list_job_events(job_id: str, *, after_sequence: int = 0) -> list[dict[str, Any]]:
+    if not job_id or not api_available():
+        return []
+    try:
+        response = _http_session().get(
+            f"{api_base()}/api/v1/jobs/{job_id}/events",
+            params={"after_sequence": after_sequence},
+            headers=_job_headers(),
+            timeout=_short_timeout_seconds(),
+        )
+    except requests.RequestException:
+        return []
+    if response.status_code != 200:
+        return []
+    payload = response.json()
+    items = payload.get("items") if isinstance(payload, dict) else []
+    return items if isinstance(items, list) else []
+
+
+def get_active_job(
+    *,
+    client_id: str,
+    question_id: str,
+    job_type: str | None = None,
+) -> dict[str, Any] | None:
+    params = {"client_id": client_id, "question_id": question_id}
+    if job_type:
+        params["job_type"] = job_type
+    try:
+        response = _http_session().get(
+            f"{api_base()}/api/v1/jobs/active",
+            params=params,
+            headers=_job_headers(),
+            timeout=_short_timeout_seconds(),
+        )
+    except requests.RequestException:
+        return None
+    if response.status_code != 200:
+        return None
+    payload = response.json()
+    return payload if isinstance(payload, dict) else None
+
+
+def get_latest_job(
+    *,
+    client_id: str,
+    question_id: str,
+    job_type: str | None = None,
+) -> dict[str, Any] | None:
+    params = {"client_id": client_id, "question_id": question_id}
+    if job_type:
+        params["job_type"] = job_type
+    try:
+        response = _http_session().get(
+            f"{api_base()}/api/v1/jobs/latest",
+            params=params,
+            headers=_job_headers(),
+            timeout=_short_timeout_seconds(),
+        )
+    except requests.RequestException:
+        return None
+    if response.status_code != 200:
+        return None
+    payload = response.json()
+    return payload if isinstance(payload, dict) else None
+
+
+def list_jobs(
+    *,
+    question_id: str | None = None,
+    status: str | None = None,
+    limit: int = 20,
+) -> list[dict[str, Any]]:
+    params: dict[str, Any] = {"limit": limit}
+    if question_id:
+        params["question_id"] = question_id
+    if status:
+        params["status"] = status
+    try:
+        response = _http_session().get(
+            f"{api_base()}/api/v1/jobs",
+            params=params,
+            headers=_job_headers(),
+            timeout=_short_timeout_seconds(),
+        )
+    except requests.RequestException:
+        return []
+    if response.status_code != 200:
+        return []
+    payload = response.json()
+    items = payload.get("items") if isinstance(payload, dict) else []
+    return items if isinstance(items, list) else []
+
+
+def retry_job(job_id: str, *, client_id: str | None = None) -> dict[str, Any]:
+    if not api_available():
+        return {
+            "status": "failed",
+            "error_type": "api_unavailable",
+            "errors": ["sage125-api 暂不可用，无法重试。"],
+        }
+    try:
+        response = _http_session().post(
+            f"{api_base()}/api/v1/jobs/{job_id}/retry",
+            json={"client_id": client_id} if client_id else {},
+            headers=_job_headers(),
+            timeout=_short_timeout_seconds(),
+        )
+    except requests.RequestException as exc:
+        return {"status": "failed", "error_type": "network", "errors": [str(exc)]}
+    if response.status_code not in (200, 202):
+        body = _job_error_payload(response)
+        return {
+            "status": "failed",
+            "error_type": body.get("code") or "http_error",
+            "errors": [body.get("message") or f"HTTP {response.status_code}"],
+            **body,
+        }
+    data = response.json()
+    data["created"] = bool(data.get("created", not data.get("reused")))
+    return data

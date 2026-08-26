@@ -10,6 +10,9 @@ app.api.routes —— 业务路由定义（供“科研发现控制台”前端�
     POST /runs/{run_id}/feedback         人在回路反馈修订
     GET  /runs/{run_id}/export/markdown  下载 report.md
     GET  /runs/{run_id}/export/pdf       下载/生成 report.pdf
+    POST /experiments/{question_id}/run  触发真实科学实验入口（目前仅 Q028）
+    GET  /experiments/{question_id}/canonical-status
+                                          只读旗舰案例 canonical/原子发布状态（目前仅 Q028）
 
 安全：绝不返回 API Key 或 .env 全量；仅返回模型名、配置状态、索引状态。
 """
@@ -628,3 +631,97 @@ def export_pdf(run_id: str):
             status_code=501,
             content={"status": "pdf_unavailable", "message": "PDF 生成失败（weasyprint 不可用），请改用 Markdown/JSON。"},
         )
+
+
+# 目前 125 题里只有 Q028 注册了可执行的真实科学实验入口（WDBC 旗舰案例，
+# app.execution.run_round1 / run_round2）。其它题目没有可执行代码，按钮点击
+# 后必须诚实返回 available=false，绝不编造实验结果。
+_EXECUTABLE_QUESTION_IDS = {"Q028"}
+
+
+@router.post("/experiments/{question_id}/run")
+def run_experiment(question_id: str) -> dict:
+    """
+    触发一次网页界面的真实实验执行（目前仅 Q028 有可执行入口）。
+
+    参数：
+        question_id: 问题 ID。
+
+    返回：
+        ``available=False`` 且带诚实原因（无可执行入口）；
+        或 ``available=True`` 且携带真实 ``ExecutionResult`` 摘要
+        （metrics、status、execution_id、git_sha 等，无一编造）。
+    """
+    qid = (question_id or "").strip().upper()
+    if qid not in _EXECUTABLE_QUESTION_IDS:
+        return {
+            "question_id": question_id,
+            "available": False,
+            "status": "not_available",
+            "reason": (
+                "该题目当前没有可执行的真实科学实验入口（scientific entrypoint），"
+                "系统不会编造实验结果。"
+            ),
+        }
+
+    from app.execution.q028_demo_run import Q028DemoRunError, run_q028_demo_experiment
+
+    try:
+        result = run_q028_demo_experiment()
+    except Q028DemoRunError as exc:
+        logger.warning("q028_demo_run_unavailable: %s", exc)
+        return {
+            "question_id": question_id,
+            "available": True,
+            "status": "failed",
+            "reason": str(exc),
+        }
+    except Exception as exc:  # noqa: BLE001 - 演示入口需要如实回传失败原因
+        logger.warning("q028_demo_run_failed: %s", exc)
+        return {
+            "question_id": question_id,
+            "available": True,
+            "status": "failed",
+            "reason": f"真实实验执行异常：{exc}",
+        }
+    return {"available": True, **result}
+
+
+@router.get("/experiments/{question_id}/canonical-status")
+def get_experiment_canonical_status(question_id: str) -> dict:
+    """
+    只读地返回旗舰案例的 canonical package / 原子发布状态（目前仅 Q028）。
+
+    绝不在此端点内触发任何实验执行、模型调用或发布动作；仅读取磁盘上
+    已经存在的证据与（如有）已发布的 canonical pointer。
+
+    参数：
+        question_id: 问题 ID。
+
+    返回：
+        ``available=False`` 且带诚实原因（该题目未接入 canonical 发布流水线）；
+        或 ``available=True`` 且携带真实的语义校验状态、Round1/Round2 阻断
+        信息、以及 canonical 是否已发布（PUBLISHED_VERIFIED）。
+    """
+    qid = (question_id or "").strip().upper()
+    if qid not in _EXECUTABLE_QUESTION_IDS:
+        return {
+            "question_id": question_id,
+            "available": False,
+            "status": "not_available",
+            "reason": "该题目当前没有接入 canonical package 发布流水线。",
+        }
+
+    try:
+        from app.execution.flagship_publish import get_canonical_status
+
+        status = get_canonical_status()
+    except Exception as exc:  # noqa: BLE001 - 只读状态端点需要如实回传失败原因
+        logger.warning("flagship_canonical_status_failed: %s", exc)
+        return {
+            "question_id": question_id,
+            "available": True,
+            "status": "error",
+            "reason": f"读取 canonical 状态异常：{exc}",
+        }
+    return {"question_id": question_id, "available": True, **status}

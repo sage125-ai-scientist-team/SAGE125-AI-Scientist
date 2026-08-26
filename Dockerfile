@@ -31,12 +31,15 @@ RUN apt-get update \
 WORKDIR /opt/sage125
 
 COPY requirements.txt ./requirements.txt
+# 首页 CCv2 组件（tsParticles + Magic UI）以可编辑方式安装，需要在
+# `pip install -r requirements.txt` 之前就位；只包含 Python 包清单和已经
+# 本地构建好的 frontend/build 产物，不在镜像内运行 npm。
+COPY --chown=10001:10001 frontend_components ./frontend_components
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 # Runtime files are copied from an allowlisted build context.  No repository
 # root, .env, tests, local data, exports, or VCS metadata enters the image.
 COPY --chown=10001:10001 app ./app
-COPY --chown=10001:10001 frontend ./frontend
 COPY --chown=10001:10001 scripts ./scripts
 
 RUN mkdir -p \

@@ -41,8 +41,8 @@ def test_selector_uses_qid_and_card_matches_selected_question(monkeypatch):
     finally:
         st.session_state = original_session  # type: ignore[assignment]
 
-    assert seen["options"] == ["Q001", "Q024"]
-    assert seen["index"] == 1
+    assert seen["options"] == ["", "Q001", "Q024"]
+    assert seen["index"] == 2
     assert qid == "Q024"
     assert any("Q024" in html and "Can xenotransplantation help?" in html for html in rendered)
 
