@@ -342,7 +342,7 @@ def test_job_store_migrates_retry_timeout_columns_and_status_exposes_metadata(tm
         "deadline_at",
         "timed_out_at",
     } <= legacy_columns
-    assert migrations == [(2,)]
+    assert migrations == [(2,), (3,)]
 
     client, store = _client(tmp_path / "api")
     with client:
