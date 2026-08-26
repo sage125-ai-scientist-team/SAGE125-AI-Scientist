@@ -62,12 +62,11 @@ def render_plotly_chart(
         "width": width,
         "theme": None,
         "key": key,
-        "config": PLOTLY_CONFIG,
     }
     if on_select is not None:
         kwargs["on_select"] = on_select
         kwargs["selection_mode"] = selection_mode
-    return st.plotly_chart(figure, **kwargs)
+    return st.plotly_chart(figure, config=PLOTLY_CONFIG, **kwargs)
 
 
 def _empty_fig(title: str) -> go.Figure:

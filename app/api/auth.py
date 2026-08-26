@@ -30,8 +30,8 @@ class AuthPolicy(Protocol):
 class HashedAPIKeyAuth:
     """Keep only SHA-256 token digests in memory and compare in constant time."""
 
-    #: 本地/演示环境放行 actor。当 SAGE_API_KEYS_JSON 未配置时启用，
-    #: 使前端及任意调用方无需任何手工配置 key 即可访问后端（本地单机使用场景）。
+    #: 仅在 APP_ENV=local|preview 或 SAGE_API_OPEN_ACCESS=1 时启用的放行 actor。
+    #: 未配置 SAGE_API_KEYS_JSON 的默认/CI 环境必须 fail-closed。
     _OPEN_ACCESS_ACTOR = "local-open-access"
 
     def __init__(self, actor_tokens: Mapping[str, str], *, open_access: bool = False) -> None:
@@ -51,15 +51,20 @@ class HashedAPIKeyAuth:
     @classmethod
     def from_environment(cls) -> "HashedAPIKeyAuth":
         raw = os.getenv("SAGE_API_KEYS_JSON", "").strip()
-        if not raw:
+        if raw:
+            try:
+                payload = json.loads(raw)
+            except json.JSONDecodeError as exc:
+                raise ValueError("SAGE_API_KEYS_JSON must be a JSON object") from exc
+            if not isinstance(payload, dict):
+                raise ValueError("SAGE_API_KEYS_JSON must map actor IDs to API keys")
+            return cls({str(actor): str(token) for actor, token in payload.items()})
+        app_env = os.getenv("APP_ENV", "").strip().lower()
+        open_flag = os.getenv("SAGE_API_OPEN_ACCESS", "").strip().lower() in {"1", "true", "yes"}
+        # 仅本地/预览显式开放；未配置 key 的默认与 CI 必须 fail-closed。
+        if open_flag or app_env in {"local", "preview"}:
             return cls({}, open_access=True)
-        try:
-            payload = json.loads(raw)
-        except json.JSONDecodeError as exc:
-            raise ValueError("SAGE_API_KEYS_JSON must be a JSON object") from exc
-        if not isinstance(payload, dict):
-            raise ValueError("SAGE_API_KEYS_JSON must map actor IDs to API keys")
-        return cls({str(actor): str(token) for actor, token in payload.items()})
+        return cls({}, open_access=False)
 
     def authenticate(self, api_key: str | None) -> APIPrincipal:
         if self._open_access:
