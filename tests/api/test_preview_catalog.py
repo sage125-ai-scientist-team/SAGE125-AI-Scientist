@@ -57,9 +57,11 @@ def test_resolve_prefers_explicit_data_dir_even_when_missing(tmp_path, monkeypat
 
     path = resolve_runtime_questions_path()
 
-    assert path == data_root / "processed" / "questions_125.json"
-    assert path == writable_catalog_path()
-    assert not path.exists()
+    from app.catalog.official import official_catalog_path
+
+    assert path == official_catalog_path()
+    assert path.exists()
+    assert not (data_root / "processed" / "questions_125.json").exists()
 
 
 def test_write_preview_catalog_marks_seed_and_stays_out_of_repo(tmp_path, monkeypatch):
@@ -80,7 +82,7 @@ def test_write_preview_catalog_marks_seed_and_stays_out_of_repo(tmp_path, monkey
     payload = json.loads(written.read_text(encoding="utf-8"))
 
     assert written == target
-    assert catalog_is_usable(written)
+    assert catalog_is_usable(written) is False
     assert len(payload) == 125
     assert all(item.get("preview_seed") is True for item in payload)
     assert all(item.get("label_tier") == "preview_seed" for item in payload)
@@ -107,30 +109,32 @@ def test_ensure_preview_catalog_is_noop_outside_preview(tmp_path, monkeypatch):
 
     result = ensure_preview_catalog()
 
-    assert result is None
+    from app.catalog.official import official_catalog_path
+
+    assert result == official_catalog_path()
     assert not (data_root / "processed" / "questions_125.json").exists()
 
 
 def test_ensure_preview_catalog_writes_data_dir_and_exports_env(tmp_path, monkeypatch):
     """
-    Preview 启动必须把 SAGE_QUESTIONS_PATH 指到 DATA_DIR 文件。
-
-    参数：
-        tmp_path: pytest 临时目录。
-        monkeypatch: 环境隔离。
+    Preview 启动必须绑定官方 Catalog，不得因 APP_ENV=preview 写 seed。
     """
     data_root = tmp_path / "preview-data"
     monkeypatch.setenv("DATA_DIR", str(data_root))
     monkeypatch.setenv("APP_ENV", "preview")
     monkeypatch.setenv("PREVIEW_EPHEMERAL_STORAGE", "true")
     monkeypatch.delenv("SAGE_QUESTIONS_PATH", raising=False)
+    monkeypatch.delenv("SAGE125_ALLOW_PREVIEW_SEED", raising=False)
     _clear_settings()
 
     result = ensure_preview_catalog()
 
-    assert result == data_root / "processed" / "questions_125.json"
     assert result is not None and result.exists()
     assert Path(os.environ["SAGE_QUESTIONS_PATH"]) == result
+    assert not (data_root / "processed" / "questions_125.json").exists()
+    blob = result.read_text(encoding="utf-8")
+    assert "[PREVIEW-SEED]" not in blob
+    assert "Will it be possible to cure all cancers?" in blob
 
 
 def test_health_and_questions_read_data_dir_catalog(tmp_path, monkeypatch):
@@ -165,7 +169,10 @@ def test_health_and_questions_read_data_dir_catalog(tmp_path, monkeypatch):
     assert health.json()["questions_count"] == 125
     assert questions.status_code == 200
     assert questions.json()["count"] == 125
+    assert questions.json()["catalog_source"] == "official"
+    q028 = next(item for item in questions.json()["questions"] if item["question_id"] == "Q028")
+    assert q028["title_en"] == "Will it be possible to cure all cancers?"
     assert v1.status_code == 200
     assert v1.json()["count"] == 5
     assert v1.json()["total"] == 125
-    assert (data_root / "processed" / "questions_125.json").exists()
+    assert not (data_root / "processed" / "questions_125.json").exists()

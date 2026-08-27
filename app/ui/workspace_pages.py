@@ -322,10 +322,13 @@ def _render_picker_panel(ctx: dict[str, Any]) -> None:
         if original:
             by_id[str(qid)] = original
     option_ids = [""] + list(by_id)
+    from app.ui.workspace import format_question_option, sanitize_question_selector_state
+
+    sanitize_question_selector_state([qid for qid in option_ids if qid])
     st.selectbox(
         "选择一个科学问题",
         option_ids,
-        format_func=lambda item: "选择科学问题" if not item else f"{item} · {by_id[item].get('question', '')[:70]}",
+        format_func=lambda item: format_question_option(item, ctx["questions"]),
         key=components.SELECTOR_WIDGET_KEY,
         on_change=store_question_selector_state,
     )

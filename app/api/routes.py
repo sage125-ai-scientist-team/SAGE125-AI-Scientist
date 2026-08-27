@@ -68,15 +68,19 @@ def _rag_index_status() -> str:
         return "unavailable"
 
 
-def _questions_count() -> int:
-    """返回问题清单数量（文件缺失返回 0）。"""
-    questions_path = _questions_path()
-    if not questions_path.exists():
-        return 0
+def _official_catalog_or_none():
     try:
-        return len(json.loads(questions_path.read_text(encoding="utf-8")))
-    except (json.JSONDecodeError, OSError):
-        return 0
+        from app.catalog.official import load_official_catalog
+
+        return load_official_catalog()
+    except Exception:
+        return None
+
+
+def _questions_count() -> int:
+    """返回官方问题清单数量（缺失或非法返回 0）。"""
+    catalog = _official_catalog_or_none()
+    return len(catalog.list_questions()) if catalog is not None else 0
 
 
 def _delivery_dependency_status(request: Request | None) -> dict[str, str]:
@@ -150,6 +154,16 @@ def health(request: Request = None) -> dict:  # type: ignore[assignment]
         "openalex_config_loaded": settings.openalex_configured,
         "rag_index_status": rag_index_status,
         "questions_count": questions_count,
+        "catalog": (
+            {
+                "status": "ok",
+                "count": questions_count,
+                "source": "official",
+                "digest": _official_catalog_or_none().get_catalog_digest(),
+            }
+            if questions_count == 125
+            else {"status": "failed", "count": questions_count, "source": "missing", "digest": ""}
+        ),
         "models": {
             "fast": settings.qwen_fast_model,
             "balanced": settings.qwen_balanced_model,
@@ -225,20 +239,50 @@ def diagnostics() -> dict:
     }
 
 
+@router.get("/health/catalog")
+def catalog_health() -> dict:
+    """官方 Catalog 健康检查：125 题、无 Preview 标记。"""
+    catalog = _official_catalog_or_none()
+    if catalog is None:
+        return {"status": "failed", "count": 0, "source": "missing", "digest": ""}
+    blob = " ".join(item.title_en for item in catalog.list_questions())
+    preview = blob.count("[PREVIEW-SEED]") + blob.lower().count("placeholder question")
+    status = "ok" if catalog.get_catalog_digest() and preview == 0 and len(catalog.list_questions()) == 125 else "failed"
+    return {
+        "status": status,
+        "count": len(catalog.list_questions()),
+        "source": "official",
+        "digest": catalog.get_catalog_digest(),
+        "preview_markers": preview,
+    }
+
+
 @router.get("/questions")
 def list_questions() -> dict:
     """
-    返回 125 问题清单。
+    返回官方 125 问题清单。
 
-    返回：
-        含 questions 的字典；文件缺失时返回 missing 提示。
+    正式模式不得回退 Preview Seed。
     """
-    # 文件缺失时给出清晰指引。
-    questions_path = _questions_path()
-    if not questions_path.exists():
-        return {"status": "missing", "message": "请先运行 python scripts/extract_125_questions.py"}
-    items = json.loads(questions_path.read_text(encoding="utf-8"))
-    return {"status": "ok", "count": len(items), "questions": items}
+    catalog = _official_catalog_or_none()
+    if catalog is None:
+        return {
+            "status": "missing",
+            "count": 0,
+            "catalog_source": "missing",
+            "catalog_digest": "",
+            "message": "官方125题目录未加载，系统已阻断选题。",
+            "questions": [],
+        }
+    digest = catalog.get_catalog_digest()
+    items = [item.as_api_item(digest) for item in catalog.list_questions()]
+    return {
+        "status": "ok",
+        "count": len(items),
+        "catalog_source": "official",
+        "catalog_digest": digest,
+        "questions": items,
+    }
 
 
 @router.post("/ingest")

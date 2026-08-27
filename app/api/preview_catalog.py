@@ -31,24 +31,13 @@ def preview_seed_allowed() -> bool:
     """
     判断当前进程是否允许写入 preview seed。
 
-    返回：
-        任一预览开关为真时返回 True：``SAGE125_PREVIEW_SEED``、
-        ``APP_ENV=preview``、``PREVIEW_EPHEMERAL_STORAGE``。
+    仅 ``APP_ENV=development`` 且显式 ``SAGE125_ALLOW_PREVIEW_SEED=true``
+    时为真。``APP_ENV=preview|production|staging`` 以及旧开关
+    ``SAGE125_PREVIEW_SEED`` / ``PREVIEW_EPHEMERAL_STORAGE`` 不得打开回退。
     """
-    seed = os.getenv("SAGE125_PREVIEW_SEED", "").strip().lower() in {
-        "1",
-        "true",
-        "yes",
-        "on",
-    }
-    app_env = os.getenv("APP_ENV", "").strip().lower() == "preview"
-    ephemeral = os.getenv("PREVIEW_EPHEMERAL_STORAGE", "").strip().lower() in {
-        "1",
-        "true",
-        "yes",
-        "on",
-    }
-    return seed or app_env or ephemeral
+    from app.catalog.official import allow_preview_seed
+
+    return allow_preview_seed()
 
 
 def configured_data_dir() -> Path:
@@ -92,36 +81,34 @@ def resolve_runtime_questions_path() -> Path:
 
     优先级：
 
-    1. 已设置的 ``SAGE_QUESTIONS_PATH``；
-    2. 已存在的 ``DATA_DIR`` 题库；
-    3. 已存在的仓库题库（仅当未显式设置 ``DATA_DIR``）；
-    4. 可写 ``DATA_DIR`` 目标（即使尚不存在）。
-
-    返回：
-        应读取或写入的绝对路径。
+    1. ``SAGE125_CATALOG_PATH``（官方精简 Catalog）；
+    2. 已设置且可用的 ``SAGE_QUESTIONS_PATH``；
+    3. 仓库内官方精简 Catalog；
+    4. 已存在且无 Preview 标记的 ``DATA_DIR`` / 仓库 booklet 抽取；
+    5. 可写 ``DATA_DIR`` 目标（仅开发显式 seed 时写入）。
     """
+    from app.catalog.official import official_catalog_path
+
+    official = official_catalog_path()
+    if catalog_is_usable(official) or official.exists():
+        return official
     override = os.getenv("SAGE_QUESTIONS_PATH", "").strip()
     if override:
         return Path(override)
     writable = writable_catalog_path()
-    if writable.exists():
+    if writable.exists() and catalog_is_usable(writable):
         return writable
     repository = repository_catalog_path()
-    if repository.exists() and not os.getenv("DATA_DIR", "").strip():
+    if repository.exists() and catalog_is_usable(repository):
         return repository
-    return writable
+    return official if official.exists() else writable
 
 
 def catalog_is_usable(path: Path, *, expected: int = 125) -> bool:
     """
-    检查路径是否包含可解析且数量正确的题库。
+    检查路径是否包含可解析且数量正确的官方题库。
 
-    参数：
-        path: 候选 JSON 路径。
-        expected: 期望条数，默认 125。
-
-    返回：
-        文件存在、可解析、长度为 ``expected`` 时为 True。
+    Preview Seed / placeholder 标记一律视为不可用。
     """
     if not path.exists():
         return False
@@ -129,6 +116,12 @@ def catalog_is_usable(path: Path, *, expected: int = 125) -> bool:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError, UnicodeError):
         return False
+    blob = json.dumps(payload, ensure_ascii=False)
+    if any(marker in blob for marker in ("[PREVIEW-SEED]", "placeholder question", '"preview_seed": true')):
+        return False
+    if isinstance(payload, dict):
+        items = payload.get("questions") or []
+        return isinstance(items, list) and len(items) == expected
     return isinstance(payload, list) and len(payload) == expected
 
 
@@ -193,13 +186,16 @@ def ensure_preview_catalog() -> Path | None:
 
     行为：
 
-    - 已有合法题库：导出 ``SAGE_QUESTIONS_PATH`` 并返回该路径；
-    - 预览开关打开且题库缺失：写入 ``DATA_DIR``，不写仓库树；
-    - 非预览且缺失：返回 None，``/health`` 保持 ``questions_count=0``。
-
-    返回：
-        可用题库路径；无法准备时为 None。
+    - 官方 Catalog 可用：导出 ``SAGE_QUESTIONS_PATH`` 并返回该路径；
+    - 仅 development + ``SAGE125_ALLOW_PREVIEW_SEED`` 且官方缺失：写 seed；
+    - 正式 / preview / staging 缺失官方 Catalog：返回 None，不得写 seed。
     """
+    from app.catalog.official import official_catalog_path
+
+    official = official_catalog_path()
+    if catalog_is_usable(official):
+        _export_questions_path(official)
+        return official
     current = resolve_runtime_questions_path()
     if catalog_is_usable(current):
         _export_questions_path(current)
