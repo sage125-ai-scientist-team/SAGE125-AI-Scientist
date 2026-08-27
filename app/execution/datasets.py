@@ -411,7 +411,9 @@ def _default_wdbc_definition() -> DatasetDefinition:
         version="1995-10-31",
         source_url=_WDBC_SOURCE_URL,
         allowed_source_hosts=frozenset({"archive.ics.uci.edu"}),
-        allowed_redirect_hosts=frozenset({"archive.ics.uci.edu"}),
+        allowed_redirect_hosts=frozenset(
+            {"archive.ics.uci.edu", "download.ics.uci.edu"}
+        ),
         target_filename="wdbc.data",
         cache_relative_dir="datasets/uci-wdbc-v1995-10-31",
         license_id="CC-BY-4.0",

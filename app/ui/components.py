@@ -1404,7 +1404,14 @@ def _render_experiment_run_control(plan: dict) -> None:
             "标准化逻辑回归 → balanced_accuracy / malignant_recall），与上方由生成式流水线"
             "写出的研究计划文字可能不完全逐句一致；本次运行不会读取、也不会执行上方文字本身。"
         )
-    if st.button("▶ 运行真实实验", width="stretch", key=button_key):
+    prior = st.session_state.get(state_key)
+    failed = bool(
+        prior
+        and prior.get("available")
+        and prior.get("status") != "succeeded"
+    )
+    run_label = "重新运行真实实验" if failed else "▶ 运行真实实验"
+    if st.button(run_label, width="stretch", key=button_key):
         with st.spinner("正在尝试执行真实实验（若该题暂无可执行入口，会诚实提示，不编造结果）…"):
             st.session_state[state_key] = api_client.run_experiment(qid)
 
@@ -1416,6 +1423,7 @@ def _render_experiment_run_control(plan: dict) -> None:
     elif result.get("status") != "succeeded":
         reason = result.get("reason") or (result.get("error") or {}).get("message") or result.get("status")
         st.error(f"真实实验执行未成功：{esc(str(reason))}")
+        st.caption("关闭 VPN 或网络恢复后，点击上方「重新运行真实实验」。不会编造指标。")
     else:
         _render_q028_result(result)
     st.markdown("</div>", unsafe_allow_html=True)
