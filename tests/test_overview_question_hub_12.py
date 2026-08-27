@@ -108,6 +108,52 @@ def test_query_param_restores_question_when_session_empty(monkeypatch):
         st.session_state = original  # type: ignore[assignment]
 
 
+def test_query_param_restores_real_mode_after_refresh(monkeypatch):
+    original = st.session_state
+    st.session_state = {}  # type: ignore[assignment]
+
+    class _QP(dict):
+        def get(self, key, default=None):
+            return dict.get(self, key, default)
+
+    qp = _QP()
+    try:
+        state.init_state()
+        assert state.current_mode() == "mock"
+        monkeypatch.setattr(st, "query_params", qp, raising=False)
+        workspace.apply_query_mode(fallback="real")
+        assert state.current_mode() == "real"
+        workspace.persist_query_mode("real")
+        assert qp.get("mode") == "real"
+        st.session_state = {}  # type: ignore[assignment]
+        state.init_state()
+        monkeypatch.setattr(st, "query_params", qp, raising=False)
+        workspace.apply_query_mode()
+        assert state.current_mode() == "real"
+        assert st.session_state.get(components.MODE_WIDGET_KEY) == "real"
+    finally:
+        st.session_state = original  # type: ignore[assignment]
+
+
+def test_mode_widget_is_not_overwritten_by_stale_query(monkeypatch):
+    original = st.session_state
+    st.session_state = {}  # type: ignore[assignment]
+
+    class _QP(dict):
+        def get(self, key, default=None):
+            return dict.get(self, key, default)
+
+    qp = _QP(mode="mock")
+    try:
+        state.init_state()
+        st.session_state[components.MODE_WIDGET_KEY] = "real"
+        monkeypatch.setattr(st, "query_params", qp, raising=False)
+        workspace.apply_query_mode(fallback="mock")
+        assert state.current_mode() == "real"
+    finally:
+        st.session_state = original  # type: ignore[assignment]
+
+
 def test_select_question_button_scrolls_to_picker():
     src = _read("app/ui/workspace.py")
     assert "request_scroll" in src

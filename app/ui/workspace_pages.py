@@ -26,6 +26,7 @@ from app.ui.workspace import (
     load_domain_distribution,
     load_question_selector_state,
     load_question_summary,
+    persist_query_mode,
     persist_query_question,
     picker_is_expanded,
     questions_fingerprint,
@@ -855,6 +856,7 @@ def page_settings() -> None:
     st.subheader("运行模式与能力")
     mode = components.render_mode_control(ctx["mode"])
     state.set_value(state.KEY_MODE, mode)
+    persist_query_mode(mode)
     switches = components.render_pipeline_switches()
     st.session_state["_sage_switches"] = switches
     _render_provider_status_fragment(ctx["health"], (ctx.get("result") or {}).get("llm_call_summary"))

@@ -425,8 +425,13 @@ def test_failed_job_shows_error_after_navigation():
         {"status": "failed", "error": {"code": "X", "message": "boom"}},
         idle_label="开始生成",
     )
-    assert spec["action"] == "view_error"
+    assert spec["label"] == "重新运行"
+    assert spec["action"] == "rerun"
     assert ui_status({"status": "failed"}) == "FAILED"
+    source = inspect.getsource(job_state.render_job_action_button)
+    assert "查看失败原因" not in source
+    assert "retry_from_checkpoint" in source
+    assert "确认从检查点重试" not in source
 
 
 def test_retry_preserves_lineage(tmp_path):

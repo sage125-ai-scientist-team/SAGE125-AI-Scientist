@@ -44,6 +44,8 @@ SELECTOR_WIDGET_KEY = "_question_selector"
 AUTHORITATIVE_QUESTION_SELECTOR_KEY = SELECTOR_WIDGET_KEY
 QUESTION_CHOICE_WIDGET_KEY = SELECTOR_WIDGET_KEY
 PICKER_EXPANDED_KEY = "question_picker_expanded"
+MODE_WIDGET_KEY = make_widget_key("mode", "control")
+MODE_WIDGET_FALLBACK_KEY = make_widget_key("mode", "control_fallback")
 
 # 标准 pending 说明（与 mock_outputs.PENDING_RESULTS 一致，用于前端提示）。
 PENDING_TEXT = "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。"
@@ -282,6 +284,10 @@ def render_mode_control(current_mode: str) -> str:
     options = ["mock", "real"]
     display = {"mock": ui_text("mock_mode"), "real": ui_text("real_mode")}
     default_index = options.index(current_mode) if current_mode in options else 0
+    if current_mode in options and st.session_state.get(MODE_WIDGET_KEY) not in options:
+        st.session_state[MODE_WIDGET_KEY] = current_mode
+    if current_mode in options and st.session_state.get(MODE_WIDGET_FALLBACK_KEY) not in options:
+        st.session_state[MODE_WIDGET_FALLBACK_KEY] = current_mode
     segmented_control = getattr(st, "segmented_control", None)
     if callable(segmented_control):
         selected = segmented_control(
@@ -289,7 +295,7 @@ def render_mode_control(current_mode: str) -> str:
             options,
             format_func=lambda v: display.get(v, v),
             default=options[default_index],
-            key=make_widget_key("mode", "control"),
+            key=MODE_WIDGET_KEY,
             label_visibility="collapsed",
         )
         mode = selected if selected in options else options[default_index]
@@ -299,7 +305,7 @@ def render_mode_control(current_mode: str) -> str:
             options,
             index=default_index,
             format_func=lambda v: display.get(v, v),
-            key=make_widget_key("mode", "control_fallback"),
+            key=MODE_WIDGET_FALLBACK_KEY,
             label_visibility="collapsed",
         )
     st.caption("模拟演示：不调用真实 Qwen，用于演示。真实运行：调用 Qwen/百炼，需配置 Key，且不会静默降级。")

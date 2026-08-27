@@ -283,7 +283,7 @@ def job_action_spec(job: dict[str, Any] | None, *, idle_label: str) -> dict[str,
     if kind == "PARTIAL":
         return {"label": "查看部分结果", "action": "view_result", "kind": kind}
     if kind == "FAILED":
-        return {"label": "查看失败原因", "action": "view_error", "kind": kind}
+        return {"label": "重新运行", "action": "rerun", "kind": kind}
     if kind == "CANCELLED":
         return {"label": idle_label, "action": "submit", "kind": kind}
     return {"label": idle_label, "action": "submit", "kind": "IDLE"}
@@ -297,7 +297,7 @@ def render_job_action_button(
     key: str,
     primary: bool = True,
 ) -> str:
-    """返回 submit / view / view_result / view_error / retry / none。不把按钮当任务状态。"""
+    """返回 submit / view / view_result / rerun / retry / none。不把按钮当任务状态。"""
     if not question_id:
         st.button(idle_label, type="secondary", width="stretch", key=key, disabled=True)
         st.caption("请先选择一个科学问题。")
@@ -307,19 +307,19 @@ def render_job_action_button(
     spec = job_action_spec(job, idle_label=idle_label)
     clicked = st.button(
         spec["label"],
-        type="primary" if primary and spec["action"] == "submit" else "secondary",
+        type="primary" if primary and spec["action"] in {"submit", "rerun"} else "secondary",
         width="stretch",
         key=key,
     )
-    if spec["kind"] == "FAILED" and question_id:
-        confirm_key = f"{key}_retry_ack"
-        if st.checkbox("确认从检查点重试（保留失败记录）", key=confirm_key):
-            if st.button("从检查点重试", key=f"{key}_retry"):
-                if job:
-                    retry_from_checkpoint(
-                        str(job["job_id"]), question_id=question_id, job_type=job_type
-                    )
-                return "retry"
+    if spec["kind"] == "FAILED" and job:
+        message = str(
+            (job.get("error") or {}).get("message")
+            or job.get("error_message")
+            or job.get("message")
+            or ""
+        ).strip()
+        if message:
+            st.caption(f"上次失败：{message}")
     if spec["kind"] in {"SUCCEEDED", "PARTIAL"} and question_id:
         rerun_key = f"{key}_rerun_ack"
         if st.checkbox("确认重新运行（将创建新 attempt，保留旧 Job）", key=rerun_key):
@@ -329,6 +329,9 @@ def render_job_action_button(
         return "none"
     if spec["action"] == "submit":
         return "submit"
+    if spec["action"] == "rerun" and job:
+        retry_from_checkpoint(str(job["job_id"]), question_id=question_id, job_type=job_type)
+        return "retry"
     if job:
         st.session_state[FOCUS_JOB_KEY] = job.get("job_id")
     return spec["action"]
