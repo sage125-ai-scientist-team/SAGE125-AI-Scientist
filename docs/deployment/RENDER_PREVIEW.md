@@ -30,14 +30,20 @@ After the API service exists, set the UI-only non-secret variable `FRONTEND_API_
 
 ## Automatic deployment
 
-Both services use `autoDeployTrigger: checksPass`. A reviewed squash merge to `integration/2026-08-10` triggers the six real `quality-gates` jobs (`lint`, `type`, `unit`, `integration`, `security`, and `build`). Render deploys the new commit only after GitHub checks pass. Failed or absent checks must not be treated as success.
+Native Render `checksPass` / `commit` auto-deploy is **off**. The central repo is public, the GitHub org has no Render GitHub App, and the repo has no webhooks, so Render never receives push or check events. Treat a missing or failed GitHub check as not passed; do not ask Render to guess.
+
+A reviewed squash merge to `integration/2026-08-10` runs `quality-gates` (`lint`, `type`, `unit`, `integration`, `coverage`, `security`, and `build`). Only after every required job succeeds, the `preview-deploy` job calls the Render API for `sage125-api-preview` and `sage125-ui-preview` with that integration SHA. Failed CI must not trigger a deploy.
+
+Required GitHub Actions repository secret:
+
+- `RENDER_API_KEY`: a Dashboard API key (`rnd_...`) from Account Settings. Never commit it. CLI session tokens expire and must not be used as the long-lived secret.
 
 The final workflow is:
 
 1. Team member opens a PR against `integration/2026-08-10`.
 2. The captain reviews and manually squash-merges it.
 3. GitHub runs push CI on the integration commit.
-4. Render deploys the same commit after checks pass.
+4. After those checks succeed, `preview-deploy` triggers both Render preview services for the same SHA.
 5. The fixed generated `onrender.com` addresses serve the new revision.
 
 ## Environment variables
@@ -83,4 +89,4 @@ For every deployment:
 1. In the affected Render service's Deploys page, redeploy the last known-good successful integration deployment.
 2. Verify the API and UI health endpoints and confirm both services run the same known-good commit.
 3. Revert the faulty integration change through a reviewed GitHub PR; do not rewrite or force-push the integration branch.
-4. Keep `checksPass` enabled. A production rollout requires a separate project/environment, persistent data design, explicit approval, and independent smoke tests.
+4. Keep native Render auto-deploy off until a Render GitHub App is installed and verified. Preview deploys stay gated by `quality-gates`. A production rollout requires a separate project/environment, persistent data design, explicit approval, and independent smoke tests.
