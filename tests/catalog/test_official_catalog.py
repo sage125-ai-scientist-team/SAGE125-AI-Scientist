@@ -76,6 +76,14 @@ def test_q028_official_title_is_correct():
     assert load_official_catalog().get_question("Q028").title_en == Q028_OFFICIAL_TITLE
 
 
+def test_packaged_catalog_is_not_gitignored_source_extract():
+    path = official_catalog_path()
+    assert path.name == "official_question_catalog.json"
+    assert not str(path).endswith("questions_125.json")
+    assert path.parent.name == "catalog"
+    assert path.parent.parent.name == "app"
+
+
 def test_api_questions_uses_official_catalog(tmp_path):
     with _client(tmp_path) as client:
         body = client.get("/questions").json()

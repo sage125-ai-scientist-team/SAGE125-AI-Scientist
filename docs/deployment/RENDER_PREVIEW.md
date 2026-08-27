@@ -65,7 +65,7 @@ The integration branch intentionally does not track `data/processed`, `data/inde
 
 Question catalog bootstrap (API start):
 
-1. Prefer the packaged official mapping `data/catalog/official_questions_125.json` (titles and domains only; no booklet excerpts). `GET /questions` and `GET /health/catalog` read `OfficialQuestionCatalog`.
+1. Prefer the packaged official mapping `app/catalog/official_question_catalog.json` (titles and domains only; no booklet excerpts). It ships with `COPY app` and is not hidden by the `DATA_DIR` volume. `GET /questions` and `GET /health/catalog` read `OfficialQuestionCatalog`.
 2. A real booklet extract at `data/processed/questions_125.json` remains the T07/T09 SHA-pinned source with excerpts; it is gitignored and is not required on Render.
 3. Preview Seed is allowed only when `APP_ENV=development` and `SAGE125_ALLOW_PREVIEW_SEED=true`. `APP_ENV=preview`, `PREVIEW_EPHEMERAL_STORAGE`, and `SAGE125_PREVIEW_SEED` must not write or display placeholder titles.
 4. The UI must keep calling the API (`FRONTEND_RUN_VIA_API=1` / T08 `frontend/**`); it does not invent questions client-side.

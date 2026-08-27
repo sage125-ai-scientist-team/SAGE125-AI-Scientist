@@ -1,9 +1,9 @@
 """Single official 125-question catalog used by API, UI, and indexes.
 
-The packaged mapping is derived from the booklet extract
-``data/processed/questions_125.json`` (SHA pinned by T07/T09) but omits
-``booklet_excerpt`` so it can ship in the deploy package. Formal mode must
-never fall back to Preview Seed.
+The packaged mapping lives next to this module so ``COPY app`` ships it
+and a ``DATA_DIR`` volume cannot hide it. It is derived from the booklet
+extract ``data/processed/questions_125.json`` (SHA pinned by T07/T09) but
+omits ``booklet_excerpt``. Formal mode must never fall back to Preview Seed.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CATALOG_PATH = PROJECT_ROOT / "data" / "catalog" / "official_questions_125.json"
+DEFAULT_CATALOG_PATH = Path(__file__).resolve().parent / "official_question_catalog.json"
 QID_RE = re.compile(r"^Q(\d{3})$")
 EXPECTED_IDS = [f"Q{i:03d}" for i in range(1, 126)]
 Q028_OFFICIAL_TITLE = "Will it be possible to cure all cancers?"

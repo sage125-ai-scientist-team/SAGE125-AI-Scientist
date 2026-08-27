@@ -154,8 +154,15 @@ def test_domain_display_zh_keys_match_internal_english_keys():
 def test_question_selectbox_shows_untranslated_question_text():
     """题目选择框仍以 `QID · 原文` 格式展示，不翻译题目正文。"""
     src = _read("app/ui/components.py")
+    workspace = _read("app/ui/workspace.py")
+    official = _read("app/catalog/official.py")
     assert '"选择一个科学问题"' in src
-    assert "by_id[item].get('question'" in src or 'by_id[item].get("question"' in src
+    assert "format_func=_format_question_option" in src
+    assert "selector_label" in src or "official_question_text" in workspace
+    assert "title_en" in official
+    assert "title_zh" in official
+    assert "不得自动调用模型翻译" not in src
+    assert "治愈所有癌症" not in src + workspace
 
 
 def test_evidence_card_uses_esc_for_dynamic_title_and_quote():

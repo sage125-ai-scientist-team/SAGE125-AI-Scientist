@@ -31,7 +31,7 @@ OFFICIAL_CATALOG_COUNT=125
 AUTHORITATIVE_CATALOG_PATH=data/processed/questions_125.json
 AUTHORITATIVE_CATALOG_SHA256=b6712a3b53f9776d7f695ea67f810c30b7d97ee59c183009432870d3224cdebb
 AUTHORITATIVE_CATALOG_SOURCE=official_booklet_extract
-PACKAGED_CATALOG_PATH=data/catalog/official_questions_125.json
+PACKAGED_CATALOG_PATH=app/catalog/official_question_catalog.json
 
 Q028_OFFICIAL_TITLE=Will it be possible to cure all cancers?
 Q028_API_TITLE_BEFORE=[PREVIEW-SEED] Biology placeholder question 06?
