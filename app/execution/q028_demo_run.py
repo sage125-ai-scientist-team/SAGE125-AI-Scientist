@@ -22,6 +22,7 @@ question_id.
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -41,12 +42,14 @@ from app.execution.run_round1 import (
 from app.execution.runner import LocalProcessRunner
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+WDBC_CACHE_RELATIVE = Path("datasets") / "uci-wdbc-v1995-10-31" / "wdbc.data"
+WDBC_PIN_SIZE_BYTES = 124103
 
-#: Pinned dataset copy preserved from an earlier controlled fetch. Reused here
-#: so the UI-triggered demo run stays fully offline (no network access).
-OFFLINE_CACHE_ROOT = (
+#: Local captain machine only. Never required on Render or a clean checkout.
+LEGACY_OFFLINE_CACHE_ROOT = (
     REPOSITORY_ROOT / "tmp" / "preserved_from_d_root" / "T05_WDBC" / "formal-cache"
 )
+OFFLINE_CACHE_ROOT = LEGACY_OFFLINE_CACHE_ROOT
 
 #: Distinct spec_id so this demo path is never confused with the formal
 #: ``wdbc-round1-baseline-v1`` spec used for official Gate/PR evidence.
@@ -55,6 +58,35 @@ _DEMO_SPEC_ID = "wdbc-round1-ui-demo-v1"
 
 class Q028DemoRunError(RuntimeError):
     """Raised when the demo run cannot even start (e.g. dataset unavailable)."""
+
+
+def _pinned_wdbc_path(cache_root: Path) -> Path:
+    return Path(cache_root) / WDBC_CACHE_RELATIVE
+
+
+def pinned_cache_available(cache_root: Path) -> bool:
+    """True only when the pin-sized WDBC file is already on disk."""
+    path = _pinned_wdbc_path(cache_root)
+    try:
+        return path.is_file() and path.stat().st_size == WDBC_PIN_SIZE_BYTES
+    except OSError:
+        return False
+
+
+def resolve_demo_cache_root() -> Path:
+    """Writable cache: env override, DATA_DIR, then a local formal cache if present."""
+    override = os.getenv("SAGE125_WDBC_CACHE_ROOT", "").strip()
+    if override:
+        return Path(override)
+    data_dir = os.getenv("DATA_DIR", "").strip()
+    if data_dir:
+        root = Path(data_dir)
+        if not root.is_absolute():
+            root = REPOSITORY_ROOT / root
+        return root / "cache" / "t05-wdbc"
+    if pinned_cache_available(LEGACY_OFFLINE_CACHE_ROOT):
+        return LEGACY_OFFLINE_CACHE_ROOT
+    return REPOSITORY_ROOT / "data" / "cache" / "t05-wdbc"
 
 
 def _build_demo_spec(dataset_manifest: Any) -> ExecutionSpec:
@@ -79,13 +111,26 @@ def run_q028_demo_experiment() -> dict[str, Any]:
     "这不是正式 Gate 证据"。结果不写入 ``docs/modules/T05/round1``（那是
     正式 Gate/PR 证据包），只在临时目录内执行并丢弃工作区。
     """
+    cache_root = resolve_demo_cache_root()
+    offline = pinned_cache_available(cache_root)
+    dataset_adapter = DatasetAdapter(
+        get_default_dataset_registry(),
+        connect_timeout_seconds=15.0,
+        read_timeout_seconds=30.0,
+        total_timeout_seconds=90.0,
+    )
     try:
-        dataset_adapter = DatasetAdapter(get_default_dataset_registry())
         resolved = dataset_adapter.fetch(
-            WDBC_DATASET_ID, cache_root=OFFLINE_CACHE_ROOT, offline=True
+            WDBC_DATASET_ID,
+            cache_root=cache_root,
+            offline=offline,
         )
     except Exception as exc:  # noqa: BLE001 - surfaced verbatim to the caller
-        raise Q028DemoRunError(f"WDBC 数据集离线缓存不可用：{exc}") from exc
+        if offline:
+            hint = "本地缓存校验失败。"
+        else:
+            hint = "已尝试从官方 UCI 地址按 pin 下载，仍未取得合法缓存。"
+        raise Q028DemoRunError(f"WDBC 数据集不可用：{hint} {exc}") from exc
 
     dataset_manifest = resolved.to_dataset_manifest()
     spec = _build_demo_spec(dataset_manifest)
@@ -99,7 +144,7 @@ def run_q028_demo_experiment() -> dict[str, Any]:
         runner = LocalProcessRunner(
             registry=registry,
             managed_root=managed_root,
-            dataset_resolver=dataset_adapter.build_resolver(OFFLINE_CACHE_ROOT),
+            dataset_resolver=dataset_adapter.build_resolver(cache_root),
         )
         result = runner.run(spec)
         # 读取真实的 run-summary.json（混淆矩阵 + 数据切分计数），必须在临时
