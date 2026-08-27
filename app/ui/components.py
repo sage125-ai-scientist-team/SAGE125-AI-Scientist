@@ -48,6 +48,20 @@ PICKER_EXPANDED_KEY = "question_picker_expanded"
 # 标准 pending 说明（与 mock_outputs.PENDING_RESULTS 一致，用于前端提示）。
 PENDING_TEXT = "当前状态：待执行验证实验。系统已生成可复现实验脚本、数据字段清单与评价指标，尚未运行真实实验。"
 
+
+def _format_question_option(question_id: str) -> str:
+    if not question_id:
+        return "选择科学问题"
+    try:
+        from app.catalog.official import get_question
+
+        item = get_question(question_id)
+        if item is not None:
+            return item.selector_label()
+    except Exception:
+        pass
+    return str(question_id)
+
 # Agent 名称中英文映射（普通用户看到"系统完成了什么"，而非模型名）。
 AGENT_DISPLAY: dict[str, tuple[str, str]] = {
     "supervisor": ("监督调度", "Supervisor"),
@@ -417,7 +431,7 @@ def render_question_selector(
     qid = st.selectbox(
         "选择一个科学问题",
         option_ids,
-        format_func=lambda item: "选择科学问题" if not item else f"{item} · {by_id[item].get('question', '')[:70]}",
+        format_func=_format_question_option,
         index=option_ids.index(preferred) if preferred in option_ids else 0,
         key=SELECTOR_WIDGET_KEY,
     )

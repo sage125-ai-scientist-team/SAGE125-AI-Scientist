@@ -65,9 +65,9 @@ The integration branch intentionally does not track `data/processed`, `data/inde
 
 Question catalog bootstrap (API start):
 
-1. Prefer a real booklet extract when `data/raw/sjtu-booklet.pdf` is available.
-2. Otherwise, T08 `app.api.preview_catalog.ensure_preview_catalog` allows an explicitly marked `preview_seed` catalog when any of these is true: `APP_ENV=preview`, `PREVIEW_EPHEMERAL_STORAGE=true`, or `SAGE125_PREVIEW_SEED=1`. It writes **`DATA_DIR/processed/questions_125.json`** (Render: `/tmp/sage125/data/processed/questions_125.json`) and exports `SAGE_QUESTIONS_PATH`. It must not write the read-only repository `data/processed` tree.
-3. Preview-seed rows are for Mock UI routing only; they are not booklet gold and must not be treated as T09 formal evaluation input.
+1. Prefer the packaged official mapping `data/catalog/official_questions_125.json` (titles and domains only; no booklet excerpts). `GET /questions` and `GET /health/catalog` read `OfficialQuestionCatalog`.
+2. A real booklet extract at `data/processed/questions_125.json` remains the T07/T09 SHA-pinned source with excerpts; it is gitignored and is not required on Render.
+3. Preview Seed is allowed only when `APP_ENV=development` and `SAGE125_ALLOW_PREVIEW_SEED=true`. `APP_ENV=preview`, `PREVIEW_EPHEMERAL_STORAGE`, and `SAGE125_PREVIEW_SEED` must not write or display placeholder titles.
 4. The UI must keep calling the API (`FRONTEND_RUN_VIA_API=1` / T08 `frontend/**`); it does not invent questions client-side.
 5. `/health.questions_count` and `GET /questions` read the same runtime path. `questions_count=0` after a preview start is a real failure, not a silent empty UI.
 

@@ -49,12 +49,18 @@ def _now_iso() -> str:
 
 
 def _load_questions() -> list[dict]:
-    if not QUESTIONS_PATH.exists():
-        return []
     try:
-        return json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return []
+        from app.catalog.official import load_official_catalog
+
+        catalog = load_official_catalog()
+        return [item.as_api_item(catalog.get_catalog_digest()) for item in catalog.list_questions()]
+    except Exception:
+        if not QUESTIONS_PATH.exists():
+            return []
+        try:
+            return json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return []
 
 
 def _questions_mtime() -> float | None:
@@ -85,7 +91,7 @@ def build_ui_question_index(*, runs_scan_limit: int = _DEFAULT_RUNS_SCAN_LIMIT) 
 
     items: list[dict[str, Any]] = []
     for q in questions:
-        qid = str(q.get("id") or "").strip()
+        qid = str(q.get("question_id") or q.get("id") or "").strip()
         run = latest_by_qid.get(qid)
         official_result = None
         if resolved.results_root is not None:
@@ -114,8 +120,11 @@ def build_ui_question_index(*, runs_scan_limit: int = _DEFAULT_RUNS_SCAN_LIMIT) 
             result_path = None
         item = {
             "question_id": qid,
-            "title": q.get("question") or q.get("title") or "",
+            "title": q.get("title_en") or q.get("question") or q.get("title") or "",
+            "title_en": q.get("title_en") or q.get("question") or q.get("title") or "",
+            "title_zh": q.get("title_zh") or "",
             "domain": q.get("domain"),
+            "catalog_digest": q.get("catalog_digest") or "",
             "status": status,
             "evidence_count": evidence_count,
             # 候选假设数量需要打开 report.json 读取 generated_hypotheses，
@@ -129,12 +138,25 @@ def build_ui_question_index(*, runs_scan_limit: int = _DEFAULT_RUNS_SCAN_LIMIT) 
         item["digest"] = _digest(item)
         items.append(item)
 
+    try:
+        from app.catalog.official import get_catalog_digest
+
+        catalog_digest = get_catalog_digest()
+    except Exception:
+        catalog_digest = ""
     index = {
+        "schema_version": "1",
+        "catalog_source": "official",
+        "catalog_digest": catalog_digest,
+        "question_count": len(items),
+        "generated_at": _now_iso(),
         "meta": {
             "questions_manifest_mtime": _questions_mtime(),
             "question_count": len(items),
             "runs_scanned": len(runs),
             "built_at": _now_iso(),
+            "catalog_source": "official",
+            "catalog_digest": catalog_digest,
         },
         "questions": items,
     }

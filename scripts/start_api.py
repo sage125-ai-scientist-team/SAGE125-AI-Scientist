@@ -30,42 +30,28 @@ def _preview_seed_allowed() -> bool:
     """
     判断 API 启动时是否允许 preview seed。
 
-    返回：
-        满足任一条件即为 True：
-        - `SAGE125_PREVIEW_SEED` 为真；
-        - `APP_ENV=preview`（Render Blueprint 已有）；
-        - `PREVIEW_EPHEMERAL_STORAGE` 为真。
+    仅 development + ``SAGE125_ALLOW_PREVIEW_SEED`` 为真。
     """
-    seed = os.getenv("SAGE125_PREVIEW_SEED", "").strip().lower() in {"1", "true", "yes", "on"}
-    app_env = os.getenv("APP_ENV", "").strip().lower() == "preview"
-    ephemeral = os.getenv("PREVIEW_EPHEMERAL_STORAGE", "").strip().lower() in {
-        "1",
-        "true",
-        "yes",
-        "on",
-    }
-    return seed or app_env or ephemeral
+    from app.catalog.official import allow_preview_seed
+
+    return allow_preview_seed()
 
 
 def ensure_preview_questions() -> None:
     """
-    在 API 进程启动前确保 questions_125.json 可用。
+    在 API 进程启动前绑定官方 125 题 Catalog。
 
-    行为：
-        - 正式环境：若已有题库则复用；有 booklet 则抽取；
-        - Preview：`APP_ENV=preview` / 临时存储 / `SAGE125_PREVIEW_SEED=1`
-          时允许写入显式标记的 preview seed，避免 UI Questions=0；
-        - 若无法准备题库：记录错误但不阻断进程启动（/health 仍可响应），
-          以便冷启动诊断；业务 `/questions` 会如实返回 missing。
+    正式 / preview / staging 只使用打包的官方映射。
+    Preview Seed 不得在这些环境自动写入。
     """
     try:
-        from scripts.bootstrap_preview_data import bootstrap
+        from app.api.preview_catalog import ensure_preview_catalog
+
+        path = ensure_preview_catalog()
+        if path is None:
+            print("[start_api] official catalog unavailable; questions API will fail closed")
     except Exception as exc:  # noqa: BLE001 — 启动入口必须容错
-        print(f"[start_api] bootstrap import failed: {exc}")
-        return
-    code = bootstrap(allow_seed=_preview_seed_allowed(), force_seed=False)
-    if code != 0:
-        print(f"[start_api] questions bootstrap exited with code {code}")
+        print(f"[start_api] catalog bind failed: {exc}")
 
 
 def main() -> None:

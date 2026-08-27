@@ -249,11 +249,17 @@ def get_runs(limit: int = 20) -> list[dict]:
 
 
 def _questions_file_fingerprint() -> float:
-    """125 题清单文件的 mtime；作为缓存键的一部分，文件变化即自动失效缓存。"""
+    """官方 Catalog 的 mtime；digest/path 变化后自动失效缓存。"""
     try:
-        return QUESTIONS_PATH.stat().st_mtime
+        from app.catalog.official import official_catalog_path
+
+        path = official_catalog_path()
+        return path.stat().st_mtime
     except OSError:
-        return 0.0
+        try:
+            return QUESTIONS_PATH.stat().st_mtime
+        except OSError:
+            return 0.0
 
 
 @st.cache_data(ttl=_QUESTIONS_CACHE_TTL_SECONDS, show_spinner=False)

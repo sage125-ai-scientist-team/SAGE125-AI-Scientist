@@ -129,9 +129,18 @@ class FilesystemQuestionOwnerAdapter:
             raise OwnerContractUnavailable("T07 QuestionItem")
         try:
             payload = json.loads(self.questions_path.read_text(encoding="utf-8"))
-            if not isinstance(payload, list):
-                raise ValueError("question source must be a JSON array")
-            return [_question_record(item) for item in payload]
+            items = payload.get("questions") if isinstance(payload, dict) else payload
+            if not isinstance(items, list):
+                raise ValueError("question source must be a JSON array or official catalog object")
+            normalized = []
+            for item in items:
+                row = dict(item)
+                row.setdefault("id", row.get("question_id"))
+                row.setdefault("question", row.get("title_en"))
+                row.setdefault("booklet_excerpt", "")
+                row.setdefault("source_page", row.get("source_page") or 0)
+                normalized.append(row)
+            return [_question_record(item) for item in normalized]
         except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
             raise OwnerContractInvalid("T07 QuestionItem", str(exc)) from exc
 

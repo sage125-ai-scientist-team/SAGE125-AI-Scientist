@@ -85,10 +85,48 @@ def bootstrap(*, refresh_questions: bool = False, refresh_diag: bool = False) ->
         "result": result,
         "plan": result.get("plan") or {},
         "qid": state.get(state.KEY_SELECTED_QID),
-        "qtext": state.get(state.KEY_SELECTED_QTEXT),
+        "qtext": official_question_text(state.get(state.KEY_SELECTED_QID), questions),
         "mode": state.current_mode(),
         "consistent": state.is_run_consistent(),
     }
+
+
+def official_question_text(qid: str | None, questions: list[dict] | None = None) -> str:
+    """按 question_id 实时查询官方标题，不使用 session 里的旧 label。"""
+    official = official_question_id(qid)
+    if not official:
+        return ""
+    try:
+        from app.catalog.official import get_question
+
+        item = get_question(official)
+        if item is not None:
+            return item.display_title()
+    except Exception:
+        pass
+    for row in questions or []:
+        if str(row.get("id") or row.get("question_id") or "").upper() == official:
+            return str(row.get("title_en") or row.get("question") or "")
+    return ""
+
+
+def format_question_option(question_id: str, questions: list[dict] | None = None) -> str:
+    if not question_id:
+        return "选择科学问题"
+    title = official_question_text(question_id, questions)
+    return f"{question_id} · {title}" if title else str(question_id)
+
+
+def sanitize_question_selector_state(question_ids: list[str]) -> None:
+    """丢掉非法 widget / 业务状态，必须在 selectbox 创建前调用。"""
+    valid = {str(qid) for qid in question_ids if qid}
+    stored = official_question_id(state.get(state.KEY_SELECTED_QID))
+    if stored not in valid:
+        st.session_state[state.KEY_SELECTED_QID] = None
+        st.session_state[state.KEY_SELECTED_QTEXT] = None
+    widget = st.session_state.get(components.SELECTOR_WIDGET_KEY)
+    if widget not in valid and widget not in (None, ""):
+        st.session_state.pop(components.SELECTOR_WIDGET_KEY, None)
 
 
 def official_question_id(raw: Any) -> str | None:
@@ -396,10 +434,7 @@ def render_workspace_header(ctx: dict[str, Any]) -> None:
     qid = ctx.get("qid") or None
     if qid:
         label, kind = research_status(ctx)
-        title = str(ctx.get("qtext") or "").strip()
-        if not title:
-            selected = selected_question(ctx.get("questions") or [], qid)
-            title = str((selected or {}).get("question") or "").strip()
+        title = official_question_text(qid, ctx.get("questions") or [])
         context_value = f"{qid} · {title}" if title else str(qid)
     else:
         label, kind = "未开始", "idle"

@@ -263,10 +263,8 @@ def test_api_entrypoint_bootstraps_preview_questions():
     """
     start_api = (ROOT / "scripts" / "start_api.py").read_text(encoding="utf-8")
     assert "ensure_preview_questions" in start_api
-    assert "bootstrap_preview_data" in start_api
-    assert "SAGE125_PREVIEW_SEED" in start_api
-    assert 'APP_ENV' in start_api
-    assert "PREVIEW_EPHEMERAL_STORAGE" in start_api
+    assert "ensure_preview_catalog" in start_api
+    assert "allow_preview_seed" in start_api
     assert "_preview_seed_allowed" in start_api
 
 

@@ -140,10 +140,17 @@ def load_question(question_id: str, *, questions_path: Path | str | None = None)
             f"缺少问题清单文件：{path}。请先运行 python scripts/extract_125_questions.py，"
             "或在测试中通过 SAGE_QUESTIONS_PATH / questions_path 注入临时夹具。"
         )
-    items = json.loads(path.read_text(encoding="utf-8"))
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    items = payload.get("questions") if isinstance(payload, dict) else payload
+    if not isinstance(items, list):
+        raise ValueError(f"问题清单格式无效：{path}")
     for it in items:
-        if it.get("id") == question_id:
-            return it
+        qid = str(it.get("id") or it.get("question_id") or "")
+        if qid == question_id:
+            row = dict(it)
+            row.setdefault("id", qid)
+            row.setdefault("question", it.get("title_en") or it.get("question"))
+            return row
     # 未找到给出清晰错误。
     raise ValueError(f"question_id 不存在：{question_id}")
 
