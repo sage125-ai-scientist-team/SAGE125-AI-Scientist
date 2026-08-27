@@ -186,3 +186,45 @@ jobs:
             ${{ runner.temp }}/benchmark.csv
           if-no-files-found: error
           retention-days: 14
+
+  # Render's native checksPass never fires: the org has no Render GitHub App
+  # and the repo has no webhooks, so push/check events never reach Render.
+  # After integration CI passes, trigger both preview services via the API.
+  preview-deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/integration/2026-08-10'
+    needs: [lint, type, unit, integration, coverage, security, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      PREVIEW_API_SERVICE_ID: srv-d9pe8jm417fc73dnnirg
+      PREVIEW_UI_SERVICE_ID: srv-d9pe8jm417fc73dnnisg
+    steps:
+      - name: Require Render API key
+        run: |
+          if [ -z "${RENDER_API_KEY}" ]; then
+            echo "RENDER_API_KEY repository secret is missing. Add a Dashboard API key (rnd_...) from https://dashboard.render.com/u/settings#api-keys"
+            exit 1
+          fi
+      - name: Trigger Render preview deploys
+        run: |
+          set -euo pipefail
+          deploy() {
+            local name="$1"
+            local id="$2"
+            echo "Triggering ${name} (${id}) at ${GITHUB_SHA}"
+            code="$(curl -sS -o /tmp/render-deploy.json -w "%{http_code}" \
+              -X POST "https://api.render.com/v1/services/${id}/deploys" \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Accept: application/json" \
+              -H "Content-Type: application/json" \
+              -d "{\"commitId\":\"${GITHUB_SHA}\",\"clearCache\":\"do_not_clear\"}")"
+            echo "HTTP ${code}"
+            python3 -c "import json; d=json.load(open('/tmp/render-deploy.json')); deploy=d.get('deploy', d); print('deploy_id', deploy.get('id'), 'status', deploy.get('status'), 'commit', (deploy.get('commit') or {}).get('id'))"
+            case "${code}" in
+              200|201|202) ;;
+              *) echo "Render deploy trigger failed for ${name}"; exit 1 ;;
+            esac
+          }
+          deploy sage125-api-preview "${PREVIEW_API_SERVICE_ID}"
+          deploy sage125-ui-preview "${PREVIEW_UI_SERVICE_ID}"
