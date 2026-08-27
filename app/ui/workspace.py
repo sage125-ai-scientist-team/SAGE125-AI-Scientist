@@ -16,6 +16,8 @@ from app.ui.ui_index import question_status_map as _question_status_map
 _OFFICIAL_QID_RE = re.compile(r"^Q(\d{3})$", re.IGNORECASE)
 QUERY_QUESTION_KEY = "question_id"
 QUERY_QUESTION_LEGACY_KEY = "qid"
+QUERY_MODE_KEY = "mode"
+ALLOWED_RUN_MODES = frozenset({"mock", "real"})
 
 BOOT_QUESTIONS = "_sage_questions"
 BOOT_HEALTH = "_sage_health"
@@ -64,8 +66,9 @@ def bootstrap(*, refresh_questions: bool = False, refresh_diag: bool = False) ->
 
     client_id = ensure_client_id()
     qid = state.get(state.KEY_SELECTED_QID)
+    job_mode = None
     if qid:
-        rehydrate_job_state(client_id, str(qid), JOB_TYPE_FULL)
+        full_job = rehydrate_job_state(client_id, str(qid), JOB_TYPE_FULL)
         from app.ui.job_state import get_pointer_job_id, persist_query_job
 
         if get_pointer_job_id(str(qid), JOB_TYPE_DEMO):
@@ -75,6 +78,10 @@ def bootstrap(*, refresh_questions: bool = False, refresh_diag: bool = False) ->
         )
         if pointer:
             persist_query_job(pointer)
+        if isinstance(full_job, dict):
+            job_mode = full_job.get("mode")
+    apply_query_mode(fallback=job_mode)
+    persist_query_mode()
 
     result = state.get_run_result()
     return {
@@ -161,6 +168,49 @@ def apply_query_question(questions: list[dict]) -> None:
         state.select_question(str(item.get("id")), item.get("question", ""))
 
 
+def official_run_mode(raw: Any) -> str | None:
+    """只接受 mock / real。"""
+    if raw is None:
+        return None
+    if isinstance(raw, (list, tuple)):
+        raw = raw[0] if raw else None
+    mode = str(raw or "").strip().lower()
+    return mode if mode in ALLOWED_RUN_MODES else None
+
+
+def apply_query_mode(*, fallback: str | None = None) -> None:
+    """从 URL 或最近 Job 恢复运行模式。刷新后不得默默回到演示。"""
+    from app.ui.components import MODE_WIDGET_FALLBACK_KEY, MODE_WIDGET_KEY
+
+    widget = official_run_mode(st.session_state.get(MODE_WIDGET_KEY)) or official_run_mode(
+        st.session_state.get(MODE_WIDGET_FALLBACK_KEY)
+    )
+    if widget:
+        state.set_value(state.KEY_MODE, widget)
+        return
+    try:
+        raw = st.query_params.get(QUERY_MODE_KEY)
+    except Exception:
+        raw = None
+    mode = official_run_mode(raw) or official_run_mode(fallback)
+    if not mode:
+        return
+    state.set_value(state.KEY_MODE, mode)
+    st.session_state[MODE_WIDGET_KEY] = mode
+    st.session_state[MODE_WIDGET_FALLBACK_KEY] = mode
+
+
+def persist_query_mode(mode: str | None = None) -> None:
+    """把当前运行模式写入 URL，刷新后仍保持真实/演示选择。"""
+    resolved = official_run_mode(mode or state.current_mode())
+    if not resolved:
+        return
+    try:
+        st.query_params[QUERY_MODE_KEY] = resolved
+    except Exception:
+        pass
+
+
 def persist_query_question(qid: str | None) -> None:
     """把当前问题写入 URL，便于刷新与分享。"""
     try:
@@ -174,6 +224,7 @@ def persist_query_question(qid: str | None) -> None:
                     del st.query_params[key]
     except Exception:
         pass
+    persist_query_mode()
     from app.ui.job_state import ensure_client_id
 
     ensure_client_id()

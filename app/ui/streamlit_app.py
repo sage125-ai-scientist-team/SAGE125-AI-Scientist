@@ -384,6 +384,9 @@ def render_legacy_workspace() -> None:
     with st.sidebar:
         mode = components.render_mode_control(mode)
         state.set_value(state.KEY_MODE, mode)
+        from app.ui.workspace import persist_query_mode
+
+        persist_query_mode(mode)
         mode = state.current_mode()
         components.render_system_status(health, llm_summary)
         handle_presets(questions)
