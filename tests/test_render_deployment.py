@@ -227,7 +227,9 @@ def test_render_blueprint_and_entrypoint_contracts(monkeypatch):
     assert blueprint.count("branch: integration/2026-08-10") == 2
     assert blueprint.count("plan: free") == 2
     assert blueprint.count("region: singapore") == 2
-    assert blueprint.count("autoDeployTrigger: checksPass") == 2
+    assert blueprint.count("autoDeployTrigger: off") == 2
+    assert "autoDeployTrigger: checksPass" not in blueprint
+    assert "autoDeployTrigger: commit" not in blueprint
     assert "startCommand: python -m scripts.start_api" in blueprint
     assert "startCommand: python -m scripts.start_ui" in blueprint
     assert "healthCheckPath: /health" in blueprint
@@ -275,6 +277,13 @@ def test_ci_covers_integration_and_main_pushes_and_pull_requests():
     pull_request_section = workflow.split("pull_request:", 1)[1].split("permissions:", 1)[0]
     assert "- integration/2026-08-10" in pull_request_section
     assert "- main" in pull_request_section
+    assert "preview-deploy:" in workflow
+    assert "github.event_name == 'push' && github.ref == 'refs/heads/integration/2026-08-10'" in workflow
+    assert "needs: [lint, type, unit, integration, coverage, security, build]" in workflow
+    assert "secrets.RENDER_API_KEY" in workflow
+    assert "srv-d9pe8jm417fc73dnnirg" in workflow
+    assert "srv-d9pe8jm417fc73dnnisg" in workflow
+    assert "https://api.render.com/v1/services/${id}/deploys" in workflow
 
 
 def test_gitattributes_has_no_utf8_bom():
