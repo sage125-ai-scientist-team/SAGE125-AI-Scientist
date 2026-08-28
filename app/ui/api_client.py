@@ -171,6 +171,12 @@ def api_available() -> bool:
     return connected
 
 
+def refresh_api_available() -> bool:
+    """作废健康缓存后再探测一次，避免把冷启动失败记成 60 秒不可用。"""
+    _fetch_health_cached.clear()
+    return api_available()
+
+
 # ---- 各接口：HTTP 优先，失败回退进程内 ----
 
 def get_health() -> dict:
@@ -811,33 +817,87 @@ def recover_run_after_timeout(question_id: str, min_mtime: float | None = None) 
     return None
 
 
+def _preflight_payload(response: requests.Response) -> dict[str, Any] | None:
+    """把 /preflight 的 JSON 或 FastAPI detail 收成前端可用的检查结果。"""
+    try:
+        data = response.json()
+    except ValueError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    detail = data.get("detail")
+    if isinstance(detail, dict):
+        data = {**data, **detail}
+    if "ok" not in data and not data.get("errors"):
+        return None
+    data.setdefault("ok", False)
+    data.setdefault("errors", [])
+    data.setdefault("warnings", [])
+    if not isinstance(data["errors"], list):
+        data["errors"] = [str(data["errors"])]
+    if not isinstance(data["warnings"], list):
+        data["warnings"] = [str(data["warnings"])]
+    return data
+
+
+def _run_api_preflight(
+    use_local_rag: bool,
+    use_deep_research: bool,
+    *,
+    allow_wake: bool,
+) -> dict[str, Any]:
+    """API-only 真实模式预检：用户点击启动时允许唤醒托管 API，横幅探测保持短超时。"""
+    timeout = _wake_timeout_seconds() if allow_wake else _short_timeout_seconds()
+    attempts = 2 if allow_wake else 1
+    if allow_wake:
+        refresh_api_available()
+    last_errors = ["sage125-api 暂不可用。"]
+    params = {
+        "use_local_rag": use_local_rag,
+        "use_deep_research": use_deep_research,
+    }
+    for attempt in range(1, attempts + 1):
+        try:
+            response = requests.get(
+                f"{api_base()}/preflight",
+                params=params,
+                timeout=timeout,
+            )
+        except requests.Timeout:
+            last_errors = ["sage125-api 正在唤醒，请再点一次开始生成。"]
+            if allow_wake and attempt < attempts:
+                refresh_api_available()
+            continue
+        except (requests.RequestException, ValueError):
+            last_errors = ["sage125-api 暂不可用。"]
+            if allow_wake and attempt < attempts:
+                refresh_api_available()
+            continue
+        parsed = _preflight_payload(response)
+        if parsed is not None:
+            return parsed
+        if response.status_code == 200:
+            last_errors = ["sage125-api 返回了无法解析的 preflight 结果。"]
+            continue
+        last_errors = [f"sage125-api 返回 HTTP {response.status_code}。"]
+    return {"ok": False, "errors": last_errors, "warnings": []}
+
+
 def run_preflight(
     use_local_rag: bool = True,
     use_deep_research: bool = True,
     *,
     check_connectivity: bool = False,
     progress_callback: Callable[[dict], None] | None = None,
+    allow_wake: bool = False,
 ) -> dict:
     """运行真实模式 preflight；API-only UI 不得加载后端配置或模型客户端。"""
     if _api_only():
-        try:
-            response = requests.get(
-                f"{api_base()}/preflight",
-                params={
-                    "use_local_rag": use_local_rag,
-                    "use_deep_research": use_deep_research,
-                },
-                timeout=_short_timeout_seconds(),
-            )
-            if response.status_code == 200:
-                return response.json()
-        except (requests.RequestException, ValueError):
-            pass
-        return {
-            "ok": False,
-            "errors": ["sage125-api 暂不可用。"],
-            "warnings": [],
-        }
+        return _run_api_preflight(
+            use_local_rag,
+            use_deep_research,
+            allow_wake=allow_wake,
+        )
     from app.workflow.preflight import run_real_preflight
     from app.core.run_progress import progress_reporting
 
@@ -1187,7 +1247,7 @@ def create_job(
     options: dict | None = None,
 ) -> dict[str, Any]:
     """创建或复用后台 Job；不执行科学流水线。"""
-    if not api_available():
+    if not api_available() and not refresh_api_available():
         return {
             "status": "failed",
             "error_type": "api_unavailable",

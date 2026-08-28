@@ -335,6 +335,7 @@ def main() -> None:
                 pf = api_client.run_preflight(
                     switches.get("use_local_rag", True),
                     switches.get("use_deep_research", True),
+                    allow_wake=True,
                 )
                 if not pf.get("ok"):
                     err_text = "\n".join(pf.get("errors", []))

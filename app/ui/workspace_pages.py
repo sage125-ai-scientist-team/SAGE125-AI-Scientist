@@ -215,7 +215,7 @@ def page_questions() -> None:
 
     consume_picker_focus()
     render_question_action_hub(ctx)
-    # 进度与 KPI 必须是页面级 Fragment，不能嵌在选题 Fragment 里，否则不会按秒刷新。
+    # 进度与 KPI 必须是页面级 Fragment，才能按秒刷新；选题区不再用 Fragment，避免换题残影。
     _render_model_progress()
     _render_research_plan_overview(ctx)
     _render_question_detail_expander(ctx)
@@ -236,25 +236,19 @@ def _live_ctx(ctx: dict[str, Any]) -> dict[str, Any]:
     return live
 
 
-@st.fragment
 def render_question_action_hub(ctx: dict[str, Any]) -> None:
-    """选题 + 快速操作 + 只读上下文 + 紧凑 Job，同一次 Fragment 更新。"""
+    """选题 + 快速操作：固定单棵页面级组件树，避免 Fragment + st.empty 留下重复卡片。"""
     apply_pending_question(ctx["questions"])
     load_question_selector_state()
     live = _live_ctx(ctx)
-    qid = str(live.get("qid") or "none")
-    phase = "open" if picker_is_expanded() else "shut"
-    # 换题时选题区从展开收成一条，Fragment 会留下上一棵组件树，出现两套快速操作。
-    slot = st.empty()
-    with slot.container():
-        with st.container(key=f"question-action-hub-{qid}-{phase}"):
-            st.markdown('<section id="workspace-header"></section>', unsafe_allow_html=True)
-            render_workspace_header(live)
-            st.markdown('<section id="global-job-status"></section>', unsafe_allow_html=True)
-            st.markdown('<section id="question-picker"></section>', unsafe_allow_html=True)
-            _render_picker_panel(live)
-            st.markdown('<section id="quick-actions"></section>', unsafe_allow_html=True)
-            _render_quick_actions(live)
+    with st.container(key="question-action-hub"):
+        st.markdown('<section id="workspace-header"></section>', unsafe_allow_html=True)
+        render_workspace_header(live)
+        st.markdown('<section id="global-job-status"></section>', unsafe_allow_html=True)
+        st.markdown('<section id="question-picker"></section>', unsafe_allow_html=True)
+        _render_picker_panel(live)
+        st.markdown('<section id="quick-actions"></section>', unsafe_allow_html=True)
+        _render_quick_actions(live)
 
 
 def _render_compact_job_status(qid: str | None) -> None:
@@ -310,7 +304,7 @@ def _render_picker_panel(ctx: dict[str, Any]) -> None:
         with btn:
             if st.button("更换问题", key="change_question", width="stretch"):
                 st.session_state[components.PICKER_EXPANDED_KEY] = True
-                st.rerun(scope="fragment")
+                st.rerun()
         return
 
     st.markdown(
