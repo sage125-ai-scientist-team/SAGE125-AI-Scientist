@@ -23,6 +23,7 @@ from app.core.config import Settings, get_settings
 from app.core.logging import get_logger
 from app.core.schemas import EvidenceCard
 from app.rag.evidence import evidence_deduplicate, literature_to_evidence_card
+from app.rag.literature_relevance import apply_content_relevance
 
 # 模块级日志器。
 logger = get_logger("rag.open_literature")
@@ -117,7 +118,10 @@ class OpenLiteratureRetriever:
         self.crossref = crossref or CrossrefClient(self.settings)
 
     def search(
-        self, queries: list[str | dict], max_results_per_query: int = 5
+        self,
+        queries: list[str | dict],
+        max_results_per_query: int = 5,
+        topic_text: str = "",
     ) -> list[EvidenceCard]:
         """
         对多个查询聚合检索 arXiv / OpenAlex / Crossref，返回去重后的证据。
@@ -125,6 +129,7 @@ class OpenLiteratureRetriever:
         参数：
             queries:               查询列表。
             max_results_per_query: 每个查询每个来源的最大条数。
+            topic_text:            科学问题原文，参与相关性打分。
 
         返回：
             去重后的 EvidenceCard 列表。
@@ -184,10 +189,17 @@ class OpenLiteratureRetriever:
                         dropped,
                     )
                 query_cards = matched
+            apply_content_relevance(
+                query_cards,
+                q,
+                topic_text=topic_text,
+                settings=self.settings,
+            )
             collected.extend(query_cards)
 
         # 统一去重后返回。
         deduped = evidence_deduplicate(collected)
+        deduped.sort(key=lambda card: card.relevance_score, reverse=True)
         logger.info(
             "open_literature 检索完成：queries=%d，raw=%d，deduped=%d",
             len(queries),
