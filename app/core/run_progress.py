@@ -108,6 +108,11 @@ def current_progress() -> Mapping:
     return dict(_latest.get() or {})
 
 
+def current_progress_callback() -> ProgressCallback | None:
+    """Return the callback bound by the nearest ``progress_reporting`` context."""
+    return _callback.get()
+
+
 @contextmanager
 def progress_reporting(callback: ProgressCallback | None) -> Iterator[None]:
     """Bind a callback to this run without global mutable state."""

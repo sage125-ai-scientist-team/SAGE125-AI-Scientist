@@ -274,6 +274,27 @@ def test_pipeline_runner_does_not_infer_completion_without_owner_contract(
     assert result.completion_verified is False
 
 
+def test_pipeline_runner_forwards_progress_callback(tmp_path, monkeypatch):
+    from app.workflow import pipeline
+
+    captured: dict = {}
+
+    def _capture(**kwargs):
+        captured.update(kwargs)
+        return (object(), SimpleNamespace(run_id="upstream-run-progress"))
+
+    monkeypatch.setattr(pipeline, "run_pipeline_with_state", _capture)
+    store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
+    store.initialize()
+    job, _ = store.create_job(request=_request(), correlation_id="corr")
+    sentinel = object()
+
+    result = PipelineJobRunner().run(job, sentinel)
+
+    assert result.upstream_run_id == "upstream-run-progress"
+    assert captured.get("progress_callback") is sentinel
+
+
 def test_queue_runs_job_and_persists_upstream_run_id(tmp_path):
     store = SQLiteJobStore(tmp_path / "jobs.sqlite3")
     store.initialize()

@@ -107,3 +107,18 @@ def test_planner_preference_calls_only_requested_source_and_filters_collision():
     assert openalex.calls == 0
     assert crossref.calls == 0
     assert [card.id for card in cards] == ["a-relevant"]
+
+
+def test_ensure_open_literature_queries_fills_missing_arxiv_and_openalex() -> None:
+    from app.rag.open_literature_retriever import ensure_open_literature_queries
+
+    filled = ensure_open_literature_queries(
+        [{
+            "query": "general relativity gravitational waves",
+            "source_preference": "crossref",
+        }],
+        fallback_query="unused",
+    )
+    prefs = [item["source_preference"] for item in filled]
+    assert prefs == ["crossref", "arxiv", "openalex"]
+    assert all(item["query"] == "general relativity gravitational waves" for item in filled)

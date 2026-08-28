@@ -37,3 +37,29 @@ def test_first_agent_failure_persists_partial_state(monkeypatch, tmp_path):
     status = json.loads((run_dir / "run_status.json").read_text(encoding="utf-8"))
     assert status["status"] == "failed"
     assert any(event.get("status") == "failed" for event in events)
+
+
+def test_nested_pipeline_keeps_outer_progress_callback(monkeypatch):
+    from types import SimpleNamespace
+
+    from app.core.run_progress import emit_progress, progress_reporting
+    from app.workflow import pipeline
+
+    events: list[dict] = []
+
+    def _impl(**_kwargs):
+        emit_progress(
+            "question_parser",
+            status="running",
+            message="正在连接 千问 3.6 Flash",
+            model_alias="fast",
+        )
+        return object(), SimpleNamespace(run_id="nested-progress")
+
+    monkeypatch.setattr(pipeline, "_run_pipeline_with_state_impl", _impl)
+    with progress_reporting(events.append):
+        pipeline.run_pipeline_with_state("Q001", mock_mode=True)
+
+    assert events
+    assert events[0]["stage"] == "question_parser"
+    assert events[0]["model_alias"] == "fast"
