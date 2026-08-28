@@ -1021,7 +1021,7 @@ def run_experiment(question_id: str) -> dict:
     try:
         r = requests.post(
             f"{api_base()}/experiments/{quote(qid, safe='')}/run",
-            timeout=max(_short_timeout_seconds(), 60),
+            timeout=max(_short_timeout_seconds(), 180),
         )
         if r.status_code == 200:
             return r.json()
