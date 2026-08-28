@@ -129,6 +129,69 @@ def is_terminal(job: dict[str, Any] | None) -> bool:
     return bool(job) and str(job.get("status") or "") in TERMINAL_BACKEND
 
 
+PROGRESS_BOUND_QID_KEY = "progress_card_bound_qid"
+PROGRESS_SHOW_TERMINAL_KEY = "progress_card_show_terminal"
+
+
+def jobs_owned_by_question(
+    jobs: list[dict[str, Any]], question_id: str | None
+) -> list[dict[str, Any]]:
+    """只保留明确属于当前题目的 Job；没有选题时不展示任何进度。"""
+    if not question_id:
+        return []
+    owned: list[dict[str, Any]] = []
+    for job in jobs:
+        job_qid = str(job.get("question_id") or "").strip()
+        if job_qid and job_qid != str(question_id):
+            continue
+        if not job_qid:
+            continue
+        owned.append(job)
+    return owned
+
+
+def select_progress_card_job(
+    question_id: str | None,
+    jobs: list[dict[str, Any]],
+    *,
+    bound_qid: str | None,
+    show_terminal: bool,
+) -> tuple[dict[str, Any] | None, str | None, bool]:
+    """换题后隐藏上一题进度；只有当前题正在跑，或刚在本题跑完尚未换题时才显示。"""
+    if not question_id:
+        return None, None, False
+    owned = jobs_owned_by_question(jobs, question_id)
+    if bound_qid != question_id:
+        show_terminal = False
+    bound_qid = question_id
+    active = [job for job in owned if is_active(job)]
+    if active:
+        ranked = sorted(
+            active, key=lambda item: str(item.get("updated_at") or ""), reverse=True
+        )
+        return ranked[0], bound_qid, True
+    if show_terminal and owned:
+        ranked = sorted(
+            owned, key=lambda item: str(item.get("updated_at") or ""), reverse=True
+        )
+        return ranked[0], bound_qid, True
+    return None, bound_qid, False
+
+
+def resolve_progress_card_job(
+    question_id: str | None, jobs: list[dict[str, Any]]
+) -> dict[str, Any] | None:
+    job, bound_qid, show_terminal = select_progress_card_job(
+        question_id,
+        jobs,
+        bound_qid=st.session_state.get(PROGRESS_BOUND_QID_KEY),
+        show_terminal=bool(st.session_state.get(PROGRESS_SHOW_TERMINAL_KEY)),
+    )
+    st.session_state[PROGRESS_BOUND_QID_KEY] = bound_qid
+    st.session_state[PROGRESS_SHOW_TERMINAL_KEY] = show_terminal
+    return job
+
+
 def stage_cursor(stage: str | None) -> tuple[int | None, int | None]:
     if not stage:
         return None, None

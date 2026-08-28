@@ -23,11 +23,17 @@ def test_model_progress_is_page_level_fragment() -> None:
     hub = src.split("def render_question_action_hub", 1)[1].split(
         "def _render_compact_job_status", 1
     )[0]
-    assert "_render_model_progress(ctx.get(\"qid\"))" in questions
+    assert "_render_model_progress()" in questions
     assert "_render_status_kpis(ctx)" in questions
     assert "_render_model_progress" not in hub
     assert "_render_status_kpis" not in hub
     assert '@st.fragment(run_every="2s")' in src.split("def _render_model_progress", 1)[0][-80:]
+    assert "KEY_SELECTED_QID" in src.split("def _render_model_progress", 1)[1].split(
+        "def _run_count_for_question", 1
+    )[0]
+    assert "slot.empty()" in src.split("def _render_model_progress", 1)[1].split(
+        "def _run_count_for_question", 1
+    )[0]
 
 
 def test_run_count_kpi_is_numeric() -> None:
@@ -90,3 +96,46 @@ def test_demo_run_has_inprocess_fallback() -> None:
     assert "_inprocess_baseline_summary" in src
     assert "run_baseline" in src
     assert "_failed_experiment_payload" in src
+
+
+def test_progress_card_hides_previous_question_after_switch() -> None:
+    from app.ui.job_state import select_progress_card_job
+
+    done = {
+        "job_id": "job-q028",
+        "question_id": "Q028",
+        "status": "waiting_feedback",
+        "updated_at": "2026-08-28T11:00:00Z",
+    }
+    job, bound, show_terminal = select_progress_card_job(
+        "Q028", [done], bound_qid="Q028", show_terminal=True
+    )
+    assert job is not None
+    assert job["job_id"] == "job-q028"
+    assert bound == "Q028"
+    assert show_terminal is True
+
+    job, bound, show_terminal = select_progress_card_job(
+        "Q059", [done], bound_qid=bound, show_terminal=show_terminal
+    )
+    assert job is None
+    assert bound == "Q059"
+    assert show_terminal is False
+
+
+def test_progress_card_appears_only_after_current_question_starts() -> None:
+    from app.ui.job_state import select_progress_card_job
+
+    running = {
+        "job_id": "job-q059",
+        "question_id": "Q059",
+        "status": "running",
+        "updated_at": "2026-08-28T11:05:00Z",
+    }
+    job, bound, show_terminal = select_progress_card_job(
+        "Q059", [running], bound_qid="Q059", show_terminal=False
+    )
+    assert job is not None
+    assert job["job_id"] == "job-q059"
+    assert bound == "Q059"
+    assert show_terminal is True
