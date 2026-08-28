@@ -38,6 +38,8 @@ def test_model_progress_is_page_level_fragment() -> None:
     assert "_render_status_kpis" in progress
     assert "slot = st.empty()" not in progress
     assert "st.empty()" in progress
+    assert "apply_job_result_if_ready" in progress
+    assert "st.rerun()" in progress
 
 
 def test_run_count_kpi_is_numeric() -> None:

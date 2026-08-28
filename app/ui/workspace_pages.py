@@ -127,7 +127,10 @@ def _render_model_progress(*, include_kpis: bool = True) -> None:
         live_qid = str(live.get("question_id") or job.get("question_id") or qid or "").strip()
         if qid and live_qid == str(qid):
             job_state.render_progress_card(live)
-            job_state.apply_job_result_if_ready(live)
+            if job_state.apply_job_result_if_ready(live):
+                # 进度卡在 Fragment 内，概览在页面级。结果刚写入时必须整页重跑，
+                # 否则会一直显示「尚未形成候选假设」，直到切到候选假设再回来。
+                st.rerun()
         else:
             st.empty()
     else:
