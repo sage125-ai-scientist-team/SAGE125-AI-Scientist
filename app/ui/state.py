@@ -23,6 +23,7 @@ KEY_ACTIVE_RUN_ID = "active_run_id"
 KEY_ACTIVE_RUN_QID = "active_run_question_id"
 KEY_RUN_RESULT = "run_result"
 KEY_MODE = "mode"  # "mock" | "real"
+KEY_MODE_EXPLICIT = "run_mode_explicit"  # 用户/URL/Job 是否已明确选定模式
 KEY_OFFLINE = "offline_browse"  # 是否处于历史结果浏览
 KEY_FEEDBACK_TEXT = "feedback_text"
 KEY_PENDING_QID = "pending_question_id"  # 外部选择（preset/history）在 selector 渲染前消费
@@ -37,6 +38,7 @@ KEY_RUN_ID = KEY_ACTIVE_RUN_ID
 def init_state() -> None:
     """初始化默认 session 状态（幂等）。"""
     st.session_state.setdefault(KEY_MODE, "mock")
+    st.session_state.setdefault(KEY_MODE_EXPLICIT, False)
     st.session_state.setdefault(KEY_RUN_RESULT, {})
     st.session_state.setdefault(KEY_ACTIVE_RUN_ID, None)
     st.session_state.setdefault(KEY_ACTIVE_RUN_QID, None)

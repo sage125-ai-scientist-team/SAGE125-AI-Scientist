@@ -286,7 +286,8 @@ def render_mode_control(current_mode: str) -> str:
     default_index = options.index(current_mode) if current_mode in options else 0
     if current_mode in options and st.session_state.get(MODE_WIDGET_KEY) not in options:
         st.session_state[MODE_WIDGET_KEY] = current_mode
-    if current_mode in options and st.session_state.get(MODE_WIDGET_FALLBACK_KEY) not in options:
+    if current_mode in options:
+        # 备用 key 不是当前控件时也会留在 session；必须与当前模式对齐。
         st.session_state[MODE_WIDGET_FALLBACK_KEY] = current_mode
     segmented_control = getattr(st, "segmented_control", None)
     if callable(segmented_control):

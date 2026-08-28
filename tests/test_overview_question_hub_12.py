@@ -135,6 +135,45 @@ def test_query_param_restores_real_mode_after_refresh(monkeypatch):
         st.session_state = original  # type: ignore[assignment]
 
 
+def test_stale_fallback_widget_does_not_reset_real_mode(monkeypatch):
+    """离开设置页后，未挂载的备用 selectbox key 不得把真实运行盖回演示。"""
+    original = st.session_state
+    st.session_state = {}  # type: ignore[assignment]
+
+    class _QP(dict):
+        def get(self, key, default=None):
+            return dict.get(self, key, default)
+
+    qp = _QP()
+    try:
+        state.init_state()
+        monkeypatch.setattr(st, "query_params", qp, raising=False)
+        workspace.persist_query_mode("real")
+        st.session_state.pop(components.MODE_WIDGET_KEY, None)
+        st.session_state[components.MODE_WIDGET_FALLBACK_KEY] = "mock"
+        workspace.apply_query_mode(fallback="mock")
+        workspace.persist_query_mode()
+        assert state.current_mode() == "real"
+        assert qp.get("mode") == "real"
+        assert st.session_state.get(components.MODE_WIDGET_FALLBACK_KEY) == "real"
+    finally:
+        st.session_state = original  # type: ignore[assignment]
+
+
+def test_explicit_mock_is_not_overwritten_by_job_fallback(monkeypatch):
+    """用户明确选了演示后，旧 Job 的 real 不得改回。"""
+    original = st.session_state
+    st.session_state = {}  # type: ignore[assignment]
+    try:
+        state.init_state()
+        workspace.persist_query_mode("mock")
+        st.session_state.pop(components.MODE_WIDGET_KEY, None)
+        workspace.apply_query_mode(fallback="real")
+        assert state.current_mode() == "mock"
+    finally:
+        st.session_state = original  # type: ignore[assignment]
+
+
 def test_mode_widget_is_not_overwritten_by_stale_query(monkeypatch):
     original = st.session_state
     st.session_state = {}  # type: ignore[assignment]
