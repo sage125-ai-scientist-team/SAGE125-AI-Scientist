@@ -47,6 +47,7 @@ _STAGE_BY_KEY = {item.key: item for item in PIPELINE_STAGES}
 _STAGE_ALIASES = {
     "starting": "preparing",
     "queued": "preparing",
+    "initializing": "preparing",
     "connecting": "preflight",
     "retrieval": "evidence_collection",
     "local_rag": "evidence_collection",

@@ -127,11 +127,28 @@ def _render_model_progress(qid: str | None) -> None:
         reverse=True,
     )
     job = ranked[0]
-    job_state.render_progress_card(job)
-    job_state.apply_job_result_if_ready(job)
+    live = api_client.get_job(str(job.get("job_id") or "")) or job
+    job_state.render_progress_card(live)
+    job_state.apply_job_result_if_ready(live)
 
 
-@st.fragment
+def _run_count_for_question(qid: str | None) -> int:
+    """Job 指针 + 导出目录去重计数；没有运行时显示 0 而不是破折号。"""
+    ids: set[str] = set()
+    for job in job_state.collect_visible_jobs(qid):
+        token = str(job.get("upstream_run_id") or job.get("job_id") or "").strip()
+        if token:
+            ids.add(token)
+    for item in list_runs():
+        if qid and str(item.get("question_id") or "") != str(qid):
+            continue
+        token = str(item.get("run_id") or "").strip()
+        if token:
+            ids.add(token)
+    return len(ids)
+
+
+@st.fragment(run_every="2s")
 def _render_status_kpis(ctx: dict[str, Any]) -> None:
     """研究状态 / 已用证据 / 运行次数。"""
     ctx = _live_ctx(ctx)
@@ -139,12 +156,12 @@ def _render_status_kpis(ctx: dict[str, Any]) -> None:
     label, _kind = research_status(ctx)
     result = ctx.get("result") or {}
     evidence_n = len(result.get("evidence_cards") or [])
-    runs = [r for r in list_runs() if not qid or str(r.get("question_id")) == str(qid)]
+    run_count = _run_count_for_question(qid)
     kpi_html = (
         '<div class="ws-kpi-row cols-3">'
         f'<div class="ws-kpi"><div class="ws-kpi-label">当前研究状态</div><div class="ws-kpi-value">{esc(label)}</div></div>'
         f'<div class="ws-kpi"><div class="ws-kpi-label">已用证据</div><div class="ws-kpi-value">{evidence_n if evidence_n else "—"}</div></div>'
-        f'<div class="ws-kpi"><div class="ws-kpi-label">运行次数</div><div class="ws-kpi-value">{len(runs) if runs else "—"}</div></div>'
+        f'<div class="ws-kpi"><div class="ws-kpi-label">运行次数</div><div class="ws-kpi-value">{run_count}</div></div>'
         "</div>"
     )
     st.markdown(kpi_html, unsafe_allow_html=True)
@@ -195,6 +212,9 @@ def page_questions() -> None:
 
     consume_picker_focus()
     render_question_action_hub(ctx)
+    # 进度与 KPI 必须是页面级 Fragment，不能嵌在选题 Fragment 里，否则不会按秒刷新。
+    _render_model_progress(ctx.get("qid"))
+    _render_status_kpis(ctx)
     _render_research_plan_overview(ctx)
     _render_question_detail_expander(ctx)
     st.markdown('<div id="recent-activity"></div>', unsafe_allow_html=True)
@@ -227,8 +247,6 @@ def render_question_action_hub(ctx: dict[str, Any]) -> None:
     _render_picker_panel(live)
     st.markdown('<section id="quick-actions"></section>', unsafe_allow_html=True)
     _render_quick_actions(live)
-    _render_model_progress(live.get("qid"))
-    _render_status_kpis(_live_ctx(ctx))
 
 
 def _render_compact_job_status(qid: str | None) -> None:

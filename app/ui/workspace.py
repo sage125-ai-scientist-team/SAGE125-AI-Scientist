@@ -420,10 +420,12 @@ def research_status(ctx: dict[str, Any]) -> tuple[str, str]:
         kinds = {ui_status(job) for job in pointer_jobs if job}
         if "FAILED" in kinds:
             return "需要补充证据", "error"
+        if "SUCCEEDED" in kinds or ("PARTIAL" in kinds and (plan or result.get("run_id"))):
+            if str(plan.get("validation_status") or "") == "validated":
+                return "已完成", "success"
+            return "已形成计划", "info"
         if "PARTIAL" in kinds:
             return "部分完成", "warning"
-        if "SUCCEEDED" in kinds:
-            return "已形成计划", "info"
     except Exception:
         pass
     if rs == "running":

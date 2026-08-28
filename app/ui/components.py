@@ -1400,7 +1400,7 @@ def _render_experiment_run_control(plan: dict) -> None:
     elif result.get("status") != "succeeded":
         reason = result.get("reason") or (result.get("error") or {}).get("message") or result.get("status")
         st.error(f"真实实验执行未成功：{esc(str(reason))}")
-        st.caption("关闭 VPN 或网络恢复后，点击上方「重新运行真实实验」。不会编造指标。")
+        st.caption("可再次点击「重新运行真实实验」。失败原因见上方原文，不会编造指标。")
     else:
         _render_q028_result(result)
     st.markdown("</div>", unsafe_allow_html=True)
