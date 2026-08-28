@@ -251,24 +251,26 @@ def rehydrate_job_state(
     return job
 
 
-def apply_job_result_if_ready(job: dict[str, Any]) -> None:
+def apply_job_result_if_ready(job: dict[str, Any]) -> bool:
+    """把已完成 Job 的 Run 结果写入会话。新写入时返回 True，供页面立刻重画概览。"""
     if not is_terminal(job):
-        return
+        return False
     run_id = job.get("upstream_run_id")
     if not run_id:
-        return
+        return False
     applied = st.session_state.setdefault(RESULT_APPLIED_KEY, set())
     if not isinstance(applied, set):
         applied = set()
         st.session_state[RESULT_APPLIED_KEY] = applied
     marker = f"{job.get('job_id')}:{run_id}"
     if marker in applied:
-        return
+        return False
     loaded = api_client.get_run(str(run_id))
     if loaded.get("status") == "missing" or not loaded.get("plan"):
-        return
+        return False
     state.set_run_result(loaded, question_id=str(job.get("question_id") or ""))
     applied.add(marker)
+    return True
 
 
 def submit_or_reuse_job(

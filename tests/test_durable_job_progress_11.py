@@ -573,6 +573,32 @@ def test_start_generate_and_plan_share_job_type():
 def test_apply_job_result_skips_missing_run(monkeypatch):
     monkeypatch.setattr(job_state.st, "session_state", {})
     monkeypatch.setattr(job_state.api_client, "get_run", lambda run_id: {"status": "missing"})
-    apply_job_result_if_ready(
+    applied = apply_job_result_if_ready(
         {"status": "completed", "job_id": "j1", "upstream_run_id": "r1", "question_id": "Q001"}
     )
+    assert applied is False
+
+
+def test_apply_job_result_returns_true_once(monkeypatch):
+    original = job_state.st.session_state
+    job_state.st.session_state = {}
+    try:
+        monkeypatch.setattr(
+            job_state.api_client,
+            "get_run",
+            lambda run_id: {
+                "status": "completed",
+                "plan": {"generated_hypotheses": [{"id": "H1", "hypothesis": "x"}]},
+            },
+        )
+        monkeypatch.setattr(job_state.state, "set_run_result", lambda *args, **kwargs: None)
+        job = {
+            "status": "completed",
+            "job_id": "j1",
+            "upstream_run_id": "r1",
+            "question_id": "Q001",
+        }
+        assert apply_job_result_if_ready(job) is True
+        assert apply_job_result_if_ready(job) is False
+    finally:
+        job_state.st.session_state = original
