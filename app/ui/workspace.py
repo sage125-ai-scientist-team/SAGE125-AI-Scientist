@@ -273,17 +273,28 @@ def official_run_mode(raw: Any) -> str | None:
     return mode if mode in ALLOWED_RUN_MODES else None
 
 
-def _commit_run_mode(mode: str) -> str | None:
-    """写入业务状态，并同步两个模式控件 key，避免未挂载的备用 key 把真实模式盖回演示。"""
+def _sync_mode_widget_keys(mode: str) -> None:
+    """只在控件尚未实例化时写入 widget key；已挂载的 key 不能再赋值。"""
     from app.ui.components import MODE_WIDGET_FALLBACK_KEY, MODE_WIDGET_KEY
 
+    for key in (MODE_WIDGET_KEY, MODE_WIDGET_FALLBACK_KEY):
+        if official_run_mode(st.session_state.get(key)) == mode:
+            continue
+        try:
+            st.session_state[key] = mode
+        except Exception:
+            pass
+
+
+def _commit_run_mode(mode: str, *, sync_widgets: bool = False) -> str | None:
+    """写入业务状态；widget key 只在控件创建前同步，避免 StreamlitAPIException。"""
     resolved = official_run_mode(mode)
     if not resolved:
         return None
     state.set_value(state.KEY_MODE, resolved)
     st.session_state[state.KEY_MODE_EXPLICIT] = True
-    st.session_state[MODE_WIDGET_KEY] = resolved
-    st.session_state[MODE_WIDGET_FALLBACK_KEY] = resolved
+    if sync_widgets:
+        _sync_mode_widget_keys(resolved)
     return resolved
 
 
@@ -295,12 +306,12 @@ def apply_query_mode(*, fallback: str | None = None) -> None:
     # 首次以 mock 写入后一直留在 session，离开设置页后不能再用它覆盖用户选择。
     live_widget = official_run_mode(st.session_state.get(MODE_WIDGET_KEY))
     if live_widget:
-        _commit_run_mode(live_widget)
+        _commit_run_mode(live_widget, sync_widgets=True)
         return
     if st.session_state.get(state.KEY_MODE_EXPLICIT):
         persisted = official_run_mode(state.current_mode())
         if persisted:
-            _commit_run_mode(persisted)
+            _commit_run_mode(persisted, sync_widgets=True)
             return
     try:
         raw = st.query_params.get(QUERY_MODE_KEY)
@@ -309,7 +320,7 @@ def apply_query_mode(*, fallback: str | None = None) -> None:
     mode = official_run_mode(raw) or official_run_mode(fallback)
     if not mode:
         return
-    _commit_run_mode(mode)
+    _commit_run_mode(mode, sync_widgets=True)
 
 
 def persist_query_mode(mode: str | None = None) -> None:

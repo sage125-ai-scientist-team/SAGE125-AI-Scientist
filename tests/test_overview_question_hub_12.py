@@ -174,6 +174,32 @@ def test_explicit_mock_is_not_overwritten_by_job_fallback(monkeypatch):
         st.session_state = original  # type: ignore[assignment]
 
 
+def test_persist_after_mounted_widget_does_not_rewrite_key(monkeypatch):
+    """设置页控件已挂载后，persist 只能写业务状态，不能再写 widget key。"""
+    original = st.session_state
+
+    class _Locked(dict):
+        locked = False
+
+        def __setitem__(self, key, value):
+            if self.locked and key == components.MODE_WIDGET_KEY:
+                raise AssertionError("must not rewrite mounted mode widget")
+            dict.__setitem__(self, key, value)
+
+    session = _Locked()
+    st.session_state = session  # type: ignore[assignment]
+    try:
+        state.init_state()
+        session[components.MODE_WIDGET_KEY] = "mock"
+        session.locked = True
+        monkeypatch.setattr(st, "query_params", {}, raising=False)
+        workspace.persist_query_mode("real")
+        assert state.current_mode() == "real"
+        assert session[components.MODE_WIDGET_KEY] == "mock"
+    finally:
+        st.session_state = original  # type: ignore[assignment]
+
+
 def test_mode_widget_is_not_overwritten_by_stale_query(monkeypatch):
     original = st.session_state
     st.session_state = {}  # type: ignore[assignment]
