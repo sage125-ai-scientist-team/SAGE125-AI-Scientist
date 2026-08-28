@@ -320,9 +320,9 @@ def test_returning_question_restores_original_job():
         st.session_state = original  # type: ignore[assignment]
 
 
-def test_question_picker_fragment_does_not_full_rerun():
+def test_question_picker_hub_is_page_level():
     src = _read("app/ui/workspace_pages.py")
-    assert "@st.fragment" in src
+    assert "@st.fragment" not in src.split("def render_question_action_hub", 1)[0][-80:]
     assert "def render_question_action_hub" in src
 
 

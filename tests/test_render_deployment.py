@@ -152,6 +152,129 @@ def test_render_ui_health_probe_allows_cold_start(monkeypatch):
     assert observed["timeout"] == 75
 
 
+def test_api_only_preflight_banner_keeps_short_timeout(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+    monkeypatch.setenv("FRONTEND_API_SHORT_TIMEOUT_SECONDS", "10")
+    monkeypatch.setenv("FRONTEND_API_WAKE_TIMEOUT_SECONDS", "75")
+    observed = []
+
+    class Response:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {"ok": True, "errors": [], "warnings": []}
+
+    def fake_get(url, *, params=None, timeout=None):
+        observed.append({"url": url, "timeout": timeout, "params": params})
+        return Response()
+
+    monkeypatch.setattr(api_client.requests, "get", fake_get)
+
+    result = api_client.run_preflight(True, True)
+
+    assert result["ok"] is True
+    preflight_calls = [item for item in observed if str(item["url"]).endswith("/preflight")]
+    assert len(preflight_calls) == 1
+    assert preflight_calls[0]["timeout"] == 10
+
+
+def test_api_only_preflight_wakes_and_retries_timeout(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+    monkeypatch.setenv("FRONTEND_API_SHORT_TIMEOUT_SECONDS", "10")
+    monkeypatch.setenv("FRONTEND_API_WAKE_TIMEOUT_SECONDS", "75")
+    observed = []
+
+    class OkResponse:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {"ok": True, "errors": [], "warnings": []}
+
+    def fake_get(url, *, params=None, timeout=None):
+        observed.append({"url": url, "timeout": timeout})
+        if str(url).endswith("/preflight") and sum(
+            1 for item in observed if str(item["url"]).endswith("/preflight")
+        ) == 1:
+            raise api_client.requests.Timeout("cold start")
+        return OkResponse()
+
+    monkeypatch.setattr(api_client.requests, "get", fake_get)
+
+    result = api_client.run_preflight(True, True, allow_wake=True)
+
+    assert result["ok"] is True
+    preflight_calls = [item for item in observed if str(item["url"]).endswith("/preflight")]
+    assert len(preflight_calls) == 2
+    assert all(item["timeout"] == 75 for item in preflight_calls)
+    assert any(str(item["url"]).endswith("/health") for item in observed)
+
+
+def test_api_only_preflight_surfaces_http_errors(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+
+    class Response:
+        status_code = 503
+
+        @staticmethod
+        def json():
+            return {"ok": False, "errors": ["百炼未配置"], "warnings": []}
+
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda url, *, params=None, timeout=None: Response(),
+    )
+
+    result = api_client.run_preflight(True, False)
+
+    assert result["ok"] is False
+    assert "百炼未配置" in result["errors"]
+
+
+def test_real_start_preflight_allows_hosted_wake():
+    src = (ROOT / "app/ui/streamlit_app.py").read_text(encoding="utf-8")
+    trigger = src.split("def process_run_triggers", 1)[1].split("if trigger_latest", 1)[0]
+    assert "allow_wake=True" in trigger
+    assert "正在检查并唤醒 sage125-api" in trigger
+
+
+def test_create_job_refreshes_stale_health_before_failing(monkeypatch):
+    probes = {"n": 0}
+
+    def fake_available() -> bool:
+        probes["n"] += 1
+        return probes["n"] >= 2
+
+    class Response:
+        status_code = 202
+
+        @staticmethod
+        def json():
+            return {"job_id": "job-wake", "created": True}
+
+    class Session:
+        @staticmethod
+        def post(*args, **kwargs):
+            return Response()
+
+    monkeypatch.setattr(api_client, "api_available", fake_available)
+    monkeypatch.setattr(api_client, "_http_session", lambda: Session())
+
+    result = api_client.create_job(
+        question_id="Q106",
+        mode="real",
+        job_type="full",
+        client_id="client-1",
+        input_digest="digest",
+        idempotency_key="key",
+    )
+
+    assert result["job_id"] == "job-wake"
+    assert probes["n"] == 2
+
+
 def test_api_only_ingest_posts_directly_without_health_gate(monkeypatch):
     monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
     monkeypatch.setenv("FRONTEND_API_SHORT_TIMEOUT_SECONDS", "10")

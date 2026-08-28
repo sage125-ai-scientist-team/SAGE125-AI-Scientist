@@ -233,10 +233,12 @@ def process_run_triggers(
         else:
             run_mode = "mock" if trigger_mock else mode
             if run_mode == "real":
-                pf = api_client.run_preflight(
-                    switches.get("use_local_rag", True),
-                    switches.get("use_deep_research", True),
-                )
+                with st.spinner("正在检查并唤醒 sage125-api…"):
+                    pf = api_client.run_preflight(
+                        switches.get("use_local_rag", True),
+                        switches.get("use_deep_research", True),
+                        allow_wake=True,
+                    )
                 if not pf.get("ok"):
                     err_text = "\n".join(pf.get("errors", []))
                     if any("DASHSCOPE" in e or "WORKSPACE" in e for e in pf.get("errors", [])):

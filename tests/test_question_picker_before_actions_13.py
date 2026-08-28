@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""选题区位于快速操作正上方，同一 Fragment 内启用操作。"""
+"""选题区位于快速操作正上方，同一页面级组件树内启用操作。"""
 
 from __future__ import annotations
 
@@ -115,7 +115,7 @@ def test_selecting_question_does_not_start_job():
     assert "process_run_triggers" not in cb
 
 
-def test_question_and_actions_share_fragment():
+def test_question_and_actions_share_hub():
     src = _read("app/ui/workspace_pages.py")
     hub = src.split("def render_question_action_hub", 1)[1].split("def _render_compact_job_status", 1)[0]
     assert "_render_picker_panel" in hub
@@ -123,22 +123,24 @@ def test_question_and_actions_share_fragment():
     assert "render_workspace_header" in hub
 
 
-def test_selection_triggers_fragment_rerun_only():
+def test_selection_does_not_rerun_from_selector_callback():
     src = _read("app/ui/workspace.py")
     cb = src.split("def store_question_selector_state", 1)[1].split("def picker_is_expanded", 1)[0]
     assert "st.rerun" not in cb
     pages = _read("app/ui/workspace_pages.py")
     picker = pages.split("def _render_picker_panel", 1)[1].split("def _render_quick_actions", 1)[0]
-    assert "st.rerun()" not in picker
+    assert "st.rerun()" in picker
+    assert 'scope="fragment"' not in picker
 
 
-def test_quick_actions_update_in_same_fragment():
+def test_quick_actions_use_single_page_tree():
     src = _read("app/ui/workspace_pages.py")
-    assert "@st.fragment" in src.split("def render_question_action_hub", 1)[0][-80:]
+    assert "@st.fragment" not in src.split("def render_question_action_hub", 1)[0][-80:]
     hub = src.split("def render_question_action_hub", 1)[1].split("def _render_research_plan_overview", 1)[0]
     assert "_render_quick_actions" in hub
-    assert "st.empty()" in hub
-    assert 'key=f"question-action-hub-{qid}-{phase}"' in hub
+    assert "st.empty()" not in hub
+    assert 'key="question-action-hub"' in hub
+    assert "question-action-hub-{qid}" not in hub
 
 
 def test_selected_question_persists_across_pages():
