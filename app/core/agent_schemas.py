@@ -18,9 +18,24 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 # 问题类型可选集合（供 QuestionParser 分类，驱动 ExperimentDesigner 策略）。
+# narrowed_falsifiable_subproblem 是 Q028 的正式类型：把“治愈所有癌症”
+# 收窄为当前可执行、可证伪的 WDBC 子问题；必须与 mock 包和真实模型输出对齐。
+QUESTION_TYPES: tuple[str, ...] = (
+    "mechanism_discovery",
+    "extreme_event_prediction",
+    "material_or_drug_optimization",
+    "theoretical_proof",
+    "observation_plan",
+    "engineering_optimization",
+    "social_risk_or_policy",
+    "ai_scientist_meta",
+    "narrowed_falsifiable_subproblem",
+    "general_scientific_unknown",
+)
+UNKNOWN_QUESTION_TYPE = "general_scientific_unknown"
 QuestionType = Literal[
     "mechanism_discovery",
     "extreme_event_prediction",
@@ -30,6 +45,7 @@ QuestionType = Literal[
     "engineering_optimization",
     "social_risk_or_policy",
     "ai_scientist_meta",
+    "narrowed_falsifiable_subproblem",
     "general_scientific_unknown",
 ]
 
@@ -85,6 +101,16 @@ class ParsedQuestionResult(BaseModel):
     entities: list[str] = Field(default_factory=list, description="实体")
     # 问题类型（驱动实验设计策略）。
     question_type: QuestionType = Field(..., description="问题类型")
+
+    @field_validator("question_type", mode="before")
+    @classmethod
+    def normalize_question_type(cls, value: object) -> object:
+        """接受官方类型；未知标签回落到 general_scientific_unknown，避免流水线在第 1 阶段崩溃。"""
+        raw = str(value or "").strip()
+        if raw in QUESTION_TYPES:
+            return raw
+        return UNKNOWN_QUESTION_TYPE
+
     # 科学边界（当前科学能回答/不能回答的范围）。
     scientific_boundary: str = Field(..., description="科学边界")
     # 不应声称的内容（防止过度宣称）。

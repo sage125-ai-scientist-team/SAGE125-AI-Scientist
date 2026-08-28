@@ -37,7 +37,7 @@ QUESTION_PARSER_PROMPT = (
 输出 JSON schema（ParsedQuestionResult）：
 {
   "domain": str, "core_question": str, "keywords": [str], "entities": [str],
-  "question_type": one of ["mechanism_discovery","extreme_event_prediction","material_or_drug_optimization","theoretical_proof","observation_plan","engineering_optimization","social_risk_or_policy","ai_scientist_meta","general_scientific_unknown"],
+  "question_type": one of ["mechanism_discovery","extreme_event_prediction","material_or_drug_optimization","theoretical_proof","observation_plan","engineering_optimization","social_risk_or_policy","ai_scientist_meta","narrowed_falsifiable_subproblem","general_scientific_unknown"],
   "scientific_boundary": str, "what_not_to_claim": [str],
   "suspected_domain_mismatch": bool, "domain_confidence": float
 }"""
