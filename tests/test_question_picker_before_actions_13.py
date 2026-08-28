@@ -137,6 +137,8 @@ def test_quick_actions_update_in_same_fragment():
     assert "@st.fragment" in src.split("def render_question_action_hub", 1)[0][-80:]
     hub = src.split("def render_question_action_hub", 1)[1].split("def _render_research_plan_overview", 1)[0]
     assert "_render_quick_actions" in hub
+    assert "st.empty()" in hub
+    assert 'key=f"question-action-hub-{qid}-{phase}"' in hub
 
 
 def test_selected_question_persists_across_pages():

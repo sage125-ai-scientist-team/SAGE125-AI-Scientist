@@ -240,13 +240,19 @@ def render_question_action_hub(ctx: dict[str, Any]) -> None:
     apply_pending_question(ctx["questions"])
     load_question_selector_state()
     live = _live_ctx(ctx)
-    st.markdown('<section id="workspace-header"></section>', unsafe_allow_html=True)
-    render_workspace_header(live)
-    st.markdown('<section id="global-job-status"></section>', unsafe_allow_html=True)
-    st.markdown('<section id="question-picker"></section>', unsafe_allow_html=True)
-    _render_picker_panel(live)
-    st.markdown('<section id="quick-actions"></section>', unsafe_allow_html=True)
-    _render_quick_actions(live)
+    qid = str(live.get("qid") or "none")
+    phase = "open" if picker_is_expanded() else "shut"
+    # 换题时选题区从展开收成一条，Fragment 会留下上一棵组件树，出现两套快速操作。
+    slot = st.empty()
+    with slot.container():
+        with st.container(key=f"question-action-hub-{qid}-{phase}"):
+            st.markdown('<section id="workspace-header"></section>', unsafe_allow_html=True)
+            render_workspace_header(live)
+            st.markdown('<section id="global-job-status"></section>', unsafe_allow_html=True)
+            st.markdown('<section id="question-picker"></section>', unsafe_allow_html=True)
+            _render_picker_panel(live)
+            st.markdown('<section id="quick-actions"></section>', unsafe_allow_html=True)
+            _render_quick_actions(live)
 
 
 def _render_compact_job_status(qid: str | None) -> None:
