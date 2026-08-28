@@ -516,38 +516,35 @@ def render_global_job_status_bar(question_id: str | None = None) -> None:
 
 def _render_job_cards() -> None:
     """渲染当前题目的 Job 卡片；供 Fragment 与静态路径共用。"""
-    slot = st.empty()
     jobs = collect_visible_jobs(state.get(state.KEY_SELECTED_QID))
     if not jobs:
-        slot.empty()
         return
     sequences = st.session_state.setdefault(LAST_EVENT_SEQ_KEY, {})
     if not isinstance(sequences, dict):
         sequences = {}
         st.session_state[LAST_EVENT_SEQ_KEY] = sequences
-    with slot.container():
-        for job in jobs:
-            job_id = str(job["job_id"])
-            live = api_client.get_job(job_id) or job
-            events: list[dict[str, Any]] = []
-            if is_active(live):
-                after = int(sequences.get(job_id) or 0)
-                events = api_client.list_job_events(job_id, after_sequence=after)
-                if events:
-                    sequences[job_id] = max(int(item.get("sequence") or 0) for item in events)
-                    live = {**live, "last_event": events[-1]}
-            render_progress_card(live)
-            apply_job_result_if_ready(live)
+    for job in jobs:
+        job_id = str(job["job_id"])
+        live = api_client.get_job(job_id) or job
+        events: list[dict[str, Any]] = []
+        if is_active(live):
+            after = int(sequences.get(job_id) or 0)
+            events = api_client.list_job_events(job_id, after_sequence=after)
             if events:
-                with st.expander("最近事件", expanded=False):
-                    for item in events[-8:]:
-                        st.caption(
-                            f"{item.get('sequence')} · {item.get('event_type')} · "
-                            f"{item.get('stage') or ''} · {item.get('message') or ''}"
-                        )
+                sequences[job_id] = max(int(item.get("sequence") or 0) for item in events)
+                live = {**live, "last_event": events[-1]}
+        render_progress_card(live)
+        apply_job_result_if_ready(live)
+        if events:
+            with st.expander("最近事件", expanded=False):
+                for item in events[-8:]:
+                    st.caption(
+                        f"{item.get('sequence')} · {item.get('event_type')} · "
+                        f"{item.get('stage') or ''} · {item.get('message') or ''}"
+                    )
 
 
-@st.fragment(run_every="1s")
+@st.fragment(run_every="2s")
 def render_job_progress_fragment() -> None:
     """只刷新进度区域；不重建题库、侧栏或科学管线。"""
     _render_job_cards()

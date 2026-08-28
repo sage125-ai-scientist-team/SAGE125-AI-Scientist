@@ -59,7 +59,8 @@ def _ctx() -> dict[str, Any]:
     job_state.ensure_client_id()
     ctx = bootstrap()
     render_workspace_header(ctx)
-    job_state.render_page_job_surface(ctx.get("qid"))
+    # 与科学问题页共用同一 Fragment：直接重画进度卡，禁止 st.empty() 先清空再绘制。
+    _render_model_progress(include_kpis=False)
     return ctx
 
 
@@ -116,7 +117,7 @@ def page_landing() -> None:
 
 
 @st.fragment(run_every="2s")
-def _render_model_progress() -> None:
+def _render_model_progress(*, include_kpis: bool = True) -> None:
     """进度卡与 KPI 同一 Fragment 刷新，避免先清空再重画造成闪烁。"""
     qid = state.get(state.KEY_SELECTED_QID)
     jobs = job_state.collect_visible_jobs(qid) if qid else []
@@ -131,7 +132,8 @@ def _render_model_progress() -> None:
             st.empty()
     else:
         st.empty()
-    _render_status_kpis({"questions": []})
+    if include_kpis:
+        _render_status_kpis({"questions": []})
 
 
 def _run_count_for_question(qid: str | None) -> int:

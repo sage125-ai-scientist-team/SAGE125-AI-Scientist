@@ -26,6 +26,9 @@ def test_model_progress_is_page_level_fragment() -> None:
     progress = src.split("def _render_model_progress", 1)[1].split(
         "def _run_count_for_question", 1
     )[0]
+    ctx = src.split("def _ctx", 1)[1].split("def _switches", 1)[0]
+    assert "_render_model_progress(include_kpis=False)" in ctx
+    assert "render_page_job_surface" not in ctx
     assert "_render_model_progress()" in questions
     assert "_render_status_kpis(ctx)" not in questions
     assert "_render_model_progress" not in hub
