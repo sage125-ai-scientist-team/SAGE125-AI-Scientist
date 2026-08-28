@@ -410,3 +410,47 @@ def test_ci_covers_integration_and_main_pushes_and_pull_requests():
 
 def test_gitattributes_has_no_utf8_bom():
     assert not (ROOT / ".gitattributes").read_bytes().startswith(b"\xef\xbb\xbf")
+
+
+def test_read_local_file_uses_api_when_local_copy_is_missing(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+    api_client._clear_remote_run_file_cache()
+    monkeypatch.setattr(api_client, "local_file_path", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(api_client, "api_available", lambda: True)
+    observed = {}
+
+    class Response:
+        status_code = 200
+        content = b'{"hypotheses": []}'
+
+    class Session:
+        @staticmethod
+        def get(url, timeout=None):
+            observed["url"] = url
+            observed["timeout"] = timeout
+            return Response()
+
+    monkeypatch.setattr(api_client, "_http_session", lambda: Session())
+
+    content = api_client.read_local_file("run-remote", "report.json")
+
+    assert content == b'{"hypotheses": []}'
+    assert observed["url"].endswith("/runs/run-remote/files/report.json")
+    assert observed["timeout"] == 10
+
+
+def test_read_local_file_stays_unavailable_when_api_missing(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+    api_client._clear_remote_run_file_cache()
+    monkeypatch.setattr(api_client, "local_file_path", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(api_client, "api_available", lambda: False)
+
+    def fail_fetch(*_args, **_kwargs):
+        raise AssertionError("must not invent export bytes")
+
+    monkeypatch.setattr(api_client, "_fetch_remote_run_file", fail_fetch)
+
+    assert api_client.read_local_file("run-remote", "report.json") is None
+    assert api_client.read_local_file("run-remote", "../secret.env") is None
+    assert api_client.read_local_file("run-remote", "not_an_artifact.bin") is None
+

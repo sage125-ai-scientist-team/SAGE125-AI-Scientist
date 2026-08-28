@@ -8,6 +8,7 @@ app.api.routes —— 业务路由定义（供“科研发现控制台”前端�
     POST /runs                           运行多智能体 pipeline
     GET  /runs/{run_id}                  读取某次运行产物
     POST /runs/{run_id}/feedback         人在回路反馈修订
+    GET  /runs/{run_id}/files/{file_name} 下载白名单产物文件
     GET  /runs/{run_id}/export/markdown  下载 report.md
     GET  /runs/{run_id}/export/pdf       下载/生成 report.pdf
     POST /experiments/{question_id}/run  触发真实科学实验入口（目前仅 Q028）
@@ -542,6 +543,68 @@ def list_runs_endpoint(limit: int = 20) -> dict:
     from app.ui.run_browser import list_runs
 
     return {"runs": list_runs(limit=limit)}
+
+
+_EXPORT_FILE_MEDIA_TYPES = {
+    "report.md": "text/markdown; charset=utf-8",
+    "report.json": "application/json",
+    "report.html": "text/html; charset=utf-8",
+    "report.pdf": "application/pdf",
+    "evidence_cards.json": "application/json",
+    "agent_trace.json": "application/json",
+    "context_pack.json": "application/json",
+    "quality_gates.json": "application/json",
+    "run_summary.txt": "text/plain; charset=utf-8",
+    "llm_call_audit.json": "application/json",
+    "artifacts_manifest.json": "application/json",
+}
+
+
+def _safe_export_file(run_id: str, file_name: str) -> Path:
+    """Resolve an allowlisted artifact path under the run directory."""
+    from app.ui.run_browser import ARTIFACT_FILES
+
+    if not run_id or Path(run_id).name != run_id or run_id in {".", ".."}:
+        raise HTTPException(status_code=400, detail="非法 run_id。")
+    if file_name not in ARTIFACT_FILES or Path(file_name).name != file_name:
+        raise HTTPException(status_code=400, detail="不支持的导出文件名。")
+    exports = _exports_dir().resolve()
+    run_dir = (exports / run_id).resolve()
+    try:
+        run_dir.relative_to(exports)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="非法 run_id。") from exc
+    if not run_dir.is_dir():
+        raise HTTPException(status_code=404, detail=f"运行不存在：{run_id}")
+    path = (run_dir / file_name).resolve()
+    try:
+        path.relative_to(run_dir)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="非法文件名。") from exc
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail=f"{file_name} 不存在。")
+    return path
+
+
+@router.get("/runs/{run_id}/files/{file_name}")
+def download_run_file(run_id: str, file_name: str):
+    """
+    下载某次运行的白名单产物文件（仅已落盘文件，不编造内容）。
+
+    参数：
+        run_id: 运行 ID。
+        file_name: 产物文件名（必须属于 ARTIFACT_FILES）。
+
+    返回：
+        文件响应。
+
+    异常：
+        HTTPException 400: 非法 run_id 或非白名单文件名。
+        HTTPException 404: 运行或文件不存在。
+    """
+    path = _safe_export_file(run_id, file_name)
+    media_type = _EXPORT_FILE_MEDIA_TYPES.get(file_name, "application/octet-stream")
+    return FileResponse(str(path), media_type=media_type, filename=f"{run_id}_{file_name}")
 
 
 @router.get("/runs/{run_id}/artifacts")

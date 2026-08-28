@@ -80,6 +80,7 @@ def test_core_api_and_generated_openapi_are_accessible():
     assert "/questions" in paths
     assert "/runs" in paths
     assert "/runs/{run_id}/artifacts" in paths
+    assert "/runs/{run_id}/files/{file_name}" in paths
 
 
 def test_streamlit_entrypoint_executes_without_exception(monkeypatch):
