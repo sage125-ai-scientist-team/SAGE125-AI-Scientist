@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import uuid
 from datetime import datetime, timezone
 from typing import Any
@@ -271,6 +272,16 @@ def apply_job_result_if_ready(job: dict[str, Any]) -> None:
     applied.add(marker)
 
 
+def next_run_input_digest(base_digest: str, existing: dict[str, Any] | None) -> str:
+    """上次运行已结束后，换一个摘要，避免幂等键复用旧 Job。"""
+    if not existing or not is_terminal(existing):
+        return base_digest
+    previous = str(existing.get("job_id") or "").strip()
+    if not previous:
+        return base_digest
+    return hashlib.sha256(f"{base_digest}|after|{previous}".encode("utf-8")).hexdigest()[:32]
+
+
 def submit_or_reuse_job(
     *,
     question_id: str,
@@ -292,7 +303,6 @@ def submit_or_reuse_job(
         digest = compute_input_digest(mode=mode, options=options)
     except TypeError:
         import json
-        import hashlib
 
         digest = hashlib.sha256(
             json.dumps(
@@ -301,6 +311,7 @@ def submit_or_reuse_job(
                 default=str,
             ).encode("utf-8")
         ).hexdigest()[:32]
+    digest = next_run_input_digest(digest, existing)
     key = compute_idempotency_key(
         client_id=client_id,
         question_id=question_id,
@@ -339,10 +350,8 @@ def job_action_spec(job: dict[str, Any] | None, *, idle_label: str) -> dict[str,
     kind = ui_status(job)
     if kind in {"QUEUED", "RUNNING", "RECOVERABLE"}:
         return {"label": "运行中，查看进度", "action": "view", "kind": kind}
-    if kind == "SUCCEEDED":
-        return {"label": "查看结果", "action": "view_result", "kind": kind}
-    if kind == "PARTIAL":
-        return {"label": "查看部分结果", "action": "view_result", "kind": kind}
+    if kind in {"SUCCEEDED", "PARTIAL"}:
+        return {"label": idle_label, "action": "submit", "kind": kind}
     if kind == "FAILED":
         return {"label": "重新运行", "action": "rerun", "kind": kind}
     if kind == "CANCELLED":
@@ -381,11 +390,6 @@ def render_job_action_button(
         ).strip()
         if message:
             st.caption(f"上次失败：{message}")
-    if spec["kind"] in {"SUCCEEDED", "PARTIAL"} and question_id:
-        rerun_key = f"{key}_rerun_ack"
-        if st.checkbox("确认重新运行（将创建新 attempt，保留旧 Job）", key=rerun_key):
-            if st.button("重新运行", key=f"{key}_rerun"):
-                return "submit"
     if not clicked:
         return "none"
     if spec["action"] == "submit":

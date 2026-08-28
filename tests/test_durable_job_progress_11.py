@@ -414,10 +414,43 @@ def test_active_button_does_not_create_new_job(tmp_path):
     pass
 
 
-def test_completed_job_shows_view_result():
+def test_completed_job_keeps_start_button():
     spec = job_state.job_action_spec({"status": "completed"}, idle_label="开始生成")
-    assert spec["label"] == "查看结果"
-    assert spec["action"] == "view_result"
+    assert spec["label"] == "开始生成"
+    assert spec["action"] == "submit"
+
+
+def test_partial_job_keeps_start_button():
+    spec = job_state.job_action_spec({"status": "waiting_feedback"}, idle_label="开始运行")
+    assert spec["label"] == "开始运行"
+    assert spec["action"] == "submit"
+
+
+def test_start_button_has_no_rerun_checkbox():
+    source = inspect.getsource(job_state.render_job_action_button)
+    assert "确认重新运行" not in source
+    assert "_rerun_ack" not in source
+
+
+def test_terminal_job_gets_new_idempotency_digest():
+    first = job_state.next_run_input_digest("abc", None)
+    assert first == "abc"
+    second = job_state.next_run_input_digest(
+        "abc", {"status": "completed", "job_id": "job-1"}
+    )
+    assert second != "abc"
+    assert (
+        job_state.next_run_input_digest(
+            "abc", {"status": "completed", "job_id": "job-1"}
+        )
+        == second
+    )
+    assert (
+        job_state.next_run_input_digest(
+            "abc", {"status": "completed", "job_id": "job-2"}
+        )
+        != second
+    )
 
 
 def test_failed_job_shows_error_after_navigation():
