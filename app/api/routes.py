@@ -239,6 +239,14 @@ def diagnostics() -> dict:
     }
 
 
+@router.get("/deployment-info")
+def deployment_info() -> dict:
+    """只读部署身份；不含密钥。"""
+    from app.api.deployment_info import deployment_info_payload
+
+    return deployment_info_payload()
+
+
 @router.get("/health/catalog")
 def catalog_health() -> dict:
     """官方 Catalog 健康检查：125 题、无 Preview 标记。"""
