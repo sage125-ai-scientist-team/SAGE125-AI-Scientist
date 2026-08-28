@@ -140,8 +140,8 @@ def _http_session() -> requests.Session:
 
 # 健康/诊断结果的短 TTL 缓存。TTL 故意保持很短（而不是 0），既能吸收同一次
 # rerun 内的重复调用与切页抖动，又不会让「服务刚恢复」这类状态长时间失真。
-_HEALTH_CACHE_TTL_SECONDS = 6
-_DIAG_CACHE_TTL_SECONDS = 6
+_HEALTH_CACHE_TTL_SECONDS = 60
+_DIAG_CACHE_TTL_SECONDS = 60
 _QUESTIONS_CACHE_TTL_SECONDS = 300
 
 
@@ -280,15 +280,32 @@ def get_questions() -> dict:
     不依赖固定 TTL 也能拿到新数据；不必每次 rerun 都重新遍历/请求。
     """
     cached = _fetch_questions_cached(_questions_file_fingerprint())
-    if cached is not None:
+    if cached is not None and cached.get("status") == "ok" and cached.get("questions"):
         return cached
-    if _api_only():
-        return {"status": "unavailable", "message": "sage125-api 暂不可用。"}
-    # 回退：直接读文件。
-    if not QUESTIONS_PATH.exists():
-        return {"status": "missing", "message": "请先运行 python scripts/extract_125_questions.py"}
-    items = json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
-    return {"status": "ok", "count": len(items), "questions": items}
+    try:
+        from app.catalog.official import load_official_catalog
+        from app.catalog.query import questions_as_api_items
+
+        catalog = load_official_catalog()
+        items = questions_as_api_items(catalog)
+        return {
+            "status": "ok",
+            "count": len(items),
+            "catalog_source": "official",
+            "catalog_digest": catalog.get_catalog_digest(),
+            "questions": items,
+        }
+    except Exception as exc:
+        if _api_only():
+            return {
+                "status": "failed",
+                "message": "官方题目目录加载失败",
+                "error": type(exc).__name__,
+                "questions": None,
+            }
+        if not QUESTIONS_PATH.exists():
+            return {"status": "failed", "message": "官方题目目录加载失败", "questions": None}
+        raise
 
 
 def _as_dict(value: Any) -> dict:

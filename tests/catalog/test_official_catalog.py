@@ -160,7 +160,8 @@ def test_development_preview_requires_explicit_flag(monkeypatch):
 
 def test_selector_options_are_question_ids():
     source = Path("app/ui/workspace_pages.py").read_text(encoding="utf-8")
-    assert "option_ids = [\"\"] + list(by_id)" in source
+    assert "official_selector_ids()" in source
+    assert "option_ids = [\"\"] + official_selector_ids()" in source
     assert "format_question_option" in source
 
 

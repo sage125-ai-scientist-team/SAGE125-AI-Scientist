@@ -24,6 +24,9 @@ BOOT_HEALTH = "_sage_health"
 BOOT_DIAG = "_sage_diag"
 BOOT_API = "_sage_api_connected"
 BOOT_RUNS_CACHE = "_sage_runs_cache"
+BOOT_CATALOG_ERROR = "_sage_catalog_error"
+BOOT_HEALTH_AT = "_sage_health_at"
+_HEALTH_SESSION_TTL_SECONDS = 60.0
 
 
 def hide_sidebar() -> None:
@@ -37,19 +40,90 @@ def show_workspace_shell() -> None:
     return None
 
 
-def bootstrap(*, refresh_questions: bool = False, refresh_diag: bool = False) -> dict[str, Any]:
-    """加载并缓存题目清单；健康状态每次刷新。切页不触发模型调用。"""
-    health = api_client.get_health()
-    st.session_state[BOOT_HEALTH] = health
-    api_connected = api_client.api_available()
-    st.session_state[BOOT_API] = api_connected
+def _load_official_questions_or_fail() -> tuple[list[dict], dict | None]:
+    """UI 进程内加载打包官方目录；失败时返回明确错误，不缓存空列表。"""
+    try:
+        from app.catalog.official import load_official_catalog
+        from app.catalog.query import questions_as_api_items
 
-    if refresh_questions or BOOT_QUESTIONS not in st.session_state:
-        q_resp = api_client.get_questions()
-        questions = q_resp.get("questions", []) if q_resp.get("status") == "ok" else []
-        st.session_state[BOOT_QUESTIONS] = questions
-        st.session_state["_sage_q_resp"] = q_resp
-    questions = list(st.session_state.get(BOOT_QUESTIONS) or [])
+        catalog = load_official_catalog()
+        items = questions_as_api_items(catalog)
+        if len(items) != 125:
+            raise ValueError(f"official catalog count is {len(items)}, expected 125")
+        return items, None
+    except Exception as exc:  # noqa: BLE001 — fail-closed for picker surfaces
+        import uuid
+
+        return [], {
+            "status": "failed",
+            "message": "官方题目目录加载失败",
+            "error": type(exc).__name__,
+            "correlation_id": str(uuid.uuid4()),
+        }
+
+
+@st.cache_data(show_spinner=False)
+def _cached_official_questions(digest: str, schema_version: str, mtime: float) -> list[dict]:
+    del digest, schema_version, mtime
+    items, error = _load_official_questions_or_fail()
+    if error:
+        raise RuntimeError(error["message"])
+    return items
+
+
+def load_boot_questions(*, refresh: bool = False) -> tuple[list[dict], dict | None]:
+    if refresh:
+        _cached_official_questions.clear()
+        st.session_state.pop(BOOT_QUESTIONS, None)
+        st.session_state.pop(BOOT_CATALOG_ERROR, None)
+    cached_error = st.session_state.get(BOOT_CATALOG_ERROR)
+    if cached_error and not refresh:
+        return [], dict(cached_error)
+    if BOOT_QUESTIONS in st.session_state and st.session_state.get(BOOT_QUESTIONS):
+        return list(st.session_state[BOOT_QUESTIONS]), None
+    try:
+        from app.catalog.official import official_catalog_path, get_catalog_digest
+
+        path = official_catalog_path()
+        mtime = path.stat().st_mtime if path.exists() else 0.0
+        items = _cached_official_questions(get_catalog_digest(), "official-ui-v1", mtime)
+        st.session_state[BOOT_QUESTIONS] = items
+        st.session_state[BOOT_CATALOG_ERROR] = None
+        st.session_state["_sage_q_resp"] = {
+            "status": "ok",
+            "count": len(items),
+            "catalog_source": "official",
+        }
+        return list(items), None
+    except Exception:
+        items, error = _load_official_questions_or_fail()
+        if error:
+            st.session_state[BOOT_CATALOG_ERROR] = error
+            st.session_state.pop(BOOT_QUESTIONS, None)
+            return [], error
+        st.session_state[BOOT_QUESTIONS] = items
+        return list(items), None
+
+
+def bootstrap(*, refresh_questions: bool = False, refresh_diag: bool = False) -> dict[str, Any]:
+    """加载官方题目清单；健康状态短缓存。切页不触发模型调用。"""
+    import time as _time
+
+    now = _time.monotonic()
+    last_health = float(st.session_state.get(BOOT_HEALTH_AT) or 0.0)
+    if (
+        refresh_questions
+        or BOOT_HEALTH not in st.session_state
+        or (now - last_health) >= _HEALTH_SESSION_TTL_SECONDS
+    ):
+        health = api_client.get_health()
+        st.session_state[BOOT_HEALTH] = health
+        st.session_state[BOOT_HEALTH_AT] = now
+        st.session_state[BOOT_API] = api_client.api_available()
+    health = st.session_state.get(BOOT_HEALTH) or {}
+    api_connected = bool(st.session_state.get(BOOT_API))
+
+    questions, catalog_error = load_boot_questions(refresh=refresh_questions)
 
     if refresh_diag or BOOT_DIAG not in st.session_state:
         st.session_state[BOOT_DIAG] = api_client.get_diagnostics()
@@ -89,6 +163,7 @@ def bootstrap(*, refresh_questions: bool = False, refresh_diag: bool = False) ->
         "diag": diag,
         "api_connected": api_connected,
         "questions": questions,
+        "catalog_error": catalog_error,
         "result": result,
         "plan": result.get("plan") or {},
         "qid": state.get(state.KEY_SELECTED_QID),
@@ -124,9 +199,29 @@ def format_question_option(question_id: str, questions: list[dict] | None = None
     return f"{question_id} · {title}" if title else str(question_id)
 
 
-def sanitize_question_selector_state(question_ids: list[str]) -> None:
+def select_quick_example(question_id: str) -> None:
+    """快速示例 callback：只写入官方 question_id，不创建 Job。"""
+    official = official_question_id(question_id)
+    if not official:
+        return
+    st.session_state[state.KEY_SELECTED_QID] = official
+    st.session_state[state.KEY_SELECTED_QTEXT] = official_question_text(official)
+    st.session_state[components.SELECTOR_WIDGET_KEY] = official
+    persist_query_question(official)
+    st.session_state[components.PICKER_EXPANDED_KEY] = False
+    st.session_state["active_section"] = "question_detail"
+    st.session_state["search_query"] = ""
+    if components.QUESTION_KEYWORD_WIDGET_KEY in st.session_state:
+        st.session_state[components.QUESTION_KEYWORD_WIDGET_KEY] = ""
+    if components.QUESTION_DOMAIN_WIDGET_KEY in st.session_state:
+        st.session_state[components.QUESTION_DOMAIN_WIDGET_KEY] = "全部"
+
+
+def sanitize_question_selector_state(question_ids: list[str] | None = None) -> None:
     """丢掉非法 widget / 业务状态，必须在 selectbox 创建前调用。"""
-    valid = {str(qid) for qid in question_ids if qid}
+    from app.catalog.official import EXPECTED_IDS
+
+    valid = {str(qid) for qid in (question_ids or EXPECTED_IDS) if qid}
     stored = official_question_id(state.get(state.KEY_SELECTED_QID))
     if stored not in valid:
         st.session_state[state.KEY_SELECTED_QID] = None
@@ -232,13 +327,12 @@ def persist_query_question(qid: str | None) -> None:
 
 def apply_pending_question(questions: list[dict]) -> str | None:
     """消费 preset/历史排队的选题，并同步唯一选择器 widget。"""
-    pending_qid = state.consume_question_selection()
-    if pending_qid and any(str(q.get("id")) == pending_qid for q in questions):
+    pending_qid = official_question_id(state.consume_question_selection())
+    if pending_qid:
         st.session_state[components.QUESTION_KEYWORD_WIDGET_KEY] = ""
         st.session_state[components.QUESTION_DOMAIN_WIDGET_KEY] = "全部"
         st.session_state[components.SELECTOR_WIDGET_KEY] = pending_qid
-        pending_item = next(q for q in questions if str(q.get("id")) == pending_qid)
-        state.select_question(pending_qid, pending_item.get("question", ""))
+        state.select_question(pending_qid, official_question_text(pending_qid, questions))
         persist_query_question(pending_qid)
         st.session_state[components.PICKER_EXPANDED_KEY] = False
         return pending_qid
@@ -250,14 +344,11 @@ def load_question_selector_state() -> None:
 
 
 def store_question_selector_state() -> None:
-    selected = st.session_state.get(components.SELECTOR_WIDGET_KEY)
+    selected = official_question_id(st.session_state.get(components.SELECTOR_WIDGET_KEY))
     if not selected:
         return
-    questions = list(st.session_state.get(BOOT_QUESTIONS) or [])
-    item = next((q for q in questions if str(q.get("id")) == str(selected)), None)
-    text = str((item or {}).get("question") or state.get(state.KEY_SELECTED_QTEXT) or "")
-    state.select_question(str(selected), text)
-    persist_query_question(str(selected))
+    state.select_question(selected, official_question_text(selected))
+    persist_query_question(selected)
     st.session_state[components.PICKER_EXPANDED_KEY] = False
 
 

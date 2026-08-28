@@ -234,6 +234,7 @@ def test_render_blueprint_and_entrypoint_contracts(monkeypatch):
     assert "startCommand: python -m scripts.start_ui" in blueprint
     assert "healthCheckPath: /health" in blueprint
     assert "healthCheckPath: /_stcore/health" in blueprint
+    assert "FRONTEND_API_BASE_URL" in blueprint
     assert "FRONTEND_API_SHORT_TIMEOUT_SECONDS" in blueprint
     assert "FRONTEND_API_WAKE_TIMEOUT_SECONDS" in blueprint
     assert "FRONTEND_INGEST_TIMEOUT_SECONDS" in blueprint

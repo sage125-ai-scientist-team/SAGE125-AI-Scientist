@@ -285,6 +285,35 @@ _READ_RESPONSES = {
     if status_code in {400, 401, 403, 404, 409, 413, 422, 429, 500, 503}
 }
 
+
+@router.get(
+    "/deployment-info",
+    summary="只读部署身份",
+    responses={
+        200: _documented_response(
+            "部署身份",
+            {
+                "environment": "preview",
+                "service_name": "sage125-api-preview",
+                "external_url": "https://sage125-api-preview.onrender.com",
+                "git_branch": "integration/2026-08-10",
+                "git_commit": "abc123",
+                "repo_slug": "sage125-ai-scientist-team/SAGE125-AI-Scientist",
+                "app_version": "abc123",
+                "catalog_digest": "7ef0d7886daf7836a7ccf5a5a71f37ed28779a6ea00d1b593578e7846b2cf431",
+                "question_count": 125,
+                "started_at": "2026-08-28T00:00:00+00:00",
+            },
+        ),
+        **_READ_RESPONSES,
+    },
+)
+def v1_deployment_info() -> dict:
+    from app.api.deployment_info import deployment_info_payload
+
+    return deployment_info_payload()
+
+
 _JOB_ACCEPTED_EXAMPLE = {
     "job_id": "c4ef4580-e351-4b44-b9a2-19edac5ec977",
     "correlation_id": "judge-demo-001",

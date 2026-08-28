@@ -325,10 +325,12 @@ def test_preset_labels_map_to_expected_internal_keys():
         assert key in PRESET_KEYWORDS, f"预设 {key} 缺少关键词映射"
 
 
-def test_render_quick_presets_uses_pills_or_safe_fallback():
+def test_render_quick_presets_uses_official_ids_and_click_callback():
     src = _read("app/ui/components.py")
     assert "def render_quick_presets(" in src
-    assert "st.pills" in src or "getattr(st, \"pills\"" in src
+    assert "quick_example_map" in src
+    assert "on_click=select_quick_example" in src
+    assert "st.button" in src
 
 
 def test_render_mode_control_uses_segmented_control_or_safe_fallback():
