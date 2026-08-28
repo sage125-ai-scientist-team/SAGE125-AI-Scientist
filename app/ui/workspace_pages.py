@@ -117,22 +117,21 @@ def page_landing() -> None:
 
 @st.fragment(run_every="2s")
 def _render_model_progress() -> None:
-    """按当前选题刷新进度卡；换题后清空，只有本题开始运行才再出现。"""
-    slot = st.empty()
+    """进度卡与 KPI 同一 Fragment 刷新，避免先清空再重画造成闪烁。"""
     qid = state.get(state.KEY_SELECTED_QID)
     jobs = job_state.collect_visible_jobs(qid) if qid else []
     job = job_state.resolve_progress_card_job(qid, jobs)
-    if not job:
-        slot.empty()
-        return
-    live = api_client.get_job(str(job.get("job_id") or "")) or job
-    live_qid = str(live.get("question_id") or "").strip()
-    if not qid or live_qid != str(qid):
-        slot.empty()
-        return
-    with slot.container():
-        job_state.render_progress_card(live)
-        job_state.apply_job_result_if_ready(live)
+    if job:
+        live = api_client.get_job(str(job.get("job_id") or "")) or job
+        live_qid = str(live.get("question_id") or job.get("question_id") or qid or "").strip()
+        if qid and live_qid == str(qid):
+            job_state.render_progress_card(live)
+            job_state.apply_job_result_if_ready(live)
+        else:
+            st.empty()
+    else:
+        st.empty()
+    _render_status_kpis({"questions": []})
 
 
 def _run_count_for_question(qid: str | None) -> int:
@@ -151,7 +150,6 @@ def _run_count_for_question(qid: str | None) -> int:
     return len(ids)
 
 
-@st.fragment(run_every="2s")
 def _render_status_kpis(ctx: dict[str, Any]) -> None:
     """研究状态 / 已用证据 / 运行次数。"""
     ctx = _live_ctx(ctx)
@@ -217,7 +215,6 @@ def page_questions() -> None:
     render_question_action_hub(ctx)
     # 进度与 KPI 必须是页面级 Fragment，不能嵌在选题 Fragment 里，否则不会按秒刷新。
     _render_model_progress()
-    _render_status_kpis(ctx)
     _render_research_plan_overview(ctx)
     _render_question_detail_expander(ctx)
     st.markdown('<div id="recent-activity"></div>', unsafe_allow_html=True)
