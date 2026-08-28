@@ -57,6 +57,7 @@ def test_api_no_submission_routes():
     # 保留的核心导出接口仍在。
     assert "/export/markdown" in routes
     assert "/export/pdf" in routes
+    assert "/runs/{run_id}/files/{file_name}" in routes
 
 
 def test_core_tools_still_exist():

@@ -85,6 +85,7 @@ def test_no_submission_routes():
     # 保留核心导出路由。
     assert any("/export/markdown" in p for p in paths)
     assert any("/export/pdf" in p for p in paths)
+    assert any("/files/{file_name}" in p for p in paths)
 
 
 def test_legacy_route_enumeration_fails_closed_on_pathless_node(monkeypatch):

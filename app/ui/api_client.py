@@ -1209,16 +1209,66 @@ def revise_run(run_id: str, feedback: str) -> dict:
         return {"status": "failed", "message": str(exc)}
 
 
+_REMOTE_RUN_FILE_CACHE: dict[tuple[str, str], bytes] = {}
+
+
+def _allowed_export_file_name(file_name: str) -> bool:
+    """Whether file_name is an exact allowlisted artifact name."""
+    from app.ui.run_browser import ARTIFACT_FILES
+
+    return bool(file_name) and file_name in ARTIFACT_FILES and Path(file_name).name == file_name
+
+
+def _clear_remote_run_file_cache() -> None:
+    """Drop cached remote artifact bytes (tests / new run)."""
+    _REMOTE_RUN_FILE_CACHE.clear()
+
+
 def local_file_path(run_id: str, file_name: str) -> Optional[Path]:
     """返回某运行产物文件的本地路径（存在则返回，否则 None）。"""
-    p = _exports_dir() / run_id / file_name
-    return p if p.exists() else None
+    if not run_id or not _allowed_export_file_name(file_name):
+        return None
+    if Path(run_id).name != run_id or run_id in {".", ".."}:
+        return None
+    run_dir = (_exports_dir() / run_id).resolve()
+    p = (run_dir / file_name).resolve()
+    try:
+        p.relative_to(run_dir)
+    except ValueError:
+        return None
+    return p if p.is_file() else None
+
+
+def _fetch_remote_run_file(run_id: str, file_name: str) -> Optional[bytes]:
+    """GET /runs/{run_id}/files/{file_name}; missing or errors return None."""
+    cache_key = (run_id, file_name)
+    cached = _REMOTE_RUN_FILE_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+    try:
+        response = _http_session().get(
+            f"{api_base()}/runs/{quote(run_id, safe='')}/files/{quote(file_name, safe='')}",
+            timeout=_short_timeout_seconds(),
+        )
+    except requests.RequestException:
+        return None
+    if response.status_code != 200:
+        return None
+    content = response.content
+    _REMOTE_RUN_FILE_CACHE[cache_key] = content
+    return content
 
 
 def read_local_file(run_id: str, file_name: str) -> Optional[bytes]:
-    """读取某运行产物文件内容字节（不存在返回 None）。"""
+    """读取某运行产物文件内容字节（本地优先，预览站回退 API；不存在返回 None）。"""
+    if not run_id or not _allowed_export_file_name(file_name):
+        return None
     p = local_file_path(run_id, file_name)
-    return p.read_bytes() if p else None
+    if p is not None:
+        return p.read_bytes()
+    if api_available():
+        return _fetch_remote_run_file(run_id, file_name)
+    return None
 
 
 def _job_headers() -> dict[str, str]:
