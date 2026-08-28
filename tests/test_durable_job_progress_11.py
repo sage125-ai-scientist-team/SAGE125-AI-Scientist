@@ -471,11 +471,15 @@ def test_job_events_sequence_is_monotonic(tmp_path):
 
 def test_fragment_polling_does_not_full_rerun_app():
     source = inspect.getsource(job_state.render_job_progress_fragment)
+    cards = inspect.getsource(job_state._render_job_cards)
     assert "@st.fragment" in inspect.getsource(job_state) or "run_every" in source
+    assert 'run_every="2s"' in inspect.getsource(job_state)
     assert "get_questions" not in source
     assert "bootstrap" not in source
     assert "run_pipeline" not in source
     assert "create_job" not in source
+    assert "slot = st.empty()" not in cards
+    assert "st.empty()" not in cards
 
 
 def test_active_jobs_multiple_questions_are_isolated(tmp_path):
