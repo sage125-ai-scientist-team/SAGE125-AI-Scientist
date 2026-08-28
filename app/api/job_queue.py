@@ -121,6 +121,7 @@ class PipelineJobRunner:
                     options.get("reviewer_auto_revision", True)
                 ),
                 mock_mode=request.get("mode", "mock") == "mock",
+                progress_callback=progress_callback,
             )
         # 当前仓库已有 T02/T03/T05 公开契约，但 Wave A runner 尚未完成适配。
         # 只保留上游引用；不得从内部对象或文件存在性推断外部 completed。

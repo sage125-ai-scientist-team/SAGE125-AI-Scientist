@@ -27,6 +27,8 @@ from app.rag.evidence import evidence_deduplicate, literature_to_evidence_card
 # 模块级日志器。
 logger = get_logger("rag.open_literature")
 
+OPEN_LITERATURE_SOURCES = ("arxiv", "openalex", "crossref")
+
 _GENERIC_QUERY_WORDS = {
     "about", "after", "against", "associated", "current", "different",
     "donor", "effects", "human", "mechanism", "mechanisms", "molecular",
@@ -57,6 +59,38 @@ def _has_topic_match(query: str, card: EvidenceCard) -> bool:
     document = " ".join((card.title, card.summary, card.quoted_text))
     overlap = query_tokens & _topic_tokens(document)
     return any(len(token) >= 10 for token in overlap) or len(overlap) >= 2
+
+
+def ensure_open_literature_queries(
+    queries: list[dict],
+    *,
+    fallback_query: str = "",
+) -> list[dict]:
+    """Planner 若只给出 Crossref 查询，补齐 arXiv / OpenAlex 同主题检索。"""
+    lit = [
+        query
+        for query in queries
+        if isinstance(query, dict)
+        and str(query.get("source_preference") or "") in OPEN_LITERATURE_SOURCES
+        and str(query.get("query") or "").strip()
+    ]
+    seed = next((str(item.get("query") or "").strip() for item in lit), "")
+    seed = seed or " ".join((fallback_query or "").split())
+    present = {str(item.get("source_preference")) for item in lit}
+    extras: list[dict] = []
+    for source in OPEN_LITERATURE_SOURCES:
+        if source in present or not seed:
+            continue
+        extras.append(
+            {
+                "query": seed,
+                "source_preference": source,
+                "purpose": f"cover_{source}",
+                "expected_evidence": "open literature metadata",
+                "priority": "medium",
+            }
+        )
+    return lit + extras
 
 
 class OpenLiteratureRetriever:

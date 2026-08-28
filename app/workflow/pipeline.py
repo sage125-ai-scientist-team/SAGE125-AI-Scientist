@@ -48,7 +48,12 @@ from app.contracts.validation import HumanFeedbackDirective
 from app.core.config import get_settings
 from app.core.execution_mode import execution_mode, is_mock_mode
 from app.core.logging import get_logger, mask_text
-from app.core.run_progress import ProgressCallback, emit_progress, progress_reporting
+from app.core.run_progress import (
+    ProgressCallback,
+    current_progress_callback,
+    emit_progress,
+    progress_reporting,
+)
 from app.core.schemas import EvidenceCard, PipelineState, QuestionItem, ResearchPlan, ScientificHypothesis
 from app.workflow.artifacts import ArtifactManager, generate_run_id, resolve_artifact_base
 from app.workflow.context_builder import ContextBuilder
@@ -219,17 +224,27 @@ def _gather_real_evidence(state, qplan: dict, exec_plan: dict, settings) -> list
     # 3) Open literature（arXiv/OpenAlex/Crossref）。
     if exec_plan.get("use_open_literature"):
         try:
-            from app.rag.open_literature_retriever import OpenLiteratureRetriever
+            from app.rag.open_literature_retriever import (
+                OpenLiteratureRetriever,
+                ensure_open_literature_queries,
+            )
 
-            # Preserve source_preference. Previously only query strings were
-            # passed, causing every query to hit all three providers and mixing
-            # unrelated keyword collisions into the evidence wall.
-            lit_queries = [
-                x for x in queries
-                if x.get("source_preference") in ("arxiv", "openalex", "crossref")
-            ]
+            parsed = state.parsed_question or {}
+            fallback = str(
+                parsed.get("core_question")
+                or getattr(state.selected_question, "question", "")
+                or ""
+            )
+            lit_queries = ensure_open_literature_queries(queries, fallback_query=fallback)
             if lit_queries:
-                evidence += OpenLiteratureRetriever(settings).search(lit_queries, max_results_per_query=3)
+                emit_progress(
+                    "retrieval",
+                    status="running",
+                    message="正在检索 arXiv、OpenAlex 与 Crossref",
+                )
+                evidence += OpenLiteratureRetriever(settings).search(
+                    lit_queries, max_results_per_query=3
+                )
         except Exception as exc:
             state.warnings.append("open_literature_failed")
             logger.warning("OpenLiterature 失败（继续）：%s", exc)
@@ -1020,6 +1035,8 @@ def run_pipeline_with_state(
 ) -> tuple[ResearchPlan, PipelineState]:
     """Run the pipeline in an isolated mode/progress context and persist failures."""
     resolved_mock = _is_mock(mock_mode)
+    if progress_callback is None:
+        progress_callback = current_progress_callback()
     active_token = _ACTIVE_STATE.set(None)
     try:
         with execution_mode(resolved_mock), progress_reporting(progress_callback):
