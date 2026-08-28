@@ -13,8 +13,9 @@ app.clients.literature_clients —— 学术文献检索客户端集合。
 
 from __future__ import annotations
 
+import re
 import time
-from typing import Optional
+from typing import Mapping, Optional
 
 from app.core.config import Settings, get_settings
 from app.core.logging import get_logger, mask_text
@@ -23,8 +24,43 @@ from app.core.schemas import EvidenceCard
 # 模块级日志器。
 logger = get_logger("clients.literature")
 
-# 文献候选的默认相关性分数（未经 rerank 前的中性占位，非真实评分）。
+# 文献候选的默认相关性分数（未经原文打分前的中性占位，检索器会覆盖）。
 _DEFAULT_RELEVANCE = 0.5
+_JATS_TAG = re.compile(r"<[^>]+>")
+
+
+def reconstruct_openalex_abstract(inverted: Mapping[str, object] | None) -> str:
+    """把 OpenAlex `abstract_inverted_index` 还原成摘要原文，不补造缺失词。"""
+    if not isinstance(inverted, Mapping) or not inverted:
+        return ""
+    placed: list[tuple[int, str]] = []
+    max_pos = -1
+    for word, indexes in inverted.items():
+        token = str(word or "").strip()
+        if not token or not isinstance(indexes, list):
+            continue
+        for raw_index in indexes:
+            try:
+                position = int(raw_index)
+            except (TypeError, ValueError):
+                continue
+            if position < 0:
+                continue
+            placed.append((position, token))
+            if position > max_pos:
+                max_pos = position
+    if max_pos < 0:
+        return ""
+    slots = [""] * (max_pos + 1)
+    for position, token in placed:
+        slots[position] = token
+    return " ".join(token for token in slots if token).strip()
+
+
+def _plain_abstract(raw: object) -> str:
+    """去掉 Crossref JATS 标签，只保留接口返回的摘要文本。"""
+    text = _JATS_TAG.sub(" ", str(raw or ""))
+    return " ".join(text.split())
 
 
 class ArxivClient:
@@ -182,8 +218,9 @@ class OpenAlexClient:
                 a.get("author", {}).get("display_name", "")
                 for a in work.get("authorships", [])
             ]
-            # 摘要为倒排索引结构，此处不重建全文，仅用标题作为可核验片段。
             title = work.get("title") or ""
+            abstract = reconstruct_openalex_abstract(work.get("abstract_inverted_index"))
+            snippet = (abstract or title).strip()
             cards.append(
                 EvidenceCard(
                     id=work.get("id", f"openalex:{query}"),
@@ -193,10 +230,12 @@ class OpenAlexClient:
                     year=work.get("publication_year"),
                     url=work.get("id"),
                     doi=(work.get("doi") or "").replace("https://doi.org/", "") or None,
-                    quoted_text=title,
-                    summary=title,
+                    quoted_text=snippet[:800],
+                    summary=(abstract[:180] if abstract else title),
                     relevance_score=_DEFAULT_RELEVANCE,
-                    reliability_note="openalex_metadata",
+                    reliability_note=(
+                        "openalex_abstract" if abstract else "openalex_metadata"
+                    ),
                 )
             )
         return cards
@@ -268,6 +307,12 @@ class CrossrefClient:
             # 期刊名（container-title）作为可靠性说明的一部分。
             container = (item.get("container-title") or [""])
             journal = container[0] if container else ""
+            abstract = _plain_abstract(item.get("abstract"))
+            snippet = abstract or title
+            note = "crossref_abstract" if abstract else "crossref_metadata"
+            summary = abstract[:180] if abstract else (
+                f"{title}（{journal}）" if journal else title
+            )
             cards.append(
                 EvidenceCard(
                     id=item.get("DOI", f"crossref:{query}"),
@@ -277,10 +322,10 @@ class CrossrefClient:
                     year=year,
                     url=item.get("URL"),
                     doi=item.get("DOI"),
-                    quoted_text=title,
-                    summary=f"{title}（{journal}）" if journal else title,
+                    quoted_text=snippet[:800],
+                    summary=summary,
                     relevance_score=_DEFAULT_RELEVANCE,
-                    reliability_note="crossref_metadata",
+                    reliability_note=note,
                 )
             )
         return cards

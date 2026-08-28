@@ -329,13 +329,16 @@ def deep_research_to_evidence_cards(result: dict) -> list[EvidenceCard]:
 
 def evidence_deduplicate(cards: list[EvidenceCard]) -> list[EvidenceCard]:
     """
-    对证据去重：DOI / URL / 标题高相似 / quoted_text hash 相同者合并。
+    对证据去重：同一来源内按 DOI / URL / 标题 / quoted_text hash 合并。
+
+    不同 source_type（如 OpenAlex 与 Crossref）即使 DOI 相同也保留，
+    避免 Crossref 把 OpenAlex 检索结果从证据墙抹掉。
 
     参数：
         cards: 证据卡片列表。
 
     返回：
-        去重后的列表（保留 relevance_score 更高、来源更可靠者）。
+        去重后的列表（同来源冲突时保留更可靠或更高相关者）。
     """
     # 以多种 key 索引已保留证据；冲突时择优替换。
     kept: list[EvidenceCard] = []
@@ -351,14 +354,15 @@ def evidence_deduplicate(cards: list[EvidenceCard]) -> list[EvidenceCard]:
         return a if a.relevance_score >= b.relevance_score else b
 
     for card in cards:
-        # 生成候选去重键。
+        # 生成候选去重键；键含来源，跨 API 的同一篇文献各自保留。
+        source = str(card.source_type or "unknown")
         keys = []
         if card.doi:
-            keys.append(f"doi:{card.doi.lower()}")
+            keys.append(f"{source}:doi:{card.doi.lower()}")
         if card.url:
-            keys.append(f"url:{card.url.lower()}")
-        keys.append(f"title:{' '.join(card.title.lower().split())}")
-        keys.append(f"quote:{_quoted_hash(card.quoted_text)}")
+            keys.append(f"{source}:url:{card.url.lower()}")
+        keys.append(f"{source}:title:{' '.join(card.title.lower().split())}")
+        keys.append(f"{source}:quote:{_quoted_hash(card.quoted_text)}")
 
         # 查找是否已存在任一相同键。
         hit_idx = next((index[k] for k in keys if k in index), None)

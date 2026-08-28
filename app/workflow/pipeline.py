@@ -243,7 +243,9 @@ def _gather_real_evidence(state, qplan: dict, exec_plan: dict, settings) -> list
                     message="正在检索 arXiv、OpenAlex 与 Crossref",
                 )
                 evidence += OpenLiteratureRetriever(settings).search(
-                    lit_queries, max_results_per_query=3
+                    lit_queries,
+                    max_results_per_query=3,
+                    topic_text=fallback,
                 )
         except Exception as exc:
             state.warnings.append("open_literature_failed")

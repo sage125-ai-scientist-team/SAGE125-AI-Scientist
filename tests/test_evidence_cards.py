@@ -67,12 +67,17 @@ def test_deep_research_failed_no_cards():
 
 
 def test_evidence_deduplicate_by_doi():
-    """相同 DOI 的证据应去重，保留更可靠来源。"""
+    """同一来源的相同 DOI 去重；不同来源即使 DOI 相同也各自保留。"""
     a = EvidenceCard(id="1", source_type="arxiv", title="T", quoted_text="q", summary="s",
                      relevance_score=0.5, doi="10.1000/x")
     b = EvidenceCard(id="2", source_type="crossref", title="T2", quoted_text="q2", summary="s2",
                      relevance_score=0.4, doi="10.1000/x")
-    deduped = evidence_deduplicate([a, b])
-    # 同 DOI 去重后仅保留 1 张，且保留更可靠的 crossref。
-    assert len(deduped) == 1
-    assert deduped[0].source_type == "crossref"
+    c = EvidenceCard(id="3", source_type="openalex", title="T3", quoted_text="q3", summary="s3",
+                     relevance_score=0.3, doi="10.1000/x")
+    d = EvidenceCard(id="4", source_type="crossref", title="T4", quoted_text="q4", summary="s4",
+                     relevance_score=0.2, doi="10.1000/x")
+    deduped = evidence_deduplicate([a, b, c, d])
+    sources = {card.source_type for card in deduped}
+    assert sources == {"arxiv", "crossref", "openalex"}
+    crossref = next(card for card in deduped if card.source_type == "crossref")
+    assert crossref.id == "2"
