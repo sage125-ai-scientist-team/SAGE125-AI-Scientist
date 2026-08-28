@@ -144,8 +144,6 @@ def jobs_owned_by_question(
         job_qid = str(job.get("question_id") or "").strip()
         if job_qid and job_qid != str(question_id):
             continue
-        if not job_qid:
-            continue
         owned.append(job)
     return owned
 

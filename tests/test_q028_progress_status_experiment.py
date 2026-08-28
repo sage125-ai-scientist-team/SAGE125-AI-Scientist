@@ -23,17 +23,18 @@ def test_model_progress_is_page_level_fragment() -> None:
     hub = src.split("def render_question_action_hub", 1)[1].split(
         "def _render_compact_job_status", 1
     )[0]
+    progress = src.split("def _render_model_progress", 1)[1].split(
+        "def _run_count_for_question", 1
+    )[0]
     assert "_render_model_progress()" in questions
-    assert "_render_status_kpis(ctx)" in questions
+    assert "_render_status_kpis(ctx)" not in questions
     assert "_render_model_progress" not in hub
     assert "_render_status_kpis" not in hub
     assert '@st.fragment(run_every="2s")' in src.split("def _render_model_progress", 1)[0][-80:]
-    assert "KEY_SELECTED_QID" in src.split("def _render_model_progress", 1)[1].split(
-        "def _run_count_for_question", 1
-    )[0]
-    assert "slot.empty()" in src.split("def _render_model_progress", 1)[1].split(
-        "def _run_count_for_question", 1
-    )[0]
+    assert "KEY_SELECTED_QID" in progress
+    assert "_render_status_kpis" in progress
+    assert "slot = st.empty()" not in progress
+    assert "st.empty()" in progress
 
 
 def test_run_count_kpi_is_numeric() -> None:
@@ -138,4 +139,21 @@ def test_progress_card_appears_only_after_current_question_starts() -> None:
     assert job is not None
     assert job["job_id"] == "job-q059"
     assert bound == "Q059"
+    assert show_terminal is True
+
+
+def test_progress_keeps_pointer_job_without_question_id() -> None:
+    from app.ui.job_state import select_progress_card_job
+
+    running = {
+        "job_id": "job-q028",
+        "status": "running",
+        "updated_at": "2026-08-28T11:06:00Z",
+    }
+    job, bound, show_terminal = select_progress_card_job(
+        "Q028", [running], bound_qid="Q028", show_terminal=True
+    )
+    assert job is not None
+    assert job["job_id"] == "job-q028"
+    assert bound == "Q028"
     assert show_terminal is True
