@@ -27,7 +27,6 @@ from app.ui.workspace import (
     load_question_selector_state,
     load_question_summary,
     persist_query_mode,
-    persist_query_question,
     picker_is_expanded,
     questions_fingerprint,
     referenced_ids,
@@ -249,6 +248,22 @@ def _render_compact_job_status(qid: str | None) -> None:
 
 
 def _render_picker_panel(ctx: dict[str, Any]) -> None:
+    from app.catalog.query import (
+        STATUS_FILTER_OPTIONS,
+        domain_options_with_counts,
+        filter_questions,
+        official_selector_ids,
+    )
+    from app.ui.workspace import format_question_option, sanitize_question_selector_state
+
+    catalog_error = ctx.get("catalog_error")
+    if catalog_error:
+        cid = esc(str(catalog_error.get("correlation_id") or ""))
+        st.error(
+            f"官方题目目录加载失败。correlation_id={cid or '—'}"
+        )
+        return
+
     qid = ctx.get("qid")
     selected = selected_question(ctx["questions"], qid)
     if qid and selected and not picker_is_expanded():
@@ -280,24 +295,38 @@ def _render_picker_panel(ctx: dict[str, Any]) -> None:
         </div>""",
         unsafe_allow_html=True,
     )
-    kw_col, domain_col, status_col = st.columns([2, 1, 1])
-    with kw_col:
-        keyword = st.text_input(
-            "关键词搜索",
-            placeholder="输入英文关键词，如 prime、gravity、pandemic",
-            key=components.QUESTION_KEYWORD_WIDGET_KEY,
-        )
-    with domain_col:
-        domain_keys = ["全部"] + sorted({q.get("domain", "Unknown") for q in (ctx["questions"] or [])})
-        domain_sel = st.selectbox(
-            "领域筛选",
-            domain_keys,
-            format_func=lambda d: ui_text("all_domains") if d == "全部" else domain_label(d),
-            key=components.QUESTION_DOMAIN_WIDGET_KEY,
-        )
-    with status_col:
-        status_filter = st.selectbox("状态筛选", ["全部", "已有运行", "尚无运行"], key="q_status_filter")
-
+    domain_pairs = domain_options_with_counts()
+    domain_keys = ["全部"] + [name for name, _count in domain_pairs]
+    domain_counts = dict(domain_pairs)
+    with st.form("official_catalog_filters", border=False, clear_on_submit=False):
+        kw_col, domain_col, status_col = st.columns([2, 1, 1])
+        with kw_col:
+            keyword = st.text_input(
+                "关键词搜索",
+                placeholder="输入英文关键词，如 prime、gravity、pandemic",
+                key=components.QUESTION_KEYWORD_WIDGET_KEY,
+            )
+        with domain_col:
+            domain_sel = st.selectbox(
+                "领域筛选",
+                domain_keys,
+                format_func=lambda d: (
+                    ui_text("all_domains")
+                    if d == "全部"
+                    else f"{domain_label(d)}（{domain_counts.get(d, 0)}）"
+                ),
+                key=components.QUESTION_DOMAIN_WIDGET_KEY,
+            )
+        with status_col:
+            status_filter = st.selectbox("状态筛选", list(STATUS_FILTER_OPTIONS), key="q_status_filter")
+        submitted = st.form_submit_button("搜索", width="stretch")
+        if submitted or keyword or domain_sel != "全部" or status_filter != "全部":
+            st.session_state["search_query"] = keyword or ""
+            st.session_state["domain_filter"] = domain_sel
+            st.session_state["status_filter"] = status_filter
+    keyword = st.session_state.get("search_query", keyword or "")
+    domain_sel = st.session_state.get("domain_filter", domain_sel)
+    status_filter = st.session_state.get("status_filter", status_filter)
     more = st.columns([6, 1.2])
     with more[1]:
         if st.button("刷新索引", key="q_refresh_index", help="重建 125 题轻量索引"):
@@ -305,27 +334,39 @@ def _render_picker_panel(ctx: dict[str, Any]) -> None:
 
             refresh_ui_question_index()
 
-    catalog = list(ctx["questions"] or [])
-    if keyword and keyword.strip():
-        kw = keyword.strip().lower()
-        catalog = [q for q in catalog if kw in (q.get("question") or "").lower()]
-    if domain_sel != "全部":
-        catalog = [q for q in catalog if q.get("domain") == domain_sel]
     status_map = get_ui_question_index_cached()
-    if status_filter != "全部" and catalog:
-        catalog = [
-            q for q in catalog
-            if (status_map.get(str(q.get("id")), {}).get("status") != "not_started") == (status_filter == "已有运行")
-        ]
-    by_id = {str(q.get("id")): q for q in catalog if q.get("id")}
-    if qid and qid not in by_id:
-        original = selected_question(ctx["questions"], qid)
-        if original:
-            by_id[str(qid)] = original
-    option_ids = [""] + list(by_id)
-    from app.ui.workspace import format_question_option, sanitize_question_selector_state
+    status_by_id = {qid_key: str((row or {}).get("status") or "not_started") for qid_key, row in status_map.items()}
+    hits = filter_questions(
+        query=keyword,
+        domain=domain_sel,
+        status=status_filter,
+        status_by_id=status_by_id,
+    )
+    st.session_state["filtered_question_ids"] = [item.question_id for item in hits]
+    if (keyword or "").strip() or domain_sel != "全部" or status_filter != "全部":
+        if hits:
+            st.caption(f"匹配 {len(hits)} 题")
+            for item in hits[:20]:
+                row, action = st.columns([5.2, 1.1], vertical_alignment="center")
+                with row:
+                    st.markdown(
+                        f"**{esc(item.question_id)}** · {esc(item.title_en)}  "
+                        f"<span class='domain'>{esc(domain_label(item.domain))}</span>",
+                        unsafe_allow_html=True,
+                    )
+                with action:
+                    st.button(
+                        "选择",
+                        key=f"search_pick_{item.question_id}",
+                        width="stretch",
+                        on_click=state.queue_question_selection,
+                        args=(item.question_id,),
+                    )
+        else:
+            st.info("未找到匹配题目")
 
-    sanitize_question_selector_state([qid for qid in option_ids if qid])
+    option_ids = [""] + official_selector_ids()
+    sanitize_question_selector_state(official_selector_ids())
     st.selectbox(
         "选择一个科学问题",
         option_ids,
@@ -333,18 +374,8 @@ def _render_picker_panel(ctx: dict[str, Any]) -> None:
         key=components.SELECTOR_WIDGET_KEY,
         on_change=store_question_selector_state,
     )
-    preset_key = components.render_quick_presets(ctx["questions"], compact=True)
-    if preset_key:
-        from app.ui.i18n import PRESET_KEYWORDS
-
-        keywords = PRESET_KEYWORDS.get(preset_key, [preset_key])
-        hit = next(
-            (q for q in (ctx["questions"] or []) if all(k in (q.get("question") or "").lower() for k in keywords)),
-            None,
-        )
-        if hit:
-            state.queue_question_selection(str(hit.get("id")))
-            apply_pending_question(ctx["questions"])
+    apply_pending_question(ctx["questions"])
+    components.render_quick_presets(ctx["questions"], compact=True)
 
 
 def _render_quick_actions(ctx: dict[str, Any]) -> None:

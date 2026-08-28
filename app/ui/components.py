@@ -313,60 +313,36 @@ def render_mode_control(current_mode: str) -> str:
 
 
 def render_quick_presets(questions: list[dict], *, compact: bool = False) -> Optional[str]:
-    """
-    渲染「快速示例」控件（优先 st.pills 单选；不再使用五个纵向大按钮）。
+    """渲染「快速示例」：五个按钮绑定官方 catalog 验证过的 question_id。"""
+    from app.catalog.query import quick_example_map
+    from app.ui.workspace import select_quick_example
 
-    内部稳定值为英文 key（prime/pandemic/climate/creativity/quantum），显示为
-    中文。只在本次是“新的一次选择”（与上次消费值不同）时才返回该内部 key，
-    避免每次 rerun 都强制把主选择器拉回预设题目，污染用户随后手动做出的其它
-    选题。是否命中题目、命中失败时的错误提示，由调用方（streamlit_app）负责，
-    以便复用既有的 errors.questions_missing / errors.question_not_selected 守卫。
-
-    参数：
-        questions: 问题 dict 列表（仅用于判断题库是否已加载，不在本函数内匹配）。
-
-    返回：
-        本次新选择的内部 key（如 "prime"）；无新选择时返回 None。
-    """
     if not compact:
         st.markdown(f"### {esc(ui_text('demo_presets'))}")
         st.caption("点击后仅切换到对应问题，不会污染其它问题的运行。")
     else:
         st.markdown('<div class="picker-presets-label">快速示例</div>', unsafe_allow_html=True)
-    preset_keys = list(PRESET_DISPLAY_ZH.keys())
-    display = {k: preset_label(k) for k in preset_keys}
-    pills = getattr(st, "pills", None)
-    if callable(pills):
-        chosen = pills(
-            ui_text("demo_presets"),
-            preset_keys,
-            format_func=lambda v: display.get(v, v),
-            selection_mode="single",
-            default=None,
-            key=make_widget_key("preset", "pills"),
-            label_visibility="collapsed",
-        )
-    else:
-        chosen = st.selectbox(
-            ui_text("demo_presets"),
-            ["-"] + preset_keys,
-            format_func=lambda v: "（未选择）" if v == "-" else display.get(v, v),
-            key=make_widget_key("preset", "select_fallback"),
-            label_visibility="collapsed",
-        )
-        chosen = None if chosen == "-" else chosen
-    # st.pills/segmented_control 的选中值在未手动清空前会在每次 rerun 中持续
-    # 返回同一个值；只在“本次选择与上次消费值不同”时才下发一次新选择，
-    # 避免每次 rerun 都强制把主选择器拉回预设题目，污染用户随后手动做出的
-    # 其它选题。
-    last_key = make_widget_key("preset", "last_consumed")
-    if chosen is None:
-        st.session_state[last_key] = None
+    try:
+        example_map = quick_example_map()
+    except Exception:
+        st.error("官方题目目录加载失败，无法绑定快速示例。")
         return None
-    if st.session_state.get(last_key) == chosen:
+    if not questions:
+        st.error("官方题目目录加载失败，快速示例不可用。")
         return None
-    st.session_state[last_key] = chosen
-    return chosen
+    cols = st.columns(len(PRESET_DISPLAY_ZH))
+    for column, key in zip(cols, PRESET_DISPLAY_ZH):
+        qid = example_map.get(key)
+        with column:
+            st.button(
+                preset_label(key),
+                key=make_widget_key("preset", key),
+                width="stretch",
+                disabled=not qid,
+                on_click=select_quick_example,
+                args=(qid,),
+            )
+    return None
 
 
 def render_question_selector(

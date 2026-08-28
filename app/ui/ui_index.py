@@ -49,18 +49,10 @@ def _now_iso() -> str:
 
 
 def _load_questions() -> list[dict]:
-    try:
-        from app.catalog.official import load_official_catalog
+    from app.catalog.official import load_official_catalog
 
-        catalog = load_official_catalog()
-        return [item.as_api_item(catalog.get_catalog_digest()) for item in catalog.list_questions()]
-    except Exception:
-        if not QUESTIONS_PATH.exists():
-            return []
-        try:
-            return json.loads(QUESTIONS_PATH.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
-            return []
+    catalog = load_official_catalog()
+    return [item.as_api_item(catalog.get_catalog_digest()) for item in catalog.list_questions()]
 
 
 def _questions_mtime() -> float | None:
