@@ -273,16 +273,35 @@ def official_run_mode(raw: Any) -> str | None:
     return mode if mode in ALLOWED_RUN_MODES else None
 
 
-def apply_query_mode(*, fallback: str | None = None) -> None:
-    """从 URL 或最近 Job 恢复运行模式。刷新后不得默默回到演示。"""
+def _commit_run_mode(mode: str) -> str | None:
+    """写入业务状态，并同步两个模式控件 key，避免未挂载的备用 key 把真实模式盖回演示。"""
     from app.ui.components import MODE_WIDGET_FALLBACK_KEY, MODE_WIDGET_KEY
 
-    widget = official_run_mode(st.session_state.get(MODE_WIDGET_KEY)) or official_run_mode(
-        st.session_state.get(MODE_WIDGET_FALLBACK_KEY)
-    )
-    if widget:
-        state.set_value(state.KEY_MODE, widget)
+    resolved = official_run_mode(mode)
+    if not resolved:
+        return None
+    state.set_value(state.KEY_MODE, resolved)
+    st.session_state[state.KEY_MODE_EXPLICIT] = True
+    st.session_state[MODE_WIDGET_KEY] = resolved
+    st.session_state[MODE_WIDGET_FALLBACK_KEY] = resolved
+    return resolved
+
+
+def apply_query_mode(*, fallback: str | None = None) -> None:
+    """从当前控件、已选定模式、URL 或最近 Job 恢复运行模式。切页不得默默回到演示。"""
+    from app.ui.components import MODE_WIDGET_KEY
+
+    # 只信任当前页真正挂载的 segmented_control。备用 selectbox key 会在设置页
+    # 首次以 mock 写入后一直留在 session，离开设置页后不能再用它覆盖用户选择。
+    live_widget = official_run_mode(st.session_state.get(MODE_WIDGET_KEY))
+    if live_widget:
+        _commit_run_mode(live_widget)
         return
+    if st.session_state.get(state.KEY_MODE_EXPLICIT):
+        persisted = official_run_mode(state.current_mode())
+        if persisted:
+            _commit_run_mode(persisted)
+            return
     try:
         raw = st.query_params.get(QUERY_MODE_KEY)
     except Exception:
@@ -290,14 +309,17 @@ def apply_query_mode(*, fallback: str | None = None) -> None:
     mode = official_run_mode(raw) or official_run_mode(fallback)
     if not mode:
         return
-    state.set_value(state.KEY_MODE, mode)
-    st.session_state[MODE_WIDGET_KEY] = mode
-    st.session_state[MODE_WIDGET_FALLBACK_KEY] = mode
+    _commit_run_mode(mode)
 
 
 def persist_query_mode(mode: str | None = None) -> None:
-    """把当前运行模式写入 URL，刷新后仍保持真实/演示选择。"""
-    resolved = official_run_mode(mode or state.current_mode())
+    """把当前运行模式写入 session 与 URL，切页/刷新后仍保持真实/演示选择。"""
+    if mode is not None:
+        resolved = _commit_run_mode(mode)
+    else:
+        resolved = official_run_mode(state.current_mode())
+        if resolved and st.session_state.get(state.KEY_MODE_EXPLICIT):
+            _commit_run_mode(resolved)
     if not resolved:
         return
     try:
@@ -600,6 +622,7 @@ def render_workspace_header(ctx: dict[str, Any]) -> None:
                         <span class="context-value">{esc(context_value)}</span>
                       </div>
                       <span class="question-status ws-status ws-status-{esc(kind)}">{esc(label)}</span>
+                      <span class="question-status ws-status ws-status-{'info' if (ctx.get('mode') == 'real') else 'idle'}">{esc('真实运行' if ctx.get('mode') == 'real' else '模拟演示')}</span>
                     </div>""",
                     unsafe_allow_html=True,
                 )
