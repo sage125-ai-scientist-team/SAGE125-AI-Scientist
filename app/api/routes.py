@@ -23,6 +23,7 @@ from __future__ import annotations
 import json
 import os
 import threading
+import time
 from pathlib import Path
 
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
@@ -389,12 +390,26 @@ class RunRequest(BaseModel):
     reviewer_auto_revision: bool = True
 
 
+_PREFLIGHT_CACHE: dict[str, tuple[float, dict]] = {}
+_PREFLIGHT_CACHE_TTL_SECONDS = 15.0
+_PREFLIGHT_CACHE_LOCK = threading.Lock()
+
+
 @router.get("/preflight")
 def preflight_real(use_local_rag: bool = True, use_deep_research: bool = True) -> dict:
     """真实模式 preflight 检查（不泄露 Key）。"""
     from app.workflow.preflight import run_real_preflight
 
-    return run_real_preflight(use_local_rag=use_local_rag, use_deep_research=use_deep_research)
+    cache_key = f"{bool(use_local_rag)}:{bool(use_deep_research)}"
+    now = time.monotonic()
+    with _PREFLIGHT_CACHE_LOCK:
+        cached = _PREFLIGHT_CACHE.get(cache_key)
+        if cached and now - cached[0] < _PREFLIGHT_CACHE_TTL_SECONDS:
+            return cached[1]
+    result = run_real_preflight(use_local_rag=use_local_rag, use_deep_research=use_deep_research)
+    with _PREFLIGHT_CACHE_LOCK:
+        _PREFLIGHT_CACHE[cache_key] = (time.monotonic(), result)
+    return result
 
 
 @router.post("/runs", deprecated=True)

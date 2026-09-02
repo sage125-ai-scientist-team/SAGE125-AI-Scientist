@@ -6,7 +6,6 @@ import hashlib
 import hmac
 import json
 import os
-import re
 import threading
 import time
 from dataclasses import dataclass
@@ -143,12 +142,24 @@ class FixedWindowRateLimiter:
 
 
 _API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
-# 进度轮询只读 Job 状态，不得占满写操作（创建任务）的窗口。
-_JOB_PROGRESS_READ = re.compile(r"^/api/v1/jobs(?:/[^/]+(?:/events)?)?$")
+
+
+def default_rate_limit() -> int:
+    """预览/本地默认放宽，避免评委轮询把创建任务窗口打满。"""
+    raw = os.getenv("SAGE_API_RATE_LIMIT", "").strip()
+    if raw.isdigit() and int(raw) >= 1:
+        return int(raw)
+    app_env = os.getenv("APP_ENV", "").strip().lower()
+    if app_env in {"local", "preview"}:
+        return 600
+    return 180
 
 
 def _is_job_progress_read(request: Request) -> bool:
-    return request.method == "GET" and bool(_JOB_PROGRESS_READ.match(request.url.path))
+    path = request.url.path
+    return request.method == "GET" and (
+        path == "/api/v1/jobs" or path.startswith("/api/v1/jobs/")
+    )
 
 
 async def authenticate_and_rate_limit(

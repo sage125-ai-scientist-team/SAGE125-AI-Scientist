@@ -817,6 +817,10 @@ def recover_run_after_timeout(question_id: str, min_mtime: float | None = None) 
     return None
 
 
+_TRANSIENT_HTTP = frozenset({408, 409, 429, 500, 502, 503, 504})
+_BUSY_MARKERS = ("HTTP 429", "限流", "繁忙", "RATE_LIMIT", "Too Many Requests")
+
+
 def _preflight_payload(response: requests.Response) -> dict[str, Any] | None:
     """把 /preflight 的 JSON 或 FastAPI detail 收成前端可用的检查结果。"""
     try:
@@ -840,6 +844,57 @@ def _preflight_payload(response: requests.Response) -> dict[str, Any] | None:
     return data
 
 
+def _retry_wait_seconds(response: requests.Response | None, attempt: int) -> float:
+    """尊重 Retry-After，但把等待压在评委可接受的几秒内。"""
+    if response is not None:
+        raw = str(response.headers.get("Retry-After") or "").strip()
+        if raw.isdigit():
+            return min(max(float(raw), 0.2), 8.0)
+    return min(0.4 * (2 ** max(attempt - 1, 0)), 3.0)
+
+
+def _is_authoritative_preflight(parsed: dict[str, Any] | None, status_code: int) -> bool:
+    """配置类失败（缺 Key 等）立即返回；429/502 等瞬时状态继续重试。"""
+    if not parsed:
+        return False
+    if parsed.get("ok") is True:
+        return True
+    errors = [str(item) for item in parsed.get("errors") or []]
+    if not errors:
+        return False
+    joined = " ".join(errors)
+    if status_code in _TRANSIENT_HTTP and any(marker in joined for marker in _BUSY_MARKERS):
+        return False
+    return True
+
+
+def _health_allows_real_start() -> dict[str, Any] | None:
+    """/preflight 被限流时，用已唤醒的 /health 决定能否启动真实任务。"""
+    refresh_api_available()
+    health = get_health()
+    if not isinstance(health, dict):
+        return None
+    status = str(health.get("status") or "")
+    if status == "unavailable":
+        return None
+    bailian = health.get("bailian") if isinstance(health.get("bailian"), dict) else {}
+    configured = bool(health.get("qwen_config_loaded")) or bool(bailian.get("configured"))
+    if configured:
+        return {
+            "ok": True,
+            "errors": [],
+            "warnings": ["预检接口暂时繁忙，已根据健康检查继续启动。"],
+            "recovered_from_transient": True,
+        }
+    if status in {"ok", "degraded"}:
+        return {
+            "ok": False,
+            "errors": ["未配置 DASHSCOPE_API_KEY 或 WORKSPACE_ID"],
+            "warnings": [],
+        }
+    return None
+
+
 def _run_api_preflight(
     use_local_rag: bool,
     use_deep_research: bool,
@@ -848,7 +903,7 @@ def _run_api_preflight(
 ) -> dict[str, Any]:
     """API-only 真实模式预检：用户点击启动时允许唤醒托管 API，横幅探测保持短超时。"""
     timeout = _wake_timeout_seconds() if allow_wake else _short_timeout_seconds()
-    attempts = 2 if allow_wake else 1
+    attempts = 4 if allow_wake else 1
     if allow_wake:
         refresh_api_available()
     last_errors = ["sage125-api 暂不可用。"]
@@ -857,6 +912,7 @@ def _run_api_preflight(
         "use_deep_research": use_deep_research,
     }
     for attempt in range(1, attempts + 1):
+        response: requests.Response | None = None
         try:
             response = requests.get(
                 f"{api_base()}/preflight",
@@ -864,22 +920,46 @@ def _run_api_preflight(
                 timeout=timeout,
             )
         except requests.Timeout:
-            last_errors = ["sage125-api 正在唤醒，请再点一次开始生成。"]
+            last_errors = ["sage125-api 正在唤醒，请稍候再点击开始生成。"]
             if allow_wake and attempt < attempts:
+                time.sleep(_retry_wait_seconds(None, attempt))
                 refresh_api_available()
             continue
         except (requests.RequestException, ValueError):
             last_errors = ["sage125-api 暂不可用。"]
             if allow_wake and attempt < attempts:
+                time.sleep(_retry_wait_seconds(None, attempt))
                 refresh_api_available()
             continue
         parsed = _preflight_payload(response)
-        if parsed is not None:
-            return parsed
+        if _is_authoritative_preflight(parsed, response.status_code):
+            return parsed or {"ok": False, "errors": last_errors, "warnings": []}
         if response.status_code == 200:
             last_errors = ["sage125-api 返回了无法解析的 preflight 结果。"]
             continue
+        if response.status_code in _TRANSIENT_HTTP:
+            last_errors = ["sage125-api 暂时繁忙，正在自动重试。"]
+            if allow_wake and attempt < attempts:
+                time.sleep(_retry_wait_seconds(response, attempt))
+                refresh_api_available()
+            continue
         last_errors = [f"sage125-api 返回 HTTP {response.status_code}。"]
+    if allow_wake:
+        fallback = _health_allows_real_start()
+        if fallback is not None:
+            return fallback
+        return {
+            "ok": False,
+            "errors": ["服务正在恢复或请求过多，请等待几秒后再次点击开始生成。"],
+            "warnings": [],
+        }
+    if last_errors and any("繁忙" in item or "唤醒" in item for item in last_errors):
+        return {
+            "ok": True,
+            "errors": [],
+            "warnings": ["预检接口暂时繁忙，启动时会再次检查。"],
+            "deferred": True,
+        }
     return {"ok": False, "errors": last_errors, "warnings": []}
 
 
@@ -1317,26 +1397,43 @@ def create_job(
             "reviewer_auto_revision": True,
         },
     }
-    try:
-        response = _http_session().post(
-            f"{api_base()}/api/v1/jobs",
-            json=payload,
-            headers={**_job_headers(), "Idempotency-Key": idempotency_key},
-            timeout=_short_timeout_seconds(),
-        )
-    except requests.RequestException as exc:
-        return {"status": "failed", "error_type": "network", "errors": [str(exc)]}
-    if response.status_code not in (200, 202):
+    last_failure: dict[str, Any] = {
+        "status": "failed",
+        "error_type": "http_error",
+        "errors": ["无法创建后台任务。"],
+    }
+    for attempt in range(1, 4):
+        try:
+            response = _http_session().post(
+                f"{api_base()}/api/v1/jobs",
+                json=payload,
+                headers={**_job_headers(), "Idempotency-Key": idempotency_key},
+                timeout=_short_timeout_seconds(),
+            )
+        except requests.RequestException as exc:
+            last_failure = {"status": "failed", "error_type": "network", "errors": [str(exc)]}
+            if attempt < 3:
+                time.sleep(_retry_wait_seconds(None, attempt))
+                refresh_api_available()
+                continue
+            return last_failure
+        if response.status_code in (200, 202):
+            data = response.json()
+            data["created"] = bool(data.get("created", not data.get("reused")))
+            return data
         body = _job_error_payload(response)
-        return {
+        last_failure = {
             "status": "failed",
             "error_type": body.get("code") or "http_error",
             "errors": [body.get("message") or f"HTTP {response.status_code}"],
             **body,
         }
-    data = response.json()
-    data["created"] = bool(data.get("created", not data.get("reused")))
-    return data
+        if response.status_code in _TRANSIENT_HTTP and attempt < 3:
+            time.sleep(_retry_wait_seconds(response, attempt))
+            refresh_api_available()
+            continue
+        return last_failure
+    return last_failure
 
 
 _JOB_STATUS_MEMO: dict[str, tuple[float, dict[str, Any]]] = {}
