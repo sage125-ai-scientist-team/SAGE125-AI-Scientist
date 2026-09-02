@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 from pypdf import PdfReader
 
 from app.api.artifact_registry import ArtifactIntegrityError, SQLiteArtifactRegistry
-from app.api.auth import FixedWindowRateLimiter, HashedAPIKeyAuth
+from app.api.auth import FixedWindowRateLimiter, HashedAPIKeyAuth, default_rate_limit
 from app.api.contracts import JobCreateRequest, JobStatus
 from app.api.job_store import SQLiteJobStore
 from app.api.main import create_app
@@ -344,3 +344,11 @@ def test_export_filesystem_failure_is_fail_closed_and_logs_safe_stack(
     assert examples["storage_unavailable"]["value"]["code"] == (
         "EXPORT_STORAGE_UNAVAILABLE"
     )
+
+
+def test_default_rate_limit_is_higher_in_preview(monkeypatch):
+    monkeypatch.delenv("SAGE_API_RATE_LIMIT", raising=False)
+    monkeypatch.setenv("APP_ENV", "preview")
+    assert default_rate_limit() == 600
+    monkeypatch.setenv("SAGE_API_RATE_LIMIT", "900")
+    assert default_rate_limit() == 900

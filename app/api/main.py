@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.artifact_registry import SQLiteArtifactRegistry
-from app.api.auth import AuthPolicy, FixedWindowRateLimiter, HashedAPIKeyAuth
+from app.api.auth import AuthPolicy, FixedWindowRateLimiter, HashedAPIKeyAuth, default_rate_limit
 from app.api.errors import (
     APIError,
     api_error_handler,
@@ -114,7 +114,7 @@ def create_app(
             auth_policy or HashedAPIKeyAuth.from_environment()
         )
         application.state.rate_limiter = rate_limiter or FixedWindowRateLimiter(
-            limit=180, window_seconds=60
+            limit=default_rate_limit(), window_seconds=60
         )
         application.state.artifact_registry = registry
         application.state.feedback_submit_port = (

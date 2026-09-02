@@ -183,6 +183,7 @@ def test_api_only_preflight_wakes_and_retries_timeout(monkeypatch):
     monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
     monkeypatch.setenv("FRONTEND_API_SHORT_TIMEOUT_SECONDS", "10")
     monkeypatch.setenv("FRONTEND_API_WAKE_TIMEOUT_SECONDS", "75")
+    monkeypatch.setattr(api_client.time, "sleep", lambda _seconds: None)
     observed = []
 
     class OkResponse:
@@ -233,11 +234,157 @@ def test_api_only_preflight_surfaces_http_errors(monkeypatch):
     assert "百炼未配置" in result["errors"]
 
 
+def test_api_only_preflight_retries_429_then_succeeds(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+    monkeypatch.setattr(api_client.time, "sleep", lambda _seconds: None)
+    observed = []
+
+    class Limited:
+        status_code = 429
+        headers = {"Retry-After": "1"}
+
+        @staticmethod
+        def json():
+            return {"code": "RATE_LIMIT_EXCEEDED", "message": "请求频率超过限制，请稍后重试。"}
+
+    class OkResponse:
+        status_code = 200
+        headers = {}
+
+        @staticmethod
+        def json():
+            return {"ok": True, "errors": [], "warnings": []}
+
+    def fake_get(url, *, params=None, timeout=None):
+        observed.append(str(url))
+        if str(url).endswith("/preflight") and sum(
+            1 for item in observed if item.endswith("/preflight")
+        ) == 1:
+            return Limited()
+        return OkResponse()
+
+    monkeypatch.setattr(api_client.requests, "get", fake_get)
+
+    result = api_client.run_preflight(True, True, allow_wake=True)
+
+    assert result["ok"] is True
+    assert sum(1 for item in observed if item.endswith("/preflight")) == 2
+
+
+def test_api_only_preflight_429_falls_back_to_health(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+    monkeypatch.setattr(api_client.time, "sleep", lambda _seconds: None)
+
+    class Limited:
+        status_code = 429
+        headers = {"Retry-After": "1"}
+
+        @staticmethod
+        def json():
+            return {"code": "RATE_LIMIT_EXCEEDED", "message": "请求频率超过限制，请稍后重试。"}
+
+    class HealthOk:
+        status_code = 200
+        headers = {}
+
+        @staticmethod
+        def json():
+            return {
+                "status": "ok",
+                "service": "sage125-api",
+                "qwen_config_loaded": True,
+                "bailian": {"configured": True, "status": "available"},
+                "questions_count": 125,
+            }
+
+    def fake_get(url, *, params=None, timeout=None):
+        if str(url).endswith("/preflight"):
+            return Limited()
+        return HealthOk()
+
+    monkeypatch.setattr(api_client.requests, "get", fake_get)
+
+    result = api_client.run_preflight(True, True, allow_wake=True)
+
+    assert result["ok"] is True
+    assert result.get("recovered_from_transient") is True
+    assert "HTTP 429" not in " ".join(result.get("errors") or [])
+
+
+def test_api_only_preflight_banner_429_is_nonblocking(monkeypatch):
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+
+    class Limited:
+        status_code = 429
+        headers = {}
+
+        @staticmethod
+        def json():
+            return {"code": "RATE_LIMIT_EXCEEDED", "message": "请求频率超过限制，请稍后重试。"}
+
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda url, *, params=None, timeout=None: Limited(),
+    )
+
+    result = api_client.run_preflight(True, True)
+
+    assert result["ok"] is True
+    assert result.get("deferred") is True
+    assert "HTTP 429" not in " ".join(result.get("errors") or [])
+
+
 def test_real_start_preflight_allows_hosted_wake():
     src = (ROOT / "app/ui/streamlit_app.py").read_text(encoding="utf-8")
     trigger = src.split("def process_run_triggers", 1)[1].split("if trigger_latest", 1)[0]
     assert "allow_wake=True" in trigger
     assert "正在检查并唤醒 sage125-api" in trigger
+    assert "服务正在恢复" in trigger
+    assert "瞬时 429" in trigger
+
+
+def test_create_job_retries_429(monkeypatch):
+    monkeypatch.setattr(api_client.time, "sleep", lambda _seconds: None)
+    monkeypatch.setattr(api_client, "api_available", lambda: True)
+    monkeypatch.setattr(api_client, "refresh_api_available", lambda: True)
+    calls = {"n": 0}
+
+    class Limited:
+        status_code = 429
+        headers = {"Retry-After": "1"}
+
+        @staticmethod
+        def json():
+            return {"code": "RATE_LIMIT_EXCEEDED", "message": "请求频率超过限制，请稍后重试。"}
+
+    class Accepted:
+        status_code = 202
+        headers = {}
+
+        @staticmethod
+        def json():
+            return {"job_id": "job-retry", "created": True}
+
+    class Session:
+        @staticmethod
+        def post(*args, **kwargs):
+            calls["n"] += 1
+            return Limited() if calls["n"] < 3 else Accepted()
+
+    monkeypatch.setattr(api_client, "_http_session", lambda: Session())
+
+    result = api_client.create_job(
+        question_id="Q019",
+        mode="real",
+        job_type="full",
+        client_id="client-1",
+        input_digest="digest",
+        idempotency_key="key",
+    )
+
+    assert result["job_id"] == "job-retry"
+    assert calls["n"] == 3
 
 
 def test_create_job_refreshes_stale_health_before_failing(monkeypatch):
