@@ -48,7 +48,10 @@ def _short_timeout_seconds() -> int:
 
 def _wake_timeout_seconds() -> int:
     """允许托管 API 从休眠中唤醒的健康探测超时。"""
-    return max(_positive_env_int("FRONTEND_API_WAKE_TIMEOUT_SECONDS", 75), 10)
+    value = max(_positive_env_int("FRONTEND_API_WAKE_TIMEOUT_SECONDS", 180), 10)
+    if os.getenv("APP_ENV", "").strip().lower() == "preview":
+        return max(value, 180)
+    return value
 
 
 def _ingest_timeout_seconds() -> int:
@@ -138,43 +141,78 @@ def _http_session() -> requests.Session:
     return s
 
 
-# 健康/诊断结果的短 TTL 缓存。TTL 故意保持很短（而不是 0），既能吸收同一次
-# rerun 内的重复调用与切页抖动，又不会让「服务刚恢复」这类状态长时间失真。
+# 只缓存成功的健康结果。失败（休眠、502、超时）不得锁住 60 秒，否则评委
+# 点「开始生成」会继续看到「暂不可用」。
 _HEALTH_CACHE_TTL_SECONDS = 60
 _DIAG_CACHE_TTL_SECONDS = 60
 _QUESTIONS_CACHE_TTL_SECONDS = 300
+_HEALTH_OK_AT = 0.0
+_HEALTH_OK_PAYLOAD: dict[str, Any] = {}
 
 
-@st.cache_data(ttl=_HEALTH_CACHE_TTL_SECONDS, show_spinner=False)
-def _fetch_health_cached(_cache_bust: int) -> tuple[bool, dict]:
-    """实际发起一次健康检查 HTTP 请求；返回 (api_connected, health_json)。
+def _clear_health_ok_cache() -> None:
+    global _HEALTH_OK_AT, _HEALTH_OK_PAYLOAD
+    _HEALTH_OK_AT = 0.0
+    _HEALTH_OK_PAYLOAD = {}
 
-    `_cache_bust` 仅用于让调用方能主动失效缓存（传入变化的整数），
-    st.cache_data 本身按参数值区分缓存条目。
-    """
+
+def _store_health_ok(payload: dict[str, Any]) -> None:
+    global _HEALTH_OK_AT, _HEALTH_OK_PAYLOAD
+    _HEALTH_OK_AT = time.monotonic()
+    _HEALTH_OK_PAYLOAD = payload
+
+
+def _probe_health(*, timeout: int | None = None) -> tuple[bool, dict]:
+    """探测 /health；失败不写入成功缓存。"""
     try:
-        r = requests.get(f"{api_base()}/health", timeout=_wake_timeout_seconds())
+        r = requests.get(
+            f"{api_base()}/health",
+            timeout=_wake_timeout_seconds() if timeout is None else timeout,
+        )
         if r.status_code != 200:
             return False, {}
         try:
             payload = r.json() if callable(getattr(r, "json", None)) else {}
         except (TypeError, ValueError, AttributeError):
             payload = {}
-        return True, payload if isinstance(payload, dict) else {}
+        if isinstance(payload, dict) and payload:
+            _store_health_ok(payload)
+            return True, payload
+        return True, {}
     except requests.RequestException:
         return False, {}
 
 
+def _fetch_health_cached(_cache_bust: int = 0) -> tuple[bool, dict]:
+    """复用最近一次成功的健康检查；页面探测用短超时，失败不缓存。"""
+    del _cache_bust
+    now = time.monotonic()
+    if _HEALTH_OK_AT and now - _HEALTH_OK_AT < _HEALTH_CACHE_TTL_SECONDS and _HEALTH_OK_PAYLOAD:
+        return True, _HEALTH_OK_PAYLOAD
+    return _probe_health(timeout=_short_timeout_seconds())
+
+
+_fetch_health_cached.clear = _clear_health_ok_cache  # type: ignore[attr-defined]
+
+
 def api_available() -> bool:
-    """探测 API 是否可达（复用健康检查缓存，不再发起独立的第二次请求）。"""
+    """探测 API 是否可达（只复用成功的健康缓存）。"""
     connected, _ = _fetch_health_cached(0)
     return connected
 
 
 def refresh_api_available() -> bool:
-    """作废健康缓存后再探测一次，避免把冷启动失败记成 60 秒不可用。"""
-    _fetch_health_cached.clear()
-    return api_available()
+    """作废成功缓存后再用唤醒超时探测一次。"""
+    _clear_health_ok_cache()
+    connected, _ = _probe_health()
+    return connected
+
+
+def wake_hosted_api(*, wait: bool = False) -> bool:
+    """打开页面时轻量戳醒托管 API；wait=True 时允许完整冷启动等待。"""
+    timeout = _wake_timeout_seconds() if wait else min(3, _short_timeout_seconds())
+    connected, _ = _probe_health(timeout=timeout)
+    return connected
 
 
 # ---- 各接口：HTTP 优先，失败回退进程内 ----
@@ -1376,13 +1414,7 @@ def create_job(
     idempotency_key: str,
     options: dict | None = None,
 ) -> dict[str, Any]:
-    """创建或复用后台 Job；不执行科学流水线。"""
-    if not api_available() and not refresh_api_available():
-        return {
-            "status": "failed",
-            "error_type": "api_unavailable",
-            "errors": ["sage125-api 暂不可用，无法在后台启动长任务。"],
-        }
+    """创建或复用后台 Job；不因瞬时 /health 失败而拒绝提交。"""
     payload = {
         "question_id": question_id,
         "mode": mode,
@@ -1402,19 +1434,29 @@ def create_job(
         "error_type": "http_error",
         "errors": ["无法创建后台任务。"],
     }
-    for attempt in range(1, 4):
+    attempts = 6
+    timeout_s = _wake_timeout_seconds()
+    for attempt in range(1, attempts + 1):
         try:
             response = _http_session().post(
                 f"{api_base()}/api/v1/jobs",
                 json=payload,
                 headers={**_job_headers(), "Idempotency-Key": idempotency_key},
-                timeout=_short_timeout_seconds(),
+                timeout=timeout_s,
             )
         except requests.RequestException as exc:
-            last_failure = {"status": "failed", "error_type": "network", "errors": [str(exc)]}
-            if attempt < 3:
+            last_failure = {
+                "status": "failed",
+                "error_type": "network",
+                "errors": [
+                    "sage125-api 正在唤醒或暂时不可达，请保持页面打开后再次点击开始生成。"
+                    if attempt >= attempts
+                    else str(exc)
+                ],
+            }
+            if attempt < attempts:
                 time.sleep(_retry_wait_seconds(None, attempt))
-                refresh_api_available()
+                wake_hosted_api(wait=True)
                 continue
             return last_failure
         if response.status_code in (200, 202):
@@ -1428,10 +1470,14 @@ def create_job(
             "errors": [body.get("message") or f"HTTP {response.status_code}"],
             **body,
         }
-        if response.status_code in _TRANSIENT_HTTP and attempt < 3:
+        if response.status_code in _TRANSIENT_HTTP and attempt < attempts:
             time.sleep(_retry_wait_seconds(response, attempt))
-            refresh_api_available()
+            wake_hosted_api(wait=True)
             continue
+        if attempt >= attempts:
+            last_failure["errors"] = [
+                "sage125-api 正在唤醒或暂时不可达，请保持页面打开后再次点击开始生成。"
+            ]
         return last_failure
     return last_failure
 

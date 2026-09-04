@@ -1,0 +1,17 @@
+name: preview-keepalive
+
+on:
+  schedule:
+    - cron: "*/12 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Wake sage125-api-preview
+        run: curl -fsS --retry 5 --retry-delay 15 --max-time 90 https://sage125-api-preview.onrender.com/health

@@ -345,13 +345,11 @@ def main() -> None:
                         errors.rag_missing(details=err_text)
                     elif any(
                         token in err_text
-                        for token in ("暂时繁忙", "正在恢复", "正在唤醒", "请求过多")
+                        for token in ("暂时繁忙", "正在恢复", "正在唤醒", "请求过多", "暂不可用")
                     ):
-                        errors.render_user_error(
-                            "服务正在恢复",
-                            "请等待几秒后再次点击开始生成。系统已自动重试唤醒，不会因为瞬时 429 阻止任务。",
-                            fix_commands=pf.get("fix_commands"),
-                        )
+                        state.begin_run()
+                        run_result = _execute_run(qid, run_mode, switches)
+                        _handle_run_result(qid, run_mode, run_result)
                     else:
                         errors.render_user_error(
                             "无法启动真实模式",

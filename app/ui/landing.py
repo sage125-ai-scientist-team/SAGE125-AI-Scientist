@@ -82,6 +82,9 @@ def _stats_refresh_fragment() -> None:
 
 
 def render_landing(ctx: dict[str, Any], *, workspace_page, case_page) -> None:
+    from app.ui import api_client
+
+    api_client.wake_hosted_api(wait=False)
     st.markdown(
         f"""
 <div class="land-page">

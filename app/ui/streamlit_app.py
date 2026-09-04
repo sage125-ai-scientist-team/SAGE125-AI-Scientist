@@ -243,24 +243,22 @@ def process_run_triggers(
                     err_text = "\n".join(pf.get("errors", []))
                     if any("DASHSCOPE" in e or "WORKSPACE" in e for e in pf.get("errors", [])):
                         errors.qwen_not_configured(details=err_text)
+                        submit_ok = False
                     elif any("RAG" in e or "chunks" in e for e in pf.get("errors", [])):
                         errors.rag_missing(details=err_text)
+                        submit_ok = False
                     elif any(
                         token in err_text
-                        for token in ("暂时繁忙", "正在恢复", "正在唤醒", "请求过多")
+                        for token in ("暂时繁忙", "正在恢复", "正在唤醒", "请求过多", "暂不可用")
                     ):
-                        errors.render_user_error(
-                            "服务正在恢复",
-                            "请等待几秒后再次点击开始生成。系统已自动重试唤醒，不会因为瞬时 429 阻止任务。",
-                            fix_commands=pf.get("fix_commands"),
-                        )
+                        submit_ok = True
                     else:
                         errors.render_user_error(
                             "无法启动真实模式",
                             "preflight 未通过：\n- " + "\n- ".join(pf.get("errors", [])),
                             fix_commands=pf.get("fix_commands"),
                         )
-                    submit_ok = False
+                        submit_ok = False
                 else:
                     submit_ok = True
             else:
@@ -268,12 +266,13 @@ def process_run_triggers(
             if submit_ok:
                 from app.ui.job_state import JOB_TYPE_DEMO, JOB_TYPE_FULL, submit_or_reuse_job
 
-                accepted = submit_or_reuse_job(
-                    question_id=str(qid),
-                    job_type=JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL,
-                    mode=run_mode,
-                    switches=switches,
-                )
+                with st.spinner("正在启动任务并唤醒 sage125-api…"):
+                    accepted = submit_or_reuse_job(
+                        question_id=str(qid),
+                        job_type=JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL,
+                        mode=run_mode,
+                        switches=switches,
+                    )
                 if accepted.get("status") == "failed" or accepted.get("errors"):
                     errors.render_user_error(
                         "无法启动后台任务",

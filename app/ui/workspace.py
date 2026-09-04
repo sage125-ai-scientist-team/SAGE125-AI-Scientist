@@ -111,15 +111,22 @@ def bootstrap(*, refresh_questions: bool = False, refresh_diag: bool = False) ->
 
     now = _time.monotonic()
     last_health = float(st.session_state.get(BOOT_HEALTH_AT) or 0.0)
+    last = st.session_state.get(BOOT_HEALTH) or {}
+    last_unavailable = str(last.get("status") or "") == "unavailable"
     if (
         refresh_questions
         or BOOT_HEALTH not in st.session_state
+        or last_unavailable
         or (now - last_health) >= _HEALTH_SESSION_TTL_SECONDS
     ):
+        api_client.wake_hosted_api(wait=False)
         health = api_client.get_health()
         st.session_state[BOOT_HEALTH] = health
         st.session_state[BOOT_HEALTH_AT] = now
-        st.session_state[BOOT_API] = api_client.api_available()
+        st.session_state[BOOT_API] = str(health.get("status") or "") != "unavailable"
+        if str(health.get("status") or "") == "unavailable":
+            # 休眠失败不得锁住整页 60 秒，下一次 rerun 继续戳醒。
+            st.session_state[BOOT_HEALTH_AT] = 0.0
     health = st.session_state.get(BOOT_HEALTH) or {}
     api_connected = bool(st.session_state.get(BOOT_API))
 
