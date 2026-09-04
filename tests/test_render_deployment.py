@@ -135,21 +135,56 @@ def test_http_run_unwraps_fastapi_detail_errors(monkeypatch):
 
 
 def test_render_ui_health_probe_allows_cold_start(monkeypatch):
-    monkeypatch.setenv("FRONTEND_API_WAKE_TIMEOUT_SECONDS", "75")
+    monkeypatch.setenv("FRONTEND_API_WAKE_TIMEOUT_SECONDS", "180")
     observed = {}
 
     class Response:
         status_code = 200
+
+        @staticmethod
+        def json():
+            return {"status": "ok", "service": "sage125-api"}
 
     def fake_get(url, *, timeout):
         observed.update({"url": url, "timeout": timeout})
         return Response()
 
     monkeypatch.setattr(api_client.requests, "get", fake_get)
+    api_client._clear_health_ok_cache()
 
-    assert api_client.api_available()
+    assert api_client.wake_hosted_api(wait=True)
     assert observed["url"].endswith("/health")
-    assert observed["timeout"] == 75
+    assert observed["timeout"] == 180
+
+
+def test_failed_health_is_not_cached(monkeypatch):
+    monkeypatch.setenv("FRONTEND_API_SHORT_TIMEOUT_SECONDS", "10")
+    api_client._clear_health_ok_cache()
+    calls = {"n": 0}
+
+    class Down:
+        status_code = 502
+
+        @staticmethod
+        def json():
+            return {}
+
+    class Up:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {"status": "ok", "service": "sage125-api"}
+
+    def fake_get(url, *, timeout=None):
+        calls["n"] += 1
+        return Down() if calls["n"] == 1 else Up()
+
+    monkeypatch.setattr(api_client.requests, "get", fake_get)
+
+    assert api_client.api_available() is False
+    assert api_client.api_available() is True
+    assert calls["n"] == 2
 
 
 def test_api_only_preflight_banner_keeps_short_timeout(monkeypatch):
@@ -340,14 +375,15 @@ def test_real_start_preflight_allows_hosted_wake():
     trigger = src.split("def process_run_triggers", 1)[1].split("if trigger_latest", 1)[0]
     assert "allow_wake=True" in trigger
     assert "正在检查并唤醒 sage125-api" in trigger
-    assert "服务正在恢复" in trigger
-    assert "瞬时 429" in trigger
+    assert "正在启动任务并唤醒 sage125-api" in trigger
+    assert "暂不可用" in trigger
 
 
 def test_create_job_retries_429(monkeypatch):
     monkeypatch.setattr(api_client.time, "sleep", lambda _seconds: None)
     monkeypatch.setattr(api_client, "api_available", lambda: True)
     monkeypatch.setattr(api_client, "refresh_api_available", lambda: True)
+    monkeypatch.setattr(api_client, "wake_hosted_api", lambda **_kwargs: False)
     calls = {"n": 0}
 
     class Limited:
@@ -387,12 +423,12 @@ def test_create_job_retries_429(monkeypatch):
     assert calls["n"] == 3
 
 
-def test_create_job_refreshes_stale_health_before_failing(monkeypatch):
-    probes = {"n": 0}
+def test_create_job_posts_without_health_gate(monkeypatch):
+    monkeypatch.setattr(api_client.time, "sleep", lambda _seconds: None)
+    monkeypatch.setattr(api_client, "wake_hosted_api", lambda **_kwargs: False)
 
-    def fake_available() -> bool:
-        probes["n"] += 1
-        return probes["n"] >= 2
+    def boom() -> bool:
+        raise AssertionError("health gate must not block create_job")
 
     class Response:
         status_code = 202
@@ -406,7 +442,8 @@ def test_create_job_refreshes_stale_health_before_failing(monkeypatch):
         def post(*args, **kwargs):
             return Response()
 
-    monkeypatch.setattr(api_client, "api_available", fake_available)
+    monkeypatch.setattr(api_client, "api_available", boom)
+    monkeypatch.setattr(api_client, "refresh_api_available", boom)
     monkeypatch.setattr(api_client, "_http_session", lambda: Session())
 
     result = api_client.create_job(
@@ -419,7 +456,6 @@ def test_create_job_refreshes_stale_health_before_failing(monkeypatch):
     )
 
     assert result["job_id"] == "job-wake"
-    assert probes["n"] == 2
 
 
 def test_api_only_ingest_posts_directly_without_health_gate(monkeypatch):
@@ -495,7 +531,8 @@ def test_render_blueprint_and_entrypoint_contracts(monkeypatch):
     assert "name: sage125-ui-preview" in blueprint
     assert blueprint.count("repo: https://github.com/sage125-ai-scientist-team/SAGE125-AI-Scientist") == 2
     assert blueprint.count("branch: integration/2026-08-10") == 2
-    assert blueprint.count("plan: free") == 2
+    assert blueprint.count("plan: starter") == 2
+    assert "plan: free" not in blueprint
     assert blueprint.count("region: singapore") == 2
     assert blueprint.count("autoDeployTrigger: off") == 2
     assert "autoDeployTrigger: checksPass" not in blueprint
@@ -507,6 +544,7 @@ def test_render_blueprint_and_entrypoint_contracts(monkeypatch):
     assert "FRONTEND_API_BASE_URL" in blueprint
     assert "FRONTEND_API_SHORT_TIMEOUT_SECONDS" in blueprint
     assert "FRONTEND_API_WAKE_TIMEOUT_SECONDS" in blueprint
+    assert 'value: "180"' in blueprint
     assert "FRONTEND_INGEST_TIMEOUT_SECONDS" in blueprint
     assert "SAGE125_PREVIEW_SEED" in blueprint
     assert "DASHSCOPE_API_KEY" not in blueprint
