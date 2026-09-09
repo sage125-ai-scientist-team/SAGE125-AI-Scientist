@@ -933,17 +933,31 @@ def _health_allows_real_start() -> dict[str, Any] | None:
     return None
 
 
+def _preflight_attempt_timeout_seconds() -> int:
+    """单次 /preflight 探测的超时；比通用唤醒超时短，避免单次尝试就吃掉整个预算。
+
+    Render 冷启动期间连接通常会被代理挂起直到容器就绪（而不是快速返回错误），
+    因此单次尝试本身就足够充当唤醒探测；不需要在每次重试之间再叠加一次完整的
+    唤醒等待（那只会让总耗时成倍增加，且更容易在用户点击"开始生成"触发的
+    Streamlit 重跑取消当前请求前，连一次探测都没有真正完成）。
+    """
+    return min(_wake_timeout_seconds(), 90)
+
+
 def _run_api_preflight(
     use_local_rag: bool,
     use_deep_research: bool,
     *,
     allow_wake: bool,
 ) -> dict[str, Any]:
-    """API-only 真实模式预检：用户点击启动时允许唤醒托管 API，横幅探测保持短超时。"""
-    timeout = _wake_timeout_seconds() if allow_wake else _short_timeout_seconds()
-    attempts = 4 if allow_wake else 1
-    if allow_wake:
-        refresh_api_available()
+    """API-only 真实模式预检：用户点击启动时允许唤醒托管 API，横幅探测保持短超时。
+
+    只做少量尝试且不在尝试之间叠加独立的完整唤醒等待：单次探测的超时本身就足够
+    覆盖一次冷启动；预检的目的是快速区分"配置缺失"与"服务暂时不可达"，真正的
+    唤醒与重试预算留给 create_job（它有自己的、更长的重试序列）。
+    """
+    timeout = _preflight_attempt_timeout_seconds() if allow_wake else _short_timeout_seconds()
+    attempts = 2 if allow_wake else 1
     last_errors = ["sage125-api 暂不可用。"]
     params = {
         "use_local_rag": use_local_rag,
@@ -961,13 +975,11 @@ def _run_api_preflight(
             last_errors = ["sage125-api 正在唤醒，请稍候再点击开始生成。"]
             if allow_wake and attempt < attempts:
                 time.sleep(_retry_wait_seconds(None, attempt))
-                refresh_api_available()
             continue
         except (requests.RequestException, ValueError):
             last_errors = ["sage125-api 暂不可用。"]
             if allow_wake and attempt < attempts:
                 time.sleep(_retry_wait_seconds(None, attempt))
-                refresh_api_available()
             continue
         parsed = _preflight_payload(response)
         if _is_authoritative_preflight(parsed, response.status_code):
@@ -979,7 +991,6 @@ def _run_api_preflight(
             last_errors = ["sage125-api 暂时繁忙，正在自动重试。"]
             if allow_wake and attempt < attempts:
                 time.sleep(_retry_wait_seconds(response, attempt))
-                refresh_api_available()
             continue
         last_errors = [f"sage125-api 返回 HTTP {response.status_code}。"]
     if allow_wake:
@@ -1404,6 +1415,16 @@ def _job_error_payload(response: requests.Response) -> dict[str, Any]:
     return body if isinstance(body, dict) else {"message": str(body)}
 
 
+def _job_create_attempt_timeout_seconds() -> int:
+    """单次 POST /api/v1/jobs 的超时；比通用唤醒超时短，配合多次直接重试更快获得反馈。
+
+    Render 冷启动期间连接通常会被代理挂起直到容器就绪，因此每次尝试本身就足够
+    覆盖一次唤醒；不再在重试之间额外插入一次独立的 /health 唤醒等待——那只会让
+    单次尝试的耗时翻倍，并显著增加"用户等得不耐烦、再次点击导致 Streamlit 重跑、
+    从而取消掉正在等待的请求"这一失败模式出现的概率。"""
+    return min(_wake_timeout_seconds(), 60)
+
+
 def create_job(
     *,
     question_id: str,
@@ -1414,7 +1435,12 @@ def create_job(
     idempotency_key: str,
     options: dict | None = None,
 ) -> dict[str, Any]:
-    """创建或复用后台 Job；不因瞬时 /health 失败而拒绝提交。"""
+    """创建或复用后台 Job；不因瞬时 /health 失败而拒绝提交。
+
+    Idempotency-Key 在同一 question_id/job_type/input_digest 下保持稳定，因此即使
+    本次调用最终仍失败，用户再次点击「开始生成」也是安全的：不会重复创建任务，
+    只是对同一个 Idempotency-Key 发起新一轮直接重试。
+    """
     payload = {
         "question_id": question_id,
         "mode": mode,
@@ -1434,8 +1460,8 @@ def create_job(
         "error_type": "http_error",
         "errors": ["无法创建后台任务。"],
     }
-    attempts = 6
-    timeout_s = _wake_timeout_seconds()
+    attempts = 5
+    timeout_s = _job_create_attempt_timeout_seconds()
     for attempt in range(1, attempts + 1):
         try:
             response = _http_session().post(
@@ -1449,14 +1475,14 @@ def create_job(
                 "status": "failed",
                 "error_type": "network",
                 "errors": [
-                    "sage125-api 正在唤醒或暂时不可达，请保持页面打开后再次点击开始生成。"
+                    "sage125-api 正在从休眠中唤醒（通常需要 30-90 秒）。请保持本页面打开，"
+                    "稍后再次点击「开始生成」——同一任务不会被重复创建。"
                     if attempt >= attempts
                     else str(exc)
                 ],
             }
             if attempt < attempts:
                 time.sleep(_retry_wait_seconds(None, attempt))
-                wake_hosted_api(wait=True)
                 continue
             return last_failure
         if response.status_code in (200, 202):
@@ -1472,11 +1498,11 @@ def create_job(
         }
         if response.status_code in _TRANSIENT_HTTP and attempt < attempts:
             time.sleep(_retry_wait_seconds(response, attempt))
-            wake_hosted_api(wait=True)
             continue
         if attempt >= attempts:
             last_failure["errors"] = [
-                "sage125-api 正在唤醒或暂时不可达，请保持页面打开后再次点击开始生成。"
+                "sage125-api 正在从休眠中唤醒（通常需要 30-90 秒）。请保持本页面打开，"
+                "稍后再次点击「开始生成」——同一任务不会被重复创建。"
             ]
         return last_failure
     return last_failure
