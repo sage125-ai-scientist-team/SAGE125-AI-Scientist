@@ -233,7 +233,7 @@ def process_run_triggers(
         else:
             run_mode = "mock" if trigger_mock else mode
             if run_mode == "real":
-                with st.spinner("正在检查并唤醒 sage125-api…"):
+                with st.spinner("正在检查并唤醒 sage125-api（闲置较久时可能需要 30-90 秒）…"):
                     pf = api_client.run_preflight(
                         switches.get("use_local_rag", True),
                         switches.get("use_deep_research", True),
@@ -266,7 +266,7 @@ def process_run_triggers(
             if submit_ok:
                 from app.ui.job_state import JOB_TYPE_DEMO, JOB_TYPE_FULL, submit_or_reuse_job
 
-                with st.spinner("正在启动任务并唤醒 sage125-api…"):
+                with st.spinner("正在启动任务并唤醒 sage125-api（闲置较久时可能需要 1-4 分钟，请勿关闭页面）…"):
                     accepted = submit_or_reuse_job(
                         question_id=str(qid),
                         job_type=JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL,
@@ -274,11 +274,25 @@ def process_run_triggers(
                         switches=switches,
                     )
                 if accepted.get("status") == "failed" or accepted.get("errors"):
-                    errors.render_user_error(
-                        "无法启动后台任务",
-                        "\n".join(str(item) for item in (accepted.get("errors") or ["Job API 调用失败"])),
-                        key_ns="job_submit_failed",
+                    job_errors = [str(item) for item in (accepted.get("errors") or ["Job API 调用失败"])]
+                    joined = "\n".join(job_errors)
+                    is_wake_related = accepted.get("error_type") == "network" or any(
+                        marker in joined
+                        for marker in ("唤醒", "休眠", "暂时繁忙", "正在恢复", "请求过多")
                     )
+                    if is_wake_related:
+                        errors.render_user_error(
+                            "sage125-api 正在唤醒",
+                            joined,
+                            severity="warning",
+                            key_ns="job_submit_failed",
+                        )
+                    else:
+                        errors.render_user_error(
+                            "无法启动后台任务",
+                            joined,
+                            key_ns="job_submit_failed",
+                        )
 
     if trigger_latest:
         latest = (diag.get("latest_run") or {}).get("run_id")

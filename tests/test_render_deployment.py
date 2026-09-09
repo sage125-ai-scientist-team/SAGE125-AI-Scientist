@@ -244,7 +244,10 @@ def test_api_only_preflight_wakes_and_retries_timeout(monkeypatch):
     preflight_calls = [item for item in observed if str(item["url"]).endswith("/preflight")]
     assert len(preflight_calls) == 2
     assert all(item["timeout"] == 75 for item in preflight_calls)
-    assert any(str(item["url"]).endswith("/health") for item in observed)
+    # 重试之间不应再额外触发一次独立的 /health 唤醒探测：那只会让单次冷启动的
+    # 等待时间翻倍，且更容易在用户失去耐心重新点击导致请求被取消前，一次尝试
+    # 都没有真正跑完。重试必须直接复用同一次 /preflight 请求的超时作为唤醒探测。
+    assert not any(str(item["url"]).endswith("/health") for item in observed)
 
 
 def test_api_only_preflight_surfaces_http_errors(monkeypatch):
@@ -456,6 +459,134 @@ def test_create_job_posts_without_health_gate(monkeypatch):
     )
 
     assert result["job_id"] == "job-wake"
+
+
+def test_create_job_does_not_double_wait_between_attempts(monkeypatch):
+    """重试之间不得再叠加一次独立的完整唤醒等待。
+
+    旧实现在每次重试前都会额外调用一次 wake_hosted_api(wait=True)（内部即一次
+    完整超时的 /health 探测），使单次尝试的实际耗时翻倍。这会显著增加"用户点击
+    后等待期间失去耐心、再次点击触发 Streamlit 重跑取消当前请求"这一失败模式的
+    概率——表现为 sage125-api 侧完全没有收到任何请求。新实现必须仅依赖 POST 本身
+    的超时作为唤醒探测，不再调用 wake_hosted_api。
+    """
+    monkeypatch.setattr(api_client.time, "sleep", lambda _seconds: None)
+
+    def boom(**_kwargs):
+        raise AssertionError("create_job must not call wake_hosted_api between retries")
+
+    monkeypatch.setattr(api_client, "wake_hosted_api", boom)
+    calls = {"n": 0}
+
+    class Limited:
+        status_code = 503
+        headers = {}
+
+        @staticmethod
+        def json():
+            return {"message": "sage125-api 暂时繁忙"}
+
+    class Accepted:
+        status_code = 202
+        headers = {}
+
+        @staticmethod
+        def json():
+            return {"job_id": "job-no-double-wait", "created": True}
+
+    class Session:
+        @staticmethod
+        def post(*args, **kwargs):
+            calls["n"] += 1
+            return Limited() if calls["n"] < 3 else Accepted()
+
+    monkeypatch.setattr(api_client, "_http_session", lambda: Session())
+
+    result = api_client.create_job(
+        question_id="Q019",
+        mode="real",
+        job_type="full",
+        client_id="client-1",
+        input_digest="digest",
+        idempotency_key="key",
+    )
+
+    assert result["job_id"] == "job-no-double-wait"
+    assert calls["n"] == 3
+
+
+def test_create_job_attempt_timeout_is_bounded_even_with_large_wake_timeout(monkeypatch):
+    """单次尝试的超时必须有上限，不能直接等于（可能很大的）通用唤醒超时。"""
+    monkeypatch.setenv("FRONTEND_API_WAKE_TIMEOUT_SECONDS", "600")
+    observed_timeouts: list[float] = []
+
+    class Accepted:
+        status_code = 202
+        headers = {}
+
+        @staticmethod
+        def json():
+            return {"job_id": "job-bounded-timeout", "created": True}
+
+    class Session:
+        @staticmethod
+        def post(*args, timeout=None, **kwargs):
+            observed_timeouts.append(timeout)
+            return Accepted()
+
+    monkeypatch.setattr(api_client, "_http_session", lambda: Session())
+
+    result = api_client.create_job(
+        question_id="Q019",
+        mode="real",
+        job_type="full",
+        client_id="client-1",
+        input_digest="digest",
+        idempotency_key="key",
+    )
+
+    assert result["job_id"] == "job-bounded-timeout"
+    assert observed_timeouts == [60]
+
+
+def test_preflight_wake_attempts_are_bounded_and_do_not_call_refresh(monkeypatch):
+    """允许唤醒的预检最多尝试 2 次 /preflight，且两次尝试之间不得再调用一次独立的
+    完整唤醒探测（refresh_api_available）——那只会让重试之间的实际等待翻倍。最终
+    兜底走 /health 时允许恰好一次 refresh_api_available 调用，不属于"重试之间"。
+    """
+    monkeypatch.setenv("FRONTEND_RUN_VIA_API", "1")
+    monkeypatch.setattr(api_client.time, "sleep", lambda _seconds: None)
+    refresh_calls = {"n": 0}
+
+    def counted_refresh() -> bool:
+        refresh_calls["n"] += 1
+        return False
+
+    monkeypatch.setattr(api_client, "refresh_api_available", counted_refresh)
+    preflight_calls = {"n": 0}
+
+    class AlwaysBusy:
+        status_code = 503
+        headers = {}
+
+        @staticmethod
+        def json():
+            return {"message": "sage125-api 暂时繁忙"}
+
+    def fake_get(url, *, params=None, timeout=None):
+        preflight_calls["n"] += 1
+        return AlwaysBusy()
+
+    monkeypatch.setattr(api_client.requests, "get", fake_get)
+    monkeypatch.setattr(api_client, "get_health", lambda: {"status": "unavailable"})
+
+    result = api_client.run_preflight(True, True, allow_wake=True)
+
+    assert preflight_calls["n"] == 2
+    # 唯一允许的一次 refresh_api_available 调用来自尝试耗尽后的 /health 兜底，
+    # 不是重试之间的额外等待。
+    assert refresh_calls["n"] == 1
+    assert result["ok"] is False
 
 
 def test_api_only_ingest_posts_directly_without_health_gate(monkeypatch):
