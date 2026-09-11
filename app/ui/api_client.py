@@ -21,7 +21,10 @@ from urllib.parse import quote
 import requests
 import streamlit as st
 
+from app.core.logging import get_logger
 from app.workflow.artifacts import resolve_artifact_base
+
+_LOGGER = get_logger(__name__)
 
 # 项目根与产物目录。
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -162,57 +165,211 @@ def _store_health_ok(payload: dict[str, Any]) -> None:
     _HEALTH_OK_PAYLOAD = payload
 
 
-def _probe_health(*, timeout: int | None = None) -> tuple[bool, dict]:
-    """探测 /health；失败不写入成功缓存。"""
+# Render Free 实例冷启动期间，边缘节点可能先用 HTTP 200 返回自己的静态占位页
+# （不是我们的业务 JSON），例如 "Application loading" / "Service waking up" /
+# "Starting the instance"。HTTP 状态码成功 ≠ 业务成功，必须先识别出这种占位页，
+# 否则调用方会把"连上了"误判成"可以用了"，进而对占位页 body 做 response.json()
+# 崩溃，或者把假阳性的"已连接"当成"已就绪"。
+_RENDER_PLACEHOLDER_MARKERS = (
+    "Application loading",
+    "Service waking up",
+    "Starting the instance",
+    "Allocating compute resources",
+    "Preparing instance for initialization",
+)
+
+
+def _looks_like_render_placeholder(text: str) -> bool:
+    """识别 Render 平台级冷启动占位页；与我们的业务响应无关。"""
+    if not text:
+        return False
+    return any(marker in text for marker in _RENDER_PLACEHOLDER_MARKERS)
+
+
+def parse_json_response(response: requests.Response) -> tuple[dict[str, Any] | None, str | None]:
+    """安全解析 HTTP 响应为业务 JSON；HTTP 状态码成功不等于业务成功。
+
+    返回 ``(data, reason)``：
+        - 解析成功且是 dict：``(data, None)``。
+        - HTTP 状态成功但 body 是 Render 冷启动占位页（非 JSON）：``(None, "render_waking")``。
+        - HTTP 状态成功但 body 既不是占位页也不是合法 JSON：``(None, "invalid_json")``。
+
+    ``create_job`` / ``retry_job`` / ``get_job`` / ``_probe_health`` 等都必须调用
+    这一个函数解析响应，不要各自重复 ``response.json()``。
+    """
+    try:
+        data = response.json()
+    except ValueError:
+        try:
+            body_text = response.text or ""
+        except Exception:  # noqa: BLE001 - response.text 本身也可能异常，不能因此崩溃
+            body_text = ""
+        if _looks_like_render_placeholder(body_text):
+            return None, "render_waking"
+        return None, "invalid_json"
+    if not isinstance(data, dict):
+        return None, "invalid_json"
+    return data, None
+
+
+def _probe_health(*, timeout: int | None = None) -> tuple[bool, bool, dict]:
+    """探测 /health；失败不写入成功缓存。
+
+    返回 ``(connected, ready, payload)``：
+        - ``connected``：拿到了 HTTP 响应（不代表业务已就绪；Render 冷启动占位页
+          同样会让 ``connected=True``）。
+        - ``ready``：响应是合法业务 JSON，才代表 API 真正可用。
+    """
     try:
         r = requests.get(
             f"{api_base()}/health",
             timeout=_wake_timeout_seconds() if timeout is None else timeout,
         )
-        if r.status_code != 200:
-            return False, {}
-        try:
-            payload = r.json() if callable(getattr(r, "json", None)) else {}
-        except (TypeError, ValueError, AttributeError):
-            payload = {}
-        if isinstance(payload, dict) and payload:
-            _store_health_ok(payload)
-            return True, payload
-        return True, {}
     except requests.RequestException:
-        return False, {}
+        return False, False, {}
+    if r.status_code != 200:
+        return False, False, {}
+    payload, reason = parse_json_response(r)
+    if payload is None:
+        _LOGGER.info(
+            "sage125-api health probe not ready: endpoint=%s status_code=%s content_type=%s ready=%s reason=%s",
+            "/health",
+            r.status_code,
+            str(r.headers.get("Content-Type", "")),
+            False,
+            reason,
+        )
+        return True, False, {}
+    if payload:
+        _store_health_ok(payload)
+    return True, True, payload
+
+
+def probe_api_wake_state(*, timeout: int | None = None) -> dict[str, Any]:
+    """结构化唤醒状态，供 UI 轮询展示；不写健康缓存之外的副作用。
+
+    返回形如 ``{"connected": bool, "ready": bool, "reason": str | None}``。
+    """
+    connected, ready, _payload = _probe_health(timeout=timeout)
+    reason: str | None = None
+    if not connected:
+        reason = "network_unreachable"
+    elif not ready:
+        reason = "render_waking"
+    return {"connected": connected, "ready": ready, "reason": reason}
 
 
 def _fetch_health_cached(_cache_bust: int = 0) -> tuple[bool, dict]:
-    """复用最近一次成功的健康检查；页面探测用短超时，失败不缓存。"""
+    """复用最近一次成功的健康检查；页面探测用短超时，失败不缓存。
+
+    返回 ``(ready, payload)``：只有业务真正就绪（不是 Render 冷启动占位页）才算
+    ``ready=True``——历史上这里叫 ``connected``，但语义一直是"能不能用"，现在
+    用更准确的名字对齐 ``_probe_health`` 的 connected/ready 拆分。
+    """
     del _cache_bust
     now = time.monotonic()
     if _HEALTH_OK_AT and now - _HEALTH_OK_AT < _HEALTH_CACHE_TTL_SECONDS and _HEALTH_OK_PAYLOAD:
         return True, _HEALTH_OK_PAYLOAD
-    return _probe_health(timeout=_short_timeout_seconds())
+    _connected, ready, payload = _probe_health(timeout=_short_timeout_seconds())
+    return ready, payload
 
 
 _fetch_health_cached.clear = _clear_health_ok_cache  # type: ignore[attr-defined]
 
 
 def api_available() -> bool:
-    """探测 API 是否可达（只复用成功的健康缓存）。"""
-    connected, _ = _fetch_health_cached(0)
-    return connected
+    """探测 API 是否已就绪可用（只复用成功的健康缓存；Render 冷启动占位页不算就绪）。"""
+    ready, _ = _fetch_health_cached(0)
+    return ready
 
 
 def refresh_api_available() -> bool:
-    """作废成功缓存后再用唤醒超时探测一次。"""
+    """作废成功缓存后再用唤醒超时探测一次；返回业务是否真正就绪。"""
     _clear_health_ok_cache()
-    connected, _ = _probe_health()
-    return connected
+    _connected, ready, _payload = _probe_health()
+    return ready
 
 
 def wake_hosted_api(*, wait: bool = False) -> bool:
-    """打开页面时轻量戳醒托管 API；wait=True 时允许完整冷启动等待。"""
+    """打开页面时轻量戳醒托管 API；wait=True 时允许完整冷启动等待。返回是否已就绪。"""
     timeout = _wake_timeout_seconds() if wait else min(3, _short_timeout_seconds())
-    connected, _ = _probe_health(timeout=timeout)
-    return connected
+    _connected, ready, _payload = _probe_health(timeout=timeout)
+    return ready
+
+
+def _cold_start_budget_seconds() -> int:
+    """"正在唤醒 API"整体轮询预算；覆盖 Render Free 实例实测的 2-4 分钟冷启动。
+
+    这不是单次 HTTP 请求超时（那是 ``_wake_timeout_seconds``），而是"允许连续
+    短超时轮询多久"的总预算；不要靠无限拉长单次请求超时来覆盖冷启动。
+    """
+    default = 240
+    value = _positive_env_int("FRONTEND_API_COLD_START_BUDGET_SECONDS", default)
+    if os.getenv("APP_ENV", "").strip().lower() == "preview":
+        return max(value, default)
+    return value
+
+
+def wait_for_api_ready(
+    *,
+    poll_timeout_seconds: int = 20,
+    max_wait_seconds: int | None = None,
+    on_progress: Callable[[dict[str, Any]], None] | None = None,
+) -> dict[str, Any]:
+    """轮询 /health 直到业务就绪或预算耗尽；用多次短超时轮询代替一次超长阻塞。
+
+    每次探测使用较短超时（默认 20s），探测之间短暂休眠；即使某一次探测正好
+    命中 Render 的冷启动占位页，下一次探测也能很快重试，不必等到单个请求超时
+    才有机会重新连接。
+
+    参数：
+        poll_timeout_seconds: 每次 /health 探测的超时。
+        max_wait_seconds:     总预算；默认取 ``_cold_start_budget_seconds()``。
+        on_progress:          每次探测后调用一次，传入
+            ``{"attempt": int, "elapsed_seconds": float, "connected": bool,
+              "ready": bool, "reason": str | None}``，供 UI 展示检查次数/等待时长。
+
+    返回：
+        ``{"ready": bool, "attempts": int, "elapsed_seconds": float, "reason": str | None}``。
+    """
+    budget = max(
+        max_wait_seconds if max_wait_seconds is not None else _cold_start_budget_seconds(),
+        poll_timeout_seconds,
+    )
+    start = time.monotonic()
+    attempt = 0
+    last_reason: str | None = None
+    while True:
+        attempt += 1
+        remaining = budget - (time.monotonic() - start)
+        if remaining <= 0:
+            break
+        this_timeout = max(1, int(min(poll_timeout_seconds, remaining)))
+        state = probe_api_wake_state(timeout=this_timeout)
+        last_reason = state.get("reason")
+        if on_progress:
+            on_progress({
+                "attempt": attempt,
+                "elapsed_seconds": round(time.monotonic() - start, 1),
+                **state,
+            })
+        if state.get("ready"):
+            return {
+                "ready": True,
+                "attempts": attempt,
+                "elapsed_seconds": round(time.monotonic() - start, 1),
+                "reason": None,
+            }
+        remaining = budget - (time.monotonic() - start)
+        if remaining <= 0:
+            break
+        time.sleep(min(3.0, max(0.5, remaining)))
+    return {
+        "ready": False,
+        "attempts": attempt,
+        "elapsed_seconds": round(time.monotonic() - start, 1),
+        "reason": last_reason,
+    }
 
 
 # ---- 各接口：HTTP 优先，失败回退进程内 ----
@@ -1425,6 +1582,35 @@ def _job_create_attempt_timeout_seconds() -> int:
     return min(_wake_timeout_seconds(), 60)
 
 
+def _parse_job_success_payload(response: requests.Response) -> tuple[dict[str, Any] | None, str | None]:
+    """``create_job`` / ``retry_job`` 共用的成功响应解析；两者不允许各自实现一套。
+
+    HTTP 状态码 200/202 只代表"网关认为请求处理成功"，不代表 body 就是我们期望
+    的业务 JSON——Render 冷启动占位页同样可能顶着 200/202 出现。
+    """
+    data, reason = parse_json_response(response)
+    if data is None:
+        return None, reason or "invalid_json"
+    if not data.get("job_id"):
+        return None, "missing_job_id"
+    data["created"] = bool(data.get("created", not data.get("reused")))
+    return data, None
+
+
+def _api_not_ready_failure(reason: str | None) -> dict[str, Any]:
+    """把"HTTP 成功但业务未就绪"统一转成可重试的失败 dict，绝不让异常冒给调用方。"""
+    message = {
+        "render_waking": "sage125-api 仍在从休眠中唤醒（收到 Render 冷启动占位响应），正在自动重试。",
+        "missing_job_id": "sage125-api 返回了不完整的任务数据，正在自动重试。",
+    }.get(reason or "", "sage125-api 返回了无法解析的响应，正在自动重试。")
+    _LOGGER.info(
+        "sage125-api job endpoint not ready: ready=%s reason=%s",
+        False,
+        reason or "invalid_json",
+    )
+    return {"status": "failed", "error_type": "api_not_ready", "errors": [message]}
+
+
 def create_job(
     *,
     question_id: str,
@@ -1486,9 +1672,18 @@ def create_job(
                 continue
             return last_failure
         if response.status_code in (200, 202):
-            data = response.json()
-            data["created"] = bool(data.get("created", not data.get("reused")))
-            return data
+            data, failure_reason = _parse_job_success_payload(response)
+            if data is not None:
+                return data
+            last_failure = _api_not_ready_failure(failure_reason)
+            if attempt < attempts:
+                time.sleep(_retry_wait_seconds(response, attempt))
+                continue
+            last_failure["errors"] = [
+                "sage125-api 正在从休眠中唤醒（通常需要 2-4 分钟）。请保持本页面打开，"
+                "稍后再次点击「开始生成」——同一任务不会被重复创建。"
+            ]
+            return last_failure
         body = _job_error_payload(response)
         last_failure = {
             "status": "failed",
@@ -1530,11 +1725,13 @@ def get_job(job_id: str) -> dict[str, Any] | None:
         return cached[1]
     if response.status_code != 200:
         return cached[1] if cached else None
-    payload = response.json()
-    if isinstance(payload, dict):
+    payload, _reason = parse_json_response(response)
+    if payload is not None:
         _JOB_STATUS_MEMO[job_id] = (now, payload)
         return payload
-    return None
+    # 200 但不是合法业务 JSON（例如 Render 冷启动占位页）：不能当成功，退回上次
+    # 已知状态，避免进度条因为一次瞬时抖动就整体消失。
+    return cached[1] if cached else None
 
 
 def list_job_events(job_id: str, *, after_sequence: int = 0) -> list[dict[str, Any]]:
@@ -1655,6 +1852,7 @@ def retry_job(job_id: str, *, client_id: str | None = None) -> dict[str, Any]:
             "errors": [body.get("message") or f"HTTP {response.status_code}"],
             **body,
         }
-    data = response.json()
-    data["created"] = bool(data.get("created", not data.get("reused")))
+    data, failure_reason = _parse_job_success_payload(response)
+    if data is None:
+        return _api_not_ready_failure(failure_reason)
     return data
