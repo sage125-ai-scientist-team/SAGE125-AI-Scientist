@@ -219,6 +219,67 @@ def test_mode_widget_is_not_overwritten_by_stale_query(monkeypatch):
         st.session_state = original  # type: ignore[assignment]
 
 
+def test_mode_control_unconditionally_resyncs_stale_valid_widget_key(monkeypatch):
+    """
+    切页会把设置页里带 key 的 segmented_control 当成全新 widget 重新创建
+    （Streamlit 官方行为）。若它残留着一个"合法但过期"的旧值（如 mock），
+    旧实现只在 key 缺失/非法时才回填 current_mode，不会纠正这种情况——这正
+    是"切到真实运行→切到其它页→切回设置又变回模拟演示"的根因。
+
+    修复后：render_mode_control 必须在创建 widget 前，无条件用传入的
+    current_mode 覆盖 widget key，不管 key 之前是什么。
+    """
+    original = st.session_state
+    # 模拟：业务态已经是 real，但 widget key 残留着切页前的旧值 mock。
+    st.session_state = {components.MODE_WIDGET_KEY: "mock"}  # type: ignore[assignment]
+    try:
+        captured: dict = {}
+
+        def fake_segmented_control(label, options, *, format_func=None, default=None, key=None, on_change=None, args=None, **kwargs):
+            # 真实 Streamlit 行为：一旦 key 已在 session_state 中，其值优先于 default。
+            captured["key_value_at_call_time"] = st.session_state.get(key)
+            captured["on_change"] = on_change
+            captured["args"] = args or ()
+            return st.session_state.get(key, default)
+
+        monkeypatch.setattr(components.st, "segmented_control", fake_segmented_control)
+
+        mode = components.render_mode_control("real")
+
+        assert captured["key_value_at_call_time"] == "real"
+        assert mode == "real"
+    finally:
+        st.session_state = original  # type: ignore[assignment]
+
+
+def test_mode_control_on_change_persists_before_next_rerun(monkeypatch):
+    """on_change 回调必须在下一次脚本主体重跑前，就把用户刚选的值写回业务状态，
+    不依赖 widget key 在切页后依然存活。"""
+    original = st.session_state
+    st.session_state = {}  # type: ignore[assignment]
+    try:
+        state.init_state()
+        captured: dict = {}
+
+        def fake_segmented_control(label, options, *, format_func=None, default=None, key=None, on_change=None, args=None, **kwargs):
+            captured["on_change"] = on_change
+            captured["args"] = args or ()
+            return st.session_state.get(key, default)
+
+        monkeypatch.setattr(components.st, "segmented_control", fake_segmented_control)
+        components.render_mode_control("mock")
+
+        # 模拟用户点击「真实运行」：Streamlit 先更新 widget 自身的 session_state
+        # 值，再调用 on_change，然后才重跑脚本主体。
+        st.session_state[components.MODE_WIDGET_KEY] = "real"
+        captured["on_change"](*captured["args"])
+
+        assert state.current_mode() == "real"
+        assert st.session_state.get(state.KEY_MODE_EXPLICIT) is True
+    finally:
+        st.session_state = original  # type: ignore[assignment]
+
+
 def test_select_question_button_scrolls_to_picker():
     src = _read("app/ui/workspace.py")
     assert "request_scroll" in src
