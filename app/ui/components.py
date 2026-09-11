@@ -274,6 +274,20 @@ def render_mode_control(current_mode: str) -> str:
     通过 format_func 分离。若当前环境不支持 segmented_control，回退为紧凑
     selectbox，同样通过 format_func 映射显示文案。
 
+    切页持久化说明（重要）：本控件在 st.navigation/st.Page 的单个页面函数里
+    创建；Streamlit 官方文档明确指出，这种带 key 的 widget 一旦离开所在页面，
+    其 key 及关联值会被删除，再次回到该页面时会被当成一个全新的 widget
+    （见 docs.streamlit.io "Working with widgets in multipage apps" /
+    "Save widget values in Session State to preserve them between pages"）。
+    因此这里必须遵循官方推荐的 placeholder-key 写法：
+        1) 每次渲染前都**无条件**用业务状态回填 widget key（不是只在 key 缺失
+           /非法时才回填——key 缺失时旧实现已经会回填，但 key 残留一个"合法
+           但过期"的值时旧实现不会纠正，这正是"切到真实运行→切页→切回设置
+           又变回模拟演示"这个问题的根因）；
+        2) 用 on_change 回调把用户刚做出的选择立即写回业务状态
+           （state.KEY_MODE / KEY_MODE_EXPLICIT），不依赖下一次脚本主体重跑
+           时再去读取 widget key 是否"新鲜"。
+
     参数：
         current_mode: 当前模式 "mock" | "real"。
 
@@ -283,12 +297,23 @@ def render_mode_control(current_mode: str) -> str:
     st.markdown(f"### {esc(ui_text('mode_control'))}")
     options = ["mock", "real"]
     display = {"mock": ui_text("mock_mode"), "real": ui_text("real_mode")}
-    default_index = options.index(current_mode) if current_mode in options else 0
-    if current_mode in options and st.session_state.get(MODE_WIDGET_KEY) not in options:
-        st.session_state[MODE_WIDGET_KEY] = current_mode
-    if current_mode in options:
-        # 备用 key 不是当前控件时也会留在 session；必须与当前模式对齐。
-        st.session_state[MODE_WIDGET_FALLBACK_KEY] = current_mode
+    resolved_current = current_mode if current_mode in options else "mock"
+    default_index = options.index(resolved_current)
+
+    def _store_mode_widget_value(widget_key: str) -> None:
+        """on_change：脚本主体重跑前就把新选择写回业务状态，不依赖 widget key 存活。"""
+        from app.ui import state as _state
+
+        picked = st.session_state.get(widget_key)
+        if picked in options:
+            _state.set_value(_state.KEY_MODE, picked)
+            st.session_state[_state.KEY_MODE_EXPLICIT] = True
+
+    # 无条件回填：不管 widget key 目前缺失、非法，还是"看似合法但其实是切页
+    # 前的陈旧值"，一律以业务状态（resolved_current）为准重新赋值，确保控件
+    # 被当成新控件重新创建时，读到的是当前真实模式，而不是它自己的旧值。
+    st.session_state[MODE_WIDGET_KEY] = resolved_current
+    st.session_state[MODE_WIDGET_FALLBACK_KEY] = resolved_current
     segmented_control = getattr(st, "segmented_control", None)
     if callable(segmented_control):
         selected = segmented_control(
@@ -297,6 +322,8 @@ def render_mode_control(current_mode: str) -> str:
             format_func=lambda v: display.get(v, v),
             default=options[default_index],
             key=MODE_WIDGET_KEY,
+            on_change=_store_mode_widget_value,
+            args=(MODE_WIDGET_KEY,),
             label_visibility="collapsed",
         )
         mode = selected if selected in options else options[default_index]
@@ -307,6 +334,8 @@ def render_mode_control(current_mode: str) -> str:
             index=default_index,
             format_func=lambda v: display.get(v, v),
             key=MODE_WIDGET_FALLBACK_KEY,
+            on_change=_store_mode_widget_value,
+            args=(MODE_WIDGET_FALLBACK_KEY,),
             label_visibility="collapsed",
         )
     st.caption("模拟演示：不调用真实 Qwen，用于演示。真实运行：调用 Qwen/百炼，需配置 Key，且不会静默降级。")
