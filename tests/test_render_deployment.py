@@ -378,7 +378,9 @@ def test_real_start_preflight_allows_hosted_wake():
     trigger = src.split("def process_run_triggers", 1)[1].split("if trigger_latest", 1)[0]
     assert "allow_wake=True" in trigger
     assert "正在检查并唤醒 sage125-api" in trigger
-    assert "正在启动任务并唤醒 sage125-api" in trigger
+    # 冷启动修复后，任务提交前先用状态轮询展示唤醒进度（而不是一次性长阻塞的
+    # 单条文案），因此这里改为断言新的轮询提示文案仍然存在。
+    assert "正在唤醒 sage125-api" in trigger
     assert "暂不可用" in trigger
 
 

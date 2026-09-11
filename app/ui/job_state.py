@@ -13,8 +13,20 @@ from app.api.contracts import (
     JOB_TYPE_FULL_RESEARCH_PIPELINE,
 )
 from app.api.job_commands import compute_idempotency_key, compute_input_digest
+from app.core.logging import get_logger
 from app.core.run_progress import STAGE_PERCENT, friendly_stage_name
 from app.ui import api_client, state
+
+_LOGGER = get_logger(__name__)
+
+# api_client 内部已经把"HTTP 成功但 Render 冷启动占位页/非法 JSON"这类协议异常
+# 转成了结构化失败 dict，不会再抛异常；这里的 try/except 是第二道防线——即使未来
+# 出现未预料到的异常，也不能让 submit_or_reuse_job 把它冒穿到 Streamlit 顶层。
+_API_NOT_READY_FALLBACK = {
+    "status": "failed",
+    "error_type": "api_not_ready",
+    "errors": ["sage125-api 暂时无法处理请求，请稍后重试。"],
+}
 
 
 def esc(value: Any) -> str:
@@ -309,15 +321,19 @@ def submit_or_reuse_job(
         job_type=job_type,
         input_digest=digest,
     )
-    accepted = api_client.create_job(
-        question_id=question_id,
-        mode=mode,
-        job_type=job_type,
-        client_id=client_id,
-        input_digest=digest,
-        idempotency_key=key,
-        options=options,
-    )
+    try:
+        accepted = api_client.create_job(
+            question_id=question_id,
+            mode=mode,
+            job_type=job_type,
+            client_id=client_id,
+            input_digest=digest,
+            idempotency_key=key,
+            options=options,
+        )
+    except Exception as exc:  # noqa: BLE001 — 第二道防线，见模块顶部注释
+        _LOGGER.warning("submit_or_reuse_job: create_job raised unexpectedly: %s", type(exc).__name__)
+        accepted = dict(_API_NOT_READY_FALLBACK)
     job_id = accepted.get("job_id")
     if job_id:
         set_active_job_id(question_id, job_type, str(job_id))
@@ -329,7 +345,11 @@ def submit_or_reuse_job(
 
 
 def retry_from_checkpoint(job_id: str, *, question_id: str, job_type: str) -> dict[str, Any]:
-    accepted = api_client.retry_job(job_id, client_id=ensure_client_id())
+    try:
+        accepted = api_client.retry_job(job_id, client_id=ensure_client_id())
+    except Exception as exc:  # noqa: BLE001 — 第二道防线，见模块顶部注释
+        _LOGGER.warning("retry_from_checkpoint: retry_job raised unexpectedly: %s", type(exc).__name__)
+        accepted = dict(_API_NOT_READY_FALLBACK)
     new_id = accepted.get("job_id")
     if new_id:
         set_active_job_id(question_id, job_type, str(new_id))
