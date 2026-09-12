@@ -301,29 +301,27 @@ def process_run_triggers(
                                     "状态：正在等待 API 服务就绪"
                                 )
 
-                    wake_state = api_client.wait_for_api_ready(on_progress=_on_wake_progress)
+                    # 产品最终要求（SAGE125-API-WAKE-PROGRESS-TIME-SYNC-FINAL-PR-DEPLOY-01）：
+                    # 唤醒阶段不允许出现"超时失败"状态。不管实际等了 5 分钟、10 分钟还是
+                    # 30 分钟，只要 /health 还没有真正 ready，就必须持续等待、持续更新
+                    # 唤醒进度/已等待时间/当前状态，绝不提示失败、绝不要求用户再点一次、
+                    # 绝不结束当前流程。因此这里改用没有任何预算/超时上限的
+                    # wait_for_api_ready_indefinitely：它只会在真正 ready 后返回一次，
+                    # 不存在"未 ready"的返回分支，也就不需要（也不能再有）"超时→失败"的
+                    # 判断逻辑。
+                    wake_state = api_client.wait_for_api_ready_indefinitely(
+                        on_progress=_on_wake_progress
+                    )
                     wake_slot.empty()
+                    api_client._record_last_wake_seconds(wake_state.get("elapsed_seconds") or 0.0)
 
-                    if wake_state.get("ready"):
-                        api_client._record_last_wake_seconds(wake_state.get("elapsed_seconds") or 0.0)
-
-                    if not wake_state.get("ready"):
-                        accepted = {
-                            "status": "failed",
-                            "error_type": "api_not_ready",
-                            "errors": [
-                                "API 服务启动超时，请稍后重试。"
-                                "同一任务不会被重复创建，可保持本页面打开后再次点击「开始生成」。"
-                            ],
-                        }
-                    else:
-                        with st.spinner("正在提交任务…"):
-                            accepted = submit_or_reuse_job(
-                                question_id=str(qid),
-                                job_type=JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL,
-                                mode=run_mode,
-                                switches=switches,
-                            )
+                    with st.spinner("正在提交任务…"):
+                        accepted = submit_or_reuse_job(
+                            question_id=str(qid),
+                            job_type=JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL,
+                            mode=run_mode,
+                            switches=switches,
+                        )
                 except Exception as exc:  # noqa: BLE001 — 顶层兜底：任何未预料异常都不能变成页面崩溃/traceback
                     accepted = None
                     errors.unexpected_error("无法启动后台任务", exc)

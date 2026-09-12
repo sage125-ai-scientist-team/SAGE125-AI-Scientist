@@ -443,6 +443,12 @@ def wait_for_api_ready(
     命中 Render 的冷启动占位页，下一次探测也能很快重试，不必等到单个请求超时
     才有机会重新连接。
 
+    这是一个**带预算上限**的通用轮询原语，保留给需要"允许放弃"语义的调用方
+    （以及既有单元测试）。生产环境里"点击开始生成"触发的唤醒等待，出于产品
+    要求（SAGE125-API-WAKE-PROGRESS-TIME-SYNC-FINAL-PR-DEPLOY-01：唤醒阶段
+    不允许出现超时失败状态），改用下面完全没有预算上限的
+    :func:`wait_for_api_ready_indefinitely`，不再调用这个带预算版本。
+
     参数：
         poll_timeout_seconds: 每次 /health 探测的超时。
         max_wait_seconds:     总预算；默认取 ``_cold_start_budget_seconds()``。
@@ -491,6 +497,58 @@ def wait_for_api_ready(
         "elapsed_seconds": round(time.monotonic() - start, 1),
         "reason": last_reason,
     }
+
+
+def wait_for_api_ready_indefinitely(
+    *,
+    poll_timeout_seconds: int = 20,
+    poll_interval_seconds: float = 3.0,
+    on_progress: Callable[[dict[str, Any]], None] | None = None,
+) -> dict[str, Any]:
+    """持续轮询 /health 直到业务真正 ready；**没有任何超时/预算上限**。
+
+    产品要求（SAGE125-API-WAKE-PROGRESS-TIME-SYNC-FINAL-PR-DEPLOY-01 最终版）：
+    用户点击「开始生成」以后，API 唤醒阶段绝不允许出现"超时失败"状态——不管
+    实际等了 5 分钟、10 分钟还是 30 分钟，只要 /health 还没有返回真实 JSON 且
+    ``ready=True``，就必须继续等待、继续在 UI 上更新唤醒进度/已等待时间/当前
+    状态，不能提示失败、不能要求用户重新点击、不能结束当前流程。
+
+    与 :func:`wait_for_api_ready` 的关键区别：这里**没有** ``max_wait_seconds``
+    / 预算的概念——函数体内不存在任何 timeout/budget 判断，因此调用方也不需要
+    处理"未 ready"的返回分支：本函数只会在真正 ready 后返回一次，正常情况下
+    不会以 ``ready=False`` 结束（唯一的退出方式是探测过程中抛出未被
+    ``probe_api_wake_state`` 内部吞掉的异常，交由调用方最外层的 try/except
+    兜底，这属于"未预料异常"而不是"唤醒超时"）。
+
+    参数：
+        poll_timeout_seconds:  每次 /health 探测的超时（探测本身不能无限阻塞）。
+        poll_interval_seconds: 两次探测之间的休眠时间。
+        on_progress:           每次探测后调用一次，传入
+            ``{"attempt": int, "elapsed_seconds": float, "connected": bool,
+              "ready": bool, "reason": str | None}``。
+
+    返回：
+        ``{"ready": True, "attempts": int, "elapsed_seconds": float, "reason": None}``。
+    """
+    start = time.monotonic()
+    attempt = 0
+    while True:
+        attempt += 1
+        state = probe_api_wake_state(timeout=poll_timeout_seconds)
+        if on_progress:
+            on_progress({
+                "attempt": attempt,
+                "elapsed_seconds": round(time.monotonic() - start, 1),
+                **state,
+            })
+        if state.get("ready"):
+            return {
+                "ready": True,
+                "attempts": attempt,
+                "elapsed_seconds": round(time.monotonic() - start, 1),
+                "reason": None,
+            }
+        time.sleep(max(0.1, poll_interval_seconds))
 
 
 # ---- 各接口：HTTP 优先，失败回退进程内 ----
