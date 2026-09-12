@@ -11,18 +11,22 @@ Render 冷启动等待体验优化：API 唤醒进度条必须与真实等待时
     3. ready=True 时立即 100%（包括"API 早已热启动，第一次探测就 ready"的场景）；
     4. 超过预计时间仍未 ready：文案改为"已超过预计启动时间"，不是"剩余 0 秒"；
     5. 预计等待时间来自历史唤醒耗时估算，并限制在 [90, 300] 秒；
-    6. 用户只点一次「开始生成」：ready 后自动调用 submit_or_reuse_job，超时/未 ready
-       时绝不创建 Job（源码级结构断言——process_run_triggers 所在的
-       app/ui/streamlit_app.py 依赖 sage125_landing 自定义组件的资产注册，
-       在 pytest 裸模式下 import 会报
+    6. 用户只点一次「开始生成」：ready 后自动调用 submit_or_reuse_job（源码级结构
+       断言——process_run_triggers 所在的 app/ui/streamlit_app.py 依赖
+       sage125_landing 自定义组件的资产注册，在 pytest 裸模式下 import 会报
        "must be declared in pyproject.toml with asset_dir"，这是与本次改动
        无关的既有环境限制；因此项目里其它测试文件对这个函数也一直只做源码
        文本断言，不实际 import/调用，这里沿用同样的约定）；
-    7. 本次改动不影响已有 AI Scientist 运行阶段进度条。
+    7. 本次改动不影响已有 AI Scientist 运行阶段进度条；
+    8. 【最终产品要求】API 唤醒阶段绝不允许出现"超时失败"状态：不管等 5 分钟、
+       10 分钟还是 30 分钟，只要还没 ready 就必须持续等待、持续更新进度，直到
+       /health 真正 ready=True 才自动继续，绝不提示失败、绝不要求用户重新
+       点击、绝不创建失败态 Job。
 """
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 
 import streamlit as st
@@ -173,7 +177,10 @@ def test_cold_start_budget_default_is_360_seconds(monkeypatch):
 
 # ---------------------------------------------------------------------------
 # 4. 用户只点一次「开始生成」：ready 后自动衔接 submit_or_reuse_job；
-#    超时/未 ready 时绝不创建 Job。
+#    唤醒阶段绝不允许出现"超时失败"状态（SAGE125-API-WAKE-PROGRESS-TIME-SYNC-
+#    FINAL-PR-DEPLOY-01 最终产品要求：不管等 5 分钟、10 分钟还是 30 分钟，只
+#    要 /health 还没 ready 就必须持续等待，不能提示失败、不能要求用户重新
+#    点击、不能创建 Job）。
 #
 #    app/ui/streamlit_app.py 依赖 sage125_landing 自定义组件资产注册，在
 #    pytest 裸模式下直接 import 会抛
@@ -185,27 +192,109 @@ def test_cold_start_budget_default_is_360_seconds(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
+def _wake_wait_block() -> str:
+    """截取 process_run_triggers 里"发起唤醒轮询"到"提交 Job"之间的代码段。"""
+    trigger_src = _trigger_source()
+    return trigger_src.split("wake_slot = st.empty()", 1)[1].split(
+        "with st.spinner(\"正在提交任务…\"):", 1
+    )[0]
+
+
+def test_wake_wait_uses_indefinite_function_not_budgeted_one():
+    """生产代码必须调用没有预算上限的 wait_for_api_ready_indefinitely，
+    不能再用带 max_wait_seconds/预算上限的 wait_for_api_ready。"""
+    block = _wake_wait_block()
+    assert "wait_for_api_ready_indefinitely(" in block
+    assert "wait_for_api_ready(" not in block  # 精确匹配"(" 排除 _indefinitely 变体
+
+
+def test_wake_wait_never_shows_timeout_or_failure_text():
+    """唤醒等待代码段里不能出现任何"超时/失败/重新点击"相关的用户可见文案或状态
+    字段——这类分支已经被彻底移除，而不是被隐藏或跳过（本函数只检查会展示给
+    用户或写进 accepted 状态的实际字符串，不检查解释性代码注释）。"""
+    block = _wake_wait_block()
+    for forbidden in (
+        "API 服务启动超时",
+        "\"status\": \"failed\"",
+        "\"error_type\": \"api_not_ready\"",
+        "请稍后重试",
+        "再次点击",
+    ):
+        assert forbidden not in block
+
+
 def test_ready_branch_auto_calls_submit_or_reuse_job_without_extra_click():
-    """ready 分支必须在同一次函数调用里自动继续建 Job，不等待用户再点一次。"""
+    """wait_for_api_ready_indefinitely 返回后必须在同一次函数调用里自动继续建
+    Job，不等待用户再点一次；且不存在"未 ready"的分支需要处理。"""
     trigger_src = _trigger_source()
-    ready_branch = trigger_src.split("if wake_state.get(\"ready\"):", 1)[1].split(
-        "if not wake_state.get(\"ready\"):", 1
-    )[0]
-    assert "submit_or_reuse_job" not in ready_branch  # 这一段只负责记录唤醒耗时
-    assert "_record_last_wake_seconds" in ready_branch
-
-    submit_branch = trigger_src.split("if not wake_state.get(\"ready\"):", 1)[1]
-    assert "submit_or_reuse_job(" in submit_branch.split("else:", 1)[1]
+    after_wait = trigger_src.split("wait_for_api_ready_indefinitely(", 1)[1]
+    assert "_record_last_wake_seconds" in after_wait.split("submit_or_reuse_job(", 1)[0]
+    assert "submit_or_reuse_job(" in after_wait
 
 
-def test_timeout_branch_never_creates_job_and_never_claims_100():
-    """未 ready（超时）分支绝不能调用 submit_or_reuse_job，也不能出现 progress=100 的字样。"""
+def test_wake_wait_call_site_has_no_ready_false_branch():
+    """process_run_triggers 里不应再有 `if wake_state.get("ready")` /
+    `if not wake_state.get("ready")` 这类分支判断——因为
+    wait_for_api_ready_indefinitely 只会在真正 ready 后返回一次。"""
     trigger_src = _trigger_source()
-    timeout_branch = trigger_src.split('"error_type": "api_not_ready",', 1)[1].split(
-        "else:", 1
-    )[0]
-    assert "submit_or_reuse_job" not in timeout_branch
-    assert "启动超时" in trigger_src
+    assert 'wake_state.get("ready")' not in trigger_src
+
+
+def test_wait_for_api_ready_indefinitely_has_no_timeout_or_budget_parameter():
+    """indefinitely 版本的函数签名里不能有预算参数；函数体的实际代码逻辑（去掉
+    文档字符串后）也不能出现"预算耗尽退出循环"式的判断（docstring 里为了跟
+    带预算版本对比，允许提及 max_wait_seconds 这个词，但代码本身不能有）。"""
+    import ast
+    import inspect
+
+    sig = inspect.signature(api_client.wait_for_api_ready_indefinitely)
+    assert "max_wait_seconds" not in sig.parameters
+    assert "budget" not in sig.parameters
+
+    src = inspect.getsource(api_client.wait_for_api_ready_indefinitely)
+    tree = ast.parse(src)
+    func_node = tree.body[0]
+    # 去掉 docstring（ast 第一个 body 节点是 Expr(Constant) 时即为 docstring）。
+    body_nodes = func_node.body[1:] if ast.get_docstring(func_node) else func_node.body
+    code_only = "\n".join(ast.unparse(node) for node in body_nodes)
+    for forbidden in ("max_wait_seconds", "budget", "WAKE_TIMEOUT", "API_TIMEOUT", "MAX_WAIT", "remaining"):
+        assert forbidden not in code_only
+
+
+def test_wait_for_api_ready_indefinitely_keeps_retrying_past_old_360s_budget():
+    """即使探测次数远超过旧版 360 秒预算下可能达到的轮询次数，也必须继续等待，
+    直到真正 ready 才返回；绝不提前放弃。"""
+    calls = {"count": 0}
+    # 旧的 360 秒预算 / 20 秒单次超时，最多约 18 次探测就会被放弃；这里故意让
+    #它连续"未就绪" 50 次（远超旧预算的放弃阈值），第 51 次才 ready。
+    NOT_READY_ATTEMPTS = 50
+
+    def _fake_probe(*, timeout=None):  # noqa: ANN001 - 测试用 stub
+        calls["count"] += 1
+        if calls["count"] > NOT_READY_ATTEMPTS:
+            return {"connected": True, "ready": True, "reason": None}
+        return {"connected": False, "ready": False, "reason": "cold_start_placeholder"}
+
+    events = []
+    original_probe = api_client.probe_api_wake_state
+    original_sleep = time.sleep
+    api_client.probe_api_wake_state = _fake_probe
+    time.sleep = lambda _seconds: None  # 测试里不真的等待
+    try:
+        result = api_client.wait_for_api_ready_indefinitely(
+            poll_timeout_seconds=1,
+            poll_interval_seconds=0.01,
+            on_progress=events.append,
+        )
+    finally:
+        api_client.probe_api_wake_state = original_probe
+        time.sleep = original_sleep
+
+    assert result["ready"] is True
+    assert calls["count"] == NOT_READY_ATTEMPTS + 1
+    assert len(events) == NOT_READY_ATTEMPTS + 1
+    assert events[-1]["ready"] is True
+    assert all(not e["ready"] for e in events[:-1])
 
 
 def test_wake_progress_card_uses_time_synced_snapshot_not_linear_math():
