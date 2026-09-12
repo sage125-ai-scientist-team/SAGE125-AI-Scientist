@@ -11,6 +11,7 @@ pipeline / 读取产物，保证仅运行 `streamlit run` 也能完成 mock 演�
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import time
@@ -302,12 +303,132 @@ def _cold_start_budget_seconds() -> int:
 
     这不是单次 HTTP 请求超时（那是 ``_wake_timeout_seconds``），而是"允许连续
     短超时轮询多久"的总预算；不要靠无限拉长单次请求超时来覆盖冷启动。
+
+    默认 360 秒（覆盖实测冷启动上限，超过仍未 ready 才提示"启动超时"）。
     """
-    default = 240
+    default = 360
     value = _positive_env_int("FRONTEND_API_COLD_START_BUDGET_SECONDS", default)
     if os.getenv("APP_ENV", "").strip().lower() == "preview":
         return max(value, default)
     return value
+
+
+# ---------------------------------------------------------------------------
+# 正在唤醒 sage125-api：时间同步进度曲线。
+#
+# 这里展示的"进度"不是 Render 内部真实启动百分比（我们无法知道 Render 真实
+# 启动阶段），而是"按历史冷启动耗时估算的等待完成度"。硬约束：
+#   - progress == 100 与 API_READY == True 严格等价，ready 之前永远 < 100；
+#   - 禁止线性 elapsed/expected*100（会前 30 秒冲到 80%-90%，然后长时间停在
+#     99% 等 ready，体验很差）；
+#   - 未 ready 时最高只能到 95%，不会长时间"卡在 99%"。
+# ---------------------------------------------------------------------------
+
+_DEFAULT_EXPECTED_WAKE_SECONDS = 180.0
+_MIN_EXPECTED_WAKE_SECONDS = 90.0
+_MAX_EXPECTED_WAKE_SECONDS = 300.0
+_WAKE_PROGRESS_CAP_BEFORE_READY = 95.0
+_LAST_WAKE_SECONDS_SESSION_KEY = "_sage125_last_wake_seconds"
+
+
+def _record_last_wake_seconds(elapsed_seconds: float) -> None:
+    """记录本次成功唤醒耗时（当前浏览器 session 内），供下次估算预计等待时间。"""
+    try:
+        if elapsed_seconds and float(elapsed_seconds) > 0:
+            st.session_state[_LAST_WAKE_SECONDS_SESSION_KEY] = float(elapsed_seconds)
+    except Exception:  # noqa: BLE001 - 没有 ScriptRunContext 时静默跳过，不影响主流程
+        pass
+
+
+def last_wake_seconds() -> float | None:
+    """读取最近一次成功唤醒耗时（当前 session 内）；无历史返回 None。"""
+    try:
+        value = st.session_state.get(_LAST_WAKE_SECONDS_SESSION_KEY)
+    except Exception:  # noqa: BLE001
+        return None
+    if isinstance(value, (int, float)) and value > 0:
+        return float(value)
+    return None
+
+
+def resolve_expected_wake_seconds(last_seconds: float | None = None) -> float:
+    """按最近一次成功唤醒耗时估算本次预计等待时间（秒）。
+
+    ``expected = 0.5 * 180 + 0.5 * last_wake_seconds``，限制在 ``[90, 300]``
+    秒；``last_seconds`` 未传入时读取当前 session 历史，无历史则用默认 180 秒。
+    """
+    if last_seconds is None:
+        last_seconds = last_wake_seconds()
+    if last_seconds is None or last_seconds <= 0:
+        return _DEFAULT_EXPECTED_WAKE_SECONDS
+    estimated = 0.5 * _DEFAULT_EXPECTED_WAKE_SECONDS + 0.5 * float(last_seconds)
+    return min(max(estimated, _MIN_EXPECTED_WAKE_SECONDS), _MAX_EXPECTED_WAKE_SECONDS)
+
+
+def compute_wake_progress_percent(
+    elapsed_seconds: float, expected_seconds: float, *, ready: bool
+) -> float:
+    """把"已等待时间"映射成"预计等待完成度"（0-100）；不是 Render 真实启动百分比。
+
+    - ``ready=True``：严格返回 ``100.0``（唯一能到 100 的入口）。
+    - ``ready=False``：无论等多久都不能到 100，最高封顶
+      ``_WAKE_PROGRESS_CAP_BEFORE_READY``（95），不会长时间停在 99%。
+    - 三段时间匹配型曲线，形状按 ``expected_seconds=180`` 秒校准，随
+      ``expected_seconds`` 等比缩放：
+        阶段一 ``[0, expected/3]``：             0%  → 45%，线性；
+        阶段二 ``(expected/3, expected*5/6]``：  45% → 80%，减速曲线（0.8 次幂）；
+        阶段三 ``(expected*5/6, +inf)``：         80% → 95%，指数衰减，
+          永远逼近但摸不到 95%（由 ``min(..., 95)`` 再兜底一层硬上限）。
+    """
+    if ready:
+        return 100.0
+    elapsed = max(float(elapsed_seconds), 0.0)
+    expected = max(float(expected_seconds), 1.0)
+    if elapsed <= 0:
+        return 0.0
+
+    t1 = expected / 3.0  # expected=180 时 = 60s
+    t2 = expected * 5.0 / 6.0  # expected=180 时 = 150s
+    tau = expected * 2.0 / 3.0  # expected=180 时 = 120s
+
+    if elapsed <= t1:
+        progress = 45.0 * elapsed / t1
+    elif elapsed <= t2:
+        frac = (elapsed - t1) / max(t2 - t1, 1e-6)
+        progress = 45.0 + 35.0 * (frac**0.8)
+    else:
+        progress = 80.0 + 15.0 * (1.0 - math.exp(-(elapsed - t2) / max(tau, 1e-6)))
+
+    return min(progress, _WAKE_PROGRESS_CAP_BEFORE_READY)
+
+
+def format_wake_elapsed_label(seconds: float) -> str:
+    """``MM:SS`` 格式，用于"已等待/预计总耗时/预计剩余"展示。"""
+    total = max(int(round(float(seconds))), 0)
+    minutes, secs = divmod(total, 60)
+    return f"{minutes:02d}:{secs:02d}"
+
+
+def wake_progress_snapshot(
+    elapsed_seconds: float, expected_seconds: float, *, ready: bool
+) -> dict[str, Any]:
+    """汇总一次探测后 UI 需要展示的全部字段（进度/已等待/预计总耗时/预计剩余/是否超期）。"""
+    elapsed = max(float(elapsed_seconds), 0.0)
+    expected = max(float(expected_seconds), 1.0)
+    percent = compute_wake_progress_percent(elapsed, expected, ready=ready)
+    overdue = elapsed > expected
+    remaining = max(expected - elapsed, 0.0)
+    return {
+        "percent": percent,
+        "elapsed_seconds": elapsed,
+        "expected_seconds": expected,
+        "remaining_seconds": remaining,
+        "overdue": overdue,
+        "ready": ready,
+        "elapsed_label": format_wake_elapsed_label(elapsed),
+        "expected_label": format_wake_elapsed_label(expected),
+        "remaining_label": format_wake_elapsed_label(remaining),
+    }
 
 
 def wait_for_api_ready(

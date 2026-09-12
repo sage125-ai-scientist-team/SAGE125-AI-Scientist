@@ -267,34 +267,53 @@ def process_run_triggers(
                 from app.ui.job_state import JOB_TYPE_DEMO, JOB_TYPE_FULL, submit_or_reuse_job
 
                 try:
-                    # 先用状态轮询等 API 真正 ready（而不是直接 create_job 硬扛冷启动）：
-                    # 每次探测短超时 + 探测间休眠，全程展示"第几次检查/已等待多久"，
-                    # 不做一次性长阻塞。Render 实测冷启动可达 2-4 分钟。
+                    # 正在唤醒 sage125-api：用状态轮询等 API 真正 ready（而不是直接
+                    # create_job 硬扛冷启动）。每次探测短超时 + 探测间休眠，全程用同一个
+                    # placeholder 原地更新"时间同步进度条"（不是 Render 内部真实启动
+                    # 百分比，而是按历史冷启动耗时估算的等待完成度），不做一次性长阻塞，
+                    # 也不整页 rerun，避免闪烁。Render 实测冷启动可达 2-4 分钟。
                     wake_slot = st.empty()
+                    expected_wake_seconds = api_client.resolve_expected_wake_seconds()
 
                     def _on_wake_progress(info: dict) -> None:
-                        hint = (
-                            "（收到 Render 冷启动占位响应，仍在等待服务真正就位）"
-                            if info.get("reason") == "render_waking"
-                            else ""
+                        ready_now = bool(info.get("ready"))
+                        snap = api_client.wake_progress_snapshot(
+                            info.get("elapsed_seconds") or 0.0,
+                            expected_wake_seconds,
+                            ready=ready_now,
                         )
                         wake_slot.empty()
                         with wake_slot.container():
-                            st.info(
-                                f"正在唤醒 sage125-api… 第 {info.get('attempt')} 次检查，"
-                                f"已等待 {info.get('elapsed_seconds')} 秒{hint}"
+                            st.markdown("**sage125-api 正在唤醒**")
+                            st.progress(min(max(snap["percent"], 0.0), 100.0) / 100.0)
+                            st.caption(
+                                f"当前进度：{snap['percent']:.0f}%　"
+                                f"已等待：{snap['elapsed_label']}　"
+                                f"预计总耗时：约 {snap['expected_label']}"
                             )
+                            if ready_now:
+                                st.caption("状态：API 已就绪")
+                            elif snap["overdue"]:
+                                st.caption("已超过预计启动时间，正在等待 API 完成最后检查")
+                            else:
+                                st.caption(
+                                    f"预计剩余：约 {snap['remaining_label']}　"
+                                    "状态：正在等待 API 服务就绪"
+                                )
 
                     wake_state = api_client.wait_for_api_ready(on_progress=_on_wake_progress)
                     wake_slot.empty()
+
+                    if wake_state.get("ready"):
+                        api_client._record_last_wake_seconds(wake_state.get("elapsed_seconds") or 0.0)
 
                     if not wake_state.get("ready"):
                         accepted = {
                             "status": "failed",
                             "error_type": "api_not_ready",
                             "errors": [
-                                f"sage125-api 唤醒超时（已等待 {wake_state.get('elapsed_seconds')} 秒）。"
-                                "请保持本页面打开，稍后再次点击「开始生成」——同一任务不会被重复创建。"
+                                "API 服务启动超时，请稍后重试。"
+                                "同一任务不会被重复创建，可保持本页面打开后再次点击「开始生成」。"
                             ],
                         }
                     else:
