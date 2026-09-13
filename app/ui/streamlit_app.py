@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import streamlit as st
 
-from app.ui import api_client, charts, components, errors, state
+from app.ui import api_client, charts, components, errors, state, wake_ui
 from app.ui import workspace_pages
 from app.ui.i18n import PRESET_KEYWORDS, preset_label, ui_text
 
@@ -207,6 +207,30 @@ def handle_presets(questions: list[dict]) -> None:
         )
 
 
+def _report_job_submit_result(accepted: dict) -> None:
+    """把 submit_or_reuse_job 的返回结果翻译成用户可见的提示；抽出来给两个调用点共用。"""
+    if accepted.get("status") == "failed" or accepted.get("errors"):
+        job_errors = [str(item) for item in (accepted.get("errors") or ["Job API 调用失败"])]
+        joined = "\n".join(job_errors)
+        is_wake_related = accepted.get("error_type") in ("network", "api_not_ready") or any(
+            marker in joined
+            for marker in ("唤醒", "休眠", "暂时繁忙", "正在恢复", "请求过多")
+        )
+        if is_wake_related:
+            errors.render_user_error(
+                "sage125-api 正在唤醒",
+                joined,
+                severity="warning",
+                key_ns="job_submit_failed",
+            )
+        else:
+            errors.render_user_error(
+                "无法启动后台任务",
+                joined,
+                key_ns="job_submit_failed",
+            )
+
+
 def process_run_triggers(
     *,
     trigger_generate: bool,
@@ -219,133 +243,126 @@ def process_run_triggers(
     trigger_latest: bool,
     diag: dict,
 ) -> None:
-    """处理生成 / Mock / 加载历史；守卫必须留在本文件以满足源码契约。"""
+    """处理生成 / Mock / 加载历史；守卫必须留在本文件以满足源码契约。
+
+    真实模式的"唤醒等待"不能再是一次性触发标志下的同步阻塞循环（根因见
+    ``app.ui.wake_ui`` 模块顶部说明）：本函数在**每一次**重跑都会检查
+    ``st.session_state`` 里是否存在尚未消费的"待提交意图"，不只是在
+    ``trigger_generate``/``trigger_mock`` 恰好为 True 的那一次重跑里才处理，
+    这样切页/其它交互导致的中间重跑也不会让等待中的意图彻底丢失。
+    """
     del selected_q
-    if trigger_generate or trigger_mock:
-        if not questions:
+    from app.ui.job_state import JOB_TYPE_DEMO, JOB_TYPE_FULL, submit_or_reuse_job
+
+    fresh_click = trigger_generate or trigger_mock
+    pending_intent = wake_ui.get_intent()
+    candidate_signature = None
+    if fresh_click and questions and qid:
+        candidate_run_mode = "mock" if trigger_mock else mode
+        candidate_job_type = JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL
+        candidate_signature = wake_ui.intent_signature(
+            question_id=str(qid), job_type=candidate_job_type, mode=candidate_run_mode, switches=switches
+        )
+    resuming_pending_wait = bool(
+        pending_intent
+        and pending_intent.get("phase") in (wake_ui.PHASE_WAKING, wake_ui.PHASE_READY)
+        and (not fresh_click or pending_intent.get("signature") == candidate_signature)
+    )
+
+    if fresh_click or resuming_pending_wait:
+        if not resuming_pending_wait and not questions:
             errors.questions_missing(
                 details="触发了生成/Mock，但 questions_125.json 不可用。"
             )
-        elif not qid:
+        elif not resuming_pending_wait and not qid:
             errors.question_not_selected(
                 details="触发了生成/Mock，但 STEP 01 尚未选中 question_id。"
             )
         else:
-            run_mode = "mock" if trigger_mock else mode
-            if run_mode == "real":
-                with st.spinner("正在检查并唤醒 sage125-api（闲置较久时可能需要 30-90 秒）…"):
-                    pf = api_client.run_preflight(
-                        switches.get("use_local_rag", True),
-                        switches.get("use_deep_research", True),
-                        allow_wake=True,
-                    )
-                if not pf.get("ok"):
-                    err_text = "\n".join(pf.get("errors", []))
-                    if any("DASHSCOPE" in e or "WORKSPACE" in e for e in pf.get("errors", [])):
-                        errors.qwen_not_configured(details=err_text)
-                        submit_ok = False
-                    elif any("RAG" in e or "chunks" in e for e in pf.get("errors", [])):
-                        errors.rag_missing(details=err_text)
-                        submit_ok = False
-                    elif any(
-                        token in err_text
-                        for token in ("暂时繁忙", "正在恢复", "正在唤醒", "请求过多", "暂不可用")
-                    ):
-                        submit_ok = True
-                    else:
-                        errors.render_user_error(
-                            "无法启动真实模式",
-                            "preflight 未通过：\n- " + "\n- ".join(pf.get("errors", [])),
-                            fix_commands=pf.get("fix_commands"),
+            if resuming_pending_wait:
+                # 复用已经建立的等待意图：question_id/mode/switches 全部以点击当时
+                # 冻结的值为准，不受当前页面挂件当下的值影响（防止串问题/串开关）。
+                run_mode = pending_intent["mode"]
+                target_qid = pending_intent["question_id"]
+                target_switches = pending_intent["switches"]
+                job_type = pending_intent["job_type"]
+                submit_ok = True  # 建立意图时 preflight 已经通过，不重复探测。
+            else:
+                run_mode = "mock" if trigger_mock else mode
+                target_qid = str(qid)
+                target_switches = switches
+                job_type = JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL
+                if run_mode == "real":
+                    with st.spinner("正在检查 sage125-api（闲置较久时可能需要唤醒）…"):
+                        pf = api_client.run_preflight(
+                            switches.get("use_local_rag", True),
+                            switches.get("use_deep_research", True),
+                            allow_wake=True,
                         )
-                        submit_ok = False
+                    if not pf.get("ok"):
+                        err_text = "\n".join(pf.get("errors", []))
+                        if any("DASHSCOPE" in e or "WORKSPACE" in e for e in pf.get("errors", [])):
+                            errors.qwen_not_configured(details=err_text)
+                            submit_ok = False
+                        elif any("RAG" in e or "chunks" in e for e in pf.get("errors", [])):
+                            errors.rag_missing(details=err_text)
+                            submit_ok = False
+                        elif any(
+                            token in err_text
+                            for token in ("暂时繁忙", "正在恢复", "正在唤醒", "请求过多", "暂不可用")
+                        ):
+                            submit_ok = True
+                        else:
+                            errors.render_user_error(
+                                "无法启动真实模式",
+                                "preflight 未通过：\n- " + "\n- ".join(pf.get("errors", [])),
+                                fix_commands=pf.get("fix_commands"),
+                            )
+                            submit_ok = False
+                    else:
+                        submit_ok = True
                 else:
                     submit_ok = True
-            else:
-                submit_ok = True
-            if submit_ok:
-                from app.ui.job_state import JOB_TYPE_DEMO, JOB_TYPE_FULL, submit_or_reuse_job
 
+            if submit_ok and run_mode == "real":
+                # 唤醒等待状态机：非阻塞、可暂停/取消，就绪后自动且仅自动提交一次。
+                # 详见 app.ui.wake_ui 模块顶部的根因说明。
+                intent = wake_ui.start_or_resume_intent(
+                    question_id=target_qid, job_type=job_type, mode=run_mode, switches=target_switches
+                )
+                if intent["phase"] == wake_ui.PHASE_WAKING:
+                    wake_ui.poll_wake_intent()
+                    return
+                # phase == "ready"：消费且只消费这一次，随后立即清除意图，
+                # 避免同一个"已就绪"状态被后续重跑重复提交。
                 try:
-                    # 正在唤醒 sage125-api：用状态轮询等 API 真正 ready（而不是直接
-                    # create_job 硬扛冷启动）。每次探测短超时 + 探测间休眠，全程用同一个
-                    # placeholder 原地更新"时间同步进度条"（不是 Render 内部真实启动
-                    # 百分比，而是按历史冷启动耗时估算的等待完成度），不做一次性长阻塞，
-                    # 也不整页 rerun，避免闪烁。Render 实测冷启动可达 2-4 分钟。
-                    wake_slot = st.empty()
-                    expected_wake_seconds = api_client.resolve_expected_wake_seconds()
-
-                    def _on_wake_progress(info: dict) -> None:
-                        ready_now = bool(info.get("ready"))
-                        snap = api_client.wake_progress_snapshot(
-                            info.get("elapsed_seconds") or 0.0,
-                            expected_wake_seconds,
-                            ready=ready_now,
-                        )
-                        wake_slot.empty()
-                        with wake_slot.container():
-                            st.markdown("**sage125-api 正在唤醒**")
-                            st.progress(min(max(snap["percent"], 0.0), 100.0) / 100.0)
-                            st.caption(
-                                f"当前进度：{snap['percent']:.0f}%　"
-                                f"已等待：{snap['elapsed_label']}　"
-                                f"预计总耗时：约 {snap['expected_label']}"
-                            )
-                            if ready_now:
-                                st.caption("状态：API 已就绪")
-                            elif snap["overdue"]:
-                                st.caption("已超过预计启动时间，正在等待 API 完成最后检查")
-                            else:
-                                st.caption(
-                                    f"预计剩余：约 {snap['remaining_label']}　"
-                                    "状态：正在等待 API 服务就绪"
-                                )
-
-                    # 产品最终要求（SAGE125-API-WAKE-PROGRESS-TIME-SYNC-FINAL-PR-DEPLOY-01）：
-                    # 唤醒阶段不允许出现"超时失败"状态。不管实际等了 5 分钟、10 分钟还是
-                    # 30 分钟，只要 /health 还没有真正 ready，就必须持续等待、持续更新
-                    # 唤醒进度/已等待时间/当前状态，绝不提示失败、绝不要求用户再点一次、
-                    # 绝不结束当前流程。因此这里改用没有任何预算/超时上限的
-                    # wait_for_api_ready_indefinitely：它只会在真正 ready 后返回一次，
-                    # 不存在"未 ready"的返回分支，也就不需要（也不能再有）"超时→失败"的
-                    # 判断逻辑。
-                    wake_state = api_client.wait_for_api_ready_indefinitely(
-                        on_progress=_on_wake_progress
-                    )
-                    wake_slot.empty()
-                    api_client._record_last_wake_seconds(wake_state.get("elapsed_seconds") or 0.0)
-
                     with st.spinner("正在提交任务…"):
                         accepted = submit_or_reuse_job(
-                            question_id=str(qid),
-                            job_type=JOB_TYPE_DEMO if trigger_mock else JOB_TYPE_FULL,
+                            question_id=str(target_qid),
+                            job_type=job_type,
                             mode=run_mode,
-                            switches=switches,
+                            switches=target_switches,
                         )
                 except Exception as exc:  # noqa: BLE001 — 顶层兜底：任何未预料异常都不能变成页面崩溃/traceback
                     accepted = None
                     errors.unexpected_error("无法启动后台任务", exc)
-                else:
-                    if accepted.get("status") == "failed" or accepted.get("errors"):
-                        job_errors = [str(item) for item in (accepted.get("errors") or ["Job API 调用失败"])]
-                        joined = "\n".join(job_errors)
-                        is_wake_related = accepted.get("error_type") in ("network", "api_not_ready") or any(
-                            marker in joined
-                            for marker in ("唤醒", "休眠", "暂时繁忙", "正在恢复", "请求过多")
-                        )
-                        if is_wake_related:
-                            errors.render_user_error(
-                                "sage125-api 正在唤醒",
-                                joined,
-                                severity="warning",
-                                key_ns="job_submit_failed",
-                            )
-                        else:
-                            errors.render_user_error(
-                                "无法启动后台任务",
-                                joined,
-                                key_ns="job_submit_failed",
-                            )
+                finally:
+                    wake_ui.clear_intent()
+                if accepted is not None:
+                    _report_job_submit_result(accepted)
+            elif submit_ok:
+                try:
+                    accepted = submit_or_reuse_job(
+                        question_id=str(target_qid),
+                        job_type=job_type,
+                        mode=run_mode,
+                        switches=target_switches,
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    accepted = None
+                    errors.unexpected_error("无法启动后台任务", exc)
+                if accepted is not None:
+                    _report_job_submit_result(accepted)
 
     if trigger_latest:
         latest = (diag.get("latest_run") or {}).get("run_id")

@@ -138,13 +138,202 @@ def test_health_json_is_ready(monkeypatch):
     monkeypatch.setattr(
         api_client.requests,
         "get",
-        lambda *a, **k: FakeResponse(200, json_data={"status": "ok"}, headers={"Content-Type": "application/json"}),
+        lambda *a, **k: FakeResponse(
+            200,
+            json_data={"status": "ok", "service": "sage125-api"},
+            headers={"Content-Type": "application/json"},
+        ),
     )
     state = api_client.probe_api_wake_state(timeout=5)
     assert state["connected"] is True
     assert state["ready"] is True
     assert api_client.wake_hosted_api(wait=True) is True
     assert api_client.refresh_api_available() is True
+
+
+def test_health_json_without_recognizable_service_is_not_ready(monkeypatch):
+    """任意 200 JSON dict 不能被当成"就绪"——必须能辨认出确实是 sage125-api。"""
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda *a, **k: FakeResponse(
+            200,
+            json_data={"hello": "world"},
+            headers={"Content-Type": "application/json"},
+        ),
+    )
+    state = api_client.probe_api_wake_state(timeout=5)
+    assert state["connected"] is True
+    assert state["ready"] is False
+    assert state["reason"] == "not_sage125"
+    assert api_client.refresh_api_available() is False
+
+
+def test_health_json_from_a_different_service_is_not_ready(monkeypatch):
+    """恰好返回 200 JSON、但 service 字段属于别的服务，不能被误判为我们的 API。"""
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda *a, **k: FakeResponse(
+            200,
+            json_data={"status": "ok", "service": "some-other-service"},
+            headers={"Content-Type": "application/json"},
+        ),
+    )
+    state = api_client.probe_api_wake_state(timeout=5)
+    assert state["connected"] is True
+    assert state["ready"] is False
+    assert state["reason"] == "not_sage125"
+
+
+def test_health_screenshot_payload_style_json_is_ready(monkeypatch):
+    """还原用户截图里的真实 /health 响应形状：没有顶层 ready 字段，仍必须判定就绪。"""
+    screenshot_like_payload = {
+        "status": "ok",
+        "service": "sage125-api",
+        "bailian": {"configured": True, "status": "available"},
+        "storage": {"mode": "ephemeral", "persistent": False},
+        "dependencies": {
+            "job_store": "available",
+            "artifact_registry": "available",
+            "artifact_storage": "available",
+        },
+        "qwen_config_loaded": True,
+        "rag_index_status": "empty",
+        "questions_count": 125,
+    }
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda *a, **k: FakeResponse(
+            200, json_data=screenshot_like_payload, headers={"Content-Type": "application/json"}
+        ),
+    )
+    state = api_client.probe_api_wake_state(timeout=5)
+    assert "ready" not in screenshot_like_payload  # 确认这份 fixture 真的没有顶层 ready 字段
+    assert state["connected"] is True
+    assert state["ready"] is True
+    assert state["reason"] is None
+    # rag_index_status == "empty" 与 storage.persistent == False 都不得阻塞就绪判定。
+    assert state["rag_index_status"] == "empty"
+    assert state["storage_persistent"] is False
+
+
+def test_health_ok_status_but_dependencies_degraded_is_still_core_ready(monkeypatch):
+    """status == "degraded"（依赖未齐全）仍然是"进程已启动、能应答"，不是"还在冷启动"。"""
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda *a, **k: FakeResponse(
+            200,
+            json_data={
+                "status": "degraded",
+                "service": "sage125-api",
+                "dependencies": {"job_store": "unavailable"},
+            },
+            headers={"Content-Type": "application/json"},
+        ),
+    )
+    state = api_client.probe_api_wake_state(timeout=5)
+    assert state["connected"] is True
+    assert state["ready"] is True
+    assert state["dependencies"] == {"job_store": "unavailable"}
+
+
+def test_health_connection_error_is_classified_not_generic(monkeypatch):
+    """连接失败要能分类（DNS/连接被拒等），不能笼统吞成一个 reason。"""
+
+    def _raise(*_a, **_k):
+        raise api_client.requests.exceptions.ConnectionError("boom")
+
+    monkeypatch.setattr(api_client.requests, "get", _raise)
+    state = api_client.probe_api_wake_state(timeout=5)
+    assert state["connected"] is False
+    assert state["reason"] == "connection_error"
+
+
+def test_health_read_timeout_is_classified(monkeypatch):
+    def _raise(*_a, **_k):
+        raise api_client.requests.exceptions.ReadTimeout("boom")
+
+    monkeypatch.setattr(api_client.requests, "get", _raise)
+    state = api_client.probe_api_wake_state(timeout=5)
+    assert state["connected"] is False
+    assert state["reason"] == "read_timeout"
+
+
+def test_health_rate_limited_status_is_classified(monkeypatch):
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda *a, **k: FakeResponse(429, text="too many requests"),
+    )
+    state = api_client.probe_api_wake_state(timeout=5)
+    assert state["connected"] is False
+    assert state["reason"] == "rate_limited"
+
+
+def test_health_server_error_status_is_classified(monkeypatch):
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda *a, **k: FakeResponse(503, text="bad gateway"),
+    )
+    state = api_client.probe_api_wake_state(timeout=5)
+    assert state["connected"] is False
+    assert state["reason"] == "server_error"
+
+
+def test_health_probe_sends_probe_id_and_user_agent_headers(monkeypatch):
+    """探测必须带上关联标识与专用 User-Agent，便于和服务端日志对上号。"""
+    captured = {}
+
+    def _fake_get(url, timeout=None, headers=None):
+        captured["url"] = url
+        captured["headers"] = headers
+        return FakeResponse(200, json_data={"status": "ok", "service": "sage125-api"})
+
+    monkeypatch.setattr(api_client.requests, "get", _fake_get)
+    result = api_client.probe_health_detailed(timeout=5, probe_id="unit-test-probe-1")
+
+    assert captured["headers"]["User-Agent"] == "SAGE125-UI-HealthProbe"
+    assert captured["headers"]["X-SAGE125-Probe-ID"] == "unit-test-probe-1"
+    assert result["probe_id"] == "unit-test-probe-1"
+    assert result["core_ready"] is True
+
+
+def test_health_probe_rejects_unsafe_probe_id_from_header(monkeypatch):
+    """probe_id 里带非法字符时不能塞进 HTTP 头（避免头注入），但探测本身仍要正常进行。"""
+    captured = {}
+
+    def _fake_get(url, timeout=None, headers=None):
+        captured["headers"] = headers
+        return FakeResponse(200, json_data={"status": "ok", "service": "sage125-api"})
+
+    monkeypatch.setattr(api_client.requests, "get", _fake_get)
+    api_client.probe_health_detailed(timeout=5, probe_id="unsafe\r\nheader-injection")
+
+    assert "X-SAGE125-Probe-ID" not in captured["headers"]
+
+
+def test_health_cache_is_isolated_by_api_base(monkeypatch):
+    """切换 api_base() 后，旧地址的成功缓存不能被新地址复用。"""
+    monkeypatch.setattr(
+        api_client.requests,
+        "get",
+        lambda *a, **k: FakeResponse(200, json_data={"status": "ok", "service": "sage125-api"}),
+    )
+    monkeypatch.setenv("FRONTEND_API_BASE_URL", "https://old-address.example.com")
+    assert api_client.refresh_api_available() is True
+    assert api_client.api_available() is True
+
+    def _raise(*_a, **_k):
+        raise api_client.requests.exceptions.ConnectionError("new address unreachable")
+
+    monkeypatch.setattr(api_client.requests, "get", _raise)
+    monkeypatch.setenv("FRONTEND_API_BASE_URL", "https://new-address.example.com")
+    # 新地址还没有任何成功缓存，不能借用旧地址的缓存假装已就绪。
+    assert api_client.api_available() is False
 
 
 # ---------------------------------------------------------------------------
@@ -262,7 +451,7 @@ def test_wait_for_api_ready_recovers_after_cold_start(monkeypatch):
         call_count["n"] += 1
         if call_count["n"] < 3:
             return FakeResponse(200, text=RENDER_PLACEHOLDER_HTML, headers={"Content-Type": "text/html"})
-        return FakeResponse(200, json_data={"status": "ok"})
+        return FakeResponse(200, json_data={"status": "ok", "service": "sage125-api"})
 
     monkeypatch.setattr(api_client.requests, "get", fake_get)
     progress_events: list[dict] = []

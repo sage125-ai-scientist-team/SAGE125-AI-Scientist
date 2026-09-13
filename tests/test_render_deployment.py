@@ -145,7 +145,7 @@ def test_render_ui_health_probe_allows_cold_start(monkeypatch):
         def json():
             return {"status": "ok", "service": "sage125-api"}
 
-    def fake_get(url, *, timeout):
+    def fake_get(url, *, timeout, **_kwargs):
         observed.update({"url": url, "timeout": timeout})
         return Response()
 
@@ -176,7 +176,7 @@ def test_failed_health_is_not_cached(monkeypatch):
         def json():
             return {"status": "ok", "service": "sage125-api"}
 
-    def fake_get(url, *, timeout=None):
+    def fake_get(url, *, timeout=None, **_kwargs):
         calls["n"] += 1
         return Down() if calls["n"] == 1 else Up()
 
@@ -335,7 +335,7 @@ def test_api_only_preflight_429_falls_back_to_health(monkeypatch):
                 "questions_count": 125,
             }
 
-    def fake_get(url, *, params=None, timeout=None):
+    def fake_get(url, *, params=None, timeout=None, **_kwargs):
         if str(url).endswith("/preflight"):
             return Limited()
         return HealthOk()
@@ -377,11 +377,14 @@ def test_real_start_preflight_allows_hosted_wake():
     src = (ROOT / "app/ui/streamlit_app.py").read_text(encoding="utf-8")
     trigger = src.split("def process_run_triggers", 1)[1].split("if trigger_latest", 1)[0]
     assert "allow_wake=True" in trigger
-    assert "正在检查并唤醒 sage125-api" in trigger
-    # 冷启动修复后，任务提交前先用状态轮询展示唤醒进度（而不是一次性长阻塞的
-    # 单条文案），因此这里改为断言新的轮询提示文案仍然存在。
-    assert "正在唤醒 sage125-api" in trigger
+    assert "正在检查 sage125-api" in trigger
     assert "暂不可用" in trigger
+    # SAGE125-UI-API-HEALTH-HANDOFF-ROOT-FIX-01：唤醒等待/进度展示已经迁移到
+    # app.ui.wake_ui 的非阻塞状态机（不再是 streamlit_app.py 里的同步长阻塞），
+    # 这里改为断言调用点接入了 wake_ui，而不是断言具体文案字符串。
+    assert "wake_ui.start_or_resume_intent(" in trigger
+    wake_ui_src = (ROOT / "app/ui/wake_ui.py").read_text(encoding="utf-8")
+    assert "sage125-api 正在唤醒" in wake_ui_src
 
 
 def test_create_job_retries_429(monkeypatch):

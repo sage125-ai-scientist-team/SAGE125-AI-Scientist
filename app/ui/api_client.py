@@ -147,23 +147,106 @@ def _http_session() -> requests.Session:
 
 # 只缓存成功的健康结果。失败（休眠、502、超时）不得锁住 60 秒，否则评委
 # 点「开始生成」会继续看到「暂不可用」。
+#
+# 缓存必须按 api_base() 隔离（键 = 当前 FRONTEND_API_BASE_URL）：同一浏览器
+# session 里如果目标地址发生变化（例如运维改了环境变量后重启 UI 进程，或者
+# 单测里 monkeypatch 了 api_base），旧地址探测成功缓存的 payload 不能被当成
+# 新地址已经就绪——否则会出现"配置已经改对了，但 UI 仍然认为服务未就绪/或
+# 反过来误判为就绪"的诡异现象，且很难从现象直接联想到"缓存没有跟着地址切换"。
 _HEALTH_CACHE_TTL_SECONDS = 60
 _DIAG_CACHE_TTL_SECONDS = 60
 _QUESTIONS_CACHE_TTL_SECONDS = 300
-_HEALTH_OK_AT = 0.0
-_HEALTH_OK_PAYLOAD: dict[str, Any] = {}
+_HEALTH_OK_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}
 
 
 def _clear_health_ok_cache() -> None:
-    global _HEALTH_OK_AT, _HEALTH_OK_PAYLOAD
-    _HEALTH_OK_AT = 0.0
-    _HEALTH_OK_PAYLOAD = {}
+    _HEALTH_OK_CACHE.clear()
 
 
 def _store_health_ok(payload: dict[str, Any]) -> None:
-    global _HEALTH_OK_AT, _HEALTH_OK_PAYLOAD
-    _HEALTH_OK_AT = time.monotonic()
-    _HEALTH_OK_PAYLOAD = payload
+    _HEALTH_OK_CACHE[api_base()] = (time.monotonic(), payload)
+
+
+def _peek_health_ok_cache() -> tuple[float, dict[str, Any]]:
+    """读取当前 api_base() 对应的成功缓存；地址不匹配时视为无缓存。"""
+    return _HEALTH_OK_CACHE.get(api_base(), (0.0, {}))
+
+
+# ---------------------------------------------------------------------------
+# 健康判定契约（单一事实来源）。
+#
+# 硬约束（对应线上截图复现的问题）：HTTP 200 + 合法 JSON dict 不等于"就绪"。
+# 必须能识别出响应确实来自 sage125-api 本身（``service`` 字段），而不是任意
+# 一个恰好返回 200 JSON 的其它服务/占位服务。反之，也不能因为
+# ``rag_index_status == "empty"`` 或 ``storage.persistent == False`` 这类
+# "业务子状态未达到最佳状态"就误判为"未就绪"——那些是任务前置条件层面的
+# 判断（由 /preflight 负责），不属于"API 进程是否已经从休眠中启动完成"这一层。
+# ---------------------------------------------------------------------------
+
+EXPECTED_HEALTH_SERVICE = "sage125-api"
+
+
+def evaluate_health_contract(
+    payload: dict[str, Any] | None,
+    *,
+    connected: bool,
+) -> dict[str, Any]:
+    """把一次 /health 探测的（连接状态, 原始 JSON）翻译成结构化健康判定。
+
+    返回字段：
+        connected:            是否拿到了 HTTP 响应（不代表业务已就绪）。
+        is_sage125:           响应是否可辨认地来自 sage125-api 本身。
+        core_ready:           唤醒阶段的"就绪"定义——``connected and is_sage125``，
+                               与 ``status`` 是 "ok" 还是 "degraded" 无关（进程已经
+                               启动并能以 sage125-api 身份应答，剩下的依赖是否齐全
+                               属于任务前置条件层，不影响"是否还在冷启动"这一层）。
+        status:               原始 status 字段（"ok" / "degraded" / None）。
+        dependencies:         原始 dependencies 子对象（job_store / artifact_* 等）。
+        rag_index_status:     原始 rag_index_status（仅供展示，不参与 core_ready）。
+        qwen_config_loaded:   原始 qwen_config_loaded（仅供展示，不参与 core_ready）。
+        bailian_configured:   原始 bailian.configured（仅供展示，不参与 core_ready）。
+        storage_persistent:   原始 storage.persistent（仅供展示，不参与 core_ready）。
+        questions_count:      原始 questions_count（仅供展示）。
+    """
+    result: dict[str, Any] = {
+        "connected": bool(connected),
+        "is_sage125": False,
+        "core_ready": False,
+        "status": None,
+        "dependencies": {},
+        "rag_index_status": None,
+        "qwen_config_loaded": None,
+        "bailian_configured": None,
+        "storage_persistent": None,
+        "questions_count": None,
+    }
+    if not connected or not isinstance(payload, dict) or not payload:
+        return result
+    status_value = payload.get("status")
+    result["status"] = status_value if isinstance(status_value, str) else None
+    result["is_sage125"] = (
+        payload.get("service") == EXPECTED_HEALTH_SERVICE and result["status"] is not None
+    )
+    result["core_ready"] = result["is_sage125"]
+    deps = payload.get("dependencies")
+    if isinstance(deps, dict):
+        result["dependencies"] = deps
+    rag = payload.get("rag_index_status")
+    if isinstance(rag, str):
+        result["rag_index_status"] = rag
+    qwen_loaded = payload.get("qwen_config_loaded")
+    if isinstance(qwen_loaded, bool):
+        result["qwen_config_loaded"] = qwen_loaded
+    bailian = payload.get("bailian")
+    if isinstance(bailian, dict) and isinstance(bailian.get("configured"), bool):
+        result["bailian_configured"] = bailian["configured"]
+    storage = payload.get("storage")
+    if isinstance(storage, dict) and isinstance(storage.get("persistent"), bool):
+        result["storage_persistent"] = storage["persistent"]
+    qcount = payload.get("questions_count")
+    if isinstance(qcount, int):
+        result["questions_count"] = qcount
+    return result
 
 
 # Render Free 实例冷启动期间，边缘节点可能先用 HTTP 200 返回自己的静态占位页
@@ -213,64 +296,193 @@ def parse_json_response(response: requests.Response) -> tuple[dict[str, Any] | N
     return data, None
 
 
-def _probe_health(*, timeout: int | None = None) -> tuple[bool, bool, dict]:
-    """探测 /health；失败不写入成功缓存。
+_PROBE_ID_HEADER = "X-SAGE125-Probe-ID"
+_PROBE_ID_PATTERN = re.compile(r"^[A-Za-z0-9_\-]{1,80}$")
+_PROBE_COUNTER = {"n": 0}
 
-    返回 ``(connected, ready, payload)``：
-        - ``connected``：拿到了 HTTP 响应（不代表业务已就绪；Render 冷启动占位页
-          同样会让 ``connected=True``）。
-        - ``ready``：响应是合法业务 JSON，才代表 API 真正可用。
+
+def new_probe_id(prefix: str = "wake") -> str:
+    """生成一个用于前后端日志关联的探测 ID；字符集/长度受限，安全可放进 HTTP 头。"""
+    _PROBE_COUNTER["n"] += 1
+    safe_prefix = re.sub(r"[^A-Za-z0-9_\-]", "-", str(prefix))[:20] or "probe"
+    raw = f"{safe_prefix}-{int(time.time())}-{os.getpid()}-{_PROBE_COUNTER['n']}"
+    return raw[:80]
+
+
+def _classify_transport_exception(exc: Exception) -> str:
+    """把 requests 抛出的异常分类成有限的几种，供 UI 展示错误分类而不是笼统的"不可用"。"""
+    if isinstance(exc, requests.exceptions.SSLError):
+        return "tls_error"
+    if isinstance(exc, requests.exceptions.ConnectTimeout):
+        return "connect_timeout"
+    if isinstance(exc, requests.exceptions.ReadTimeout):
+        return "read_timeout"
+    if isinstance(exc, requests.exceptions.Timeout):
+        return "timeout"
+    if isinstance(exc, requests.exceptions.ConnectionError):
+        return "connection_error"
+    return "request_exception"
+
+
+def _classify_http_status(status_code: int) -> str:
+    if status_code in (401, 403):
+        return "auth_error"
+    if status_code == 404:
+        return "not_found"
+    if status_code == 429:
+        return "rate_limited"
+    if 500 <= status_code < 600:
+        return "server_error"
+    return f"http_error_{status_code}"
+
+
+def probe_health_detailed(
+    *, timeout: int | None = None, probe_id: str | None = None
+) -> dict[str, Any]:
+    """探测 /health 并返回完整结构化结果；是 ``_probe_health`` / ``probe_api_wake_state``
+    共用的唯一实现，也是本模块对外暴露的"健康判定单一事实来源"。
+
+    返回字段（超集，向后兼容旧的 ``connected``/``ready``/``reason``）：
+        connected, ready(=core_ready), reason,
+        http_status, response_kind, exception_type,
+        target_url, probe_id, duration_ms,
+        以及 ``evaluate_health_contract`` 的全部展示字段
+        （status / dependencies / rag_index_status / qwen_config_loaded /
+        bailian_configured / storage_persistent / questions_count）。
+
+    ``probe_id`` 会通过 ``X-SAGE125-Probe-ID`` 请求头带给服务端；服务端按长度
+    /字符白名单校验后原样记录进日志，方便把某一次前端探测与服务端日志对上号。
+    失败（连不上/超时/HTTP 非 200/非法 JSON）不写入成功缓存。
     """
+    started = time.monotonic()
+    url = f"{api_base()}/health"
+    pid = probe_id or new_probe_id()
+    headers = {"User-Agent": "SAGE125-UI-HealthProbe"}
+    if _PROBE_ID_PATTERN.match(pid):
+        headers[_PROBE_ID_HEADER] = pid
+    base_result: dict[str, Any] = {
+        "probe_id": pid,
+        "target_url": url,
+        "http_status": None,
+        "response_kind": None,
+        "exception_type": None,
+    }
+
+    def _finish(**extra: Any) -> dict[str, Any]:
+        base_result["duration_ms"] = round((time.monotonic() - started) * 1000, 1)
+        base_result.update(extra)
+        return base_result
+
     try:
         r = requests.get(
-            f"{api_base()}/health",
+            url,
             timeout=_wake_timeout_seconds() if timeout is None else timeout,
+            headers=headers,
         )
-    except requests.RequestException:
-        return False, False, {}
+    except requests.RequestException as exc:
+        exc_type = _classify_transport_exception(exc)
+        contract = evaluate_health_contract(None, connected=False)
+        return _finish(
+            exception_type=exc_type,
+            reason=exc_type,
+            **contract,
+        )
+
+    base_result["http_status"] = r.status_code
     if r.status_code != 200:
-        return False, False, {}
-    payload, reason = parse_json_response(r)
+        contract = evaluate_health_contract(None, connected=False)
+        return _finish(
+            response_kind=_classify_http_status(r.status_code),
+            reason=_classify_http_status(r.status_code),
+            **contract,
+        )
+
+    payload, parse_reason = parse_json_response(r)
     if payload is None:
         _LOGGER.info(
-            "sage125-api health probe not ready: endpoint=%s status_code=%s content_type=%s ready=%s reason=%s",
+            "sage125-api health probe not ready: probe_id=%s endpoint=%s status_code=%s "
+            "content_type=%s ready=%s reason=%s",
+            pid,
             "/health",
             r.status_code,
             str(r.headers.get("Content-Type", "")),
             False,
-            reason,
+            parse_reason,
         )
-        return True, False, {}
-    if payload:
+        contract = evaluate_health_contract(None, connected=True)
+        return _finish(response_kind=parse_reason or "invalid_json", reason=parse_reason, **contract)
+
+    contract = evaluate_health_contract(payload, connected=True)
+    if contract["core_ready"]:
         _store_health_ok(payload)
-    return True, True, payload
+        return _finish(response_kind="json", reason=None, **contract)
+    # 连上了、也是合法 JSON，但认不出是 sage125-api（陌生/占位服务）：不算就绪，
+    # 也绝不能写入成功缓存，否则会把别的服务误判成"我们的 API 已经就绪"。
+    _LOGGER.info(
+        "sage125-api health probe connected but payload is not recognizable as %s: "
+        "probe_id=%s service=%r status=%r",
+        EXPECTED_HEALTH_SERVICE,
+        pid,
+        payload.get("service"),
+        payload.get("status"),
+    )
+    return _finish(response_kind="not_sage125", reason="not_sage125", **contract)
 
 
-def probe_api_wake_state(*, timeout: int | None = None) -> dict[str, Any]:
+def _probe_health(*, timeout: int | None = None) -> tuple[bool, bool, dict]:
+    """向后兼容的三元组包装；新代码请直接用 ``probe_health_detailed``。
+
+    返回 ``(connected, ready, payload)``：
+        - ``connected``：拿到了 HTTP 响应（不代表业务已就绪；Render 冷启动占位页
+          同样会让 ``connected=True``）。
+        - ``ready``：响应可辨认地来自 sage125-api 本身，才代表 API 真正可用
+          （不再是"任意 200 JSON dict 即算就绪"——那会把陌生服务/占位服务误判
+          成我们的 API）。
+    """
+    detailed = probe_health_detailed(timeout=timeout)
+    connected = bool(detailed.get("connected"))
+    ready = bool(detailed.get("core_ready"))
+    payload = _HEALTH_OK_CACHE.get(api_base(), (0.0, {}))[1] if ready else {}
+    return connected, ready, payload
+
+
+def probe_api_wake_state(*, timeout: int | None = None, probe_id: str | None = None) -> dict[str, Any]:
     """结构化唤醒状态，供 UI 轮询展示；不写健康缓存之外的副作用。
 
-    返回形如 ``{"connected": bool, "ready": bool, "reason": str | None}``。
+    返回形如
+    ``{"connected": bool, "ready": bool, "reason": str | None, ...}``（超集，
+    额外字段见 :func:`probe_health_detailed`），向后兼容旧调用方只读
+    ``connected``/``ready``/``reason`` 三个键的用法。
     """
-    connected, ready, _payload = _probe_health(timeout=timeout)
-    reason: str | None = None
-    if not connected:
+    detailed = probe_health_detailed(timeout=timeout, probe_id=probe_id)
+    connected = bool(detailed.get("connected"))
+    ready = bool(detailed.get("core_ready"))
+    reason = detailed.get("reason")
+    if not connected and not reason:
         reason = "network_unreachable"
-    elif not ready:
+    elif connected and not ready and not reason:
         reason = "render_waking"
-    return {"connected": connected, "ready": ready, "reason": reason}
+    result = dict(detailed)
+    result["connected"] = connected
+    result["ready"] = ready
+    result["reason"] = reason
+    return result
 
 
 def _fetch_health_cached(_cache_bust: int = 0) -> tuple[bool, dict]:
     """复用最近一次成功的健康检查；页面探测用短超时，失败不缓存。
 
-    返回 ``(ready, payload)``：只有业务真正就绪（不是 Render 冷启动占位页）才算
-    ``ready=True``——历史上这里叫 ``connected``，但语义一直是"能不能用"，现在
-    用更准确的名字对齐 ``_probe_health`` 的 connected/ready 拆分。
+    返回 ``(ready, payload)``：只有业务真正就绪（可辨认地来自 sage125-api 本身）
+    才算 ``ready=True``——历史上这里叫 ``connected``，但语义一直是"能不能用"，
+    现在用更准确的名字对齐 ``_probe_health`` 的 connected/ready 拆分。
+
+    缓存严格按当前 ``api_base()`` 隔离，见 ``_peek_health_ok_cache``。
     """
     del _cache_bust
+    cached_at, cached_payload = _peek_health_ok_cache()
     now = time.monotonic()
-    if _HEALTH_OK_AT and now - _HEALTH_OK_AT < _HEALTH_CACHE_TTL_SECONDS and _HEALTH_OK_PAYLOAD:
-        return True, _HEALTH_OK_PAYLOAD
+    if cached_at and now - cached_at < _HEALTH_CACHE_TTL_SECONDS and cached_payload:
+        return True, cached_payload
     _connected, ready, payload = _probe_health(timeout=_short_timeout_seconds())
     return ready, payload
 

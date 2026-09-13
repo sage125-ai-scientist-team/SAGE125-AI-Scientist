@@ -298,7 +298,6 @@ def render_mode_control(current_mode: str) -> str:
     options = ["mock", "real"]
     display = {"mock": ui_text("mock_mode"), "real": ui_text("real_mode")}
     resolved_current = current_mode if current_mode in options else "mock"
-    default_index = options.index(resolved_current)
 
     def _store_mode_widget_value(widget_key: str) -> None:
         """on_change：脚本主体重跑前就把新选择写回业务状态，不依赖 widget key 存活。"""
@@ -312,6 +311,19 @@ def render_mode_control(current_mode: str) -> str:
     # 无条件回填：不管 widget key 目前缺失、非法，还是"看似合法但其实是切页
     # 前的陈旧值"，一律以业务状态（resolved_current）为准重新赋值，确保控件
     # 被当成新控件重新创建时，读到的是当前真实模式，而不是它自己的旧值。
+    #
+    # 注意：不能再同时传 default=/index=。Streamlit 的规则是"key 已在
+    # session_state 中时，用 session_state 的值初始化 widget，default/index
+    # 会被忽略"——但只要同一次调用里 default/index 与 session_state 同时
+    # 存在，Streamlit 就会打一条运行时 WARNING（"created with a default value
+    # but also had its value set via the Session State API"）。线上日志已经
+    # 实测到这条 WARNING（对应 mode__control）；这不是无害噪音：它说明控件初始
+    # 值判定路径处于两套机制的边界状态，一旦 Streamlit 内部对该边界状态的处理
+    # 在某次 rerun 上出现时序差异（例如切页后 key 被删除、下一次重建时 default
+    # 与刚回填的 session_state 短暂不一致），就会复现"真实模式切页后又变回模拟"
+    # 这个问题。既然上面已经无条件用 resolved_current 回填了 session_state，
+    # default/index 完全冗余，直接删除即可从根上消除这条 WARNING 和它对应的
+    # 时序不确定性。
     st.session_state[MODE_WIDGET_KEY] = resolved_current
     st.session_state[MODE_WIDGET_FALLBACK_KEY] = resolved_current
     segmented_control = getattr(st, "segmented_control", None)
@@ -320,18 +332,16 @@ def render_mode_control(current_mode: str) -> str:
             ui_text("mode_control"),
             options,
             format_func=lambda v: display.get(v, v),
-            default=options[default_index],
             key=MODE_WIDGET_KEY,
             on_change=_store_mode_widget_value,
             args=(MODE_WIDGET_KEY,),
             label_visibility="collapsed",
         )
-        mode = selected if selected in options else options[default_index]
+        mode = selected if selected in options else resolved_current
     else:
         mode = st.selectbox(
             ui_text("mode_control"),
             options,
-            index=default_index,
             format_func=lambda v: display.get(v, v),
             key=MODE_WIDGET_FALLBACK_KEY,
             on_change=_store_mode_widget_value,

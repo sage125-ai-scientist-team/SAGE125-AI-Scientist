@@ -306,20 +306,38 @@ def _commit_run_mode(mode: str, *, sync_widgets: bool = False) -> str | None:
 
 
 def apply_query_mode(*, fallback: str | None = None) -> None:
-    """从当前控件、已选定模式、URL 或最近 Job 恢复运行模式。切页不得默默回到演示。"""
+    """从已选定模式、当前控件、URL 或最近 Job 恢复运行模式。切页不得默默回到演示。
+
+    优先级历史教训（重要，请勿再颠倒顺序）：早期实现优先信任
+    ``st.session_state[MODE_WIDGET_KEY]``（"当前页真正挂载的 widget"），理由是
+    只有设置页会渲染这个控件，键值"新鲜"。但这个假设依赖 Streamlit 内部
+    "离开页面后何时清除未重建的 widget key" 的确切时序——这个时序不是本项目
+    可以控制或稳定依赖的公开契约，线上已实测到 Streamlit 运行时 WARNING
+    （"created with a default value but also had its value set via the
+    Session State API"），说明控件初始值判定确实处于两套机制的边界状态。
+    一旦该边界状态在某次 rerun 上出现时序差异，就会复现"设置页切成真实模式，
+    切到其他页再切回设置，又变回模拟模式"的问题——且很难用简单单测稳定复现，
+    因为它取决于 Streamlit 内部实现细节而不是本模块的公开行为。
+
+    修复方式：把"用户已明确选择过的业务状态"（``KEY_MODE_EXPLICIT`` +
+    ``KEY_MODE``）提到最高优先级。这两个键由 ``render_mode_control`` 的
+    ``on_change`` 回调在 **每次用户点击时同步写入**（回调发生在脚本主体重跑
+    之前），不依赖任何 widget key 是否存活、是否被清除、清除的确切时间点。
+    只要用户曾经明确选择过模式，这个业务状态就是唯一可信来源；widget 键值只
+    作为"业务状态从未被明确设置过时"的次级兜底（例如极端情况下 on_change 未
+    触发但 widget 本身仍带着新值），而不是主判据。
+    """
     from app.ui.components import MODE_WIDGET_KEY
 
-    # 只信任当前页真正挂载的 segmented_control。备用 selectbox key 会在设置页
-    # 首次以 mock 写入后一直留在 session，离开设置页后不能再用它覆盖用户选择。
-    live_widget = official_run_mode(st.session_state.get(MODE_WIDGET_KEY))
-    if live_widget:
-        _commit_run_mode(live_widget, sync_widgets=True)
-        return
     if st.session_state.get(state.KEY_MODE_EXPLICIT):
         persisted = official_run_mode(state.current_mode())
         if persisted:
             _commit_run_mode(persisted, sync_widgets=True)
             return
+    live_widget = official_run_mode(st.session_state.get(MODE_WIDGET_KEY))
+    if live_widget:
+        _commit_run_mode(live_widget, sync_widgets=True)
+        return
     try:
         raw = st.query_params.get(QUERY_MODE_KEY)
     except Exception:
