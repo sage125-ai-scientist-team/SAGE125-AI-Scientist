@@ -31,7 +31,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from app.ui import api_client, job_state, state
+from app.ui import api_client, job_state, state, wake_ui
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -193,19 +193,21 @@ def test_cold_start_budget_default_is_360_seconds(monkeypatch):
 
 
 def _wake_wait_block() -> str:
-    """截取 process_run_triggers 里"发起唤醒轮询"到"提交 Job"之间的代码段。"""
+    """截取 process_run_triggers 里真实模式分支的代码段（唤醒等待 + 提交 Job）。"""
     trigger_src = _trigger_source()
-    return trigger_src.split("wake_slot = st.empty()", 1)[1].split(
-        "with st.spinner(\"正在提交任务…\"):", 1
-    )[0]
+    return trigger_src.split('if submit_ok and run_mode == "real":', 1)[1]
 
 
-def test_wake_wait_uses_indefinite_function_not_budgeted_one():
-    """生产代码必须调用没有预算上限的 wait_for_api_ready_indefinitely，
-    不能再用带 max_wait_seconds/预算上限的 wait_for_api_ready。"""
+def test_wake_wait_uses_nonblocking_wake_ui_state_machine():
+    """生产代码必须走 app.ui.wake_ui 的非阻塞状态机（start_or_resume_intent +
+    poll_wake_intent），不能再用同步阻塞的 wait_for_api_ready_indefinitely /
+    wait_for_api_ready（根因：一次性触发标志 + 同步 while 循环，切页/重跑会
+    直接杀死等待意图，导致"API 已 ready 但页面卡住不动"）。"""
     block = _wake_wait_block()
-    assert "wait_for_api_ready_indefinitely(" in block
-    assert "wait_for_api_ready(" not in block  # 精确匹配"(" 排除 _indefinitely 变体
+    assert "wake_ui.start_or_resume_intent(" in block
+    assert "wake_ui.poll_wake_intent(" in block
+    assert "wait_for_api_ready_indefinitely(" not in block
+    assert "wait_for_api_ready(" not in block
 
 
 def test_wake_wait_never_shows_timeout_or_failure_text():
@@ -224,20 +226,43 @@ def test_wake_wait_never_shows_timeout_or_failure_text():
 
 
 def test_ready_branch_auto_calls_submit_or_reuse_job_without_extra_click():
-    """wait_for_api_ready_indefinitely 返回后必须在同一次函数调用里自动继续建
-    Job，不等待用户再点一次；且不存在"未 ready"的分支需要处理。"""
-    trigger_src = _trigger_source()
-    after_wait = trigger_src.split("wait_for_api_ready_indefinitely(", 1)[1]
-    assert "_record_last_wake_seconds" in after_wait.split("submit_or_reuse_job(", 1)[0]
-    assert "submit_or_reuse_job(" in after_wait
+    """intent phase 变成 "ready" 后必须在同一次函数调用里自动继续建 Job，不等待
+    用户再点一次；未就绪（phase == "waking"）分支必须直接 return，交给下一次
+    重跑/fragment 继续探测，不能在本次调用里硬等。"""
+    block = _wake_wait_block()
+    assert 'intent["phase"] == wake_ui.PHASE_WAKING' in block
+    assert "return" in block.split('intent["phase"] == wake_ui.PHASE_WAKING', 1)[1].split(
+        "submit_or_reuse_job(", 1
+    )[0]
+    assert "submit_or_reuse_job(" in block
 
 
 def test_wake_wait_call_site_has_no_ready_false_branch():
     """process_run_triggers 里不应再有 `if wake_state.get("ready")` /
-    `if not wake_state.get("ready")` 这类分支判断——因为
-    wait_for_api_ready_indefinitely 只会在真正 ready 后返回一次。"""
+    `if not wake_state.get("ready")` 这类分支判断——健康判定完全交给
+    app.ui.wake_ui / app.ui.api_client 的结构化字段，不在调用点重复判断。"""
     trigger_src = _trigger_source()
     assert 'wake_state.get("ready")' not in trigger_src
+
+
+def test_wake_wait_intent_is_cleared_after_consumption_exactly_once():
+    """ready 分支消费后必须清除意图（wake_ui.clear_intent()），避免同一个
+    "已就绪"状态在后续重跑里被重复提交。"""
+    block = _wake_wait_block()
+    after_ready = block.split('intent["phase"] == wake_ui.PHASE_WAKING', 1)[1]
+    assert "wake_ui.clear_intent()" in after_ready
+
+
+def test_process_run_triggers_does_not_early_exit_on_pending_wait():
+    """守卫不能只看一次性触发标志：存在待消费的唤醒意图时，即使
+    trigger_generate/trigger_mock 都是 False（例如切页后的普通重跑），也必须
+    继续处理，否则等待状态会在中途被早退检查悄悄丢弃。"""
+    trigger_src = _trigger_source()
+    guard_section = trigger_src.split("fresh_click = trigger_generate or trigger_mock", 1)[1].split(
+        "if fresh_click or resuming_pending_wait:", 1
+    )[0]
+    assert "resuming_pending_wait" in guard_section
+    assert "wake_ui.get_intent()" in guard_section
 
 
 def test_wait_for_api_ready_indefinitely_has_no_timeout_or_budget_parameter():
@@ -297,30 +322,44 @@ def test_wait_for_api_ready_indefinitely_keeps_retrying_past_old_360s_budget():
     assert all(not e["ready"] for e in events[:-1])
 
 
-def test_wake_progress_card_uses_time_synced_snapshot_not_linear_math():
-    """唤醒卡片必须用 wake_progress_snapshot()/compute_wake_progress_percent() 的时间同步曲线，
-    不能出现 elapsed/expected*100 这种简单线性算法。"""
-    trigger_src = _trigger_source()
-    assert "wake_progress_snapshot" in trigger_src
-    assert "st.progress(" in trigger_src
-    assert "elapsed_seconds\" / \"expected_seconds\" * 100" not in trigger_src
-    assert "/ expected_wake_seconds * 100" not in trigger_src
-    assert "elapsed_seconds / expected" not in trigger_src
+def test_wake_card_shows_uncertain_progress_not_fixed_curve():
+    """产品最新要求（SAGE125-UI-API-HEALTH-HANDOFF-ROOT-FIX-01）：唤醒卡片不再用
+    固定 95% 封顶曲线/编造的剩余时间，而是展示已等待时间/探测次数/最近探测
+    时间/错误分类，并明确提示"恢复时间暂无法估算"。"""
+    import inspect
+
+    src = inspect.getsource(wake_ui.render_waiting_card)
+    assert "已等待" in src
+    assert "探测次数" in src
+    assert "最近一次探测" in src
+    assert "恢复时间暂无法估算" in src
+    # 不能再出现旧版"当前进度：XX%　预计总耗时"这种编造完成度的展示方式。
+    assert "预计总耗时" not in src
+    assert "预计剩余" not in src
 
 
-def test_wake_card_does_not_use_full_page_rerun():
-    """唤醒进度用同一个 placeholder 原地更新，不能用整页 st.rerun() 刷新导致闪烁。"""
-    trigger_src = _trigger_source()
-    wake_section = trigger_src.split("wake_slot = st.empty()", 1)[1].split(
-        "wake_state = api_client.wait_for_api_ready", 1
-    )[0]
-    assert "st.rerun()" not in wake_section
+def test_wake_poller_is_a_streamlit_fragment_not_a_blocking_loop():
+    """探测器必须是 st.fragment(run_every=...)，每次只做一次有边界探测，不是
+    while 循环同步阻塞整页脚本执行。"""
+    import inspect
+
+    assert getattr(wake_ui.poll_wake_intent, "__name__", "") == "poll_wake_intent"
+    src = inspect.getsource(wake_ui)
+    assert "@st.fragment(run_every=" in src
+    poll_src = inspect.getsource(wake_ui.poll_wake_intent)
+    assert "while " not in poll_src
+    assert "time.sleep" not in poll_src
 
 
-def test_single_wake_slot_placeholder_reused_not_multiple_containers():
-    """全程只用一个 st.empty() placeholder 原地刷新，不新增第二个独立进度区域。"""
-    trigger_src = _trigger_source()
-    assert trigger_src.count("wake_slot = st.empty()") == 1
+def test_ready_transition_triggers_full_app_rerun_not_direct_submit():
+    """fragment 探测到 ready 后只负责触发一次全页 rerun，不在 fragment 内部直接
+    调用 submit_or_reuse_job（提交动作统一收敛在 process_run_triggers 里，
+    避免绕过一次性消费保护）。"""
+    import inspect
+
+    src = inspect.getsource(wake_ui.poll_wake_intent)
+    assert 'st.rerun(scope="app")' in src
+    assert "submit_or_reuse_job" not in src
 
 
 # ---------------------------------------------------------------------------

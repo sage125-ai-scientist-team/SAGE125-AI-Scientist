@@ -28,9 +28,14 @@ def test_streamlit_source_guards_missing_questions_and_qid():
     """
     assert "errors.questions_missing" in APP_SRC
     assert "errors.question_not_selected" in APP_SRC
-    assert "if trigger_generate or trigger_mock:" in APP_SRC
-    assert "if not questions:" in APP_SRC
-    assert "elif not qid:" in APP_SRC
+    # SAGE125-UI-API-HEALTH-HANDOFF-ROOT-FIX-01：守卫条件从单纯的一次性触发
+    # 标志扩展为"一次性触发 或 存在待消费的唤醒意图"（否则切页期间的重跑会把
+    # 等待中的意图悄悄丢弃），但对"缺题库/未选题"这两个真正的静默失败场景，
+    # 判断逻辑必须保持不变。
+    assert "fresh_click = trigger_generate or trigger_mock" in APP_SRC
+    assert "if fresh_click or resuming_pending_wait:" in APP_SRC
+    assert "if not resuming_pending_wait and not questions:" in APP_SRC
+    assert "elif not resuming_pending_wait and not qid:" in APP_SRC
 
 
 def test_demo_preset_guards_present():

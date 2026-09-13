@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import threading
 import time
 from pathlib import Path
@@ -118,6 +119,31 @@ def _delivery_dependency_status(request: Request | None) -> dict[str, str]:
     return statuses
 
 
+_PROBE_ID_HEADER = "X-SAGE125-Probe-ID"
+_PROBE_ID_LOG_PATTERN = re.compile(r"^[A-Za-z0-9_\-]{1,80}$")
+
+
+def _log_health_probe_correlation(request: Request | None) -> None:
+    """把前端探测请求带来的关联标识记录进服务端日志，便于对上号排查。
+
+    只读、无副作用；标识必须先过长度/字符白名单校验才会被写入日志（避免把
+    任意用户可控的头部值未经校验地拼进日志——潜在的日志注入/污染风险）。
+    校验失败时只记录"存在但不合法"，不记录原始值。
+    """
+    if request is None:
+        return
+    try:
+        probe_id = request.headers.get(_PROBE_ID_HEADER)
+    except Exception:  # noqa: BLE001 - 诊断日志绝不能影响主响应
+        return
+    if not probe_id:
+        return
+    if _PROBE_ID_LOG_PATTERN.match(probe_id):
+        logger.info("health probe correlation: probe_id=%s", probe_id)
+    else:
+        logger.info("health probe correlation: probe_id=<rejected-invalid-format>")
+
+
 @router.get("/health")
 def health(request: Request = None) -> dict:  # type: ignore[assignment]
     """
@@ -130,6 +156,7 @@ def health(request: Request = None) -> dict:  # type: ignore[assignment]
     questions_count = _questions_count()
     rag_index_status = _rag_index_status()
     dependencies = _delivery_dependency_status(request)
+    _log_health_probe_correlation(request)
     status = (
         "ok"
         if (
